@@ -1,43 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <title><?= APP_NAME ?></title>
+    <meta charset="UTF-8">
+    <title>seSendok</title>
     <link rel="stylesheet" href="/vendor/semantic.min.css">
+    <style>
+        body { overflow: hidden; }
+        .pusher { height: calc(100vh - 50px); margin-top: 50px; }
+    </style>
 </head>
 <body>
-    <div class="ui top fixed menu">
-        <a class="item sidebar-toggle"><i class="sidebar icon"></i></a>
-        <!-- Navbar lain -->
-    </div>
-    <div class="ui vertical inverted sidebar menu left">
-        <a class="item" href="/anggaran">Anggaran <i class="dropdown icon"></i></a>
-        <div class="menu">
-            <a class="item" href="/anggaran/renstra">Renstra</a>
-            <a class="item" href="/anggaran/renja">Renja</a>
-            <a class="item" href="/anggaran/dpa">DPA</a>
-            <a class="item" href="/anggaran/renja_perubahan">Renja Perubahan</a>
-            <a class="item" href="/anggaran/dppa">DPPA</a>
+
+<div class="ui teal top fixed inverted menu">
+    <a class="item" id="sidebar-toggle"><i class="sidebar icon"></i></a>
+    <div class="right menu">
+        <div class="ui dropdown item">
+            <i class="user icon"></i> User
+            <i class="dropdown icon"></i>
+            <div class="menu">
+                <a class="item">Logout</a>
+            </div>
         </div>
-        <a class="item" href="/kontrak">Kontrak</a>
-        <a class="item" href="/realisasi">Realisasi <i class="dropdown icon"></i></a>
-        <div class="menu">
-            <a class="item" href="/realisasi/input_realisasi">Input Realisasi</a>
-            <a class="item" href="/realisasi/spj">SPJ</a>
-            <a class="item" href="/realisasi/evaluasi_renja">Evaluasi Renja</a>
+    </div>
+</div>
+
+<div class="ui inverted left vertical sidebar menu">
+    <div class="item"><h3>seSendok</h3></div>
+    <a class="item" href="/home"><i class="home icon"></i> Beranda</a>
+    <div class="ui accordion item">
+        <div class="title"><i class="dropdown icon"></i> Anggaran</div>
+        <div class="content menu">
+            <a class="item" href="/anggaran"><i class="tags icon"></i> Anggaran</a>
+            <a class="item" href="/anggaran/renstra"><i class="sitemap icon"></i> RENSTRA</a>
+            <a class="item" href="/anggaran/renja"><i class="tag icon"></i> RENJA</a>
+            <a class="item" href="/anggaran/dpa"><i class="tags icon"></i> DPA</a>
+            <a class="item" href="/anggaran/renja-perubahan"><i class="tags icon"></i> Renja Perubahan</a>
+            <a class="item" href="/anggaran/dppa"><i class="tags icon"></i> DPPA</a>
         </div>
-        <!-- Tambah menu lain: Referensi, Kepegawaian, Chat, Pengaturan -->
     </div>
-    <div class="pusher" style="margin-top: 50px;">
-        <?= $content ?>  <!-- Isi view di sini -->
+</div>
+
+<div class="ui bottom attached pushable">
+    <div class="pusher">
+        <?php echo $content ?? ''; ?>
     </div>
-    <script src="/vendor/jquery.min.js"></script>
-    <script src="/vendor/semantic.min.js"></script>
-    <script>
-        $('.sidebar-toggle').on('click', function() {
-            $('.ui.sidebar').sidebar('toggle');
-        });
-        $('.ui.accordion').accordion();
-        $('.ui.dropdown').dropdown();
-    </script>
+</div>
+
+<script src="/vendor/semantic.min.js"></script>
+<script>
+    $('#sidebar-toggle').click(function() {
+        $('.ui.sidebar').sidebar('toggle');
+    });
+    $('.ui.accordion').accordion();
+    $('.ui.dropdown').dropdown();
+</script>
 </body>
 </html>
