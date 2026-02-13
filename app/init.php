@@ -7,11 +7,31 @@ define('BASE_PATH', dirname(__DIR__));
 if (file_exists(BASE_PATH . '/app/helpers.php')) {
     require_once BASE_PATH . '/app/helpers.php';
 }
+// Load .env ke konstanta (sederhana)
+$envFile = BASE_PATH . '/.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || strpos($line, '#') === 0) continue;
+        if (strpos($line, '=') === false) continue;
+        list($k, $v) = explode('=', $line, 2);
+        $k = trim($k);
+        $v = trim($v);
+        // Jika belum didefinisikan, define
+        if (!defined($k)) define($k, $v);
+    }
+}
 
 // Autoload classes (Controllers, Models, dll.)
 spl_autoload_register(function ($class) {
+    // ubah backslashes ke slash
     $class = str_replace('\\', '/', $class);
-    $file = BASE_PATH . '/app/' . $class . '.php';
+
+    // Jika $class sudah berisi 'app/...' maka kita jangan tambah '/app/' dua kali
+    // Path final: BASE_PATH . '/' . $class . '.php'
+    $file = BASE_PATH . '/' . $class . '.php';
+
     if (file_exists($file)) {
         require $file;
     }
