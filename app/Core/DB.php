@@ -21,7 +21,7 @@ class DB
             //         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             //     ]
             // );
-            GANTI MENJADI INI (PAKAI SOCKET SYNology)
+            //GANTI MENJADI INI (PAKAI SOCKET SYNology)
             $this->pdo = new PDO(
                 "mysql:unix_socket=/run/mysqld/mysqld10.sock;dbname={$config['dbname']};charset=utf8mb4",
                 $config['username'],
