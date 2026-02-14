@@ -10,6 +10,11 @@ return [
     '/register/proses' => ['AuthController', 'register'],
     '/dashboard' => ['DashboardController', 'index'],
 
+    '/referensi' => ['ReferensiController', 'index'],
+    '/referensi/store' => ['ReferensiController', 'store'],
+    '/referensi/update' => ['ReferensiController', 'update'],
+    '/referensi/delete' => ['ReferensiController', 'delete'],
+
     '/renstra' => ['RenstraController', 'index'],
     '/renja' => ['RenjaController', 'index'],
     '/dpa' => ['DpaController', 'index'],
