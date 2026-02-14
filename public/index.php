@@ -1,7 +1,19 @@
 <?php
-//sementara agar error muncul
-//Setelah perbaikan selesai, hapus atau set display_errors ke 0 pada production.
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-require_once __DIR__ . '/../app/init.php';
+session_start();
+
+require_once '../app/Core/DB.php';
+require_once '../app/Core/Auth.php';
+require_once '../app/Core/Controller.php';
+require_once '../app/Core/Router.php';
+
+$uri=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
+$route=Router::route($uri);
+
+if($route){
+    require_once "../app/Controllers/".$route[0].".php";
+    $controller=new $route[0];
+    $method=$route[1];
+    $controller->$method();
+}else{
+    echo "404 Not Found";
+}
