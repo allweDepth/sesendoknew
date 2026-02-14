@@ -5,10 +5,6 @@ require_once __DIR__ . '/../Core/Auth.php';
 
 class AuthController extends Controller
 {
-    public function loginForm()
-    {
-        require __DIR__ . '/../Views/auth/login.php';
-    }
 
     public function login()
     {
@@ -17,18 +13,19 @@ class AuthController extends Controller
 
         if (!Auth::login($username, $password)) {
             $_SESSION['login_error'] = "Username atau password salah";
-            header("Location: /login");
+            header("Location: /");
             exit;
         }
 
-        header("Location: /");
+        // LOGIN BERHASIL
+        header("Location: /dashboard");
         exit;
     }
 
     public function logout()
     {
         Auth::logout();
-        header("Location: /login");
+        header("Location: /");
         exit;
     }
 }

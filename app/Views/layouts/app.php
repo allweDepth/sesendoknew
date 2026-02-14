@@ -14,8 +14,8 @@
 
     <!-- NAVBAR (DI LUAR PUSHABLE) -->
     <div class="ui top fixed menu">
-        <div class="item">
-            <a id="sidebar-toggle">
+        <div class="item" id="sidebar-toggle">
+            <a>
                 <i class="bars icon"></i>
             </a>
         </div>

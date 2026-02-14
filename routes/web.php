@@ -1,9 +1,12 @@
 <?php
 return [
-    '/' => ['DashboardController','index'],
-    '/login'=>['AuthController','loginForm'],
+    '/' => ['HomeController','index'],
+    '/home' => ['HomeController','index'],
+
     '/login/proses'=>['AuthController','login'],
     '/logout'=>['AuthController','logout'],
+
+    '/dashboard'=>['DashboardController','index'],
 
     '/renstra'=>['RenstraController','index'],
     '/renja'=>['RenjaController','index'],
