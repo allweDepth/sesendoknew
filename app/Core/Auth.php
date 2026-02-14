@@ -4,22 +4,29 @@ require_once __DIR__ . '/DB.php';
 
 class Auth
 {
-    public static function login($username, $password)
+    public static function login($usernameInput, $passwordInput)
     {
         $db = DB::getInstance();
 
+        $usernameInput = trim($usernameInput);
+
         $user = $db->first(
             'user_sesendok_biila',
-            'WHERE username = ? OR email = ? AND disable = 0',
-            [$username]
+            'WHERE username = ? OR email = ?',
+            [$usernameInput, $usernameInput] // WAJIB 2 PARAMETER
         );
 
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user'] = $user;
-            return true;
+        if (!$user) {
+            return false;
         }
 
-        return false;
+        if (!password_verify($passwordInput, $user['password'])) {
+            return false;
+        }
+
+        $_SESSION['user'] = $user;
+
+        return true;
     }
 
     public static function user()
