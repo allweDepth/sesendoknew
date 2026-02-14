@@ -27,16 +27,7 @@
 
   </div>
 
-  <div class="ui container">
-    <h2 class="ui header">Berita</h2>
-    <p>Isi berita...</p>
-
-    <h2 class="ui header">Organisasi</h2>
-    <p>Isi organisasi...</p>
-
-    <h2 class="ui header">Pelayanan</h2>
-    <p>Isi pelayanan...</p>
-  </div>
+  
 
   <!-- LOGIN MODAL -->
   <div class="ui modal" id="loginModal">
