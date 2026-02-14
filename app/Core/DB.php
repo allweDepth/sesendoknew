@@ -12,8 +12,18 @@ class DB
         $config = require __DIR__ . '/../../config/database.php';
 
         try {
+            // $this->pdo = new PDO(
+            //     "mysql:host={$config['host']};dbname={$config['dbname']};charset=utf8mb4",
+            //     $config['username'],
+            //     $config['password'],
+            //     [
+            //         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            //         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            //     ]
+            // );
+            GANTI MENJADI INI (PAKAI SOCKET SYNology)
             $this->pdo = new PDO(
-                "mysql:host={$config['host']};dbname={$config['dbname']};charset=utf8mb4",
+                "mysql:unix_socket=/run/mysqld/mysqld10.sock;dbname={$config['dbname']};charset=utf8mb4",
                 $config['username'],
                 $config['password'],
                 [
