@@ -2,7 +2,7 @@
 return [
     '/' => ['HomeController', 'index'],
     '/home' => ['HomeController', 'index'],
-    '/berita' => ['HomeController', 'berita'],
+    '/datateknis' => ['HomeController', 'datateknis'],
     '/organisasi' => ['HomeController', 'organisasi'],
 
     '/login/proses' => ['AuthController', 'login'],

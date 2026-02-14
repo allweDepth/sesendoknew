@@ -12,9 +12,9 @@ class HomeController extends Controller
 
     $this->view('home/index', [], 'public');
   }
-  public function berita()
+  public function datateknis()
   {
-    $this->view('home/berita', [], 'public');
+    $this->view('home/datateknis', [], 'public');
   }
 
   public function organisasi()
