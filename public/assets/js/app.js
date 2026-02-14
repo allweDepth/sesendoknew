@@ -1,13 +1,20 @@
 $(document).ready(function () {
-	$('.ui.sidebar')
-        .sidebar({
-            context: $('.pusher'),
-            transition: 'overlay'
-        });
 
-    $('#sidebar-toggle').on('click',function(){
-        $('.ui.sidebar').sidebar('toggle');
-    });
+	$('.ui.sidebar').sidebar({
+		context: $('.ui.pushable'),
+		transition: 'push'
+	});
+
+	$('#sidebar-toggle').on('click', function () {
+		$('.ui.sidebar').sidebar('toggle');
+	});
+
+	// TOGGLE
+	$("#sidebar-toggle").on("click", function () {
+		$(".ui.sidebar").sidebar("toggle");
+	});
+
+	// TOAST
 	function showToast(type, message) {
 		let color = "info";
 
@@ -23,4 +30,5 @@ $(document).ready(function () {
 			showProgress: "bottom",
 		});
 	}
+
 });
