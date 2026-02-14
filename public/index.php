@@ -6,8 +6,14 @@ require_once '../app/Core/Auth.php';
 require_once '../app/Core/Controller.php';
 require_once '../app/Core/Router.php';
 
-$uri=parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
-$route=Router::route($uri);
+$basePath = '/sesendoknew/public'; // sesuaikan dengan folder kamu
+
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri = str_replace($basePath, '', $uri);
+
+if($uri == '') $uri = '/';
+
+$route = Router::route($uri);
 
 if($route){
     require_once "../app/Controllers/".$route[0].".php";

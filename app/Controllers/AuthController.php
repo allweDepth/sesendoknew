@@ -12,17 +12,17 @@ class AuthController extends Controller
 
     public function login()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $username = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
 
-            if (Auth::login($_POST['username'], $_POST['password'])) {
-                header("Location: /");
-                exit;
-            } else {
-                $_SESSION['error'] = "Username atau Password salah";
-                header("Location: /login");
-                exit;
-            }
+        if (!Auth::login($username, $password)) {
+            $_SESSION['login_error'] = "Username atau password salah";
+            header("Location: /login");
+            exit;
         }
+
+        header("Location: /");
+        exit;
     }
 
     public function logout()

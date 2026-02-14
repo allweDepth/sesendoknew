@@ -54,6 +54,13 @@ $('.ui.form').form({
     }
 });
 </script>
-
+<?php if(isset($_SESSION['error'])): ?>
+<script>
+  $('body').toast({
+    class: 'error',
+    message: '<?= $_SESSION['error']; ?>'
+  });
+</script>
+<?php unset($_SESSION['error']); endif; ?>
 </body>
 </html>
