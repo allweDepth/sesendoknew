@@ -14,7 +14,7 @@ class Auth
             [$username]
         );
 
-        if ($user && $user['password'] == $password) {
+        if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user'] = $user;
             return true;
         }
@@ -42,5 +42,4 @@ class Auth
     {
         return $_SESSION['user']['tahun'] ?? null;
     }
-    
 }
