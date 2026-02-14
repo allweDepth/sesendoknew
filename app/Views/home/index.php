@@ -10,10 +10,22 @@
 <body>
 
   <div class="ui secondary pointing menu">
-    <a href="/home" class="item">Berita</a>
-    <a href="/datateknis" class="item">Data Teknis</a>
-    <a href="/organisasi" class="item">Organisasi</a>
-    <a href="/pelayanan" class="item">Pelayanan</a>
+
+    <a href="/home" class="item <?= ($active ?? '') == 'berita' ? 'active' : '' ?>">
+      Berita
+    </a>
+
+    <a href="/datateknis" class="item <?= ($active ?? '') == 'datateknis' ? 'active' : '' ?>">
+      Data Teknis
+    </a>
+
+    <a href="/organisasi" class="item <?= ($active ?? '') == 'organisasi' ? 'active' : '' ?>">
+      Organisasi
+    </a>
+
+    <a href="/pelayanan" class="item <?= ($active ?? '') == 'pelayanan' ? 'active' : '' ?>">
+      Pelayanan
+    </a>
 
     <div class="right menu">
       <div class="ui dropdown item">
@@ -27,52 +39,53 @@
     </div>
 
   </div>
-<div class="ui container" style="margin-top:40px">
 
-  <h2 class="ui dividing header">
-    <i class="newspaper outline icon"></i>
-    <div class="content">
-      Berita
-      <div class="sub header">Informasi terbaru seSendok</div>
-    </div>
-  </h2>
+  <div class="ui container" style="margin-top:40px">
 
-  <div class="ui three stackable cards">
-
-    <div class="card">
+    <h2 class="ui dividing header">
+      <i class="newspaper outline icon"></i>
       <div class="content">
-        <div class="header">Peluncuran Sistem seSendok</div>
-        <div class="meta">14 Februari 2026</div>
-        <div class="description">
-          seSendok – Sistem Elektronik Sinkronisasi Dokumen Perencanaan, Penganggaran, dan Realisasi Kinerja resmi diluncurkan.
+        Berita
+        <div class="sub header">Informasi terbaru seSendok</div>
+      </div>
+    </h2>
+
+    <div class="ui three stackable cards">
+
+      <div class="card">
+        <div class="content">
+          <div class="header">Peluncuran Sistem seSendok</div>
+          <div class="meta">14 Februari 2026</div>
+          <div class="description">
+            seSendok – Sistem Elektronik Sinkronisasi Dokumen Perencanaan, Penganggaran, dan Realisasi Kinerja resmi diluncurkan.
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="card">
-      <div class="content">
-        <div class="header">Update Modul Renstra</div>
-        <div class="meta">10 Februari 2026</div>
-        <div class="description">
-          Penambahan fitur monitoring indikator kinerja.
+      <div class="card">
+        <div class="content">
+          <div class="header">Update Modul Renstra</div>
+          <div class="meta">10 Februari 2026</div>
+          <div class="description">
+            Penambahan fitur monitoring indikator kinerja.
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="card">
-      <div class="content">
-        <div class="header">Integrasi SIPD</div>
-        <div class="meta">5 Februari 2026</div>
-        <div class="description">
-          Sinkronisasi data penganggaran dengan sistem nasional.
+      <div class="card">
+        <div class="content">
+          <div class="header">Integrasi SIPD</div>
+          <div class="meta">5 Februari 2026</div>
+          <div class="description">
+            Sinkronisasi data penganggaran dengan sistem nasional.
+          </div>
         </div>
       </div>
+
     </div>
 
   </div>
 
-</div>
-  
 
   <!-- LOGIN MODAL -->
   <div class="ui modal" id="loginModal">
@@ -186,7 +199,7 @@
   </div>
   <script>
     $('.ui.dropdown').dropdown();
-
+    $('.menu .item').tab();
     $('#btnLogin').click(function() {
       $('#loginModal').modal('show');
     });

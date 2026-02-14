@@ -10,7 +10,7 @@ class Auth
 
         $user = $db->first(
             'user_sesendok_biila',
-            'WHERE username = ? AND disable = 0',
+            'WHERE username = ? OR email = ? AND disable = 0',
             [$username]
         );
 

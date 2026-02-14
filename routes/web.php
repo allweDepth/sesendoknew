@@ -4,7 +4,7 @@ return [
     '/home' => ['HomeController', 'index'],
     '/datateknis' => ['HomeController', 'datateknis'],
     '/organisasi' => ['HomeController', 'organisasi'],
-
+    '/pelayanan' => ['HomeController', 'pelayanan'],
     '/login/proses' => ['AuthController', 'login'],
     '/logout' => ['AuthController', 'logout'],
     '/register/proses' => ['AuthController', 'register'],

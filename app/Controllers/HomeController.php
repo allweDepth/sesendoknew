@@ -19,6 +19,13 @@ class HomeController extends Controller
 
   public function organisasi()
   {
-    $this->view('home/organisasi', [], 'public');
+    // load data organisasi dari model
+    $this->view('home/organisasi', ['active' => 'organisasi'], 'public');
+  }
+
+  public function pelayanan()
+  {
+    // load data pelayanan dari model
+    $this->view('home/pelayanan', ['active' => 'pelayanan'], 'public');
   }
 }
