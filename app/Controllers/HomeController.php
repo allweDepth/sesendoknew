@@ -10,6 +10,6 @@ class HomeController extends Controller
             exit;
         }
 
-        $this->view('home/index');
+        $this->view('home/index', [], 'public');
     }
 }
