@@ -14,7 +14,7 @@
 
     <!-- NAVBAR (DI LUAR PUSHABLE) -->
     <div class="ui top fixed menu">
-        <div class="item" id="sidebar-toggle">
+        <div class="item nabiila" id="sidebar-toggle">
             <a>
                 <i class="bars icon"></i>
             </a>
@@ -49,10 +49,8 @@
             </div>
         </div>
     </div>
-    
     <!-- SIDEBAR WRAPPER -->
-    <div class="ui pushable" style="margin-top:50px; min-height:100vh;">
-
+    <div class="ui bottom pushable" style="margin-top:50px; min-height:100vh;">
         <!-- SIDEBAR -->
         <div class="ui sidebar inverted vertical menu">
             <!-- HEADER -->
@@ -68,7 +66,6 @@
                     </div>
                 </h2>
             </div>
-
             <!-- SEARCH -->
             <div class="item">
                 <div class="ui inverted transparent icon input">
@@ -76,12 +73,10 @@
                     <i class="search icon"></i>
                 </div>
             </div>
-
             <!-- HOME -->
             <a class="item" href="/dashboard">
                 <i class="home icon"></i> Dashboard
             </a>
-
             <!-- ANGGARAN -->
             <div class="ui accordion inverted item">
                 <div class="title">
@@ -183,7 +178,8 @@
                 <i class="user icon"></i> Profil
             </a>
         </div>
-
+        <!-- FLYOUT -->\
+        <?php require __DIR__ . '/../partials/flyout.php'; ?>
         <!-- PUSHER -->
         <div class="pusher">
             <div class="ui container" style="padding-top:20px;">
@@ -193,8 +189,7 @@
         </div>
 
     </div>
-<!-- FLYOUT -->\
-    <?php require __DIR__ . '/../partials/flyout.php'; ?>
+
     <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>

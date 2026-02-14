@@ -5,6 +5,7 @@
   <link rel="stylesheet" href="/assets/css/fomantic.min.css">
   <script src="/assets/js/jquery.min.js"></script>
   <script src="/assets/js/fomantic.min.js"></script>
+  <script src="/node_modules/crypto-js/crypto-js.js"></script>
 </head>
 
 <body>
