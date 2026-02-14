@@ -7,8 +7,25 @@
 </head>
 <body>
 
-<div class="ui secondary menu">
-    <div class="left menu">
+<div class="ui secondary pointing menu">
+
+    <a class="active item">
+        Home
+    </a>
+
+    <a class="item">
+        Berita
+    </a>
+
+    <a class="item">
+        Organisasi
+    </a>
+
+    <a class="item">
+        Pelayanan
+    </a>
+
+    <div class="right menu">
         <div class="ui dropdown item">
             Account
             <i class="dropdown icon"></i>
@@ -18,6 +35,7 @@
             </div>
         </div>
     </div>
+
 </div>
 
 <div class="ui container">
@@ -48,12 +66,31 @@
         </form>
     </div>
 </div>
-
+<!-- REGISTER MODAL -->
+<div class="ui modal" id="registerModal">
+    <div class="header">Register</div>
+    <div class="content">
+        <form class="ui form" method="POST" action="/register/proses">
+            <div class="field">
+                <label>Username</label>
+                <input type="text" name="username" required>
+            </div>
+            <div class="field">
+                <label>Password</label>
+                <input type="password" name="password" required>
+            </div>
+            <button class="ui green button">Register</button>
+        </form>
+    </div>
+</div>
 <script>
 $('.ui.dropdown').dropdown();
 
 $('#btnLogin').click(function(){
     $('#loginModal').modal('show');
+});
+$('#btnRegister').click(function(){
+    $('#registerModal').modal('show');
 });
 </script>
 

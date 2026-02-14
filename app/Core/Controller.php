@@ -2,17 +2,19 @@
 
 class Controller {
 
-    protected function view($path, $data = []) {
+    protected function view($path, $data = [], $layout = 'app') {
 
         extract($data);
 
-        // Render view dulu
         ob_start();
         require __DIR__ . '/../Views/' . $path . '.php';
         $content = ob_get_clean();
 
-        // Masukkan ke layout
-        require __DIR__ . '/../Views/layouts/app.php';
+        if ($layout === 'public') {
+            require __DIR__ . '/../Views/layouts/public.php';
+        } else {
+            require __DIR__ . '/../Views/layouts/app.php';
+        }
     }
 
 }
