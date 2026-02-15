@@ -176,10 +176,10 @@
                     <i class="dropdown icon"></i> Standar Harga Satuan
                 </div>
                 <div class="content">
-                    <a class="item" href="/ssh"><i class="file icon"></i> SSH</a>
-                    <a class="item" href="/hspk"><i class="file alternate icon"></i> HSPK</a>
-                    <a class="item" href="/asb"><i class="file alternate outline icon"></i> ASB</a>
-                    <a class="item" href="/sbu"><i class="file outline icon"></i> SBU</a>
+                    <a class="item" href="/standar_harga?tbl=ssh"><i class="file icon"></i> SSH</a>
+                    <a class="item" href="/standar_harga?tbl=hspk"><i class="file alternate icon"></i> HSPK</a>
+                    <a class="item" href="/standar_harga?tbl=asb"><i class="file alternate outline icon"></i> ASB</a>
+                    <a class="item" href="/standar_harga?tbl=sbu"><i class="file outline icon"></i> SBU</a>
                 </div>
             </div>
 

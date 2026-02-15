@@ -19,26 +19,56 @@
   <div class="ui hidden divider"></div>
 
   <table class="ui celled striped table">
-    <thead>
+      <thead>
+      <?php
+
+      $columns = [
+        'asn' => [
+          'Nama',
+          'NIP',
+          'Alamat'
+        ],
+        'sk_asn' => [
+          'Kode',
+          'Nama Kegiatan'
+        ],
+        'register_surat' => [
+          'Kode',
+          'Nama Program'
+        ],
+        'tata_naskah' => [
+          'Kode',
+          'Nama Program'
+        ]
+      ];
+
+      $currentColumns = $columns[$tbl] ?? ['Nama'];
+
+      $totalCol = count($currentColumns) + 1; // +1 untuk kolom Aksi
+
+      ?>
+
       <tr>
-        <th width="5%">No</th>
-        <th>Nama</th>
-        <th width="15%">Aksi</th>
+        <?php foreach ($currentColumns as $col): ?>
+          <th><?= $col ?></th>
+        <?php endforeach; ?>
+
+        <th class="collapsing">Aksi</th>
       </tr>
-    </thead>
+  </thead>
 
 
     <!-- INI SAJA YANG BERBEDA -->
     <tbody name="tabel_kepegawaian">
     <tr>
-      <td colspan="3">
+      <td colspan="<?= $totalCol ?>">
         <div class="ui active inline loader"></div>
       </td>
     </tr>
-    </tbody>
-    <tfoot>
-      <tr>
-        <th colspan="3">
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="<?= $totalCol ?>" class="right aligned">
           <div class="ui center pagination menu" name="pagination_kepegawaian"></div>
         </th>
       </tr>

@@ -17,29 +17,54 @@
   </h3>
 
   <div class="ui hidden divider"></div>
+  
+    <table class="ui celled striped table">
+      <thead>
+      <?php
 
-  <table class="ui celled striped table">
-    <thead>
+      $columns = [
+        'sub_kegiatan' => [
+          'Kode',
+          'Nama Sub Kegiatan',
+          'Pagu'
+        ],
+        'kegiatan' => [
+          'Kode',
+          'Nama Kegiatan'
+        ],
+        'program' => [
+          'Kode',
+          'Nama Program'
+        ]
+      ];
+
+      $currentColumns = $columns[$tbl] ?? ['Nama'];
+
+      $totalCol = count($currentColumns) + 1; // +1 untuk kolom Aksi
+
+      ?>
+
       <tr>
-        <th>ID</th>
-        <th>Nama</th>
+        <?php foreach ($currentColumns as $col): ?>
+          <th><?= $col ?></th>
+        <?php endforeach; ?>
+
         <th class="collapsing">Aksi</th>
       </tr>
-    </thead>
-
-    <tbody name="tabel_referensi">
-      <tr>
-        <td colspan="3">
-          <div class="ui active inline loader"></div>
-        </td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr>
-        <th colspan="3">
-          <div class="ui center pagination menu" name="pagination_referensi"></div>
+  </thead>
+  <tbody name="tabel_referensi">
+    <tr>
+      <td colspan="<?= $totalCol ?>">
+        <div class="ui active inline loader"></div>
+      </td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="<?= $totalCol ?>" class="right aligned">
+        <div class="ui center pagination menu" name="pagination_referensi"></div>
         </th>
-      </tr>
-    </tfoot>
+    </tr>
+  </tfoot>
   </table>
 </div>

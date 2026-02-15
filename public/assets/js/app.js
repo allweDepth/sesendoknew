@@ -184,8 +184,9 @@ class TableManager {
 		rows.forEach((row) => {
 			html += "<tr>";
 
-			Object.values(row).forEach((val) => {
-				html += `<td>${val ?? ""}</td>`;
+			Object.keys(row).forEach((key) => {
+				if (key === "id") return; // ← skip kolom id
+				html += `<td>${row[key] ?? ""}</td>`;
 			});
 
 			html += `<td class="collapsing">
@@ -553,7 +554,6 @@ class FlyoutManager {
 		 Open Flyout
 	---------------------------------------------- */
 	open($btn) {
-
 		const jenis = $btn.attr("jns");
 		const tbl = $btn.attr("tbl");
 		const idRow = $btn.attr("id_row");
