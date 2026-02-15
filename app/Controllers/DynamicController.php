@@ -6,7 +6,7 @@ class DynamicController
 	public function index($params = null)
 	{
 		$service = new DynamicTableService($_POST);
-		echo json_encode($service->handle($_POST));
+		echo $service->handle($_POST);
 	}
 }
 

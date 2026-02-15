@@ -14,6 +14,12 @@
         .pusher .ui .container {
             padding: 20px !important;
         }
+
+        .content-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
     </style>
 </head>
 
@@ -198,7 +204,7 @@
                     </div>
                 </div>
             </div>
-            <div class="ui container">
+            <div  class="content-scroll">
                 <?= $content ?>
             </div>
 

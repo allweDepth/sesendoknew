@@ -92,27 +92,32 @@ class TableManager {
 				cari: AppState.cari,
 			},
 			success: (res) => {
-				if (!res.success) {
-					console.warn(res.message);
+				if (!res || res.success !== true) {
+					console.warn(res?.message || "Response tidak valid");
+					this.renderTable([]);
 					return;
 				}
 
-				let rows = res.data?.rows || [];
+				// FIX DI SINI
+				let rows = Array.isArray(res.data) ? res.data : [];
 				let meta = res.meta || {};
 
 				this.renderTable(rows);
 
 				this.renderPagination({
-					total: meta.total ?? meta.total_data ?? 0,
-					limit: meta.limit ?? AppState.rows,
-					page: meta.page ?? AppState.halaman,
-					totalPage: meta.total_page ?? null,
+					total: meta.total || 0,
+					limit: meta.limit || AppState.rows,
+					page: meta.page || AppState.halaman,
 				});
 			},
 		});
 	}
 
 	renderTable(rows) {
+		if (!Array.isArray(rows)) {
+			rows = [];
+		}
+
 		let html = "";
 
 		rows.forEach((row) => {
@@ -129,25 +134,68 @@ class TableManager {
 	}
 
 	renderPagination(meta) {
-		if (!meta || !meta.total_page) {
+		if (!meta || !meta.total) {
 			$('div[name="pagination_referensi"]').html("");
 			return;
 		}
 
 		let currentPage = meta.page || 1;
-		let totalPage = meta.total_page;
+		let limit = meta.limit || 10;
+		let totalPage = Math.ceil(meta.total / limit);
 
-		let html = "";
+		if (totalPage <= 1) {
+			$('div[name="pagination_referensi"]').html("");
+			return;
+		}
 
-		for (let i = 1; i <= totalPage; i++) {
+		let html = `<div class="ui pagination menu">`;
+
+		// FIRST
+		html += `
+		<a class="item" data-page="1">
+			<i class="angle double left chevron icon"></i>
+		</a>
+	`;
+
+		// PREVIOUS
+		let prev = currentPage > 1 ? currentPage - 1 : 1;
+
+		html += `
+		<a class="item" data-page="${prev}">
+			<i class="angle left icon"></i>
+		</a>
+	`;
+
+		// PAGE NUMBERS (maks 5 halaman sekitar current)
+		let start = Math.max(1, currentPage - 2);
+		let end = Math.min(totalPage, currentPage + 2);
+
+		for (let i = start; i <= end; i++) {
 			let active = i === currentPage ? "active" : "";
-
 			html += `
 			<a class="item ${active}" data-page="${i}">
 				${i}
 			</a>
 		`;
 		}
+
+		// NEXT
+		let next = currentPage < totalPage ? currentPage + 1 : totalPage;
+
+		html += `
+		<a class="item" data-page="${next}">
+			<i class="angle right icon"></i>
+		</a>
+	`;
+
+		// LAST
+		html += `
+		<a class="item" data-page="${totalPage}">
+			<i class="angle double right chevron icon"></i>
+		</a>
+	`;
+
+		html += `</div>`;
 
 		$('div[name="pagination_referensi"]').html(html);
 	}
@@ -205,7 +253,14 @@ $(document).ready(function () {
 	const $context = $("#mainContext");
 
 	const $sidebar = $context.children(".ui.sidebar");
+const params = new URLSearchParams(window.location.search);
+const tblFromUrl = params.get("tbl");
 
+const currentPath = window.location.pathname.replace(/^\/+/g, "");
+
+if (tblFromUrl && currentPath) {
+	tableManager.load(currentPath, tblFromUrl);
+}
 	$sidebar.sidebar({
 		context: $context,
 		transition: "push",
@@ -264,15 +319,5 @@ $(document).ready(function () {
    HANDLE LINK REFERENSI
 ========================= */
 
-	$("body").on("click", 'a[href^="/referensi"]', function (e) {
-		e.preventDefault();
-
-		const url = new URL(this.href);
-		const tbl = url.searchParams.get("tbl");
-
-		if (tbl) {
-			history.pushState(null, "", this.href);
-			tableManager.load("referensi", tbl);
-		}
-	});
+	
 });

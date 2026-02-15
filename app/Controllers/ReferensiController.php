@@ -32,24 +32,14 @@ class ReferensiController extends Controller
             die("Tabel tidak diizinkan");
         }
 
-        $db = DB::getInstance();
-
-        // contoh mapping tabel database
-        $mapTable = [
-            'program' => 'sub_kegiatan_neo',
-            'kegiatan' => 'sub_kegiatan_neo',
-            'sub_kegiatan' => 'sub_kegiatan_neo'
-        ];
-
-        $tableName = $mapTable[$tbl] ?? $tbl;
-
-        $rows = $db->get($tableName);
+        // ❌ HAPUS query DB
+        // Data sekarang di-load via DynamicTableService (AJAX)
 
         $this->view('referensi/index', [
-            'rows' => $rows,
             'tbl'  => $tbl
         ], 'app');
     }
+
 
     public function store()
     {
