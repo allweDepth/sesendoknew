@@ -142,4 +142,6 @@ class DynamicTableService
 
         return JsonResponse::success('Data ditemukan', null, $rows);
     }
+    // klik menu referensi 
+    
 }

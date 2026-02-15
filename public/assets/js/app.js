@@ -259,4 +259,20 @@ $(document).ready(function () {
 			tableManager.fetch();
 		},
 	);
+	//menu referensi
+	/* =========================
+   HANDLE LINK REFERENSI
+========================= */
+
+	$("body").on("click", 'a[href^="/referensi"]', function (e) {
+		e.preventDefault();
+
+		const url = new URL(this.href);
+		const tbl = url.searchParams.get("tbl");
+
+		if (tbl) {
+			history.pushState(null, "", this.href);
+			tableManager.load("referensi", tbl);
+		}
+	});
 });
