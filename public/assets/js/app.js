@@ -106,6 +106,10 @@ class TableManager {
 	}
 
 	fetch() {
+		if ($("#countRow").length) {
+			let value = $("#countRow").dropdown("get value");
+			AppState.rows = parseInt(value) || AppState.rows;
+		}
 		this.ajax.request({
 			data: {
 				jenis: AppState.jenis,
@@ -441,6 +445,15 @@ $(document).ready(function () {
 
 	const currentPath = window.location.pathname.replace(/^\/+/g, "");
 
+	// 🔥 Ambil rows pertama kali
+	if ($("#countRow").length) {
+		let value = $("#countRow").dropdown("get value");
+		AppState.rows = parseInt(value) || 10;
+	}
+
+	if (tblFromUrl && currentPath) {
+		tableManager.load(currentPath, tblFromUrl);
+	}
 	if (tblFromUrl && currentPath) {
 		tableManager.load(currentPath, tblFromUrl);
 	}
@@ -470,10 +483,12 @@ $(document).ready(function () {
 	   DROPDOWN COUNT ROW
 	========================= */
 
-	$("#countRow").on("change", function () {
-		AppState.rows = parseInt($(this).val());
-		AppState.halaman = 1;
-		tableManager.fetch();
+	$("#countRow").dropdown({
+		onChange: function (value) {
+			AppState.rows = parseInt(value) || 10;
+			AppState.halaman = 1;
+			tableManager.fetch();
+		},
 	});
 
 	$(".ui.dropdown").dropdown();

@@ -15,11 +15,11 @@
             padding: 20px !important;
         }
 
-        .content-scroll {
+        /* .content-scroll {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-        }
+        } */
     </style>
 </head>
 

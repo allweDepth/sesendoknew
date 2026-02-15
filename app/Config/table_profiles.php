@@ -228,7 +228,7 @@ return [
                 'searchable' => ['id','kd_opd','nama','nip','npwp'],
                 'order_by' => 'nama ASC'
             ],
-            'asn' => [
+            'kepegawaian' => [
                 'select' => ['id','kd_opd','nama','nip','npwp'],
                 'searchable' => ['id','kd_opd','nama','nip','npwp'],
                 'order_by' => 'nama ASC'

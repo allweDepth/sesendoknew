@@ -29,7 +29,7 @@
 
 
     <!-- INI SAJA YANG BERBEDA -->
-    <tbody name="tabel_kepegawaian"></tbody>
+    <tbody name="tabel_kepegawaian">
     <tr>
       <td colspan="3">
         <div class="ui active inline loader"></div>
@@ -39,7 +39,7 @@
     <tfoot>
       <tr>
         <th colspan="3">
-          <div class="ui center pagination menu" name="pagination_referensi"></div>
+          <div class="ui center pagination menu" name="pagination_kepegawaian"></div>
         </th>
       </tr>
     </tfoot>
