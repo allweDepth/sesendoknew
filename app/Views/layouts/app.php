@@ -10,6 +10,9 @@
         #mainContext {
             min-height: calc(100vh - 40px);
         }
+        .pusher .ui .container {
+            padding: 20px !important;
+        }
     </style>
 </head>
 
