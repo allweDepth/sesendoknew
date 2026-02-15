@@ -1,8 +1,8 @@
 /* =========================================================
-   GLOBAL CONFIG
-   ---------------------------------------------------------
-   → Konfigurasi dasar aplikasi
-   → Jika ganti base URL atau endpoint API, ubah di sini
+	 GLOBAL CONFIG
+	 ---------------------------------------------------------
+	 → Konfigurasi dasar aplikasi
+	 → Jika ganti base URL atau endpoint API, ubah di sini
 ========================================================= */
 
 const AppConfig = {
@@ -12,26 +12,27 @@ const AppConfig = {
 };
 
 /* =========================================================
-   GLOBAL STATE (UNIVERSAL)
-   ---------------------------------------------------------
-   → Menyimpan state aktif tabel & pagination
-   → Dipakai oleh TableManager dan modul lain
+	 GLOBAL STATE (UNIVERSAL)
+	 ---------------------------------------------------------
+	 → Menyimpan state aktif tabel & pagination
+	 → Dipakai oleh TableManager dan modul lain
 ========================================================= */
 
 const AppState = {
 	halaman: 1, // Halaman aktif saat ini
 	rows: 10, // Jumlah data per halaman
 	jenis: "", // Module aktif (referensi, renstra, dll)
+	mode: "", // add / edit / detail  <-- TAMBAH INI
 	tbl: "", // Tabel aktif
 	cari: "", // Keyword pencarian
 	currentMenu: "", // Tracking menu sebelumnya
 };
 
 /* =========================================================
-   CORE AJAX ENGINE
-   ---------------------------------------------------------
-   → Wrapper universal untuk semua AJAX request
-   → Semua komunikasi backend lewat sini
+	 CORE AJAX ENGINE
+	 ---------------------------------------------------------
+	 → Wrapper universal untuk semua AJAX request
+	 → Semua komunikasi backend lewat sini
 ========================================================= */
 
 class AjaxEngine {
@@ -71,10 +72,10 @@ class AjaxEngine {
 }
 
 /* =========================================================
-   UNIVERSAL TABLE MODULE
-   ---------------------------------------------------------
-   → Konfigurasi tombol aksi per module/tabel
-   → Tambah atau ubah aturan tombol di sini
+	 UNIVERSAL TABLE MODULE
+	 ---------------------------------------------------------
+	 → Konfigurasi tombol aksi per module/tabel
+	 → Tambah atau ubah aturan tombol di sini
 ========================================================= */
 
 const ActionConfig = {
@@ -102,13 +103,13 @@ const ActionConfig = {
 };
 
 /* =========================================================
-   TABLE MANAGER
-   ---------------------------------------------------------
-   → Engine utama load & render tabel
-   → Mengatur:
-       - Load data
-       - Render table
-       - Render pagination
+	 TABLE MANAGER
+	 ---------------------------------------------------------
+	 → Engine utama load & render tabel
+	 → Mengatur:
+			 - Load data
+			 - Render table
+			 - Render pagination
 ========================================================= */
 
 class TableManager {
@@ -117,8 +118,8 @@ class TableManager {
 	}
 
 	/* -----------------------------------------------------
-	   Load tabel berdasarkan module & nama tabel
-	   Dipanggil saat klik menu
+		 Load tabel berdasarkan module & nama tabel
+		 Dipanggil saat klik menu
 	------------------------------------------------------ */
 	load(jenis, tbl) {
 		// Reset halaman jika pindah menu
@@ -134,9 +135,9 @@ class TableManager {
 	}
 
 	/* -----------------------------------------------------
-	   Fetch data dari backend
-	   Mengirim:
-	       jenis, tbl, halaman, rows, cari
+		 Fetch data dari backend
+		 Mengirim:
+				 jenis, tbl, halaman, rows, cari
 	------------------------------------------------------ */
 	fetch() {
 		// Sinkronisasi jumlah rows dari dropdown (Fomantic UI)
@@ -175,7 +176,7 @@ class TableManager {
 	}
 
 	/* -----------------------------------------------------
-	   Render isi tbody tabel
+		 Render isi tbody tabel
 	------------------------------------------------------ */
 	renderTable(rows) {
 		let html = "";
@@ -200,8 +201,8 @@ class TableManager {
 	}
 
 	/* -----------------------------------------------------
-	   Render pagination
-	   ⚠️ LOGIC ASLI TIDAK DIUBAH
+		 Render pagination
+		 ⚠️ LOGIC ASLI TIDAK DIUBAH
 	------------------------------------------------------ */
 	renderPagination(meta) {
 		let target = `div[name="pagination_${AppState.jenis}"]`;
@@ -256,7 +257,7 @@ class TableManager {
 	}
 
 	/* -----------------------------------------------------
-	   Build tombol aksi (edit/delete/detail)
+		 Build tombol aksi (edit/delete/detail)
 	------------------------------------------------------ */
 	buildActionButtons(row) {
 		let jenis = AppState.jenis;
@@ -314,16 +315,14 @@ class TableManager {
 	}
 }
 /* =========================================================
-   FORM ENGINE PRO - FIELD VARIATIONS (FOMANTIC STYLE)
+	 FORM ENGINE PRO - FIELD VARIATIONS (FOMANTIC STYLE)
 ========================================================= */
 
 class FormEngine {
-
 	/* ============================
-	   Render Form ke Container
+		 Render Form ke Container
 	============================ */
 	static render(container, elements = []) {
-
 		let html = `<form class="ui form">`;
 		html += this.build(elements);
 		html += `</form>`;
@@ -333,25 +332,23 @@ class FormEngine {
 	}
 
 	/* ============================
-	   Build All Elements
+		 Build All Elements
 	============================ */
 	static build(elements = []) {
 		let html = "";
-		elements.forEach(el => {
+		elements.forEach((el) => {
 			html += this.element(el);
 		});
 		return html;
 	}
 
 	/* ============================
-	   Build Single Element
+		 Build Single Element
 	============================ */
 	static element(el) {
-
 		const { tag, prop = {} } = el;
 
 		switch (tag) {
-
 			/* ===== SINGLE FIELD ===== */
 			case "field":
 				return this.fieldWrapper(this.input(prop), prop);
@@ -359,7 +356,7 @@ class FormEngine {
 			case "fieldTextarea":
 				return this.fieldWrapper(
 					`<textarea name="${prop.name}" ${prop.atribut || ""}></textarea>`,
-					prop
+					prop,
 				);
 
 			case "fieldDropdown":
@@ -405,10 +402,9 @@ class FormEngine {
 	}
 
 	/* ============================
-	   Field Wrapper
+		 Field Wrapper
 	============================ */
 	static fieldWrapper(inner, prop) {
-
 		return `
 			<div class="field 
 				${prop.classField || ""} 
@@ -421,10 +417,9 @@ class FormEngine {
 	}
 
 	/* ============================
-	   Basic Input
+		 Basic Input
 	============================ */
 	static input(prop) {
-
 		// icon input
 		if (prop.icon) {
 			return `
@@ -470,13 +465,12 @@ class FormEngine {
 	}
 
 	/* ============================
-	   Dropdown
+		 Dropdown
 	============================ */
 	static dropdown(prop) {
-
 		let options = "";
 
-		(prop.options || []).forEach(opt => {
+		(prop.options || []).forEach((opt) => {
 			options += `
 				<div class="item" data-value="${opt.value}">
 					${opt.text}
@@ -497,7 +491,7 @@ class FormEngine {
 	}
 
 	/* ============================
-	   Init Fomantic Components
+		 Init Fomantic Components
 	============================ */
 	static init() {
 		$(".ui.dropdown").dropdown();
@@ -505,53 +499,226 @@ class FormEngine {
 	}
 }
 /* =========================================================
-   INIT APPLICATION (document.ready)
-   ---------------------------------------------------------
-   → Semua inisialisasi dijalankan saat DOM siap
-   → Mengatur:
-       - TableManager
-       - Auto load berdasarkan URL
-       - Sidebar
-       - Menu click
-       - Dropdown rows
-       - Pagination click
-       - Search
-       - Flyout
+	 FLYOUT MANAGER
+	 ---------------------------------------------------------
+	 → Mengatur panel flyout (add/edit/detail)
+	 → Mengontrol buka/tutup
+	 → Mengisi form menggunakan FormEngine
+========================================================= */
+
+class FlyoutManager {
+	constructor(contextSelector = "#mainContext") {
+		this.$context = $(contextSelector);
+		this.$flyout = this.$context.children(".ui.flyout");
+
+		this.$icon = $("#icon_flyout");
+		this.$header = $("#content_flyout");
+		this.$form = $("#form_flyout");
+
+		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
+
+		this.init();
+	}
+
+	/* ---------------------------------------------
+		 Inisialisasi Flyout Fomantic
+	---------------------------------------------- */
+	init() {
+		this.$flyout.flyout({
+			context: this.$context,
+			transition: "push",
+			closable: false,
+		});
+
+		this.bindEvents();
+	}
+
+	/* ---------------------------------------------
+		 Event Binding
+	---------------------------------------------- */
+	bindEvents() {
+		// Klik tombol edit/add (name="flyout")
+		$(document).on("click", '[name="flyout"]', (e) => {
+			e.preventDefault();
+			this.open($(e.currentTarget));
+		});
+
+		// Tombol close
+		$(document).on("click", ".btnFlyoutClose, .close.icon", () => {
+			this.hide();
+		});
+	}
+
+	/* ---------------------------------------------
+		 Open Flyout
+	---------------------------------------------- */
+	open($btn) {
+
+		const jenis = $btn.attr("jns");
+		const tbl = $btn.attr("tbl");
+		const idRow = $btn.attr("id_row");
+
+		AppState.mode = jenis;
+
+		// ⬇️ JANGAN timpa tbl kalau tidak ada
+		if (tbl) {
+			AppState.tbl = tbl;
+		}
+
+		let config = this.buildConfig(jenis, AppState.tbl);
+
+		this.render(config);
+
+		if (jenis === "edit" && idRow) {
+			this.loadData(idRow);
+		} else {
+			this.show();
+		}
+	}
+
+	/* ---------------------------------------------
+		 Konfigurasi Form per jenis
+		 Bisa kamu modifikasi sesuai kebutuhan
+	---------------------------------------------- */
+	buildConfig(jenis, tbl) {
+		let config = {
+			icon: "folder icon",
+			header: "",
+			elements: [],
+		};
+
+		if (jenis === "add") {
+			config.icon = "plus icon";
+			config.header = "Tambah Data";
+
+			config.elements = [
+				{
+					tag: "field",
+					prop: {
+						label: "Nama",
+						name: "nama",
+						classField: "required",
+						atribut: `placeholder="Nama"`,
+					},
+				},
+			];
+		}
+
+		if (jenis === "edit") {
+			config.icon = "edit icon";
+			config.header = "Edit Data";
+
+			config.elements = [
+				{
+					tag: "field",
+					prop: {
+						label: "Nama",
+						name: "nama",
+						classField: "required",
+						atribut: `placeholder="Nama"`,
+					},
+				},
+			];
+		}
+
+		return config;
+	}
+
+	/* ---------------------------------------------
+		 Render ke Flyout
+	---------------------------------------------- */
+	render(config) {
+		this.$icon.attr("class", config.icon);
+		this.$header.text(config.header);
+
+		// Gunakan FormEngine untuk isi form
+		if (config.elements) {
+			FormEngine.render("#form_flyout", config.elements);
+		}
+	}
+
+	/* ---------------------------------------------
+		 Load Data (Mode Edit)
+	---------------------------------------------- */
+	loadData(idRow) {
+		this.ajax.request({
+			data: {
+				jenis: "edit",
+				tbl: AppState.tbl,
+				id_row: idRow,
+			},
+			success: (res) => {
+				if (res.success && res.data) {
+					// Prefill form berdasarkan name=""
+					Object.keys(res.data).forEach((key) => {
+						this.$form.find(`[name="${key}"]`).val(res.data[key]);
+					});
+
+					this.show();
+				}
+			},
+		});
+	}
+
+	/* ---------------------------------------------
+		 Show / Hide
+	---------------------------------------------- */
+	show() {
+		this.$flyout.flyout("show");
+	}
+
+	hide() {
+		this.$flyout.flyout("hide");
+	}
+}
+/* =========================================================
+	 INIT APPLICATION (document.ready)
+	 ---------------------------------------------------------
+	 → Semua inisialisasi dijalankan saat DOM siap
+	 → Mengatur:
+			 - TableManager
+			 - Auto load berdasarkan URL
+			 - Sidebar
+			 - Menu click
+			 - Dropdown rows
+			 - Pagination click
+			 - Search
+			 - Flyout
 ========================================================= */
 
 $(document).ready(function () {
 	/* ---------------------------------------------
-	   Inisialisasi Table Manager
-	   → Engine utama tabel
+		 Inisialisasi Table Manager
+		 → Engine utama tabel
 	---------------------------------------------- */
 	tableManager = new TableManager();
 
 	/* ---------------------------------------------
-	   Ambil elemen context utama
+		 Ambil elemen context utama
 	---------------------------------------------- */
 	const $context = $("#mainContext");
 
 	/* ---------------------------------------------
-	   Sidebar reference
+		 Sidebar reference
 	---------------------------------------------- */
 	const $sidebar = $context.children(".ui.sidebar");
 
 	/* ---------------------------------------------
-	   Ambil parameter URL (?tbl=...)
-	   Contoh: /referensi?tbl=program
+		 Ambil parameter URL (?tbl=...)
+		 Contoh: /referensi?tbl=program
 	---------------------------------------------- */
 	const params = new URLSearchParams(window.location.search);
 	const tblFromUrl = params.get("tbl");
 
 	/* ---------------------------------------------
-	   Ambil path aktif
-	   Contoh: /referensi
+		 Ambil path aktif
+		 Contoh: /referensi
 	---------------------------------------------- */
 	const currentPath = window.location.pathname.replace(/^\/+/g, "");
 
 	/* ---------------------------------------------
-	   Sinkronisasi jumlah rows pertama kali
-	   (Dropdown Fomantic UI)
+		 Sinkronisasi jumlah rows pertama kali
+		 (Dropdown Fomantic UI)
 	---------------------------------------------- */
 	if ($("#countRow").length) {
 		let value = $("#countRow").dropdown("get value");
@@ -559,8 +726,8 @@ $(document).ready(function () {
 	}
 
 	/* ---------------------------------------------
-	   Auto load tabel jika ada ?tbl=
-	   (Dipanggil 2x sesuai kode asli)
+		 Auto load tabel jika ada ?tbl=
+		 (Dipanggil 2x sesuai kode asli)
 	---------------------------------------------- */
 	if (tblFromUrl && currentPath) {
 		tableManager.load(currentPath, tblFromUrl);
@@ -578,16 +745,16 @@ $(document).ready(function () {
 	});
 
 	/* ---------------------------------------------
-	   Toggle Sidebar Button
+		 Toggle Sidebar Button
 	---------------------------------------------- */
 	$("#toggleSidebar").on("click", function () {
 		$sidebar.sidebar("toggle");
 	});
 
 	/* =============================================
-	   MENU CLICK LOAD TABLE
-	   → Saat klik menu sidebar
-	   → Akan load tabel berdasarkan jenis & tbl
+		 MENU CLICK LOAD TABLE
+		 → Saat klik menu sidebar
+		 → Akan load tabel berdasarkan jenis & tbl
 	============================================= */
 	$(document).on("click", '[name="menu_table"]', function (e) {
 		e.preventDefault();
@@ -599,8 +766,8 @@ $(document).ready(function () {
 	});
 
 	/* =============================================
-	   DROPDOWN COUNT ROW
-	   → Mengubah jumlah data per halaman
+		 DROPDOWN COUNT ROW
+		 → Mengubah jumlah data per halaman
 	============================================= */
 	$("#countRow").dropdown({
 		onChange: function (value) {
@@ -611,14 +778,14 @@ $(document).ready(function () {
 	});
 
 	/* ---------------------------------------------
-	   Inisialisasi semua dropdown & accordion
+		 Inisialisasi semua dropdown & accordion
 	---------------------------------------------- */
 	$(".ui.dropdown").dropdown();
 	$(".ui.accordion").accordion({ exclusive: false });
 
 	/* =============================================
-	   PAGINATION CLICK
-	   → Klik nomor halaman
+		 PAGINATION CLICK
+		 → Klik nomor halaman
 	============================================= */
 	$(document).on("click", '[name^="pagination_"] .item', function () {
 		let page = parseInt($(this).data("page"));
@@ -629,8 +796,8 @@ $(document).ready(function () {
 	});
 
 	/* =============================================
-	   SEARCH INPUT (Debounce 700ms)
-	   → Pencarian otomatis setelah berhenti mengetik
+		 SEARCH INPUT (Debounce 700ms)
+		 → Pencarian otomatis setelah berhenti mengetik
 	============================================= */
 	let searchTimer;
 
@@ -645,8 +812,8 @@ $(document).ready(function () {
 	});
 
 	/* ---------------------------------------------
-	   (Opsional - tidak aktif)
-	   Fomantic Search API
+		 (Opsional - tidak aktif)
+		 Fomantic Search API
 	---------------------------------------------- */
 	// $(".ui.search").search({
 	// 	source: [],
@@ -659,8 +826,8 @@ $(document).ready(function () {
 	// });
 
 	/* ---------------------------------------------
-	   Inisialisasi Flyout Manager
-	   → Panel samping edit/add data
+		 Inisialisasi Flyout Manager
+		 → Panel samping edit/add data
 	---------------------------------------------- */
 	let flyoutManager = new FlyoutManager("#mainContext");
 });

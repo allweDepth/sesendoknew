@@ -15,36 +15,38 @@
             padding: 20px !important;
         }
 
-        html, body {
-    height: 100%;
-    overflow: hidden;
-}
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
 
-/* FIX SEGMENT PUSHABLE */
-#mainContext.ui.segment {
-    height: calc(100vh - 40px);
-    padding: 0 !important;
-    overflow: hidden;   /* PENTING */
-}
+        /* FIX SEGMENT PUSHABLE */
+        #mainContext.ui.segment {
+            height: calc(100vh - 40px);
+            padding: 0 !important;
+            overflow: hidden;
+            /* PENTING */
+        }
 
-/* PUSHER */
-#mainContext .pusher {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
+        /* PUSHER */
+        #mainContext .pusher {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
 
-/* STICKY HEADER */
-#mainContext .pusher > .ui.sticky {
-    flex: 0 0 auto;
-}
+        /* STICKY HEADER */
+        #mainContext .pusher>.ui.sticky {
+            flex: 0 0 auto;
+        }
 
-/* SCROLL AREA */
-#mainContext .content-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-}
+        /* SCROLL AREA */
+        #mainContext .content-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
     </style>
 </head>
 
@@ -238,8 +240,8 @@
     </div>
 
     <!-- JS -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/fomantic.min.js"></script>
     <script src="/assets/js/app.js"></script>
 
 </body>
