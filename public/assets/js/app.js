@@ -9,6 +9,19 @@ const AppConfig = {
 };
 
 /* ==========================================
+   GLOBAL STATE (UNIVERSAL)
+========================================== */
+
+const AppState = {
+	halaman: 1,
+	rows: 10,
+	jenis: "",
+	tbl: "",
+	cari: "",
+	currentMenu: ""
+};
+
+/* ==========================================
    CORE AJAX ENGINE
 ========================================== */
 
@@ -30,6 +43,7 @@ class AjaxEngine {
 			type: method,
 			url: url,
 			data: data,
+			dataType: "json",
 			beforeSend: function () {
 				if (beforeSend) beforeSend();
 			},
@@ -45,6 +59,94 @@ class AjaxEngine {
 			},
 		});
 	}
+}
+
+/* ==========================================
+   UNIVERSAL TABLE MODULE
+========================================== */
+
+class TableManager {
+	constructor() {
+		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
+	}
+
+	load(jenis, tbl) {
+
+		if (AppState.currentMenu !== tbl) {
+			AppState.halaman = 1;
+		}
+
+		AppState.jenis = jenis;
+		AppState.tbl = tbl;
+		AppState.currentMenu = tbl;
+
+		this.fetch();
+	}
+
+	fetch() {
+
+		this.ajax.request({
+			data: {
+				jenis: AppState.jenis,
+				tbl: AppState.tbl,
+				halaman: AppState.halaman,
+				rows: AppState.rows,
+				cari: AppState.cari
+			},
+			success: (res) => {
+
+				if (!res.success) {
+					console.warn(res.message);
+					return;
+				}
+
+				this.renderTable(res.data.rows || []);
+				this.renderPagination(res.meta.total || 0, res.meta.limit || 10);
+			}
+		});
+	}
+
+	renderTable(rows) {
+
+		let html = "";
+
+		rows.forEach(row => {
+			html += "<tr>";
+			Object.values(row).forEach(val => {
+				html += `<td>${val ?? ""}</td>`;
+			});
+			html += "</tr>";
+		});
+
+		$("#tableBody").html(html);
+	}
+
+	renderPagination(total, limit) {
+
+		let totalPage = Math.ceil(total / limit);
+		let html = "";
+
+		for (let i = 1; i <= totalPage; i++) {
+			let active = (i === AppState.halaman) ? "active" : "";
+
+			html += `
+				<a class="item ${active}" onclick="changePage(${i})">
+					${i}
+				</a>
+			`;
+		}
+
+		$("#pagination").html(html);
+	}
+}
+
+/* ==========================================
+   GLOBAL PAGINATION FUNCTION
+========================================== */
+
+function changePage(page) {
+	AppState.halaman = page;
+	tableManager.fetch();
 }
 
 /* ==========================================
@@ -68,7 +170,7 @@ class Auth {
 				password,
 			},
 			success: function (res) {
-				if (res.status === "success") {
+				if (res.success) {
 					window.location.href = AppConfig.baseUrl + "dashboard";
 				} else {
 					$(".ui.message.error").show();
@@ -82,12 +184,13 @@ class Auth {
    INIT
 ========================================== */
 
-$(document).ready(function () {
-	const $context = $("#mainContext");
+let tableManager;
 
-	/* =========================
-       SIDEBAR (CUSTOM CONTEXT)
-    ========================== */
+$(document).ready(function () {
+
+	tableManager = new TableManager();
+
+	const $context = $("#mainContext");
 
 	const $sidebar = $context.children(".ui.sidebar");
 
@@ -100,10 +203,6 @@ $(document).ready(function () {
 		$sidebar.sidebar("toggle");
 	});
 
-	/* =========================
-       FLYOUT (CUSTOM CONTEXT)
-    ========================== */
-
 	const $flyout = $context.children(".ui.flyout");
 
 	$flyout.flyout({
@@ -113,58 +212,28 @@ $(document).ready(function () {
 	});
 
 	/* =========================
-       OPEN FLYOUT BUTTON
-    ========================== */
+	   MENU CLICK LOAD TABLE
+	========================= */
 
-	$(document).on("click", '[name="flyout"]', function (e) {
+	$(document).on("click", '[name="menu_table"]', function (e) {
 		e.preventDefault();
 
-		let btn = $(this);
-		let tbl = btn.attr("tbl") || "";
+		let jenis = $(this).attr("jenis");
+		let tbl = $(this).attr("tbl");
 
-		$("#content_flyout").text("Tambah Data " + tbl);
-
-		$.get("/referensi/form", { tbl: tbl }, function (html) {
-			$("#form_flyout").html(html);
-			$flyout.flyout("show");
-		});
+		tableManager.load(jenis, tbl);
 	});
 
 	/* =========================
-       CLOSE FLYOUT
-    ========================== */
+	   DROPDOWN COUNT ROW
+	========================= */
 
-	$(document).on("click", ".close.icon", function () {
-		$flyout.flyout("hide");
+	$("#countRow").on("change", function () {
+		AppState.rows = parseInt($(this).val());
+		AppState.halaman = 1;
+		tableManager.fetch();
 	});
-
-	/* =========================
-       DROPDOWN & ACCORDION
-    ========================== */
 
 	$(".ui.dropdown").dropdown();
-
-	$(".ui.accordion").accordion({
-		exclusive: false,
-	});
-	/* =========================
-   AUTO HEIGHT FLYOUT
-========================= */
-
-	function adjustFlyoutHeight() {
-		const navbarHeight = $(".ui.top.attached.menu").outerHeight() || 0;
-		const viewportHeight = $(window).height();
-
-		$(".ui.flyout").css({
-			height: viewportHeight - navbarHeight + "px",
-		});
-	}
-
-	// run on load
-	adjustFlyoutHeight();
-
-	// run on resize
-	$(window).on("resize", function () {
-		adjustFlyoutHeight();
-	});
+	$(".ui.accordion").accordion({ exclusive: false });
 });
