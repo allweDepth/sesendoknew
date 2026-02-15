@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__.'/../Core/Auth.php';
-require_once __DIR__.'/../Core/DB.php';
+require_once __DIR__ . '/../Core/Auth.php';
+require_once __DIR__ . '/../Core/DB.php';
 
 class ReferensiController extends Controller
 {
@@ -60,7 +60,13 @@ class ReferensiController extends Controller
 
         echo json_encode(['status' => 'ok']);
     }
+    public function load()
+    {
+        require_once __DIR__ . '/../Services/DynamicTableService.php';
 
+        $service = new DynamicTableService();
+        echo json_encode($service->handle($_POST));
+    }
     public function update()
     {
         $db = DB::getInstance();
@@ -72,7 +78,7 @@ class ReferensiController extends Controller
             [$_POST['id']]
         );
 
-        echo json_encode(['status'=>'ok']);
+        echo json_encode(['status' => 'ok']);
     }
 
     public function delete()
@@ -85,6 +91,6 @@ class ReferensiController extends Controller
             [$_POST['id']]
         );
 
-        echo json_encode(['status'=>'ok']);
+        echo json_encode(['status' => 'ok']);
     }
 }

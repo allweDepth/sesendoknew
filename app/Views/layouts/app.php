@@ -10,6 +10,7 @@
         #mainContext {
             min-height: calc(100vh - 40px);
         }
+
         .pusher .ui .container {
             padding: 20px !important;
         }
@@ -86,7 +87,7 @@
             <!-- ANGGARAN -->
             <div class="ui accordion inverted item">
                 <div class="title item">
-                     <i class="dropdown icon"></i><span></span>Anggaran
+                    <i class="dropdown icon"></i><span></span>Anggaran
                 </div>
                 <div class="content">
                     <a class="item" href="/renstra"><i class="purple sitemap icon"></i> RENSTRA</a>
@@ -188,6 +189,15 @@
         <?php require __DIR__ . '/../partials/flyout.php'; ?>
         <!-- PUSHER -->
         <div class="pusher">
+            <!-- sticky-->
+            <div class="ui sticky">
+                <div class="ui icon message dashboard"><i class="home icon"></i>
+                    <div class="content">
+                        <div class="header">DASHBOARD</div>
+                        <div class="pDashboard">seSendok</div>
+                    </div>
+                </div>
+            </div>
             <div class="ui container">
                 <?= $content ?>
             </div>

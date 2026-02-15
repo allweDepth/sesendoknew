@@ -11,6 +11,7 @@ return [
     '/dashboard' => ['DashboardController', 'index'],
 
     '/referensi' => ['ReferensiController', 'index'],
+    '/referensi/load' => ['ReferensiController', 'load'],
     '/referensi/store' => ['ReferensiController', 'store'],
     '/referensi/update' => ['ReferensiController', 'update'],
     '/referensi/delete' => ['ReferensiController', 'delete'],
