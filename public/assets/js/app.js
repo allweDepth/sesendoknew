@@ -150,25 +150,32 @@ class TableManager {
 
 		let html = `<div class="ui pagination menu">`;
 
-		// FIRST
-		html += `
-		<a class="item" data-page="1">
-			<i class="angle double left chevron icon"></i>
-		</a>
-	`;
+		// ===== FIRST & PREV (TIDAK MUNCUL JIKA HALAMAN 1) =====
+		if (currentPage > 1) {
+			html += `
+			<a class="item" data-page="1">
+				<i class="angle double left chevron icon"></i>
+			</a>
+		`;
 
-		// PREVIOUS
-		let prev = currentPage > 1 ? currentPage - 1 : 1;
+			html += `
+			<a class="item" data-page="${currentPage - 1}">
+				<i class="angle left icon"></i>
+			</a>
+		`;
+		}
 
-		html += `
-		<a class="item" data-page="${prev}">
-			<i class="angle left icon"></i>
-		</a>
-	`;
+		// ===== PAGE NUMBERS (maks 3 sekitar current) =====
+		let start = Math.max(1, currentPage - 1);
+		let end = Math.min(totalPage, currentPage + 1);
 
-		// PAGE NUMBERS (maks 5 halaman sekitar current)
-		let start = Math.max(1, currentPage - 2);
-		let end = Math.min(totalPage, currentPage + 2);
+		if (currentPage === 1) {
+			end = Math.min(3, totalPage);
+		}
+
+		if (currentPage === totalPage) {
+			start = Math.max(totalPage - 2, 1);
+		}
 
 		for (let i = start; i <= end; i++) {
 			let active = i === currentPage ? "active" : "";
@@ -179,21 +186,20 @@ class TableManager {
 		`;
 		}
 
-		// NEXT
-		let next = currentPage < totalPage ? currentPage + 1 : totalPage;
+		// ===== NEXT & LAST (TIDAK MUNCUL JIKA HALAMAN TERAKHIR) =====
+		if (currentPage < totalPage) {
+			html += `
+			<a class="item" data-page="${currentPage + 1}">
+				<i class="angle right icon"></i>
+			</a>
+		`;
 
-		html += `
-		<a class="item" data-page="${next}">
-			<i class="angle right icon"></i>
-		</a>
-	`;
-
-		// LAST
-		html += `
-		<a class="item" data-page="${totalPage}">
-			<i class="angle double right chevron icon"></i>
-		</a>
-	`;
+			html += `
+			<a class="item" data-page="${totalPage}">
+				<i class="angle double right chevron icon"></i>
+			</a>
+		`;
+		}
 
 		html += `</div>`;
 
@@ -253,14 +259,14 @@ $(document).ready(function () {
 	const $context = $("#mainContext");
 
 	const $sidebar = $context.children(".ui.sidebar");
-const params = new URLSearchParams(window.location.search);
-const tblFromUrl = params.get("tbl");
+	const params = new URLSearchParams(window.location.search);
+	const tblFromUrl = params.get("tbl");
 
-const currentPath = window.location.pathname.replace(/^\/+/g, "");
+	const currentPath = window.location.pathname.replace(/^\/+/g, "");
 
-if (tblFromUrl && currentPath) {
-	tableManager.load(currentPath, tblFromUrl);
-}
+	if (tblFromUrl && currentPath) {
+		tableManager.load(currentPath, tblFromUrl);
+	}
 	$sidebar.sidebar({
 		context: $context,
 		transition: "push",
@@ -314,10 +320,28 @@ if (tblFromUrl && currentPath) {
 			tableManager.fetch();
 		},
 	);
-	//menu referensi
-	/* =========================
-   HANDLE LINK REFERENSI
-========================= */
 
-	
+	/* =========================
+   SEARCH
+========================= */
+	let searchTimer;
+
+	$("#cari_data").on("input", function () {
+		clearTimeout(searchTimer);
+
+		searchTimer = setTimeout(() => {
+			AppState.cari = $(this).val().trim();
+			AppState.halaman = 1;
+			tableManager.fetch();
+		}, 700);
+	});
+	// $(".ui.search").search({
+	// 	source: [],
+	// 	searchOnFocus: false,
+	// 	onSearchQuery: function (query) {
+	// 		AppState.cari = query;
+	// 		AppState.halaman = 1;
+	// 		tableManager.fetch();
+	// 	},
+	// });
 });

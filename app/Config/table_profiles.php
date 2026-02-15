@@ -133,6 +133,11 @@ return [
                 'select' => ['id','nama_perusahaan','npwp'],
                 'searchable' => ['nama_perusahaan','npwp'],
                 'order_by' => 'nama_perusahaan ASC'
+            ],
+            'referensi' => [
+                'select' => ['nama_perusahaan', 'alamat', 'email', 'npwp', 'no_rekening', 'bank_rekening', 'atas_nama_rekening', 'direktur'],
+                'searchable' => ['nama_perusahaan', 'alamat','direktur'],
+                'order_by' => 'nama_perusahaan ASC'
             ]
         ]
     ],
@@ -196,6 +201,11 @@ return [
                 'select' => ['*'],
                 'searchable' => ['text','indikator'],
                 'order_by' => 'tahun DESC'
+            ],
+            'referensi' => [
+                'select' => ['nama_perusahaan', 'alamat', 'email', 'npwp', 'no_rekening', 'bank_rekening', 'atas_nama_rekening', 'direktur'],
+                'searchable' => ['nama_perusahaan', 'alamat','direktur'],
+                'order_by' => 'nama_perusahaan ASC'
             ]
         ]
     ]
