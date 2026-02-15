@@ -146,20 +146,23 @@ class TableManager {
 				html += `<td>${val ?? ""}</td>`;
 			});
 
-			// Kolom Action otomatis
 			html += `<td class="collapsing">
-					${this.buildActionButtons(row)}
-				 </td>`;
+			${this.buildActionButtons(row)}
+		</td>`;
 
 			html += "</tr>";
 		});
 
-		$('tbody[name="tabel_referensi"]').html(html);
+		let target = `tbody[name="tabel_${AppState.jenis}"]`;
+
+		$(target).html(html);
 	}
 
 	renderPagination(meta) {
+		let target = `div[name="pagination_${AppState.jenis}"]`;
+
 		if (!meta || !meta.total) {
-			$('div[name="pagination_referensi"]').html("");
+			$(target).html("");
 			return;
 		}
 
@@ -168,66 +171,43 @@ class TableManager {
 		let totalPage = Math.ceil(meta.total / limit);
 
 		if (totalPage <= 1) {
-			$('div[name="pagination_referensi"]').html("");
+			$(target).html("");
 			return;
 		}
 
 		let html = `<div class="ui pagination menu">`;
 
-		// ===== FIRST & PREV (TIDAK MUNCUL JIKA HALAMAN 1) =====
 		if (currentPage > 1) {
-			html += `
-			<a class="item" data-page="1">
-				<i class="angle double left chevron icon"></i>
-			</a>
-		`;
+			html += `<a class="item" data-page="1">
+					<i class="angle double left chevron icon"></i>
+				 </a>`;
 
-			html += `
-			<a class="item" data-page="${currentPage - 1}">
-				<i class="angle left icon"></i>
-			</a>
-		`;
+			html += `<a class="item" data-page="${currentPage - 1}">
+					<i class="angle left icon"></i>
+				 </a>`;
 		}
 
-		// ===== PAGE NUMBERS (maks 3 sekitar current) =====
 		let start = Math.max(1, currentPage - 1);
 		let end = Math.min(totalPage, currentPage + 1);
 
-		if (currentPage === 1) {
-			end = Math.min(3, totalPage);
-		}
-
-		if (currentPage === totalPage) {
-			start = Math.max(totalPage - 2, 1);
-		}
-
 		for (let i = start; i <= end; i++) {
 			let active = i === currentPage ? "active" : "";
-			html += `
-			<a class="item ${active}" data-page="${i}">
-				${i}
-			</a>
-		`;
+			html += `<a class="item ${active}" data-page="${i}">${i}</a>`;
 		}
 
-		// ===== NEXT & LAST (TIDAK MUNCUL JIKA HALAMAN TERAKHIR) =====
 		if (currentPage < totalPage) {
-			html += `
-			<a class="item" data-page="${currentPage + 1}">
-				<i class="angle right icon"></i>
-			</a>
-		`;
+			html += `<a class="item" data-page="${currentPage + 1}">
+					<i class="angle right icon"></i>
+				 </a>`;
 
-			html += `
-			<a class="item" data-page="${totalPage}">
-				<i class="angle double right chevron icon"></i>
-			</a>
-		`;
+			html += `<a class="item" data-page="${totalPage}">
+					<i class="angle double right chevron icon"></i>
+				 </a>`;
 		}
 
 		html += `</div>`;
 
-		$('div[name="pagination_referensi"]').html(html);
+		$(target).html(html);
 	}
 	buildActionButtons(row) {
 		let jenis = AppState.jenis;
@@ -498,17 +478,13 @@ $(document).ready(function () {
 
 	$(".ui.dropdown").dropdown();
 	$(".ui.accordion").accordion({ exclusive: false });
-	$(document).on(
-		"click",
-		'div[name="pagination_referensi"] .item',
-		function () {
-			let page = parseInt($(this).data("page"));
-			if (!page) return;
+	$(document).on("click", '[name^="pagination_"] .item', function () {
+		let page = parseInt($(this).data("page"));
+		if (!page) return;
 
-			AppState.halaman = page;
-			tableManager.fetch();
-		},
-	);
+		AppState.halaman = page;
+		tableManager.fetch();
+	});
 
 	/* =========================
    SEARCH
@@ -533,6 +509,6 @@ $(document).ready(function () {
 	// 		tableManager.fetch();
 	// 	},
 	// });
-
+	// memanggil class flyout
 	let flyoutManager = new FlyoutManager("#mainContext");
 });
