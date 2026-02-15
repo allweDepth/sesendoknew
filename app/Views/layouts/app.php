@@ -5,16 +5,19 @@
     <meta charset="UTF-8">
     <title>SIPD</title>
 
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
-
+    <link rel="stylesheet" href="/assets/css/fomantic.min.css">
+    <style>
+        #mainContext {
+            min-height: calc(100vh - 40px);
+        }
+    </style>
 </head>
 
 <body>
 
     <!-- NAVBAR (DI LUAR PUSHABLE) -->
-    <div class="ui top fixed menu">
-        <div class="item nabiila"  id="biilainayah">
+    <div class="ui top attached menu">
+        <div class="item" id="toggleSidebar">
             <a>
                 <i class="bars icon"></i>
             </a>
@@ -50,9 +53,9 @@
         </div>
     </div>
     <!-- SIDEBAR WRAPPER -->
-    <div class="ui bottom pushable" style="margin-top:50px; min-height:100vh;">
+    <div class="ui bottom attached segment pushable" id="mainContext">
         <!-- SIDEBAR -->
-        <div class="ui sidebar inverted vertical menu">
+        <div class="ui inverted vertical sidebar menu left">
             <!-- HEADER -->
             <div class="item">
                 <h2 class="ui inverted center aligned icon header dash_header">
@@ -182,7 +185,7 @@
         <?php require __DIR__ . '/../partials/flyout.php'; ?>
         <!-- PUSHER -->
         <div class="pusher">
-            <div class="ui container" style="padding-top:20px;">
+            <div class="ui container">
                 <?= $content ?>
             </div>
 
