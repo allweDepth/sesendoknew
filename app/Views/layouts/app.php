@@ -14,7 +14,7 @@
 
     <!-- NAVBAR (DI LUAR PUSHABLE) -->
     <div class="ui top fixed menu">
-        <div class="item nabiila" id="sidebar-toggle">
+        <div class="item nabiila"  id="biilainayah">
             <a>
                 <i class="bars icon"></i>
             </a>

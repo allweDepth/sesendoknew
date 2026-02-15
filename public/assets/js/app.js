@@ -205,11 +205,25 @@ $(document).ready(function () {
 	// 	transition: "push",
 	// });
 	//sidebar toggle
+
+
+     const $context = $(".bottom.pushable");
+
+    // pastikan hanya sidebar kiri yang di-init
+    // const $mainSidebar = $context.children(".ui.sidebar.left");
+
+    // $mainSidebar
+    //     .sidebar({
+    //         context: $context,
+    //         transition: "push"
+    //     })
+    //     .sidebar("attach events", "#biilainayah");
+
 	$(".ui.sidebar")
 		.sidebar({
 			context: $(".bottom.pushable"),
 		})
-		.sidebar("attach events", ".menu .item.nabiila")
+		.sidebar("attach events", "#biilainayah")
 		.sidebar("setting", "transition", "push");
 	// $("#sidebar-toggle").on("click", function () {
 	// 	$(".ui.sidebar").sidebar("toggle");
