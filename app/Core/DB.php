@@ -62,7 +62,11 @@ class DB
         $sql = "SELECT * FROM {$table} {$where}";
         return $this->query($sql, $params)->fetchAll();
     }
-
+    public function select($table, $columns = '*', $where = '', $params = [])
+    {
+        $sql = "SELECT {$columns} FROM {$table} {$where}";
+        return $this->query($sql, $params)->fetchAll();
+    }
     public function first($table, $where = "", $params = [])
     {
         $sql = "SELECT * FROM {$table} {$where} LIMIT 1";
