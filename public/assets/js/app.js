@@ -313,7 +313,197 @@ class TableManager {
 		return html;
 	}
 }
+/* =========================================================
+   FORM ENGINE PRO - FIELD VARIATIONS (FOMANTIC STYLE)
+========================================================= */
 
+class FormEngine {
+
+	/* ============================
+	   Render Form ke Container
+	============================ */
+	static render(container, elements = []) {
+
+		let html = `<form class="ui form">`;
+		html += this.build(elements);
+		html += `</form>`;
+
+		$(container).html(html);
+		this.init();
+	}
+
+	/* ============================
+	   Build All Elements
+	============================ */
+	static build(elements = []) {
+		let html = "";
+		elements.forEach(el => {
+			html += this.element(el);
+		});
+		return html;
+	}
+
+	/* ============================
+	   Build Single Element
+	============================ */
+	static element(el) {
+
+		const { tag, prop = {} } = el;
+
+		switch (tag) {
+
+			/* ===== SINGLE FIELD ===== */
+			case "field":
+				return this.fieldWrapper(this.input(prop), prop);
+
+			case "fieldTextarea":
+				return this.fieldWrapper(
+					`<textarea name="${prop.name}" ${prop.atribut || ""}></textarea>`,
+					prop
+				);
+
+			case "fieldDropdown":
+				return this.fieldWrapper(this.dropdown(prop), prop);
+
+			case "fieldCheckbox":
+				return `
+					<div class="field ${prop.classField || ""}">
+						<div class="ui checkbox">
+							<input type="checkbox" name="${prop.name}" ${prop.atribut || ""}>
+							<label>${prop.label || ""}</label>
+						</div>
+					</div>
+				`;
+
+			/* ===== GROUP FIELDS ===== */
+			case "fields":
+				return `
+					<div class="fields ${prop.classGroup || ""}">
+						${this.build(prop.children || [])}
+					</div>
+				`;
+
+			/* ===== INLINE FIELDS ===== */
+			case "inlineFields":
+				return `
+					<div class="inline fields">
+						${this.build(prop.children || [])}
+					</div>
+				`;
+
+			/* ===== DIVIDER ===== */
+			case "divider":
+				return `
+					<h4 class="ui dividing header">
+						${prop.label || ""}
+					</h4>
+				`;
+
+			default:
+				return "";
+		}
+	}
+
+	/* ============================
+	   Field Wrapper
+	============================ */
+	static fieldWrapper(inner, prop) {
+
+		return `
+			<div class="field 
+				${prop.classField || ""} 
+				${prop.width || ""}">
+				
+				${prop.label ? `<label>${prop.label}</label>` : ""}
+				${inner}
+			</div>
+		`;
+	}
+
+	/* ============================
+	   Basic Input
+	============================ */
+	static input(prop) {
+
+		// icon input
+		if (prop.icon) {
+			return `
+				<div class="ui icon input ${prop.classInput || ""}">
+					<input type="${prop.type || "text"}"
+						   name="${prop.name}"
+						   ${prop.atribut || ""}>
+					<i class="${prop.icon} icon"></i>
+				</div>
+			`;
+		}
+
+		// labeled input
+		if (prop.labelInput) {
+			return `
+				<div class="ui labeled input ${prop.classInput || ""}">
+					<div class="ui label">${prop.labelInput}</div>
+					<input type="${prop.type || "text"}"
+						   name="${prop.name}"
+						   ${prop.atribut || ""}>
+				</div>
+			`;
+		}
+
+		// action input
+		if (prop.action) {
+			return `
+				<div class="ui action input ${prop.classInput || ""}">
+					<input type="${prop.type || "text"}"
+						   name="${prop.name}"
+						   ${prop.atribut || ""}>
+					<button class="ui button">${prop.action}</button>
+				</div>
+			`;
+		}
+
+		// default input
+		return `
+			<input type="${prop.type || "text"}"
+				   name="${prop.name}"
+				   ${prop.atribut || ""}>
+		`;
+	}
+
+	/* ============================
+	   Dropdown
+	============================ */
+	static dropdown(prop) {
+
+		let options = "";
+
+		(prop.options || []).forEach(opt => {
+			options += `
+				<div class="item" data-value="${opt.value}">
+					${opt.text}
+				</div>
+			`;
+		});
+
+		return `
+			<div class="ui selection dropdown ${prop.classInput || ""}">
+				<input type="hidden" name="${prop.name}">
+				<i class="dropdown icon"></i>
+				<div class="default text">Pilih</div>
+				<div class="menu">
+					${options}
+				</div>
+			</div>
+		`;
+	}
+
+	/* ============================
+	   Init Fomantic Components
+	============================ */
+	static init() {
+		$(".ui.dropdown").dropdown();
+		$(".ui.checkbox").checkbox();
+	}
+}
 /* =========================================================
    INIT APPLICATION (document.ready)
    ---------------------------------------------------------
@@ -380,7 +570,7 @@ $(document).ready(function () {
 	}
 
 	/* ---------------------------------------------
-	   Inisialisasi Sidebar Fomantic
+	Inisialisasi Sidebar Fomantic
 	---------------------------------------------- */
 	$sidebar.sidebar({
 		context: $context,
