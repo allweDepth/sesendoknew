@@ -1,147 +1,122 @@
 <?php
 
+require_once __DIR__ . '/JsonResponse.php';
+
 class DynamicTableService
 {
-    private DB $db;
-    private array $profiles;
+  private DB $db;
+  private array $profiles;
 
-    public function __construct()
-    {
-        $this->db = DB::getInstance();
-        $this->profiles = require __DIR__ . '/../../config/table_profiles.php';
+  public function __construct()
+  {
+    $this->db = DB::getInstance();
+    $this->profiles = require __DIR__ . '/../Config/table_profiles.php';
+  }
+
+  public function handle(array $request): string
+  {
+    $tbl   = $request['tbl']   ?? '';
+    $jenis = $request['jenis'] ?? 'default';
+
+    if (!$tbl) {
+      return JsonResponse::error('Tabel tidak dikirim');
     }
 
-    public function handle(array $request): string
-    {
-        $jenis = $request['jenis'] ?? '';
-        $table = $request['tbl'] ?? '';
-
-        if (!$jenis || !$table) {
-            return JsonResponse::error('Parameter tidak lengkap');
-        }
-
-        if (!isset($this->profiles[$table])) {
-            return JsonResponse::error('Tabel tidak terdaftar');
-        }
-
-        return match ($jenis) {
-            'get_tbl'       => $this->getTable($table, $request),
-            'get_row'       => $this->getRow($table, $request),
-            'get_row_json'  => $this->getDropdown($table, $request),
-            'get_data'      => $this->getDataByCondition($table, $request),
-            default         => JsonResponse::error('Jenis tidak dikenali'),
-        };
+    if (!isset($this->profiles[$tbl])) {
+      return JsonResponse::error('Tabel tidak terdaftar');
     }
 
-    private function getTable(string $table, array $request): string
-    {
-        $limit  = max(1, (int)($request['rows'] ?? 10));
-        $page   = max(1, (int)($request['halaman'] ?? 1));
-        $search = trim($request['cari'] ?? '');
+    $profile = $this->profiles[$tbl];
+    $table   = $profile['table'];
 
-        $profile = $this->profiles[$table]['get_tbl'] ?? null;
+    $mode = $profile['modes'][$jenis]
+      ?? $profile['modes']['default']
+      ?? null;
 
-        if (!$profile) {
-            return JsonResponse::error('Profile get_tbl tidak tersedia');
-        }
-
-        $offset = ($page - 1) * $limit;
-
-        $where  = '';
-        $params = [];
-
-        if ($search && isset($profile['search'])) {
-            $where  = "WHERE {$profile['search']}";
-            $params = array_fill(
-                0,
-                substr_count($profile['search'], '?'),
-                "%$search%"
-            );
-        }
-
-        $order = $profile['order'] ?? '';
-        $clause = trim("$where $order LIMIT $offset, $limit");
-
-        $rows = $this->db->select($table, '*', $clause, $params);
-
-        $totalRow = $this->db
-            ->select($table, 'COUNT(*) as total')[0]['total'] ?? 0;
-
-        return JsonResponse::success(
-            'Data berhasil',
-            [
-                'total' => (int)$totalRow,
-                'page'  => $page,
-                'limit' => $limit
-            ],
-            $rows
-        );
+    if (!$mode) {
+      return JsonResponse::error('Mode tidak tersedia');
     }
 
-    private function getRow(string $table, array $request): string
-    {
-        $id = (int)($request['id_row'] ?? 0);
+    return $this->buildQuery($table, $profile, $mode, $request);
+  }
 
-        if ($id <= 0) {
-            return JsonResponse::error('ID tidak valid');
-        }
+  private function buildQuery(
+    string $table,
+    array $profile,
+    array $mode,
+    array $request
+  ): string {
 
-        $row = $this->db->first($table, "WHERE id = ?", [$id]);
+    $limit  = max(1, (int)($request['rows'] ?? 10));
+    $page   = max(1, (int)($request['halaman'] ?? 1));
+    $search = trim($request['cari'] ?? '');
 
-        return $row
-            ? JsonResponse::success('Data ditemukan', null, $row)
-            : JsonResponse::error('Data tidak ditemukan');
+    $offset = ($page - 1) * $limit;
+
+    // SELECT
+    $select = '*';
+    if (!empty($mode['select'])) {
+      $select = implode(',', $mode['select']);
     }
 
-    private function getDropdown(string $table, array $request): string
-    {
-        $search = trim($request['cari'] ?? '');
+    // WHERE
+    $whereParts = [];
+    $params = [];
 
-        $profile = $this->profiles[$table]['dropdown'] ?? null;
-
-        if (!$profile) {
-            return JsonResponse::error('Profile dropdown tidak tersedia');
-        }
-
-        $where  = '';
-        $params = [];
-
-        if ($search && isset($profile['search'])) {
-            $where  = "WHERE {$profile['search']}";
-            $params = ["%$search%"];
-        }
-
-        $rows = $this->db->select($table, '*', $where, $params);
-
-        $results = array_map(function ($row) use ($profile) {
-            return [
-                'name'  => $row[$profile['text']] ?? '',
-                'value' => $row[$profile['value']] ?? ''
-            ];
-        }, $rows);
-
-        return JsonResponse::success('Dropdown loaded', null, $results);
+    // where dari config
+    if (!empty($mode['where'])) {
+      $whereParts[] = $mode['where'];
     }
 
-    private function getDataByCondition(string $table, array $request): string
-    {
-        $profile = $this->profiles[$table]['fields'] ?? null;
+    // search dynamic
+    if ($search !== '' && !empty($mode['searchable'])) {
+      $searchParts = [];
 
-        $field = $request['field'] ?? '';
-        $value = $request['value'] ?? '';
+      foreach ($mode['searchable'] as $field) {
+        $searchParts[] = "$field LIKE ?";
+        $params[] = "%$search%";
+      }
 
-        if (!$field || !$value) {
-            return JsonResponse::error('Parameter tidak lengkap');
-        }
-
-        if ($profile && !in_array($field, $profile, true)) {
-            return JsonResponse::error('Field tidak diizinkan');
-        }
-
-        $rows = $this->db->get($table, "WHERE $field = ?", [$value]);
-
-        return JsonResponse::success('Data ditemukan', null, $rows);
+      $whereParts[] = '(' . implode(' OR ', $searchParts) . ')';
     }
-    // klik menu referensi 
-    
+
+    $where = '';
+    if (!empty($whereParts)) {
+      $where = 'WHERE ' . implode(' AND ', $whereParts);
+    }
+
+    // ORDER
+    $order = '';
+    if (!empty($mode['order_by'])) {
+      $order = 'ORDER BY ' . $mode['order_by'];
+    }
+
+    // TOTAL
+    $totalQuery = "SELECT COUNT(*) as total FROM `$table` $where";
+    $stmt = $this->db->query($totalQuery, $params);
+    $row  = $stmt->fetch(PDO::FETCH_ASSOC);
+    $totalRow = $row['total'] ?? 0;
+
+    // DATA
+    $dataQuery = "
+            SELECT $select
+            FROM `$table`
+            $where
+            $order
+            LIMIT $offset, $limit
+        ";
+
+    $stmt = $this->db->query($dataQuery, $params);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return JsonResponse::success(
+      'Data berhasil',
+      [
+        'total' => (int)$totalRow,
+        'page'  => $page,
+        'limit' => $limit
+      ],
+      $rows
+    );
+  }
 }

@@ -16,6 +16,8 @@ return [
     '/referensi/update' => ['ReferensiController', 'update'],
     '/referensi/delete' => ['ReferensiController', 'delete'],
 
+    '/dynamic' => ['DynamicController', 'index'],
+    
     '/renstra' => ['RenstraController', 'index'],
     '/renja' => ['RenjaController', 'index'],
     '/dpa' => ['DpaController', 'index'],
