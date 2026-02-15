@@ -82,8 +82,8 @@
             </a>
             <!-- ANGGARAN -->
             <div class="ui accordion inverted item">
-                <div class="title">
-                    <i class="dropdown icon"></i> Anggaran
+                <div class="title item">
+                     <i class="dropdown icon"></i><span></span>Anggaran
                 </div>
                 <div class="content">
                     <a class="item" href="/renstra"><i class="purple sitemap icon"></i> RENSTRA</a>
@@ -101,7 +101,7 @@
 
             <!-- REALISASI -->
             <div class="ui accordion inverted item">
-                <div class="title">
+                <div class="title item">
                     <i class="dropdown icon"></i> Realisasi
                 </div>
                 <div class="content">
@@ -113,7 +113,7 @@
 
             <!-- REFERENSI -->
             <div class="ui accordion inverted item">
-                <div class="title">
+                <div class="title item">
                     <i class="dropdown icon"></i> Referensi
                 </div>
                 <div class="content">
@@ -135,7 +135,7 @@
 
             <!-- STANDAR HARGA -->
             <div class="ui accordion inverted item">
-                <div class="title">
+                <div class="title item">
                     <i class="dropdown icon"></i> Standar Harga Satuan
                 </div>
                 <div class="content">
@@ -148,7 +148,7 @@
 
             <!-- KEPEGAWAIAN -->
             <div class="ui accordion inverted item">
-                <div class="title">
+                <div class="title item">
                     <i class="dropdown icon"></i> Kepegawaian
                 </div>
                 <div class="content">
@@ -181,7 +181,7 @@
                 <i class="user icon"></i> Profil
             </a>
         </div>
-        <!-- FLYOUT -->\
+        <!-- FLYOUT -->
         <?php require __DIR__ . '/../partials/flyout.php'; ?>
         <!-- PUSHER -->
         <div class="pusher">
