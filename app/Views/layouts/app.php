@@ -15,11 +15,36 @@
             padding: 20px !important;
         }
 
-        /* .content-scroll {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        } */
+        html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+/* FIX SEGMENT PUSHABLE */
+#mainContext.ui.segment {
+    height: calc(100vh - 40px);
+    padding: 0 !important;
+    overflow: hidden;   /* PENTING */
+}
+
+/* PUSHER */
+#mainContext .pusher {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* STICKY HEADER */
+#mainContext .pusher > .ui.sticky {
+    flex: 0 0 auto;
+}
+
+/* SCROLL AREA */
+#mainContext .content-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
     </style>
 </head>
 
@@ -204,7 +229,7 @@
                     </div>
                 </div>
             </div>
-            <div  class="content-scroll">
+            <div class="content-scroll">
                 <?= $content ?>
             </div>
 
