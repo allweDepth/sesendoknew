@@ -8,19 +8,62 @@ return [
         'modes' => [
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['kode','uraian'],
+                'searchable' => ['kode', 'uraian'],
                 'order_by' => 'kode ASC'
             ]
         ]
     ],
-
+    'sbu' => [
+        'table' => 'sbu_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kd_aset', 'uraian_barang'],
+                'order_by' => 'uraian_barang ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
+            ],
+            'standar_harga' => [
+                'select' => ['id', 'kd_aset', 'uraian_barang', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset', 'nomenklatur_urusan'],
+                'order_by' => 'kd_aset ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
+            ]
+        ]
+    ],
+    'ssh' => [
+        'table' => 'ssh_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kd_aset', 'uraian_barang'],
+                'order_by' => 'uraian_barang ASC'
+            ]
+        ]
+    ],
     'asb' => [
         'table' => 'asb_neo',
         'primary_key' => 'id',
         'modes' => [
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['kd_aset','uraian_barang'],
+                'searchable' => ['kd_aset', 'uraian_barang'],
+                'order_by' => 'uraian_barang ASC'
+            ]
+        ]
+    ],
+    'hspk' => [
+        'table' => 'hspk_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kd_aset', 'uraian_barang'],
                 'order_by' => 'uraian_barang ASC'
             ]
         ]
@@ -32,7 +75,7 @@ return [
         'modes' => [
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['kode','uraian'],
+                'searchable' => ['kode', 'uraian'],
                 'order_by' => 'kode ASC'
             ]
         ]
@@ -43,8 +86,8 @@ return [
         'primary_key' => 'id',
         'modes' => [
             'default' => [
-                'select' => ['id','kode','uraian','singkatan'],
-                'searchable' => ['kode','uraian','singkatan'],
+                'select' => ['id', 'kode', 'uraian', 'singkatan'],
+                'searchable' => ['kode', 'uraian', 'singkatan'],
                 'order_by' => 'kode ASC'
             ]
         ]
@@ -55,8 +98,8 @@ return [
         'primary_key' => 'id',
         'modes' => [
             'dropdown' => [
-                'select' => ['id','value','item'],
-                'searchable' => ['item','value'],
+                'select' => ['id', 'value', 'item'],
+                'searchable' => ['item', 'value'],
                 'order_by' => 'item ASC'
             ],
             'default' => [
@@ -72,22 +115,22 @@ return [
         'primary_key' => 'id',
         'modes' => [
             'dropdown' => [
-                'select' => ['id','kode','nomenklatur_urusan'],
-                'searchable' => ['kode','nomenklatur_urusan'],
+                'select' => ['id', 'kode', 'nomenklatur_urusan'],
+                'searchable' => ['kode', 'nomenklatur_urusan'],
                 'order_by' => 'kode ASC'
             ],
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['kode','nomenklatur_urusan'],
+                'searchable' => ['kode', 'nomenklatur_urusan'],
                 'order_by' => 'kode ASC'
             ],
             'referensi' => [
-                'select' => ['kode','nomenklatur_urusan'],
-                'searchable' => ['kode','nomenklatur_urusan'],
+                'select' => ['kode', 'nomenklatur_urusan'],
+                'searchable' => ['kode', 'nomenklatur_urusan'],
                 'order_by' => 'kode ASC'
             ],
             'edit' => [
-                'select' => ['id','kode','nomenklatur_urusan'],
+                'select' => ['id', 'kode', 'nomenklatur_urusan'],
                 'searchable' => ['*'],
                 'order_by' => 'kode ASC'
             ]
@@ -99,8 +142,8 @@ return [
         'primary_key' => 'id',
         'modes' => [
             'default' => [
-                'select' => ['id','kode','uraian'],
-                'searchable' => ['kode','uraian'],
+                'select' => ['id', 'kode', 'uraian'],
+                'searchable' => ['kode', 'uraian'],
                 'order_by' => 'kode ASC'
             ]
         ]
@@ -111,8 +154,8 @@ return [
         'primary_key' => 'id',
         'modes' => [
             'default' => [
-                'select' => ['id','kode','uraian','status'],
-                'searchable' => ['kode','uraian'],
+                'select' => ['id', 'kode', 'uraian', 'status'],
+                'searchable' => ['kode', 'uraian'],
                 'order_by' => 'kode ASC'
             ]
         ]
@@ -123,8 +166,8 @@ return [
         'primary_key' => 'id',
         'modes' => [
             'default' => [
-                'select' => ['id','kode','judul','nomor'],
-                'searchable' => ['kode','judul','nomor'],
+                'select' => ['id', 'kode', 'judul', 'nomor'],
+                'searchable' => ['kode', 'judul', 'nomor'],
                 'order_by' => 'tgl_penetapan DESC'
             ]
         ]
@@ -135,13 +178,13 @@ return [
         'primary_key' => 'id',
         'modes' => [
             'default' => [
-                'select' => ['id','nama_perusahaan','npwp'],
-                'searchable' => ['nama_perusahaan','npwp'],
+                'select' => ['id', 'nama_perusahaan', 'npwp'],
+                'searchable' => ['nama_perusahaan', 'npwp'],
                 'order_by' => 'nama_perusahaan ASC'
             ],
             'referensi' => [
                 'select' => ['nama_perusahaan', 'alamat', 'email', 'npwp', 'no_rekening', 'bank_rekening', 'atas_nama_rekening', 'direktur'],
-                'searchable' => ['nama_perusahaan', 'alamat','direktur'],
+                'searchable' => ['nama_perusahaan', 'alamat', 'direktur'],
                 'order_by' => 'nama_perusahaan ASC'
             ]
         ]
@@ -153,7 +196,7 @@ return [
         'modes' => [
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['kd_sub_keg','uraian'],
+                'searchable' => ['kd_sub_keg', 'uraian'],
                 'order_by' => 'tahun DESC'
             ]
         ]
@@ -165,7 +208,7 @@ return [
         'modes' => [
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['kd_sub_keg','uraian'],
+                'searchable' => ['kd_sub_keg', 'uraian'],
                 'order_by' => 'tahun DESC'
             ]
         ]
@@ -177,7 +220,7 @@ return [
         'modes' => [
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['uraian_prog_keg','indikator'],
+                'searchable' => ['uraian_prog_keg', 'indikator'],
                 'order_by' => 'tahun DESC'
             ]
         ]
@@ -189,27 +232,27 @@ return [
         'modes' => [
 
             'tujuan' => [
-                'select' => ['id','text'],
+                'select' => ['id', 'text'],
                 'searchable' => ['text'],
                 'where' => "kelompok = 'tujuan'",
                 'order_by' => 'text ASC'
             ],
 
             'sasaran' => [
-                'select' => ['id','text','indikator'],
-                'searchable' => ['text','indikator'],
+                'select' => ['id', 'text', 'indikator'],
+                'searchable' => ['text', 'indikator'],
                 'where' => "kelompok = 'sasaran'",
                 'order_by' => 'text ASC'
             ],
 
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['text','indikator'],
+                'searchable' => ['text', 'indikator'],
                 'order_by' => 'tahun DESC'
             ],
             'referensi' => [
                 'select' => ['nama_perusahaan', 'alamat', 'email', 'npwp', 'no_rekening', 'bank_rekening', 'atas_nama_rekening', 'direktur'],
-                'searchable' => ['nama_perusahaan', 'alamat','direktur'],
+                'searchable' => ['nama_perusahaan', 'alamat', 'direktur'],
                 'order_by' => 'nama_perusahaan ASC'
             ]
         ]
@@ -219,18 +262,18 @@ return [
         'primary_key' => 'id',
         'modes' => [
             'dropdown' => [
-                'select' => ['id','kd_opd','nama','nip','npwp'],
-                'searchable' => ['kd_opd','nama','nip','npwp'],
+                'select' => ['id', 'kd_opd', 'nama', 'nip', 'npwp'],
+                'searchable' => ['kd_opd', 'nama', 'nip', 'npwp'],
                 'order_by' => 'nama ASC'
             ],
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['id','kd_opd','nama','nip','npwp'],
+                'searchable' => ['id', 'kd_opd', 'nama', 'nip', 'npwp'],
                 'order_by' => 'nama ASC'
             ],
             'kepegawaian' => [
-                'select' => ['id','kd_opd','nama','nip','npwp'],
-                'searchable' => ['id','kd_opd','nama','nip','npwp'],
+                'select' => ['id', 'kd_opd', 'nama', 'nip', 'npwp'],
+                'searchable' => ['id', 'kd_opd', 'nama', 'nip', 'npwp'],
                 'order_by' => 'nama ASC'
             ],
             'edit' => [

@@ -46,11 +46,12 @@ class DynamicTableService
     array $mode,
     array $request
   ): string {
+
     $idRow = (int)($request['id_row'] ?? 0);
 
     /*
     |--------------------------------------------------------------------------
-    | MODE EDIT → AMBIL 1 DATA BERDASARKAN PRIMARY KEY
+    | MODE EDIT
     |--------------------------------------------------------------------------
     */
     if (($request['jenis'] ?? '') === 'edit' && $idRow > 0) {
@@ -63,11 +64,11 @@ class DynamicTableService
       }
 
       $query = "
-            SELECT $select
-            FROM `$table`
-            WHERE `$primaryKey` = ?
-            LIMIT 1
-        ";
+        SELECT $select
+        FROM `$table`
+        WHERE `$primaryKey` = ?
+        LIMIT 1
+      ";
 
       $stmt = $this->db->query($query, [$idRow]);
       $row  = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -85,10 +86,10 @@ class DynamicTableService
         $row
       );
     }
+
     $limit  = max(1, (int)($request['rows'] ?? 10));
     $page   = max(1, (int)($request['halaman'] ?? 1));
     $search = trim($request['cari'] ?? '');
-
     $offset = ($page - 1) * $limit;
 
     // SELECT
@@ -99,19 +100,56 @@ class DynamicTableService
 
     // WHERE
     $whereParts = [];
-    $params = [];
+    $params     = [];
 
-    // where dari config
+    /*
+    |--------------------------------------------------------------------------
+    | WHERE DARI CONFIG
+    |--------------------------------------------------------------------------
+    */
     if (!empty($mode['where'])) {
-      $whereParts[] = $mode['where'];
+
+      // jika string (backward compatible)
+      if (is_string($mode['where'])) {
+        $whereParts[] = $mode['where'];
+      }
+
+      // jika array (field => source/value)
+      if (is_array($mode['where'])) {
+
+        foreach ($mode['where'] as $field => $source) {
+
+          // ambil dari user login
+          if ($source === 'user') {
+
+            $value = $_SESSION['user'][$field] ?? null;
+
+            if ($value !== null && $value !== '') {
+              $whereParts[] = "`$field` = ?";
+              $params[]     = $value;
+            }
+          }
+
+          // static value
+          else {
+            $whereParts[] = "`$field` = ?";
+            $params[]     = $source;
+          }
+        }
+      }
     }
 
-    // search dynamic
+    /*
+    |--------------------------------------------------------------------------
+    | SEARCH
+    |--------------------------------------------------------------------------
+    */
     if ($search !== '' && !empty($mode['searchable'])) {
+
       $searchParts = [];
 
       foreach ($mode['searchable'] as $field) {
-        $searchParts[] = "$field LIKE ?";
+        $searchParts[] = "`$field` LIKE ?";
         $params[] = "%$search%";
       }
 
@@ -123,26 +161,38 @@ class DynamicTableService
       $where = 'WHERE ' . implode(' AND ', $whereParts);
     }
 
-    // ORDER
+    /*
+    |--------------------------------------------------------------------------
+    | ORDER
+    |--------------------------------------------------------------------------
+    */
     $order = '';
     if (!empty($mode['order_by'])) {
       $order = 'ORDER BY ' . $mode['order_by'];
     }
 
-    // TOTAL
+    /*
+    |--------------------------------------------------------------------------
+    | TOTAL
+    |--------------------------------------------------------------------------
+    */
     $totalQuery = "SELECT COUNT(*) as total FROM `$table` $where";
     $stmt = $this->db->query($totalQuery, $params);
     $row  = $stmt->fetch(PDO::FETCH_ASSOC);
     $totalRow = $row['total'] ?? 0;
 
-    // DATA
+    /*
+    |--------------------------------------------------------------------------
+    | DATA
+    |--------------------------------------------------------------------------
+    */
     $dataQuery = "
-            SELECT $select
-            FROM `$table`
-            $where
-            $order
-            LIMIT $offset, $limit
-        ";
+      SELECT $select
+      FROM `$table`
+      $where
+      $order
+      LIMIT $offset, $limit
+    ";
 
     $stmt = $this->db->query($dataQuery, $params);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);

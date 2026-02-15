@@ -31,4 +31,12 @@ return [
     '/kepegawaian/store' => ['KepegawaianController', 'store'],
     '/kepegawaian/update' => ['KepegawaianController', 'update'],
     '/kepegawaian/delete' => ['KepegawaianController', 'delete'],
+    // ==============================
+    // STANDAR HARGA
+    // ==============================
+    '/standar_harga' => ['StandarHargaController', 'index'],
+    '/standar_harga/load' => ['StandarHargaController', 'load'],
+    '/standar_harga/store' => ['StandarHargaController', 'store'],
+    '/standar_harga/update' => ['StandarHargaController', 'update'],
+    '/standar_harga/delete' => ['StandarHargaController', 'delete'],
 ];
