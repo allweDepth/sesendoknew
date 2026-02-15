@@ -97,8 +97,17 @@ class TableManager {
 					return;
 				}
 
-				this.renderTable(res.data.rows || []);
-				this.renderPagination(res.meta.total || 0, res.meta.limit || 10);
+				let rows = res.data?.rows || [];
+				let meta = res.meta || {};
+
+				this.renderTable(rows);
+
+				this.renderPagination({
+					total: meta.total ?? meta.total_data ?? 0,
+					limit: meta.limit ?? AppState.rows,
+					page: meta.page ?? AppState.halaman,
+					totalPage: meta.total_page ?? null,
+				});
 			},
 		});
 	}
@@ -119,12 +128,19 @@ class TableManager {
 		$('tbody[name="tabel_referensi"]').html(html);
 	}
 
-	renderPagination(total, limit) {
-		let totalPage = Math.ceil(total / limit);
+	renderPagination(meta) {
+		if (!meta || !meta.total_page) {
+			$('div[name="pagination_referensi"]').html("");
+			return;
+		}
+
+		let currentPage = meta.page || 1;
+		let totalPage = meta.total_page;
+
 		let html = "";
 
 		for (let i = 1; i <= totalPage; i++) {
-			let active = i === AppState.halaman ? "active" : "";
+			let active = i === currentPage ? "active" : "";
 
 			html += `
 			<a class="item ${active}" data-page="${i}">
@@ -232,4 +248,15 @@ $(document).ready(function () {
 
 	$(".ui.dropdown").dropdown();
 	$(".ui.accordion").accordion({ exclusive: false });
+	$(document).on(
+		"click",
+		'div[name="pagination_referensi"] .item',
+		function () {
+			let page = parseInt($(this).data("page"));
+			if (!page) return;
+
+			AppState.halaman = page;
+			tableManager.fetch();
+		},
+	);
 });
