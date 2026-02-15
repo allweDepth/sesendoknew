@@ -330,7 +330,126 @@ class Auth {
 ========================================== */
 
 let tableManager;
+/* ==========================================
+   FLYOUT MANAGER
+========================================== */
 
+class FlyoutManager {
+	constructor(contextSelector = "#mainContext") {
+		this.$context = $(contextSelector);
+		this.$flyout = this.$context.children(".ui.flyout");
+
+		this.$icon = $("#icon_flyout");
+		this.$header = $("#content_flyout");
+		this.$form = $("#form_flyout");
+
+		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
+
+		this.init();
+	}
+
+	init() {
+		this.$flyout.flyout({
+			context: this.$context,
+			transition: "push",
+			closable: false,
+		});
+
+		this.bindEvents();
+	}
+
+	bindEvents() {
+		$(document).on("click", '[name="flyout"]', (e) => {
+			e.preventDefault();
+			this.open($(e.currentTarget));
+		});
+
+		$(document).on("click", ".btnFlyoutClose, .close.icon", () => {
+			this.hide();
+		});
+	}
+
+	open($btn) {
+		const jenis = $btn.attr("jns");
+		const tbl = $btn.attr("tbl");
+		const idRow = $btn.attr("id_row");
+
+		AppState.jenis = jenis;
+		AppState.tbl = tbl;
+
+		let config = this.buildConfig(jenis, tbl);
+
+		this.render(config);
+
+		if (jenis === "edit" && idRow) {
+			this.loadData(idRow);
+		} else {
+			this.show();
+		}
+	}
+
+	buildConfig(jenis, tbl) {
+		let config = {
+			icon: "folder icon",
+			header: "",
+			content: "",
+		};
+
+		if (jenis === "add") {
+			config.icon = "plus icon";
+			config.header = "Tambah Data";
+			config.content = `<div class="field">
+				<label>Nama</label>
+				<input name="nama">
+			</div>`;
+		}
+
+		if (jenis === "edit") {
+			config.icon = "edit icon";
+			config.header = "Edit Data";
+			config.content = `<div class="field">
+				<label>Nama</label>
+				<input name="nama">
+			</div>`;
+		}
+
+		return config;
+	}
+
+	render(config) {
+		this.$icon.attr("class", config.icon);
+		this.$header.text(config.header);
+		this.$form.html(config.content);
+
+		$(".ui.dropdown").dropdown();
+	}
+
+	loadData(idRow) {
+		this.ajax.request({
+			data: {
+				jenis: "edit",
+				tbl: AppState.tbl,
+				id_row: idRow,
+			},
+			success: (res) => {
+				if (res.success && res.data) {
+					Object.keys(res.data).forEach((key) => {
+						this.$form.find(`[name="${key}"]`).val(res.data[key]);
+					});
+					this.show();
+				}
+			},
+		});
+	}
+
+	show() {
+		this.$flyout.flyout("show");
+	}
+
+	hide() {
+		this.$flyout.flyout("hide");
+	}
+}
 $(document).ready(function () {
 	tableManager = new TableManager();
 
@@ -352,14 +471,6 @@ $(document).ready(function () {
 
 	$("#toggleSidebar").on("click", function () {
 		$sidebar.sidebar("toggle");
-	});
-
-	const $flyout = $context.children(".ui.flyout");
-
-	$flyout.flyout({
-		context: $context,
-		transition: "push",
-		closable: false,
 	});
 
 	/* =========================
@@ -422,4 +533,6 @@ $(document).ready(function () {
 	// 		tableManager.fetch();
 	// 	},
 	// });
+
+	let flyoutManager = new FlyoutManager("#mainContext");
 });

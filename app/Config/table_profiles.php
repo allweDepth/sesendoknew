@@ -85,6 +85,11 @@ return [
                 'select' => ['kode','nomenklatur_urusan'],
                 'searchable' => ['kode','nomenklatur_urusan'],
                 'order_by' => 'kode ASC'
+            ],
+            'edit' => [
+                'select' => ['id','kode','nomenklatur_urusan'],
+                'searchable' => ['*'],
+                'order_by' => 'kode ASC'
             ]
         ]
     ],

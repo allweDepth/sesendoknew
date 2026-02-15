@@ -46,7 +46,45 @@ class DynamicTableService
     array $mode,
     array $request
   ): string {
+    $idRow = (int)($request['id_row'] ?? 0);
 
+    /*
+    |--------------------------------------------------------------------------
+    | MODE EDIT → AMBIL 1 DATA BERDASARKAN PRIMARY KEY
+    |--------------------------------------------------------------------------
+    */
+    if (($request['jenis'] ?? '') === 'edit' && $idRow > 0) {
+
+      $primaryKey = $profile['primary_key'] ?? 'id';
+
+      $select = '*';
+      if (!empty($mode['select'])) {
+        $select = implode(',', $mode['select']);
+      }
+
+      $query = "
+            SELECT $select
+            FROM `$table`
+            WHERE `$primaryKey` = ?
+            LIMIT 1
+        ";
+
+      $stmt = $this->db->query($query, [$idRow]);
+      $row  = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      if (!$row) {
+        return JsonResponse::error('Data tidak ditemukan');
+      }
+
+      return JsonResponse::success(
+        'Data berhasil diambil',
+        [
+          'mode' => 'edit',
+          'id'   => $idRow
+        ],
+        $row
+      );
+    }
     $limit  = max(1, (int)($request['rows'] ?? 10));
     $page   = max(1, (int)($request['halaman'] ?? 1));
     $search = trim($request['cari'] ?? '');
