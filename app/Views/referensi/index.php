@@ -27,45 +27,17 @@
       </tr>
     </thead>
 
-    <tbody>
-
-      <?php if (empty($rows)): ?>
-        <tr>
-          <td colspan="3">
-            <div class="ui warning message">
-              Data belum tersedia.
-            </div>
-          </td>
-        </tr>
-      <?php else: ?>
-        <?php foreach ($rows as $row): ?>
-          <tr>
-            <td><?= $row['id'] ?? '' ?></td>
-            <td contenteditable="true"
-              class="editable"
-              data-id="<?= $row['id'] ?>"
-              data-tbl="<?= $tbl ?>">
-              <?= $row['nama'] ?? '' ?>
-            </td>
-            <td>
-              <button class="ui red mini button btnDelete"
-                data-id="<?= $row['id'] ?>"
-                data-tbl="<?= $tbl ?>">
-                <i class="trash icon"></i>
-              </button>
-            </td>
-          </tr>
-        <?php endforeach; ?>
-      <?php endif; ?>
-
+    <tbody name="tabel_referensi">
+      <tr>
+        <td colspan="3">
+          <div class="ui active inline loader"></div>
+        </td>
+      </tr>
     </tbody>
-
     <tfoot>
       <tr>
         <th colspan="3">
-          <div class="ui center pagination menu">
-            <a class="active item">1</a>
-          </div>
+          <div class="ui center pagination menu" name="pagination_referensi"></div>
         </th>
       </tr>
     </tfoot>

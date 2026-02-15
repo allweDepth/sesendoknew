@@ -18,7 +18,7 @@ const AppState = {
 	jenis: "",
 	tbl: "",
 	cari: "",
-	currentMenu: ""
+	currentMenu: "",
 };
 
 /* ==========================================
@@ -71,7 +71,6 @@ class TableManager {
 	}
 
 	load(jenis, tbl) {
-
 		if (AppState.currentMenu !== tbl) {
 			AppState.halaman = 1;
 		}
@@ -84,17 +83,15 @@ class TableManager {
 	}
 
 	fetch() {
-
 		this.ajax.request({
 			data: {
 				jenis: AppState.jenis,
 				tbl: AppState.tbl,
 				halaman: AppState.halaman,
 				rows: AppState.rows,
-				cari: AppState.cari
+				cari: AppState.cari,
 			},
 			success: (res) => {
-
 				if (!res.success) {
 					console.warn(res.message);
 					return;
@@ -102,41 +99,41 @@ class TableManager {
 
 				this.renderTable(res.data.rows || []);
 				this.renderPagination(res.meta.total || 0, res.meta.limit || 10);
-			}
+			},
 		});
 	}
 
 	renderTable(rows) {
-
 		let html = "";
 
-		rows.forEach(row => {
+		rows.forEach((row) => {
 			html += "<tr>";
-			Object.values(row).forEach(val => {
+
+			Object.values(row).forEach((val) => {
 				html += `<td>${val ?? ""}</td>`;
 			});
+
 			html += "</tr>";
 		});
 
-		$("#tableBody").html(html);
+		$('tbody[name="tabel_referensi"]').html(html);
 	}
 
 	renderPagination(total, limit) {
-
 		let totalPage = Math.ceil(total / limit);
 		let html = "";
 
 		for (let i = 1; i <= totalPage; i++) {
-			let active = (i === AppState.halaman) ? "active" : "";
+			let active = i === AppState.halaman ? "active" : "";
 
 			html += `
-				<a class="item ${active}" onclick="changePage(${i})">
-					${i}
-				</a>
-			`;
+			<a class="item ${active}" data-page="${i}">
+				${i}
+			</a>
+		`;
 		}
 
-		$("#pagination").html(html);
+		$('div[name="pagination_referensi"]').html(html);
 	}
 }
 
@@ -187,7 +184,6 @@ class Auth {
 let tableManager;
 
 $(document).ready(function () {
-
 	tableManager = new TableManager();
 
 	const $context = $("#mainContext");
