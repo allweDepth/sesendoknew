@@ -64,7 +64,30 @@ class AjaxEngine {
 /* ==========================================
    UNIVERSAL TABLE MODULE
 ========================================== */
+// ini pengaturan tombol di tabel
+const ActionConfig = {
+	// DEFAULT GLOBAL
+	default: {
+		buttons: ["edit", "delete"],
+	},
 
+	// REFERENSI
+	referensi: {
+		sub_kegiatan: {
+			buttons: ["edit", "delete"],
+		},
+		satuan: {
+			buttons: ["edit"],
+		},
+	},
+
+	// RENSTRA
+	renstra: {
+		tujuan_sasaran_renstra: {
+			buttons: ["edit"], // hanya 1 tombol
+		},
+	},
+};
 class TableManager {
 	constructor() {
 		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
@@ -114,10 +137,6 @@ class TableManager {
 	}
 
 	renderTable(rows) {
-		if (!Array.isArray(rows)) {
-			rows = [];
-		}
-
 		let html = "";
 
 		rows.forEach((row) => {
@@ -126,6 +145,11 @@ class TableManager {
 			Object.values(row).forEach((val) => {
 				html += `<td>${val ?? ""}</td>`;
 			});
+
+			// Kolom Action otomatis
+			html += `<td class="collapsing">
+					${this.buildActionButtons(row)}
+				 </td>`;
 
 			html += "</tr>";
 		});
@@ -204,6 +228,60 @@ class TableManager {
 		html += `</div>`;
 
 		$('div[name="pagination_referensi"]').html(html);
+	}
+	buildActionButtons(row) {
+		let jenis = AppState.jenis;
+		let tbl = AppState.tbl;
+
+		let config =
+			ActionConfig[jenis]?.[tbl] || ActionConfig[jenis] || ActionConfig.default;
+
+		let buttons = config.buttons || [];
+
+		if (!buttons.length) return "";
+
+		let html = `<div class="ui icon basic mini buttons">`;
+
+		buttons.forEach((btn) => {
+			if (btn === "edit") {
+				html += `
+				<button class="ui button"
+					name="flyout"
+					jns="edit"
+					tbl="${tbl}"
+					id_row="${row.id}">
+					<i class="edit outline blue icon"></i>
+				</button>
+			`;
+			}
+
+			if (btn === "delete") {
+				html += `
+				<button class="ui red button"
+					name="del_row"
+					jns="delete"
+					tbl="${tbl}"
+					id_row="${row.id}">
+					<i class="trash alternate outline red icon"></i>
+				</button>
+			`;
+			}
+
+			if (btn === "detail") {
+				html += `
+				<button class="ui green button"
+					name="detail_row"
+					tbl="${tbl}"
+					id_row="${row.id}">
+					<i class="eye icon"></i>
+				</button>
+			`;
+			}
+		});
+
+		html += `</div>`;
+
+		return html;
 	}
 }
 
