@@ -1,7 +1,8 @@
 <?php
 return [
-    '/' => ['HomeController', 'index'],
-    '/home' => ['HomeController', 'index'],
+    '/' => ['HomeController', 'home'],
+    '/home' => ['HomeController', 'home'],
+    '/berita' => ['HomeController', 'berita'],
     '/datateknis' => ['HomeController', 'datateknis'],
     '/organisasi' => ['HomeController', 'organisasi'],
     '/pelayanan' => ['HomeController', 'pelayanan'],
@@ -9,6 +10,7 @@ return [
     '/logout' => ['AuthController', 'logout'],
     '/register/proses' => ['AuthController', 'register'],
     '/dashboard' => ['DashboardController', 'index'],
+    '/berita' => ['HomeController', 'news'],
 
     '/referensi' => ['ReferensiController', 'index'],
     '/referensi/load' => ['ReferensiController', 'load'],

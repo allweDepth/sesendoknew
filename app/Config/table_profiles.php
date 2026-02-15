@@ -43,6 +43,14 @@ return [
                 'select' => ['*'],
                 'searchable' => ['kd_aset', 'uraian_barang'],
                 'order_by' => 'uraian_barang ASC'
+            ],
+            'standar_harga' => [
+                'select' => ['id', 'kd_aset', 'uraian_barang', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset', 'nomenklatur_urusan'],
+                'order_by' => 'kd_aset ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
             ]
         ]
     ],
@@ -54,6 +62,14 @@ return [
                 'select' => ['*'],
                 'searchable' => ['kd_aset', 'uraian_barang'],
                 'order_by' => 'uraian_barang ASC'
+            ],
+            'standar_harga' => [
+                'select' => ['id', 'kd_aset', 'uraian_barang', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset', 'nomenklatur_urusan'],
+                'order_by' => 'kd_aset ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
             ]
         ]
     ],
@@ -65,6 +81,14 @@ return [
                 'select' => ['*'],
                 'searchable' => ['kd_aset', 'uraian_barang'],
                 'order_by' => 'uraian_barang ASC'
+            ],
+            'standar_harga' => [
+                'select' => ['id', 'kd_aset', 'uraian_barang', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset', 'nomenklatur_urusan'],
+                'order_by' => 'kd_aset ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
             ]
         ]
     ],
