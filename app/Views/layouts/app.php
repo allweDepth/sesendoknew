@@ -127,7 +127,7 @@
                     <i class="dropdown icon"></i> Referensi
                 </div>
                 <div class="content">
-                    <a class="item" href="/bidang_urusan"><i class="user plus icon"></i> Bidang Urusan</a>
+                    <a class="item" href="/referensi?tbl=bidang_urusan"><i class="user plus icon"></i> Bidang Urusan</a>
                     <a class="item" href="/referensi?tbl=program"><i class="users icon"></i> Program</a>
                     <a class="item" href="/referensi?tbl=kegiatan"><i class="outdent icon"></i> Kegiatan</a>
                     <a class="item" href="/referensi?tbl=sub_kegiatan"><i class="layer group icon"></i> Sub Kegiatan</a>
@@ -162,10 +162,10 @@
                     <i class="dropdown icon"></i> Kepegawaian
                 </div>
                 <div class="content">
-                    <a class="item" href="/asn"><i class="users icon"></i> ASN</a>
-                    <a class="item" href="/sk_asn"><i class="file signature icon"></i> Surat Keputusan (SK)</a>
-                    <a class="item" href="/register_surat"><i class="clipboard list icon"></i> Register Surat</a>
-                    <a class="item" href="/tata_naskah"><i class="edit icon"></i> Tata Naskah</a>
+                    <a class="item" href="/kepegawaian?tbl=asn"><i class="users icon"></i> ASN</a>
+                    <a class="item" href="/kepegawaian?tbl=sk_asn"><i class="file signature icon"></i> Surat Keputusan (SK)</a>
+                    <a class="item" href="/kepegawaian?tbl=register_surat"><i class="clipboard list icon"></i> Register Surat</a>
+                    <a class="item" href="/kepegawaian?tbl=tata_naskah"><i class="edit icon"></i> Tata Naskah</a>
                 </div>
             </div>
 

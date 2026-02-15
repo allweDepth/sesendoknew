@@ -213,6 +213,32 @@ return [
                 'order_by' => 'nama_perusahaan ASC'
             ]
         ]
-    ]
+    ],
+    'asn' => [
+        'table' => 'db_asn_pemda_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'dropdown' => [
+                'select' => ['id','kd_opd','nama','nip','npwp'],
+                'searchable' => ['kd_opd','nama','nip','npwp'],
+                'order_by' => 'nama ASC'
+            ],
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['id','kd_opd','nama','nip','npwp'],
+                'order_by' => 'nama ASC'
+            ],
+            'asn' => [
+                'select' => ['id','kd_opd','nama','nip','npwp'],
+                'searchable' => ['id','kd_opd','nama','nip','npwp'],
+                'order_by' => 'nama ASC'
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'nama ASC'
+            ]
+        ]
+    ],
 
 ];
