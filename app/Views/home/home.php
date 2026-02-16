@@ -1,5 +1,16 @@
 <?php $active = 'berita'; ?>
+<?php
+function randomAvatar() {
+    $path = __DIR__ . '/../../../public/assets/img/umum/dpupr/';
+    $images = glob($path . '*.{jpg,jpeg,png,gif}', GLOB_BRACE);
 
+    if (!$images) {
+        return '/assets/img/umum/dpupr/default.png';
+    }
+
+    return '/assets/img/umum/dpupr/' . basename($images[array_rand($images)]);
+}
+?>
 <div class="pusher">
 
     <!-- HERO SECTION -->
@@ -38,7 +49,7 @@
             </div>
 
             <div class="eight wide column">
-                <img src="img/logo.png" class="ui large centered image">
+                <img src="<?= randomAvatar(); ?>" class="ui large centered image">
             </div>
 
         </div>
@@ -106,7 +117,7 @@
                 <!-- BPS -->
                 <div class="item">
                     <div class="image">
-                        <img src="img/bps.png">
+                        <img src="/assets/img/umum/BPS.png">
                     </div>
                     <div class="content">
                         <a class="header" href="https://pasangkayukab.bps.go.id/id" target="_blank">
@@ -132,7 +143,7 @@
                 <!-- LPSE -->
                 <div class="item">
                     <div class="image">
-                        <img src="img/logo_garuda.png">
+                        <img src="/assets/img/umum/logo.png">
                     </div>
                     <div class="content">
                         <a class="header" href="https://spse.inaproc.id/pasangkayukab" target="_blank">
