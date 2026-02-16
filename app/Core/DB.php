@@ -110,4 +110,104 @@ class DB
     {
         return $this->lastInsertId;
     }
+    /* ===============================
+       MINI QUERY BUILDER
+    =============================== */
+
+    private $qb = [];
+
+    public function table($table)
+    {
+        $this->qb = [
+            'table' => $table,
+            'select' => '*',
+            'join' => [],
+            'where' => [],
+            'params' => [],
+            'order' => '',
+            'limit' => ''
+        ];
+        return $this;
+    }
+
+    public function selectQB($columns = '*')
+    {
+        $this->qb['select'] = $columns;
+        return $this;
+    }
+
+    public function join($table, $condition, $type = 'LEFT')
+    {
+        $this->qb['join'][] = "{$type} JOIN {$table} ON {$condition}";
+        return $this;
+    }
+
+    public function where($condition, $params = [])
+    {
+        $this->qb['where'][] = $condition;
+        $this->qb['params'] = array_merge($this->qb['params'], $params);
+        return $this;
+    }
+
+    public function orderBy($order)
+    {
+        $this->qb['order'] = "ORDER BY {$order}";
+        return $this;
+    }
+
+    public function limit($limit)
+    {
+        $this->qb['limit'] = "LIMIT {$limit}";
+        return $this;
+    }
+
+    public function qbGet()
+    {
+        $sql = "SELECT {$this->qb['select']} FROM {$this->qb['table']}";
+
+        if (!empty($this->qb['join'])) {
+            $sql .= " " . implode(" ", $this->qb['join']);
+        }
+
+        if (!empty($this->qb['where'])) {
+            $sql .= " WHERE " . implode(" AND ", $this->qb['where']);
+        }
+
+        if ($this->qb['order']) {
+            $sql .= " " . $this->qb['order'];
+        }
+
+        if ($this->qb['limit']) {
+            $sql .= " " . $this->qb['limit'];
+        }
+
+        return $this->query($sql, $this->qb['params'])->fetchAll();
+    }
+
+    public function qbFirst()
+    {
+        $this->qb['limit'] = "LIMIT 1";
+
+        $sql = "SELECT {$this->qb['select']} FROM {$this->qb['table']}";
+
+        if (!empty($this->qb['join'])) {
+            $sql .= " " . implode(" ", $this->qb['join']);
+        }
+
+        if (!empty($this->qb['where'])) {
+            $sql .= " WHERE " . implode(" AND ", $this->qb['where']);
+        }
+
+        if ($this->qb['order']) {
+            $sql .= " " . $this->qb['order'];
+        }
+
+        if ($this->qb['limit']) {
+            $sql .= " " . $this->qb['limit'];
+        }
+
+        $result = $this->query($sql, $this->qb['params'])->fetchAll();
+
+        return $result[0] ?? null;
+    }
 }

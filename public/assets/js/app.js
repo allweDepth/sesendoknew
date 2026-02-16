@@ -830,4 +830,62 @@ $(document).ready(function () {
 		 → Panel samping edit/add data
 	---------------------------------------------- */
 	let flyoutManager = new FlyoutManager("#mainContext");
+
+/* =========================================
+   WALLCHAT MODULE
+========================================= */
+
+// POST STATUS
+$(document).on("submit", "#formPost", function (e) {
+    e.preventDefault();
+
+    $.post("/wallchat/store", $(this).serialize(), function (res) {
+        if (res.status) {
+            location.reload();
+        }
+    }, "json");
+});
+
+// KOMENTAR
+$(document).on("submit", ".formComment", function (e) {
+    e.preventDefault();
+
+    let parent_id = $(this).data("id");
+    let content = $(this).find('input[name="content"]').val();
+
+    $.post("/wallchat/comment", {
+        parent_id: parent_id,
+        content: content
+    }, function (res) {
+        if (res.status) {
+            location.reload();
+        }
+    }, "json");
+});
+
+// MODAL PRIVATE MESSAGE
+$(document).on("click", "#btnPrivateMessage", function () {
+    $("#modalPrivateMessage").modal("show");
+});
+
+// PRIVATE MESSAGE SEND
+$(document).on("submit", "#formPrivateMessage", function (e) {
+    e.preventDefault();
+
+    $.post("/wallchat/private", $(this).serialize(), function (res) {
+
+        if (res.status) {
+            $("#modalPrivateMessage").modal("hide");
+
+            Swal.fire({
+                icon: "success",
+                title: "Berhasil",
+                text: res.message
+            });
+        }
+
+    }, "json");
+});
+
+
 });

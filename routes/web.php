@@ -41,4 +41,19 @@ return [
     '/standar_harga/store' => ['StandarHargaController', 'store'],
     '/standar_harga/update' => ['StandarHargaController', 'update'],
     '/standar_harga/delete' => ['StandarHargaController', 'delete'],
+    // ==============================
+    // P E N G A T U R A N
+    // ==============================
+    '/pengaturan' => ['PengaturanController', 'index'],
+    '/pengaturan/load' => ['PengaturanController', 'load'],
+    '/pengaturan/store' => ['PengaturanController', 'store'],
+    '/pengaturan/update' => ['PengaturanController', 'update'],
+    '/pengaturan/delete' => ['PengaturanController', 'delete'],
+    // ==============================
+    // W A L L C H A T
+    // ==============================
+    '/wallchat' => ['WallchatController', 'index'],
+    '/wallchat/load' => ['WallchatController', 'load'],
+    '/wallchat/store' => ['WallchatController', 'store'],
+    '/wallchat/comment' => ['WallchatController', 'comment'],
 ];
