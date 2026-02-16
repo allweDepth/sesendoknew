@@ -12,18 +12,8 @@ class DB
         $config = require __DIR__ . '/../../config/database.php';
 
         try {
-            // $this->pdo = new PDO(
-            //     "mysql:host={$config['host']};dbname={$config['dbname']};charset=utf8mb4",
-            //     $config['username'],
-            //     $config['password'],
-            //     [
-            //         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            //         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            //     ]
-            // );
-            //GANTI MENJADI INI (PAKAI SOCKET SYNology) yesss jalan di synologi sebelumnya error "ERROR 2002 (HY000): Can't connect to server on '127.0.0.1' (115)"
             $this->pdo = new PDO(
-                "mysql:unix_socket=/run/mysqld/mysqld10.sock;dbname={$config['dbname']};charset=utf8mb4",
+                "mysql:host={$config['host']};dbname={$config['dbname']};charset=utf8mb4",
                 $config['username'],
                 $config['password'],
                 [
@@ -31,6 +21,16 @@ class DB
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 ]
             );
+            //GANTI MENJADI INI (PAKAI SOCKET SYNology) yesss jalan di synologi sebelumnya error "ERROR 2002 (HY000): Can't connect to server on '127.0.0.1' (115)"
+            // $this->pdo = new PDO(
+            //     "mysql:unix_socket=/run/mysqld/mysqld10.sock;dbname={$config['dbname']};charset=utf8mb4",
+            //     $config['username'],
+            //     $config['password'],
+            //     [
+            //         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            //         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            //     ]
+            // );
         } catch (PDOException $e) {
             die("Database Error: " . $e->getMessage());
         }

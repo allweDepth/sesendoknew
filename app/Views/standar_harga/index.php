@@ -24,21 +24,36 @@
 
       $columns = [
         'ssh' => [
-          'Nama',
-          'NIP',
-          'Alamat'
+          'Kode Aset',
+          'Kode Akun',
+          'Uraian',
+          'Spesifikasi',
+          'Satuan',
+          'Harga Satuan'
         ],
         'hspk' => [
-          'Kode',
-          'Nama Kegiatan'
+          'Kode Aset',
+          'Kode Akun',
+          'Uraian',
+          'Spesifikasi',
+          'Satuan',
+          'Harga Satuan'
         ],
         'asb' => [
-          'Kode',
-          'Nama Program'
+          'Kode Aset',
+          'Kode Akun',
+          'Uraian',
+          'Spesifikasi',
+          'Satuan',
+          'Harga Satuan'
         ],
         'sbu' => [
-          'Kode',
-          'Nama Program'
+          'Kode Aset',
+          'Kode Akun',
+          'Uraian',
+          'Spesifikasi',
+          'Satuan',
+          'Harga Satuan'
         ]
       ];
 

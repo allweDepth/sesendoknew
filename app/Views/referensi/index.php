@@ -26,7 +26,9 @@
         'sub_kegiatan' => [
           'Kode',
           'Nama Sub Kegiatan',
-          'Pagu'
+          'Kinerja',
+
+          'Indikator'
         ],
         'kegiatan' => [
           'Kode',
@@ -35,6 +37,57 @@
         'program' => [
           'Kode',
           'Nama Program'
+        ],
+        'rekanan' => [
+          'Perusahaan',
+          'Alamat',
+          'email',
+          'NPWP',
+          'No. Rekening',
+          'Nama Bank',
+          'Direktur'
+        ],
+        'satuan' => [
+          'Value',
+          'Item',
+          'Keterangan'
+        ],
+        'aset' => [
+          'Kode',
+          'Uraian',
+          'Keterangan'
+        ],
+        'akun' => [
+          'Kode',
+          'Uraian',
+          'Keterangan'
+        ],
+        'sumber_dana' => [
+          'Kode',
+          'Uraian',
+          'Keterangan'
+        ],
+        'organisasi' => [
+          'Kode',
+          'Uraian',
+          'Alamat',
+          'Keterangan'
+        ],
+        'peraturan' => [
+          'Nomor',
+          'Uraian',
+          'Tanggal Penetapan',
+          'status',
+          'Keterangan'
+        ],
+        'wilayah' => [
+          'Kode',
+          'Uraian',
+          'Status',
+          'Jumlah Kec.',
+          'Jumlah Desa',
+          'Luas',
+          'Keterangan'
         ]
       ];
 

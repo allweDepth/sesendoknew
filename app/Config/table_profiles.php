@@ -10,6 +10,11 @@ return [
                 'select' => ['*'],
                 'searchable' => ['kode', 'uraian'],
                 'order_by' => 'kode ASC'
+            ],
+            'referensi' => [
+                'select' => ['id', 'kode', 'uraian', 'keterangan'],
+                'searchable' => ['kode', 'uraian', 'keterangan'],
+                'order_by' => 'kode ASC'
             ]
         ]
     ],
@@ -26,8 +31,8 @@ return [
                 ] // ambil dari user login
             ],
             'standar_harga' => [
-                'select' => ['id', 'kd_aset', 'uraian_barang', 'satuan', 'harga_satuan'],
-                'searchable' => ['kd_aset', 'nomenklatur_urusan'],
+                'select' => ['id', 'kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
                 'order_by' => 'kd_aset ASC',
                 'where' => [
                     'tahun' => 'user'
@@ -45,8 +50,8 @@ return [
                 'order_by' => 'uraian_barang ASC'
             ],
             'standar_harga' => [
-                'select' => ['id', 'kd_aset', 'uraian_barang', 'satuan', 'harga_satuan'],
-                'searchable' => ['kd_aset', 'nomenklatur_urusan'],
+                'select' => ['id', 'kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
                 'order_by' => 'kd_aset ASC',
                 'where' => [
                     'tahun' => 'user'
@@ -64,8 +69,8 @@ return [
                 'order_by' => 'uraian_barang ASC'
             ],
             'standar_harga' => [
-                'select' => ['id', 'kd_aset', 'uraian_barang', 'satuan', 'harga_satuan'],
-                'searchable' => ['kd_aset', 'nomenklatur_urusan'],
+                'select' => ['id', 'kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
                 'order_by' => 'kd_aset ASC',
                 'where' => [
                     'tahun' => 'user'
@@ -83,8 +88,8 @@ return [
                 'order_by' => 'uraian_barang ASC'
             ],
             'standar_harga' => [
-                'select' => ['id', 'kd_aset', 'uraian_barang', 'satuan', 'harga_satuan'],
-                'searchable' => ['kd_aset', 'nomenklatur_urusan'],
+                'select' => ['id', 'kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
                 'order_by' => 'kd_aset ASC',
                 'where' => [
                     'tahun' => 'user'
@@ -101,6 +106,11 @@ return [
                 'select' => ['*'],
                 'searchable' => ['kode', 'uraian'],
                 'order_by' => 'kode ASC'
+            ],
+            'referensi' => [
+                'select' => ['id', 'kode', 'uraian', 'keterangan'],
+                'searchable' => ['kode', 'uraian'],
+                'order_by' => 'kode ASC'
             ]
         ]
     ],
@@ -113,6 +123,11 @@ return [
                 'select' => ['id', 'kode', 'uraian', 'singkatan'],
                 'searchable' => ['kode', 'uraian', 'singkatan'],
                 'order_by' => 'kode ASC'
+            ],
+            'referensi' => [
+                'select' => ['id', 'kode', 'uraian', 'alamat', 'keterangan'],
+                'searchable' => ['kode', 'uraian', 'alamat', 'keterangan'],
+                'order_by' => 'kode ASC'
             ]
         ]
     ],
@@ -123,6 +138,11 @@ return [
         'modes' => [
             'dropdown' => [
                 'select' => ['id', 'value', 'item'],
+                'searchable' => ['item', 'value'],
+                'order_by' => 'item ASC'
+            ],
+            'referensi' => [
+                'select' => ['id', 'value', 'item', 'keterangan'],
                 'searchable' => ['item', 'value'],
                 'order_by' => 'item ASC'
             ],
@@ -149,7 +169,7 @@ return [
                 'order_by' => 'kode ASC'
             ],
             'referensi' => [
-                'select' => ['kode', 'nomenklatur_urusan'],
+                'select' => ['id', 'kode', 'nomenklatur_urusan', 'kinerja', 'indikator'],
                 'searchable' => ['kode', 'nomenklatur_urusan'],
                 'order_by' => 'kode ASC'
             ],
@@ -169,6 +189,11 @@ return [
                 'select' => ['id', 'kode', 'uraian'],
                 'searchable' => ['kode', 'uraian'],
                 'order_by' => 'kode ASC'
+            ],
+            'referensi' => [
+                'select' => ['id', 'kode', 'uraian', 'keterangan'],
+                'searchable' => ['kode', 'uraian', 'keterangan'],
+                'order_by' => 'kode ASC'
             ]
         ]
     ],
@@ -180,6 +205,11 @@ return [
             'default' => [
                 'select' => ['id', 'kode', 'uraian', 'status'],
                 'searchable' => ['kode', 'uraian'],
+                'order_by' => 'kode ASC'
+            ],
+            'referensi' => [
+                'select' => ['id', 'kode', 'uraian', 'status', 'jml_kec', 'jml_desa', 'luas', 'keterangan'],
+                'searchable' => ['kode', 'uraian', 'status', 'jml_kec', 'jml_desa', 'luas', 'keterangan'],
                 'order_by' => 'kode ASC'
             ]
         ]
@@ -193,6 +223,11 @@ return [
                 'select' => ['id', 'kode', 'judul', 'nomor'],
                 'searchable' => ['kode', 'judul', 'nomor'],
                 'order_by' => 'tgl_penetapan DESC'
+            ],
+            'referensi' => [
+                'select' => ['id', 'nomor', 'judul', 'tgl_penetapan', 'status', 'keterangan'],
+                'searchable' => ['kode', 'uraian', 'alamat', 'keterangan'],
+                'order_by' => 'kode ASC'
             ]
         ]
     ],
@@ -207,7 +242,7 @@ return [
                 'order_by' => 'nama_perusahaan ASC'
             ],
             'referensi' => [
-                'select' => ['nama_perusahaan', 'alamat', 'email', 'npwp', 'no_rekening', 'bank_rekening', 'atas_nama_rekening', 'direktur'],
+                'select' => ['nama_perusahaan', 'alamat', 'email', 'npwp', 'no_rekening', 'bank_rekening', 'direktur'],
                 'searchable' => ['nama_perusahaan', 'alamat', 'direktur'],
                 'order_by' => 'nama_perusahaan ASC'
             ]
