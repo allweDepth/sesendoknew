@@ -1,4 +1,16 @@
 <?php $active = 'pelayanan'; ?>
+<?php
+function randomAvatar() {
+    $path = __DIR__ . '/../../../public/assets/img/avatar/large/';
+    $images = glob($path . '*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+
+    if (!$images) {
+        return '/assets/img/avatar/default.png';
+    }
+
+    return '/assets/img/avatar/large/' . basename($images[array_rand($images)]);
+}
+?>
 <div class="ui container" style="margin-top:60px; max-width:1100px">
 
   <h2 class="ui center aligned header">
@@ -15,7 +27,7 @@
     <!-- IMB -->
     <div class="card layanan-card">
       <div class="image">
-        <img src="https://source.unsplash.com/600x400/?building,architecture">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">IMB / Persetujuan Bangunan Gedung</div>
@@ -34,7 +46,7 @@
     <!-- AIR BERSIH -->
     <div class="card layanan-card">
       <div class="image">
-        <img src="https://source.unsplash.com/600x400/?clean-water,water">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">Pengelolaan Air Bersih</div>
@@ -53,7 +65,7 @@
     <!-- AIR LIMBAH -->
     <div class="card layanan-card">
       <div class="image">
-        <img src="https://source.unsplash.com/600x400/?wastewater,treatment">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">Pengelolaan Air Limbah Domestik</div>
@@ -72,7 +84,7 @@
     <!-- ALAT BERAT -->
     <div class="card layanan-card">
       <div class="image">
-        <img src="https://source.unsplash.com/600x400/?heavy-equipment,construction">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">Peralatan Alat Berat & Laboratorium</div>

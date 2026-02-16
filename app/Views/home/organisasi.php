@@ -1,4 +1,16 @@
 <?php $active = 'organisasi'; ?>
+<?php
+function randomAvatar() {
+    $path = __DIR__ . '/../../../public/assets/img/avatar/large/';
+    $images = glob($path . '*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+
+    if (!$images) {
+        return '/assets/img/avatar/default.png';
+    }
+
+    return '/assets/img/avatar/large/' . basename($images[array_rand($images)]);
+}
+?>
 <div class="ui container" style="margin-top:60px; max-width:1200px">
 
   <h2 class="ui center aligned header">
@@ -14,7 +26,7 @@
   <div class="ui center aligned segment basic">
     <div class="ui centered card profil-card utama">
       <div class="image">
-        <img src="https://source.unsplash.com/300x300/?government,official">
+        <img src="/assets/img/avatar/default.jpeg">
       </div>
       <div class="content">
         <div class="header">SYAMSUNAR, SP., M.M</div>
@@ -33,7 +45,7 @@
   <div class="ui center aligned segment basic">
     <div class="ui centered card profil-card">
       <div class="image">
-        <img src="https://source.unsplash.com/300x300/?woman,leader">
+        <img src="/assets/img/avatar/large/nan.jpg">
       </div>
       <div class="content">
         <div class="header">SRI IRDA AYU, SP., M.Si</div>
@@ -57,7 +69,7 @@
 
     <div class="card profil-card">
       <div class="image">
-        <img src="https://source.unsplash.com/300x300/?construction">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">KAMARUDDIN, ST., M.P.W.P</div>
@@ -71,7 +83,7 @@
 
     <div class="card profil-card">
       <div class="image">
-        <img src="https://source.unsplash.com/300x300/?road,engineer">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">BACHTIAR B SUMAY, SH</div>
@@ -85,7 +97,7 @@
 
     <div class="card profil-card">
       <div class="image">
-        <img src="https://source.unsplash.com/300x300/?water,dam">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">I NYOMAN SUMERTA, ST., M.P.W.P</div>
@@ -99,7 +111,7 @@
 
     <div class="card profil-card">
       <div class="image">
-        <img src="https://source.unsplash.com/300x300/?city,planning">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">NURMADINA, S.Sos., M.SI</div>
@@ -113,7 +125,7 @@
 
     <div class="card profil-card">
       <div class="image">
-        <img src="https://source.unsplash.com/300x300/?building,architecture">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">NARDIN, ST</div>
@@ -138,7 +150,7 @@
 
     <div class="card profil-card">
       <div class="image">
-        <img src="https://source.unsplash.com/300x300/?finance,office">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">FELIX DATUAN, ST</div>
@@ -152,7 +164,7 @@
 
     <div class="card profil-card">
       <div class="image">
-        <img src="https://source.unsplash.com/300x300/?administration">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">IRMAWATI, SE., M.P.W.P</div>
@@ -166,7 +178,7 @@
 
     <div class="card profil-card">
       <div class="image">
-        <img src="https://source.unsplash.com/300x300/?wastewater,plant">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">I MADE SULAWA, SE., M.P.W.P</div>
@@ -180,7 +192,7 @@
 
     <div class="card profil-card">
       <div class="image">
-        <img src="https://source.unsplash.com/300x300/?documents">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">AS'AT, ST</div>
@@ -194,7 +206,7 @@
 
     <div class="card profil-card">
       <div class="image">
-        <img src="https://source.unsplash.com/300x300/?water,management">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">MUNAWIR Z, SH</div>
@@ -208,7 +220,7 @@
 
     <div class="card profil-card">
       <div class="image">
-        <img src="https://source.unsplash.com/300x300/?paperwork,office">
+        <img src="<?= randomAvatar(); ?>">
       </div>
       <div class="content">
         <div class="header">FUADY KAHAR, SH</div>
