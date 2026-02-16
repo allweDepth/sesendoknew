@@ -5,7 +5,7 @@ require_once __DIR__ . '/AnggaranParserService.php';
 
 /**
  * ============================================================
- * ANGARAN CRUD SERVICE (FINAL - INCREMENTAL ENGINE)
+ * ANGARAN CRUD SERVICE (FINAL - INCREMENTAL + PERATURAN)
  * ============================================================
  *
  * Fitur:
@@ -16,19 +16,27 @@ require_once __DIR__ . '/AnggaranParserService.php';
  * - DeleteHierarchy (cascade)
  * - Auto ensure parent hierarchy
  * - Incremental parent update (tanpa SUM berat)
+ * - Lookup uraian master berdasarkan PERATURAN
  *
- * Prinsip:
+ * Prinsip Kerja:
  * ------------------------------------------------------------
- * Parent tidak dihitung ulang dengan SUM,
- * tetapi ditambah / dikurangi berdasarkan delta.
- *
- * Lebih cepat dan scalable.
+ * - Parent tidak dihitung ulang dengan SUM,
+ *   tetapi ditambah/dikurangi berdasarkan delta.
+ * - Hierarki parent otomatis dibuat jika belum ada.
+ * - Uraian parent diambil dari tabel master:
+ *      sub_kegiatan_neo
+ *      akun_neo
+ *   dengan filter peraturan.
  *
  * ============================================================
  */
 
 class AnggaranCrudService
 {
+  /* ============================================================
+       PROPERTIES
+    ============================================================ */
+
   private DB $db;
   private string $table;
   private string $amountColumn;
@@ -37,10 +45,21 @@ class AnggaranCrudService
   private string $kd_wilayah;
   private string $kd_opd;
 
+  private int $peraturan; // 🔥 peraturan DI-INJECT lewat constructor
+
   private AnggaranParserService $parser;
 
-  public function __construct(string $table, string $amountColumn = 'jumlah')
-  {
+  /* ============================================================
+       CONSTRUCTOR
+       ------------------------------------------------------------
+       $peraturan WAJIB diberikan saat instansiasi class.
+    ============================================================ */
+
+  public function __construct(
+    string $table,
+    string $amountColumn,
+    int $peraturan
+  ) {
     if (
       !isset($_SESSION['tahun']) ||
       !isset($_SESSION['kd_wilayah']) ||
@@ -52,6 +71,7 @@ class AnggaranCrudService
     $this->db = DB::getInstance();
     $this->table = $table;
     $this->amountColumn = $amountColumn;
+    $this->peraturan = $peraturan;
 
     $this->tahun      = $_SESSION['tahun'];
     $this->kd_wilayah = $_SESSION['kd_wilayah'];
@@ -70,12 +90,12 @@ class AnggaranCrudService
 
     try {
 
-      // 1️⃣ Ensure hierarchy kegiatan
+      // 1️⃣ Pastikan hierarki sub kegiatan ada
       if (!empty($data['kd_sub_keg'])) {
         $this->ensureHierarchy('kd_sub_keg', $data['kd_sub_keg']);
       }
 
-      // 2️⃣ Ensure hierarchy rekening
+      // 2️⃣ Pastikan hierarki akun ada (jika ada kd_akun)
       if (!empty($data['kd_akun'])) {
         $this->ensureHierarchy(
           'kd_akun',
@@ -84,15 +104,15 @@ class AnggaranCrudService
         );
       }
 
-      // 3️⃣ Inject session identity
+      // 3️⃣ Inject identity session
       $data['tahun']      = $this->tahun;
       $data['kd_wilayah'] = $this->kd_wilayah;
       $data['kd_opd']     = $this->kd_opd;
 
-      // 4️⃣ Insert row
+      // 4️⃣ Insert row detail
       $id = $this->db->insert($this->table, $data);
 
-      // 5️⃣ Update parent with delta
+      // 5️⃣ Tambah parent dengan delta (incremental engine)
       $this->updateParentByDelta(
         $data['kd_sub_keg'],
         $data['kd_akun'] ?? null,
@@ -103,7 +123,6 @@ class AnggaranCrudService
 
       return $id;
     } catch (Exception $e) {
-
       $this->db->query("ROLLBACK");
       throw $e;
     }
@@ -119,6 +138,7 @@ class AnggaranCrudService
 
     try {
 
+      // Ambil data lama untuk hitung delta
       $old = $this->db->first(
         $this->table,
         "WHERE id=? AND tahun=? AND kd_wilayah=? AND kd_opd=?",
@@ -127,7 +147,6 @@ class AnggaranCrudService
 
       $oldAmount = (float)$old[$this->amountColumn];
       $newAmount = (float)$data[$this->amountColumn];
-
       $delta = $newAmount - $oldAmount;
 
       unset($data['tahun'], $data['kd_wilayah'], $data['kd_opd']);
@@ -139,7 +158,7 @@ class AnggaranCrudService
         [$id, $this->tahun, $this->kd_wilayah, $this->kd_opd]
       );
 
-      // Update parent by delta
+      // Update parent sesuai delta
       $this->updateParentByDelta(
         $old['kd_sub_keg'],
         $old['kd_akun'] ?? null,
@@ -150,7 +169,6 @@ class AnggaranCrudService
 
       return 1;
     } catch (Exception $e) {
-
       $this->db->query("ROLLBACK");
       throw $e;
     }
@@ -189,84 +207,6 @@ class AnggaranCrudService
 
       return 1;
     } catch (Exception $e) {
-
-      $this->db->query("ROLLBACK");
-      throw $e;
-    }
-  }
-
-  /* ============================================================
-       DELETE HIERARCHY (CASCADE)
-    ============================================================ */
-
-  public function deleteHierarchy(string $field, string $prefix): int
-  {
-    if (!in_array($field, ['kd_sub_keg', 'kd_akun'])) {
-      throw new Exception("Field tidak valid.");
-    }
-
-    $this->db->query("START TRANSACTION");
-
-    try {
-
-      $sample = $this->db->first(
-        $this->table,
-        "WHERE tahun=? AND kd_wilayah=? AND kd_opd=? 
-                 AND {$field} LIKE ?",
-        [
-          $this->tahun,
-          $this->kd_wilayah,
-          $this->kd_opd,
-          $prefix . '%'
-        ]
-      );
-
-      if (!$sample) {
-        $this->db->query("ROLLBACK");
-        return 0;
-      }
-
-      // Ambil total subtree sekali saja
-      $totalRow = $this->db->query(
-        "SELECT SUM({$this->amountColumn}) as total
-                 FROM {$this->table}
-                 WHERE tahun=? AND kd_wilayah=? AND kd_opd=? 
-                 AND {$field} LIKE ?",
-        [
-          $this->tahun,
-          $this->kd_wilayah,
-          $this->kd_opd,
-          $prefix . '%'
-        ]
-      )->fetch();
-
-      $delta = -(float)($totalRow['total'] ?? 0);
-
-      // Hapus subtree
-      $deleted = $this->db->delete(
-        $this->table,
-        "WHERE tahun=? AND kd_wilayah=? AND kd_opd=? 
-                 AND {$field} LIKE ?",
-        [
-          $this->tahun,
-          $this->kd_wilayah,
-          $this->kd_opd,
-          $prefix . '%'
-        ]
-      );
-
-      // Update parent
-      $this->updateParentByDelta(
-        $sample['kd_sub_keg'],
-        $sample['kd_akun'] ?? null,
-        $delta
-      );
-
-      $this->db->query("COMMIT");
-
-      return $deleted;
-    } catch (Exception $e) {
-
       $this->db->query("ROLLBACK");
       throw $e;
     }
@@ -274,6 +214,9 @@ class AnggaranCrudService
 
   /* ============================================================
        ENSURE HIERARCHY
+       ------------------------------------------------------------
+       Membuat parent jika belum ada
+       dan mengisi uraian dari master berdasarkan PERATURAN
     ============================================================ */
 
   private function ensureHierarchy(string $field, string $kode, ?string $kd_sub_keg = null)
@@ -300,10 +243,14 @@ class AnggaranCrudService
 
       if (!$exists) {
 
+        // 🔥 Ambil uraian master berdasarkan peraturan
+        $uraian = $this->getMasterUraian($field, $level);
+
         $insert = [
           'tahun'      => $this->tahun,
           'kd_wilayah' => $this->kd_wilayah,
           'kd_opd'     => $this->kd_opd,
+          'uraian'     => $uraian,
           $this->amountColumn => 0
         ];
 
@@ -322,7 +269,68 @@ class AnggaranCrudService
   }
 
   /* ============================================================
-       UPDATE PARENT BY DELTA (CORE ENGINE)
+       GET MASTER URAIAN BERDASARKAN PERATURAN
+    ============================================================ */
+
+  /* ============================================================
+   GET MASTER URAIAN (STRICT + CACHE)
+   ============================================================ */
+
+  private array $masterCache = [];
+
+  /**
+   * Ambil uraian master berdasarkan peraturan
+   * + strict validation
+   * + caching
+   */
+  private function getMasterUraian(string $field, string $kode): string
+  {
+    // 🔹 Inisialisasi cache array jika belum ada
+    if (!isset($this->masterCache[$field])) {
+      $this->masterCache[$field] = [];
+    }
+
+    // 🔹 Jika sudah pernah diambil, gunakan cache
+    if (isset($this->masterCache[$field][$kode])) {
+      return $this->masterCache[$field][$kode];
+    }
+
+    // 🔹 Query ke tabel master
+    if ($field === 'kd_sub_keg') {
+
+      $row = $this->db->first(
+        'sub_kegiatan_neo',
+        "WHERE kode=? AND peraturan=?",
+        [$kode, $this->peraturan]
+      );
+    } elseif ($field === 'kd_akun') {
+
+      $row = $this->db->first(
+        'akun_neo',
+        "WHERE kode=? AND peraturan=?",
+        [$kode, $this->peraturan]
+      );
+    } else {
+      throw new Exception("Field master tidak valid.");
+    }
+
+    // 🔴 STRICT VALIDATION
+    if (!$row) {
+      throw new Exception(
+        "Kode '{$kode}' tidak ditemukan di master {$field} untuk peraturan {$this->peraturan}"
+      );
+    }
+
+    // 🔹 Simpan ke cache
+    $this->masterCache[$field][$kode] = $row['uraian'];
+
+    return $row['uraian'];
+  }
+
+  /* ============================================================
+       UPDATE PARENT BY DELTA
+       ------------------------------------------------------------
+       Core incremental engine
     ============================================================ */
 
   private function updateParentByDelta(
@@ -353,7 +361,7 @@ class AnggaranCrudService
       );
     }
 
-    // Update rekening jika ada
+    // Update hierarchy rekening
     if ($kd_akun) {
 
       $akunLevels = $this->parser->buildHierarchy($kd_akun);
