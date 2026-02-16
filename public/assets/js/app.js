@@ -859,7 +859,31 @@ class FormContainerManager {
 			this.$flyout.flyout("hide");
 		}
 	}
+/* --------------------------------------------- */
+loadData(idRow, container) {
 
+	this.ajax.request({
+		data: {
+			jenis: "edit",
+			tbl: AppState.tbl,
+			id_row: idRow,
+		},
+		success: (res) => {
+			if (res.success && res.data) {
+
+				// tentukan target form sesuai container
+				let $formTarget =
+					container === "modal"
+						? $("#form_modal")
+						: $("#form_flyout");
+
+				Object.keys(res.data).forEach((key) => {
+					$formTarget.find(`[name="${key}"]`).val(res.data[key]);
+				});
+			}
+		},
+	});
+}
 	/* --------------------------------------------- */
 	buildConfig(jenis, tbl) {
 		let config = {

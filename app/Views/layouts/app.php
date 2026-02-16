@@ -52,7 +52,7 @@
 
 <body>
 
-    <!-- NAVBAR (DI LUAR PUSHABLE) -->
+    <!-- NAVBAR (DI LUAR PUSHABLE) @note-->
     <div class="ui top attached menu">
         <div class="item" id="toggleSidebar">
             <a>
@@ -89,6 +89,7 @@
             </div>
         </div>
     </div>
+
     <!-- SIDEBAR WRAPPER -->
     <div class="ui bottom attached segment pushable" id="mainContext">
         <!-- SIDEBAR -->
@@ -218,10 +219,11 @@
                 <i class="user icon"></i> Profil
             </a>
         </div>
-        <!-- FLYOUT -->
-        <?php require __DIR__ . '/../partials/flyout.php'; ?>
+
         <!-- PUSHER -->
         <div class="pusher">
+            <!-- FLYOUT -->
+            <?php require __DIR__ . '/../partials/flyout.php'; ?>
             <!-- sticky-->
             <div class="ui sticky">
                 <div class="ui icon message dashboard"><i class="home icon"></i>
