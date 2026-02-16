@@ -48,12 +48,16 @@ class AjaxEngine {
 		success = null,
 		error = null,
 		complete = null,
+		processData = true,
+		contentType = "application/x-www-form-urlencoded; charset=UTF-8",
 	}) {
 		return $.ajax({
 			type: method,
 			url: url,
 			data: data,
 			dataType: "json",
+			processData: processData,
+			contentType: contentType,
 			beforeSend: function () {
 				if (beforeSend) beforeSend();
 			},
@@ -339,9 +343,14 @@ class FormEngine {
 	============================ */
 	static build(elements = []) {
 		let html = "";
+
 		elements.forEach((el) => {
+			if (el.prop?.role) {
+				if (!el.prop.role.includes(AppState.role)) return;
+			}
 			html += this.element(el);
 		});
+
 		return html;
 	}
 
@@ -502,6 +511,75 @@ class FormEngine {
 	}
 }
 /* =========================================================
+   ROLE ENGINE
+========================================================= */
+
+const RoleConfig = {
+	admin: {
+		canAdd: true,
+		canEdit: true,
+		canDelete: true,
+		canUpload: true,
+	},
+	editor: {
+		canAdd: true,
+		canEdit: true,
+		canDelete: false,
+		canUpload: true,
+	},
+	viewer: {
+		canAdd: false,
+		canEdit: false,
+		canDelete: false,
+		canUpload: false,
+	},
+};
+
+// Simulasi role login
+AppState.role = "admin";
+/* =========================================================
+   UI BUILDER CONFIG
+	 BUAT FIELD UNTUK FORM sesuai tbl
+========================================================= */
+
+const UIConfig = {//@note
+	referensi: {
+		satuan: [
+			{
+				tag: "field",
+				prop: {
+					label: "Nama Satuan",
+					name: "nama_satuan",
+					classField: "required",
+					atribut: `placeholder="Masukkan satuan"`,
+					role: ["admin", "editor"],
+				},
+			},
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Status",
+					name: "status",
+					options: [
+						{ value: "1", text: "Aktif" },
+						{ value: "0", text: "Non Aktif" },
+					],
+					role: ["admin"],
+				},
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Upload File",
+					name: "file_dokumen",
+					type: "file",
+					role: ["admin"],
+				},
+			},
+		],
+	},
+};
+/* =========================================================
 	 FLYOUT MANAGER
 	 ---------------------------------------------------------
 	 → Mengatur panel flyout (add/edit/detail)
@@ -576,7 +654,29 @@ class FlyoutManager {
 			this.show();
 		}
 	}
+	//========
+	//========
+	save() {
+		let form = $("#form_flyout form")[0];
+		let formData = new FormData(form);
 
+		formData.append("jenis", AppState.mode);
+		formData.append("tbl", AppState.tbl);
+
+		this.ajax.request({
+			url: AppConfig.apiUrl + "dynamic/save",
+			method: "POST",
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: (res) => {
+				if (res.success) {
+					this.hide();
+					new TableManager().fetch();
+				}
+			},
+		});
+	}
 	/* ---------------------------------------------
 		 Konfigurasi Form per jenis
 		 Bisa kamu modifikasi sesuai kebutuhan
@@ -588,46 +688,46 @@ class FlyoutManager {
 			elements: [],
 		};
 
-		if (jenis === "add") {
-			config.icon = "plus icon";
-			config.header = "Tambah Data";
+		let role = RoleConfig[AppState.role];
 
-			config.elements = [
-				{
-					tag: "field",
-					prop: {
-						label: "Nama",
-						name: "nama",
-						classField: "required",
-						atribut: `placeholder="Nama"`,
-					},
-				},
-			];
+		if (jenis === "add" && !role.canAdd) return config;
+		if (jenis === "edit" && !role.canEdit) return config;
+
+		config.header =
+			jenis === "add"
+				? "Tambah Data"
+				: jenis === "edit"
+					? "Edit Data"
+					: "Detail Data";
+
+		config.icon =
+			jenis === "add"
+				? "plus icon"
+				: jenis === "edit"
+					? "edit icon"
+					: "eye icon";
+
+		if (UIConfig[AppState.jenis]?.[tbl]) {
+			config.elements = UIConfig[AppState.jenis][tbl];
 		}
 
-		if (jenis === "edit") {
-			config.icon = "edit icon";
-			config.header = "Edit Data";
+		// Tambahkan tombol submit
+		config.elements.push({
+			tag: "divider",
+			prop: { label: "" },
+		});
 
-			config.elements = [
-				{
-					tag: "field",
-					prop: {
-						label: "Nama",
-						name: "nama",
-						classField: "required",
-						atribut: `placeholder="Nama"`,
-					},
-					tag: "field",
-					prop: {
-						label: "Nama",
-						name: "nama",
-						classField: "required",
-						atribut: `placeholder="Nama"`,
-					},
-				},
-			];
-		}
+		config.elements.push({
+			tag: "field",
+			prop: {
+				name: "_submit",
+				atribut: `
+				type="button"
+				class="ui primary button btnSubmit"
+				value="Simpan"
+			`,
+			},
+		});
 
 		return config;
 	}
@@ -679,7 +779,157 @@ class FlyoutManager {
 		this.$flyout.flyout("hide");
 	}
 }
+/* =========================================================
+   FORM CONTAINER MANAGER
+   Bisa tampil di:
+   - Flyout
+   - Modal
+========================================================= */
 
+class FormContainerManager {
+	constructor() {
+		this.$flyout = $("#mainContext").children(".ui.flyout");
+		this.$modal = $("#mainModal");
+
+		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
+
+		this.bindEvents();
+	}
+
+	/* --------------------------------------------- */
+	bindEvents() {
+		$(document).on("click", '[data-ui="open-form"]', (e) => {
+			e.preventDefault();
+			this.open($(e.currentTarget));
+		});
+
+		$(document).on("click", ".btnSubmit", () => {
+			this.save();
+		});
+	}
+
+	/* --------------------------------------------- */
+	open($btn) {
+		const jenis = $btn.data("jns");
+		const tbl = $btn.data("tbl");
+		const container = $btn.data("container") || "flyout";
+		const idRow = $btn.data("id");
+
+		AppState.mode = jenis;
+		AppState.tbl = tbl;
+
+		let config = this.buildConfig(jenis, tbl);
+
+		this.render(config, container);
+
+		if ((jenis === "edit" || jenis === "detail") && idRow) {
+			this.loadData(idRow, container);
+		}
+
+		this.show(container);
+	}
+
+	/* --------------------------------------------- */
+	render(config, container) {
+		if (container === "modal") {
+			$("#icon_modal").attr("class", config.icon);
+			$("#content_modal").text(config.header);
+			FormEngine.render("#form_modal", config.elements);
+		} else {
+			$("#icon_flyout").attr("class", config.icon);
+			$("#content_flyout").text(config.header);
+			FormEngine.render("#form_flyout", config.elements);
+		}
+	}
+
+	/* --------------------------------------------- */
+	show(container) {
+		if (container === "modal") {
+			this.$modal.modal("show");
+		} else {
+			this.$flyout.flyout("show");
+		}
+	}
+
+	/* --------------------------------------------- */
+	hide(container) {
+		if (container === "modal") {
+			this.$modal.modal("hide");
+		} else {
+			this.$flyout.flyout("hide");
+		}
+	}
+
+	/* --------------------------------------------- */
+	buildConfig(jenis, tbl) {
+		let config = {
+			icon: "folder icon",
+			header: "",
+			elements: [],
+		};
+
+		config.header =
+			jenis === "add"
+				? "Tambah Data"
+				: jenis === "edit"
+					? "Edit Data"
+					: "Detail Data";
+
+		config.icon =
+			jenis === "add"
+				? "plus icon"
+				: jenis === "edit"
+					? "edit icon"
+					: "eye icon";
+
+		if (UIConfig[AppState.jenis]?.[tbl]) {
+			config.elements = UIConfig[AppState.jenis][tbl];
+		}
+
+		config.elements.push({
+			tag: "divider",
+			prop: {},
+		});
+
+		config.elements.push({
+			tag: "field",
+			prop: {
+				name: "_submit",
+				atribut: `
+					type="button"
+					class="ui primary button btnSubmit"
+					value="Simpan"
+				`,
+			},
+		});
+
+		return config;
+	}
+
+	/* --------------------------------------------- */
+	save() {
+		let form = $(".ui.form")[0];
+		let formData = new FormData(form);
+
+		formData.append("jenis", AppState.mode);
+		formData.append("tbl", AppState.tbl);
+
+		this.ajax.request({
+			url: AppConfig.apiUrl + "dynamic/save",
+			method: "POST",
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: (res) => {
+				if (res.success) {
+					this.$modal.modal("hide");
+					this.$flyout.flyout("hide");
+					new TableManager().fetch();
+				}
+			},
+		});
+	}
+}
 // Kenapa Ini Versi CEO & Interaktif?
 function loadProfil() {
 	$.post(
@@ -935,8 +1185,8 @@ $(document).ready(function () {
 	/* ---------------------------------------------
 	   Inisialisasi Flyout Manager
 	---------------------------------------------- */
-	let flyoutManager = new FlyoutManager("#mainContext");
-
+	// let flyoutManager = new FlyoutManager("#mainContext");
+	let formContainerManager = new FormContainerManager();
 	/* =========================================
 	   WALLCHAT MODULE (TETAP UTUH)
 	========================================= */
@@ -1022,7 +1272,25 @@ $(document).ready(function () {
 			);
 		});
 	});
+	// Delete
+	$(document).on("click", '[data-ui="delete-row"]', (e) => {
+		let id = $(e.currentTarget).data("id");
 
+		if (!confirm("Yakin hapus data?")) return;
+
+		this.ajax.request({
+			data: {
+				jenis: "delete",
+				tbl: AppState.tbl,
+				id_row: id,
+			},
+			success: (res) => {
+				if (res.success) {
+					new TableManager().fetch();
+				}
+			},
+		});
+	});
 	/* ---------------------------------------------
 	   Load Profil jika halaman profil
 	---------------------------------------------- */

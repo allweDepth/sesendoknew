@@ -7,7 +7,15 @@
   <div class="ui hidden divider"></div>
 
   <div class="ui right floated basic icon buttons">
-    <button class="ui button" data-ui="open-form" data-tooltip="Tambah Data" data-position="bottom center" jns="add"><i class="plus icon"></i></button>
+    <button class="ui button"
+      data-ui="open-form"
+      data-jns="add"
+      data-tbl="<?= $tbl ?>"
+      data-tooltip="Tambah Data"
+      data-position="bottom center"
+      data-container="flyout">>
+      <i class="plus icon"></i>
+    </button>
     <button class="ui button" data-ui="open-form" jns="import" data-tooltip="Import XLSX" data-position="bottom center"><i class="upload icon"></i></button> <button class="ui button" data-tooltip="Download" data-position="bottom center" name="ungguh" jns="dok" tbl="sub_keg" type="submit"><i class="alternate download icon"></i></button>
   </div>
 
@@ -17,9 +25,9 @@
   </h3>
 
   <div class="ui hidden divider"></div>
-  
-    <table class="ui celled striped table">
-      <thead>
+
+  <table class="ui celled striped table">
+    <thead>
       <?php
 
       $columns = [
@@ -104,20 +112,20 @@
 
         <th class="collapsing">Aksi</th>
       </tr>
-  </thead>
-  <tbody name="tabel_referensi">
-    <tr>
-      <td colspan="<?= $totalCol ?>">
-        <div class="ui active inline loader"></div>
-      </td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td colspan="<?= $totalCol ?>" class="right aligned">
-        <div class="ui center pagination menu" name="pagination_referensi"></div>
-        </th>
-    </tr>
-  </tfoot>
+    </thead>
+    <tbody name="tabel_referensi">
+      <tr>
+        <td colspan="<?= $totalCol ?>">
+          <div class="ui active inline loader"></div>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="<?= $totalCol ?>" class="right aligned">
+          <div class="ui center pagination menu" name="pagination_referensi"></div>
+          </th>
+      </tr>
+    </tfoot>
   </table>
 </div>
