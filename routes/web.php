@@ -56,4 +56,10 @@ return [
     '/wallchat/load' => ['WallchatController', 'load'],
     '/wallchat/store' => ['WallchatController', 'store'],
     '/wallchat/comment' => ['WallchatController', 'comment'],
+    // ==============================
+    // P R O F I L
+    // ==============================
+    '/profil' => ['ProfilController', 'index'],
+    '/profil/load' => ['ProfilController', 'load'],
+    '/profil/update' => ['ProfilController', 'update'],
 ];

@@ -276,42 +276,44 @@ class TableManager {
 		buttons.forEach((btn) => {
 			if (btn === "edit") {
 				html += `
-				<button class="ui button"
-					name="flyout"
-					jns="edit"
-					tbl="${tbl}"
-					id_row="${row.id}">
-					<i class="edit outline blue icon"></i>
-				</button>
+			<button class="ui button"
+				data-ui="open-form"
+				data-container="flyout"
+				data-jns="edit"
+				data-tbl="${tbl}"
+				data-id="${row.id}">
+				<i class="edit outline blue icon"></i>
+			</button>
 			`;
 			}
 
 			if (btn === "delete") {
 				html += `
-				<button class="ui red button"
-					name="del_row"
-					jns="delete"
-					tbl="${tbl}"
-					id_row="${row.id}">
-					<i class="trash alternate outline red icon"></i>
-				</button>
+			<button class="ui red button"
+				data-ui="delete-row"
+				data-jns="delete"
+				data-tbl="${tbl}"
+				data-id="${row.id}">
+				<i class="trash alternate outline red icon"></i>
+			</button>
 			`;
 			}
 
 			if (btn === "detail") {
 				html += `
-				<button class="ui green button"
-					name="detail_row"
-					tbl="${tbl}"
-					id_row="${row.id}">
-					<i class="eye icon"></i>
-				</button>
+			<button class="ui green button"
+				data-ui="detail-row"
+				data-container="flyout"
+				data-jns="detail"
+				data-tbl="${tbl}"
+				data-id="${row.id}">
+				<i class="eye icon"></i>
+			</button>
 			`;
 			}
 		});
 
 		html += `</div>`;
-
 		return html;
 	}
 }
@@ -538,13 +540,13 @@ class FlyoutManager {
 		 Event Binding
 	---------------------------------------------- */
 	bindEvents() {
-		// Klik tombol edit/add (name="flyout")
-		$(document).on("click", '[name="flyout"]', (e) => {
+		// Open Form (Add / Edit / Detail)
+		$(document).on("click", '[data-ui="open-form"]', (e) => {
 			e.preventDefault();
 			this.open($(e.currentTarget));
 		});
 
-		// Tombol close
+		// Close Flyout
 		$(document).on("click", ".btnFlyoutClose, .close.icon", () => {
 			this.hide();
 		});
@@ -554,13 +556,12 @@ class FlyoutManager {
 		 Open Flyout
 	---------------------------------------------- */
 	open($btn) {
-		const jenis = $btn.attr("jns");
-		const tbl = $btn.attr("tbl");
-		const idRow = $btn.attr("id_row");
+		const jenis = $btn.data("jns");
+		const tbl = $btn.data("tbl");
+		const idRow = $btn.data("id");
 
 		AppState.mode = jenis;
 
-		// ⬇️ JANGAN timpa tbl kalau tidak ada
 		if (tbl) {
 			AppState.tbl = tbl;
 		}
@@ -569,7 +570,7 @@ class FlyoutManager {
 
 		this.render(config);
 
-		if (jenis === "edit" && idRow) {
+		if ((jenis === "edit" || jenis === "detail") && idRow) {
 			this.loadData(idRow);
 		} else {
 			this.show();
@@ -610,6 +611,13 @@ class FlyoutManager {
 
 			config.elements = [
 				{
+					tag: "field",
+					prop: {
+						label: "Nama",
+						name: "nama",
+						classField: "required",
+						atribut: `placeholder="Nama"`,
+					},
 					tag: "field",
 					prop: {
 						label: "Nama",
@@ -671,6 +679,35 @@ class FlyoutManager {
 		this.$flyout.flyout("hide");
 	}
 }
+
+// Kenapa Ini Versi CEO & Interaktif?
+function loadProfil() {
+	$.post(
+		"/profil/load",
+		function (res) {
+			if (res.status === "success") {
+				let d = res.data;
+
+				for (let key in d) {
+					$('[name="' + key + '"]').val(d[key]);
+				}
+
+				$("#card_nama").text(d.nama);
+				$("#card_type").text(d.type_user);
+				$("#card_tahun").text(d.tahun);
+				$("#card_login").text(d.tgl_login ?? "-");
+
+				if (d.photo) {
+					$("#preview_photo").attr("src", "uploads/" + d.photo);
+				}
+
+				$(".ui.dropdown").dropdown("refresh");
+			}
+		},
+		"json",
+	);
+}
+
 /* =========================================================
 	 INIT APPLICATION (document.ready)
 	 ---------------------------------------------------------
@@ -688,37 +725,33 @@ class FlyoutManager {
 
 $(document).ready(function () {
 	/* ---------------------------------------------
-		 Inisialisasi Table Manager
-		 → Engine utama tabel
+	   Inisialisasi Table Manager
 	---------------------------------------------- */
 	tableManager = new TableManager();
 
 	/* ---------------------------------------------
-		 Ambil elemen context utama
+	   Ambil elemen context utama
 	---------------------------------------------- */
 	const $context = $("#mainContext");
 
 	/* ---------------------------------------------
-		 Sidebar reference
+	   Sidebar reference
 	---------------------------------------------- */
 	const $sidebar = $context.children(".ui.sidebar");
 
 	/* ---------------------------------------------
-		 Ambil parameter URL (?tbl=...)
-		 Contoh: /referensi?tbl=program
+	   Ambil parameter URL (?tbl=...)
 	---------------------------------------------- */
 	const params = new URLSearchParams(window.location.search);
 	const tblFromUrl = params.get("tbl");
 
 	/* ---------------------------------------------
-		 Ambil path aktif
-		 Contoh: /referensi
+	   Ambil path aktif
 	---------------------------------------------- */
 	const currentPath = window.location.pathname.replace(/^\/+/g, "");
 
 	/* ---------------------------------------------
-		 Sinkronisasi jumlah rows pertama kali
-		 (Dropdown Fomantic UI)
+	   Sinkronisasi jumlah rows pertama kali
 	---------------------------------------------- */
 	if ($("#countRow").length) {
 		let value = $("#countRow").dropdown("get value");
@@ -726,8 +759,7 @@ $(document).ready(function () {
 	}
 
 	/* ---------------------------------------------
-		 Auto load tabel jika ada ?tbl=
-		 (Dipanggil 2x sesuai kode asli)
+	   Auto load tabel jika ada ?tbl=
 	---------------------------------------------- */
 	if (tblFromUrl && currentPath) {
 		tableManager.load(currentPath, tblFromUrl);
@@ -737,7 +769,7 @@ $(document).ready(function () {
 	}
 
 	/* ---------------------------------------------
-	Inisialisasi Sidebar Fomantic
+	   Inisialisasi Sidebar Fomantic
 	---------------------------------------------- */
 	$sidebar.sidebar({
 		context: $context,
@@ -745,16 +777,14 @@ $(document).ready(function () {
 	});
 
 	/* ---------------------------------------------
-		 Toggle Sidebar Button
+	   Toggle Sidebar Button
 	---------------------------------------------- */
 	$("#toggleSidebar").on("click", function () {
 		$sidebar.sidebar("toggle");
 	});
 
 	/* =============================================
-		 MENU CLICK LOAD TABLE
-		 → Saat klik menu sidebar
-		 → Akan load tabel berdasarkan jenis & tbl
+	   MENU CLICK LOAD TABLE
 	============================================= */
 	$(document).on("click", '[name="menu_table"]', function (e) {
 		e.preventDefault();
@@ -766,8 +796,7 @@ $(document).ready(function () {
 	});
 
 	/* =============================================
-		 DROPDOWN COUNT ROW
-		 → Mengubah jumlah data per halaman
+	   DROPDOWN COUNT ROW
 	============================================= */
 	$("#countRow").dropdown({
 		onChange: function (value) {
@@ -778,14 +807,13 @@ $(document).ready(function () {
 	});
 
 	/* ---------------------------------------------
-		 Inisialisasi semua dropdown & accordion
+	   Inisialisasi dropdown & accordion
 	---------------------------------------------- */
 	$(".ui.dropdown").dropdown();
 	$(".ui.accordion").accordion({ exclusive: false });
 
 	/* =============================================
-		 PAGINATION CLICK
-		 → Klik nomor halaman
+	   PAGINATION CLICK
 	============================================= */
 	$(document).on("click", '[name^="pagination_"] .item', function () {
 		let page = parseInt($(this).data("page"));
@@ -796,8 +824,7 @@ $(document).ready(function () {
 	});
 
 	/* =============================================
-		 SEARCH INPUT (Debounce 700ms)
-		 → Pencarian otomatis setelah berhenti mengetik
+	   SEARCH INPUT (Debounce)
 	============================================= */
 	let searchTimer;
 
@@ -811,81 +838,197 @@ $(document).ready(function () {
 		}, 700);
 	});
 
-	/* ---------------------------------------------
-		 (Opsional - tidak aktif)
-		 Fomantic Search API
-	---------------------------------------------- */
-	// $(".ui.search").search({
-	// 	source: [],
-	// 	searchOnFocus: false,
-	// 	onSearchQuery: function (query) {
-	// 		AppState.cari = query;
-	// 		AppState.halaman = 1;
-	// 		tableManager.fetch();
-	// 	},
-	// });
+	/* =========================================================
+	   RENSTRA PAGE MODULE (TETAP UTUH)
+	========================================================= */
+
+	function initRenstraPage() {
+		if (!$(".renstra-page").length) return;
+
+		$(".ui.dropdown").dropdown();
+		$(".ui.checkbox").checkbox();
+
+		$(".ui.calendar").calendar({
+			type: "date",
+			formatter: {
+				date: function (date) {
+					if (!date) return "";
+					const day = ("0" + date.getDate()).slice(-2);
+					const month = ("0" + (date.getMonth() + 1)).slice(-2);
+					const year = date.getFullYear();
+					return year + "-" + month + "-" + day;
+				},
+			},
+		});
+
+		$(".renstra-page .ui.form").form({
+			fields: {
+				kd_wilayah: {
+					identifier: "kd_wilayah",
+					rules: [{ type: "empty", prompt: "Kode Wilayah wajib diisi" }],
+				},
+				tahun: {
+					identifier: "tahun",
+					rules: [{ type: "empty", prompt: "Tahun wajib diisi" }],
+				},
+				tahun_renstra: {
+					identifier: "tahun_renstra",
+					rules: [{ type: "empty", prompt: "Tahun Renstra wajib dipilih" }],
+				},
+				aturan_anggaran: {
+					identifier: "aturan_anggaran",
+					rules: [{ type: "empty", prompt: "Aturan Anggaran wajib dipilih" }],
+				},
+			},
+		});
+
+		function lockSection(trigger, fields) {
+			$(document).on("change", trigger, function () {
+				fields.forEach((name) => {
+					let field = $('[name="' + name + '"]').closest(".field");
+					if ($(this).is(":checked")) {
+						field.find("input, .ui.dropdown").addClass("disabled");
+					} else {
+						field.find("input, .ui.dropdown").removeClass("disabled");
+					}
+				});
+			});
+		}
+
+		lockSection('input[name="kunci_renja"]', ["awal_renja", "akhir_renja"]);
+		lockSection('input[name="kunci_dpa"]', ["awal_dpa", "akhir_dpa"]);
+		lockSection('input[name="kunci_renstra"]', [
+			"awal_renstra",
+			"akhir_renstra",
+		]);
+
+		function loadDropdown(name, url) {
+			$.get(
+				url,
+				function (res) {
+					let dropdown = $('[name="' + name + '"]').closest(".ui.dropdown");
+					let menu = dropdown.find(".menu");
+					menu.html("");
+
+					if (res.data) {
+						res.data.forEach((item) => {
+							menu.append(
+								'<div class="item" data-value="' +
+									item.id +
+									'">' +
+									item.nama +
+									"</div>",
+							);
+						});
+					}
+
+					dropdown.dropdown("refresh");
+				},
+				"json",
+			);
+		}
+
+		loadDropdown("aturan_anggaran", "/referensi/load?jenis=anggaran");
+		loadDropdown("aturan_akun", "/referensi/load?jenis=akun");
+	}
 
 	/* ---------------------------------------------
-		 Inisialisasi Flyout Manager
-		 → Panel samping edit/add data
+	   Inisialisasi Flyout Manager
 	---------------------------------------------- */
 	let flyoutManager = new FlyoutManager("#mainContext");
 
-/* =========================================
-   WALLCHAT MODULE
-========================================= */
+	/* =========================================
+	   WALLCHAT MODULE (TETAP UTUH)
+	========================================= */
 
-// POST STATUS
-$(document).on("submit", "#formPost", function (e) {
-    e.preventDefault();
+	$(document).on("submit", "#formPost", function (e) {
+		e.preventDefault();
+		$.post(
+			"/wallchat/store",
+			$(this).serialize(),
+			function (res) {
+				if (res.status) location.reload();
+			},
+			"json",
+		);
+	});
 
-    $.post("/wallchat/store", $(this).serialize(), function (res) {
-        if (res.status) {
-            location.reload();
-        }
-    }, "json");
-});
+	$(document).on("submit", ".formComment", function (e) {
+		e.preventDefault();
 
-// KOMENTAR
-$(document).on("submit", ".formComment", function (e) {
-    e.preventDefault();
+		let parent_id = $(this).data("id");
+		let content = $(this).find('input[name="content"]').val();
 
-    let parent_id = $(this).data("id");
-    let content = $(this).find('input[name="content"]').val();
+		$.post(
+			"/wallchat/comment",
+			{
+				parent_id: parent_id,
+				content: content,
+			},
+			function (res) {
+				if (res.status) location.reload();
+			},
+			"json",
+		);
+	});
 
-    $.post("/wallchat/comment", {
-        parent_id: parent_id,
-        content: content
-    }, function (res) {
-        if (res.status) {
-            location.reload();
-        }
-    }, "json");
-});
+	$(document).on("click", "#btnPrivateMessage", function () {
+		$("#modalPrivateMessage").modal("show");
+	});
 
-// MODAL PRIVATE MESSAGE
-$(document).on("click", "#btnPrivateMessage", function () {
-    $("#modalPrivateMessage").modal("show");
-});
+	$(document).on("submit", "#formPrivateMessage", function (e) {
+		e.preventDefault();
 
-// PRIVATE MESSAGE SEND
-$(document).on("submit", "#formPrivateMessage", function (e) {
-    e.preventDefault();
+		$.post(
+			"/wallchat/private",
+			$(this).serialize(),
+			function (res) {
+				if (res.status) {
+					$("#modalPrivateMessage").modal("hide");
+					Swal.fire({
+						icon: "success",
+						title: "Berhasil",
+						text: res.message,
+					});
+				}
+			},
+			"json",
+		);
+	});
+	/* ---------------------------------------------
+	   Handler Delete
+	---------------------------------------------- */
+	$(document).on("click", '[data-ui="delete-row"]', function () {
+		let tbl = $(this).data("tbl");
+		let id = $(this).data("id");
 
-    $.post("/wallchat/private", $(this).serialize(), function (res) {
+		Swal.fire({
+			title: "Yakin hapus data?",
+			icon: "warning",
+			showCancelButton: true,
+		}).then((result) => {
+			if (!result.isConfirmed) return;
 
-        if (res.status) {
-            $("#modalPrivateMessage").modal("hide");
+			$.post(
+				AppConfig.apiUrl + "dynamic",
+				{
+					jenis: "delete",
+					tbl: tbl,
+					id_row: id,
+				},
+				function () {
+					tableManager.fetch();
+				},
+			);
+		});
+	});
 
-            Swal.fire({
-                icon: "success",
-                title: "Berhasil",
-                text: res.message
-            });
-        }
+	/* ---------------------------------------------
+	   Load Profil jika halaman profil
+	---------------------------------------------- */
+	if (window.location.pathname === "/profil") {
+		loadProfil();
+	}
 
-    }, "json");
-});
-
-
+	initRenstraPage();
 });
