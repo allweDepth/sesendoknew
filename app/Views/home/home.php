@@ -1,141 +1,181 @@
 <?php $active = 'berita'; ?>
 
-<div class="ui container" style="margin-top:50px; max-width:1100px">
+<div class="pusher">
 
-  <!-- HEADER -->
-  <div class="ui center aligned basic segment">
-    <h1 class="ui header" style="font-weight:600;">
-      Berita seSendok
-    </h1>
-    <div class="ui grey text">
-      Informasi pembangunan dan perencanaan daerah
-    </div>
-  </div>
-
-  <div class="ui hidden divider"></div>
-
-  <?php if (!empty($berita)): ?>
-
-    <div class="ui stackable two column grid">
-
-      <?php foreach ($berita as $item): ?>
-
-        <?php
-          $judul = htmlspecialchars($item['judul'] ?? '');
-          $kelompok = htmlspecialchars($item['kelompok'] ?? '');
-          $ringkas = $item['uraian_singkat']
-                      ? htmlspecialchars($item['uraian_singkat'])
-                      : substr(strip_tags($item['uraian_html'] ?? ''), 0, 150) . '...';
-
-          $tanggalRaw = $item['tanggal'] ?? null;
-          $tanggal = $tanggalRaw ? date('d F Y', strtotime($tanggalRaw)) : '-';
-          $tahun = $tanggalRaw ? date('Y', strtotime($tanggalRaw)) : '-';
-
-          // Ambil gambar dari uraian_html jika ada
-          preg_match('/<img.*?src=["\'](.*?)["\']/', $item['uraian_html'] ?? '', $matches);
-          $gambar = $matches[1] ?? "https://source.unsplash.com/600x400/?" . urlencode($kelompok);
-        ?>
-
-        <div class="column">
-          <div class="ui fluid card berita-card">
-
-            <!-- IMAGE -->
-            <div class="image berita-image">
-              <img src="<?= $gambar ?>" alt="<?= $judul ?>">
-            </div>
-
-            <div class="content">
-
-              <!-- Badge -->
-              <div class="right floated meta">
-                <span class="ui tiny basic blue label">
-                  <?= $kelompok ?>
-                </span>
-              </div>
-
-              <!-- Judul -->
-              <div class="header berita-title">
-                <?= $judul ?>
-              </div>
-
-              <!-- Meta -->
-              <div class="meta berita-meta">
-                <i class="calendar alternate outline icon"></i>
-                <?= $tanggal ?>
-              </div>
-
-              <div class="description berita-desc">
-                <?= $ringkas ?>
-              </div>
-
-            </div>
-
-            <div class="extra content">
-              <span class="ui tiny teal label">
-                <?= $tahun ?>
-              </span>
-
-              <div class="ui right floated tiny primary basic button">
-                Selengkapnya
-              </div>
-            </div>
-
-          </div>
+    <!-- HERO SECTION -->
+    <div class="ui inverted vertical masthead center aligned segment">
+        <div class="ui text container">
+            <h1 class="ui inverted header">
+                DINAS PEKERJAAN UMUM DAN PENATAAN RUANG
+            </h1>
+            <h2>Kabupaten Pasangkayu</h2>
+            <p>Melayani Infrastruktur Jalan, Irigasi, Air Minum, Sanitasi dan Penataan Ruang</p>
+            <a class="ui huge primary button" href="data_teknis">
+                Lihat Data Infrastruktur <i class="right arrow icon"></i>
+            </a>
         </div>
-
-      <?php endforeach; ?>
-
     </div>
 
-  <?php else: ?>
+    <!-- PROFIL DINAS -->
+    <div class="ui vertical stripe segment">
+        <div class="ui stackable grid container">
 
-    <div class="ui placeholder segment">
-      <div class="ui icon header">
-        <i class="newspaper outline icon"></i>
-        Belum ada berita tersedia
-      </div>
+            <div class="eight wide column">
+                <h2 class="ui header">
+                    <i class="building icon"></i>
+                    <div class="content">Tentang DPUPR</div>
+                </h2>
+                <p>
+                    Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu 
+                    bertanggung jawab dalam pembangunan dan pemeliharaan infrastruktur daerah 
+                    yang meliputi jalan dan jembatan, jaringan irigasi, sistem air minum, sanitasi, 
+                    serta pengendalian dan pemanfaatan ruang.
+                </p>
+                <p>
+                    DPUPR berkomitmen meningkatkan kualitas layanan infrastruktur 
+                    demi mendukung pertumbuhan ekonomi dan kesejahteraan masyarakat Pasangkayu.
+                </p>
+            </div>
+
+            <div class="eight wide column">
+                <img src="img/logo.png" class="ui large centered image">
+            </div>
+
+        </div>
     </div>
 
-  <?php endif; ?>
+    <!-- LAYANAN UTAMA -->
+    <div class="ui vertical stripe segment">
+        <div class="ui container">
+            <h2 class="ui dividing header">Layanan Infrastruktur</h2>
+
+            <div class="ui four stackable cards">
+
+                <div class="card">
+                    <div class="content">
+                        <div class="header">Bina Marga</div>
+                        <div class="description">
+                            Pembangunan dan pemeliharaan jalan serta jembatan kabupaten 
+                            untuk meningkatkan konektivitas antar wilayah.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="content">
+                        <div class="header">Sumber Daya Air</div>
+                        <div class="description">
+                            Pengelolaan jaringan irigasi, pengendalian banjir, 
+                            dan konservasi sumber daya air.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="content">
+                        <div class="header">Cipta Karya</div>
+                        <div class="description">
+                            Penyediaan infrastruktur air minum, sanitasi, 
+                            dan permukiman sesuai Standar Pelayanan Minimal.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="content">
+                        <div class="header">Penataan Ruang</div>
+                        <div class="description">
+                            Penyusunan dan pengendalian RTRW serta pengawasan 
+                            pemanfaatan ruang wilayah.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- LINK EKSTERNAL PENTING -->
+    <div class="ui vertical stripe segment">
+        <div class="ui container">
+
+            <h2 class="ui dividing header">Informasi & Transparansi Publik</h2>
+
+            <div class="ui two stackable items">
+
+                <!-- BPS -->
+                <div class="item">
+                    <div class="image">
+                        <img src="img/bps.png">
+                    </div>
+                    <div class="content">
+                        <a class="header" href="https://pasangkayukab.bps.go.id/id" target="_blank">
+                            BPS Kabupaten Pasangkayu
+                        </a>
+                        <div class="description">
+                            <p>
+                                Akses data statistik resmi Kabupaten Pasangkayu, 
+                                termasuk data infrastruktur, demografi, ekonomi, 
+                                dan publikasi "Pasangkayu Dalam Angka".
+                            </p>
+                        </div>
+                        <div class="extra">
+                            <a class="ui small primary button" 
+                               href="https://pasangkayukab.bps.go.id/id" 
+                               target="_blank">
+                                Kunjungi Website BPS
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LPSE -->
+                <div class="item">
+                    <div class="image">
+                        <img src="img/logo_garuda.png">
+                    </div>
+                    <div class="content">
+                        <a class="header" href="https://spse.inaproc.id/pasangkayukab" target="_blank">
+                            LPSE Kabupaten Pasangkayu
+                        </a>
+                        <div class="description">
+                            <p>
+                                Informasi dan pelaksanaan pengadaan barang/jasa pemerintah 
+                                secara elektronik untuk menjamin transparansi, akuntabilitas, 
+                                dan keterbukaan publik.
+                            </p>
+                        </div>
+                        <div class="extra">
+                            <a class="ui small green button" 
+                               href="https://spse.inaproc.id/pasangkayukab" 
+                               target="_blank">
+                                Akses LPSE
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MOTTO -->
+    <div class="ui vertical stripe quote segment">
+        <div class="ui center aligned container">
+            <h2>"Bekerja Keras, Bergerak Cepat, Bertindak Tepat"</h2>
+            <p>Komitmen Pelayanan Dinas PUPR Kabupaten Pasangkayu</p>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="ui vertical stripe segment">
+        <div class="ui center aligned container">
+            <h3 class="ui header">Mari Bangun Infrastruktur Pasangkayu Bersama</h3>
+            <a class="ui large primary button" href="profil">
+                Profil Lengkap Dinas
+            </a>
+        </div>
+    </div>
 
 </div>
-
-<style>
-.berita-card {
-  border-radius: 14px !important;
-  overflow: hidden;
-  transition: all 0.35s ease;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.05);
-}
-
-.berita-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 30px rgba(0,0,0,0.15);
-}
-
-.berita-image img {
-  height: 220px;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.berita-card:hover .berita-image img {
-  transform: scale(1.05);
-}
-
-.berita-title {
-  font-weight: 600 !important;
-  margin-top: 5px !important;
-}
-
-.berita-meta {
-  font-size: 13px;
-  color: #777;
-  margin-bottom: 10px;
-}
-
-.berita-desc {
-  color: #555;
-  line-height: 1.6;
-}
-</style>

@@ -26,19 +26,34 @@
         'asn' => [
           'Nama',
           'NIP',
-          'Alamat'
+          'Alamat',
+          'Golongan',
+          'ruang',
+          'Jabatan',
+          'Keterangan'
         ],
         'sk_asn' => [
-          'Kode',
-          'Nama Kegiatan'
+          'Nomor',
+          'Tanggal Surat',
+          'Tentang',
+          'Pemberi Tugas',
+          'Keterangan'
         ],
         'register_surat' => [
-          'Kode',
-          'Nama Program'
+          'Jenis Naskah',
+          'Sifat',
+          'Nomor',
+          'Tanggal',
+          'Uraian',
+          'File',
+          'Keterangan'
         ],
         'tata_naskah' => [
-          'Kode',
-          'Nama Program'
+          'Jenis',
+          'Nomor',
+          'Tanggal',
+          'Uraian',
+          'Keterangan'
         ]
       ];
 

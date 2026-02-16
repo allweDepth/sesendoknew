@@ -221,7 +221,10 @@ return [
             'default' => [
                 'select' => ['*'],
                 'searchable' => ['kd_sub_keg', 'uraian'],
-                'order_by' => 'tahun DESC'
+                'order_by' => 'tahun DESC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
             ]
         ]
     ],
@@ -233,7 +236,10 @@ return [
             'default' => [
                 'select' => ['*'],
                 'searchable' => ['kd_sub_keg', 'uraian'],
-                'order_by' => 'tahun DESC'
+                'order_by' => 'tahun DESC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
             ]
         ]
     ],
@@ -245,7 +251,10 @@ return [
             'default' => [
                 'select' => ['*'],
                 'searchable' => ['uraian_prog_keg', 'indikator'],
-                'order_by' => 'tahun DESC'
+                'order_by' => 'tahun DESC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
             ]
         ]
     ],
@@ -259,25 +268,37 @@ return [
                 'select' => ['id', 'text'],
                 'searchable' => ['text'],
                 'where' => "kelompok = 'tujuan'",
-                'order_by' => 'text ASC'
+                'order_by' => 'text ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
             ],
 
             'sasaran' => [
                 'select' => ['id', 'text', 'indikator'],
                 'searchable' => ['text', 'indikator'],
                 'where' => "kelompok = 'sasaran'",
-                'order_by' => 'text ASC'
+                'order_by' => 'text ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
             ],
 
             'default' => [
                 'select' => ['*'],
                 'searchable' => ['text', 'indikator'],
-                'order_by' => 'tahun DESC'
+                'order_by' => 'tahun DESC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
             ],
             'referensi' => [
                 'select' => ['nama_perusahaan', 'alamat', 'email', 'npwp', 'no_rekening', 'bank_rekening', 'atas_nama_rekening', 'direktur'],
                 'searchable' => ['nama_perusahaan', 'alamat', 'direktur'],
-                'order_by' => 'nama_perusahaan ASC'
+                'order_by' => 'nama_perusahaan ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
             ]
         ]
     ],
@@ -286,7 +307,7 @@ return [
         'primary_key' => 'id',
         'modes' => [
             'dropdown' => [
-                'select' => ['id', 'kd_opd', 'nama', 'nip', 'npwp'],
+                'select' => ['id', 'nama', 'nip', 'alamat', 'golongan', 'ruang', 'jabatan', 'keterangan'],
                 'searchable' => ['kd_opd', 'nama', 'nip', 'npwp'],
                 'order_by' => 'nama ASC'
             ],
@@ -296,7 +317,7 @@ return [
                 'order_by' => 'nama ASC'
             ],
             'kepegawaian' => [
-                'select' => ['id', 'kd_opd', 'nama', 'nip', 'npwp'],
+                'select' => ['id', 'nama', 'nip', 'alamat', 'golongan', 'ruang', 'jabatan', 'keterangan'],
                 'searchable' => ['id', 'kd_opd', 'nama', 'nip', 'npwp'],
                 'order_by' => 'nama ASC'
             ],
@@ -307,5 +328,107 @@ return [
             ]
         ]
     ],
+    'sk_asn' => [
+        'table' => 'sk_asn_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'dropdown' => [
+                'select' => ['id', 'nomor', 'tgl_surat_dibuat', 'tentang', 'pemberi_tgs', 'keterangan'],
+                'searchable' => ['kd_opd', 'nomor', 'tentang', 'tgl_surat_dibuat'],
+                'order_by' => 'id ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
+            ],
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['id', 'kd_opd', 'tgl_surat_dibuat', 'tentang'],
+                'order_by' => 'id ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
+            ],
+            'kepegawaian' => [
+                'select' => ['id', 'nomor', 'tgl_surat_dibuat', 'tentang', 'pemberi_tgs', 'keterangan'],
+                'searchable' => ['kd_opd', 'nomor', 'tentang', 'tgl_surat_dibuat'],
+                'order_by' => 'tgl_surat_dibuat ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
+            ]
+        ]
+    ],
+    'register_surat' => [
+        'table' => 'register_naskah_dinas',
+        'primary_key' => 'id',
+        'modes' => [
+            'dropdown' => [
+                'select' => ['id', 'jenis_naskah_dinas','sifat','nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
+                'searchable' => ['jenis_naskah_dinas','sifat','nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
+                'order_by' => 'tanggal ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
+            ],
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['jenis_naskah_dinas','sifat','nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
+                'order_by' => 'tanggal ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
+            ],
+            'kepegawaian' => [
+                'select' => ['id', 'jenis_naskah_dinas','sifat','nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
+                'searchable' => ['jenis_naskah_dinas','sifat','nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
+                'order_by' => 'tanggal ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
+            ]
+        ]
+    ],
+    'tata_naskah' => [
+        'table' => 'naskah_dinas_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'dropdown' => [
+                'select' => ['id', 'jenis_naskah_dinas','nomor', 'tgl_surat_dibuat','klasifikasi_keamanan', 'tentang', 'keterangan'],
+                'searchable' => ['jenis_naskah_dinas','klasifikasi_keamanan','nomor', 'tgl_surat_dibuat', 'uraian', 'file', 'keterangan'],
+                'order_by' => 'tgl_surat_dibuat ASC'
+            ],
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['jenis_naskah_dinas','klasifikasi_keamanan','nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
+                'order_by' => 'tgl_surat_dibuat ASC'
+            ],
+            'kepegawaian' => [
+                'select' => ['id', 'jenis_naskah_dinas','klasifikasi_keamanan','nomor', 'tgl_surat_dibuat', 'uraian', 'file', 'keterangan'],
+                'searchable' => ['jenis_naskah_dinas','klasifikasi_keamanan','nomor', 'tgl_surat_dibuat', 'uraian', 'file', 'keterangan'],
+                'order_by' => 'tgl_surat_dibuat ASC'
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+        ]
+    ]
 
 ];
