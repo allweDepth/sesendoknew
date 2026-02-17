@@ -1,6 +1,19 @@
 <?php
+
+/**
+ * ==============================================================
+ * DynamicController
+ * --------------------------------------------------------------
+ * Controller untuk:
+ * - Render dynamic table (AJAX)
+ * - Export Excel profesional (Logo + Kop + Styling)
+ * - Import Excel ke database
+ * ==============================================================
+ */
+
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../Services/DynamicTableService.php';
+require_once __DIR__ . '/../Core/DB.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -9,228 +22,291 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class DynamicController
 {
-	public function index($params = null)
-	{
-		$service = new DynamicTableService($_POST);
-		echo $service->handle($_POST);
-	}
-	//=========EXPORT EXCEL
-	public function export()
-	{
-		$table = $_GET['tabel'] ?? null;
+    /**
+     * ==========================================================
+     * INDEX
+     * ----------------------------------------------------------
+     * Menangani request AJAX dynamic table
+     * ==========================================================
+     */
+    public function index($params = null)
+    {
+        $service = new DynamicTableService($_POST);
+        echo $service->handle($_POST);
+    }
 
-		if (!$table) {
-			http_response_code(400);
-			die("Tabel tidak ditemukan");
-		}
+    /**
+     * ==========================================================
+     * EXPORT EXCEL PROFESIONAL
+     * ----------------------------------------------------------
+     * Fitur:
+     * - Logo Pemda
+     * - Kop Surat
+     * - Header warna OPD
+     * - Freeze header
+     * - Format Rupiah otomatis
+     * - Auto column width (max 30)
+     * - Wrap text jika melebihi batas
+     * - Border
+     * - Auto filter
+     * - Grouping
+     * ==========================================================
+     */
+    public function export()
+    {
+        $table = $_GET['tabel'] ?? null;
 
-		$data = DynamicTableService::getAll($table);
+        if (!$table) {
+            http_response_code(400);
+            die("Tabel tidak ditemukan");
+        }
 
-		if (empty($data)) {
-			die("Data kosong di tabel: " . $table);
-		}
+        // Ambil data via service
+        $data = DynamicTableService::getAll($table);
 
-		$spreadsheet = new Spreadsheet();
-		$sheet = $spreadsheet->getActiveSheet();
+        if (empty($data)) {
+            die("Data kosong di tabel: " . $table);
+        }
 
-		$headers = array_keys($data[0]);
-		$totalColumns = count($headers);
-		$lastColumn = Coordinate::stringFromColumnIndex($totalColumns);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-		/* =====================================================
-       1. LOGO PEMDA
-    ===================================================== */
+        $headers = array_keys($data[0]);
+        $totalColumns = count($headers);
+        $lastColumn = Coordinate::stringFromColumnIndex($totalColumns);
 
-		$drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-		$drawing->setName('Logo');
-		$drawing->setDescription('Logo Pemda');
-		$drawing->setPath(__DIR__ . '/../../public/assets/img/umum/logo.png');
-		$drawing->setHeight(70);
-		$drawing->setCoordinates('A1');
-		$drawing->setWorksheet($sheet);
+        /**
+         * ======================================================
+         * 1. LOGO PEMDA
+         * ------------------------------------------------------
+         * Menampilkan logo di kiri atas (A1)
+         * ======================================================
+         */
+        $logoPath = __DIR__ . '/../../public/assets/img/umum/logo.png';
 
-		/* =====================================================
-       2. KOP SURAT
-    ===================================================== */
+        if (file_exists($logoPath)) {
+            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+            $drawing->setName('Logo');
+            $drawing->setDescription('Logo Pemda');
+            $drawing->setPath($logoPath);
+            $drawing->setHeight(70);
+            $drawing->setCoordinates('A1');
+            $drawing->setWorksheet($sheet);
+        }
 
-		$sheet->mergeCells("B1:{$lastColumn}1");
-		$sheet->setCellValue("B1", "PEMERINTAH KABUPATEN PASANGKAYU");
+        /**
+         * ======================================================
+         * 2. KOP SURAT
+         * ======================================================
+         */
+        $sheet->mergeCells("B1:{$lastColumn}1");
+        $sheet->setCellValue("B1", "PEMERINTAH KABUPATEN PASANGKAYU");
 
-		$sheet->mergeCells("B2:{$lastColumn}2");
-		$sheet->setCellValue("B2", "DINAS PEKERJAAN UMUM DAN PENATAAN RUANG");
+        $sheet->mergeCells("B2:{$lastColumn}2");
+        $sheet->setCellValue("B2", "DINAS PEKERJAAN UMUM DAN PENATAAN RUANG");
 
-		$sheet->mergeCells("B3:{$lastColumn}3");
-		$sheet->setCellValue("B3", strtoupper("DATA " . $table));
+        $sheet->mergeCells("B3:{$lastColumn}3");
+        $sheet->setCellValue("B3", strtoupper("DATA " . $table));
 
-		$sheet->getStyle("B1:B3")->getFont()->setBold(true)->setSize(12);
-		$sheet->getStyle("B1:B3")->getAlignment()->setHorizontal('center');
+        $sheet->getStyle("B1:B3")->getFont()->setBold(true)->setSize(12);
+        $sheet->getStyle("B1:B3")->getAlignment()->setHorizontal('center');
 
-		/* =====================================================
-       3. HEADER TABLE
-    ===================================================== */
+        /**
+         * ======================================================
+         * 3. HEADER TABLE
+         * ======================================================
+         */
+        $headerRow = 5;
 
-		$headerRow = 5;
+        foreach ($headers as $index => $header) {
+            $columnLetter = Coordinate::stringFromColumnIndex($index + 1);
+            $sheet->setCellValue($columnLetter . $headerRow, strtoupper($header));
+        }
 
-		foreach ($headers as $index => $header) {
-			$columnLetter = Coordinate::stringFromColumnIndex($index + 1);
-			$sheet->setCellValue($columnLetter . $headerRow, strtoupper($header));
-		}
+        // Warna header OPD
+        $sheet->getStyle("A{$headerRow}:{$lastColumn}{$headerRow}")
+            ->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()
+            ->setARGB('FF1F4E78');
 
-		// Warna khas OPD (Biru)
-		$sheet->getStyle("A{$headerRow}:{$lastColumn}{$headerRow}")
-			->getFill()
-			->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-			->getStartColor()
-			->setARGB('FF1F4E78');
+        // Font putih + bold
+        $sheet->getStyle("A{$headerRow}:{$lastColumn}{$headerRow}")
+            ->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');
 
-		$sheet->getStyle("A{$headerRow}:{$lastColumn}{$headerRow}")
-			->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');
+        // Alignment tengah + wrap
+        $sheet->getStyle("A{$headerRow}:{$lastColumn}{$headerRow}")
+            ->getAlignment()
+            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER)
+            ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)
+            ->setWrapText(true);
 
-		$sheet->freezePane('A6');
+        // Tinggi header
+        $sheet->getRowDimension($headerRow)->setRowHeight(40);
 
-		/* =====================================================
-       4. DATA + FORMAT RUPIAH
-    ===================================================== */
+        // Freeze agar header tetap saat scroll
+        $sheet->freezePane('A6');
 
-		$row = 6;
+        /**
+         * ======================================================
+         * 4. DATA + FORMAT RUPIAH OTOMATIS
+         * ======================================================
+         */
+        $row = 6;
 
-		foreach ($data as $item) {
+        foreach ($data as $item) {
 
-			$colIndex = 1;
+            $colIndex = 1;
 
-			foreach ($item as $value) {
+            foreach ($item as $value) {
 
-				$columnLetter = Coordinate::stringFromColumnIndex($colIndex);
-				$cell = $columnLetter . $row;
+                $columnLetter = Coordinate::stringFromColumnIndex($colIndex);
+                $cell = $columnLetter . $row;
 
-				$sheet->setCellValue($cell, $value);
+                $sheet->setCellValue($cell, $value);
 
-				// AUTO FORMAT RUPIAH jika numeric besar
-				if (is_numeric($value) && $value > 1000) {
-					$sheet->getStyle($cell)
-						->getNumberFormat()
-						->setFormatCode('"Rp" #,##0');
-				}
+                // Jika numeric besar -> format rupiah
+                if (is_numeric($value) && $value > 1000) {
+                    $sheet->getStyle($cell)
+                        ->getNumberFormat()
+                        ->setFormatCode('"Rp" #,##0');
+                }
 
-				$colIndex++;
-			}
+                $colIndex++;
+            }
 
-			$row++;
-		}
+            $row++;
+        }
 
-		$lastDataRow = $row - 1;
+        $lastDataRow = $row - 1;
 
-		/* =====================================================
-       5. AUTO WIDTH
-    ===================================================== */
+        /**
+         * ======================================================
+         * 5. AUTO COLUMN WIDTH (DINAMIS MAX 30)
+         * ------------------------------------------------------
+         * - Jika isi < 30 karakter → width mengikuti isi
+         * - Jika > 30 → dibatasi 30 + wrap text aktif
+         * ======================================================
+         */
+        $maxLimit = 30;
 
-		for ($i = 1; $i <= $totalColumns; $i++) {
-			$columnLetter = Coordinate::stringFromColumnIndex($i);
-			$sheet->getColumnDimension($columnLetter)->setAutoSize(true);
-		}
+        for ($colIndex = 1; $colIndex <= $totalColumns; $colIndex++) {
 
-		/* =====================================================
-       6. BORDER
-    ===================================================== */
+            $columnLetter = Coordinate::stringFromColumnIndex($colIndex);
+            $maxLength = 0;
 
-		$sheet->getStyle("A{$headerRow}:{$lastColumn}{$lastDataRow}")
-			->getBorders()->getAllBorders()
-			->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            // Cek header
+            $headerValue = $sheet->getCell($columnLetter . $headerRow)->getValue();
+            $maxLength = strlen($headerValue);
 
-		/* =====================================================
-       7. AUTO FILTER
-    ===================================================== */
+            // Cek isi kolom
+            for ($r = $headerRow + 1; $r <= $lastDataRow; $r++) {
+                $cellValue = $sheet->getCell($columnLetter . $r)->getValue();
+                $length = strlen((string)$cellValue);
+                if ($length > $maxLength) {
+                    $maxLength = $length;
+                }
+            }
 
-		$sheet->setAutoFilter("A{$headerRow}:{$lastColumn}{$lastDataRow}");
+            $calculatedWidth = $maxLength + 2;
 
-		/* =====================================================
-       8. GROUPING COLLAPSE (contoh grouping per 10 baris)
-    ===================================================== */
+            if ($calculatedWidth > $maxLimit) {
+                $calculatedWidth = $maxLimit;
 
-		for ($r = 6; $r <= $lastDataRow; $r += 10) {
-			$sheet->getRowDimension($r)
-				->setOutlineLevel(1)
-				->setVisible(true)
-				->setCollapsed(false);
-		}
+                $sheet->getStyle($columnLetter)
+                    ->getAlignment()
+                    ->setWrapText(true);
+            }
 
-		$sheet->setShowSummaryBelow(true);
+            $sheet->getColumnDimension($columnLetter)->setWidth($calculatedWidth);
+        }
 
-		/* =====================================================
-       OUTPUT
-    ===================================================== */
+        /**
+         * ======================================================
+         * 6. BORDER TABLE
+         * ======================================================
+         */
+        $sheet->getStyle("A{$headerRow}:{$lastColumn}{$lastDataRow}")
+            ->getBorders()->getAllBorders()
+            ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
-		if (ob_get_length()) ob_end_clean();
+        /**
+         * ======================================================
+         * 7. AUTO FILTER
+         * ======================================================
+         */
+        $sheet->setAutoFilter("A{$headerRow}:{$lastColumn}{$lastDataRow}");
 
-		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		header('Content-Disposition: attachment;filename="' . $table . '_OPD.xlsx"');
-		header('Cache-Control: max-age=0');
+        /**
+         * ======================================================
+         * 8. GROUPING (Contoh: tiap 10 baris)
+         * ======================================================
+         */
+        for ($r = 6; $r <= $lastDataRow; $r += 10) {
+            $sheet->getRowDimension($r)
+                ->setOutlineLevel(1)
+                ->setVisible(true)
+                ->setCollapsed(false);
+        }
 
-		$writer = new Xlsx($spreadsheet);
-		$writer->save('php://output');
-		exit;
-	}
-	public function import()
-	{
-		$table = $_POST['tabel'] ?? null;
+        $sheet->setShowSummaryBelow(true);
 
-		if (!$table || !isset($_FILES['file'])) {
-			http_response_code(400);
-			exit;
-		}
+        /**
+         * ======================================================
+         * OUTPUT FILE
+         * ======================================================
+         */
+        if (ob_get_length()) ob_end_clean();
 
-		$allowed = ['asn', 'users', 'referensi', 'wallchat'];
-		if (!in_array($table, $allowed)) {
-			http_response_code(403);
-			exit;
-		}
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $table . '_OPD.xlsx"');
+        header('Cache-Control: max-age=0');
 
-		$file = $_FILES['file']['tmp_name'];
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
+    }
 
-		$spreadsheet = IOFactory::load($file);
-		$sheet = $spreadsheet->getActiveSheet();
-		$rows = $sheet->toArray();
+    /**
+     * ==========================================================
+     * IMPORT EXCEL KE DATABASE
+     * ==========================================================
+     */
+    public function import()
+    {
+        $table = $_POST['tabel'] ?? null;
 
-		$pdo = DB::getInstance()->getConnection();
-		$pdo->beginTransaction();
+        if (!$table || !isset($_FILES['file'])) {
+            http_response_code(400);
+            exit;
+        }
 
-		try {
+        $file = $_FILES['file']['tmp_name'];
 
-			$headers = $rows[0];
+        $spreadsheet = IOFactory::load($file);
+        $sheet = $spreadsheet->getActiveSheet();
+        $rows = $sheet->toArray();
 
-			$stmt = $pdo->query("DESCRIBE `$table`");
-			$columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $db = DB::getInstance();
 
-			foreach ($headers as $h) {
-				if (!in_array($h, $columns)) {
-					throw new Exception("Kolom $h tidak ada");
-				}
-			}
+        try {
 
-			for ($i = 1; $i < count($rows); $i++) {
+            $headers = $rows[0];
 
-				$row = $rows[$i];
+            for ($i = 1; $i < count($rows); $i++) {
 
-				$colString = implode(',', $headers);
-				$placeholders = implode(',', array_fill(0, count($headers), '?'));
+                $rowData = array_combine($headers, $rows[$i]);
 
-				$stmt = $pdo->prepare("
-                INSERT INTO `$table` ($colString)
-                VALUES ($placeholders)
-            ");
+                $db->insert($table, $rowData);
+            }
 
-				$stmt->execute($row);
-			}
+            echo json_encode(['success' => true]);
+        } catch (Exception $e) {
 
-			$pdo->commit();
-			echo json_encode(['success' => true]);
-		} catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+        }
 
-			$pdo->rollBack();
-			http_response_code(500);
-			echo json_encode(['error' => $e->getMessage()]);
-		}
-
-		exit;
-	}
+        exit;
+    }
 }
