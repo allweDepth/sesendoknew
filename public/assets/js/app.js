@@ -1763,16 +1763,14 @@ $(document).ready(function () {
 	});
 	// export excel
 	$(document).on("click", 'button[data-action="export"]', function (e) {
+		console.log("EXPORT CLICKED");
 
-    console.log("EXPORT CLICKED");
+		e.preventDefault();
 
-    e.preventDefault();
+		const table = $(this).data("tbl");
 
-    const table = $(this).data("tbl");
-
-    window.location.href = AppConfig.apiUrl + "export?tabel=" + table;
-
-});
+		window.location.href = AppConfig.apiUrl + "export?tabel=" + table;
+	});
 
 	/* ---------------------------------------------
 	   Load Profil jika halaman profil
@@ -1782,4 +1780,81 @@ $(document).ready(function () {
 	}
 
 	initRenstraPage();
+
+
+	//=============
+	// UNTUK RESNTRA
+	//==============
+
+    let currentTbl = 'misi_renstra_neo';
+
+    // klik menu
+    $('#renstraMenu .item').click(function(){
+
+        $('#renstraMenu .item').removeClass('active');
+        $(this).addClass('active');
+
+        currentTbl = $(this).data('tbl');
+
+        // ubah header
+        $('#judulTabel').text($(this).text().toUpperCase());
+
+        // ubah data-tbl di tbody
+        $('tbody[name="tabel_dynamic"]').attr('data-tbl', currentTbl);
+
+        // ubah tombol
+        $('#btnTambah').attr('data-tbl', currentTbl);
+        $('#btnImport').attr('data-tbl', currentTbl);
+        $('#btnExport').attr('data-tbl', currentTbl);
+
+        // reload dynamic (pakai sistem JS global Anda)
+        $('tbody[name="tabel_dynamic"]').html(`
+            <tr>
+              <td colspan="2">
+                <div class="ui active inline loader"></div>
+              </td>
+            </tr>
+        `);
+
+        // trigger reload
+        $(document).trigger('reload_dynamic_table');
+
+    });
+		// ==============================
+// RENSTRA TAB SWITCH
+// ==============================
+
+$(document).on('click', '#renstraMenu .item', function () {
+
+    let currentTbl = $(this).data('tbl');
+
+    // aktifkan menu
+    $('#renstraMenu .item').removeClass('active');
+    $(this).addClass('active');
+
+    // ubah header
+    $('#judulTabel').text($(this).text().toUpperCase());
+
+    // ubah data-tbl pada tbody
+    let $tbody = $('tbody[name="tabel_dynamic"]');
+    $tbody.attr('data-tbl', currentTbl);
+
+    // ubah tombol sidebar
+    $('#btnTambah').attr('data-tbl', currentTbl);
+    $('#btnImport').attr('data-tbl', currentTbl);
+    $('#btnExport').attr('data-tbl', currentTbl);
+
+    // tampilkan loader
+    $tbody.html(`
+        <tr>
+            <td colspan="2">
+                <div class="ui active inline loader"></div>
+            </td>
+        </tr>
+    `);
+
+    // trigger reload tabel dynamic
+    $(document).trigger('reload_dynamic_table');
+
+});
 });

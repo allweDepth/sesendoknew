@@ -501,6 +501,124 @@ return [
                 'order_by' => 'id ASC'
             ]
         ]
-    ]
+    ],
+    'misi_renstra_neo' => [
+        'table' => 'misi_renstra_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kode', 'uraian'],
+                'order_by' => 'id DESC',
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+        ]
+    ],
+
+    'tujuan_renstra_neo' => [
+        'table' => 'tujuan_renstra_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kode', 'uraian'],
+                'order_by' => 'id DESC',
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+        ]
+    ],
+
+    'sasaran_renstra_neo' => [
+        'table' => 'sasaran_renstra_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kode', 'uraian'],
+                'order_by' => 'id DESC',
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+        ]
+    ],
+
+    'indikator_sasaran_renstra_neo' => [
+        'table' => 'indikator_sasaran_renstra_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['indikator', 'satuan'],
+                'order_by' => 'id DESC',
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+        ]
+    ],
+
+    'program_renstra_neo' => [
+        'table' => 'program_renstra_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['uraian_program'],
+                'order_by' => 'id DESC',
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+        ]
+    ],
+
+    'indikator_program_renstra_neo' => [
+        'table' => 'indikator_program_renstra_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['indikator', 'satuan'],
+                'order_by' => 'id DESC',
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+        ]
+    ],
+
+    'anggaran_program_renstra_neo' => [
+        'table' => 'anggaran_program_renstra_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['lokasi'],
+                'order_by' => 'id DESC',
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+        ]
+    ],
 
 ];

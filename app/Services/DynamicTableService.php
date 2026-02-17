@@ -49,8 +49,40 @@ class DynamicTableService
     }
     return $this->buildQuery($table, $profile, $mode, $request);
   }
+  // ===================================
+  // VALIDASI LOCK RENSTRA
+  // ===================================
+  private function checkRenstraLock(string $table): ?string
+  {
+    if (!str_contains($table, 'renstra_neo')) {
+      return null;
+    }
+
+    $tahun = $_SESSION['tahun'] ?? null;
+
+    if (!$tahun) {
+      return null;
+    }
+
+    $p = $this->db->query(
+      "SELECT kunci_renstra FROM pengaturan_neo WHERE tahun = ?",
+      [$tahun]
+    )->fetch(PDO::FETCH_ASSOC);
+
+    if ($p && $p['kunci_renstra'] == 1) {
+      return 'Renstra sudah dikunci oleh admin.';
+    }
+
+    return null;
+  }
   private function insert(string $table, array $profile, array $request): string
   {
+    // ==========================
+    // LOCK RENSTRA
+    // ==========================
+    if ($error = $this->checkRenstraLock($table)) {
+        return JsonResponse::error($error);
+    }
     $primaryKey = $profile['primary_key'] ?? 'id';
 
     $fields = [];
@@ -83,6 +115,27 @@ class DynamicTableService
   }
   private function update(string $table, array $profile, array $request): string
   {
+    // ==========================
+    // LOCK RENSTRA
+    // ==========================
+    if ($error = $this->checkRenstraLock($table)) {
+        return JsonResponse::error($error);
+    }
+    if (str_contains($table, 'renstra_neo')) {
+
+      $tahun = $_SESSION['tahun'] ?? null;
+
+      if ($tahun) {
+        $p = $this->db->query(
+          "SELECT kunci_renstra FROM pengaturan_neo WHERE tahun = ?",
+          [$tahun]
+        )->fetch(PDO::FETCH_ASSOC);
+
+        if ($p && $p['kunci_renstra'] == 1) {
+          return JsonResponse::error('Renstra sudah dikunci oleh admin.');
+        }
+      }
+    }
     $primaryKey = $profile['primary_key'] ?? 'id';
     $id = (int)$request['id'];
 
@@ -119,6 +172,27 @@ class DynamicTableService
   }
   private function delete(string $table, array $profile, int $id): string
   {
+    // ==========================
+    // LOCK RENSTRA
+    // ==========================
+    if ($error = $this->checkRenstraLock($table)) {
+        return JsonResponse::error($error);
+    }
+    if (str_contains($table, 'renstra_neo')) {
+
+      $tahun = $_SESSION['tahun'] ?? null;
+
+      if ($tahun) {
+        $p = $this->db->query(
+          "SELECT kunci_renstra FROM pengaturan_neo WHERE tahun = ?",
+          [$tahun]
+        )->fetch(PDO::FETCH_ASSOC);
+
+        if ($p && $p['kunci_renstra'] == 1) {
+          return JsonResponse::error('Renstra sudah dikunci oleh admin.');
+        }
+      }
+    }
     $primaryKey = $profile['primary_key'] ?? 'id';
 
     $query = "
