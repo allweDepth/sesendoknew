@@ -419,6 +419,8 @@ class FormEngine {
 
 		switch (tag) {
 			/* ===== SINGLE FIELD ===== */
+			case "fieldCalendar":
+				return this.fieldWrapper(this.calendar(prop), prop);
 			case "cardProfile":
 				return this.cardProfile(prop);
 
@@ -471,6 +473,23 @@ class FormEngine {
 			default:
 				return "";
 		}
+	}
+	//Kalender
+	static calendar(prop) {
+		return `
+	<div class="ui calendar">
+		<div class="ui input left icon ${prop.classInput || ""}">
+			<i class="calendar icon"></i>
+			<input 
+				type="text"
+				name="${prop.name}"
+				data-type="${prop.calendarType || "date"}"
+				placeholder="${prop.placeholder || "Pilih Tanggal"}"
+				${prop.readonly ? "readonly" : ""}
+			>
+		</div>
+	</div>
+	`;
 	}
 	//CARD
 	static cardProfile(prop) {
@@ -613,10 +632,30 @@ class FormEngine {
 		 Init Fomantic Components
 	============================ */
 	static init() {
+		// DROPDOWN
 		$(".ui.dropdown").dropdown();
+
+		// CHECKBOX
 		$(".ui.checkbox").checkbox();
+
+		// DIMMER
 		$(".ui.card .image").dimmer({
 			on: "hover",
+		});
+
+		// 🔥 CALENDAR INIT
+		$(".ui.calendar").each(function () {
+			let type = $(this).find("input").attr("data-type");
+
+			$(this).calendar({
+				type: type || "date",
+				formatter: {
+					date: function (date) {
+						if (!date) return "";
+						return date.getFullYear();
+					},
+				},
+			});
 		});
 	}
 }
@@ -657,24 +696,25 @@ const UIConfig = {
    RENSTRA
 ====================================================== */
 	renstra: {
-		/* ===================== RENSTRA MASTER ===================== */
 		renstra_neo: [
 			{
-				tag: "field",
+				tag: "fieldCalendar",
 				prop: {
 					label: "Periode Mulai",
 					name: "periode_mulai",
-					atribut: `type="number"`,
-					classField: "required",
+					placeholder: "Pilih Tahun",
+					calendarType: "year",
+					readonly: true,
 				},
 			},
 			{
-				tag: "field",
+				tag: "fieldCalendar",
 				prop: {
 					label: "Periode Selesai",
 					name: "periode_selesai",
-					atribut: `type="number"`,
-					classField: "required",
+					placeholder: "Pilih Tahun",
+					calendarType: "year",
+					readonly: true,
 				},
 			},
 			{
@@ -683,88 +723,98 @@ const UIConfig = {
 			},
 		],
 
-		/* ===================== MISI ===================== */
 		misi_renstra_neo: [
 			{
-				tag: "field",
-				prop: { label: "Kode", name: "kode", classField: "required" },
+				tag: "fieldDropdown",
+				prop: { label: "Renstra", name: "id_renstra", source: "renstra_neo" },
 			},
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{
 				tag: "fieldTextarea",
 				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
 			},
 		],
 
-		/* ===================== TUJUAN ===================== */
 		tujuan_renstra_neo: [
 			{
-				tag: "field",
-				prop: { label: "Kode", name: "kode", classField: "required" },
+				tag: "fieldDropdown",
+				prop: { label: "Misi", name: "id_misi", source: "misi_renstra_neo" },
 			},
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{
 				tag: "fieldTextarea",
 				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
 			},
 		],
 
-		/* ===================== SASARAN ===================== */
 		sasaran_renstra_neo: [
 			{
-				tag: "field",
-				prop: { label: "Kode", name: "kode", classField: "required" },
-			},
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
-			},
-		],
-
-		/* ===================== INDIKATOR SASARAN ===================== */
-		indikator_sasaran_renstra_neo: [
-			{
-				tag: "field",
-				prop: { label: "Indikator", name: "indikator", classField: "required" },
-			},
-			{
-				tag: "field",
-				prop: { label: "Satuan", name: "satuan" },
-			},
-			{
-				tag: "field",
-				prop: { label: "Target", name: "target" },
-			},
-		],
-
-		/* ===================== PROGRAM ===================== */
-		program_renstra_neo: [
-			{
-				tag: "field",
+				tag: "fieldDropdown",
 				prop: {
-					label: "Kode Program",
-					name: "kode_program",
-					classField: "required",
+					label: "Tujuan",
+					name: "id_tujuan",
+					source: "tujuan_renstra_neo",
 				},
 			},
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{
 				tag: "fieldTextarea",
 				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
 			},
 		],
 
-		/* ===================== INDIKATOR PROGRAM ===================== */
-		indikator_program_renstra_neo: [
+		indikator_sasaran_renstra_neo: [
 			{
-				tag: "field",
-				prop: { label: "Indikator", name: "indikator", classField: "required" },
+				tag: "fieldDropdown",
+				prop: {
+					label: "Sasaran",
+					name: "id_sasaran",
+					source: "sasaran_renstra_neo",
+				},
 			},
+			{ tag: "field", prop: { label: "Indikator", name: "indikator" } },
+			{ tag: "field", prop: { label: "Satuan", name: "satuan" } },
+			{ tag: "field", prop: { label: "Target", name: "target" } },
+		],
+
+		program_renstra_neo: [
 			{
-				tag: "field",
-				prop: { label: "Target", name: "target" },
+				tag: "fieldDropdown",
+				prop: {
+					label: "Sasaran",
+					name: "id_sasaran",
+					source: "sasaran_renstra_neo",
+				},
+			},
+			{ tag: "field", prop: { label: "Kode Program", name: "kode_program" } },
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
 			},
 		],
 
-		/* ===================== ANGGARAN PROGRAM ===================== */
+		indikator_program_renstra_neo: [
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Program",
+					name: "id_program",
+					source: "program_renstra_neo",
+				},
+			},
+			{ tag: "field", prop: { label: "Indikator", name: "indikator" } },
+			{ tag: "field", prop: { label: "Target", name: "target" } },
+		],
+
 		anggaran_program_renstra_neo: [
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Program",
+					name: "id_program",
+					source: "program_renstra_neo",
+				},
+			},
 			{
 				tag: "field",
 				prop: { label: "Tahun", name: "tahun", atribut: `type="number"` },
@@ -1405,11 +1455,12 @@ class FormContainerManager {
 	}
 	/* --------------------------------------------- */
 	open($btn) {
-    // event?.stopPropagation?.(); // 🔥 TAMBAH
+		// event?.stopPropagation?.(); // 🔥 TAMBAH
 		console.log("BTN DATA TBL =", $btn.data("tbl"));
 		console.log("AppState.tbl =", AppState.tbl);
 		const jenisMode = $btn.data("jns"); // add / edit
-		const tbl = $btn.data("tbl");
+		// const tbl = $btn.data("tbl");
+		const tbl = AppState.tbl;
 		const container = $btn.data("container") || "flyout";
 		const idRow = $btn.data("id");
 
@@ -1668,8 +1719,8 @@ $(document).ready(function () {
 	---------------------------------------------- */
 
 	if (tblFromUrl && currentPath !== "renstra") {
-    tableManager.load(currentPath, tblFromUrl);
-}
+		tableManager.load(currentPath, tblFromUrl);
+	}
 
 	/* ---------------------------------------------
 	   Inisialisasi Sidebar Fomantic
@@ -1854,8 +1905,6 @@ $(document).ready(function () {
 
 	$(document).on("click", "#renstraMenu .item", function (e) {
 		e.preventDefault();
-		e.stopPropagation(); // 🔥 TAMBAH INI
-		   e.stopImmediatePropagation(); // 🔥 TAMBAH INI
 		let tbl = $(this).data("tbl");
 
 		// aktifkan menu
@@ -1880,16 +1929,15 @@ $(document).ready(function () {
 	let defaultTbl = $("#renstraMenu .item.active").data("tbl");
 
 	// INIT DEFAULT RENSTRA TAB (HANYA JIKA BELUM ADA STATE)
-if (currentPath === "renstra" && !AppState.tbl) {
+	if (currentPath === "renstra" && !AppState.tbl) {
+		let defaultTbl = $("#renstraMenu .item.active").data("tbl");
 
-    let defaultTbl = $("#renstraMenu .item.active").data("tbl");
+		if (defaultTbl) {
+			$("#btnTambah").attr("data-tbl", defaultTbl);
+			$("#btnImport").attr("data-tbl", defaultTbl);
+			$("#btnExport").attr("data-tbl", defaultTbl);
 
-    if (defaultTbl) {
-        $("#btnTambah").attr("data-tbl", defaultTbl);
-        $("#btnImport").attr("data-tbl", defaultTbl);
-        $("#btnExport").attr("data-tbl", defaultTbl);
-
-        tableManager.load("renstra", defaultTbl);
-    }
-}
+			tableManager.load("renstra", defaultTbl);
+		}
+	}
 });
