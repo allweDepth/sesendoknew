@@ -346,7 +346,7 @@ class TableManager {
 	}
 }
 /* =========================================================
-	 FORM ENGINE PRO - FIELD VARIATIONS (FOMANTIC STYLE)
+	 FORM ENGINE PRO - FIELD VARIATIONS (FOMANTIC STYLE)@note
 ========================================================= */
 
 class FormEngine {
@@ -385,6 +385,9 @@ class FormEngine {
 
 		switch (tag) {
 			/* ===== SINGLE FIELD ===== */
+			case "cardProfile":
+				return this.cardProfile(prop);
+
 			case "field":
 				return this.fieldWrapper(this.input(prop), prop);
 
@@ -435,7 +438,50 @@ class FormEngine {
 				return "";
 		}
 	}
+	//CARD
+	static cardProfile(prop) {
+		return `
+	<div class="ui special fluid card">
 
+		<div class="content">
+			<div class="right floated meta">${prop.meta || ""}</div>
+			<img class="ui avatar image"
+			     src="${prop.image}"
+			     onerror="imgsrc(this)">
+			${prop.title || ""}
+		</div>
+
+		<div class="blurring dimmable image">
+			<div class="ui dimmer">
+				<div class="content">
+					<div class="center">
+						<button class="ui inverted icon button"
+							name="direct"
+							type="button"
+							jns="upload"
+							tbl="${prop.table}"
+							id_row="${prop.id_row || ""}"
+							dok="${prop.dokumen}"
+							accept="${prop.accept}">
+							<i class="file icon"></i>
+							Upload File
+						</button>
+					</div>
+				</div>
+			</div>
+			<img src="${prop.image}" onerror="imgsrc(this)">
+		</div>
+
+		<div class="content">
+			<span class="right floated">
+				<i class="heart outline like icon"></i> likes
+			</span>
+			<i class="comment icon"></i> comments
+		</div>
+
+	</div>
+	`;
+	}
 	/* ============================
 		 Field Wrapper
 	============================ */
@@ -531,6 +577,9 @@ class FormEngine {
 	static init() {
 		$(".ui.dropdown").dropdown();
 		$(".ui.checkbox").checkbox();
+		$(".ui.card .image").dimmer({
+		on: "hover"
+	});
 	}
 }
 /* =========================================================
@@ -566,7 +615,7 @@ AppState.role = "admin";
 ========================================================= */
 
 const UIConfig = {
-	/* ======================================================
+	/* ======================================================@note
 	   STANDAR HARGA
 	====================================================== */
 	standar_harga: {
@@ -702,52 +751,247 @@ const UIConfig = {
 		asn: [
 			{
 				tag: "field",
-				prop: { label: "NIP", name: "nip", classField: "required" },
+				prop: {
+					label: "Nama Lengkap (tanpa gelar)",
+					name: "nama",
+					placeholder: "Nama Lengkap (tanpa gelar)",
+					classField: "required",
+				},
+			},
+			{
+				tag: "fieldAction",
+				prop: {
+					label: "Nomor Induk Pegawai",
+					name: "nip",
+					placeholder: "NIP",
+					button: {
+						icon: "search",
+						class: "teal",
+						attr: {
+							jns: "get_data",
+							tbl: "asn",
+							klm: "nip",
+						},
+					},
+					classField: "required",
+				},
 			},
 			{
 				tag: "field",
-				prop: { label: "Nama", name: "nama", classField: "required" },
-			},
-			{ tag: "field", prop: { label: "Alamat", name: "alamat" } },
-			{
-				tag: "fields",
 				prop: {
-					classGroup: "two",
-					children: [
-						{
-							tag: "fieldDropdown",
-							prop: {
-								label: "Golongan",
-								name: "golongan",
-								options: [
-									{ value: "I", text: "I" },
-									{ value: "II", text: "II" },
-									{ value: "III", text: "III" },
-									{ value: "IV", text: "IV" },
-								],
-							},
-						},
-
-						{
-							tag: "fieldDropdown",
-							prop: {
-								label: "Ruang",
-								name: "ruang",
-								options: [
-									{ value: "a", text: "a" },
-									{ value: "b", text: "b" },
-									{ value: "c", text: "c" },
-									{ value: "d", text: "d" },
-									{ value: "e", text: "e" },
-								],
-							},
-						},
+					label: "Gelar",
+					name: "gelar",
+					placeholder: "Gelar di belakang nama",
+					non_data: true,
+				},
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Gelar Depan Nama",
+					name: "gelar_depan",
+					placeholder: "Gelar di depan nama",
+					non_data: true,
+				},
+			},
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Kelompok Jabatan",
+					name: "kelompok",
+					options: [
+						{ value: "1", text: "Kepala OPD" },
+						{ value: "2", text: "Sekretaris" },
+						{ value: "3", text: "Kepala Bidang" },
+						{ value: "4", text: "ASN" },
+						{ value: "5", text: "non ASN" },
 					],
 				},
 			},
-			{ tag: "field", prop: { label: "Jabatan", name: "jabatan" } },
-			{ tag: "field", prop: { label: "NPWP", name: "npwp" } },
-			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
+			{
+				tag: "field",
+				prop: {
+					label: "Jabatan",
+					name: "jabatan",
+					placeholder: "Jabatan...",
+				},
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Tempat Lahir",
+					name: "t4_lahir",
+					placeholder: "tempat lahir",
+					non_data: true,
+				},
+			},
+			{
+				tag: "fieldDate",
+				prop: {
+					label: "Tanggal Lahir",
+					name: "tgl_lahir",
+					placeholder: "Input tanggal lahir..",
+					calendarType: "date",
+					readonly: true,
+				},
+			},
+
+			// ==============================
+			// PANGKAT & GOLONGAN (DIPERTAHANKAN)
+			// ==============================
+
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Golongan",
+					name: "golongan",
+					options: [
+						{ value: "1", text: "I" },
+						{ value: "2", text: "II" },
+						{ value: "3", text: "III" },
+						{ value: "4", text: "IV" },
+					],
+				},
+			},
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Ruang",
+					name: "ruang",
+					options: [
+						{ value: "a", text: "a" },
+						{ value: "b", text: "b" },
+						{ value: "c", text: "c" },
+						{ value: "d", text: "d" },
+						{ value: "e", text: "e" },
+					],
+				},
+			},
+
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Jenis Kepegawaian",
+					name: "jenis_kepeg",
+					options: [
+						{ value: "pnsp", text: "ASN pusat" },
+						{ value: "pnsd1", text: "ASN Provinsi" },
+						{ value: "pnsd2", text: "ASN Kabupaten/Kota" },
+						{ value: "pnsp_dpb1", text: "ASN Pusat diperbantukan Provinsi" },
+						{ value: "pnsp_dpb2", text: "ASN Pusat diperbantukan Kab./Kota" },
+						{ value: "pnsp_dpk1", text: "ASN Pusat dipekerjakan Provinsi" },
+						{ value: "pnsp_dpk2", text: "ASN Pusat dipekerjakan Kab./Kota" },
+						{ value: "pnsd_dpb_pusat", text: "ASN Daerah diperbantukan Pusat" },
+						{ value: "pnsd_dpk_pusat", text: "ASN Daerah dipekerjakan Pusat" },
+						{ value: "swasta", text: "Swasta" },
+					],
+				},
+			},
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Status Kepegawaian",
+					name: "status_kepeg",
+					options: [
+						{ value: "capeg", text: "Calon Pegawai" },
+						{ value: "peg_tetap", text: "ASN/Pegawai tetap" },
+						{ value: "mpp", text: "Masa Persiapan Pensiun" },
+						{ value: "pen_uang_tunggu", text: "Pensiunan" },
+						{ value: "peg_seorsing", text: "Pegawai Seorsing" },
+						{ value: "cuti", text: "Cuti" },
+						{ value: "peg_sementara", text: "Pegawai Sementara" },
+						{ value: "peg_bulanan", text: "Pegawai Bulanan" },
+					],
+				},
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Nomor KTP",
+					name: "no_ktp",
+					placeholder: "Nomor ktp...",
+				},
+			},
+			{
+				tag: "field",
+				prop: { label: "NPWP", name: "npwp", placeholder: "NPWP..." },
+			},
+			{
+				tag: "field",
+				prop: { label: "Alamat", name: "alamat", placeholder: "Alamat..." },
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Kontak Person",
+					name: "kontak_person",
+					placeholder: "Kontak Person...",
+				},
+			},
+			{
+				tag: "field",
+				prop: { label: "email", name: "email", placeholder: "email..." },
+			},
+
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Agama",
+					name: "agama",
+					options: [
+						{ value: "islam", text: "Islam" },
+						{ value: "kristen", text: "Kristen" },
+						{ value: "katolik", text: "Katolik" },
+						{ value: "protestan", text: "Protestan" },
+						{ value: "hindu", text: "Hindu" },
+						{ value: "budha", text: "Budha" },
+						{ value: "konghucu", text: "Konghucu" },
+						{ value: "yahudi", text: "Yahudi" },
+						{ value: "kepercayaan", text: "Kepercayaan Tuhan YME." },
+					],
+				},
+			},
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Kelamin",
+					name: "kelamin",
+					options: [
+						{ value: "pria", text: "Pria" },
+						{ value: "wanita", text: "Wanita" },
+					],
+				},
+			},
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Status",
+					name: "status",
+					options: [
+						{ value: "menikah", text: "Menikah" },
+						{ value: "janda-duda", text: "Duda-Janda" },
+						{ value: "lajang", text: "Lajang" },
+					],
+				},
+			},
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Keterangan",
+					name: "keterangan",
+					rows: 2,
+					non_data: true,
+				},
+			},
+			{
+				tag: "fieldCheckbox",
+				prop: {
+					label: "Non Aktif",
+					name: "disable",
+					type: "toggle",
+					non_data: true,
+				},
+			},
 		],
 	},
 
