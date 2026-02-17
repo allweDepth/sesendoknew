@@ -52,7 +52,7 @@
 
 <body>
 
-    <!-- NAVBAR (DI LUAR PUSHABLE) @note//@note -->
+    <!-- NAVBAR (DI LUAR PUSHABLE) @note-->
     <div class="ui top attached menu">
         <div class="item" id="toggleSidebar">
             <a>
