@@ -608,7 +608,8 @@ class FlyoutManager {
 	init() {
 		this.$flyout.flyout({
 			context: this.$context,
-			transition: "push",
+			transition: "overlay",
+			dimPage: false,
 			closable: false,
 		});
 
@@ -792,13 +793,33 @@ class FormContainerManager {
 		this.$flyout = $("#mainContext").children(".ui.flyout");
 		this.$modal = $("#mainModal");
 
-		this.activeContainer = "flyout"; // <-- TAMBAHAN
+		this.activeContainer = "flyout";
 
 		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
 
-		this.bindEvents();
-	}
+		this.initContainers(); // <-- TAMBAHKAN INI
 
+		
+	}
+initContainers() {
+
+    // INIT FLYOUT HANYA SEKALI
+    this.$flyout.flyout({
+        context: this.$context,
+        transition: "overlay",
+        dimPage: false,
+        closable: false,
+    });
+
+    this.bindEvents();
+
+    // Modal biasanya sudah aman, tapi boleh guard juga
+    if (this.$modal.length && !this.$modal.data('module-modal')) {
+        this.$modal.modal({
+            closable: false
+        });
+    }
+}
 	/* --------------------------------------------- */
 	bindEvents() {
 		$(document).on("click", '[data-ui="open-form"]', (e) => {
