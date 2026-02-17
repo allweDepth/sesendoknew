@@ -36,10 +36,100 @@ class DynamicTableService
     if (!$mode) {
       return JsonResponse::error('Mode tidak tersedia');
     }
+    if ($jenis === 'add') {
+      return $this->insert($table, $profile, $request);
+    }
 
+    if ($jenis === 'edit' && !empty($request['id'])) {
+      return $this->update($table, $profile, $request);
+    }
+
+    if ($jenis === 'delete' && !empty($request['id_row'])) {
+      return $this->delete($table, $profile, $request['id_row']);
+    }
     return $this->buildQuery($table, $profile, $mode, $request);
   }
+  private function insert(string $table, array $profile, array $request): string
+  {
+    $primaryKey = $profile['primary_key'] ?? 'id';
 
+    $fields = [];
+    $values = [];
+    $params = [];
+
+    foreach ($request as $key => $value) {
+
+      if ($key === 'jenis' || $key === 'tbl') continue;
+      if ($key === $primaryKey) continue;
+
+      $fields[] = "`$key`";
+      $values[] = "?";
+      $params[] = $value;
+    }
+
+    if (empty($fields)) {
+      return JsonResponse::error('Tidak ada data dikirim');
+    }
+
+    $query = "
+        INSERT INTO `$table`
+        (" . implode(',', $fields) . ")
+        VALUES (" . implode(',', $values) . ")
+    ";
+
+    $this->db->query($query, $params);
+
+    return JsonResponse::success('Data berhasil disimpan');
+  }
+  private function update(string $table, array $profile, array $request): string
+  {
+    $primaryKey = $profile['primary_key'] ?? 'id';
+    $id = (int)$request['id'];
+
+    if (!$id) {
+      return JsonResponse::error('ID tidak valid');
+    }
+
+    $sets = [];
+    $params = [];
+
+    foreach ($request as $key => $value) {
+
+      if (in_array($key, ['jenis', 'tbl', 'id'])) continue;
+
+      $sets[] = "`$key` = ?";
+      $params[] = $value;
+    }
+
+    if (empty($sets)) {
+      return JsonResponse::error('Tidak ada data diubah');
+    }
+
+    $params[] = $id;
+
+    $query = "
+        UPDATE `$table`
+        SET " . implode(',', $sets) . "
+        WHERE `$primaryKey` = ?
+    ";
+
+    $this->db->query($query, $params);
+
+    return JsonResponse::success('Data berhasil diperbarui');
+  }
+  private function delete(string $table, array $profile, int $id): string
+  {
+    $primaryKey = $profile['primary_key'] ?? 'id';
+
+    $query = "
+        DELETE FROM `$table`
+        WHERE `$primaryKey` = ?
+    ";
+
+    $this->db->query($query, [$id]);
+
+    return JsonResponse::success('Data berhasil dihapus');
+  }
   private function buildQuery(
     string $table,
     array $profile,
