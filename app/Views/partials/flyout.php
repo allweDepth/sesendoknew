@@ -22,7 +22,7 @@
       <div class="ui red button btnFlyoutClose">
         <i class="remove icon"></i> Tutup
       </div>
-      <div class="ui green button btnFlyoutSubmit">
+      <div class="ui green button btnSubmit">
         <i class="checkmark icon"></i> Submit
       </div>
     </div>

@@ -47,6 +47,29 @@
             overflow-y: auto;
             padding: 20px;
         }
+
+        /* ================================
+   SIDEBAR KANAN WIDTH CONTROL
+================================ */
+
+        /* Default (Desktop) */
+        .sidebarkanan {
+            width: 420px !important;
+        }
+
+        /* Tablet */
+        @media (max-width: 992px) {
+            .sidebarkanan {
+                width: 360px !important;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .sidebarkanan {
+                width: 100% !important;
+            }
+        }
     </style>
 </head>
 

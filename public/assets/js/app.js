@@ -330,9 +330,12 @@ class FormEngine {
 		 Render Form ke Container
 	============================ */
 	static render(container, elements = []) {
-		let html = this.build(elements);
+		let html = `<form class="ui form">`;
+		html += this.build(elements);
+		html += `</form>`;
 
 		$(container).html(html);
+
 		this.init();
 	}
 
@@ -913,7 +916,7 @@ class FormContainerManager {
 				context: $("#mainContext"),
 				transition: "push",
 				// dimPage: false,
-				closable: true,
+				closable: false,//saat dimmer di klik sidebar kanan tidak muncul
 				scrollLock: true,
 			});
 		}
@@ -933,20 +936,34 @@ class FormContainerManager {
 	}
 	/* --------------------------------------------- */
 	bindEvents() {
-		$(document).on("click", '[data-ui="open-form"]', (e) => {
+		const self = this; // 🔥 penting untuk jaga context
+
+		// OPEN FORM
+		$(document).on("click", '[data-ui="open-form"]', function (e) {
 			e.preventDefault();
-			this.open($(e.currentTarget));
+			self.open($(this));
 		});
 
-		$(document).on("click", ".btnSubmit", () => {
-			this.save();
+		// SUBMIT
+		$(document).on("click", ".btnSubmit", function () {
+			self.save();
+		});
+
+		// CLOSE BUTTON
+		$(document).on("click", ".btnFlyoutClose", function () {
+			self.$flyout.sidebar("hide");
+		});
+
+		// ICON CLOSE
+		$(document).on("click", ".sidebarkanan .close.icon", function () {
+			self.$flyout.sidebar("hide");
 		});
 	}
 	getActiveForm() {
 		if (this.activeContainer === "modal") {
-			return $("#form_modal");
+			return $("#form_modal form");
 		}
-		return $("#form_flyout");
+		return $("#form_flyout form");
 	}
 	/* --------------------------------------------- */
 	open($btn) {
@@ -978,19 +995,26 @@ class FormContainerManager {
 	render(config, container) {
 		$("#form_modal").empty();
 		$("#form_flyout").empty();
+
+		// ✅ target HARUS dideklarasikan di luar if
+		let target;
+
 		if (container === "modal") {
+			target = "#form_modal";
 			$("#icon_modal").attr("class", config.icon);
 			$("#content_modal").text(config.header);
-			FormEngine.render("#form_modal", config.elements);
 		} else {
+			target = "#form_flyout";
 			$("#icon_flyout").attr("class", config.icon);
 			$("#content_flyout").text(config.header);
-			FormEngine.render("#form_flyout", config.elements);
 		}
-		// 🔥 TAMBAH HIDDEN ID (untuk edit)
-    if (AppState.mode === "edit") {
-        $(target).prepend(`<input type="hidden" name="id">`);
-    }
+
+		FormEngine.render(target, config.elements);
+
+		// ✅ Hidden ID hanya saat edit
+		if (AppState.mode === "edit") {
+			$(target).prepend(`<input type="hidden" name="id">`);
+		}
 	}
 
 	/* --------------------------------------------- */
