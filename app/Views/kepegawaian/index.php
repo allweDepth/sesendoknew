@@ -16,7 +16,7 @@
       data-container="modal">
       <i class="plus icon"></i>
     </button>
-    <button class="ui button" data-ui="open-form" jns="import" data-tooltip="Import XLSX" data-position="bottom center"><i class="upload icon"></i></button> <button class="ui button" data-tooltip="Download" data-position="bottom center" name="ungguh" jns="dok" tbl="sub_keg" type="submit"><i class="alternate download icon"></i></button>
+    <button class="ui button" data-ui="open-form" data-tbl="asn" data-jns="import" data-tooltip="Import XLSX" data-position="bottom center"><i class="upload icon"></i></button> <button class="ui button" data-tooltip="Download" data-position="bottom center" data-container="modal" name="ungguh" data-jns="tabel" data-tbl="asn" type="submit"><i class="alternate download icon"></i></button>
   </div>
 
   <h3 class="ui dividing header">

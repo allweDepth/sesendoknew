@@ -440,13 +440,19 @@ class FormEngine {
 	}
 	//CARD
 	static cardProfile(prop) {
+		let defaultImage = AppConfig.baseUrl + "assets/img/avatar/default.jpeg";
+
+	let imagePath = prop?.image?.trim()
+		? prop.image
+		: defaultImage;
+
 		return `
 	<div class="ui special fluid card">
 
 		<div class="content">
 			<div class="right floated meta">${prop.meta || ""}</div>
 			<img class="ui avatar image"
-			     src="${prop.image}"
+			     src="${defaultImage}"
 			     onerror="imgsrc(this)">
 			${prop.title || ""}
 		</div>
@@ -469,7 +475,7 @@ class FormEngine {
 					</div>
 				</div>
 			</div>
-			<img src="${prop.image}" onerror="imgsrc(this)">
+			<img src="${defaultImage}" onerror="imgsrc(this)">
 		</div>
 
 		<div class="content">
@@ -578,8 +584,8 @@ class FormEngine {
 		$(".ui.dropdown").dropdown();
 		$(".ui.checkbox").checkbox();
 		$(".ui.card .image").dimmer({
-		on: "hover"
-	});
+			on: "hover",
+		});
 	}
 }
 /* =========================================================
@@ -749,6 +755,18 @@ const UIConfig = {
 	====================================================== */
 	kepegawaian: {
 		asn: [
+			{
+				tag: "cardProfile",
+				prop: {
+					title: "Aparatur Sipil Negara (ASN)",
+					meta: "14h",
+					image: "img/avatar/default.jpeg",
+					table: "asn",
+					id_row: 1,
+					dokumen: "file_photo",
+					accept: ".jpg,.png,.jpeg",
+				},
+			},
 			{
 				tag: "field",
 				prop: {
