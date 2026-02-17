@@ -542,8 +542,7 @@ AppState.role = "admin";
 	 BUAT FIELD UNTUK FORM sesuai tbl
 ========================================================= */
 
-const UIConfig = {
-	//@note
+const UIConfig = {//@note
 	referensi: {
 		satuan: [
 			{
@@ -780,248 +779,142 @@ class FlyoutManager {
 		this.$flyout.flyout("hide");
 	}
 }
-/**
- * ============================================================
- * FORM CONTAINER MANAGER
- * ------------------------------------------------------------
- * Universal Engine untuk:
- * - Drawer (Sidebar kanan)
- * - Modal (optional)
- * 
- * Menggantikan flyout lama → sekarang pakai sidebar
- * Agar tidak muncul error:
- * "Had to add pusher element"
- * ============================================================
- */
+/* =========================================================
+   FORM CONTAINER MANAGER
+   Bisa tampil di:
+   - Flyout
+   - Modal
+========================================================= */
 
 class FormContainerManager {
+	constructor() {
+		this.$flyout = $("#mainContext").children(".ui.flyout");
+		this.$modal = $("#mainModal");
 
-	/**
-	 * ------------------------------------------------------------
-	 * Constructor
-	 * ------------------------------------------------------------
-	 * - Ambil context utama (#mainContext)
-	 * - Ambil drawer (sidebar kanan)
-	 * - Ambil modal (jika ada)
-	 * - Inisialisasi sidebar
-	 */
-	constructor(options = {}) {
-
-		// Container utama pushable
-		this.$context = $("#mainContext");
-
-		// Drawer kanan (pengganti flyout)
-		this.$drawer = this.$context.children(".ui.sidebar.drawer");
-
-		// Alias supaya method lama tetap bisa pakai $flyout
-		this.$flyout = this.$drawer;
-
-		// Modal universal (opsional)
-		this.$modal = $(".ui.modal.universal");
-
-		// Ajax helper (jika Anda punya class Ajax sendiri)
-		this.ajax = new AjaxManager();
-
-		// Default setting sidebar
-		this.settings = {
-			transition: "overlay",
-			dimPage: false,
-			...options
-		};
-
-		this.init();
-	}
-
-	/**
-	 * ------------------------------------------------------------
-	 * INIT
-	 * ------------------------------------------------------------
-	 * Inisialisasi drawer sidebar
-	 */
-	init() {
-
-		if (this.$drawer.length) {
-			this.$drawer.sidebar({
-				context: this.$context,
-				transition: this.settings.transition,
-				dimPage: this.settings.dimPage,
-				closable: false
-			});
-		}
+		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
 
 		this.bindEvents();
 	}
 
-	/**
-	 * ------------------------------------------------------------
-	 * BIND EVENTS
-	 * ------------------------------------------------------------
-	 * - Open form
-	 * - Close drawer
-	 */
+	/* --------------------------------------------- */
 	bindEvents() {
-
-		const self = this;
-
-		// OPEN FORM (delegation aman untuk dynamic content)
-		$(document).on("click", "[data-ui='open-form']", function (e) {
-
+		$(document).on("click", '[data-ui="open-form"]', (e) => {
 			e.preventDefault();
-
-			const $btn = $(this);
-			const jenis = $btn.data("jns");
-			const tbl = $btn.data("tbl");
-			const container = $btn.data("container") || "drawer";
-
-			AppState.mode = jenis;
-			AppState.tbl = tbl;
-
-			// Build konfigurasi form
-			let config = self.buildConfig(jenis, tbl);
-
-			// Render form
-			self.render(config, container);
-
-			// Tampilkan container
-			self.show(container);
-
-			// Jika edit → load data
-			if (jenis === "edit" && $btn.data("id")) {
-				self.loadData($btn.data("id"), container);
-			}
+			this.open($(e.currentTarget));
 		});
 
-		// CLOSE DRAWER
-		$(document).on(
-			"click",
-			".btnFlyoutClose, .drawer .close.icon",
-			function () {
-				self.hide("drawer");
-			}
-		);
+		$(document).on("click", ".btnSubmit", () => {
+			this.save();
+		});
 	}
 
-	/**
-	 * ------------------------------------------------------------
-	 * RENDER FORM
-	 * ------------------------------------------------------------
-	 * Render elemen berdasarkan config
-	 */
+	/* --------------------------------------------- */
+	open($btn) {
+		const jenis = $btn.data("jns");
+		const tbl = $btn.data("tbl");
+		const container = $btn.data("container") || "flyout";
+		const idRow = $btn.data("id");
+
+		AppState.mode = jenis;
+		AppState.tbl = tbl;
+
+		let config = this.buildConfig(jenis, tbl);
+
+		this.render(config, container);
+
+		if ((jenis === "edit" || jenis === "detail") && idRow) {
+			this.loadData(idRow, container);
+		}
+
+		this.show(container);
+	}
+
+	/* --------------------------------------------- */
 	render(config, container) {
-
 		if (container === "modal") {
-
 			$("#icon_modal").attr("class", config.icon);
 			$("#content_modal").text(config.header);
-
 			FormEngine.render("#form_modal", config.elements);
-
 		} else {
-
 			$("#icon_flyout").attr("class", config.icon);
 			$("#content_flyout").text(config.header);
-
 			FormEngine.render("#form_flyout", config.elements);
 		}
 	}
 
-	/**
-	 * ------------------------------------------------------------
-	 * SHOW CONTAINER
-	 * ------------------------------------------------------------
-	 */
+	/* --------------------------------------------- */
 	show(container) {
-
 		if (container === "modal") {
-
 			this.$modal.modal("show");
-
 		} else {
-
-			this.$drawer.sidebar("show");
+			this.$flyout.flyout("show");
 		}
 	}
 
-	/**
-	 * ------------------------------------------------------------
-	 * HIDE CONTAINER
-	 * ------------------------------------------------------------
-	 */
+	/* --------------------------------------------- */
 	hide(container) {
-
 		if (container === "modal") {
-
 			this.$modal.modal("hide");
-
 		} else {
-
-			this.$drawer.sidebar("hide");
+			this.$flyout.flyout("hide");
 		}
 	}
+/* --------------------------------------------- */
+loadData(idRow, container) {
 
-	/**
-	 * ------------------------------------------------------------
-	 * LOAD DATA (MODE EDIT)
-	 * ------------------------------------------------------------
-	 */
-	loadData(idRow, container) {
+	this.ajax.request({
+		data: {
+			jenis: "edit",
+			tbl: AppState.tbl,
+			id_row: idRow,
+		},
+		success: (res) => {
+			if (res.success && res.data) {
 
-		this.ajax.request({
-			data: {
-				jenis: "edit",
-				tbl: AppState.tbl,
-				id_row: idRow
-			},
-			success: (res) => {
+				// tentukan target form sesuai container
+				let $formTarget =
+					container === "modal"
+						? $("#form_modal")
+						: $("#form_flyout");
 
-				if (res.success && res.data) {
-
-					let $formTarget =
-						container === "modal"
-							? $("#form_modal")
-							: $("#form_flyout");
-
-					Object.keys(res.data).forEach((key) => {
-						$formTarget.find(`[name="${key}"]`).val(res.data[key]);
-					});
-				}
+				Object.keys(res.data).forEach((key) => {
+					$formTarget.find(`[name="${key}"]`).val(res.data[key]);
+				});
 			}
-		});
-	}
-
-	/**
-	 * ------------------------------------------------------------
-	 * BUILD CONFIG FORM
-	 * ------------------------------------------------------------
-	 */
+		},
+	});
+}
+	/* --------------------------------------------- */
 	buildConfig(jenis, tbl) {
-
 		let config = {
-			icon: jenis === "add" ? "plus icon"
-				: jenis === "edit" ? "edit icon"
-				: "eye icon",
+			icon: "folder icon",
+			header: "",
+			elements: [],
+		};
 
-			header: jenis === "add"
+		config.header =
+			jenis === "add"
 				? "Tambah Data"
 				: jenis === "edit"
 					? "Edit Data"
-					: "Detail Data",
+					: "Detail Data";
 
-			elements: []
-		};
+		config.icon =
+			jenis === "add"
+				? "plus icon"
+				: jenis === "edit"
+					? "edit icon"
+					: "eye icon";
 
-		// Ambil schema dari UIConfig
 		if (UIConfig[AppState.jenis]?.[tbl]) {
-			config.elements = [...UIConfig[AppState.jenis][tbl]];
+			config.elements = UIConfig[AppState.jenis][tbl];
 		}
 
-		// Tambahkan divider
 		config.elements.push({
 			tag: "divider",
-			prop: {}
+			prop: {},
 		});
 
-		// Tambahkan tombol submit
 		config.elements.push({
 			tag: "field",
 			prop: {
@@ -1030,26 +923,16 @@ class FormContainerManager {
 					type="button"
 					class="ui primary button btnSubmit"
 					value="Simpan"
-				`
-			}
+				`,
+			},
 		});
 
 		return config;
 	}
 
-	/**
-	 * ------------------------------------------------------------
-	 * SAVE DATA
-	 * ------------------------------------------------------------
-	 */
+	/* --------------------------------------------- */
 	save() {
-
-		let form = document.querySelector(
-			this.$modal.hasClass("active")
-				? "#form_modal"
-				: "#form_flyout"
-		);
-
+		let form = $(".ui.form")[0];
 		let formData = new FormData(form);
 
 		formData.append("jenis", AppState.mode);
@@ -1062,14 +945,12 @@ class FormContainerManager {
 			processData: false,
 			contentType: false,
 			success: (res) => {
-
 				if (res.success) {
-
-					this.hide("drawer");
-
+					this.$modal.modal("hide");
+					this.$flyout.flyout("hide");
 					new TableManager().fetch();
 				}
-			}
+			},
 		});
 	}
 }

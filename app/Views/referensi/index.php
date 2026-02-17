@@ -13,7 +13,7 @@
       data-tbl="<?= $tbl ?>"
       data-tooltip="Tambah Data"
       data-position="bottom center"
-      data-container="drawer">
+      data-container="flyout">
       <i class="plus icon"></i>
     </button>
     <button class="ui button" data-ui="open-form" jns="import" data-tooltip="Import XLSX" data-position="bottom center" data-container="flyout"><i class="upload icon"></i></button> <button class="ui button" data-tooltip="Download" data-position="bottom center" name="ungguh" jns="dok" tbl="sub_keg" type="submit"><i class="alternate download icon"></i></button>
