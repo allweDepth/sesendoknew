@@ -330,13 +330,11 @@ class FormEngine {
 		 Render Form ke Container
 	============================ */
 	static render(container, elements = []) {
-		let html = `<form class="ui form">`;
-		html += this.build(elements);
-		html += `</form>`;
+		let html = this.build(elements);
 
-		$(container).html(html);
+    $(container).html(html);
 
-		this.init();
+    this.init();
 	}
 
 	/* ============================
@@ -961,9 +959,9 @@ class FormContainerManager {
 	}
 	getActiveForm() {
 		if (this.activeContainer === "modal") {
-			return $("#form_modal form");
-		}
-		return $("#form_flyout form");
+        return $("#form_modal");
+    }
+    return $("#form_flyout");
 	}
 	/* --------------------------------------------- */
 	open($btn) {

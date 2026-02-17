@@ -1,29 +1,31 @@
 <!-- FLYOUT GLOBAL -->
 <div class="ui right vertical sidebar sidebarkanan">
 
-  <div class="ui segment basic">
+  <div class="flyout-container">
 
-    <i class="close icon" style="float:right; cursor:pointer;"></i>
+    <div class="flyout-body ui basic segment">
 
-    <h3 class="ui header">
-      <i class="folder icon" id="icon_flyout"></i>
-      <div class="content" id="content_flyout">
-        Lengkapi Data
-      </div>
-    </h3>
+      <i class="close icon btnFlyoutClose" style="float:right; cursor:pointer;"></i>
 
-    <form class="ui form" id="form_flyout">
-      <!-- FORM DINAMIS -->
-    </form>
+      <h3 class="ui header">
+        <i class="folder icon" id="icon_flyout"></i>
+        <div class="content" id="content_flyout">
+          Lengkapi Data
+        </div>
+      </h3>
 
-    <div class="ui divider"></div>
+      <form class="ui form" id="form_flyout"></form>
 
-    <div class="ui two buttons">
-      <div class="ui red button btnFlyoutClose">
-        <i class="remove icon"></i> Tutup
-      </div>
-      <div class="ui green button btnSubmit">
-        <i class="checkmark icon"></i> Submit
+    </div>
+
+    <div class="flyout-footer ui segment">
+      <div class="ui two buttons">
+        <div class="ui red button btnFlyoutClose">
+          <i class="remove icon"></i> Tutup
+        </div>
+        <div class="ui green button btnSubmit">
+          <i class="checkmark icon"></i> Submit
+        </div>
       </div>
     </div>
 

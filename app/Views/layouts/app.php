@@ -70,6 +70,27 @@
                 width: 100% !important;
             }
         }
+
+        .sidebarkanan {
+            width: 420px;
+            display: flex;
+        }
+
+        .flyout-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        .flyout-body {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .flyout-footer {
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
     </style>
 </head>
 
