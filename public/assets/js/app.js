@@ -790,7 +790,7 @@ class FlyoutManager {
 
 class FormContainerManager {
 	constructor() {
-		this.$flyout = $("#mainContext").children(".ui.flyout");
+		this.$flyout = $("#mainContext .ui.flyout");
 		this.$modal = $("#mainModal");
 
 		this.activeContainer = "flyout";
@@ -798,28 +798,27 @@ class FormContainerManager {
 		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
 
 		this.initContainers(); // <-- TAMBAHKAN INI
-
-		
 	}
-initContainers() {
+	initContainers() {
+		// INIT FLYOUT HANYA SEKALI
+		if (!this.$flyout.hasClass("initialized")) {
+			this.$flyout.flyout({
+				dimPage: false,
+				closable: false,
+				transition: "overlay",
+			});
+			this.$flyout.addClass("initialized");
+		}
 
-    // INIT FLYOUT HANYA SEKALI
-    this.$flyout.flyout({
-        context: this.$context,
-        transition: "overlay",
-        dimPage: false,
-        closable: false,
-    });
+		this.bindEvents();
 
-    this.bindEvents();
-
-    // Modal biasanya sudah aman, tapi boleh guard juga
-    if (this.$modal.length && !this.$modal.data('module-modal')) {
-        this.$modal.modal({
-            closable: false
-        });
-    }
-}
+		// Modal biasanya sudah aman, tapi boleh guard juga
+		if (this.$modal.length && !this.$modal.data("module-modal")) {
+			this.$modal.modal({
+				closable: false,
+			});
+		}
+	}
 	/* --------------------------------------------- */
 	bindEvents() {
 		$(document).on("click", '[data-ui="open-form"]', (e) => {
