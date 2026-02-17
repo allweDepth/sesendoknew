@@ -580,207 +580,7 @@ const UIConfig = {
 		],
 	},
 };
-/* =========================================================
-	 FLYOUT MANAGER
-	 ---------------------------------------------------------
-	 → Mengatur panel flyout (add/edit/detail)
-	 → Mengontrol buka/tutup
-	 → Mengisi form menggunakan FormEngine
-========================================================= */
 
-class FlyoutManager {
-	constructor(contextSelector = "#mainContext") {
-		this.$context = $(contextSelector);
-		this.$flyout = this.$context.children(".ui.flyout");
-
-		this.$icon = $("#icon_flyout");
-		this.$header = $("#content_flyout");
-		this.$form = $("#form_flyout");
-
-		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
-
-		this.init();
-	}
-
-	/* ---------------------------------------------/
-		 Inisialisasi Flyout Fomantic
-	---------------------------------------------- */
-	init() {
-		this.$flyout.flyout({
-			context: this.$context,
-			transition: "overlay",
-			dimPage: false,
-			closable: false,
-		});
-
-		this.bindEvents();
-	}
-
-	/* ---------------------------------------------
-		 Event Binding
-	---------------------------------------------- */
-	bindEvents() {
-		// Open Form (Add / Edit / Detail)
-		$(document).on("click", '[data-ui="open-form"]', (e) => {
-			e.preventDefault();
-			this.open($(e.currentTarget));
-		});
-
-		// Close Flyout
-		$(document).on("click", ".btnFlyoutClose, .close.icon", () => {
-			this.hide();
-		});
-	}
-
-	/* ---------------------------------------------
-		 Open Flyout
-	---------------------------------------------- */
-	open($btn) {
-		const jenis = $btn.data("jns");
-		const tbl = $btn.data("tbl");
-		const idRow = $btn.data("id");
-
-		AppState.mode = jenis;
-
-		if (tbl) {
-			AppState.tbl = tbl;
-		}
-
-		let config = this.buildConfig(jenis, AppState.tbl);
-
-		this.render(config);
-
-		if ((jenis === "edit" || jenis === "detail") && idRow) {
-			this.loadData(idRow);
-		} else {
-			this.show();
-		}
-	}
-	//========
-	//========
-	save() {
-		let form = $("#form_flyout form")[0];
-		let formData = new FormData(form);
-
-		formData.append("jenis", AppState.mode);
-		formData.append("tbl", AppState.tbl);
-
-		this.ajax.request({
-			url: AppConfig.apiUrl + "dynamic/save",
-			method: "POST",
-			data: formData,
-			processData: false,
-			contentType: false,
-			success: (res) => {
-				if (res.success) {
-					this.hide();
-					new TableManager().fetch();
-				}
-			},
-		});
-	}
-	/* ---------------------------------------------
-		 Konfigurasi Form per jenis
-		 Bisa kamu modifikasi sesuai kebutuhan
-	---------------------------------------------- */
-	buildConfig(jenis, tbl) {
-		let config = {
-			icon: "folder icon",
-			header: "",
-			elements: [],
-		};
-
-		let role = RoleConfig[AppState.role];
-
-		if (jenis === "add" && !role.canAdd) return config;
-		if (jenis === "edit" && !role.canEdit) return config;
-
-		config.header =
-			jenis === "add"
-				? "Tambah Data"
-				: jenis === "edit"
-					? "Edit Data"
-					: "Detail Data";
-
-		config.icon =
-			jenis === "add"
-				? "plus icon"
-				: jenis === "edit"
-					? "edit icon"
-					: "eye icon";
-
-		if (UIConfig[AppState.jenis]?.[tbl]) {
-			config.elements = UIConfig[AppState.jenis][tbl];
-		}
-
-		// Tambahkan tombol submit
-		config.elements.push({
-			tag: "divider",
-			prop: { label: "" },
-		});
-
-		config.elements.push({
-			tag: "field",
-			prop: {
-				name: "_submit",
-				atribut: `
-				type="button"
-				class="ui primary button btnSubmit"
-				value="Simpan"
-			`,
-			},
-		});
-
-		return config;
-	}
-
-	/* ---------------------------------------------
-		 Render ke Flyout
-	---------------------------------------------- */
-	render(config) {
-		this.$icon.attr("class", config.icon);
-		this.$header.text(config.header);
-
-		// Gunakan FormEngine untuk isi form
-		if (config.elements) {
-			FormEngine.render("#form_flyout", config.elements);
-		}
-	}
-
-	/* ---------------------------------------------
-		 Load Data (Mode Edit)
-	---------------------------------------------- */
-	loadData(idRow) {
-		this.ajax.request({
-			data: {
-				jenis: "edit",
-				tbl: AppState.tbl,
-				id_row: idRow,
-			},
-			success: (res) => {
-				if (res.success && res.data) {
-					// Prefill form berdasarkan name=""
-					Object.keys(res.data).forEach((key) => {
-						this.$form.find(`[name="${key}"]`).val(res.data[key]);
-					});
-
-					this.show();
-				}
-			},
-		});
-	}
-
-	/* ---------------------------------------------
-		 Show / Hide
-	---------------------------------------------- */
-	show() {
-		this.$flyout.flyout("show");
-	}
-
-	hide() {
-		this.$flyout.flyout("hide");
-	}
-}
 /* =========================================================
    FORM CONTAINER MANAGER
    Bisa tampil di:
@@ -790,7 +590,7 @@ class FlyoutManager {
 
 class FormContainerManager {
 	constructor() {
-		this.$flyout = $("#mainContext .ui.flyout");
+		this.$flyout = $("#mainContext .sidebarkanan");
 		this.$modal = $("#mainModal");
 
 		this.activeContainer = "flyout";
@@ -801,13 +601,18 @@ class FormContainerManager {
 	}
 	initContainers() {
 		// INIT FLYOUT HANYA SEKALI
-		if (!this.$flyout.hasClass("initialized")) {
-			this.$flyout.flyout({
+		if (this.$flyout.length && !this.$flyout.data("module-sidebar")) {
+			this.$flyout.sidebar({
+				context: $("#mainContext"),
+				transition: "overlay",
 				dimPage: false,
 				closable: false,
-				transition: "overlay",
+				direction: "right",
 			});
-			this.$flyout.addClass("initialized");
+		}
+
+		if (this.$modal.length && !this.$modal.data("module-modal")) {
+			this.$modal.modal({ closable: false });
 		}
 
 		this.bindEvents();
@@ -876,21 +681,21 @@ class FormContainerManager {
 
 	/* --------------------------------------------- */
 	show(container) {
-		if (container === "modal") {
-			this.$modal.modal("show");
-		} else {
-			this.$flyout.flyout("show");
-		}
+	if (container === "modal") {
+		this.$modal.modal("show");
+	} else {
+		this.$flyout.sidebar("show");
 	}
+}
 
 	/* --------------------------------------------- */
 	hide(container) {
-		if (container === "modal") {
-			this.$modal.modal("hide");
-		} else {
-			this.$flyout.flyout("hide");
-		}
+	if (container === "modal") {
+		this.$modal.modal("hide");
+	} else {
+		this.$flyout.sidebar("hide");
 	}
+}
 	/* --------------------------------------------- */
 	loadData(idRow, container) {
 		this.ajax.request({
@@ -1042,7 +847,7 @@ $(document).ready(function () {
 	/* ---------------------------------------------
 	   Sidebar reference
 	---------------------------------------------- */
-	const $sidebar = $context.children(".ui.sidebar");
+	const $sidebarUtama = $(".sidebarutama");
 
 	/* ---------------------------------------------
 	   Ambil parameter URL (?tbl=...)
@@ -1066,9 +871,7 @@ $(document).ready(function () {
 	/* ---------------------------------------------
 	   Auto load tabel jika ada ?tbl=
 	---------------------------------------------- */
-	if (tblFromUrl && currentPath) {
-		tableManager.load(currentPath, tblFromUrl);
-	}
+
 	if (tblFromUrl && currentPath) {
 		tableManager.load(currentPath, tblFromUrl);
 	}
@@ -1076,7 +879,7 @@ $(document).ready(function () {
 	/* ---------------------------------------------
 	   Inisialisasi Sidebar Fomantic
 	---------------------------------------------- */
-	$sidebar.sidebar({
+	$sidebarUtama.sidebar({
 		context: $context,
 		transition: "push",
 	});
@@ -1085,7 +888,7 @@ $(document).ready(function () {
 	   Toggle Sidebar Button
 	---------------------------------------------- */
 	$("#toggleSidebar").on("click", function () {
-		$sidebar.sidebar("toggle");
+		$sidebarUtama.sidebar("toggle");
 	});
 
 	/* =============================================
@@ -1328,24 +1131,7 @@ $(document).ready(function () {
 		});
 	});
 	// Delete
-	$(document).on("click", '[data-ui="delete-row"]', (e) => {
-		let id = $(e.currentTarget).data("id");
 
-		if (!confirm("Yakin hapus data?")) return;
-
-		this.ajax.request({
-			data: {
-				jenis: "delete",
-				tbl: AppState.tbl,
-				id_row: id,
-			},
-			success: (res) => {
-				if (res.success) {
-					new TableManager().fetch();
-				}
-			},
-		});
-	});
 	/* ---------------------------------------------
 	   Load Profil jika halaman profil
 	---------------------------------------------- */

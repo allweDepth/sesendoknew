@@ -1,5 +1,5 @@
 <!-- FLYOUT GLOBAL -->
-<div class="ui right flyout">
+<div class="ui right vertical sidebar sidebarkanan">
 
   <div class="ui segment basic">
 

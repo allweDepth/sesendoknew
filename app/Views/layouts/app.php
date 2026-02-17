@@ -93,7 +93,7 @@
     <!-- SIDEBAR WRAPPER -->
     <div class="ui bottom attached segment pushable" id="mainContext">
         <!-- SIDEBAR -->
-        <div class="ui inverted vertical sidebar menu left">
+        <div class="ui inverted vertical sidebar menu left sidebarutama">
             <!-- HEADER -->
             <div class="item">
                 <h2 class="ui inverted center aligned icon header dash_header">
@@ -219,11 +219,11 @@
                 <i class="user icon"></i> Profil
             </a>
         </div>
-
+        <!-- FLYOUT -->
+        <?php require __DIR__ . '/../partials/flyout.php'; ?>
         <!-- PUSHER -->
         <div class="pusher">
-            <!-- FLYOUT -->
-            <?php require __DIR__ . '/../partials/flyout.php'; ?>
+
             <!-- sticky-->
             <div class="ui sticky">
                 <div class="ui icon message dashboard"><i class="home icon"></i>
