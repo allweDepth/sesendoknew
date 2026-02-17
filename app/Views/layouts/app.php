@@ -219,11 +219,11 @@
                 <i class="user icon"></i> Profil
             </a>
         </div>
-        <!-- FLYOUT -->
-        <?php require __DIR__ . '/../partials/flyout.php'; ?>
+
         <!-- PUSHER -->
         <div class="pusher">
-
+            <!-- FLYOUT -->
+            <?php require __DIR__ . '/../partials/flyout.php'; ?>
             <!-- sticky-->
             <div class="ui sticky">
                 <div class="ui icon message dashboard"><i class="home icon"></i>
