@@ -442,9 +442,7 @@ class FormEngine {
 	static cardProfile(prop) {
 		let defaultImage = AppConfig.baseUrl + "assets/img/avatar/default.jpeg";
 
-	let imagePath = prop?.image?.trim()
-		? prop.image
-		: defaultImage;
+		let imagePath = prop?.image?.trim() ? prop.image : defaultImage;
 
 		return `
 	<div class="ui special fluid card">
@@ -1466,6 +1464,7 @@ function loadProfil() {
 ========================================================= */
 
 $(document).ready(function () {
+	//@note $ready
 	/* ---------------------------------------------
 	   Inisialisasi Table Manager
 	---------------------------------------------- */
@@ -1762,7 +1761,42 @@ $(document).ready(function () {
 			);
 		});
 	});
-	// Delete
+	// export excel
+	$(document).on("click", 'button[data-action="export"]', async function (e) {
+		console.log("EXPORT CLICKED");
+		e.preventDefault();
+
+		const table = $(this).data("tbl");
+		const btn = $(this);
+
+		try {
+			btn.addClass("loading");
+
+			const response = await fetch(AppConfig.apiUrl + "export", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ tabel: table }),
+			});
+
+			if (!response.ok) throw new Error("Gagal export");
+
+			const blob = await response.blob();
+			const url = window.URL.createObjectURL(blob);
+
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = table + ".xlsx";
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+
+			window.URL.revokeObjectURL(url);
+		} catch (err) {
+			alert(err.message);
+		} finally {
+			btn.removeClass("loading");
+		}
+	});
 
 	/* ---------------------------------------------
 	   Load Profil jika halaman profil

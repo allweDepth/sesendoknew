@@ -1,4 +1,8 @@
 RewriteEngine On
+
+# Jika file atau folder ada → jalankan normal
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php/$1 [L]  # Mirip Laravel, route ke index.php
+
+# Semua route arahkan ke index.php
+RewriteRule ^ index.php [QSA,L]

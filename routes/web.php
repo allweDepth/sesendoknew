@@ -62,4 +62,7 @@ return [
     '/profil' => ['ProfilController', 'index'],
     '/profil/load' => ['ProfilController', 'load'],
     '/profil/update' => ['ProfilController', 'update'],
+      // EXPORT IMPORT EXCEL
+    '/export' => ['DynamicController', 'export'],
+    '/import' => ['DynamicController', 'import'],
 ];

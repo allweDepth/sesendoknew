@@ -297,4 +297,18 @@ class DynamicTableService
       $rows
     );
   }
+  public static function getAll($tbl)
+  {
+    $profiles = require __DIR__ . '/../Config/table_profiles.php';
+
+    if (!isset($profiles[$tbl])) {
+      return [];
+    }
+
+    $realTable = $profiles[$tbl]['table'];
+
+    $db = DB::getInstance();
+
+    return $db->get($realTable);
+  }
 }

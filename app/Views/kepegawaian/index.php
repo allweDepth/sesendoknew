@@ -13,10 +13,19 @@
       data-tbl="<?= $tbl ?>"
       data-tooltip="Tambah Data"
       data-position="bottom center"
-      data-container="modal">
+      data-container="flyout">
       <i class="plus icon"></i>
     </button>
-    <button class="ui button" data-ui="open-form" data-tbl="asn" data-jns="import" data-tooltip="Import XLSX" data-position="bottom center"><i class="upload icon"></i></button> <button class="ui button" data-tooltip="Download" data-position="bottom center" data-container="modal" name="ungguh" data-jns="tabel" data-tbl="asn" type="submit"><i class="alternate download icon"></i></button>
+    <button class="ui button" data-ui="open-form" data-tbl="asn" data-jns="import" data-tooltip="Import XLSX" data-position="bottom center"><i class="upload icon"></i></button>
+    <button class="ui icon button"
+      type="button"
+      data-tooltip="Download"
+      data-position="bottom center"
+      data-container="flyout"
+      data-action="export"
+      data-tbl="asn">
+      <i class="alternate download icon"></i>
+    </button>
   </div>
 
   <h3 class="ui dividing header">
@@ -27,7 +36,7 @@
   <div class="ui hidden divider"></div>
 
   <table class="ui celled striped table">
-      <thead>
+    <thead>
       <?php
 
       $columns = [
@@ -78,22 +87,22 @@
 
         <th class="collapsing">Aksi</th>
       </tr>
-  </thead>
+    </thead>
 
 
     <!-- INI SAJA YANG BERBEDA -->
     <tbody name="tabel_kepegawaian">
-    <tr>
-      <td colspan="<?= $totalCol ?>">
-        <div class="ui active inline loader"></div>
-      </td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td colspan="<?= $totalCol ?>" class="right aligned">
+      <tr>
+        <td colspan="<?= $totalCol ?>">
+          <div class="ui active inline loader"></div>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="<?= $totalCol ?>" class="right aligned">
           <div class="ui center pagination menu" name="pagination_kepegawaian"></div>
-        </th>
+          </th>
       </tr>
     </tfoot>
   </table>
