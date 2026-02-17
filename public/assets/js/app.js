@@ -330,9 +330,7 @@ class FormEngine {
 		 Render Form ke Container
 	============================ */
 	static render(container, elements = []) {
-		let html = `<form class="ui form">`;
-		html += this.build(elements);
-		html += `</form>`;
+		let html = this.build(elements);
 
 		$(container).html(html);
 		this.init();
@@ -543,40 +541,349 @@ AppState.role = "admin";
 ========================================================= */
 
 const UIConfig = {
-	//@note
+	/* ======================================================
+	   STANDAR HARGA
+	====================================================== */
+	standar_harga: {
+		/* ===================== SBU (sbu_neo) ===================== */
+		sbu: [
+			{
+				tag: "field",
+				prop: { label: "Kode Aset", name: "kd_aset", classField: "required" },
+			},
+			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
+			{
+				tag: "field",
+				prop: {
+					label: "Uraian Barang",
+					name: "uraian_barang",
+					classField: "required",
+				},
+			},
+			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
+			{
+				tag: "fieldDropdown",
+				prop: { label: "Satuan", name: "satuan", options: [] },
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Harga Satuan",
+					name: "harga_satuan",
+					atribut: `type="number"`,
+				},
+			},
+			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
+		],
+
+		/* ===================== SSH (ssh_neo) ===================== */
+		ssh: [
+			{
+				tag: "field",
+				prop: { label: "Kode Aset", name: "kd_aset", classField: "required" },
+			},
+			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
+			{
+				tag: "field",
+				prop: {
+					label: "Uraian Barang",
+					name: "uraian_barang",
+					classField: "required",
+				},
+			},
+			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
+			{
+				tag: "fieldDropdown",
+				prop: { label: "Satuan", name: "satuan", options: [] },
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Harga Satuan",
+					name: "harga_satuan",
+					atribut: `type="number"`,
+				},
+			},
+			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
+		],
+
+		/* ===================== ASB (asb_neo) ===================== */
+		asb: [
+			{
+				tag: "field",
+				prop: { label: "Kode Aset", name: "kd_aset", classField: "required" },
+			},
+			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
+			{
+				tag: "field",
+				prop: {
+					label: "Uraian Barang",
+					name: "uraian_barang",
+					classField: "required",
+				},
+			},
+			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
+			{
+				tag: "fieldDropdown",
+				prop: { label: "Satuan", name: "satuan", options: [] },
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Harga Satuan",
+					name: "harga_satuan",
+					atribut: `type="number"`,
+				},
+			},
+			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
+		],
+
+		/* ===================== HSPK (hspk_neo) ===================== */
+		hspk: [
+			{
+				tag: "field",
+				prop: { label: "Kode Aset", name: "kd_aset", classField: "required" },
+			},
+			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
+			{
+				tag: "field",
+				prop: {
+					label: "Uraian Barang",
+					name: "uraian_barang",
+					classField: "required",
+				},
+			},
+			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
+			{
+				tag: "fieldDropdown",
+				prop: { label: "Satuan", name: "satuan", options: [] },
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Harga Satuan",
+					name: "harga_satuan",
+					atribut: `type="number"`,
+				},
+			},
+			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
+		],
+	},
+
+	/* ======================================================
+	   KEPEGAWAIAN (db_asn_pemda_neo)
+	====================================================== */
+	kepegawaian: {
+		asn: [
+			{
+				tag: "field",
+				prop: { label: "NIP", name: "nip", classField: "required" },
+			},
+			{
+				tag: "field",
+				prop: { label: "Nama", name: "nama", classField: "required" },
+			},
+			{ tag: "field", prop: { label: "Alamat", name: "alamat" } },
+			{
+				tag: "fields",
+				prop: {
+					classGroup: "two",
+					children: [
+						{
+							tag: "fieldDropdown",
+							prop: {
+								label: "Golongan",
+								name: "golongan",
+								options: [
+									{ value: "I", text: "I" },
+									{ value: "II", text: "II" },
+									{ value: "III", text: "III" },
+									{ value: "IV", text: "IV" },
+								],
+							},
+						},
+
+						{
+							tag: "fieldDropdown",
+							prop: {
+								label: "Ruang",
+								name: "ruang",
+								options: [
+									{ value: "a", text: "a" },
+									{ value: "b", text: "b" },
+									{ value: "c", text: "c" },
+									{ value: "d", text: "d" },
+									{ value: "e", text: "e" },
+								],
+							},
+						},
+					],
+				},
+			},
+			{ tag: "field", prop: { label: "Jabatan", name: "jabatan" } },
+			{ tag: "field", prop: { label: "NPWP", name: "npwp" } },
+			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
+		],
+	},
+
+	/* ======================================================
+	   REFERENSI
+	====================================================== */
 	referensi: {
+		/* sub_kegiatan_neo */
+		sub_kegiatan: [
+			{
+				tag: "field",
+				prop: { label: "Kode", name: "kode", classField: "required" },
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Nomenklatur Urusan",
+					name: "nomenklatur_urusan",
+					classField: "required",
+				},
+			},
+			{ tag: "field", prop: { label: "Kinerja", name: "kinerja" } },
+			{ tag: "field", prop: { label: "Indikator", name: "indikator" } },
+		],
+
+		/* rekanan_neo */
+		rekanan: [
+			{
+				tag: "field",
+				prop: {
+					label: "Nama Perusahaan",
+					name: "nama_perusahaan",
+					classField: "required",
+				},
+			},
+			{ tag: "field", prop: { label: "NPWP", name: "npwp" } },
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Alamat", name: "alamat", atribut: `rows="3"` },
+			},
+			{ tag: "field", prop: { label: "Email", name: "email" } },
+			{ tag: "field", prop: { label: "No Rekening", name: "no_rekening" } },
+			{ tag: "field", prop: { label: "Bank Rekening", name: "bank_rekening" } },
+			{ tag: "field", prop: { label: "Direktur", name: "direktur" } },
+		],
+
+		/* satuan_neo */
 		satuan: [
 			{
 				tag: "field",
-				prop: {
-					label: "Nama Satuan",
-					name: "nama_satuan",
-					classField: "required",
-					atribut: `placeholder="Masukkan satuan"`,
-					role: ["admin", "editor"],
-				},
-			},
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Status",
-					name: "status",
-					options: [
-						{ value: "1", text: "Aktif" },
-						{ value: "0", text: "Non Aktif" },
-					],
-					role: ["admin"],
-				},
+				prop: { label: "Value", name: "value", classField: "required" },
 			},
 			{
 				tag: "field",
+				prop: { label: "Item", name: "item", classField: "required" },
+			},
+			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
+		],
+
+		/* mapping_aset_akun */
+		mapping: [
+			{
+				tag: "fieldDropdown",
+				prop: { label: "Aset", name: "id_aset", options: [] },
+			},
+			{
+				tag: "fieldDropdown",
+				prop: { label: "Akun", name: "id_akun", options: [] },
+			},
+		],
+
+		/* aset_neo */
+		neraca: [
+			{
+				tag: "field",
+				prop: { label: "Kode", name: "kode", classField: "required" },
+			},
+			{
+				tag: "field",
+				prop: { label: "Uraian", name: "uraian", classField: "required" },
+			},
+			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
+		],
+
+		/* takun_neo */
+		akun: [
+			{
+				tag: "field",
+				prop: { label: "Kode", name: "kode", classField: "required" },
+			},
+			{
+				tag: "field",
+				prop: { label: "Uraian", name: "uraian", classField: "required" },
+			},
+			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
+		],
+
+		/* sumber_dana_neo */
+		sumber_dana: [
+			{
+				tag: "field",
+				prop: { label: "Kode", name: "kode", classField: "required" },
+			},
+			{
+				tag: "field",
+				prop: { label: "Uraian", name: "uraian", classField: "required" },
+			},
+			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
+		],
+
+		/* organisasi_neo */
+		organisasi: [
+			{
+				tag: "field",
+				prop: { label: "Kode", name: "kode", classField: "required" },
+			},
+			{
+				tag: "field",
+				prop: { label: "Uraian", name: "uraian", classField: "required" },
+			},
+			{ tag: "field", prop: { label: "Alamat", name: "alamat" } },
+			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
+		],
+
+		/* peraturan_neo */
+		peraturan: [
+			{
+				tag: "field",
+				prop: { label: "Nomor", name: "nomor", classField: "required" },
+			},
+			{ tag: "field", prop: { label: "Judul", name: "judul" } },
+			{
+				tag: "field",
 				prop: {
-					label: "Upload File",
-					name: "file_dokumen",
-					type: "file",
-					role: ["admin"],
+					label: "Tanggal Penetapan",
+					name: "tgl_penetapan",
+					atribut: `type="date"`,
 				},
 			},
+			{ tag: "field", prop: { label: "Status", name: "status" } },
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="3"` },
+			},
+		],
+
+		/* wilayah_neo */
+		wilayah: [
+			{
+				tag: "field",
+				prop: { label: "Kode", name: "kode", classField: "required" },
+			},
+			{
+				tag: "field",
+				prop: { label: "Uraian", name: "uraian", classField: "required" },
+			},
+			{ tag: "field", prop: { label: "Status", name: "status" } },
+			{ tag: "field", prop: { label: "Jumlah Kecamatan", name: "jml_kec" } },
+			{ tag: "field", prop: { label: "Jumlah Desa", name: "jml_desa" } },
+			{ tag: "field", prop: { label: "Luas", name: "luas" } },
+			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
 		],
 	},
 };
@@ -648,10 +955,13 @@ class FormContainerManager {
 		const container = $btn.data("container") || "flyout";
 		const idRow = $btn.data("id");
 
-		this.activeContainer = container; // <-- TAMBAHAN
+		this.activeContainer = container;
 
 		AppState.mode = jenis;
 		AppState.tbl = tbl;
+
+		// 🔥 TAMBAH INI
+		AppState.jenis = window.location.pathname.replace(/^\/+/g, "");
 
 		let config = this.buildConfig(jenis, tbl);
 
@@ -677,24 +987,28 @@ class FormContainerManager {
 			$("#content_flyout").text(config.header);
 			FormEngine.render("#form_flyout", config.elements);
 		}
+		// 🔥 TAMBAH HIDDEN ID (untuk edit)
+    if (AppState.mode === "edit") {
+        $(target).prepend(`<input type="hidden" name="id">`);
+    }
 	}
 
 	/* --------------------------------------------- */
 	show(container) {
-		 if (container === "modal") {
-        this.$modal.modal("show");
-    } else {
-        this.$flyout.sidebar("show");
-    }
+		if (container === "modal") {
+			this.$modal.modal("show");
+		} else {
+			this.$flyout.sidebar("show");
+		}
 	}
 
 	/* --------------------------------------------- */
 	hide(container) {
 		if (container === "modal") {
-        this.$modal.modal("hide");
-    } else {
-        this.$flyout.sidebar("hide");
-    }
+			this.$modal.modal("hide");
+		} else {
+			this.$flyout.sidebar("hide");
+		}
 	}
 	/* --------------------------------------------- */
 	loadData(idRow, container) {
@@ -706,12 +1020,39 @@ class FormContainerManager {
 			},
 			success: (res) => {
 				if (res.success && res.data) {
-					// tentukan target form sesuai container
 					let $formTarget =
 						container === "modal" ? $("#form_modal") : $("#form_flyout");
 
 					Object.keys(res.data).forEach((key) => {
-						$formTarget.find(`[name="${key}"]`).val(res.data[key]);
+						let $field = $formTarget.find(`[name="${key}"]`);
+
+						if (!$field.length) return;
+
+						// 🔹 Dropdown Fomantic
+						if ($field.closest(".ui.dropdown").length) {
+							$field
+								.closest(".ui.dropdown")
+								.dropdown("set selected", res.data[key]);
+						}
+
+						// 🔹 Checkbox
+						else if ($field.attr("type") === "checkbox") {
+							if (res.data[key] == 1 || res.data[key] === true) {
+								$field.closest(".ui.checkbox").checkbox("check");
+							} else {
+								$field.closest(".ui.checkbox").checkbox("uncheck");
+							}
+						}
+
+						// 🔹 File input (tidak bisa di-set demi security)
+						else if ($field.attr("type") === "file") {
+							// skip (browser tidak izinkan set value file)
+						}
+
+						// 🔹 Input biasa
+						else {
+							$field.val(res.data[key]);
+						}
 					});
 				}
 			},
@@ -742,23 +1083,6 @@ class FormContainerManager {
 		if (UIConfig[AppState.jenis]?.[tbl]) {
 			config.elements = UIConfig[AppState.jenis][tbl];
 		}
-
-		config.elements.push({
-			tag: "divider",
-			prop: {},
-		});
-
-		config.elements.push({
-			tag: "field",
-			prop: {
-				name: "_submit",
-				atribut: `
-					type="button"
-					class="ui primary button btnSubmit"
-					value="Simpan"
-				`,
-			},
-		});
 
 		return config;
 	}

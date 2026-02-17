@@ -15,6 +15,11 @@ return [
                 'select' => ['id', 'kode', 'uraian', 'keterangan'],
                 'searchable' => ['kode', 'uraian', 'keterangan'],
                 'order_by' => 'kode ASC'
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
             ]
         ]
     ],
@@ -31,12 +36,20 @@ return [
                 ] // ambil dari user login
             ],
             'standar_harga' => [
-                'select' => ['id', 'kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
-                'searchable' => ['kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
+                'select' => ['id', 'kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
                 'order_by' => 'kd_aset ASC',
                 'where' => [
                     'tahun' => 'user'
                 ] // ambil dari user login
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ]
             ]
         ]
     ],
@@ -50,12 +63,20 @@ return [
                 'order_by' => 'uraian_barang ASC'
             ],
             'standar_harga' => [
-                'select' => ['id', 'kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
-                'searchable' => ['kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
+                'select' => ['id', 'kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
                 'order_by' => 'kd_aset ASC',
                 'where' => [
                     'tahun' => 'user'
                 ] // ambil dari user login
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ]
             ]
         ]
     ],
@@ -69,12 +90,20 @@ return [
                 'order_by' => 'uraian_barang ASC'
             ],
             'standar_harga' => [
-                'select' => ['id', 'kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
-                'searchable' => ['kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
+                'select' => ['id', 'kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
                 'order_by' => 'kd_aset ASC',
                 'where' => [
                     'tahun' => 'user'
                 ] // ambil dari user login
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ]
             ]
         ]
     ],
@@ -88,12 +117,20 @@ return [
                 'order_by' => 'uraian_barang ASC'
             ],
             'standar_harga' => [
-                'select' => ['id', 'kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
-                'searchable' => ['kd_aset','kd_akun', 'uraian_barang','spesifikasi', 'satuan', 'harga_satuan'],
+                'select' => ['id', 'kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
                 'order_by' => 'kd_aset ASC',
                 'where' => [
                     'tahun' => 'user'
                 ] // ambil dari user login
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ]
             ]
         ]
     ],
@@ -174,7 +211,7 @@ return [
                 'order_by' => 'kode ASC'
             ],
             'edit' => [
-                'select' => ['id', 'kode', 'nomenklatur_urusan'],
+                'select' => ['*'],
                 'searchable' => ['*'],
                 'order_by' => 'kode ASC'
             ]
@@ -406,8 +443,8 @@ return [
         'primary_key' => 'id',
         'modes' => [
             'dropdown' => [
-                'select' => ['id', 'jenis_naskah_dinas','sifat','nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
-                'searchable' => ['jenis_naskah_dinas','sifat','nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
+                'select' => ['id', 'jenis_naskah_dinas', 'sifat', 'nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
+                'searchable' => ['jenis_naskah_dinas', 'sifat', 'nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
                 'order_by' => 'tanggal ASC',
                 'where' => [
                     'tahun' => 'user'
@@ -415,15 +452,15 @@ return [
             ],
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['jenis_naskah_dinas','sifat','nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
+                'searchable' => ['jenis_naskah_dinas', 'sifat', 'nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
                 'order_by' => 'tanggal ASC',
                 'where' => [
                     'tahun' => 'user'
                 ] // ambil dari user login
             ],
             'kepegawaian' => [
-                'select' => ['id', 'jenis_naskah_dinas','sifat','nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
-                'searchable' => ['jenis_naskah_dinas','sifat','nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
+                'select' => ['id', 'jenis_naskah_dinas', 'sifat', 'nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
+                'searchable' => ['jenis_naskah_dinas', 'sifat', 'nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
                 'order_by' => 'tanggal ASC',
                 'where' => [
                     'tahun' => 'user'
@@ -444,18 +481,18 @@ return [
         'primary_key' => 'id',
         'modes' => [
             'dropdown' => [
-                'select' => ['id', 'jenis_naskah_dinas','nomor', 'tgl_surat_dibuat','klasifikasi_keamanan', 'tentang', 'keterangan'],
-                'searchable' => ['jenis_naskah_dinas','klasifikasi_keamanan','nomor', 'tgl_surat_dibuat', 'uraian', 'file', 'keterangan'],
+                'select' => ['id', 'jenis_naskah_dinas', 'nomor', 'tgl_surat_dibuat', 'klasifikasi_keamanan', 'tentang', 'keterangan'],
+                'searchable' => ['jenis_naskah_dinas', 'klasifikasi_keamanan', 'nomor', 'tgl_surat_dibuat', 'uraian', 'file', 'keterangan'],
                 'order_by' => 'tgl_surat_dibuat ASC'
             ],
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['jenis_naskah_dinas','klasifikasi_keamanan','nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
+                'searchable' => ['jenis_naskah_dinas', 'klasifikasi_keamanan', 'nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
                 'order_by' => 'tgl_surat_dibuat ASC'
             ],
             'kepegawaian' => [
-                'select' => ['id', 'jenis_naskah_dinas','klasifikasi_keamanan','nomor', 'tgl_surat_dibuat', 'uraian', 'file', 'keterangan'],
-                'searchable' => ['jenis_naskah_dinas','klasifikasi_keamanan','nomor', 'tgl_surat_dibuat', 'uraian', 'file', 'keterangan'],
+                'select' => ['id', 'jenis_naskah_dinas', 'klasifikasi_keamanan', 'nomor', 'tgl_surat_dibuat', 'uraian', 'file', 'keterangan'],
+                'searchable' => ['jenis_naskah_dinas', 'klasifikasi_keamanan', 'nomor', 'tgl_surat_dibuat', 'uraian', 'file', 'keterangan'],
                 'order_by' => 'tgl_surat_dibuat ASC'
             ],
             'edit' => [
