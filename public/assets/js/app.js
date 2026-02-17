@@ -27,7 +27,23 @@ const AppState = {
 	cari: "", // Keyword pencarian
 	currentMenu: "", // Tracking menu sebelumnya
 };
+/* =========================================================
+   GLOBAL TOAST ENGINE
+========================================================= */
 
+const ToastEngine = {
+	show({ success = true, message = "" }) {
+		if (!message) return;
+
+		$("body").toast({
+			message: message,
+			class: success ? "success" : "error",
+			position: "top right",
+			displayTime: 3000,
+			showProgress: "bottom",
+		});
+	},
+};
 /* =========================================================
 	 CORE AJAX ENGINE
 	 ---------------------------------------------------------
@@ -62,6 +78,14 @@ class AjaxEngine {
 				if (beforeSend) beforeSend();
 			},
 			success: function (res) {
+				// 🔥 AUTO TOAST GLOBAL
+				if (res && typeof res.success !== "undefined") {
+					ToastEngine.show({
+						success: res.success,
+						message: res.message || "",
+					});
+				}
+
 				if (success) success(res);
 			},
 			error: function (err) {
@@ -332,9 +356,9 @@ class FormEngine {
 	static render(container, elements = []) {
 		let html = this.build(elements);
 
-    $(container).html(html);
+		$(container).html(html);
 
-    this.init();
+		this.init();
 	}
 
 	/* ============================
@@ -914,7 +938,7 @@ class FormContainerManager {
 				context: $("#mainContext"),
 				transition: "push",
 				// dimPage: false,
-				closable: false,//saat dimmer di klik sidebar kanan tidak muncul
+				closable: false, //saat dimmer di klik sidebar kanan tidak muncul
 				scrollLock: true,
 			});
 		}
@@ -959,9 +983,9 @@ class FormContainerManager {
 	}
 	getActiveForm() {
 		if (this.activeContainer === "modal") {
-        return $("#form_modal");
-    }
-    return $("#form_flyout");
+			return $("#form_modal");
+		}
+		return $("#form_flyout");
 	}
 	/* --------------------------------------------- */
 	open($btn) {
