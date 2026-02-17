@@ -604,10 +604,10 @@ class FormContainerManager {
 		if (this.$flyout.length && !this.$flyout.data("module-sidebar")) {
 			this.$flyout.sidebar({
 				context: $("#mainContext"),
-				transition: "overlay",
-				dimPage: false,
-				closable: false,
-				direction: "right",
+				transition: "push",
+				// dimPage: false,
+				closable: true,
+				scrollLock: true,
 			});
 		}
 
@@ -681,21 +681,21 @@ class FormContainerManager {
 
 	/* --------------------------------------------- */
 	show(container) {
-	if (container === "modal") {
-		this.$modal.modal("show");
-	} else {
-		this.$flyout.sidebar("show");
+		 if (container === "modal") {
+        this.$modal.modal("show");
+    } else {
+        this.$flyout.sidebar("show");
+    }
 	}
-}
 
 	/* --------------------------------------------- */
 	hide(container) {
-	if (container === "modal") {
-		this.$modal.modal("hide");
-	} else {
-		this.$flyout.sidebar("hide");
+		if (container === "modal") {
+        this.$modal.modal("hide");
+    } else {
+        this.$flyout.sidebar("hide");
+    }
 	}
-}
 	/* --------------------------------------------- */
 	loadData(idRow, container) {
 		this.ajax.request({
