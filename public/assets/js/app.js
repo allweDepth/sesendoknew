@@ -1405,32 +1405,32 @@ class FormContainerManager {
 	}
 	/* --------------------------------------------- */
 	open($btn) {
-		console.log("OPEN CLICK");
-    console.log("AppState.jenis =", AppState.jenis);
-    console.log("AppState.tbl   =", $btn.data("tbl"));
-		const jenis = $btn.data("jns");
-		const tbl = $btn.data("tbl");
-		const container = $btn.data("container") || "flyout";
-		const idRow = $btn.data("id");
 
-		this.activeContainer = container;
+    const jenisMode = $btn.data("jns"); // add / edit
+    const tbl = $btn.data("tbl");
+    const container = $btn.data("container") || "flyout";
+    const idRow = $btn.data("id");
 
-		AppState.mode = jenis;
-		AppState.tbl = tbl;
+    this.activeContainer = container;
 
-		// 🔥 TAMBAH INI
-		// AppState.jenis = window.location.pathname.replace(/^\/+/g, "");
+    AppState.mode = jenisMode;
+    AppState.tbl = tbl;
 
-		let config = this.buildConfig(jenis, tbl);
+    // 🔥 FIX WAJIB
+    if (!AppState.jenis) {
+        AppState.jenis = window.location.pathname.replace(/^\/+/g, "");
+    }
 
-		this.render(config, container);
+    let config = this.buildConfig(jenisMode, tbl);
 
-		if ((jenis === "edit" || jenis === "detail") && idRow) {
-			this.loadData(idRow, container);
-		}
+    this.render(config, container);
 
-		this.show(container);
-	}
+    if ((jenisMode === "edit" || jenisMode === "detail") && idRow) {
+        this.loadData(idRow, container);
+    }
+
+    this.show(container);
+}
 
 	/* --------------------------------------------- */
 	render(config, container) {
