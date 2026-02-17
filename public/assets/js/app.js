@@ -1405,32 +1405,34 @@ class FormContainerManager {
 	}
 	/* --------------------------------------------- */
 	open($btn) {
+    // event?.stopPropagation?.(); // 🔥 TAMBAH
+		console.log("BTN DATA TBL =", $btn.data("tbl"));
+		console.log("AppState.tbl =", AppState.tbl);
+		const jenisMode = $btn.data("jns"); // add / edit
+		const tbl = $btn.data("tbl");
+		const container = $btn.data("container") || "flyout";
+		const idRow = $btn.data("id");
 
-    const jenisMode = $btn.data("jns"); // add / edit
-    const tbl = $btn.data("tbl");
-    const container = $btn.data("container") || "flyout";
-    const idRow = $btn.data("id");
+		this.activeContainer = container;
 
-    this.activeContainer = container;
+		AppState.mode = jenisMode;
+		AppState.tbl = tbl;
 
-    AppState.mode = jenisMode;
-    AppState.tbl = tbl;
+		// 🔥 FIX WAJIB
+		if (!AppState.jenis) {
+			AppState.jenis = window.location.pathname.replace(/^\/+/g, "");
+		}
 
-    // 🔥 FIX WAJIB
-    if (!AppState.jenis) {
-        AppState.jenis = window.location.pathname.replace(/^\/+/g, "");
-    }
+		let config = this.buildConfig(jenisMode, tbl);
 
-    let config = this.buildConfig(jenisMode, tbl);
+		this.render(config, container);
 
-    this.render(config, container);
+		if ((jenisMode === "edit" || jenisMode === "detail") && idRow) {
+			this.loadData(idRow, container);
+		}
 
-    if ((jenisMode === "edit" || jenisMode === "detail") && idRow) {
-        this.loadData(idRow, container);
-    }
-
-    this.show(container);
-}
+		this.show(container);
+	}
 
 	/* --------------------------------------------- */
 	render(config, container) {
@@ -1526,8 +1528,8 @@ class FormContainerManager {
 	/* --------------------------------------------- */
 	buildConfig(jenis, tbl) {
 		console.log("CHECK UIConfig:", UIConfig[AppState.jenis]);
-console.log("CHECK tbl:", tbl);
-console.log("CHECK exists:", UIConfig[AppState.jenis]?.[tbl]);
+		console.log("CHECK tbl:", tbl);
+		console.log("CHECK exists:", UIConfig[AppState.jenis]?.[tbl]);
 		let config = {
 			icon: "folder icon",
 			header: "",
@@ -1665,9 +1667,9 @@ $(document).ready(function () {
 	   Auto load tabel jika ada ?tbl=
 	---------------------------------------------- */
 
-	if (tblFromUrl && currentPath) {
-		tableManager.load(currentPath, tblFromUrl);
-	}
+	if (tblFromUrl && currentPath !== "renstra") {
+    tableManager.load(currentPath, tblFromUrl);
+}
 
 	/* ---------------------------------------------
 	   Inisialisasi Sidebar Fomantic
@@ -1850,7 +1852,10 @@ $(document).ready(function () {
 	// RENSTRA TAB SWITCH (BERSIH)
 	// ==============================
 
-	$(document).on("click", "#renstraMenu .item", function () {
+	$(document).on("click", "#renstraMenu .item", function (e) {
+		e.preventDefault();
+		e.stopPropagation(); // 🔥 TAMBAH INI
+		   e.stopImmediatePropagation(); // 🔥 TAMBAH INI
 		let tbl = $(this).data("tbl");
 
 		// aktifkan menu
@@ -1868,4 +1873,23 @@ $(document).ready(function () {
 		// 🔥 pakai engine global
 		tableManager.load("renstra", tbl);
 	});
+	// ==============================
+	// INIT DEFAULT RENSTRA TAB
+	// ==============================
+
+	let defaultTbl = $("#renstraMenu .item.active").data("tbl");
+
+	// INIT DEFAULT RENSTRA TAB (HANYA JIKA BELUM ADA STATE)
+if (currentPath === "renstra" && !AppState.tbl) {
+
+    let defaultTbl = $("#renstraMenu .item.active").data("tbl");
+
+    if (defaultTbl) {
+        $("#btnTambah").attr("data-tbl", defaultTbl);
+        $("#btnImport").attr("data-tbl", defaultTbl);
+        $("#btnExport").attr("data-tbl", defaultTbl);
+
+        tableManager.load("renstra", defaultTbl);
+    }
+}
 });
