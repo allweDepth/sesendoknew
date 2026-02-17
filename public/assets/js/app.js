@@ -1146,7 +1146,7 @@ class FormContainerManager {
 		formData.append("tbl", AppState.tbl);
 
 		this.ajax.request({
-			url: AppConfig.apiUrl + "dynamic/save",
+			url: AppConfig.apiUrl + "dynamic",
 			method: "POST",
 			data: formData,
 			processData: false,

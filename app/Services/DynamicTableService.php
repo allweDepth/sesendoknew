@@ -288,7 +288,7 @@ class DynamicTableService
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     return JsonResponse::success(
-      'Data berhasil',
+      'Data berhasil ditampilkan',
       [
         'total' => (int)$totalRow,
         'page'  => $page,
