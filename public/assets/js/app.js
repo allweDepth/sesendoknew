@@ -542,7 +542,8 @@ AppState.role = "admin";
 	 BUAT FIELD UNTUK FORM sesuai tbl
 ========================================================= */
 
-const UIConfig = {//@note
+const UIConfig = {
+	//@note
 	referensi: {
 		satuan: [
 			{
@@ -791,6 +792,8 @@ class FormContainerManager {
 		this.$flyout = $("#mainContext").children(".ui.flyout");
 		this.$modal = $("#mainModal");
 
+		this.activeContainer = "flyout"; // <-- TAMBAHAN
+
 		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
 
 		this.bindEvents();
@@ -807,13 +810,20 @@ class FormContainerManager {
 			this.save();
 		});
 	}
-
+	getActiveForm() {
+		if (this.activeContainer === "modal") {
+			return $("#form_modal");
+		}
+		return $("#form_flyout");
+	}
 	/* --------------------------------------------- */
 	open($btn) {
 		const jenis = $btn.data("jns");
 		const tbl = $btn.data("tbl");
 		const container = $btn.data("container") || "flyout";
 		const idRow = $btn.data("id");
+
+		this.activeContainer = container; // <-- TAMBAHAN
 
 		AppState.mode = jenis;
 		AppState.tbl = tbl;
@@ -831,6 +841,8 @@ class FormContainerManager {
 
 	/* --------------------------------------------- */
 	render(config, container) {
+		$("#form_modal").empty();
+		$("#form_flyout").empty();
 		if (container === "modal") {
 			$("#icon_modal").attr("class", config.icon);
 			$("#content_modal").text(config.header);
@@ -859,31 +871,27 @@ class FormContainerManager {
 			this.$flyout.flyout("hide");
 		}
 	}
-/* --------------------------------------------- */
-loadData(idRow, container) {
+	/* --------------------------------------------- */
+	loadData(idRow, container) {
+		this.ajax.request({
+			data: {
+				jenis: "edit",
+				tbl: AppState.tbl,
+				id_row: idRow,
+			},
+			success: (res) => {
+				if (res.success && res.data) {
+					// tentukan target form sesuai container
+					let $formTarget =
+						container === "modal" ? $("#form_modal") : $("#form_flyout");
 
-	this.ajax.request({
-		data: {
-			jenis: "edit",
-			tbl: AppState.tbl,
-			id_row: idRow,
-		},
-		success: (res) => {
-			if (res.success && res.data) {
-
-				// tentukan target form sesuai container
-				let $formTarget =
-					container === "modal"
-						? $("#form_modal")
-						: $("#form_flyout");
-
-				Object.keys(res.data).forEach((key) => {
-					$formTarget.find(`[name="${key}"]`).val(res.data[key]);
-				});
-			}
-		},
-	});
-}
+					Object.keys(res.data).forEach((key) => {
+						$formTarget.find(`[name="${key}"]`).val(res.data[key]);
+					});
+				}
+			},
+		});
+	}
 	/* --------------------------------------------- */
 	buildConfig(jenis, tbl) {
 		let config = {
@@ -932,8 +940,12 @@ loadData(idRow, container) {
 
 	/* --------------------------------------------- */
 	save() {
-		let form = $(".ui.form")[0];
-		let formData = new FormData(form);
+		let $formTarget = this.getActiveForm();
+		let formElement = $formTarget[0];
+
+		if (!formElement) return;
+
+		let formData = new FormData(formElement);
 
 		formData.append("jenis", AppState.mode);
 		formData.append("tbl", AppState.tbl);
@@ -946,8 +958,7 @@ loadData(idRow, container) {
 			contentType: false,
 			success: (res) => {
 				if (res.success) {
-					this.$modal.modal("hide");
-					this.$flyout.flyout("hide");
+					this.hide(this.activeContainer); // <-- lebih aman
 					new TableManager().fetch();
 				}
 			},
