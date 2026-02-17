@@ -21,7 +21,9 @@
     <button class="ui button"
       data-ui="open-form"
       data-jns="add"
+      data-tbl="misi_renstra_neo"
       id="btnTambah">
+      
       <i class="plus icon"></i>
     </button>
 

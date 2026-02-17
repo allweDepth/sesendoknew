@@ -620,5 +620,20 @@ return [
             ]
         ]
     ],
-
+    'renstra_neo' => [
+        'table' => 'renstra_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['periode_mulai', 'periode_selesai', 'visi'],
+                'order_by' => 'id DESC'
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+        ]
+    ],
 ];

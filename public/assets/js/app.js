@@ -131,11 +131,7 @@ const ActionConfig = {
 };
 // untuk renstra menu
 const RenstraHeaderConfig = {
-	renstra_neo: [
-   "Periode Mulai",
-   "Periode Selesai",
-   "Visi"
-],
+	renstra_neo: ["Periode Mulai", "Periode Selesai", "Visi"],
 	misi_renstra_neo: ["Kode", "Uraian"],
 	tujuan_renstra_neo: ["Kode", "Uraian"],
 	sasaran_renstra_neo: ["Kode", "Uraian"],
@@ -657,6 +653,128 @@ AppState.role = "admin";
 ========================================================= */
 
 const UIConfig = {
+	/* ======================================================
+   RENSTRA
+====================================================== */
+	renstra: {
+		/* ===================== RENSTRA MASTER ===================== */
+		renstra_neo: [
+			{
+				tag: "field",
+				prop: {
+					label: "Periode Mulai",
+					name: "periode_mulai",
+					atribut: `type="number"`,
+					classField: "required",
+				},
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Periode Selesai",
+					name: "periode_selesai",
+					atribut: `type="number"`,
+					classField: "required",
+				},
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Visi", name: "visi", atribut: `rows="3"` },
+			},
+		],
+
+		/* ===================== MISI ===================== */
+		misi_renstra_neo: [
+			{
+				tag: "field",
+				prop: { label: "Kode", name: "kode", classField: "required" },
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
+			},
+		],
+
+		/* ===================== TUJUAN ===================== */
+		tujuan_renstra_neo: [
+			{
+				tag: "field",
+				prop: { label: "Kode", name: "kode", classField: "required" },
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
+			},
+		],
+
+		/* ===================== SASARAN ===================== */
+		sasaran_renstra_neo: [
+			{
+				tag: "field",
+				prop: { label: "Kode", name: "kode", classField: "required" },
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
+			},
+		],
+
+		/* ===================== INDIKATOR SASARAN ===================== */
+		indikator_sasaran_renstra_neo: [
+			{
+				tag: "field",
+				prop: { label: "Indikator", name: "indikator", classField: "required" },
+			},
+			{
+				tag: "field",
+				prop: { label: "Satuan", name: "satuan" },
+			},
+			{
+				tag: "field",
+				prop: { label: "Target", name: "target" },
+			},
+		],
+
+		/* ===================== PROGRAM ===================== */
+		program_renstra_neo: [
+			{
+				tag: "field",
+				prop: {
+					label: "Kode Program",
+					name: "kode_program",
+					classField: "required",
+				},
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
+			},
+		],
+
+		/* ===================== INDIKATOR PROGRAM ===================== */
+		indikator_program_renstra_neo: [
+			{
+				tag: "field",
+				prop: { label: "Indikator", name: "indikator", classField: "required" },
+			},
+			{
+				tag: "field",
+				prop: { label: "Target", name: "target" },
+			},
+		],
+
+		/* ===================== ANGGARAN PROGRAM ===================== */
+		anggaran_program_renstra_neo: [
+			{
+				tag: "field",
+				prop: { label: "Tahun", name: "tahun", atribut: `type="number"` },
+			},
+			{
+				tag: "field",
+				prop: { label: "Pagu", name: "pagu", atribut: `type="number"` },
+			},
+		],
+	},
 	/* ======================================================@note
 	   STANDAR HARGA
 	====================================================== */
@@ -1287,6 +1405,9 @@ class FormContainerManager {
 	}
 	/* --------------------------------------------- */
 	open($btn) {
+		console.log("OPEN CLICK");
+    console.log("AppState.jenis =", AppState.jenis);
+    console.log("AppState.tbl   =", $btn.data("tbl"));
 		const jenis = $btn.data("jns");
 		const tbl = $btn.data("tbl");
 		const container = $btn.data("container") || "flyout";
@@ -1298,7 +1419,7 @@ class FormContainerManager {
 		AppState.tbl = tbl;
 
 		// 🔥 TAMBAH INI
-		AppState.jenis = window.location.pathname.replace(/^\/+/g, "");
+		// AppState.jenis = window.location.pathname.replace(/^\/+/g, "");
 
 		let config = this.buildConfig(jenis, tbl);
 
@@ -1404,6 +1525,9 @@ class FormContainerManager {
 	}
 	/* --------------------------------------------- */
 	buildConfig(jenis, tbl) {
+		console.log("CHECK UIConfig:", UIConfig[AppState.jenis]);
+console.log("CHECK tbl:", tbl);
+console.log("CHECK exists:", UIConfig[AppState.jenis]?.[tbl]);
 		let config = {
 			icon: "folder icon",
 			header: "",
