@@ -1,6 +1,6 @@
 <!-- FLYOUT GLOBAL -->
-<div class="ui right flyout">
-
+<!-- <div class="ui right flyout"> -->
+<div class="ui right vertical sidebar drawer">
   <div class="ui segment basic">
 
     <i class="close icon" style="float:right; cursor:pointer;"></i>

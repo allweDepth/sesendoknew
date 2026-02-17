@@ -52,7 +52,7 @@
 
 <body>
 
-    <!-- NAVBAR (DI LUAR PUSHABLE) @note-->
+    <!-- NAVBAR (DI LUAR PUSHABLE) @note//@note -->
     <div class="ui top attached menu">
         <div class="item" id="toggleSidebar">
             <a>
@@ -219,11 +219,11 @@
                 <i class="user icon"></i> Profil
             </a>
         </div>
-
+        <!-- FLYOUT -->
+        <?php require __DIR__ . '/../partials/flyout.php'; ?>
         <!-- PUSHER -->
         <div class="pusher">
-            <!-- FLYOUT -->
-            <?php require __DIR__ . '/../partials/flyout.php'; ?>
+
             <!-- sticky-->
             <div class="ui sticky">
                 <div class="ui icon message dashboard"><i class="home icon"></i>
