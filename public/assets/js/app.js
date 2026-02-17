@@ -1762,41 +1762,17 @@ $(document).ready(function () {
 		});
 	});
 	// export excel
-	$(document).on("click", 'button[data-action="export"]', async function (e) {
-		console.log("EXPORT CLICKED");
-		e.preventDefault();
+	$(document).on("click", 'button[data-action="export"]', function (e) {
 
-		const table = $(this).data("tbl");
-		const btn = $(this);
+    console.log("EXPORT CLICKED");
 
-		try {
-			btn.addClass("loading");
+    e.preventDefault();
 
-			const response = await fetch(AppConfig.apiUrl + "export", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ tabel: table }),
-			});
+    const table = $(this).data("tbl");
 
-			if (!response.ok) throw new Error("Gagal export");
+    window.location.href = AppConfig.apiUrl + "export?tabel=" + table;
 
-			const blob = await response.blob();
-			const url = window.URL.createObjectURL(blob);
-
-			const a = document.createElement("a");
-			a.href = url;
-			a.download = table + ".xlsx";
-			document.body.appendChild(a);
-			a.click();
-			a.remove();
-
-			window.URL.revokeObjectURL(url);
-		} catch (err) {
-			alert(err.message);
-		} finally {
-			btn.removeClass("loading");
-		}
-	});
+});
 
 	/* ---------------------------------------------
 	   Load Profil jika halaman profil
