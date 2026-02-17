@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 17 Feb 2026 pada 08.11
+-- Waktu pembuatan: 17 Feb 2026 pada 14.51
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -48,6 +48,19 @@ CREATE TABLE `akun_neo` (
   `tgl_update` datetime NOT NULL,
   `username_update` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `anggaran_program_renstra_neo`
+--
+
+CREATE TABLE `anggaran_program_renstra_neo` (
+  `id` bigint(20) NOT NULL,
+  `program_id` bigint(20) NOT NULL,
+  `tahun` year(4) NOT NULL,
+  `pagu` decimal(18,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -563,6 +576,48 @@ CREATE TABLE `hspk_neo` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `indikator_program_renstra_neo`
+--
+
+CREATE TABLE `indikator_program_renstra_neo` (
+  `id` bigint(20) NOT NULL,
+  `program_id` bigint(20) NOT NULL,
+  `nama_indikator` text NOT NULL,
+  `satuan` varchar(50) DEFAULT NULL,
+  `target_t1` decimal(15,2) DEFAULT NULL,
+  `target_t2` decimal(15,2) DEFAULT NULL,
+  `target_t3` decimal(15,2) DEFAULT NULL,
+  `target_t4` decimal(15,2) DEFAULT NULL,
+  `target_t5` decimal(15,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `indikator_sasaran_renstra_neo`
+--
+
+CREATE TABLE `indikator_sasaran_renstra_neo` (
+  `id` bigint(20) NOT NULL,
+  `sasaran_id` bigint(20) NOT NULL,
+  `nama_indikator` text NOT NULL,
+  `rumus_perhitungan` text DEFAULT NULL,
+  `satuan` varchar(50) DEFAULT NULL,
+  `baseline` decimal(15,2) DEFAULT NULL,
+  `target_t1` decimal(15,2) DEFAULT NULL,
+  `target_t2` decimal(15,2) DEFAULT NULL,
+  `target_t3` decimal(15,2) DEFAULT NULL,
+  `target_t4` decimal(15,2) DEFAULT NULL,
+  `target_t5` decimal(15,2) DEFAULT NULL,
+  `target_akhir` decimal(15,2) DEFAULT NULL,
+  `sumber_data` varchar(255) DEFAULT NULL,
+  `kategori_spm` tinyint(4) DEFAULT 0,
+  `disable` tinyint(4) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `jobs`
 --
 
@@ -649,6 +704,20 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) NOT NULL,
   `batch` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `misi_renstra_neo`
+--
+
+CREATE TABLE `misi_renstra_neo` (
+  `id` bigint(20) NOT NULL,
+  `renstra_id` bigint(20) NOT NULL,
+  `kode` varchar(20) DEFAULT NULL,
+  `uraian` text NOT NULL,
+  `disable` tinyint(4) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -825,6 +894,21 @@ CREATE TABLE `peraturan_neo` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `program_renstra_neo`
+--
+
+CREATE TABLE `program_renstra_neo` (
+  `id` bigint(20) NOT NULL,
+  `sasaran_id` bigint(20) NOT NULL,
+  `kd_sub_keg` varchar(50) DEFAULT NULL,
+  `uraian` text NOT NULL,
+  `lokasi` varchar(255) DEFAULT NULL,
+  `disable` tinyint(4) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `rab_paket_neo`
 --
 
@@ -857,6 +941,22 @@ CREATE TABLE `rab_paket_neo` (
   `tgl_update` datetime NOT NULL,
   `username_update` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `realisasi_sasaran_renstra_neo`
+--
+
+CREATE TABLE `realisasi_sasaran_renstra_neo` (
+  `id` bigint(20) NOT NULL,
+  `indikator_id` bigint(20) NOT NULL,
+  `tahun` year(4) NOT NULL,
+  `target` decimal(15,2) DEFAULT NULL,
+  `realisasi` decimal(15,2) DEFAULT NULL,
+  `persentase_capaian` decimal(5,2) DEFAULT NULL,
+  `keterangan` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1039,47 +1139,39 @@ CREATE TABLE `renja_p_neo` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `renstra_skpd_neo`
+-- Struktur dari tabel `renstra_neo`
 --
 
-CREATE TABLE `renstra_skpd_neo` (
-  `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(15) NOT NULL,
-  `kd_opd` varchar(255) NOT NULL,
-  `tahun` year(4) NOT NULL,
-  `kd_sub_keg` varchar(255) NOT NULL,
-  `kel_rek` varchar(50) NOT NULL,
-  `tujuan` int(11) DEFAULT NULL,
-  `sasaran` int(11) DEFAULT NULL,
-  `sasaran_txt` text DEFAULT NULL,
-  `uraian_prog_keg` text NOT NULL,
-  `indikator` text DEFAULT NULL,
-  `satuan` varchar(255) DEFAULT NULL,
-  `data_capaian_awal` decimal(32,12) DEFAULT NULL,
-  `target_thn_1` decimal(32,12) DEFAULT NULL,
-  `dana_thn_1` decimal(32,12) DEFAULT NULL,
-  `target_thn_2` decimal(32,12) DEFAULT NULL,
-  `dana_thn_2` decimal(32,12) DEFAULT NULL,
-  `target_thn_3` decimal(32,12) DEFAULT NULL,
-  `dana_thn_3` decimal(32,12) DEFAULT NULL,
-  `target_thn_4` decimal(32,12) DEFAULT NULL,
-  `dana_thn_4` decimal(32,12) DEFAULT NULL,
-  `target_thn_5` decimal(32,12) DEFAULT NULL,
-  `dana_thn_5` decimal(32,12) DEFAULT NULL,
-  `target_thn_6` decimal(32,12) DEFAULT NULL,
-  `dana_thn_6` decimal(32,12) DEFAULT NULL,
-  `kondisi_akhir` decimal(32,12) DEFAULT NULL,
-  `jumlah` decimal(40,12) NOT NULL,
-  `lokasi` varchar(255) DEFAULT NULL,
-  `keterangan` varchar(255) DEFAULT NULL,
-  `disable` tinyint(1) NOT NULL DEFAULT 0,
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `setujui` tinyint(1) DEFAULT 0,
-  `kunci` tinyint(1) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+CREATE TABLE `renstra_neo` (
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(20) NOT NULL,
+  `kd_opd` varchar(20) NOT NULL,
+  `periode_mulai` year(4) NOT NULL,
+  `periode_selesai` year(4) NOT NULL,
+  `visi` text DEFAULT NULL,
+  `status` enum('draft','review','final') DEFAULT 'draft',
+  `disable` tinyint(4) DEFAULT 0,
+  `kunci` tinyint(4) DEFAULT 0,
+  `setujui` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `sasaran_renstra_neo`
+--
+
+CREATE TABLE `sasaran_renstra_neo` (
+  `id` bigint(20) NOT NULL,
+  `tujuan_id` bigint(20) NOT NULL,
+  `kode` varchar(20) DEFAULT NULL,
+  `uraian` text NOT NULL,
+  `disable` tinyint(4) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1368,6 +1460,20 @@ CREATE TABLE `sumber_dana_neo` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `tujuan_renstra_neo`
+--
+
+CREATE TABLE `tujuan_renstra_neo` (
+  `id` bigint(20) NOT NULL,
+  `misi_id` bigint(20) NOT NULL,
+  `kode` varchar(20) DEFAULT NULL,
+  `uraian` text NOT NULL,
+  `disable` tinyint(4) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `tujuan_sasaran_renstra_neo`
 --
 
@@ -1450,7 +1556,7 @@ CREATE TABLE `user_sesendok_biila` (
 
 INSERT INTO `user_sesendok_biila` (`id`, `username`, `email`, `nama`, `nip`, `password`, `remember_token`, `kd_organisasi`, `nama_org`, `kd_wilayah`, `type_user`, `photo`, `tgl_daftar`, `tgl_login`, `tahun`, `kontak_person`, `alamat`, `font_size`, `theme`, `warna_tbl`, `scrolling_table`, `disable_login`, `disable_anggaran`, `disable_kontrak`, `disable_realisasi`, `disable_chat`, `ket`, `disable`) VALUES
 (1, 'alwi_mansyur', 'alwi@gmail.com', 'Alwi Mansyur', '1980', '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'user', 'images/avatar/default.jpeg', '2018-06-04 21:57:05', '2024-10-23 15:03:04', '2024', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
-(2, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin', 'img/avatar/username(nabiila)_dok(photo)_wilayah(76.01)_2305070e99916190687b3774c0d56f134b954d74_2.jpg', '2018-06-09 15:54:29', '2026-02-17 09:16:15', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
+(2, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin', 'img/avatar/username(nabiila)_dok(photo)_wilayah(76.01)_2305070e99916190687b3774c0d56f134b954d74_2.jpg', '2018-06-09 15:54:29', '2026-02-17 18:03:17', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
 (3, 'inayah', 'inayah@gmail.com', 'Inayah Nadhilah', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '', 'user', 'images/avatar/default.jpeg', '2018-06-22 22:04:17', '2020-03-08 02:30:41', '2024', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'dimana mana hatiku senang oke', 0),
 (4, 'Arlinda', 'arlinda@gmail.com', 'Arlinda Achmad', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '', 'Prof', '', 'admin', 'images/avatar/default.jpeg', '2018-07-10 14:27:06', '2018-10-21 12:23:09', '2024', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu.', 0),
 (5, 'administrator', 'alwi.mansyur@gmail.com', 'administrator', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '', 'administrator AHSP', '', 'user', 'images/avatar/c14719a7f71e46badf2cf93ae373ae9797281782_9.png', '2023-02-09 23:41:34', '2023-02-23 00:05:26', '2024', '08128886665', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk mu', 0),
@@ -1509,6 +1615,13 @@ CREATE TABLE `wilayah_neo` (
 --
 ALTER TABLE `akun_neo`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `anggaran_program_renstra_neo`
+--
+ALTER TABLE `anggaran_program_renstra_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `program_id` (`program_id`);
 
 --
 -- Indeks untuk tabel `asb_neo`
@@ -1593,6 +1706,20 @@ ALTER TABLE `hspk_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `indikator_program_renstra_neo`
+--
+ALTER TABLE `indikator_program_renstra_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `program_id` (`program_id`);
+
+--
+-- Indeks untuk tabel `indikator_sasaran_renstra_neo`
+--
+ALTER TABLE `indikator_sasaran_renstra_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `sasaran_id` (`sasaran_id`);
+
+--
 -- Indeks untuk tabel `jobs`
 --
 ALTER TABLE `jobs`
@@ -1622,6 +1749,13 @@ ALTER TABLE `mapping_aset_akun`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `misi_renstra_neo`
+--
+ALTER TABLE `misi_renstra_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `renstra_id` (`renstra_id`);
 
 --
 -- Indeks untuk tabel `naskah_dinas_neo`
@@ -1654,10 +1788,24 @@ ALTER TABLE `peraturan_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `program_renstra_neo`
+--
+ALTER TABLE `program_renstra_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `sasaran_id` (`sasaran_id`);
+
+--
 -- Indeks untuk tabel `rab_paket_neo`
 --
 ALTER TABLE `rab_paket_neo`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `realisasi_sasaran_renstra_neo`
+--
+ALTER TABLE `realisasi_sasaran_renstra_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `indikator_id` (`indikator_id`);
 
 --
 -- Indeks untuk tabel `register_naskah_dinas`
@@ -1684,10 +1832,17 @@ ALTER TABLE `renja_p_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `renstra_skpd_neo`
+-- Indeks untuk tabel `renstra_neo`
 --
-ALTER TABLE `renstra_skpd_neo`
+ALTER TABLE `renstra_neo`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `sasaran_renstra_neo`
+--
+ALTER TABLE `sasaran_renstra_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `tujuan_id` (`tujuan_id`);
 
 --
 -- Indeks untuk tabel `satuan_neo`
@@ -1749,6 +1904,13 @@ ALTER TABLE `sumber_dana_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `tujuan_renstra_neo`
+--
+ALTER TABLE `tujuan_renstra_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `misi_id` (`misi_id`);
+
+--
 -- Indeks untuk tabel `tujuan_sasaran_renstra_neo`
 --
 ALTER TABLE `tujuan_sasaran_renstra_neo`
@@ -1794,6 +1956,12 @@ ALTER TABLE `wilayah_neo`
 --
 ALTER TABLE `akun_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `anggaran_program_renstra_neo`
+--
+ALTER TABLE `anggaran_program_renstra_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `asb_neo`
@@ -1862,6 +2030,18 @@ ALTER TABLE `hspk_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `indikator_program_renstra_neo`
+--
+ALTER TABLE `indikator_program_renstra_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `indikator_sasaran_renstra_neo`
+--
+ALTER TABLE `indikator_sasaran_renstra_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `jobs`
 --
 ALTER TABLE `jobs`
@@ -1884,6 +2064,12 @@ ALTER TABLE `mapping_aset_akun`
 --
 ALTER TABLE `migrations`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `misi_renstra_neo`
+--
+ALTER TABLE `misi_renstra_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `naskah_dinas_neo`
@@ -1910,10 +2096,22 @@ ALTER TABLE `peraturan_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `program_renstra_neo`
+--
+ALTER TABLE `program_renstra_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `rab_paket_neo`
 --
 ALTER TABLE `rab_paket_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `realisasi_sasaran_renstra_neo`
+--
+ALTER TABLE `realisasi_sasaran_renstra_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `register_naskah_dinas`
@@ -1940,10 +2138,16 @@ ALTER TABLE `renja_p_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `renstra_skpd_neo`
+-- AUTO_INCREMENT untuk tabel `renstra_neo`
 --
-ALTER TABLE `renstra_skpd_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `renstra_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `sasaran_renstra_neo`
+--
+ALTER TABLE `sasaran_renstra_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `satuan_neo`
@@ -1994,6 +2198,12 @@ ALTER TABLE `sumber_dana_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `tujuan_renstra_neo`
+--
+ALTER TABLE `tujuan_renstra_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `tujuan_sasaran_renstra_neo`
 --
 ALTER TABLE `tujuan_sasaran_renstra_neo`
@@ -2022,6 +2232,58 @@ ALTER TABLE `wallchat`
 --
 ALTER TABLE `wilayah_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
+--
+
+--
+-- Ketidakleluasaan untuk tabel `anggaran_program_renstra_neo`
+--
+ALTER TABLE `anggaran_program_renstra_neo`
+  ADD CONSTRAINT `1` FOREIGN KEY (`program_id`) REFERENCES `program_renstra_neo` (`id`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `indikator_program_renstra_neo`
+--
+ALTER TABLE `indikator_program_renstra_neo`
+  ADD CONSTRAINT `1` FOREIGN KEY (`program_id`) REFERENCES `program_renstra_neo` (`id`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `indikator_sasaran_renstra_neo`
+--
+ALTER TABLE `indikator_sasaran_renstra_neo`
+  ADD CONSTRAINT `1` FOREIGN KEY (`sasaran_id`) REFERENCES `sasaran_renstra_neo` (`id`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `misi_renstra_neo`
+--
+ALTER TABLE `misi_renstra_neo`
+  ADD CONSTRAINT `1` FOREIGN KEY (`renstra_id`) REFERENCES `renstra_neo` (`id`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `program_renstra_neo`
+--
+ALTER TABLE `program_renstra_neo`
+  ADD CONSTRAINT `1` FOREIGN KEY (`sasaran_id`) REFERENCES `sasaran_renstra_neo` (`id`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `realisasi_sasaran_renstra_neo`
+--
+ALTER TABLE `realisasi_sasaran_renstra_neo`
+  ADD CONSTRAINT `1` FOREIGN KEY (`indikator_id`) REFERENCES `indikator_sasaran_renstra_neo` (`id`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `sasaran_renstra_neo`
+--
+ALTER TABLE `sasaran_renstra_neo`
+  ADD CONSTRAINT `1` FOREIGN KEY (`tujuan_id`) REFERENCES `tujuan_renstra_neo` (`id`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `tujuan_renstra_neo`
+--
+ALTER TABLE `tujuan_renstra_neo`
+  ADD CONSTRAINT `1` FOREIGN KEY (`misi_id`) REFERENCES `misi_renstra_neo` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
