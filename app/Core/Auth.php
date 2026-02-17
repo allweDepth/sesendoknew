@@ -24,7 +24,7 @@ class Auth
             return false;
         }
 
-        $_SESSION['user'] = $user;
+        $_SESSION['user'] = $user;//@note session
 
         return true;
     }

@@ -4,410 +4,311 @@ require_once __DIR__ . '/JsonResponse.php';
 
 class DynamicTableService
 {
-  private DB $db;
-  private array $profiles;
-  private array $user;
+    /* =========================================================
+       PROPERTIES
+    ========================================================= */
 
-  public function __construct()
-  {
-    $this->db = DB::getInstance();
-    $this->profiles = require __DIR__ . '/../Config/table_profiles.php';
-    $this->user = $_SESSION['user'] ?? [];
-  }
-  private function injectSystemFields(array &$request): void
-  {
-    $systemFields = ['kd_wilayah', 'kd_opd', 'tahun'];
+    private DB $db;              // Instance database
+    private array $profiles;     // Konfigurasi tabel
+    private array $user;         // Data user login dari session
 
-    foreach ($systemFields as $field) {
-      if (isset($this->user[$field])) {
-        $request[$field] = $this->user[$field];
-      }
-    }
-  }
-  public function handle(array $request): string
-  {
-    $tbl   = $request['tbl']   ?? '';
-    $jenis = $request['jenis'] ?? 'default';
 
-    if (!$tbl) {
-      return JsonResponse::error('Tabel tidak dikirim');
+    /* =========================================================
+       CONSTRUCTOR
+       - Load DB
+       - Load table profiles
+       - Ambil user dari session
+    ========================================================= */
+
+    public function __construct()
+    {
+        $this->db = DB::getInstance();
+        $this->profiles = require __DIR__ . '/../Config/table_profiles.php';
+        $this->user = $_SESSION['user'] ?? [];
     }
 
-    if (!isset($this->profiles[$tbl])) {
-      return JsonResponse::error('Tabel tidak terdaftar');
-    }
 
-    $profile = $this->profiles[$tbl];
-    $table   = $profile['table'];
+    /* =========================================================
+       HANDLE REQUEST
+       - Router utama berdasarkan jenis (add/edit/delete/list)
+    ========================================================= */
 
-    $mode = $profile['modes'][$jenis]
-      ?? $profile['modes']['default']
-      ?? null;
+    public function handle(array $request): string
+    {
+        $tbl   = $request['tbl']   ?? '';
+        $jenis = $request['jenis'] ?? 'default';
 
-    if (!$mode) {
-      return JsonResponse::error('Mode tidak tersedia');
-    }
-    if ($jenis === 'add') {
-      return $this->insert($table, $profile, $request);
-    }
-
-    if ($jenis === 'edit' && !empty($request['id'])) {
-      return $this->update($table, $profile, $request);
-    }
-
-    if ($jenis === 'delete' && !empty($request['id_row'])) {
-      return $this->delete($table, $profile, $request['id_row']);
-    }
-    return $this->buildQuery($table, $profile, $mode, $request);
-  }
-  // ===================================
-  // VALIDASI LOCK RENSTRA
-  // ===================================
-  private function checkRenstraLock(string $table): ?string
-  {
-    if (!str_contains($table, 'renstra_neo')) {
-      return null;
-    }
-
-    $tahun = $_SESSION['tahun'] ?? null;
-
-    if (!$tahun) {
-      return null;
-    }
-
-    $p = $this->db->query(
-      "SELECT kunci_renstra FROM pengaturan_neo WHERE tahun = ?",
-      [$tahun]
-    )->fetch(PDO::FETCH_ASSOC);
-
-    if ($p && $p['kunci_renstra'] == 1) {
-      return 'Renstra sudah dikunci oleh admin.';
-    }
-
-    return null;
-  }
-  private function insert(string $table, array $profile, array $request): string
-  {
-    $this->injectSystemFields($request);
-    // ==========================
-    // LOCK RENSTRA
-    // ==========================
-    if ($error = $this->checkRenstraLock($table)) {
-      return JsonResponse::error($error);
-    }
-    $primaryKey = $profile['primary_key'] ?? 'id';
-
-    $fields = [];
-    $values = [];
-    $params = [];
-    // ===================================
-    // AUTO INJECT RENSTRA CONTEXT
-    // ===================================
-    if (str_contains($table, 'renstra_neo')) {
-
-      if (!empty($_SESSION['user']['kd_wilayah'])) {
-        $request['kd_wilayah'] = $_SESSION['user']['kd_wilayah'];
-      }
-
-      if (!empty($_SESSION['user']['tahun'])) {
-        $request['tahun'] = $_SESSION['user']['tahun'];
-      }
-    }
-    foreach ($request as $key => $value) {
-
-      if ($key === 'jenis' || $key === 'tbl') continue;
-      if ($key === $primaryKey) continue;
-
-      $fields[] = "`$key`";
-      $values[] = "?";
-      $params[] = $value;
-    }
-
-    if (empty($fields)) {
-      return JsonResponse::error('Tidak ada data dikirim');
-    }
-
-    $query = "
-        INSERT INTO `$table`
-        (" . implode(',', $fields) . ")
-        VALUES (" . implode(',', $values) . ")
-    ";
-
-    $this->db->query($query, $params);
-
-    return JsonResponse::success('Data berhasil disimpan');
-  }
-  private function update(string $table, array $profile, array $request): string
-  {
-    $this->injectSystemFields($request);
-    // ==========================
-    // LOCK RENSTRA
-    // ==========================
-    if ($error = $this->checkRenstraLock($table)) {
-      return JsonResponse::error($error);
-    }
-    if (str_contains($table, 'renstra_neo')) {
-
-      $tahun = $_SESSION['tahun'] ?? null;
-
-      if ($tahun) {
-        $p = $this->db->query(
-          "SELECT kunci_renstra FROM pengaturan_neo WHERE tahun = ?",
-          [$tahun]
-        )->fetch(PDO::FETCH_ASSOC);
-
-        if ($p && $p['kunci_renstra'] == 1) {
-          return JsonResponse::error('Renstra sudah dikunci oleh admin.');
+        if (!$tbl) {
+            return JsonResponse::error('Tabel tidak dikirim');
         }
-      }
-    }
-    $primaryKey = $profile['primary_key'] ?? 'id';
-    $id = (int)$request['id'];
 
-    if (!$id) {
-      return JsonResponse::error('ID tidak valid');
-    }
-
-    $sets = [];
-    $params = [];
-
-    foreach ($request as $key => $value) {
-
-      if (in_array($key, ['jenis', 'tbl', 'id'])) continue;
-
-      $sets[] = "`$key` = ?";
-      $params[] = $value;
-    }
-
-    if (empty($sets)) {
-      return JsonResponse::error('Tidak ada data diubah');
-    }
-
-    $params[] = $id;
-
-    $query = "
-        UPDATE `$table`
-        SET " . implode(',', $sets) . "
-        WHERE `$primaryKey` = ?
-    ";
-
-    $this->db->query($query, $params);
-
-    return JsonResponse::success('Data berhasil diperbarui');
-  }
-  private function delete(string $table, array $profile, int $id): string
-  {
-    // ==========================
-    // LOCK RENSTRA
-    // ==========================
-    if ($error = $this->checkRenstraLock($table)) {
-      return JsonResponse::error($error);
-    }
-    if (str_contains($table, 'renstra_neo')) {
-
-      $tahun = $_SESSION['tahun'] ?? null;
-
-      if ($tahun) {
-        $p = $this->db->query(
-          "SELECT kunci_renstra FROM pengaturan_neo WHERE tahun = ?",
-          [$tahun]
-        )->fetch(PDO::FETCH_ASSOC);
-
-        if ($p && $p['kunci_renstra'] == 1) {
-          return JsonResponse::error('Renstra sudah dikunci oleh admin.');
+        if (!isset($this->profiles[$tbl])) {
+            return JsonResponse::error('Tabel tidak terdaftar');
         }
-      }
-    }
-    $primaryKey = $profile['primary_key'] ?? 'id';
 
-    $query = "
-        DELETE FROM `$table`
-        WHERE `$primaryKey` = ?
-    ";
+        $profile = $this->profiles[$tbl];
+        $table   = $profile['table'];
 
-    $this->db->query($query, [$id]);
+        if ($jenis === 'add') {
+            return $this->insert($table, $request);
+        }
 
-    return JsonResponse::success('Data berhasil dihapus');
-  }
-  private function buildQuery(
-    string $table,
-    array $profile,
-    array $mode,
-    array $request
-  ): string {
+        if ($jenis === 'edit' && !empty($request['id'])) {
+            return $this->update($table, $request);
+        }
 
-    $idRow = (int)($request['id_row'] ?? 0);
+        if ($jenis === 'delete' && !empty($request['id_row'])) {
+            return $this->delete($table, $profile, (int)$request['id_row']);
+        }
 
-    /*
-    |--------------------------------------------------------------------------
-    | MODE EDIT
-    |--------------------------------------------------------------------------
-    */
-    if (($request['jenis'] ?? '') === 'edit' && $idRow > 0) {
-
-      $primaryKey = $profile['primary_key'] ?? 'id';
-
-      $select = '*';
-      if (!empty($mode['select'])) {
-        $select = implode(',', $mode['select']);
-      }
-
-      $query = "
-        SELECT $select
-        FROM `$table`
-        WHERE `$primaryKey` = ?
-        LIMIT 1
-      ";
-
-      $stmt = $this->db->query($query, [$idRow]);
-      $row  = $stmt->fetch(PDO::FETCH_ASSOC);
-
-      if (!$row) {
-        return JsonResponse::error('Data tidak ditemukan');
-      }
-
-      return JsonResponse::success(
-        'Data berhasil diambil',
-        [
-          'mode' => 'edit',
-          'id'   => $idRow
-        ],
-        $row
-      );
+        return $this->buildQuery($table, $profile, $request);
     }
 
-    $limit  = max(1, (int)($request['rows'] ?? 10));
-    $page   = max(1, (int)($request['halaman'] ?? 1));
-    $search = trim($request['cari'] ?? '');
-    $offset = ($page - 1) * $limit;
 
-    // SELECT
-    $select = '*';
-    if (!empty($mode['select'])) {
-      $select = implode(',', $mode['select']);
+    /* =========================================================
+       AMBIL STRUKTUR KOLOM TABEL
+       - Digunakan untuk filter kolom valid
+    ========================================================= */
+
+    private function getTableColumns(string $table): array
+    {
+        $stmt = $this->db->query("SHOW COLUMNS FROM `$table`");
+
+        $columns = [];
+
+        foreach ($stmt->fetchAll() as $col) {
+            $columns[] = $col['Field'];
+        }
+
+        return $columns;
     }
 
-    // WHERE
-    $whereParts = [];
-    $params     = [];
 
-    /*
-    |--------------------------------------------------------------------------
-    | WHERE DARI CONFIG
-    |--------------------------------------------------------------------------
-    */
-    if (!empty($mode['where'])) {
+    /* =========================================================
+       INSERT DATA DINAMIS
+       - Filter hanya kolom valid
+       - Auto inject kd_wilayah, kd_opd
+       - Auto audit fields
+    ========================================================= */
 
-      // jika string (backward compatible)
-      if (is_string($mode['where'])) {
-        $whereParts[] = $mode['where'];
-      }
+    private function insert(string $table, array $request): string
+    {
+        $columns = $this->getTableColumns($table);
 
-      // jika array (field => source/value)
-      if (is_array($mode['where'])) {
+        $filtered = [];
 
-        foreach ($mode['where'] as $field => $source) {
+        /* -------------------------------
+           FILTER FIELD VALID
+        ------------------------------- */
 
-          // ambil dari user login
-          if ($source === 'user') {
+        foreach ($request as $key => $value) {
 
-            $value = $_SESSION['user'][$field] ?? null;
+            if (in_array($key, ['jenis', 'tbl'])) continue;
 
-            if ($value !== null && $value !== '') {
-              $whereParts[] = "`$field` = ?";
-              $params[]     = $value;
+            if (in_array($key, $columns)) {
+                $filtered[$key] = $value;
             }
-          }
-
-          // static value
-          else {
-            $whereParts[] = "`$field` = ?";
-            $params[]     = $source;
-          }
         }
-      }
+
+        /* -------------------------------
+   AUTO INJECT SYSTEM FIELD (SAFE)
+------------------------------- */
+
+        $user = $this->user ?? [];
+
+        /* kd_wilayah */
+        if (in_array('kd_wilayah', $columns) && !isset($filtered['kd_wilayah'])) {
+
+            if (!empty($user['kd_wilayah'])) {
+                $filtered['kd_wilayah'] = $user['kd_wilayah'];
+            } else {
+                return JsonResponse::error("Session kd_wilayah tidak ditemukan");
+            }
+        }
+
+        /* kd_opd */
+        if (in_array('kd_opd', $columns) && !isset($filtered['kd_opd'])) {
+
+            if (!empty($user['kd_opd'])) {
+                $filtered['kd_opd'] = $user['kd_opd'];
+            } else {
+                return JsonResponse::error("Session kd_opd tidak ditemukan");
+            }
+        }
+        /* -------------------------------
+           AUTO AUDIT FIELD
+        ------------------------------- */
+
+        if (in_array('tgl_insert', $columns)) {
+            $filtered['tgl_insert'] = date('Y-m-d H:i:s');
+        }
+
+        if (in_array('username_insert', $columns)) {
+            $filtered['username_insert'] = $this->user['username'] ?? 'system';
+        }
+
+        if (in_array('disable', $columns) && !isset($filtered['disable'])) {
+            $filtered['disable'] = 0;
+        }
+
+        if (empty($filtered)) {
+            return JsonResponse::error("Tidak ada data yang bisa disimpan");
+        }
+        $this->db->insert($table, $filtered);
+
+        return JsonResponse::success("Data berhasil disimpan");
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | SEARCH
-    |--------------------------------------------------------------------------
-    */
-    if ($search !== '' && !empty($mode['searchable'])) {
 
-      $searchParts = [];
+    /* =========================================================
+       UPDATE DATA DINAMIS
+       - Filter kolom valid
+       - Auto update audit field
+    ========================================================= */
 
-      foreach ($mode['searchable'] as $field) {
-        $searchParts[] = "`$field` LIKE ?";
-        $params[] = "%$search%";
-      }
+    private function update(string $table, array $request): string
+    {
+        $columns = $this->getTableColumns($table);
 
-      $whereParts[] = '(' . implode(' OR ', $searchParts) . ')';
+        $id = $request['id'] ?? null;
+
+        if (!$id) {
+            return JsonResponse::error("ID tidak ditemukan");
+        }
+
+        unset($request['id']);
+
+        $filtered = [];
+
+        foreach ($request as $key => $value) {
+
+            if (in_array($key, ['jenis', 'tbl'])) continue;
+
+            if (in_array($key, $columns)) {
+                $filtered[$key] = $value;
+            }
+        }
+
+        /* -------------------------------
+           AUTO UPDATE FIELD
+        ------------------------------- */
+
+        if (in_array('tgl_update', $columns)) {
+            $filtered['tgl_update'] = date('Y-m-d H:i:s');
+        }
+
+        if (in_array('username_update', $columns)) {
+            $filtered['username_update'] = $this->user['username'] ?? 'system';
+        }
+
+        if (empty($filtered)) {
+            return JsonResponse::error("Tidak ada data yang bisa diupdate");
+        }
+
+        $this->db->update($table, $filtered, "WHERE id = ?", [$id]);
+
+        return JsonResponse::success("Data berhasil diupdate");
     }
 
-    $where = '';
-    if (!empty($whereParts)) {
-      $where = 'WHERE ' . implode(' AND ', $whereParts);
+
+    /* =========================================================
+       DELETE DATA
+    ========================================================= */
+
+    private function delete(string $table, array $profile, int $id): string
+    {
+        $primaryKey = $profile['primary_key'] ?? 'id';
+
+        $this->db->delete($table, "WHERE `$primaryKey` = ?", [$id]);
+
+        return JsonResponse::success('Data berhasil dihapus');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | ORDER
-    |--------------------------------------------------------------------------
-    */
-    $order = '';
-    if (!empty($mode['order_by'])) {
-      $order = 'ORDER BY ' . $mode['order_by'];
+
+    /* =========================================================
+       BUILD QUERY (LIST DATA + PAGINATION + SEARCH)
+    ========================================================= */
+
+    private function buildQuery(
+        string $table,
+        array $profile,
+        array $request
+    ): string {
+
+        $limit  = max(1, (int)($request['rows'] ?? 10));
+        $page   = max(1, (int)($request['halaman'] ?? 1));
+        $search = trim($request['cari'] ?? '');
+        $offset = ($page - 1) * $limit;
+
+        $whereParts = [];
+        $params = [];
+
+        /* -------------------------------
+           FILTER BY USER (AUTO)
+        ------------------------------- */
+
+        $columns = $this->getTableColumns($table);
+
+        if (in_array('kd_wilayah', $columns) && isset($this->user['kd_wilayah'])) {
+            $whereParts[] = "kd_wilayah = ?";
+            $params[] = $this->user['kd_wilayah'];
+        }
+
+        if (in_array('kd_opd', $columns) && isset($this->user['kd_opd'])) {
+            $whereParts[] = "kd_opd = ?";
+            $params[] = $this->user['kd_opd'];
+        }
+
+        /* -------------------------------
+           SEARCH
+        ------------------------------- */
+
+        if ($search !== '' && !empty($profile['searchable'])) {
+
+            $searchParts = [];
+
+            foreach ($profile['searchable'] as $field) {
+                $searchParts[] = "`$field` LIKE ?";
+                $params[] = "%$search%";
+            }
+
+            $whereParts[] = '(' . implode(' OR ', $searchParts) . ')';
+        }
+
+        $where = '';
+
+        if (!empty($whereParts)) {
+            $where = 'WHERE ' . implode(' AND ', $whereParts);
+        }
+
+        /* -------------------------------
+           TOTAL COUNT
+        ------------------------------- */
+
+        $totalQuery = "SELECT COUNT(*) as total FROM `$table` $where";
+        $totalRow = $this->db->query($totalQuery, $params)->fetch()['total'] ?? 0;
+
+        /* -------------------------------
+           DATA QUERY
+        ------------------------------- */
+
+        $dataQuery = "
+            SELECT *
+            FROM `$table`
+            $where
+            LIMIT $offset, $limit
+        ";
+
+        $rows = $this->db->query($dataQuery, $params)->fetchAll();
+
+        return JsonResponse::success(
+            'Data berhasil ditampilkan',
+            [
+                'total' => (int)$totalRow,
+                'page'  => $page,
+                'limit' => $limit
+            ],
+            $rows
+        );
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | TOTAL
-    |--------------------------------------------------------------------------
-    */
-    $totalQuery = "SELECT COUNT(*) as total FROM `$table` $where";
-    $stmt = $this->db->query($totalQuery, $params);
-    $row  = $stmt->fetch(PDO::FETCH_ASSOC);
-    $totalRow = $row['total'] ?? 0;
-
-    /*
-    |--------------------------------------------------------------------------
-    | DATA
-    |--------------------------------------------------------------------------
-    */
-    $dataQuery = "
-      SELECT $select
-      FROM `$table`
-      $where
-      $order
-      LIMIT $offset, $limit
-    ";
-
-    $stmt = $this->db->query($dataQuery, $params);
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    return JsonResponse::success(
-      'Data berhasil ditampilkan',
-      [
-        'total' => (int)$totalRow,
-        'page'  => $page,
-        'limit' => $limit
-      ],
-      $rows
-    );
-  }
-  public static function getAll($tbl)
-  {
-    $profiles = require __DIR__ . '/../Config/table_profiles.php';
-
-    if (!isset($profiles[$tbl])) {
-      return [];
-    }
-
-    $realTable = $profiles[$tbl]['table'];
-
-    $db = DB::getInstance();
-
-    return $db->get($realTable);
-  }
 }
