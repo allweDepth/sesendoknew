@@ -6,13 +6,24 @@ class DynamicTableService
 {
   private DB $db;
   private array $profiles;
+  private array $user;
 
   public function __construct()
   {
     $this->db = DB::getInstance();
     $this->profiles = require __DIR__ . '/../Config/table_profiles.php';
+    $this->user = $_SESSION['user'] ?? [];
   }
+  private function injectSystemFields(array &$request): void
+  {
+    $systemFields = ['kd_wilayah', 'kd_opd', 'tahun'];
 
+    foreach ($systemFields as $field) {
+      if (isset($this->user[$field])) {
+        $request[$field] = $this->user[$field];
+      }
+    }
+  }
   public function handle(array $request): string
   {
     $tbl   = $request['tbl']   ?? '';
@@ -77,18 +88,31 @@ class DynamicTableService
   }
   private function insert(string $table, array $profile, array $request): string
   {
+    $this->injectSystemFields($request);
     // ==========================
     // LOCK RENSTRA
     // ==========================
     if ($error = $this->checkRenstraLock($table)) {
-        return JsonResponse::error($error);
+      return JsonResponse::error($error);
     }
     $primaryKey = $profile['primary_key'] ?? 'id';
 
     $fields = [];
     $values = [];
     $params = [];
+    // ===================================
+    // AUTO INJECT RENSTRA CONTEXT
+    // ===================================
+    if (str_contains($table, 'renstra_neo')) {
 
+      if (!empty($_SESSION['user']['kd_wilayah'])) {
+        $request['kd_wilayah'] = $_SESSION['user']['kd_wilayah'];
+      }
+
+      if (!empty($_SESSION['user']['tahun'])) {
+        $request['tahun'] = $_SESSION['user']['tahun'];
+      }
+    }
     foreach ($request as $key => $value) {
 
       if ($key === 'jenis' || $key === 'tbl') continue;
@@ -115,11 +139,12 @@ class DynamicTableService
   }
   private function update(string $table, array $profile, array $request): string
   {
+    $this->injectSystemFields($request);
     // ==========================
     // LOCK RENSTRA
     // ==========================
     if ($error = $this->checkRenstraLock($table)) {
-        return JsonResponse::error($error);
+      return JsonResponse::error($error);
     }
     if (str_contains($table, 'renstra_neo')) {
 
@@ -176,7 +201,7 @@ class DynamicTableService
     // LOCK RENSTRA
     // ==========================
     if ($error = $this->checkRenstraLock($table)) {
-        return JsonResponse::error($error);
+      return JsonResponse::error($error);
     }
     if (str_contains($table, 'renstra_neo')) {
 

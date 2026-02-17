@@ -129,7 +129,21 @@ const ActionConfig = {
 		},
 	},
 };
-
+// untuk renstra menu
+const RenstraHeaderConfig = {
+	renstra_neo: [
+   "Periode Mulai",
+   "Periode Selesai",
+   "Visi"
+],
+	misi_renstra_neo: ["Kode", "Uraian"],
+	tujuan_renstra_neo: ["Kode", "Uraian"],
+	sasaran_renstra_neo: ["Kode", "Uraian"],
+	indikator_sasaran_renstra_neo: ["Indikator", "Satuan"],
+	program_renstra_neo: ["Kode Program", "Uraian"],
+	indikator_program_renstra_neo: ["Indikator", "Target"],
+	anggaran_program_renstra_neo: ["Tahun", "Pagu"],
+};
 /* =========================================================
 	 TABLE MANAGER
 	 ---------------------------------------------------------
@@ -207,24 +221,48 @@ class TableManager {
 		 Render isi tbody tabel
 	------------------------------------------------------ */
 	renderTable(rows) {
+		if (AppState.jenis === "renstra") {
+			let headers = RenstraHeaderConfig[AppState.tbl] || [];
+
+			let theadHtml = "<tr>";
+
+			headers.forEach((h) => {
+				theadHtml += `<th>${h}</th>`;
+			});
+
+			theadHtml += `<th class="collapsing">Aksi</th></tr>`;
+
+			$("thead tr").replaceWith(theadHtml);
+		}
+		let target = `tbody[name="tabel_${AppState.jenis}"]`;
 		let html = "";
+
+		if (!rows.length) {
+			html = `
+            <tr>
+                <td colspan="100%" class="center aligned">
+                    Tidak ada data
+                </td>
+            </tr>
+        `;
+			$(target).html(html);
+			return;
+		}
 
 		rows.forEach((row) => {
 			html += "<tr>";
 
 			Object.keys(row).forEach((key) => {
-				if (key === "id") return; // ← skip kolom id
+				if (key === "id") return;
 				html += `<td>${row[key] ?? ""}</td>`;
 			});
 
 			html += `<td class="collapsing">
-			${this.buildActionButtons(row)}
-		</td>`;
+            ${this.buildActionButtons(row)}
+        </td>`;
 
 			html += "</tr>";
 		});
-
-		let target = `tbody[name="tabel_${AppState.jenis}"]`;
 
 		$(target).html(html);
 	}
@@ -1577,100 +1615,6 @@ $(document).ready(function () {
 		}, 700);
 	});
 
-	/* =========================================================
-	   RENSTRA PAGE MODULE (TETAP UTUH)
-	========================================================= */
-
-	function initRenstraPage() {
-		if (!$(".renstra-page").length) return;
-
-		$(".ui.dropdown").dropdown();
-		$(".ui.checkbox").checkbox();
-
-		$(".ui.calendar").calendar({
-			type: "date",
-			formatter: {
-				date: function (date) {
-					if (!date) return "";
-					const day = ("0" + date.getDate()).slice(-2);
-					const month = ("0" + (date.getMonth() + 1)).slice(-2);
-					const year = date.getFullYear();
-					return year + "-" + month + "-" + day;
-				},
-			},
-		});
-
-		$(".renstra-page .ui.form").form({
-			fields: {
-				kd_wilayah: {
-					identifier: "kd_wilayah",
-					rules: [{ type: "empty", prompt: "Kode Wilayah wajib diisi" }],
-				},
-				tahun: {
-					identifier: "tahun",
-					rules: [{ type: "empty", prompt: "Tahun wajib diisi" }],
-				},
-				tahun_renstra: {
-					identifier: "tahun_renstra",
-					rules: [{ type: "empty", prompt: "Tahun Renstra wajib dipilih" }],
-				},
-				aturan_anggaran: {
-					identifier: "aturan_anggaran",
-					rules: [{ type: "empty", prompt: "Aturan Anggaran wajib dipilih" }],
-				},
-			},
-		});
-
-		function lockSection(trigger, fields) {
-			$(document).on("change", trigger, function () {
-				fields.forEach((name) => {
-					let field = $('[name="' + name + '"]').closest(".field");
-					if ($(this).is(":checked")) {
-						field.find("input, .ui.dropdown").addClass("disabled");
-					} else {
-						field.find("input, .ui.dropdown").removeClass("disabled");
-					}
-				});
-			});
-		}
-
-		lockSection('input[name="kunci_renja"]', ["awal_renja", "akhir_renja"]);
-		lockSection('input[name="kunci_dpa"]', ["awal_dpa", "akhir_dpa"]);
-		lockSection('input[name="kunci_renstra"]', [
-			"awal_renstra",
-			"akhir_renstra",
-		]);
-
-		function loadDropdown(name, url) {
-			$.get(
-				url,
-				function (res) {
-					let dropdown = $('[name="' + name + '"]').closest(".ui.dropdown");
-					let menu = dropdown.find(".menu");
-					menu.html("");
-
-					if (res.data) {
-						res.data.forEach((item) => {
-							menu.append(
-								'<div class="item" data-value="' +
-									item.id +
-									'">' +
-									item.nama +
-									"</div>",
-							);
-						});
-					}
-
-					dropdown.dropdown("refresh");
-				},
-				"json",
-			);
-		}
-
-		loadDropdown("aturan_anggaran", "/referensi/load?jenis=anggaran");
-		loadDropdown("aturan_akun", "/referensi/load?jenis=akun");
-	}
-
 	/* ---------------------------------------------
 	   Inisialisasi Flyout Manager
 	---------------------------------------------- */
@@ -1778,83 +1722,26 @@ $(document).ready(function () {
 	if (window.location.pathname === "/profil") {
 		loadProfil();
 	}
+	// ==============================
+	// RENSTRA TAB SWITCH (BERSIH)
+	// ==============================
 
-	initRenstraPage();
+	$(document).on("click", "#renstraMenu .item", function () {
+		let tbl = $(this).data("tbl");
 
+		// aktifkan menu
+		$("#renstraMenu .item").removeClass("active");
+		$(this).addClass("active");
 
-	//=============
-	// UNTUK RESNTRA
-	//==============
+		// ubah judul
+		$("#judulTabel").text($(this).text().toUpperCase());
 
-    let currentTbl = 'misi_renstra_neo';
+		// ubah tombol
+		$("#btnTambah").attr("data-tbl", tbl);
+		$("#btnImport").attr("data-tbl", tbl);
+		$("#btnExport").attr("data-tbl", tbl);
 
-    // klik menu
-    $('#renstraMenu .item').click(function(){
-
-        $('#renstraMenu .item').removeClass('active');
-        $(this).addClass('active');
-
-        currentTbl = $(this).data('tbl');
-
-        // ubah header
-        $('#judulTabel').text($(this).text().toUpperCase());
-
-        // ubah data-tbl di tbody
-        $('tbody[name="tabel_dynamic"]').attr('data-tbl', currentTbl);
-
-        // ubah tombol
-        $('#btnTambah').attr('data-tbl', currentTbl);
-        $('#btnImport').attr('data-tbl', currentTbl);
-        $('#btnExport').attr('data-tbl', currentTbl);
-
-        // reload dynamic (pakai sistem JS global Anda)
-        $('tbody[name="tabel_dynamic"]').html(`
-            <tr>
-              <td colspan="2">
-                <div class="ui active inline loader"></div>
-              </td>
-            </tr>
-        `);
-
-        // trigger reload
-        $(document).trigger('reload_dynamic_table');
-
-    });
-		// ==============================
-// RENSTRA TAB SWITCH
-// ==============================
-
-$(document).on('click', '#renstraMenu .item', function () {
-
-    let currentTbl = $(this).data('tbl');
-
-    // aktifkan menu
-    $('#renstraMenu .item').removeClass('active');
-    $(this).addClass('active');
-
-    // ubah header
-    $('#judulTabel').text($(this).text().toUpperCase());
-
-    // ubah data-tbl pada tbody
-    let $tbody = $('tbody[name="tabel_dynamic"]');
-    $tbody.attr('data-tbl', currentTbl);
-
-    // ubah tombol sidebar
-    $('#btnTambah').attr('data-tbl', currentTbl);
-    $('#btnImport').attr('data-tbl', currentTbl);
-    $('#btnExport').attr('data-tbl', currentTbl);
-
-    // tampilkan loader
-    $tbody.html(`
-        <tr>
-            <td colspan="2">
-                <div class="ui active inline loader"></div>
-            </td>
-        </tr>
-    `);
-
-    // trigger reload tabel dynamic
-    $(document).trigger('reload_dynamic_table');
-
-});
+		// 🔥 pakai engine global
+		tableManager.load("renstra", tbl);
+	});
 });

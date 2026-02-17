@@ -6,6 +6,7 @@
 
   <!-- MENU -->
   <div class="ui secondary pointing menu" id="renstraMenu">
+    <a class="item" data-tbl="renstra_neo">Data Renstra</a>
     <a class="item active" data-tbl="misi_renstra_neo">Misi</a>
     <a class="item" data-tbl="tujuan_renstra_neo">Tujuan</a>
     <a class="item" data-tbl="sasaran_renstra_neo">Sasaran</a>
@@ -46,31 +47,27 @@
 
   <!-- SATU TABEL SAJA -->
   <table class="ui celled striped table">
-    <thead>
-      <tr>
-        <th>Data</th>
-        <th class="collapsing">Aksi</th>
-      </tr>
-    </thead>
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th class="collapsing">Aksi</th>
+    </tr>
+  </thead>
 
-    <tbody name="tabel_dynamic"
-            data-tbl="misi_renstra_neo">
-      <tr>
-        <td colspan="2">
-          <div class="ui active inline loader"></div>
-        </td>
-      </tr>
-    </tbody>
+  <tbody name="tabel_renstra">
+    <tr>
+      <td colspan="2">
+        <div class="ui active inline loader"></div>
+      </td>
+    </tr>
+  </tbody>
 
-    <tfoot>
-      <tr>
-        <td colspan="2" class="right aligned">
-          <div class="ui pagination menu"
-               name="pagination_dynamic"></div>
-        </td>
-      </tr>
-    </tfoot>
-  </table>
-
-</div>
+  <tfoot>
+    <tr>
+      <td colspan="2" class="right aligned">
+        <div name="pagination_renstra"></div>
+      </td>
+    </tr>
+  </tfoot>
+</table>
 
