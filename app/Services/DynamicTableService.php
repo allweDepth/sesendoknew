@@ -268,6 +268,63 @@ class DynamicTableService
             return JsonResponse::error("Tidak ada data yang bisa disimpan");
         }
 
+        /* =====================================================
+       KHUSUS PERIODE RPJMD
+    ===================================================== */
+        if ($table === 'periode_rpjmd') {
+
+            $mulai   = (int)($filtered['periode_mulai'] ?? 0);
+            $selesai = (int)($filtered['periode_selesai'] ?? 0);
+
+            $kd_wilayah = $this->user['kd_wilayah'] ?? null;
+
+            if (!$kd_wilayah) {
+                return JsonResponse::error("Wilayah tidak ditemukan");
+            }
+
+            if ($mulai >= $selesai) {
+                return JsonResponse::error("Periode tidak valid");
+            }
+
+            // CEK OVERLAP
+            $cek = $this->db->query("
+            SELECT id FROM periode_rpjmd
+            WHERE kd_wilayah = ?
+            AND (
+                (? BETWEEN periode_mulai AND periode_selesai)
+                OR
+                (? BETWEEN periode_mulai AND periode_selesai)
+            )
+        ", [$kd_wilayah, $mulai, $selesai])->fetch();
+
+            if ($cek) {
+                return JsonResponse::error("Periode tumpang tindih");
+            }
+
+            // inject wilayah
+            $filtered['kd_wilayah'] = $kd_wilayah;
+
+            // HANDLE STATUS AKTIF
+            if (!empty($filtered['status_aktif'])) {
+
+                // nonaktifkan semua dulu
+                $this->db->query("
+                UPDATE periode_rpjmd
+                SET status_aktif = 0
+                WHERE kd_wilayah = ?
+            ", [$kd_wilayah]);
+
+                $filtered['status_aktif'] = 1;
+            } else {
+                $filtered['status_aktif'] = 0;
+            }
+        }
+        $filtered['tgl_insert'] = date('Y-m-d H:i:s');
+        $filtered['username_insert'] = $this->user['username'] ?? 'system';
+        /* =====================================================
+       INSERT FINAL
+    ===================================================== */
+
         $this->db->insert($table, $filtered);
 
         return JsonResponse::success("Data berhasil disimpan");

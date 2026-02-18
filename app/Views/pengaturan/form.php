@@ -78,20 +78,59 @@ $currentRole = $roleInfo[$type] ?? $roleInfo['viewer'];
         </p>
     </div>
 </div>
+
 <form class="ui form" method="post" action="/pengaturan/store">
 
-<!-- ======================================================
-     ROLE INFO
-====================================================== -->
-<div class="ui icon message">
-<i class="shield alternate icon"></i>
-<div class="content">
-<div class="header">Role: <?= strtoupper($type); ?></div>
-Wilayah: <strong><?= $kd_wilayah ?></strong> |
-OPD: <strong><?= $kd_opd ?></strong>
+
+<?php if($type === 'super_admin'): ?>
+
+<div class="ui raised segment">
+<h4 class="ui dividing header">Periode RPJMD</h4>
+
+<div class="ui three column grid">
+
+ <div class="column">
+        <div class="field">
+            <label>Periode Mulai</label>
+            <div class="ui calendar" id="rpjmd_mulai_calendar">
+                <div class="ui input left icon">
+                    <i class="calendar icon"></i>
+                    <input type="text"
+                           name="rpjmd_mulai"
+                           placeholder="Pilih Tahun"
+                           autocomplete="off">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="column">
+        <div class="field">
+            <label>Periode Selesai</label>
+            <div class="ui calendar" id="rpjmd_selesai_calendar">
+                <div class="ui input left icon">
+                    <i class="calendar icon"></i>
+                    <input type="text"
+                           name="rpjmd_selesai"
+                           placeholder="Pilih Tahun"
+                           autocomplete="off">
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="column">
+<div class="field">
+<label>Keterangan</label>
+<input type="text" name="rpjmd_keterangan">
 </div>
 </div>
 
+</div>
+
+</div>
+
+<?php endif; ?>
 <!-- ======================================================
      ATURAN REFERENSI (SUPER ADMIN)
 ====================================================== -->

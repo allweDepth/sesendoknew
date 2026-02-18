@@ -688,6 +688,18 @@ class FormEngine {
 ========================================================= */
 
 const RoleConfig = {
+	admin_opd: {
+		canAdd: true,
+		canEdit: true,
+		canDelete: true,
+		canUpload: true,
+	},
+	super_admin: {
+		canAdd: true,
+		canEdit: true,
+		canDelete: true,
+		canUpload: true,
+	},
 	admin: {
 		canAdd: true,
 		canEdit: true,
@@ -716,7 +728,7 @@ AppState.role = "admin";
 ========================================================= */
 
 const UIConfig = {
-	/* ======================================================
+	/* ====================================================== @note UIConfig
    RENSTRA
 ====================================================== */
 	renstra: {
@@ -849,7 +861,7 @@ const UIConfig = {
 			},
 		],
 	},
-	/* ======================================================@note
+	/* ======================================================
 	   STANDAR HARGA
 	====================================================== */
 	standar_harga: {
@@ -1401,6 +1413,43 @@ const UIConfig = {
 			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
 		],
 	},
+	/* ======================================================
+	   PENGATURAN
+	====================================================== */
+	pengaturan: {
+		periode_rpjmd: [
+			{
+				tag: "fieldCalendar",
+				prop: {
+					label: "Periode Mulai",
+					name: "periode_mulai",
+					calendarType: "year",
+				},
+			},
+			{
+				tag: "fieldCalendar",
+				prop: {
+					label: "Periode Selesai",
+					name: "periode_selesai",
+					calendarType: "year",
+				},
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Keterangan",
+					name: "keterangan",
+				},
+			},
+			{
+				tag: "fieldCheckbox",
+				prop: {
+					label: "Aktif",
+					name: "status_aktif",
+				},
+			},
+		],
+	},
 };
 
 /* =========================================================
@@ -1411,6 +1460,7 @@ const UIConfig = {
 ========================================================= */
 
 class FormContainerManager {
+	// @note FormContainerManager
 	constructor() {
 		this.$flyout = $("#mainContext .sidebarkanan");
 		this.$modal = $("#mainModal");
@@ -1677,9 +1727,6 @@ class FormContainerManager {
 	}
 	/* --------------------------------------------- */
 	buildConfig(jenis, tbl) {
-		console.log("CHECK UIConfig:", UIConfig[AppState.jenis]);
-		console.log("CHECK tbl:", tbl);
-		console.log("CHECK exists:", UIConfig[AppState.jenis]?.[tbl]);
 		let config = {
 			icon: "folder icon",
 			header: "",
@@ -2044,4 +2091,14 @@ $(document).ready(function () {
 			tableManager.load("renstra", defaultTbl);
 		}
 	}
+	//pengaturan menu
+	$("#rpjmd_mulai_calendar").calendar({
+		type: "year",
+		endCalendar: $("#rpjmd_selesai_calendar"),
+	});
+
+	$("#rpjmd_selesai_calendar").calendar({
+		type: "year",
+		startCalendar: $("#rpjmd_mulai_calendar"),
+	});
 });

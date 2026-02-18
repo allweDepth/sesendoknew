@@ -641,4 +641,24 @@ return [
             ]
         ]
     ],
+    'periode_rpjmd' => [
+        'table' => 'periode_rpjmd',
+        'primary_key' => 'id',
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'periode_mulai'
+        ],
+        'modes' => [
+            'default' => [
+                'select' => [
+                    'id',
+                    'periode_mulai',
+                    'periode_selesai',
+                    'status_aktif'
+                ],
+                'searchable' => ['periode_mulai', 'periode_selesai'],
+                'order_by' => 'periode_mulai DESC'
+            ]
+        ]
+    ],
 ];
