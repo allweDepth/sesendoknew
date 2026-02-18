@@ -4,93 +4,62 @@ require_once __DIR__ . '/JsonResponse.php';
 
 /**
  * ============================================================
- * DYNAMIC TABLE SERVICE
+ * DYNAMIC TABLE SERVICE (MODE + ACTION AWARE)
  * ============================================================
  *
- * Engine CRUD dinamis berbasis konfigurasi profile tabel.
- * Mendukung:
- * - Insert
- * - Update
- * - Delete
- * - List + Pagination + Search
+ * Konsep final:
+ * ------------------------------------------------------------
+ * - jenis = bisa berupa:
+ *      ✔ add / edit / delete / dropdown  → dianggap AKSI
+ *      ✔ selain itu → dianggap MODE tampilan
  *
- * Fitur keamanan:
- * - Auto filter berdasarkan session user (kd_wilayah, kd_opd, tahun)
- * - Tidak bisa akses data lintas OPD/tahun
- * - Auto audit field
+ * - Mode akan membaca:
+ *      $profile['modes'][$mode]
  *
- * Arsitektur:
- * - Reusable user scope filter (applyUserScope)
- * - Dynamic column detection (SHOW COLUMNS)
- * - Fully profile-driven
+ * - Jika mode tidak ada → fallback ke default
  *
  * ============================================================
  */
 
 class DynamicTableService
 {
-    /* =========================================================
-       PROPERTIES
-    ========================================================= */
-
-    private DB $db;              // Instance koneksi database (Singleton)
-    private array $profiles;     // Konfigurasi semua tabel (table_profiles.php)
-    private array $user;         // Data user login dari session
-
-
-    /* =========================================================
-       CONSTRUCTOR
-       - Load DB
-       - Load konfigurasi tabel
-       - Ambil data user dari session
-    ========================================================= */
+    private DB $db;
+    private array $profiles;
+    private array $user;
 
     public function __construct()
     {
-        $this->db = DB::getInstance(); // Ambil koneksi database
+        $this->db = DB::getInstance();
         $this->profiles = require __DIR__ . '/../Config/table_profiles.php';
-        $this->user = $_SESSION['user'] ?? []; // User login aktif
+        $this->user = $_SESSION['user'] ?? [];
     }
 
-
     /* =========================================================
-       HANDLE REQUEST (Router Utama)
-       - Menentukan aksi berdasarkan parameter 'jenis'
+       MAIN HANDLER
     ========================================================= */
 
     public function handle(array $request): string
     {
-        $jenis = $request['jenis'] ?? 'default';
+        $jenis = $request['jenis'] ?? '';
+        $tbl   = $request['tbl'] ?? '';
 
-        /* =====================================================
-       1️⃣ DROPDOWN REQUEST (TIDAK PERLU tbl)
-       -----------------------------------------------------
-       - Dropdown hanya butuh 'source'
-       - Tidak boleh divalidasi pakai tbl
-    ====================================================== */
-
+        /* =========================================
+           1️⃣ DROPDOWN (tidak perlu tbl)
+        ========================================= */
         if ($jenis === 'dropdown' && !empty($request['source'])) {
-
             return $this->loadDropdown(
                 $request['source'],
                 $request['parent_value'] ?? null
             );
         }
 
-        /* =====================================================
-       2️⃣ NORMAL TABLE OPERATION (CRUD / LIST)
-       -----------------------------------------------------
-       - Di bawah ini baru perlu tbl
-    ====================================================== */
-
-        $tbl = $request['tbl'] ?? '';
-
-        // Validasi tbl dikirim
+        /* =========================================
+           2️⃣ VALIDASI TABEL
+        ========================================= */
         if (!$tbl) {
             return JsonResponse::error('Tabel tidak dikirim');
         }
 
-        // Validasi tbl terdaftar
         if (!isset($this->profiles[$tbl])) {
             return JsonResponse::error('Tabel tidak terdaftar');
         }
@@ -98,10 +67,9 @@ class DynamicTableService
         $profile = $this->profiles[$tbl];
         $table   = $profile['table'];
 
-        /* =====================================================
-       ROUTING BERDASARKAN JENIS
-    ====================================================== */
-
+        /* =========================================
+           3️⃣ AKSI CRUD
+        ========================================= */
         if ($jenis === 'add') {
             return $this->insert($table, $request);
         }
@@ -114,9 +82,18 @@ class DynamicTableService
             return $this->delete($table, $profile, (int)$request['id_row']);
         }
 
-        // Default: tampilkan data
-        return $this->buildQuery($table, $profile, $request);
+        /* =========================================
+           4️⃣ SELAIN ITU = MODE TAMPILAN
+        ========================================= */
+        $mode = $jenis ?: 'default';
+
+        return $this->buildQuery($table, $profile, $request, $mode);
     }
+
+    /* =========================================================
+       DROPDOWN ENGINE
+    ========================================================= */
+
     private function loadDropdown(string $source, $parentValue = null): string
     {
         if (!isset($this->profiles[$source])) {
@@ -131,11 +108,8 @@ class DynamicTableService
         $whereParts = $scopeWhere;
         $params     = $scopeParams;
 
-        // Parent dependency
         if ($parentValue !== null) {
-
             foreach ($this->getTableColumns($table) as $col) {
-
                 if (str_starts_with($col, 'id_')) {
                     $whereParts[] = "`$col` = ?";
                     $params[] = $parentValue;
@@ -152,11 +126,11 @@ class DynamicTableService
         $labelField = $profile['dropdown']['label'] ?? 'uraian';
 
         $query = "
-                SELECT `$valueField` as id, `$labelField` as uraian
-                FROM `$table`
-                $where
-                ORDER BY `$valueField` ASC
-            ";
+            SELECT `$valueField` as id, `$labelField` as uraian
+            FROM `$table`
+            $where
+            ORDER BY `$valueField` ASC
+        ";
 
         $rows = $this->db->query($query, $params)->fetchAll();
 
@@ -164,231 +138,19 @@ class DynamicTableService
     }
 
     /* =========================================================
-       AMBIL STRUKTUR KOLOM TABEL
-       Digunakan untuk:
-       - Filter field valid saat insert/update
-       - Cek apakah tabel punya kolom scope
-    ========================================================= */
-
-    private function getTableColumns(string $table): array
-    {
-        $stmt = $this->db->query("SHOW COLUMNS FROM `$table`");
-
-        $columns = [];
-
-        foreach ($stmt->fetchAll() as $col) {
-            $columns[] = $col['Field'];
-        }
-
-        return $columns;
-    }
-
-
-    /* =========================================================
-       USER DATA SCOPE (Reusable Filter Engine)
-       =========================================================
-       Membatasi data berdasarkan:
-       - kd_wilayah
-       - kd_opd
-       - tahun
-       Jika kolom ada di tabel dan ada di session.
-    ========================================================= */
-
-    private function applyUserScope(string $table): array
-    {
-        $columns = $this->getTableColumns($table);
-
-        $whereParts = [];
-        $params     = [];
-
-        // Mapping field yang di-scope
-        $mapping = [
-            'kd_wilayah' => $this->user['kd_wilayah'] ?? null,
-            'kd_opd'     => $this->user['kd_opd'] ?? null,
-            'tahun'      => $this->user['tahun'] ?? null,
-        ];
-
-        foreach ($mapping as $field => $value) {
-
-            // Hanya filter jika:
-            // - Kolom ada di tabel
-            // - Session punya nilai
-            if (in_array($field, $columns) && !empty($value)) {
-                $whereParts[] = "`$field` = ?";
-                $params[] = $value;
-            }
-        }
-
-        return [$whereParts, $params];
-    }
-
-
-    /* =========================================================
-       INSERT DATA DINAMIS
-       =========================================================
-       - Filter hanya kolom valid
-       - Auto inject kd_wilayah, kd_opd, tahun
-       - Auto audit field
-    ========================================================= */
-
-    private function insert(string $table, array $request): string
-    {
-        $columns = $this->getTableColumns($table);
-        $filtered = [];
-
-        // Filter hanya field yang memang ada di tabel
-        foreach ($request as $key => $value) {
-
-            if (in_array($key, ['jenis', 'tbl'])) continue;
-
-            if (in_array($key, $columns)) {
-                $filtered[$key] = $value;
-            }
-        }
-
-        /* -------------------------------
-           AUTO INJECT USER SCOPE FIELD
-        ------------------------------- */
-
-        $mapping = [
-            'kd_wilayah' => $this->user['kd_wilayah'] ?? null,
-            'kd_opd'     => $this->user['kd_opd'] ?? null,
-            'tahun'      => $this->user['tahun'] ?? null,
-        ];
-
-        foreach ($mapping as $field => $value) {
-
-            if (in_array($field, $columns) && !isset($filtered[$field])) {
-
-                if (empty($value)) {
-                    return JsonResponse::error("Session $field tidak ditemukan");
-                }
-
-                $filtered[$field] = $value;
-            }
-        }
-
-        /* -------------------------------
-           AUTO AUDIT FIELD
-        ------------------------------- */
-
-        if (in_array('tgl_insert', $columns)) {
-            $filtered['tgl_insert'] = date('Y-m-d H:i:s');
-        }
-
-        if (in_array('username_insert', $columns)) {
-            $filtered['username_insert'] = $this->user['username'] ?? 'system';
-        }
-
-        if (in_array('disable', $columns) && !isset($filtered['disable'])) {
-            $filtered['disable'] = 0;
-        }
-
-        if (empty($filtered)) {
-            return JsonResponse::error("Tidak ada data yang bisa disimpan");
-        }
-
-        $this->db->insert($table, $filtered);
-
-        return JsonResponse::success("Data berhasil disimpan");
-    }
-
-
-    /* =========================================================
-       UPDATE DATA DINAMIS
-       =========================================================
-       - Filter kolom valid
-       - Auto update audit field
-       - Scoped (tidak bisa update lintas OPD/tahun)
-    ========================================================= */
-
-    private function update(string $table, array $request): string
-    {
-        $columns = $this->getTableColumns($table);
-
-        $id = $request['id'] ?? null;
-
-        if (!$id) {
-            return JsonResponse::error("ID tidak ditemukan");
-        }
-
-        unset($request['id']);
-
-        $filtered = [];
-
-        foreach ($request as $key => $value) {
-
-            if (in_array($key, ['jenis', 'tbl'])) continue;
-
-            if (in_array($key, $columns)) {
-                $filtered[$key] = $value;
-            }
-        }
-
-        // Auto audit update
-        if (in_array('tgl_update', $columns)) {
-            $filtered['tgl_update'] = date('Y-m-d H:i:s');
-        }
-
-        if (in_array('username_update', $columns)) {
-            $filtered['username_update'] = $this->user['username'] ?? 'system';
-        }
-
-        if (empty($filtered)) {
-            return JsonResponse::error("Tidak ada data yang bisa diupdate");
-        }
-
-        // Terapkan user scope
-        list($scopeWhere, $scopeParams) = $this->applyUserScope($table);
-
-        $whereClause = "WHERE id = ?";
-
-        if (!empty($scopeWhere)) {
-            $whereClause .= " AND " . implode(" AND ", $scopeWhere);
-        }
-
-        $params = array_merge([$id], $scopeParams);
-
-        $this->db->update($table, $filtered, $whereClause, $params);
-
-        return JsonResponse::success("Data berhasil diupdate");
-    }
-
-
-    /* =========================================================
-       DELETE DATA
-       Scoped (tidak bisa hapus lintas OPD/tahun)
-    ========================================================= */
-
-    private function delete(string $table, array $profile, int $id): string
-    {
-        $primaryKey = $profile['primary_key'] ?? 'id';
-
-        list($scopeWhere, $scopeParams) = $this->applyUserScope($table);
-
-        $whereClause = "WHERE `$primaryKey` = ?";
-
-        if (!empty($scopeWhere)) {
-            $whereClause .= " AND " . implode(" AND ", $scopeWhere);
-        }
-
-        $params = array_merge([$id], $scopeParams);
-
-        $this->db->delete($table, $whereClause, $params);
-
-        return JsonResponse::success('Data berhasil dihapus');
-    }
-
-
-    /* =========================================================
-       BUILD QUERY (LIST + PAGINATION + SEARCH)
+       BUILD QUERY (MODE AWARE)
     ========================================================= */
 
     private function buildQuery(
         string $table,
         array $profile,
-        array $request
+        array $request,
+        string $mode
     ): string {
+
+        $modeConfig = $profile['modes'][$mode]
+            ?? $profile['modes']['default']
+            ?? [];
 
         $limit  = max(1, (int)($request['rows'] ?? 10));
         $page   = max(1, (int)($request['halaman'] ?? 1));
@@ -398,24 +160,48 @@ class DynamicTableService
         $whereParts = [];
         $params     = [];
 
-        /* -------------------------------
-           APPLY USER SCOPE FILTER
-        ------------------------------- */
-
+        /* =========================================
+           USER SCOPE
+        ========================================= */
         list($userWhere, $userParams) = $this->applyUserScope($table);
 
         $whereParts = array_merge($whereParts, $userWhere);
         $params     = array_merge($params, $userParams);
 
-        /* -------------------------------
-           SEARCH FILTER
-        ------------------------------- */
+        /* =========================================
+           CUSTOM WHERE MODE (jika ada)
+        ========================================= */
+        if (!empty($modeConfig['where'])) {
 
-        if ($search !== '' && !empty($profile['searchable'])) {
+            if (is_array($modeConfig['where'])) {
+                foreach ($modeConfig['where'] as $field => $source) {
+
+                    if ($source === 'user') {
+                        $value = $this->user[$field] ?? null;
+
+                        if ($value !== null) {
+                            $whereParts[] = "`$field` = ?";
+                            $params[] = $value;
+                        }
+                    }
+                }
+            }
+
+            if (is_string($modeConfig['where'])) {
+                $whereParts[] = $modeConfig['where'];
+            }
+        }
+
+        /* =========================================
+           SEARCH MODE
+        ========================================= */
+        $searchable = $modeConfig['searchable'] ?? [];
+
+        if ($search !== '' && !empty($searchable)) {
 
             $searchParts = [];
 
-            foreach ($profile['searchable'] as $field) {
+            foreach ($searchable as $field) {
                 $searchParts[] = "`$field` LIKE ?";
                 $params[] = "%$search%";
             }
@@ -427,21 +213,25 @@ class DynamicTableService
             ? 'WHERE ' . implode(' AND ', $whereParts)
             : '';
 
-        /* -------------------------------
-           TOTAL COUNT QUERY
-        ------------------------------- */
-
+        /* =========================================
+           TOTAL COUNT
+        ========================================= */
         $totalQuery = "SELECT COUNT(*) as total FROM `$table` $where";
         $totalRow = $this->db->query($totalQuery, $params)->fetch()['total'] ?? 0;
 
-        /* -------------------------------
-           DATA QUERY
-        ------------------------------- */
+        /* =========================================
+           SELECT MODE
+        ========================================= */
+        $select = $modeConfig['select'] ?? ['*'];
+        $selectClause = implode(',', $select);
+
+        $orderBy = $modeConfig['order_by'] ?? 'id DESC';
 
         $dataQuery = "
-            SELECT *
+            SELECT $selectClause
             FROM `$table`
             $where
+            ORDER BY $orderBy
             LIMIT $offset, $limit
         ";
 
@@ -456,5 +246,113 @@ class DynamicTableService
             ],
             $rows
         );
+    }
+
+    /* =========================================================
+       INSERT
+    ========================================================= */
+
+    private function insert(string $table, array $request): string
+    {
+        $columns = $this->getTableColumns($table);
+        $filtered = [];
+
+        foreach ($request as $key => $value) {
+            if (in_array($key, ['jenis', 'tbl'])) continue;
+            if (in_array($key, $columns)) {
+                $filtered[$key] = $value;
+            }
+        }
+
+        if (empty($filtered)) {
+            return JsonResponse::error("Tidak ada data yang bisa disimpan");
+        }
+
+        $this->db->insert($table, $filtered);
+
+        return JsonResponse::success("Data berhasil disimpan");
+    }
+
+    /* =========================================================
+       UPDATE
+    ========================================================= */
+
+    private function update(string $table, array $request): string
+    {
+        $columns = $this->getTableColumns($table);
+
+        $id = $request['id'] ?? null;
+        if (!$id) {
+            return JsonResponse::error("ID tidak ditemukan");
+        }
+
+        unset($request['id']);
+
+        $filtered = [];
+
+        foreach ($request as $key => $value) {
+            if (in_array($key, ['jenis', 'tbl'])) continue;
+            if (in_array($key, $columns)) {
+                $filtered[$key] = $value;
+            }
+        }
+
+        if (empty($filtered)) {
+            return JsonResponse::error("Tidak ada data yang bisa diupdate");
+        }
+
+        $this->db->update($table, $filtered, "WHERE id = ?", [$id]);
+
+        return JsonResponse::success("Data berhasil diupdate");
+    }
+
+    /* =========================================================
+       DELETE
+    ========================================================= */
+
+    private function delete(string $table, array $profile, int $id): string
+    {
+        $primaryKey = $profile['primary_key'] ?? 'id';
+
+        $this->db->delete(
+            $table,
+            "WHERE `$primaryKey` = ?",
+            [$id]
+        );
+
+        return JsonResponse::success('Data berhasil dihapus');
+    }
+
+    /* =========================================================
+       UTILITIES
+    ========================================================= */
+
+    private function getTableColumns(string $table): array
+    {
+        $stmt = $this->db->query("SHOW COLUMNS FROM `$table`");
+        return array_column($stmt->fetchAll(), 'Field');
+    }
+
+    private function applyUserScope(string $table): array
+    {
+        $columns = $this->getTableColumns($table);
+
+        $whereParts = [];
+        $params     = [];
+
+        $mapping = [
+            'kd_wilayah' => $this->user['kd_wilayah'] ?? null,
+            'kd_opd'     => $this->user['kd_opd'] ?? null,
+            'tahun'      => $this->user['tahun'] ?? null,
+        ];
+
+        foreach ($mapping as $field => $value) {
+            if (in_array($field, $columns) && !empty($value)) {
+                $whereParts[] = "`$field` = ?";
+                $params[] = $value;
+            }
+        }
+
+        return [$whereParts, $params];
     }
 }
