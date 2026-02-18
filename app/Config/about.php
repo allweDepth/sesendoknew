@@ -36,3 +36,53 @@ Wilayah = 1 wilayah
 OPD = 1 OPD
 Sub Kegiatan = Berdasarkan mapping user_sub_kegiatan
 Approve = Tidak
+┌───────────────────────────────────────────┐
+│                FRONTEND                   │
+│-------------------------------------------│
+│  app.js                                   │
+│   • TableManager                          │
+│   • FormContainerManager                  │
+│   • FormEngine                            │
+│   • AjaxEngine                            │
+│                                           │
+│  UIConfig                                 │
+│  ActionConfig                             │
+│  RenstraHeaderConfig                      │
+└──────────────────────┬────────────────────┘
+                       │ AJAX (POST /dynamic)
+                       ▼
+┌───────────────────────────────────────────┐
+│         DynamicTableService              │
+│-------------------------------------------│
+│  handle()                                │
+│    ├─ add      → insert()                │
+│    ├─ edit     → update()                │
+│    ├─ delete   → delete()                │
+│    ├─ dropdown → loadDropdown()          │
+│    └─ lainnya  → buildQuery(mode)        │
+│                                           │
+│  Mode Aware + Action Aware               │
+│  User Scope Aware                        │
+└──────────────────────┬────────────────────┘
+                       ▼
+┌───────────────────────────────────────────┐
+│         table_profiles.php               │
+│-------------------------------------------│
+│  • table                                 │
+│  • primary_key                           │
+│  • modes                                 │
+│     ├─ default                           │
+│     ├─ kepegawaian                       │
+│     ├─ referensi                         │
+│     └─ dll                               │
+└──────────────────────┬────────────────────┘
+                       ▼
+┌───────────────────────────────────────────┐
+│                DATABASE                  │
+│-------------------------------------------│
+│  sk_asn_neo                              │
+│  renstra_neo                             │
+│  misi_renstra_neo                        │
+│  tujuan_renstra_neo                      │
+│  dll                                     │
+└───────────────────────────────────────────┘
