@@ -508,7 +508,7 @@ return [
         'modes' => [
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['kode', 'uraian'],
+                'searchable' => ['uraian'],
                 'order_by' => 'id DESC',
             ],
             'edit' => [
@@ -525,7 +525,7 @@ return [
         'modes' => [
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['kode', 'uraian'],
+                'searchable' => ['uraian'],
                 'order_by' => 'id DESC',
             ],
             'edit' => [
@@ -542,7 +542,7 @@ return [
         'modes' => [
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['kode', 'uraian'],
+                'searchable' => ['uraian'],
                 'order_by' => 'id DESC',
             ],
             'edit' => [
@@ -623,10 +623,10 @@ return [
     'renstra_neo' => [
         'table' => 'renstra_neo',
         'primary_key' => 'id',
-        // 🔥 TAMBAHAN KHUSUS UNTUK DROPDOWN
+
         'dropdown' => [
             'value' => 'id',
-            'label' => 'periode_mulai' // atau 'uraian' jika ada
+            'label' => 'visi'
         ],
         'modes' => [
             'default' => [
@@ -638,7 +638,11 @@ return [
                 'select' => ['*'],
                 'searchable' => ['*'],
                 'order_by' => 'id ASC'
-            ]
+            ],
+            'dropdown' => [
+                'value' => 'id',
+                'label' => 'visi'
+            ],
         ]
     ],
     'periode_rpjmd' => [

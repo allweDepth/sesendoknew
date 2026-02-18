@@ -178,24 +178,41 @@ class DynamicTableService
     ========================================================= */
     private function insert(string $table, array $request): string
     {
+        /* =====================================================
+       1️⃣ Ambil semua kolom tabel dari database
+       Digunakan untuk memfilter field yang valid saja
+    ===================================================== */
         $columns = $this->getTableColumns($table);
+
+        /* =====================================================
+       2️⃣ Filter request → hanya kolom yang ada di DB
+       Hindari field liar dari frontend
+    ===================================================== */
         $filtered = [];
 
-        // Filter hanya kolom yang ada di DB
         foreach ($request as $key => $value) {
+
+            // Abaikan field kontrol sistem
             if (in_array($key, ['jenis', 'tbl'])) continue;
+
+            // Hanya masukkan field yang memang ada di tabel
             if (in_array($key, $columns)) {
                 $filtered[$key] = $value;
             }
         }
 
+        // Jika tidak ada data valid → hentikan
         if (empty($filtered)) {
             return JsonResponse::error("Tidak ada data yang bisa disimpan");
         }
 
         /* =====================================================
-           VALIDASI KHUSUS PERIODE RPJMD
-        ===================================================== */
+       3️⃣ VALIDASI KHUSUS TABEL PERIODE RPJMD
+       -----------------------------------------------------
+       - Cek periode valid
+       - Cek overlap
+       - Set hanya 1 periode aktif per wilayah
+    ===================================================== */
         if ($table === 'periode_rpjmd') {
 
             $mulai   = (int)($filtered['periode_mulai'] ?? 0);
@@ -211,31 +228,32 @@ class DynamicTableService
                 return JsonResponse::error("Periode tidak valid");
             }
 
-            // CEK OVERLAP
+            // Cek overlap periode
             $cek = $this->db->query("
-                SELECT id FROM periode_rpjmd
-                WHERE kd_wilayah = ?
-                AND (
-                    (? BETWEEN periode_mulai AND periode_selesai)
-                    OR
-                    (? BETWEEN periode_mulai AND periode_selesai)
-                )
-            ", [$kd_wilayah, $mulai, $selesai])->fetch();
+            SELECT id FROM periode_rpjmd
+            WHERE kd_wilayah = ?
+            AND (
+                (? BETWEEN periode_mulai AND periode_selesai)
+                OR
+                (? BETWEEN periode_mulai AND periode_selesai)
+            )
+        ", [$kd_wilayah, $mulai, $selesai])->fetch();
 
             if ($cek) {
                 return JsonResponse::error("Periode tumpang tindih");
             }
 
+            // Inject wilayah dari session (tidak boleh dari form)
             $filtered['kd_wilayah'] = $kd_wilayah;
 
-            // Handle status aktif (hanya 1 aktif per wilayah)
+            // Jika diset aktif → nonaktifkan yang lain
             if (!empty($filtered['status_aktif'])) {
 
                 $this->db->query("
-                    UPDATE periode_rpjmd
-                    SET status_aktif = 0
-                    WHERE kd_wilayah = ?
-                ", [$kd_wilayah]);
+                UPDATE periode_rpjmd
+                SET status_aktif = 0
+                WHERE kd_wilayah = ?
+            ", [$kd_wilayah]);
 
                 $filtered['status_aktif'] = 1;
             } else {
@@ -243,9 +261,107 @@ class DynamicTableService
             }
         }
 
-        // Inject audit otomatis
+        /* =====================================================
+       4️⃣ AUTO INJECT USER SCOPE
+       -----------------------------------------------------
+       Jika tabel punya kolom:
+       - kd_wilayah
+       - kd_opd
+       - tahun
+       maka isi otomatis dari session user
+    ===================================================== */
+
+        $userScopeMapping = [
+            'kd_wilayah' => $this->user['kd_wilayah'] ?? null,
+            'kd_opd'     => $this->user['kd_opd'] ?? null,
+            'tahun'      => $this->user['tahun'] ?? null,
+        ];
+
+        foreach ($userScopeMapping as $field => $value) {
+
+            // Jika kolom ada di tabel DAN belum diset sebelumnya
+            if (in_array($field, $columns) && !isset($filtered[$field]) && $value !== null) {
+                $filtered[$field] = $value;
+            }
+        }
+
+        /* =====================================================
+        5️⃣ AUTO SET PERIODE AKTIF UNTUK RENSTRA
+        -----------------------------------------------------
+        renstra_neo harus selalu terikat ke:
+        periode_rpjmd.status_aktif = 1
+        ===================================================== */
+        if ($table === 'renstra_neo' && in_array('periode_id', $columns)) {
+
+            $kd_wilayah = $this->user['kd_wilayah'] ?? null;
+
+            $periodeAktif = $this->db->query("
+            SELECT id
+            FROM periode_rpjmd
+            WHERE kd_wilayah = ?
+            AND status_aktif = 1
+            LIMIT 1
+            ", [$kd_wilayah])->fetch();
+
+            if ($periodeAktif) {
+                $filtered['periode_id'] = $periodeAktif['id'];
+            } else {
+
+                // fallback ambil periode terbaru
+                $periodeTerbaru = $this->db->query("
+            SELECT id
+            FROM periode_rpjmd
+            WHERE kd_wilayah = ?
+            ORDER BY periode_mulai DESC
+            LIMIT 1
+        ", [$kd_wilayah])->fetch();
+
+                if ($periodeTerbaru) {
+                    $filtered['periode_id'] = $periodeTerbaru['id'];
+                } else {
+                    return JsonResponse::error("Belum ada periode RPJMD terdaftar");
+                }
+            }
+        }
+        /* =====================================================
+5️⃣.1 AUTO GENERATE KODE UNTUK MISI
+-----------------------------------------------------
+Jika tabel misi_renstra_neo:
+- Jangan percaya input user untuk kode
+- Generate otomatis berdasarkan renstra_id
+===================================================== */
+        if ($table === 'misi_renstra_neo' && in_array('kode', $columns)) {
+
+            $renstraId = $filtered['renstra_id'] ?? null;
+
+            if (!$renstraId) {
+                return JsonResponse::error("Renstra wajib dipilih");
+            }
+
+            // Ambil kode terakhir dalam renstra yang sama
+            $lastKode = $this->db->query("
+        SELECT MAX(CAST(kode AS UNSIGNED)) as max_kode
+        FROM misi_renstra_neo
+        WHERE renstra_id = ?
+    ", [$renstraId])->fetch()['max_kode'] ?? 0;
+
+            // Set kode baru
+            $filtered['kode'] = $lastKode + 1;
+        }
+        /* =====================================================
+       6️⃣ AUDIT TRAIL
+       -----------------------------------------------------
+       Otomatis isi:
+       - tgl_insert
+       - username_insert
+    ===================================================== */
         $filtered = $this->injectAudit($filtered, 'insert');
 
+        /* =====================================================
+       7️⃣ FINAL INSERT
+       -----------------------------------------------------
+       Semua validasi selesai → simpan ke DB
+    ===================================================== */
         $this->db->insert($table, $filtered);
 
         return JsonResponse::success("Data berhasil disimpan");

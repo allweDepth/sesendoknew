@@ -888,7 +888,6 @@ const UIConfig = {
 				tag: "fieldDropdown",
 				prop: { label: "Renstra", name: "id_renstra", source: "renstra_neo" },
 			},
-			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{
 				tag: "fieldTextarea",
 				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
@@ -900,7 +899,6 @@ const UIConfig = {
 				tag: "fieldDropdown",
 				prop: { label: "Misi", name: "id_misi", source: "misi_renstra_neo" },
 			},
-			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{
 				tag: "fieldTextarea",
 				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
@@ -1680,7 +1678,7 @@ class FormContainerManager {
 		const jenisMode = $btn.data("jns");
 		// Mode form: add / edit / detail
 
-		const tbl = $btn.data("tbl") || AppState.tbl;
+		const tbl = $btn.attr("data-tbl") || AppState.tbl;
 		// 🔥 PRIORITAS:
 		// 1️⃣ Ambil tbl langsung dari tombol (data-tbl)
 		// 2️⃣ Jika tidak ada, fallback ke AppState.tbl
@@ -1689,6 +1687,20 @@ class FormContainerManager {
 		// Mencegah flyout kosong ketika AppState.tbl belum di-set.
 
 		AppState.tbl = tbl;
+		// ======================================
+		// LOAD SERVER DROPDOWN CONFIG
+		// ======================================
+		let serverAttr = $btn.attr("data-server");
+
+		if (serverAttr) {
+			try {
+				AppState.serverSources = JSON.parse(serverAttr);
+			} catch (e) {
+				AppState.serverSources = [];
+			}
+		} else {
+			AppState.serverSources = [];
+		}
 		// Sinkronisasi state global agar konsisten dengan tbl yang dipakai sekarang.
 
 		const container = $btn.data("container") || "flyout";
@@ -2155,6 +2167,8 @@ $(document).ready(function () {
 
 		$("#btnTambah").attr("data-server", JSON.stringify(serverList));
 
+		// 🔥 TAMBAH INI (sinkronisasi state langsung)
+		AppState.serverSources = serverList;
 		// 🔥 pakai engine global
 		tableManager.load("renstra", tbl);
 	});
@@ -2164,26 +2178,46 @@ $(document).ready(function () {
 
 	let defaultTbl = $("#renstraMenu .item.active").data("tbl");
 
-	// INIT DEFAULT RENSTRA TAB (HANYA JIKA BELUM ADA STATE)
-	if (currentPath === "renstra" && !AppState.tbl) {
-		let defaultTbl = $("#renstraMenu .item.active").data("tbl");
+	// ==============================
+	// INIT DEFAULT RENSTRA TAB (FINAL STABLE)
+	// ==============================
+	if (currentPath === "renstra" && !AppState.currentMenu) {
+		let $activeTab = $("#renstraMenu .item.active");
 
-		if (defaultTbl) {
-			$("#btnTambah").attr("data-tbl", defaultTbl);
-			$("#btnImport").attr("data-tbl", defaultTbl);
-			$("#btnExport").attr("data-tbl", defaultTbl);
-
-			tableManager.load("renstra", defaultTbl);
+		if (!$activeTab.length) {
+			$activeTab = $("#renstraMenu .item").first();
+			$activeTab.addClass("active");
 		}
-		
+
+		let defaultTbl = $activeTab.data("tbl");
+
+		console.log("INIT DEFAULT RENSTRA:", defaultTbl);
+
+		// 🔥 SINKRONISASI STATE GLOBAL
+		AppState.tbl = defaultTbl;
+		AppState.currentMenu = defaultTbl;
+
+		let serverList = ServerDropdownConfig[defaultTbl] || [];
+
+		// 🔥 Update tombol
+		$("#btnTambah").attr("data-tbl", defaultTbl);
+		$("#btnImport").attr("data-tbl", defaultTbl);
+		$("#btnExport").attr("data-tbl", defaultTbl);
+		$("#btnTambah").attr("data-server", JSON.stringify(serverList));
+
+		// 🔥 Update dropdown dependency
+		AppState.serverSources = serverList;
+
+		// 🔥 Load tabel pertama kali
+		tableManager.load("renstra", defaultTbl);
 	}
 	// ==============================
-		// INIT DEFAULT PENGATURAN
-		// ==============================
+	// INIT DEFAULT PENGATURAN
+	// ==============================
 
-		if (currentPath === "pengaturan" && !AppState.tbl) {
-			tableManager.load("pengaturan", "periode_rpjmd");
-		}
+	if (currentPath === "pengaturan" && !AppState.tbl) {
+		tableManager.load("pengaturan", "periode_rpjmd");
+	}
 	//pengaturan menu
 	$("#rpjmd_mulai_calendar").calendar({
 		type: "year",
