@@ -2,35 +2,60 @@
 
 require_once __DIR__ . '/JsonResponse.php';
 
+/**
+ * ============================================================
+ * DYNAMIC TABLE SERVICE
+ * ============================================================
+ *
+ * Engine CRUD dinamis berbasis konfigurasi profile tabel.
+ * Mendukung:
+ * - Insert
+ * - Update
+ * - Delete
+ * - List + Pagination + Search
+ *
+ * Fitur keamanan:
+ * - Auto filter berdasarkan session user (kd_wilayah, kd_opd, tahun)
+ * - Tidak bisa akses data lintas OPD/tahun
+ * - Auto audit field
+ *
+ * Arsitektur:
+ * - Reusable user scope filter (applyUserScope)
+ * - Dynamic column detection (SHOW COLUMNS)
+ * - Fully profile-driven
+ *
+ * ============================================================
+ */
+
 class DynamicTableService
 {
     /* =========================================================
        PROPERTIES
     ========================================================= */
 
-    private DB $db;              // Instance database
-    private array $profiles;     // Konfigurasi tabel
+    private DB $db;              // Instance koneksi database (Singleton)
+    private array $profiles;     // Konfigurasi semua tabel (table_profiles.php)
     private array $user;         // Data user login dari session
 
 
     /* =========================================================
        CONSTRUCTOR
        - Load DB
-       - Load table profiles
-       - Ambil user dari session
+       - Load konfigurasi tabel
+       - Ambil data user dari session
     ========================================================= */
 
     public function __construct()
     {
-        $this->db = DB::getInstance();
+        $this->db = DB::getInstance(); // Ambil koneksi database
         $this->profiles = require __DIR__ . '/../Config/table_profiles.php';
-        $this->user = $_SESSION['user'] ?? [];
+        $this->user = $_SESSION['user'] ?? []; // User login aktif
     }
 
 
     /* =========================================================
-       HANDLE REQUEST
-       - Router utama berdasarkan jenis (add/edit/delete/list)
+       HANDLE REQUEST (Router Utama)
+       - Menentukan aksi berdasarkan parameter 'jenis'
     ========================================================= */
 
     public function handle(array $request): string
@@ -38,10 +63,12 @@ class DynamicTableService
         $tbl   = $request['tbl']   ?? '';
         $jenis = $request['jenis'] ?? 'default';
 
+        // Validasi tabel dikirim
         if (!$tbl) {
             return JsonResponse::error('Tabel tidak dikirim');
         }
 
+        // Validasi tabel terdaftar di profile
         if (!isset($this->profiles[$tbl])) {
             return JsonResponse::error('Tabel tidak terdaftar');
         }
@@ -49,6 +76,7 @@ class DynamicTableService
         $profile = $this->profiles[$tbl];
         $table   = $profile['table'];
 
+        // Routing berdasarkan jenis aksi
         if ($jenis === 'add') {
             return $this->insert($table, $request);
         }
@@ -61,13 +89,16 @@ class DynamicTableService
             return $this->delete($table, $profile, (int)$request['id_row']);
         }
 
+        // Default: tampilkan data
         return $this->buildQuery($table, $profile, $request);
     }
 
 
     /* =========================================================
        AMBIL STRUKTUR KOLOM TABEL
-       - Digunakan untuk filter kolom valid
+       Digunakan untuk:
+       - Filter field valid saat insert/update
+       - Cek apakah tabel punya kolom scope
     ========================================================= */
 
     private function getTableColumns(string $table): array
@@ -85,22 +116,58 @@ class DynamicTableService
 
 
     /* =========================================================
+       USER DATA SCOPE (Reusable Filter Engine)
+       =========================================================
+       Membatasi data berdasarkan:
+       - kd_wilayah
+       - kd_opd
+       - tahun
+       Jika kolom ada di tabel dan ada di session.
+    ========================================================= */
+
+    private function applyUserScope(string $table): array
+    {
+        $columns = $this->getTableColumns($table);
+
+        $whereParts = [];
+        $params     = [];
+
+        // Mapping field yang di-scope
+        $mapping = [
+            'kd_wilayah' => $this->user['kd_wilayah'] ?? null,
+            'kd_opd'     => $this->user['kd_opd'] ?? null,
+            'tahun'      => $this->user['tahun'] ?? null,
+        ];
+
+        foreach ($mapping as $field => $value) {
+
+            // Hanya filter jika:
+            // - Kolom ada di tabel
+            // - Session punya nilai
+            if (in_array($field, $columns) && !empty($value)) {
+                $whereParts[] = "`$field` = ?";
+                $params[] = $value;
+            }
+        }
+
+        return [$whereParts, $params];
+    }
+
+
+    /* =========================================================
        INSERT DATA DINAMIS
+       =========================================================
        - Filter hanya kolom valid
-       - Auto inject kd_wilayah, kd_opd
-       - Auto audit fields
+       - Auto inject kd_wilayah, kd_opd, tahun
+       - Auto audit field
     ========================================================= */
 
     private function insert(string $table, array $request): string
     {
         $columns = $this->getTableColumns($table);
-
         $filtered = [];
 
-        /* -------------------------------
-           FILTER FIELD VALID
-        ------------------------------- */
-
+        // Filter hanya field yang memang ada di tabel
         foreach ($request as $key => $value) {
 
             if (in_array($key, ['jenis', 'tbl'])) continue;
@@ -111,30 +178,27 @@ class DynamicTableService
         }
 
         /* -------------------------------
-   AUTO INJECT SYSTEM FIELD (SAFE)
-------------------------------- */
+           AUTO INJECT USER SCOPE FIELD
+        ------------------------------- */
 
-        $user = $this->user ?? [];
+        $mapping = [
+            'kd_wilayah' => $this->user['kd_wilayah'] ?? null,
+            'kd_opd'     => $this->user['kd_opd'] ?? null,
+            'tahun'      => $this->user['tahun'] ?? null,
+        ];
 
-        /* kd_wilayah */
-        if (in_array('kd_wilayah', $columns) && !isset($filtered['kd_wilayah'])) {
+        foreach ($mapping as $field => $value) {
 
-            if (!empty($user['kd_wilayah'])) {
-                $filtered['kd_wilayah'] = $user['kd_wilayah'];
-            } else {
-                return JsonResponse::error("Session kd_wilayah tidak ditemukan");
+            if (in_array($field, $columns) && !isset($filtered[$field])) {
+
+                if (empty($value)) {
+                    return JsonResponse::error("Session $field tidak ditemukan");
+                }
+
+                $filtered[$field] = $value;
             }
         }
 
-        /* kd_opd */
-        if (in_array('kd_opd', $columns) && !isset($filtered['kd_opd'])) {
-
-            if (!empty($user['kd_opd'])) {
-                $filtered['kd_opd'] = $user['kd_opd'];
-            } else {
-                return JsonResponse::error("Session kd_opd tidak ditemukan");
-            }
-        }
         /* -------------------------------
            AUTO AUDIT FIELD
         ------------------------------- */
@@ -154,6 +218,7 @@ class DynamicTableService
         if (empty($filtered)) {
             return JsonResponse::error("Tidak ada data yang bisa disimpan");
         }
+
         $this->db->insert($table, $filtered);
 
         return JsonResponse::success("Data berhasil disimpan");
@@ -162,8 +227,10 @@ class DynamicTableService
 
     /* =========================================================
        UPDATE DATA DINAMIS
+       =========================================================
        - Filter kolom valid
        - Auto update audit field
+       - Scoped (tidak bisa update lintas OPD/tahun)
     ========================================================= */
 
     private function update(string $table, array $request): string
@@ -189,10 +256,7 @@ class DynamicTableService
             }
         }
 
-        /* -------------------------------
-           AUTO UPDATE FIELD
-        ------------------------------- */
-
+        // Auto audit update
         if (in_array('tgl_update', $columns)) {
             $filtered['tgl_update'] = date('Y-m-d H:i:s');
         }
@@ -205,7 +269,18 @@ class DynamicTableService
             return JsonResponse::error("Tidak ada data yang bisa diupdate");
         }
 
-        $this->db->update($table, $filtered, "WHERE id = ?", [$id]);
+        // Terapkan user scope
+        list($scopeWhere, $scopeParams) = $this->applyUserScope($table);
+
+        $whereClause = "WHERE id = ?";
+
+        if (!empty($scopeWhere)) {
+            $whereClause .= " AND " . implode(" AND ", $scopeWhere);
+        }
+
+        $params = array_merge([$id], $scopeParams);
+
+        $this->db->update($table, $filtered, $whereClause, $params);
 
         return JsonResponse::success("Data berhasil diupdate");
     }
@@ -213,20 +288,31 @@ class DynamicTableService
 
     /* =========================================================
        DELETE DATA
+       Scoped (tidak bisa hapus lintas OPD/tahun)
     ========================================================= */
 
     private function delete(string $table, array $profile, int $id): string
     {
         $primaryKey = $profile['primary_key'] ?? 'id';
 
-        $this->db->delete($table, "WHERE `$primaryKey` = ?", [$id]);
+        list($scopeWhere, $scopeParams) = $this->applyUserScope($table);
+
+        $whereClause = "WHERE `$primaryKey` = ?";
+
+        if (!empty($scopeWhere)) {
+            $whereClause .= " AND " . implode(" AND ", $scopeWhere);
+        }
+
+        $params = array_merge([$id], $scopeParams);
+
+        $this->db->delete($table, $whereClause, $params);
 
         return JsonResponse::success('Data berhasil dihapus');
     }
 
 
     /* =========================================================
-       BUILD QUERY (LIST DATA + PAGINATION + SEARCH)
+       BUILD QUERY (LIST + PAGINATION + SEARCH)
     ========================================================= */
 
     private function buildQuery(
@@ -241,26 +327,19 @@ class DynamicTableService
         $offset = ($page - 1) * $limit;
 
         $whereParts = [];
-        $params = [];
+        $params     = [];
 
         /* -------------------------------
-           FILTER BY USER (AUTO)
+           APPLY USER SCOPE FILTER
         ------------------------------- */
 
-        $columns = $this->getTableColumns($table);
+        list($userWhere, $userParams) = $this->applyUserScope($table);
 
-        if (in_array('kd_wilayah', $columns) && isset($this->user['kd_wilayah'])) {
-            $whereParts[] = "kd_wilayah = ?";
-            $params[] = $this->user['kd_wilayah'];
-        }
-
-        if (in_array('kd_opd', $columns) && isset($this->user['kd_opd'])) {
-            $whereParts[] = "kd_opd = ?";
-            $params[] = $this->user['kd_opd'];
-        }
+        $whereParts = array_merge($whereParts, $userWhere);
+        $params     = array_merge($params, $userParams);
 
         /* -------------------------------
-           SEARCH
+           SEARCH FILTER
         ------------------------------- */
 
         if ($search !== '' && !empty($profile['searchable'])) {
@@ -275,14 +354,12 @@ class DynamicTableService
             $whereParts[] = '(' . implode(' OR ', $searchParts) . ')';
         }
 
-        $where = '';
-
-        if (!empty($whereParts)) {
-            $where = 'WHERE ' . implode(' AND ', $whereParts);
-        }
+        $where = !empty($whereParts)
+            ? 'WHERE ' . implode(' AND ', $whereParts)
+            : '';
 
         /* -------------------------------
-           TOTAL COUNT
+           TOTAL COUNT QUERY
         ------------------------------- */
 
         $totalQuery = "SELECT COUNT(*) as total FROM `$table` $where";
