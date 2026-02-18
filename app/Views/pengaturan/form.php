@@ -1,238 +1,254 @@
 <?php
 /**
  * =========================================================
- * FORM PENGATURAN SISTEM
+ * FORM PENGATURAN SISTEM (ENTERPRISE STRUCTURE)
  * =========================================================
- * Role Aware:
+ * Role Matrix:
  *
- * super_admin      → bisa kelola periode RPJMD
- * admin_wilayah    → bisa kelola periode RPJMD wilayahnya
- * admin_opd        → tidak bisa kelola periode (hanya lihat)
- * viewer           → tidak bisa akses pengaturan (idealnya dibatasi di controller)
+ * super_admin   → Mengatur ATURAN REFERENSI
+ * admin_wilayah → Mengatur PERIODE & KONTROL SISTEM
+ * admin_opd     → Read Only
+ * viewer        → Read Only
  *
+ * Basis data: kd_wilayah
  * =========================================================
  */
 
-$type = $_SESSION['user']['type_user'] ?? '';
+require_once __DIR__ . '/../../Core/DB.php';
+$db = DB::getInstance();
+
+/* =========================================================
+   SESSION
+========================================================= */
+$type        = $_SESSION['user']['type_user'] ?? 'viewer';
+$kd_wilayah  = $_SESSION['user']['kd_wilayah'] ?? '';
+$kd_opd      = $_SESSION['user']['kd_opd'] ?? '';
+$tahunUser   = $_SESSION['user']['tahun'] ?? date('Y');
+
+/* =========================================================
+   LOAD DATA
+========================================================= */
+$pengaturan = $db->query(
+    "SELECT * FROM pengaturan_neo WHERE kd_wilayah = ? LIMIT 1",
+    [$kd_wilayah]
+)->fetch();
+
+$peraturan = $db->query(
+    "SELECT id, judul FROM peraturan_neo ORDER BY judul ASC"
+)->fetchAll();
+
+/* =========================================================
+   ROLE PERMISSION
+========================================================= */
+$canEditAturan  = ($type === 'super_admin');
+$canEditPeriode = ($type === 'admin_wilayah');
+$canEditKontrol = ($type === 'admin_wilayah');
+
+$disAturan  = $canEditAturan  ? '' : 'disabled';
+$disPeriode = $canEditPeriode ? '' : 'disabled';
+$disKontrol = $canEditKontrol ? '' : 'disabled';
+?>
+<?php
+/* ==========================================
+   ROLE MESSAGE CONFIGURATION
+========================================== */
+$roleInfo = [
+    'super_admin'   => ['color'=>'red','icon'=>'shield alternate','title'=>'Super Admin','desc'=>'Mengatur aturan referensi sistem'],
+    'admin_wilayah' => ['color'=>'orange','icon'=>'globe','title'=>'Admin Wilayah','desc'=>'Mengatur periode dan kontrol sistem'],
+    'admin_opd'     => ['color'=>'blue','icon'=>'building','title'=>'Admin OPD','desc'=>'Mengikuti pengaturan wilayah'],
+    'viewer'        => ['color'=>'grey','icon'=>'eye','title'=>'Viewer','desc'=>'Hanya dapat melihat pengaturan']
+];
+
+$currentRole = $roleInfo[$type] ?? $roleInfo['viewer'];
 ?>
 
-<form class="ui form" method="post" action="/pengaturan/simpan">
-
-  <!-- ======================================================
-       INFORMASI DASAR
-  ======================================================= -->
-  <div class="ui raised segment">
-    <h4 class="ui dividing header">Informasi Dasar</h4>
-
-    <div class="two fields">
-
-      <!-- Kode Wilayah (Readonly untuk OPD) -->
-      <div class="field">
-        <label>Kode Wilayah</label>
-        <input type="text"
-               name="kd_wilayah"
-               value="<?= $_SESSION['user']['kd_wilayah'] ?? '' ?>"
-               readonly>
-      </div>
-
-      <!-- Tahun Sistem -->
-      <div class="field">
-        <label>Tahun Sistem</label>
-        <input type="number"
-               name="tahun"
-               value="<?= $_SESSION['user']['tahun'] ?? date('Y'); ?>">
-      </div>
-
+<!-- ======================================================
+     ROLE MESSAGE (FOMANTIC)
+====================================================== -->
+<div class="ui <?= $currentRole['color']; ?> icon message">
+    <i class="<?= $currentRole['icon']; ?> icon"></i>
+    <div class="content">
+        <div class="header">
+            Role Anda: <?= strtoupper($currentRole['title']); ?>
+        </div>
+        <p><?= $currentRole['desc']; ?></p>
+        <p>
+            Wilayah: <strong><?= $kd_wilayah ?></strong> |
+            OPD: <strong><?= $kd_opd ?></strong>
+        </p>
     </div>
-  </div>
+</div>
+<form class="ui form" method="post" action="/pengaturan/store">
 
+<!-- ======================================================
+     ROLE INFO
+====================================================== -->
+<div class="ui icon message">
+<i class="shield alternate icon"></i>
+<div class="content">
+<div class="header">Role: <?= strtoupper($type); ?></div>
+Wilayah: <strong><?= $kd_wilayah ?></strong> |
+OPD: <strong><?= $kd_opd ?></strong>
+</div>
+</div>
 
-  <!-- ======================================================
-       PENGATURAN REFERENSI
-  ======================================================= -->
-  <div class="ui raised segment">
-    <h4 class="ui dividing header">Pengaturan Referensi</h4>
+<!-- ======================================================
+     ATURAN REFERENSI (SUPER ADMIN)
+====================================================== -->
+<div class="ui raised segment">
+<h4 class="ui dividing header">Aturan Referensi</h4>
 
-    <div class="four fields">
+<?php
+$aturanFields = [
+'aturan_anggaran','aturan_organisasi','aturan_pengadaan',
+'aturan_akun','aturan_asb','aturan_sbu','aturan_ssh',
+'aturan_hspk','aturan_sumber_dana','aturan_sub_kegiatan'
+];
 
-      <!-- Tahun Renstra -->
-      <div class="field">
-        <label>Tahun Renstra</label>
-        <div class="ui fluid selection dropdown">
-          <input type="hidden" name="tahun_renstra">
-          <i class="dropdown icon"></i>
-          <div class="default text">Pilih Tahun Renstra</div>
-          <div class="menu">
-            <div class="item" data-value="2025-2029">2025-2029</div>
-            <div class="item" data-value="2020-2024">2020-2024</div>
-          </div>
-        </div>
-      </div>
+foreach($aturanFields as $field):
+?>
+<div class="field">
+<label><?= ucwords(str_replace('_',' ',$field)); ?></label>
+<div class="ui fluid selection dropdown <?= $disAturan ?>">
+<input type="hidden"
+       name="<?= $field ?>"
+       value="<?= $pengaturan[$field] ?? '' ?>">
+<i class="dropdown icon"></i>
+<div class="default text">Pilih</div>
+<div class="menu">
+<?php foreach($peraturan as $row): ?>
+<div class="item"
+     data-value="<?= $row['id']; ?>">
+     <?= htmlspecialchars($row['judul']); ?>
+</div>
+<?php endforeach; ?>
+</div>
+</div>
+</div>
+<?php endforeach; ?>
 
-      <!-- Aturan Anggaran -->
-      <div class="field">
-        <label>Aturan Anggaran</label>
-        <div class="ui fluid selection dropdown">
-          <input type="hidden" name="aturan_anggaran">
-          <i class="dropdown icon"></i>
-          <div class="default text">Pilih Aturan Anggaran</div>
-          <div class="menu">
-            <div class="item" data-value="permendagri_77">Permendagri 77/2020</div>
-          </div>
-        </div>
-      </div>
+</div>
 
-      <!-- Aturan Organisasi -->
-      <div class="field">
-        <label>Aturan Organisasi</label>
-        <div class="ui fluid selection dropdown">
-          <input type="hidden" name="aturan_organisasi">
-          <i class="dropdown icon"></i>
-          <div class="default text">Pilih Aturan Organisasi</div>
-          <div class="menu">
-            <div class="item" data-value="perda">Perda Organisasi</div>
-          </div>
-        </div>
-      </div>
+<!-- ======================================================
+     PERIODE DOKUMEN (ADMIN WILAYAH)
+====================================================== -->
+<div class="ui raised segment">
+<h4 class="ui dividing header">Periode Dokumen</h4>
 
-      <!-- Aturan Pengadaan -->
-      <div class="field">
-        <label>Aturan Pengadaan</label>
-        <div class="ui fluid selection dropdown">
-          <input type="hidden" name="aturan_pengadaan">
-          <i class="dropdown icon"></i>
-          <div class="default text">Pilih Aturan Pengadaan</div>
-          <div class="menu">
-            <div class="item" data-value="perpres_12">Perpres 12/2021</div>
-          </div>
-        </div>
-      </div>
+<div class="ui four column stackable grid">
+<?php foreach(['awal_renja','akhir_renja','awal_dpa','akhir_dpa'] as $f): ?>
+<div class="column">
+<div class="field">
+<label><?= ucwords(str_replace('_',' ',$f)); ?></label>
+<input type="date"
+       name="<?= $f ?>"
+       value="<?= $pengaturan[$f] ?? '' ?>"
+       <?= $disPeriode ?>>
+</div>
+</div>
+<?php endforeach; ?>
+</div>
 
-    </div>
-  </div>
+<div class="ui four column stackable grid">
+<?php foreach(['awal_renja_p','akhir_renja_p','awal_dppa','akhir_dppa'] as $f): ?>
+<div class="column">
+<div class="field">
+<label><?= ucwords(str_replace('_',' ',$f)); ?></label>
+<input type="date"
+       name="<?= $f ?>"
+       value="<?= $pengaturan[$f] ?? '' ?>"
+       <?= $disPeriode ?>>
+</div>
+</div>
+<?php endforeach; ?>
+</div>
 
+<div class="ui two column stackable grid">
+<?php foreach(['awal_renstra','akhir_renstra'] as $f): ?>
+<div class="column">
+<div class="field">
+<label><?= ucwords(str_replace('_',' ',$f)); ?></label>
+<input type="date"
+       name="<?= $f ?>"
+       value="<?= $pengaturan[$f] ?? '' ?>"
+       <?= $disPeriode ?>>
+</div>
+</div>
+<?php endforeach; ?>
+</div>
 
-  <!-- ======================================================
-       PERIODE RPJMD
-       HANYA UNTUK admin_wilayah & super_admin
-  ======================================================= -->
-  <?php if (in_array($type, ['admin_wilayah','super_admin'])): ?>
+</div>
 
-  <div class="ui raised segment">
-    <h4 class="ui dividing header">Kelola Periode RPJMD</h4>
+<!-- ======================================================
+     KONTROL SISTEM (ADMIN WILAYAH)
+====================================================== -->
+<div class="ui raised segment">
+<h4 class="ui dividing header">Kontrol Sistem</h4>
 
-    <div class="three fields">
+<div class="ui stackable four column grid">
 
-      <!-- Periode Mulai -->
-      <div class="field">
-        <label>Periode Mulai</label>
-        <input type="number"
-               name="periode_mulai"
-               placeholder="2025"
-               required>
-      </div>
+<?php
+function kontrolCard($title,$kunci,$setujui,$pengaturan,$disabled){
+?>
+<div class="column">
+<div class="ui segment">
+<h5 class="ui header"><?= $title ?></h5>
 
-      <!-- Periode Selesai -->
-      <div class="field">
-        <label>Periode Selesai</label>
-        <input type="number"
-               name="periode_selesai"
-               placeholder="2029"
-               required>
-      </div>
+<div class="ui form">
+<div class="field">
+<div class="ui toggle checkbox">
+<input type="checkbox"
+       name="<?= $kunci ?>"
+       <?= !empty($pengaturan[$kunci]) ? 'checked' : '' ?>
+       <?= $disabled ?>>
+<label>Kunci</label>
+</div>
+</div>
 
-      <!-- Status Aktif -->
-      <div class="field">
-        <label>Status Aktif</label>
-        <div class="ui toggle checkbox">
-          <input type="checkbox" name="status_aktif" value="1">
-          <label>Aktifkan periode ini</label>
-        </div>
-      </div>
+<div class="field">
+<div class="ui toggle checkbox">
+<input type="checkbox"
+       name="<?= $setujui ?>"
+       <?= !empty($pengaturan[$setujui]) ? 'checked' : '' ?>
+       <?= $disabled ?>>
+<label>Setujui</label>
+</div>
+</div>
+</div>
 
-    </div>
+</div>
+</div>
+<?php } ?>
 
-    <!-- Keterangan -->
-    <div class="field">
-      <label>Keterangan</label>
-      <input type="text"
-             name="keterangan"
-             placeholder="Contoh: RPJMD 2025-2029">
-    </div>
+<?php
+kontrolCard('Global','kunci','setujui',$pengaturan,$disKontrol);
+kontrolCard('Renstra','kunci_renstra','setujui_renstra',$pengaturan,$disKontrol);
+kontrolCard('Renja','kunci_renja','setujui_renja',$pengaturan,$disKontrol);
+kontrolCard('DPA','kunci_dpa','setujui_dpa',$pengaturan,$disKontrol);
+kontrolCard('Renja P','kunci_renja_p','setujui_renja_p',$pengaturan,$disKontrol);
+kontrolCard('DPPA','kunci_dppa','setujui_dppa',$pengaturan,$disKontrol);
+kontrolCard('Paket','kunci_paket','setujui_paket',$pengaturan,$disKontrol);
+kontrolCard('Realisasi','kunci_realisasi','setujui_realisasi',$pengaturan,$disKontrol);
+?>
 
-    <!-- Info Sistem -->
-    <div class="ui small info message">
-      <i class="info circle icon"></i>
-      Jika diaktifkan, periode lain di wilayah ini harus dinonaktifkan di backend.
-    </div>
+</div>
+</div>
 
-  </div>
+<!-- ======================================================
+     SUBMIT
+====================================================== -->
+<div class="ui right aligned segment">
 
-  <?php endif; ?>
+<?php if($canEditAturan || $canEditPeriode || $canEditKontrol): ?>
+<button type="submit" class="ui primary button">
+<i class="save icon"></i> Simpan
+</button>
+<?php else: ?>
+<div class="ui grey disabled button">
+Tidak memiliki hak perubahan
+</div>
+<?php endif; ?>
 
-
-  <!-- ======================================================
-       INFORMASI PERIODE (ADMIN OPD)
-       HANYA TAMPIL INFO
-  ======================================================= -->
-  <?php if ($type === 'admin_opd'): ?>
-
-  <div class="ui info message">
-    <i class="info circle icon"></i>
-    Periode RPJMD ditentukan oleh Admin Wilayah.
-    Anda mengikuti periode aktif sistem.
-  </div>
-
-  <?php endif; ?>
-
-
-  <!-- ======================================================
-       KONTROL GLOBAL
-  ======================================================= -->
-  <div class="ui raised segment">
-    <h4 class="ui dividing header">Kontrol Global</h4>
-
-    <div class="ui three column grid">
-
-      <div class="column">
-        <div class="ui toggle checkbox">
-          <input type="checkbox" name="disable">
-          <label>Disable Sistem</label>
-        </div>
-      </div>
-
-      <div class="column">
-        <div class="ui toggle checkbox">
-          <input type="checkbox" name="kunci">
-          <label>Kunci Global</label>
-        </div>
-      </div>
-
-      <div class="column">
-        <div class="ui toggle checkbox">
-          <input type="checkbox" name="setujui">
-          <label>Setujui Global</label>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-
-  <!-- ======================================================
-       TOMBOL SIMPAN
-  ======================================================= -->
-  <div class="ui right aligned segment">
-
-    <button type="submit" class="ui primary button">
-      <i class="save icon"></i>
-      Simpan
-    </button>
-
-    <button type="reset" class="ui button">
-      Reset
-    </button>
-
-  </div>
+</div>
 
 </form>

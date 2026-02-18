@@ -96,7 +96,7 @@
 
 <body>
 
-    <!-- NAVBAR (DI LUAR PUSHABLE) @note-->
+    <!-- NAVBAR (DI LUAR PUSHABLE) @note -->
     <div class="ui top attached menu">
         <div class="item" id="toggleSidebar">
             <a>
@@ -241,8 +241,8 @@
                 </div>
             </div>
 
-            <!-- ADMIN MENU -->
-            <?php if (($_SESSION['user']['type_user'] ?? '') === 'admin'): ?>
+            <!-- ADMIN MENU super_admin,admin_wilayah,admin_opd,1=viewer-->
+            <?php if (($_SESSION['user']['type_user'] ?? '') !== 'viewer'): ?>
 
                 <a class="item" href="/halaman_berita">
                     <i class="newspaper icon"></i> Halaman Berita
