@@ -26,6 +26,7 @@ const AppState = {
 	tbl: "", // Tabel aktif
 	cari: "", // Keyword pencarian
 	currentMenu: "", // Tracking menu sebelumnya
+	serverSources: [], // 🔥 daftar dropdown yang boleh fetch server
 };
 /* =========================================================
    GLOBAL TOAST ENGINE
@@ -139,6 +140,23 @@ const RenstraHeaderConfig = {
 	program_renstra_neo: ["Kode Program", "Uraian"],
 	indikator_program_renstra_neo: ["Indikator", "Target"],
 	anggaran_program_renstra_neo: ["Tahun", "Pagu"],
+};
+/* =========================================================
+   SERVER DROPDOWN CONFIG (RENSTRA DEPENDENCY MAP)
+   ---------------------------------------------------------
+   → Tentukan dropdown mana yang perlu fetch server
+   → Per tabel
+========================================================= */
+
+const ServerDropdownConfig = {
+	renstra_neo: [],
+	misi_renstra_neo: ["renstra_neo"],
+	tujuan_renstra_neo: ["misi_renstra_neo"],
+	sasaran_renstra_neo: ["tujuan_renstra_neo"],
+	indikator_sasaran_renstra_neo: ["sasaran_renstra_neo"],
+	program_renstra_neo: ["sasaran_renstra_neo"],
+	indikator_program_renstra_neo: ["program_renstra_neo"],
+	anggaran_program_renstra_neo: ["program_renstra_neo"],
 };
 /* =========================================================
 	 TABLE MANAGER
@@ -606,26 +624,32 @@ class FormEngine {
 		 Dropdown
 	============================ */
 	static dropdown(prop) {
-		let options = "";
+		let staticOptions = "";
 
-		(prop.options || []).forEach((opt) => {
-			options += `
+		// STATIC OPTIONS (jika ada)
+		if (prop.options && prop.options.length) {
+			prop.options.forEach((opt) => {
+				staticOptions += `
 				<div class="item" data-value="${opt.value}">
 					${opt.text}
 				</div>
 			`;
-		});
+			});
+		}
 
 		return `
-			<div class="ui selection dropdown ${prop.classInput || ""}">
-				<input type="hidden" name="${prop.name}">
-				<i class="dropdown icon"></i>
-				<div class="default text">Pilih</div>
-				<div class="menu">
-					${options}
-				</div>
+		<div class="ui selection dropdown ${prop.classInput || ""}"
+			 data-source="${prop.source || ""}"
+			 data-parent="${prop.parent || ""}">
+			 
+			<input type="hidden" name="${prop.name}">
+			<i class="dropdown icon"></i>
+			<div class="default text">Pilih</div>
+			<div class="menu">
+				${staticOptions}
 			</div>
-		`;
+		</div>
+	`;
 	}
 
 	/* ============================
@@ -1453,12 +1477,86 @@ class FormContainerManager {
 		}
 		return $("#form_flyout");
 	}
+	//=================
+	loadDropdowns(containerSelector) {
+		if (!AppState.serverSources.length) return;
+
+		const self = this;
+
+		$(containerSelector)
+			.find(".ui.dropdown[data-source]")
+			.each(function () {
+				let $dropdown = $(this);
+				let source = $dropdown.data("source");
+
+				if (!AppState.serverSources.includes(source)) return;
+
+				self.fetchDropdown($dropdown, source);
+
+				let parentName = $dropdown.data("parent");
+
+				if (parentName) {
+					$(containerSelector).on(
+						"change",
+						`[name="${parentName}"]`,
+						function () {
+							let parentValue = $(this).val();
+							self.fetchDropdown($dropdown, source, parentValue);
+						},
+					);
+				}
+			});
+	}
+
+	fetchDropdown($dropdown, source, parentValue = null) {
+		let payload = {
+			jenis: "dropdown",
+			source: source,
+		};
+
+		if (parentValue) {
+			payload.parent_value = parentValue;
+		}
+
+		this.ajax.request({
+			data: payload,
+			success: function (res) {
+				if (!res.success) return;
+
+				let menu = $dropdown.find(".menu");
+				menu.empty();
+
+				res.data.forEach((item) => {
+					menu.append(`
+					<div class="item" data-value="${item.id}">
+						${item.uraian}
+					</div>
+				`);
+				});
+
+				$dropdown.dropdown("refresh");
+			},
+		});
+	}
 	/* --------------------------------------------- */
 	open($btn) {
-		// event?.stopPropagation?.(); // 🔥 TAMBAH
-		console.log("BTN DATA TBL =", $btn.data("tbl"));
-		console.log("AppState.tbl =", AppState.tbl);
 		const jenisMode = $btn.data("jns"); // add / edit
+		// ===============================
+		// PARSE DATA-SERVER (ARRAY)
+		// ===============================
+		let serverAttr = $btn.data("server") || [];
+
+		if (typeof serverAttr === "string") {
+			try {
+				AppState.serverSources = JSON.parse(serverAttr);
+			} catch (e) {
+				AppState.serverSources = [];
+			}
+		} else if (Array.isArray(serverAttr)) {
+			AppState.serverSources = serverAttr;
+		} else {
+			AppState.serverSources = [];
+		}
 		// const tbl = $btn.data("tbl");
 		const tbl = AppState.tbl;
 		const container = $btn.data("container") || "flyout";
@@ -1504,7 +1602,8 @@ class FormContainerManager {
 		}
 
 		FormEngine.render(target, config.elements);
-
+		// 🔥 hydrate dropdown setelah render
+		this.loadDropdowns(target);
 		// ✅ Hidden ID hanya saat edit
 		if (AppState.mode === "edit") {
 			$(target).prepend(`<input type="hidden" name="id">`);
@@ -1906,7 +2005,7 @@ $(document).ready(function () {
 	$(document).on("click", "#renstraMenu .item", function (e) {
 		e.preventDefault();
 		let tbl = $(this).data("tbl");
-
+		console.log("TAB CLICK:", tbl);
 		// aktifkan menu
 		$("#renstraMenu .item").removeClass("active");
 		$(this).addClass("active");
@@ -1918,6 +2017,11 @@ $(document).ready(function () {
 		$("#btnTambah").attr("data-tbl", tbl);
 		$("#btnImport").attr("data-tbl", tbl);
 		$("#btnExport").attr("data-tbl", tbl);
+
+		// 🔥 UPDATE data-server OTOMATIS
+		let serverList = ServerDropdownConfig[tbl] || [];
+
+		$("#btnTambah").attr("data-server", JSON.stringify(serverList));
 
 		// 🔥 pakai engine global
 		tableManager.load("renstra", tbl);

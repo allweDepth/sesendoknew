@@ -623,6 +623,11 @@ return [
     'renstra_neo' => [
         'table' => 'renstra_neo',
         'primary_key' => 'id',
+        // 🔥 TAMBAHAN KHUSUS UNTUK DROPDOWN
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'periode_mulai' // atau 'uraian' jika ada
+        ],
         'modes' => [
             'default' => [
                 'select' => ['*'],

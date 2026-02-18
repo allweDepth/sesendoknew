@@ -60,15 +60,37 @@ class DynamicTableService
 
     public function handle(array $request): string
     {
-        $tbl   = $request['tbl']   ?? '';
         $jenis = $request['jenis'] ?? 'default';
 
-        // Validasi tabel dikirim
+        /* =====================================================
+       1️⃣ DROPDOWN REQUEST (TIDAK PERLU tbl)
+       -----------------------------------------------------
+       - Dropdown hanya butuh 'source'
+       - Tidak boleh divalidasi pakai tbl
+    ====================================================== */
+
+        if ($jenis === 'dropdown' && !empty($request['source'])) {
+
+            return $this->loadDropdown(
+                $request['source'],
+                $request['parent_value'] ?? null
+            );
+        }
+
+        /* =====================================================
+       2️⃣ NORMAL TABLE OPERATION (CRUD / LIST)
+       -----------------------------------------------------
+       - Di bawah ini baru perlu tbl
+    ====================================================== */
+
+        $tbl = $request['tbl'] ?? '';
+
+        // Validasi tbl dikirim
         if (!$tbl) {
             return JsonResponse::error('Tabel tidak dikirim');
         }
 
-        // Validasi tabel terdaftar di profile
+        // Validasi tbl terdaftar
         if (!isset($this->profiles[$tbl])) {
             return JsonResponse::error('Tabel tidak terdaftar');
         }
@@ -76,7 +98,10 @@ class DynamicTableService
         $profile = $this->profiles[$tbl];
         $table   = $profile['table'];
 
-        // Routing berdasarkan jenis aksi
+        /* =====================================================
+       ROUTING BERDASARKAN JENIS
+    ====================================================== */
+
         if ($jenis === 'add') {
             return $this->insert($table, $request);
         }
@@ -92,7 +117,51 @@ class DynamicTableService
         // Default: tampilkan data
         return $this->buildQuery($table, $profile, $request);
     }
+    private function loadDropdown(string $source, $parentValue = null): string
+    {
+        if (!isset($this->profiles[$source])) {
+            return JsonResponse::error("Source tidak ditemukan");
+        }
 
+        $profile = $this->profiles[$source];
+        $table   = $profile['table'];
+
+        list($scopeWhere, $scopeParams) = $this->applyUserScope($table);
+
+        $whereParts = $scopeWhere;
+        $params     = $scopeParams;
+
+        // Parent dependency
+        if ($parentValue !== null) {
+
+            foreach ($this->getTableColumns($table) as $col) {
+
+                if (str_starts_with($col, 'id_')) {
+                    $whereParts[] = "`$col` = ?";
+                    $params[] = $parentValue;
+                    break;
+                }
+            }
+        }
+
+        $where = !empty($whereParts)
+            ? "WHERE " . implode(" AND ", $whereParts)
+            : "";
+
+        $valueField = $profile['dropdown']['value'] ?? 'id';
+        $labelField = $profile['dropdown']['label'] ?? 'uraian';
+
+        $query = "
+                SELECT `$valueField` as id, `$labelField` as uraian
+                FROM `$table`
+                $where
+                ORDER BY `$valueField` ASC
+            ";
+
+        $rows = $this->db->query($query, $params)->fetchAll();
+
+        return JsonResponse::success("Dropdown loaded", [], $rows);
+    }
 
     /* =========================================================
        AMBIL STRUKTUR KOLOM TABEL
