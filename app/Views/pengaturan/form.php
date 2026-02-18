@@ -79,7 +79,7 @@ $currentRole = $roleInfo[$type] ?? $roleInfo['viewer'];
     </div>
 </div>
 
-<form class="ui form" method="post" action="/pengaturan/store">
+<form class="ui form">
 
 
 <?php if($type === 'super_admin'): ?>

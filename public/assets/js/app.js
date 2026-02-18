@@ -494,20 +494,28 @@ class FormEngine {
 	}
 	//Kalender
 	static calendar(prop) {
+		let attrs = "";
+
+		if (prop.attr) {
+			Object.entries(prop.attr).forEach(([key, value]) => {
+				attrs += `${key}="${value}" `;
+			});
+		}
+
 		return `
-	<div class="ui calendar">
-		<div class="ui input left icon ${prop.classInput || ""}">
-			<i class="calendar icon"></i>
-			<input 
-				type="text"
-				name="${prop.name}"
-				data-type="${prop.calendarType || "date"}"
-				placeholder="${prop.placeholder || "Pilih Tanggal"}"
-				${prop.readonly ? "readonly" : ""}
-			>
-		</div>
-	</div>
-	`;
+    <div class="ui calendar" ${attrs}>
+        <div class="ui input left icon ${prop.classInput || ""}">
+            <i class="calendar icon"></i>
+            <input 
+                type="text"
+                name="${prop.name}"
+                data-type="${prop.calendarType || "date"}"
+                placeholder="${prop.placeholder || "Pilih Tanggal"}"
+                ${prop.readonly ? "readonly" : ""}
+            >
+        </div>
+    </div>
+    `;
 	}
 	//CARD
 	static cardProfile(prop) {
@@ -656,30 +664,101 @@ class FormEngine {
 		 Init Fomantic Components
 	============================ */
 	static init() {
+		// ==============================
 		// DROPDOWN
+		// ==============================
 		$(".ui.dropdown").dropdown();
 
+		// ==============================
 		// CHECKBOX
+		// ==============================
 		$(".ui.checkbox").checkbox();
 
+		// ==============================
 		// DIMMER
+		// ==============================
 		$(".ui.card .image").dimmer({
 			on: "hover",
 		});
 
-		// 🔥 CALENDAR INIT
+		// ==============================
+		// CALENDAR DEFAULT INIT
+		// ==============================
 		$(".ui.calendar").each(function () {
-			let type = $(this).find("input").attr("data-type");
+			let $calendar = $(this);
+			let type = $calendar.find("input").attr("data-type");
 
-			$(this).calendar({
+			$calendar.calendar({
 				type: type || "date",
 				formatter: {
 					date: function (date) {
 						if (!date) return "";
-						return date.getFullYear();
+
+						// jika type year → tampilkan tahun saja
+						if (type === "year") {
+							return date.getFullYear();
+						}
+
+						return date.toLocaleDateString();
 					},
 				},
 			});
+		});
+
+		// ==============================
+		// RANGE CALENDAR AUTO LINK
+		// ==============================
+		let groups = {};
+
+		$(".ui.calendar[data-group]").each(function () {
+			let $calendar = $(this);
+			let group = $calendar.data("group");
+			let range = $calendar.data("range"); // start / end
+
+			if (!groups[group]) {
+				groups[group] = {};
+			}
+
+			groups[group][range] = $calendar;
+		});
+
+		Object.keys(groups).forEach((group) => {
+			let start = groups[group]["start"];
+			let end = groups[group]["end"];
+
+			if (start && end) {
+				let startType = start.find("input").data("type") || "date";
+				let endType = end.find("input").data("type") || "date";
+
+				start.calendar("destroy");
+				end.calendar("destroy");
+
+				start.calendar({
+					type: startType,
+					endCalendar: end,
+					formatter: {
+						date: function (date) {
+							if (!date) return "";
+							return startType === "year"
+								? date.getFullYear()
+								: date.toLocaleDateString();
+						},
+					},
+				});
+
+				end.calendar({
+					type: endType,
+					startCalendar: start,
+					formatter: {
+						date: function (date) {
+							if (!date) return "";
+							return endType === "year"
+								? date.getFullYear()
+								: date.toLocaleDateString();
+						},
+					},
+				});
+			}
 		});
 	}
 }
@@ -723,12 +802,57 @@ const RoleConfig = {
 // Simulasi role login
 AppState.role = "admin";
 /* =========================================================
-   UI BUILDER CONFIG
+   UI BUILDER CONFIG  @note UIConfig
 	 BUAT FIELD UNTUK FORM sesuai tbl
 ========================================================= */
 
 const UIConfig = {
-	/* ====================================================== @note UIConfig
+	/* ======================================================
+	   PENGATURAN
+	====================================================== */
+	pengaturan: {
+		periode_rpjmd: [
+			{
+    tag: "fieldCalendar",
+    prop: {
+        label: "Periode Mulai",
+        name: "periode_mulai",
+        calendarType: "year",
+        attr: {
+            "data-group": "rpjmd",
+            "data-range": "start"
+        }
+    }
+},
+{
+    tag: "fieldCalendar",
+    prop: {
+        label: "Periode Selesai",
+        name: "periode_selesai",
+        calendarType: "year",
+        attr: {
+            "data-group": "rpjmd",
+            "data-range": "end"
+        }
+    }
+},
+			{
+				tag: "field",
+				prop: {
+					label: "Keterangan",
+					name: "keterangan",
+				},
+			},
+			{
+				tag: "fieldCheckbox",
+				prop: {
+					label: "Aktif",
+					name: "status_aktif",
+				},
+			},
+		],
+	},
+	/* ======================================================
    RENSTRA
 ====================================================== */
 	renstra: {
@@ -1413,43 +1537,6 @@ const UIConfig = {
 			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
 		],
 	},
-	/* ======================================================
-	   PENGATURAN
-	====================================================== */
-	pengaturan: {
-		periode_rpjmd: [
-			{
-				tag: "fieldCalendar",
-				prop: {
-					label: "Periode Mulai",
-					name: "periode_mulai",
-					calendarType: "year",
-				},
-			},
-			{
-				tag: "fieldCalendar",
-				prop: {
-					label: "Periode Selesai",
-					name: "periode_selesai",
-					calendarType: "year",
-				},
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Keterangan",
-					name: "keterangan",
-				},
-			},
-			{
-				tag: "fieldCheckbox",
-				prop: {
-					label: "Aktif",
-					name: "status_aktif",
-				},
-			},
-		],
-	},
 };
 
 /* =========================================================
@@ -1590,43 +1677,41 @@ class FormContainerManager {
 	}
 	/* --------------------------------------------- */
 	open($btn) {
-		const jenisMode = $btn.data("jns"); // add / edit
-		// ===============================
-		// PARSE DATA-SERVER (ARRAY)
-		// ===============================
-		let serverAttr = $btn.data("server") || [];
+		const jenisMode = $btn.data("jns");
+		// Mode form: add / edit / detail
 
-		if (typeof serverAttr === "string") {
-			try {
-				AppState.serverSources = JSON.parse(serverAttr);
-			} catch (e) {
-				AppState.serverSources = [];
-			}
-		} else if (Array.isArray(serverAttr)) {
-			AppState.serverSources = serverAttr;
-		} else {
-			AppState.serverSources = [];
-		}
-		// const tbl = $btn.data("tbl");
-		const tbl = AppState.tbl;
+		const tbl = $btn.data("tbl") || AppState.tbl;
+		// 🔥 PRIORITAS:
+		// 1️⃣ Ambil tbl langsung dari tombol (data-tbl)
+		// 2️⃣ Jika tidak ada, fallback ke AppState.tbl
+		//
+		// Ini membuat tombol tidak bergantung pada state sebelumnya.
+		// Mencegah flyout kosong ketika AppState.tbl belum di-set.
+
+		AppState.tbl = tbl;
+		// Sinkronisasi state global agar konsisten dengan tbl yang dipakai sekarang.
+
 		const container = $btn.data("container") || "flyout";
 		const idRow = $btn.data("id");
 
 		this.activeContainer = container;
-
 		AppState.mode = jenisMode;
-		AppState.tbl = tbl;
 
-		// 🔥 FIX WAJIB
 		if (!AppState.jenis) {
+			// Jika jenis belum ada (misalnya halaman standalone),
+			// ambil dari URL path: contoh "/pengaturan" → "pengaturan"
 			AppState.jenis = window.location.pathname.replace(/^\/+/g, "");
 		}
 
 		let config = this.buildConfig(jenisMode, tbl);
+		// buildConfig akan mencari:
+		// UIConfig[AppState.jenis][tbl]
+		// Jika salah satu tidak ada → elements kosong.
 
 		this.render(config, container);
 
 		if ((jenisMode === "edit" || jenisMode === "detail") && idRow) {
+			// Jika edit/detail → load data dari server
 			this.loadData(idRow, container);
 		}
 

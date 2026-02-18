@@ -43,9 +43,9 @@ class DynamicTableService
         $jenis = $request['jenis'] ?? '';
         $tbl   = $request['tbl'] ?? '';
 
-        /* =========================================
-           1️⃣ DROPDOWN (tidak perlu tbl)
-        ========================================= */
+        // ==============================
+        // DROPDOWN
+        // ==============================
         if ($jenis === 'dropdown' && !empty($request['source'])) {
             return $this->loadDropdown(
                 $request['source'],
@@ -53,9 +53,6 @@ class DynamicTableService
             );
         }
 
-        /* =========================================
-           2️⃣ VALIDASI TABEL
-        ========================================= */
         if (!$tbl) {
             return JsonResponse::error('Tabel tidak dikirim');
         }
@@ -67,29 +64,58 @@ class DynamicTableService
         $profile = $this->profiles[$tbl];
         $table   = $profile['table'];
 
-        /* =========================================
-           3️⃣ AKSI CRUD
-        ========================================= */
+        // ==============================
+        // ADD
+        // ==============================
         if ($jenis === 'add') {
             return $this->insert($table, $request);
         }
 
-        if ($jenis === 'edit' && !empty($request['id'])) {
-            return $this->update($table, $request);
+        // ==============================
+        // EDIT (DUAL MODE)
+        // ==============================
+        if ($jenis === 'edit') {
+
+            // 🔹 MODE LOAD DATA
+            if (!empty($request['id_row']) && count($request) <= 3) {
+                return $this->getById($table, (int)$request['id_row']);
+            }
+
+            // 🔹 MODE UPDATE
+            if (!empty($request['id'])) {
+                return $this->update($table, $request);
+            }
+
+            return JsonResponse::error("ID tidak ditemukan");
         }
 
+        // ==============================
+        // DELETE
+        // ==============================
         if ($jenis === 'delete' && !empty($request['id_row'])) {
             return $this->delete($table, $profile, (int)$request['id_row']);
         }
 
-        /* =========================================
-           4️⃣ SELAIN ITU = MODE TAMPILAN
-        ========================================= */
+        // ==============================
+        // DEFAULT → LISTING
+        // ==============================
         $mode = $jenis ?: 'default';
 
         return $this->buildQuery($table, $profile, $request, $mode);
     }
+    private function getById(string $table, int $id): string
+    {
+        $row = $this->db->query(
+            "SELECT * FROM `$table` WHERE id = ? LIMIT 1",
+            [$id]
+        )->fetch();
 
+        if (!$row) {
+            return JsonResponse::error("Data tidak ditemukan");
+        }
+
+        return JsonResponse::success("Data ditemukan", null, $row);
+    }
     /* =========================================================
        DROPDOWN ENGINE
     ========================================================= */

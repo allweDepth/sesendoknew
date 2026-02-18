@@ -21,8 +21,7 @@
                 data-ui="open-form"
                 data-container="flyout"
                 data-jns="add"
-                data-tbl="periode_rpjmd"
-                data-tooltip="Tambah Data" data-position="bottom center">
+                data-tbl="periode_rpjmd">
             <i class="plus icon"></i>
             Tambah Periode RPJMD
         </button>
