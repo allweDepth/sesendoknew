@@ -29,41 +29,88 @@ class AuthController extends Controller
         exit;
     }
     public function register()
+{
+    header('Content-Type: application/json');
+
+    $data = [
+        'username'      => $_POST['username'] ?? '',
+        'email'         => $_POST['email'] ?? '',
+        'nama'          => $_POST['nama'] ?? '',
+        'nip'           => $_POST['nip'] ?? '',
+        'kontak_person' => $_POST['kontak_person'] ?? '',
+        'alamat'        => $_POST['alamat'] ?? '',
+        'password'      => $_POST['password'] ?? '',
+        'kd_wilayah'    => $_POST['kd_wilayah'] ?? '',
+        'kd_opd'        => $_POST['kd_opd'] ?? '',
+    ];
+
+    // Validasi sederhana
+    if (empty($data['username']) || empty($data['password'])) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Username dan password wajib diisi'
+        ]);
+        exit;
+    }
+
+    // Hash password
+    $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+
+    require_once __DIR__ . '/../Models/UserModel.php';
+    $userModel = new UserModel();
+
+    if (!$userModel->insertUser($data)) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Gagal menyimpan data'
+        ]);
+        exit;
+    }
+
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'Registrasi berhasil 🎉'
+    ]);
+    exit;
+}
+    public function getWilayah()
     {
-        $data = [
-            'username'      => $_POST['username'] ?? '',
-            'email'         => $_POST['email'] ?? '',
-            'nama_lengkap'  => $_POST['nama_lengkap'] ?? '',
-            'nip'           => $_POST['nip'] ?? '',
-            'kontak_person' => $_POST['kontak_person'] ?? '',
-            'alamat'        => $_POST['alamat'] ?? '',
-            'password'      => $_POST['password'] ?? '',
-            'wilayah'       => $_POST['wilayah'] ?? '',
-            'organisasi'    => $_POST['organisasi'] ?? '',
-        ];
+        header('Content-Type: application/json');
 
-        // Validasi sederhana
-        if (empty($data['username']) || empty($data['password'])) {
-            $_SESSION['register_error'] = "Username dan password wajib diisi";
-            header("Location: /");
+        $db = DB::getInstance();
+
+        $data = $db->query("
+        SELECT kode, uraian 
+        FROM wilayah_neo
+        ORDER BY uraian ASC
+    ")->fetchAll(PDO::FETCH_ASSOC);
+
+        echo json_encode($data);
+    }
+
+
+    public function getOrganisasi()
+    {
+        header('Content-Type: application/json');
+
+        $kd_wilayah = $_GET['kd_wilayah'] ?? null;
+
+        if (!$kd_wilayah) {
+            echo json_encode([]);
             exit;
         }
 
-        // Hash password
-        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        $db = DB::getInstance();
 
-        // Simpan ke database
-        require_once __DIR__ . '/../Models/UserModel.php';
-        $userModel = new UserModel();
+        $data = $db->query(
+            "SELECT kode, uraian 
+         FROM organisasi_neo 
+         WHERE kd_wilayah = ?
+         ORDER BY uraian ASC",
+            [$kd_wilayah]
+        )->fetchAll(PDO::FETCH_ASSOC);
 
-        if (!$userModel->insertUser($data)) {
-            $_SESSION['register_error'] = "Gagal menyimpan data";
-            header("Location: /");
-            exit;
-        }
-
-        $_SESSION['register_success'] = "Registrasi berhasil, silakan login";
-        header("Location: /");
+        echo json_encode($data);
         exit;
     }
 }

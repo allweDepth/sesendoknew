@@ -96,11 +96,8 @@
 
 <body>
 
-<<<<<<< HEAD
-    <!-- NAVBAR (DI LUAR PUSHABLE) @note -->
-=======
+
     <!-- NAVBAR (DI LUAR PUSHABLE) @note navbar -->
->>>>>>> 3797ad2 (rev)
     <div class="ui top attached menu">
         <div class="item" id="toggleSidebar">
             <a>
@@ -258,6 +255,7 @@
                 <a class="item" href="/pengaturan">
                     <i class="toolbox icon"></i> Pengaturan
                 </a>
+
             <?php endif; ?>
 
             <a class="item" href="/wallchat">

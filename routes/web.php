@@ -85,4 +85,7 @@ return [
 
   '/renstra/import' => ['RenstraController', 'importExcel'],
   '/renstra/export_word' => ['RenstraController', 'exportWord'],
+  //untuk login register
+  '/wilayah/load' => ['AuthController', 'getWilayah'],
+  '/organisasi/load' => ['AuthController', 'getOrganisasi'],
 ];
