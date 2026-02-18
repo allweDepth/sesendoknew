@@ -96,7 +96,11 @@
 
 <body>
 
+<<<<<<< HEAD
     <!-- NAVBAR (DI LUAR PUSHABLE) @note -->
+=======
+    <!-- NAVBAR (DI LUAR PUSHABLE) @note navbar -->
+>>>>>>> 3797ad2 (rev)
     <div class="ui top attached menu">
         <div class="item" id="toggleSidebar">
             <a>
@@ -241,8 +245,9 @@
                 </div>
             </div>
 
-            <!-- ADMIN MENU super_admin,admin_wilayah,admin_opd,1=viewer-->
+            <!-- ADMIN MENU super_admin,admin_wilayah,admin_opd,1=viewer 1=viewer  2=admin_opd, 3.admin_wilayah 4=super_admin-->
             <?php if (($_SESSION['user']['type_user'] ?? '') !== 'viewer'): ?>
+
 
                 <a class="item" href="/halaman_berita">
                     <i class="newspaper icon"></i> Halaman Berita
