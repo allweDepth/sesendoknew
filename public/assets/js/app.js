@@ -813,29 +813,29 @@ const UIConfig = {
 	pengaturan: {
 		periode_rpjmd: [
 			{
-    tag: "fieldCalendar",
-    prop: {
-        label: "Periode Mulai",
-        name: "periode_mulai",
-        calendarType: "year",
-        attr: {
-            "data-group": "rpjmd",
-            "data-range": "start"
-        }
-    }
-},
-{
-    tag: "fieldCalendar",
-    prop: {
-        label: "Periode Selesai",
-        name: "periode_selesai",
-        calendarType: "year",
-        attr: {
-            "data-group": "rpjmd",
-            "data-range": "end"
-        }
-    }
-},
+				tag: "fieldCalendar",
+				prop: {
+					label: "Periode Mulai",
+					name: "periode_mulai",
+					calendarType: "year",
+					attr: {
+						"data-group": "rpjmd",
+						"data-range": "start",
+					},
+				},
+			},
+			{
+				tag: "fieldCalendar",
+				prop: {
+					label: "Periode Selesai",
+					name: "periode_selesai",
+					calendarType: "year",
+					attr: {
+						"data-group": "rpjmd",
+						"data-range": "end",
+					},
+				},
+			},
 			{
 				tag: "field",
 				prop: {
@@ -2175,7 +2175,15 @@ $(document).ready(function () {
 
 			tableManager.load("renstra", defaultTbl);
 		}
+		
 	}
+	// ==============================
+		// INIT DEFAULT PENGATURAN
+		// ==============================
+
+		if (currentPath === "pengaturan" && !AppState.tbl) {
+			tableManager.load("pengaturan", "periode_rpjmd");
+		}
 	//pengaturan menu
 	$("#rpjmd_mulai_calendar").calendar({
 		type: "year",
