@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 17 Feb 2026 pada 14.51
+-- Waktu pembuatan: 18 Feb 2026 pada 09.44
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -658,7 +658,7 @@ CREATE TABLE `job_batches` (
 
 CREATE TABLE `kd_wilayah_neo` (
   `id` int(11) NOT NULL,
-  `kode` int(11) NOT NULL,
+  `kode` varchar(60) NOT NULL,
   `uraian` int(11) NOT NULL,
   `prioritas_pembangunan` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`prioritas_pembangunan`)),
   `disable` int(11) DEFAULT NULL,
@@ -890,6 +890,25 @@ CREATE TABLE `peraturan_neo` (
   `username_update` varchar(255) NOT NULL,
   `keterangan` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `periode_rpjmd`
+--
+
+CREATE TABLE `periode_rpjmd` (
+  `id` int(11) NOT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
+  `periode_mulai` year(4) NOT NULL,
+  `periode_selesai` year(4) NOT NULL,
+  `status_aktif` tinyint(1) DEFAULT 1,
+  `keterangan` varchar(255) DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1144,8 +1163,30 @@ CREATE TABLE `renja_p_neo` (
 
 CREATE TABLE `renstra_neo` (
   `id` bigint(20) NOT NULL,
-  `kd_wilayah` varchar(20) NOT NULL,
-  `kd_opd` varchar(20) NOT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_opd` varchar(60) NOT NULL,
+  `periode_id` int(11) NOT NULL,
+  `visi` text DEFAULT NULL,
+  `status` enum('draft','review','final') DEFAULT 'draft',
+  `disable` tinyint(4) DEFAULT 0,
+  `kunci` tinyint(4) DEFAULT 0,
+  `setujui` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `renstra_neo_backup`
+--
+
+CREATE TABLE `renstra_neo_backup` (
+  `id` bigint(20) NOT NULL DEFAULT 0,
+  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_opd` varchar(60) NOT NULL,
   `periode_mulai` year(4) NOT NULL,
   `periode_selesai` year(4) NOT NULL,
   `visi` text DEFAULT NULL,
@@ -1527,7 +1568,7 @@ CREATE TABLE `user_sesendok_biila` (
   `nip` varchar(18) DEFAULT NULL,
   `password` varchar(225) NOT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
-  `kd_organisasi` varchar(30) NOT NULL,
+  `kd_opd` varchar(30) NOT NULL,
   `nama_org` varchar(400) NOT NULL,
   `kd_wilayah` varchar(255) NOT NULL,
   `type_user` varchar(20) NOT NULL,
@@ -1554,7 +1595,7 @@ CREATE TABLE `user_sesendok_biila` (
 -- Dumping data untuk tabel `user_sesendok_biila`
 --
 
-INSERT INTO `user_sesendok_biila` (`id`, `username`, `email`, `nama`, `nip`, `password`, `remember_token`, `kd_organisasi`, `nama_org`, `kd_wilayah`, `type_user`, `photo`, `tgl_daftar`, `tgl_login`, `tahun`, `kontak_person`, `alamat`, `font_size`, `theme`, `warna_tbl`, `scrolling_table`, `disable_login`, `disable_anggaran`, `disable_kontrak`, `disable_realisasi`, `disable_chat`, `ket`, `disable`) VALUES
+INSERT INTO `user_sesendok_biila` (`id`, `username`, `email`, `nama`, `nip`, `password`, `remember_token`, `kd_opd`, `nama_org`, `kd_wilayah`, `type_user`, `photo`, `tgl_daftar`, `tgl_login`, `tahun`, `kontak_person`, `alamat`, `font_size`, `theme`, `warna_tbl`, `scrolling_table`, `disable_login`, `disable_anggaran`, `disable_kontrak`, `disable_realisasi`, `disable_chat`, `ket`, `disable`) VALUES
 (1, 'alwi_mansyur', 'alwi@gmail.com', 'Alwi Mansyur', '1980', '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'user', 'images/avatar/default.jpeg', '2018-06-04 21:57:05', '2024-10-23 15:03:04', '2024', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
 (2, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin', 'img/avatar/username(nabiila)_dok(photo)_wilayah(76.01)_2305070e99916190687b3774c0d56f134b954d74_2.jpg', '2018-06-09 15:54:29', '2026-02-17 18:03:17', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
 (3, 'inayah', 'inayah@gmail.com', 'Inayah Nadhilah', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '', 'user', 'images/avatar/default.jpeg', '2018-06-22 22:04:17', '2020-03-08 02:30:41', '2024', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'dimana mana hatiku senang oke', 0),
@@ -1736,7 +1777,9 @@ ALTER TABLE `job_batches`
 -- Indeks untuk tabel `kd_wilayah_neo`
 --
 ALTER TABLE `kd_wilayah_neo`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unik_kode_wilayah` (`kode`),
+  ADD KEY `idx_kode_wilayah` (`kode`);
 
 --
 -- Indeks untuk tabel `mapping_aset_akun`
@@ -1785,6 +1828,12 @@ ALTER TABLE `pengaturan_neo`
 -- Indeks untuk tabel `peraturan_neo`
 --
 ALTER TABLE `peraturan_neo`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `periode_rpjmd`
+--
+ALTER TABLE `periode_rpjmd`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -2093,6 +2142,12 @@ ALTER TABLE `pengaturan_neo`
 -- AUTO_INCREMENT untuk tabel `peraturan_neo`
 --
 ALTER TABLE `peraturan_neo`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `periode_rpjmd`
+--
+ALTER TABLE `periode_rpjmd`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --

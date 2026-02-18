@@ -1,23 +1,55 @@
-<form class="ui form">
+<?php
+/**
+ * =========================================================
+ * FORM PENGATURAN SISTEM
+ * =========================================================
+ * Role Aware:
+ *
+ * super_admin      → bisa kelola periode RPJMD
+ * admin_wilayah    → bisa kelola periode RPJMD wilayahnya
+ * admin_opd        → tidak bisa kelola periode (hanya lihat)
+ * viewer           → tidak bisa akses pengaturan (idealnya dibatasi di controller)
+ *
+ * =========================================================
+ */
 
-  <!-- ================= INFORMASI DASAR ================= -->
+$type = $_SESSION['user']['type_user'] ?? '';
+?>
+
+<form class="ui form" method="post" action="/pengaturan/simpan">
+
+  <!-- ======================================================
+       INFORMASI DASAR
+  ======================================================= -->
   <div class="ui raised segment">
     <h4 class="ui dividing header">Informasi Dasar</h4>
 
     <div class="two fields">
+
+      <!-- Kode Wilayah (Readonly untuk OPD) -->
       <div class="field">
         <label>Kode Wilayah</label>
-        <input type="text" name="kd_wilayah" placeholder="Kode Wilayah">
+        <input type="text"
+               name="kd_wilayah"
+               value="<?= $_SESSION['user']['kd_wilayah'] ?? '' ?>"
+               readonly>
       </div>
 
+      <!-- Tahun Sistem -->
       <div class="field">
-        <label>Tahun</label>
-        <input type="number" name="tahun" placeholder="Tahun">
+        <label>Tahun Sistem</label>
+        <input type="number"
+               name="tahun"
+               value="<?= $_SESSION['user']['tahun'] ?? date('Y'); ?>">
       </div>
+
     </div>
   </div>
 
-  <!-- ================= DROPDOWN REFERENSI ================= -->
+
+  <!-- ======================================================
+       PENGATURAN REFERENSI
+  ======================================================= -->
   <div class="ui raised segment">
     <h4 class="ui dividing header">Pengaturan Referensi</h4>
 
@@ -77,115 +109,91 @@
       </div>
 
     </div>
-
-    <!-- Baris kedua dropdown -->
-    <div class="four fields">
-
-      <div class="field">
-        <label>Aturan Akun</label>
-        <div class="ui fluid selection dropdown">
-          <input type="hidden" name="aturan_akun">
-          <i class="dropdown icon"></i>
-          <div class="default text">Pilih Aturan Akun</div>
-          <div class="menu">
-            <div class="item" data-value="akun_2024">Akun 2024</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Aturan ASB</label>
-        <div class="ui fluid selection dropdown">
-          <input type="hidden" name="aturan_asb">
-          <i class="dropdown icon"></i>
-          <div class="default text">Pilih Aturan ASB</div>
-          <div class="menu">
-            <div class="item" data-value="asb_2024">ASB 2024</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Aturan SBU</label>
-        <div class="ui fluid selection dropdown">
-          <input type="hidden" name="aturan_sbu">
-          <i class="dropdown icon"></i>
-          <div class="default text">Pilih Aturan SBU</div>
-          <div class="menu">
-            <div class="item" data-value="sbu_2024">SBU 2024</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Aturan SSH</label>
-        <div class="ui fluid selection dropdown">
-          <input type="hidden" name="aturan_ssh">
-          <i class="dropdown icon"></i>
-          <div class="default text">Pilih Aturan SSH</div>
-          <div class="menu">
-            <div class="item" data-value="ssh_2024">SSH 2024</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
   </div>
 
-  <!-- ================= PERIODE ================= -->
+
+  <!-- ======================================================
+       PERIODE RPJMD
+       HANYA UNTUK admin_wilayah & super_admin
+  ======================================================= -->
+  <?php if (in_array($type, ['admin_wilayah','super_admin'])): ?>
+
   <div class="ui raised segment">
-    <h4 class="ui dividing header">Periode Dokumen</h4>
+    <h4 class="ui dividing header">Kelola Periode RPJMD</h4>
 
-    <div class="four fields">
+    <div class="three fields">
 
+      <!-- Periode Mulai -->
       <div class="field">
-        <label>Awal Renja</label>
-        <div class="ui calendar" id="awal_renja">
-          <div class="ui input left icon">
-            <i class="calendar icon"></i>
-            <input type="text" name="awal_renja">
-          </div>
-        </div>
+        <label>Periode Mulai</label>
+        <input type="number"
+               name="periode_mulai"
+               placeholder="2025"
+               required>
       </div>
 
+      <!-- Periode Selesai -->
       <div class="field">
-        <label>Akhir Renja</label>
-        <div class="ui calendar" id="akhir_renja">
-          <div class="ui input left icon">
-            <i class="calendar icon"></i>
-            <input type="text" name="akhir_renja">
-          </div>
-        </div>
+        <label>Periode Selesai</label>
+        <input type="number"
+               name="periode_selesai"
+               placeholder="2029"
+               required>
       </div>
 
+      <!-- Status Aktif -->
       <div class="field">
-        <label>Awal DPA</label>
-        <div class="ui calendar" id="awal_dpa">
-          <div class="ui input left icon">
-            <i class="calendar icon"></i>
-            <input type="text" name="awal_dpa">
-          </div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Akhir DPA</label>
-        <div class="ui calendar" id="akhir_dpa">
-          <div class="ui input left icon">
-            <i class="calendar icon"></i>
-            <input type="text" name="akhir_dpa">
-          </div>
+        <label>Status Aktif</label>
+        <div class="ui toggle checkbox">
+          <input type="checkbox" name="status_aktif" value="1">
+          <label>Aktifkan periode ini</label>
         </div>
       </div>
 
     </div>
+
+    <!-- Keterangan -->
+    <div class="field">
+      <label>Keterangan</label>
+      <input type="text"
+             name="keterangan"
+             placeholder="Contoh: RPJMD 2025-2029">
+    </div>
+
+    <!-- Info Sistem -->
+    <div class="ui small info message">
+      <i class="info circle icon"></i>
+      Jika diaktifkan, periode lain di wilayah ini harus dinonaktifkan di backend.
+    </div>
+
   </div>
 
-  <!-- ================= KONTROL GLOBAL ================= -->
+  <?php endif; ?>
+
+
+  <!-- ======================================================
+       INFORMASI PERIODE (ADMIN OPD)
+       HANYA TAMPIL INFO
+  ======================================================= -->
+  <?php if ($type === 'admin_opd'): ?>
+
+  <div class="ui info message">
+    <i class="info circle icon"></i>
+    Periode RPJMD ditentukan oleh Admin Wilayah.
+    Anda mengikuti periode aktif sistem.
+  </div>
+
+  <?php endif; ?>
+
+
+  <!-- ======================================================
+       KONTROL GLOBAL
+  ======================================================= -->
   <div class="ui raised segment">
     <h4 class="ui dividing header">Kontrol Global</h4>
 
     <div class="ui three column grid">
+
       <div class="column">
         <div class="ui toggle checkbox">
           <input type="checkbox" name="disable">
@@ -206,17 +214,25 @@
           <label>Setujui Global</label>
         </div>
       </div>
+
     </div>
   </div>
 
-  <!-- ================= TOMBOL ================= -->
+
+  <!-- ======================================================
+       TOMBOL SIMPAN
+  ======================================================= -->
   <div class="ui right aligned segment">
+
     <button type="submit" class="ui primary button">
-      <i class="save icon"></i> Simpan
+      <i class="save icon"></i>
+      Simpan
     </button>
+
     <button type="reset" class="ui button">
       Reset
     </button>
+
   </div>
 
 </form>
