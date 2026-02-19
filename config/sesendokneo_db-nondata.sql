@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 18 Feb 2026 pada 21.31
+-- Waktu pembuatan: 19 Feb 2026 pada 10.20
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -59,7 +59,11 @@ CREATE TABLE `anggaran_program_renstra_neo` (
   `id` bigint(20) NOT NULL,
   `program_id` bigint(20) NOT NULL,
   `tahun` year(4) NOT NULL,
-  `pagu` decimal(18,2) DEFAULT NULL
+  `pagu` decimal(18,2) DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL,
+  `user_insert` varchar(50) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `user_update` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -588,7 +592,11 @@ CREATE TABLE `indikator_program_renstra_neo` (
   `target_t2` decimal(15,2) DEFAULT NULL,
   `target_t3` decimal(15,2) DEFAULT NULL,
   `target_t4` decimal(15,2) DEFAULT NULL,
-  `target_t5` decimal(15,2) DEFAULT NULL
+  `target_t5` decimal(15,2) DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL,
+  `user_insert` varchar(50) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `user_update` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -612,7 +620,11 @@ CREATE TABLE `indikator_sasaran_renstra_neo` (
   `target_akhir` decimal(15,2) DEFAULT NULL,
   `sumber_data` varchar(255) DEFAULT NULL,
   `kategori_spm` tinyint(4) DEFAULT 0,
-  `disable` tinyint(4) DEFAULT 0
+  `disable` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `user_insert` varchar(50) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `user_update` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -715,7 +727,11 @@ CREATE TABLE `misi_renstra_neo` (
   `id` bigint(20) NOT NULL,
   `renstra_id` bigint(20) NOT NULL,
   `uraian` text NOT NULL,
-  `disable` tinyint(4) DEFAULT 0
+  `disable` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `user_insert` varchar(50) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `user_update` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -921,7 +937,11 @@ CREATE TABLE `program_renstra_neo` (
   `kd_sub_keg` varchar(50) DEFAULT NULL,
   `uraian` text NOT NULL,
   `lokasi` varchar(255) DEFAULT NULL,
-  `disable` tinyint(4) DEFAULT 0
+  `disable` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `user_insert` varchar(50) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `user_update` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1209,7 +1229,11 @@ CREATE TABLE `sasaran_renstra_neo` (
   `id` bigint(20) NOT NULL,
   `tujuan_id` bigint(20) NOT NULL,
   `uraian` text NOT NULL,
-  `disable` tinyint(4) DEFAULT 0
+  `disable` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `user_insert` varchar(50) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `user_update` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1506,7 +1530,11 @@ CREATE TABLE `tujuan_renstra_neo` (
   `id` bigint(20) NOT NULL,
   `misi_id` bigint(20) NOT NULL,
   `uraian` text NOT NULL,
-  `disable` tinyint(4) DEFAULT 0
+  `disable` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `user_insert` varchar(50) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `user_update` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
