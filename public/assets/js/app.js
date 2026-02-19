@@ -1022,7 +1022,10 @@ const UIConfig = {
 				tag: "field",
 				prop: { label: "Kode Aset", name: "kd_aset", classField: "required" },
 			},
-			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
+			{
+				tag: "field",
+				prop: { label: "Kode Akun", name: "kd_akun", classField: "required" },
+			},
 			{
 				tag: "field",
 				prop: {
@@ -1034,7 +1037,12 @@ const UIConfig = {
 			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Satuan", name: "satuan", options: [] },
+				prop: {
+					label: "Satuan",
+					name: "satuan",
+					options: [],
+					classField: "required",
+				},
 			},
 			{
 				tag: "field",
@@ -1042,6 +1050,7 @@ const UIConfig = {
 					label: "Harga Satuan",
 					name: "harga_satuan",
 					atribut: `type="number"`,
+					classField: "required",
 				},
 			},
 			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
@@ -1208,6 +1217,7 @@ const UIConfig = {
 				prop: {
 					label: "Kelompok Jabatan",
 					name: "kelompok",
+					classField: "required",
 					options: [
 						{ value: "1", text: "Kepala OPD" },
 						{ value: "2", text: "Sekretaris" },
@@ -1232,19 +1242,21 @@ const UIConfig = {
 					name: "t4_lahir",
 					placeholder: "tempat lahir",
 					non_data: true,
+					classField: "required",
 				},
 			},
 			{
-				tag: "fieldDate",
+				tag: "fieldCalendar",
 				prop: {
 					label: "Tanggal Lahir",
 					name: "tgl_lahir",
-					placeholder: "Input tanggal lahir..",
 					calendarType: "date",
 					readonly: true,
+					classField: "required",
 				},
 			},
 
+			,
 			// ==============================
 			// PANGKAT & GOLONGAN (DIPERTAHANKAN)
 			// ==============================
@@ -1365,6 +1377,7 @@ const UIConfig = {
 				prop: {
 					label: "Kelamin",
 					name: "kelamin",
+					classField: "required",
 					options: [
 						{ value: "pria", text: "Pria" },
 						{ value: "wanita", text: "Wanita" },
@@ -1436,7 +1449,10 @@ const UIConfig = {
 					classField: "required",
 				},
 			},
-			{ tag: "field", prop: { label: "NPWP", name: "npwp" } },
+			{
+				tag: "field",
+				prop: { label: "NPWP", name: "npwp", classField: "required" },
+			},
 			{
 				tag: "fieldTextarea",
 				prop: { label: "Alamat", name: "alamat", atribut: `rows="3"` },
@@ -1444,7 +1460,10 @@ const UIConfig = {
 			{ tag: "field", prop: { label: "Email", name: "email" } },
 			{ tag: "field", prop: { label: "No Rekening", name: "no_rekening" } },
 			{ tag: "field", prop: { label: "Bank Rekening", name: "bank_rekening" } },
-			{ tag: "field", prop: { label: "Direktur", name: "direktur" } },
+			{
+				tag: "field",
+				prop: { label: "Direktur", name: "direktur", classField: "required" },
+			},
 		],
 
 		/* satuan_neo */
@@ -1791,26 +1810,33 @@ class FormContainerManager {
 	}
 	initValidation(target) {
 		const $form = $(target);
-
 		if (!$form.length) return;
 
 		let rules = {};
 		let elements = UIConfig[AppState.jenis]?.[AppState.tbl] || [];
 
 		elements.forEach((el) => {
+			// 🔥 Pastikan field punya name
 			if (!el.prop?.name) return;
+
+			// 🔥 Pastikan field BENAR-BENAR ADA di DOM
+			if (!$form.find(`[name="${el.prop.name}"]`).length) return;
 
 			let fieldRules = [];
 
-			// 🔥 REQUIRED detect dari classField
+			/* ===============================
+		   REQUIRED (classField)
+		=============================== */
 			if (el.prop.classField?.includes("required")) {
 				fieldRules.push({
 					type: "empty",
-					prompt: el.prop.label + " wajib diisi",
+					prompt: (el.prop.label || el.prop.name) + " wajib diisi",
 				});
 			}
 
-			// 🔥 EMAIL detect otomatis
+			/* ===============================
+		   EMAIL
+		=============================== */
 			if (el.prop.name === "email") {
 				fieldRules.push({
 					type: "email",
@@ -1818,11 +1844,13 @@ class FormContainerManager {
 				});
 			}
 
-			// 🔥 NUMBER detect dari atribut
+			/* ===============================
+		   NUMBER
+		=============================== */
 			if (el.prop.atribut?.includes('type="number"')) {
 				fieldRules.push({
 					type: "number",
-					prompt: el.prop.label + " harus berupa angka",
+					prompt: (el.prop.label || el.prop.name) + " harus berupa angka",
 				});
 			}
 
@@ -1833,6 +1861,8 @@ class FormContainerManager {
 				};
 			}
 		});
+
+		$form.form("destroy"); // 🔥 penting supaya tidak double init
 
 		$form.form({
 			inline: true,
