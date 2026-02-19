@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 19 Feb 2026 pada 10.20
+-- Waktu pembuatan: 19 Feb 2026 pada 11.14
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -596,7 +596,9 @@ CREATE TABLE `indikator_program_renstra_neo` (
   `tgl_insert` datetime DEFAULT NULL,
   `user_insert` varchar(50) DEFAULT NULL,
   `tgl_update` datetime DEFAULT NULL,
-  `user_update` varchar(50) DEFAULT NULL
+  `user_update` varchar(50) DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -624,7 +626,9 @@ CREATE TABLE `indikator_sasaran_renstra_neo` (
   `tgl_insert` datetime DEFAULT NULL,
   `user_insert` varchar(50) DEFAULT NULL,
   `tgl_update` datetime DEFAULT NULL,
-  `user_update` varchar(50) DEFAULT NULL
+  `user_update` varchar(50) DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
