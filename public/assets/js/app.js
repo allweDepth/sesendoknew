@@ -26,7 +26,7 @@ const AppState = {
 	tbl: "", // Tabel aktif
 	cari: "", // Keyword pencarian
 	currentMenu: "", // Tracking menu sebelumnya
-	serverSources: [], // 🔥 daftar dropdown yang boleh fetch server
+	serverSources: [], // 🔥 @note daftar dropdown yang boleh fetch server
 };
 /* =========================================================
    GLOBAL TOAST ENGINE
@@ -163,23 +163,6 @@ const RenstraHeaderConfig = {
 	program_renstra_neo: ["Kode Program", "Uraian"],
 	indikator_program_renstra_neo: ["Indikator", "Target"],
 	anggaran_program_renstra_neo: ["Tahun", "Pagu"],
-};
-/* =========================================================
-   SERVER DROPDOWN CONFIG (RENSTRA DEPENDENCY MAP)
-   ---------------------------------------------------------
-   → Tentukan dropdown mana yang perlu fetch server
-   → Per tabel
-========================================================= */
-
-const ServerDropdownConfig = {
-	renstra_neo: [],
-	misi_renstra_neo: ["renstra_neo"],
-	tujuan_renstra_neo: ["misi_renstra_neo"],
-	sasaran_renstra_neo: ["tujuan_renstra_neo"],
-	indikator_sasaran_renstra_neo: ["sasaran_renstra_neo"],
-	program_renstra_neo: ["sasaran_renstra_neo"],
-	indikator_program_renstra_neo: ["program_renstra_neo"],
-	anggaran_program_renstra_neo: ["program_renstra_neo"],
 };
 /* =========================================================
 	 TABLE MANAGER
@@ -851,15 +834,20 @@ const RoleConfig = {
 
 // Simulasi role login
 AppState.role = "admin";
-/* =========================================================
-   UI BUILDER CONFIG  @note UIConfig
-	 BUAT FIELD UNTUK FORM sesuai tbl
-========================================================= */
+// ======================================================
+// 🔥 UI CONFIG (FINAL CLEAN VERSION)
+// ------------------------------------------------------
+// - Dynamic dropdown → pakai prop.source
+// - Static dropdown → pakai prop.options
+// - Atribut HTML → pakai prop.atribut
+// - Tidak ada data-server lagi
+// ======================================================
 
 const UIConfig = {
-	/* ======================================================
-	   PENGATURAN
-	====================================================== */
+
+	// ======================================================
+	// PENGATURAN
+	// ======================================================
 	pengaturan: {
 		periode_rpjmd: [
 			{
@@ -868,11 +856,8 @@ const UIConfig = {
 					label: "Periode Mulai",
 					name: "periode_mulai",
 					calendarType: "year",
-					attr: {
-						"data-group": "rpjmd",
-						"data-range": "start",
-					},
-				},
+					atribut: `data-group="rpjmd" data-range="start"`
+				}
 			},
 			{
 				tag: "fieldCalendar",
@@ -880,79 +865,84 @@ const UIConfig = {
 					label: "Periode Selesai",
 					name: "periode_selesai",
 					calendarType: "year",
-					attr: {
-						"data-group": "rpjmd",
-						"data-range": "end",
-					},
-				},
+					atribut: `data-group="rpjmd" data-range="end"`
+				}
 			},
 			{
 				tag: "field",
 				prop: {
 					label: "Keterangan",
-					name: "keterangan",
-				},
+					name: "keterangan"
+				}
 			},
 			{
 				tag: "fieldCheckbox",
 				prop: {
 					label: "Aktif",
-					name: "status_aktif",
-				},
-			},
-		],
+					name: "status_aktif"
+				}
+			}
+		]
 	},
-	/* ======================================================
-   RENSTRA
-====================================================== */
+
+	// ======================================================
+	// RENSTRA
+	// ======================================================
 	renstra: {
+
 		renstra_neo: [
 			{
 				tag: "fieldCalendar",
 				prop: {
 					label: "Periode Mulai",
 					name: "periode_mulai",
-					placeholder: "Pilih Tahun",
 					calendarType: "year",
-					readonly: true,
-				},
+					readonly: true
+				}
 			},
 			{
 				tag: "fieldCalendar",
 				prop: {
 					label: "Periode Selesai",
 					name: "periode_selesai",
-					placeholder: "Pilih Tahun",
 					calendarType: "year",
-					readonly: true,
-				},
+					readonly: true
+				}
 			},
 			{
 				tag: "fieldTextarea",
-				prop: { label: "Visi", name: "visi", atribut: `rows="3"` },
-			},
+				prop: { label: "Visi", name: "visi", atribut: `rows="3"` }
+			}
 		],
 
 		misi_renstra_neo: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Renstra", name: "renstra_id", source: "renstra_neo" },
+				prop: {
+					label: "Renstra",
+					name: "renstra_id",
+					source: "renstra_neo"
+				}
 			},
 			{
 				tag: "fieldTextarea",
-				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
-			},
+				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` }
+			}
 		],
 
 		tujuan_renstra_neo: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Misi", name: "misi_id", source: "misi_renstra_neo" },
+				prop: {
+					label: "Misi",
+					name: "misi_id",
+					source: "misi_renstra_neo"
+				}
 			},
 			{
 				tag: "fieldTextarea",
-				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
-			},
+				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` }
+			}
 		],
 
 		sasaran_renstra_neo: [
@@ -961,32 +951,13 @@ const UIConfig = {
 				prop: {
 					label: "Tujuan",
 					name: "tujuan_id",
-					source: "tujuan_renstra_neo",
-				},
+					source: "tujuan_renstra_neo"
+				}
 			},
 			{
 				tag: "fieldTextarea",
-				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
-			},
-		],
-
-		indikator_sasaran_renstra_neo: [
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Sasaran",
-					name: "sasaran_id",
-					source: "sasaran_renstra_neo",
-				},
-			},
-			{ tag: "field", prop: { label: "Indikator", name: "nama_indikator" } },
-			{ tag: "field", prop: { label: "Satuan", name: "satuan" } },
-			{ tag: "field", prop: { label: "Target T1", name: "target_t1" } },
-			{ tag: "field", prop: { label: "Target T2", name: "target_t2" } },
-			{ tag: "field", prop: { label: "Target T3", name: "target_t3" } },
-			{ tag: "field", prop: { label: "Target T4", name: "target_t4" } },
-			{ tag: "field", prop: { label: "Target T5", name: "target_t5" } },
-			{ tag: "field", prop: { label: "Target Akhir", name: "target_akhir" } },
+				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` }
+			}
 		],
 
 		program_renstra_neo: [
@@ -995,508 +966,53 @@ const UIConfig = {
 				prop: {
 					label: "Sasaran",
 					name: "id_sasaran",
-					source: "sasaran_renstra_neo",
-				},
-			},
-			{ tag: "field", prop: { label: "Kode Program", name: "kode_program" } },
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
-			},
-		],
-
-		indikator_program_renstra_neo: [
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Program",
-					name: "program_id",
-					source: "program_renstra_neo",
-				},
-			},
-			{ tag: "field", prop: { label: "Indikator", name: "nama_indikator" } },
-			{ tag: "field", prop: { label: "Satuan", name: "satuan" } },
-			{ tag: "field", prop: { label: "Target T1", name: "target_t1" } },
-			{ tag: "field", prop: { label: "Target T2", name: "target_t2" } },
-			{ tag: "field", prop: { label: "Target T3", name: "target_t3" } },
-			{ tag: "field", prop: { label: "Target T4", name: "target_t4" } },
-			{ tag: "field", prop: { label: "Target T5", name: "target_t5" } },
-		],
-
-		anggaran_program_renstra_neo: [
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Program",
-					name: "id_program",
-					source: "program_renstra_neo",
-				},
+					source: "sasaran_renstra_neo"
+				}
 			},
 			{
 				tag: "field",
-				prop: { label: "Tahun", name: "tahun", atribut: `type="number"` },
-			},
-			{
-				tag: "field",
-				prop: { label: "Pagu", name: "pagu", atribut: `type="number"` },
-			},
-		],
-	},
-	/* ======================================================
-	   STANDAR HARGA
-	====================================================== */
-	standar_harga: {
-		/* ===================== SBU (sbu_neo) ===================== */
-		sbu: [
-			{
-				tag: "field",
-				prop: { label: "Kode Aset", name: "kd_aset", classField: "required" },
-			},
-			{
-				tag: "field",
-				prop: { label: "Kode Akun", name: "kd_akun", classField: "required" },
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Uraian Barang",
-					name: "uraian_barang",
-					classField: "required",
-				},
-			},
-			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Satuan",
-					name: "satuan",
-					options: [],
-					classField: "required",
-				},
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Harga Satuan",
-					name: "harga_satuan",
-					atribut: `type="number"`,
-					classField: "required",
-				},
-			},
-			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
-		],
-
-		/* ===================== SSH (ssh_neo) ===================== */
-		ssh: [
-			{
-				tag: "field",
-				prop: { label: "Kode Aset", name: "kd_aset", classField: "required" },
-			},
-			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
-			{
-				tag: "field",
-				prop: {
-					label: "Uraian Barang",
-					name: "uraian_barang",
-					classField: "required",
-				},
-			},
-			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
-			{
-				tag: "fieldDropdown",
-				prop: { label: "Satuan", name: "satuan", options: [] },
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Harga Satuan",
-					name: "harga_satuan",
-					atribut: `type="number"`,
-				},
-			},
-			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
-		],
-
-		/* ===================== ASB (asb_neo) ===================== */
-		asb: [
-			{
-				tag: "field",
-				prop: { label: "Kode Aset", name: "kd_aset", classField: "required" },
-			},
-			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
-			{
-				tag: "field",
-				prop: {
-					label: "Uraian Barang",
-					name: "uraian_barang",
-					classField: "required",
-				},
-			},
-			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
-			{
-				tag: "fieldDropdown",
-				prop: { label: "Satuan", name: "satuan", options: [] },
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Harga Satuan",
-					name: "harga_satuan",
-					atribut: `type="number"`,
-				},
-			},
-			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
-		],
-
-		/* ===================== HSPK (hspk_neo) ===================== */
-		hspk: [
-			{
-				tag: "field",
-				prop: { label: "Kode Aset", name: "kd_aset", classField: "required" },
-			},
-			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
-			{
-				tag: "field",
-				prop: {
-					label: "Uraian Barang",
-					name: "uraian_barang",
-					classField: "required",
-				},
-			},
-			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
-			{
-				tag: "fieldDropdown",
-				prop: { label: "Satuan", name: "satuan", options: [] },
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Harga Satuan",
-					name: "harga_satuan",
-					atribut: `type="number"`,
-				},
-			},
-			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
-		],
-	},
-
-	/* ======================================================
-	   KEPEGAWAIAN (db_asn_pemda_neo)
-	====================================================== */
-	kepegawaian: {
-		asn: [
-			{
-				tag: "cardProfile",
-				prop: {
-					title: "Aparatur Sipil Negara (ASN)",
-					meta: "14h",
-					image: "img/avatar/default.jpeg",
-					table: "asn",
-					id_row: 1,
-					dokumen: "file_photo",
-					accept: ".jpg,.png,.jpeg",
-				},
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Nama Lengkap (tanpa gelar)",
-					name: "nama",
-					placeholder: "Nama Lengkap (tanpa gelar)",
-					classField: "required",
-				},
-			},
-			{
-				tag: "fieldAction",
-				prop: {
-					label: "Nomor Induk Pegawai",
-					name: "nip",
-					placeholder: "NIP",
-					button: {
-						icon: "search",
-						class: "teal",
-						attr: {
-							jns: "get_data",
-							tbl: "asn",
-							klm: "nip",
-						},
-					},
-					classField: "required",
-				},
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Gelar",
-					name: "gelar",
-					placeholder: "Gelar di belakang nama",
-					non_data: true,
-				},
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Gelar Depan Nama",
-					name: "gelar_depan",
-					placeholder: "Gelar di depan nama",
-					non_data: true,
-				},
-			},
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Kelompok Jabatan",
-					name: "kelompok",
-					classField: "required",
-					options: [
-						{ value: "1", text: "Kepala OPD" },
-						{ value: "2", text: "Sekretaris" },
-						{ value: "3", text: "Kepala Bidang" },
-						{ value: "4", text: "ASN" },
-						{ value: "5", text: "non ASN" },
-					],
-				},
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Jabatan",
-					name: "jabatan",
-					placeholder: "Jabatan...",
-				},
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Tempat Lahir",
-					name: "t4_lahir",
-					placeholder: "tempat lahir",
-					non_data: true,
-					classField: "required",
-				},
-			},
-			{
-				tag: "fieldCalendar",
-				prop: {
-					label: "Tanggal Lahir",
-					name: "tgl_lahir",
-					calendarType: "date",
-					readonly: true,
-					classField: "required",
-				},
-			},
-
-			,
-			// ==============================
-			// PANGKAT & GOLONGAN (DIPERTAHANKAN)
-			// ==============================
-
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Golongan",
-					name: "golongan",
-					options: [
-						{ value: "1", text: "I" },
-						{ value: "2", text: "II" },
-						{ value: "3", text: "III" },
-						{ value: "4", text: "IV" },
-					],
-				},
-			},
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Ruang",
-					name: "ruang",
-					options: [
-						{ value: "a", text: "a" },
-						{ value: "b", text: "b" },
-						{ value: "c", text: "c" },
-						{ value: "d", text: "d" },
-						{ value: "e", text: "e" },
-					],
-				},
-			},
-
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Jenis Kepegawaian",
-					name: "jenis_kepeg",
-					options: [
-						{ value: "pnsp", text: "ASN pusat" },
-						{ value: "pnsd1", text: "ASN Provinsi" },
-						{ value: "pnsd2", text: "ASN Kabupaten/Kota" },
-						{ value: "pnsp_dpb1", text: "ASN Pusat diperbantukan Provinsi" },
-						{ value: "pnsp_dpb2", text: "ASN Pusat diperbantukan Kab./Kota" },
-						{ value: "pnsp_dpk1", text: "ASN Pusat dipekerjakan Provinsi" },
-						{ value: "pnsp_dpk2", text: "ASN Pusat dipekerjakan Kab./Kota" },
-						{ value: "pnsd_dpb_pusat", text: "ASN Daerah diperbantukan Pusat" },
-						{ value: "pnsd_dpk_pusat", text: "ASN Daerah dipekerjakan Pusat" },
-						{ value: "swasta", text: "Swasta" },
-					],
-				},
-			},
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Status Kepegawaian",
-					name: "status_kepeg",
-					options: [
-						{ value: "capeg", text: "Calon Pegawai" },
-						{ value: "peg_tetap", text: "ASN/Pegawai tetap" },
-						{ value: "mpp", text: "Masa Persiapan Pensiun" },
-						{ value: "pen_uang_tunggu", text: "Pensiunan" },
-						{ value: "peg_seorsing", text: "Pegawai Seorsing" },
-						{ value: "cuti", text: "Cuti" },
-						{ value: "peg_sementara", text: "Pegawai Sementara" },
-						{ value: "peg_bulanan", text: "Pegawai Bulanan" },
-					],
-				},
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Nomor KTP",
-					name: "no_ktp",
-					placeholder: "Nomor ktp...",
-				},
-			},
-			{
-				tag: "field",
-				prop: { label: "NPWP", name: "npwp", placeholder: "NPWP..." },
-			},
-			{
-				tag: "field",
-				prop: { label: "Alamat", name: "alamat", placeholder: "Alamat..." },
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Kontak Person",
-					name: "kontak_person",
-					placeholder: "Kontak Person...",
-				},
-			},
-			{
-				tag: "field",
-				prop: { label: "email", name: "email", placeholder: "email..." },
-			},
-
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Agama",
-					name: "agama",
-					options: [
-						{ value: "islam", text: "Islam" },
-						{ value: "kristen", text: "Kristen" },
-						{ value: "katolik", text: "Katolik" },
-						{ value: "protestan", text: "Protestan" },
-						{ value: "hindu", text: "Hindu" },
-						{ value: "budha", text: "Budha" },
-						{ value: "konghucu", text: "Konghucu" },
-						{ value: "yahudi", text: "Yahudi" },
-						{ value: "kepercayaan", text: "Kepercayaan Tuhan YME." },
-					],
-				},
-			},
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Kelamin",
-					name: "kelamin",
-					classField: "required",
-					options: [
-						{ value: "pria", text: "Pria" },
-						{ value: "wanita", text: "Wanita" },
-					],
-				},
-			},
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Status",
-					name: "status",
-					options: [
-						{ value: "menikah", text: "Menikah" },
-						{ value: "janda-duda", text: "Duda-Janda" },
-						{ value: "lajang", text: "Lajang" },
-					],
-				},
+				prop: { label: "Kode Program", name: "kode_program" }
 			},
 			{
 				tag: "fieldTextarea",
-				prop: {
-					label: "Keterangan",
-					name: "keterangan",
-					rows: 2,
-					non_data: true,
-				},
-			},
-			{
-				tag: "fieldCheckbox",
-				prop: {
-					label: "Non Aktif",
-					name: "disable",
-					type: "toggle",
-					non_data: true,
-				},
-			},
-		],
+				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` }
+			}
+		]
 	},
 
-	/* ======================================================
-	   REFERENSI
-	====================================================== */
+	// ======================================================
+	// REFERENSI
+	// ======================================================
 	referensi: {
-		/* ===================== URUSAN ===================== */
+
 		urusan: [
 			{
 				tag: "field",
-				prop: {
-					label: "Kode Urusan",
-					name: "kode",
-					classField: "required",
-				},
+				prop: { label: "Kode Urusan", name: "kode", classField: "required" }
 			},
 			{
 				tag: "field",
-				prop: {
-					label: "Nama Urusan",
-					name: "nama",
-					classField: "required",
-				},
-			},
+				prop: { label: "Nama Urusan", name: "nama", classField: "required" }
+			}
 		],
 
-		/* ===================== BIDANG ===================== */
 		bidang: [
 			{
 				tag: "fieldDropdown",
 				prop: {
 					label: "Urusan",
 					name: "kode_urusan",
-					source: "urusan",
-				},
+					source: "urusan"
+				}
 			},
 			{
 				tag: "field",
-				prop: {
-					label: "Kode Bidang",
-					name: "kode",
-					classField: "required",
-				},
+				prop: { label: "Kode Bidang", name: "kode", classField: "required" }
 			},
 			{
 				tag: "field",
-				prop: {
-					label: "Nama",
-					name: "nama",
-					classField: "required",
-				},
-			},
+				prop: { label: "Nama", name: "nama", classField: "required" }
+			}
 		],
 
 		program: [
@@ -1505,277 +1021,39 @@ const UIConfig = {
 				prop: {
 					label: "Bidang",
 					name: "kode_bidang",
-					source: "bidang",
-				},
+					source: "bidang"
+				}
 			},
 			{
 				tag: "field",
-				prop: { label: "Kode Program", name: "kode", classField: "required" },
+				prop: { label: "Kode Program", name: "kode", classField: "required" }
 			},
 			{
 				tag: "field",
-				prop: { label: "Nama", name: "nama", classField: "required" },
-			},
+				prop: { label: "Nama", name: "nama", classField: "required" }
+			}
 		],
+
 		kegiatan: [
 			{
 				tag: "fieldDropdown",
 				prop: {
 					label: "Program",
 					name: "kode_program",
-					source: "program",
-				},
+					source: "program"
+				}
 			},
 			{
 				tag: "field",
-				prop: { label: "Kode Kegiatan", name: "kode", classField: "required" },
+				prop: { label: "Kode Kegiatan", name: "kode", classField: "required" }
 			},
 			{
 				tag: "field",
-				prop: { label: "Nama", name: "nama", classField: "required" },
-			},
-		],
-		sub_kegiatan: [
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Mode Input",
-					name: "mode_input",
-					options: [
-						{ value: "manual", text: "Manual" },
-						{ value: "import", text: "Import Excel" },
-					],
-					classField: "required",
-				},
-			},
+				prop: { label: "Nama", name: "nama", classField: "required" }
+			}
+		]
+	}
 
-			// ========================= MANUAL =========================
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Urusan",
-					name: "kode_urusan",
-					source: "urusan",
-					attr: { "data-mode": "manual" },
-				},
-			},
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Bidang",
-					name: "kode_bidang",
-					source: "bidang",
-					attr: { "data-mode": "manual" },
-				},
-			},
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Program",
-					name: "kode_program",
-					source: "program",
-					attr: { "data-mode": "manual" },
-				},
-			},
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Kegiatan",
-					name: "kode_kegiatan",
-					source: "kegiatan",
-					attr: { "data-mode": "manual" },
-				},
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Kode Sub Kegiatan",
-					name: "kode",
-					classField: "required",
-					attr: { "data-mode": "manual" },
-				},
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Nomenklatur Urusan",
-					name: "nomenklatur_urusan",
-					classField: "required",
-					attr: { "data-mode": "manual" },
-				},
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Kinerja",
-					name: "kinerja",
-					attr: { "data-mode": "manual" },
-				},
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Indikator",
-					name: "indikator",
-					attr: { "data-mode": "manual" },
-				},
-			},
-
-			// ========================= IMPORT =========================
-			{
-				tag: "fieldFile",
-				prop: {
-					label: "Upload File Excel",
-					name: "file_import",
-					accept: ".xlsx,.xls",
-					attr: { "data-mode": "import" },
-				},
-			},
-		],
-		/* rekanan_neo */
-		rekanan: [
-			{
-				tag: "field",
-				prop: {
-					label: "Nama Perusahaan",
-					name: "nama_perusahaan",
-					classField: "required",
-				},
-			},
-			{
-				tag: "field",
-				prop: { label: "NPWP", name: "npwp", classField: "required" },
-			},
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Alamat", name: "alamat", atribut: `rows="3"` },
-			},
-			{ tag: "field", prop: { label: "Email", name: "email" } },
-			{ tag: "field", prop: { label: "No Rekening", name: "no_rekening" } },
-			{ tag: "field", prop: { label: "Bank Rekening", name: "bank_rekening" } },
-			{
-				tag: "field",
-				prop: { label: "Direktur", name: "direktur", classField: "required" },
-			},
-		],
-
-		/* satuan_neo */
-		satuan: [
-			{
-				tag: "field",
-				prop: { label: "Value", name: "value", classField: "required" },
-			},
-			{
-				tag: "field",
-				prop: { label: "Item", name: "item", classField: "required" },
-			},
-			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
-		],
-
-		/* mapping_aset_akun */
-		mapping: [
-			{
-				tag: "fieldDropdown",
-				prop: { label: "Aset", name: "id_aset", options: [] },
-			},
-			{
-				tag: "fieldDropdown",
-				prop: { label: "Akun", name: "id_akun", options: [] },
-			},
-		],
-
-		/* aset_neo */
-		neraca: [
-			{
-				tag: "field",
-				prop: { label: "Kode", name: "kode", classField: "required" },
-			},
-			{
-				tag: "field",
-				prop: { label: "Uraian", name: "uraian", classField: "required" },
-			},
-			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
-		],
-
-		/* takun_neo */
-		akun: [
-			{
-				tag: "field",
-				prop: { label: "Kode", name: "kode", classField: "required" },
-			},
-			{
-				tag: "field",
-				prop: { label: "Uraian", name: "uraian", classField: "required" },
-			},
-			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
-		],
-
-		/* sumber_dana_neo */
-		sumber_dana: [
-			{
-				tag: "field",
-				prop: { label: "Kode", name: "kode", classField: "required" },
-			},
-			{
-				tag: "field",
-				prop: { label: "Uraian", name: "uraian", classField: "required" },
-			},
-			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
-		],
-
-		/* organisasi_neo */
-		organisasi: [
-			{
-				tag: "field",
-				prop: { label: "Kode", name: "kode", classField: "required" },
-			},
-			{
-				tag: "field",
-				prop: { label: "Uraian", name: "uraian", classField: "required" },
-			},
-			{ tag: "field", prop: { label: "Alamat", name: "alamat" } },
-			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
-		],
-
-		/* peraturan_neo */
-		peraturan: [
-			{
-				tag: "field",
-				prop: { label: "Nomor", name: "nomor", classField: "required" },
-			},
-			{ tag: "field", prop: { label: "Judul", name: "judul" } },
-			{
-				tag: "field",
-				prop: {
-					label: "Tanggal Penetapan",
-					name: "tgl_penetapan",
-					atribut: `type="date"`,
-				},
-			},
-			{ tag: "field", prop: { label: "Status", name: "status" } },
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="3"` },
-			},
-		],
-
-		/* wilayah_neo */
-		wilayah: [
-			{
-				tag: "field",
-				prop: { label: "Kode", name: "kode", classField: "required" },
-			},
-			{
-				tag: "field",
-				prop: { label: "Uraian", name: "uraian", classField: "required" },
-			},
-			{ tag: "field", prop: { label: "Status", name: "status" } },
-			{ tag: "field", prop: { label: "Jumlah Kecamatan", name: "jml_kec" } },
-			{ tag: "field", prop: { label: "Jumlah Desa", name: "jml_desa" } },
-			{ tag: "field", prop: { label: "Luas", name: "luas" } },
-			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
-		],
-	},
 };
 
 /* =========================================================
@@ -1898,9 +1176,14 @@ class FormContainerManager {
 	// LOAD DROPDOWN (TIDAK DIUBAH)
 	// =============================
 	loadDropdowns(containerSelector) {
-		if (!AppState.serverSources.length) return;
-
 		const self = this;
+
+		// =====================================================
+		// 🔥 LOOP SEMUA DROPDOWN YANG PUNYA data-source
+		// -----------------------------------------------------
+		// - Kalau tidak punya source → skip (static dropdown aman)
+		// - Kalau punya source → fetch
+		// =====================================================
 
 		$(containerSelector)
 			.find(".ui.dropdown[data-source]")
@@ -1908,10 +1191,20 @@ class FormContainerManager {
 				let $dropdown = $(this);
 				let source = $dropdown.data("source");
 
+				// 🔥 Skip jika tidak ada source (dropdown manual)
+				if (!source) return;
+
+				// 🔥 Pastikan source memang terdeteksi dari UIConfig
 				if (!AppState.serverSources.includes(source)) return;
 
+				// =====================================================
+				// 🔥 FETCH DROPDOWN DATA
+				// =====================================================
 				self.fetchDropdown($dropdown, source);
 
+				// =====================================================
+				// 🔥 SUPPORT PARENT DEPENDENCY (CASCADING)
+				// =====================================================
 				let parentName = $dropdown.data("parent");
 
 				if (parentName) {
@@ -1964,24 +1257,35 @@ class FormContainerManager {
 		const tbl = $btn.attr("data-tbl") || AppState.tbl;
 
 		AppState.tbl = tbl;
+		AppState.mode = jenisMode;
 
-		let serverAttr = $btn.attr("data-server");
+		// =====================================================
+		// 🔥 AUTO DETECT DROPDOWN SOURCE DARI UIConfig
+		// -----------------------------------------------------
+		// - Hanya dropdown yang punya prop.source
+		// - Dropdown manual (pakai options) tidak ikut
+		// - Tidak tergantung tombol / menu / renstra config
+		// =====================================================
 
-		if (serverAttr) {
-			try {
-				AppState.serverSources = JSON.parse(serverAttr);
-			} catch (e) {
-				AppState.serverSources = [];
-			}
-		} else {
-			AppState.serverSources = [];
-		}
+		let elements = UIConfig[AppState.jenis]?.[tbl] || [];
+
+		AppState.serverSources = elements
+			.filter(
+				(el) => el.tag === "fieldDropdown" && el.prop && el.prop.source, // 🔥 hanya dropdown dynamic
+			)
+			.map((el) => el.prop.source);
+
+		// 🔥 Hindari duplicate source (aman kalau ada parent-child sama)
+		AppState.serverSources = [...new Set(AppState.serverSources)];
+
+		// =====================================================
+		// 🔥 SELESAI DETECT
+		// =====================================================
 
 		const container = $btn.data("container") || "flyout";
 		const idRow = $btn.data("id");
 
 		this.activeContainer = container;
-		AppState.mode = jenisMode;
 
 		if (!AppState.jenis) {
 			AppState.jenis = window.location.pathname.replace(/^\/+/g, "");
@@ -2181,42 +1485,40 @@ class FormContainerManager {
 		// 🔥 MODE IMPORT XLSX
 		// ===============================
 		if (AppState.mode === "import_xlsx") {
+			let $formTarget = this.getActiveForm();
+			let formElement = $formTarget[0];
 
-    let $formTarget = this.getActiveForm();
-    let formElement = $formTarget[0];
+			let formData = new FormData();
 
-    let formData = new FormData();
+			let fileInput = $formTarget.find('[name="file_import"]')[0];
 
-    let fileInput = $formTarget.find('[name="file_import"]')[0];
+			if (!fileInput.files.length) {
+				alert("File belum dipilih");
+				return;
+			}
 
-    if (!fileInput.files.length) {
-        alert("File belum dipilih");
-        return;
-    }
+			// 🔥 SINKRON DENGAN BACKEND
+			formData.append("file", fileInput.files[0]);
+			formData.append("tabel", AppState.tbl);
 
-    // 🔥 SINKRON DENGAN BACKEND
-    formData.append("file", fileInput.files[0]);
-    formData.append("tabel", AppState.tbl);
+			this.ajax.request({
+				url: AppConfig.apiUrl + "dynamic/import",
+				method: "POST",
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: (res) => {
+					if (res.success) {
+						this.hide(this.activeContainer);
+						new TableManager().fetch();
+					} else {
+						alert(res.error || "Import gagal");
+					}
+				},
+			});
 
-    this.ajax.request({
-        url: AppConfig.apiUrl + "dynamic/import",
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: (res) => {
-            if (res.success) {
-                this.hide(this.activeContainer);
-                new TableManager().fetch();
-            } else {
-                alert(res.error || "Import gagal");
-            }
-        }
-    });
-
-    return; // 🔥 hentikan save normal
-}
-
+			return; // 🔥 hentikan save normal
+		}
 
 		// ===============================
 		// 🔥 SAVE NORMAL (ADD / EDIT)
@@ -2531,13 +1833,10 @@ $(document).ready(function () {
 		$("#btnImport").attr("data-tbl", tbl);
 		$("#btnExport").attr("data-tbl", tbl);
 
-		// 🔥 UPDATE data-server OTOMATIS
-		let serverList = ServerDropdownConfig[tbl] || [];
-
-		$("#btnTambah").attr("data-server", JSON.stringify(serverList));
-
-		// 🔥 TAMBAH INI (sinkronisasi state langsung)
-		AppState.serverSources = serverList;
+		// =============================================
+		// 🔥 Tidak perlu set data-server lagi
+		// Dropdown akan auto detect saat open form
+		// =============================================
 		// 🔥 pakai engine global
 		tableManager.load("renstra", tbl);
 	});
@@ -2565,17 +1864,10 @@ $(document).ready(function () {
 		// 🔥 SINKRONISASI STATE GLOBAL
 		AppState.tbl = defaultTbl;
 		AppState.currentMenu = defaultTbl;
-
-		let serverList = ServerDropdownConfig[defaultTbl] || [];
-
 		// 🔥 Update tombol
 		$("#btnTambah").attr("data-tbl", defaultTbl);
 		$("#btnImport").attr("data-tbl", defaultTbl);
 		$("#btnExport").attr("data-tbl", defaultTbl);
-		$("#btnTambah").attr("data-server", JSON.stringify(serverList));
-
-		// 🔥 Update dropdown dependency
-		AppState.serverSources = serverList;
 
 		// 🔥 Load tabel pertama kali
 		tableManager.load("renstra", defaultTbl);

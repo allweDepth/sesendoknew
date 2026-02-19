@@ -731,12 +731,12 @@ return [
                 'order_by' => 'kode ASC'
             ],
             'default' => [
-                'select' => ['*'],
+                'select' => ['kode as id', 'kode', 'nama'],
                 'searchable' => ['kode', 'nama'],
                 'order_by' => 'kode ASC'
             ],
             'referensi' => [
-                'select' => ['kode', 'nama'],
+                'select' => ['kode as id', 'kode', 'nama'],
                 'searchable' => ['kode', 'nama'],
                 'order_by' => 'kode ASC'
             ],
@@ -758,12 +758,12 @@ return [
                 'order_by' => 'kode ASC'
             ],
             'default' => [
-                'select' => ['*'],
+                'select' => ['kode as id', 'kode', 'kode_urusan', 'nama'],
                 'searchable' => ['kode', 'nama'],
                 'order_by' => 'kode ASC'
             ],
             'referensi' => [
-                'select' => ['kode', 'kode_urusan', 'nama'],
+                'select' => ['kode as id', 'kode', 'kode_urusan', 'nama'],
                 'searchable' => ['kode', 'nama'],
                 'order_by' => 'kode ASC'
             ],
@@ -785,12 +785,12 @@ return [
                 'order_by' => 'kode ASC'
             ],
             'default' => [
-                'select' => ['*'],
+                'select' => ['kode as id', 'kode', 'kode_bidang', 'nama'],
                 'searchable' => ['kode', 'nama'],
                 'order_by' => 'kode ASC'
             ],
             'referensi' => [
-                'select' => ['kode', 'kode_bidang', 'nama'],
+                'select' => ['kode as id', 'kode', 'kode_bidang', 'nama'],
                 'searchable' => ['kode', 'nama'],
                 'order_by' => 'kode ASC'
             ],
@@ -812,12 +812,12 @@ return [
                 'order_by' => 'kode ASC'
             ],
             'default' => [
-                'select' => ['*'],
+                'select' => ['kode as id', 'kode', 'kode_program', 'nama'],
                 'searchable' => ['kode', 'nama'],
                 'order_by' => 'kode ASC'
             ],
             'referensi' => [
-                'select' => ['kode', 'kode_program', 'nama'],
+                'select' => ['kode as id', 'kode', 'kode_program', 'nama'],
                 'searchable' => ['kode', 'nama'],
                 'order_by' => 'kode ASC'
             ],
@@ -829,29 +829,29 @@ return [
         ]
     ],
     'sub_kegiatan' => [
-        'table' => 'sub_kegiatan',
-        'primary_key' => 'kode',
-        'modes' => [
-            'dropdown' => [
-                'select' => ['kode as id', 'nama as uraian'],
-                'searchable' => ['kode', 'nama'],
-                'order_by' => 'kode ASC'
-            ],
-            'default' => [
-                'select' => ['*'],
-                'searchable' => ['kode', 'nama'],
-                'order_by' => 'kode ASC'
-            ],
-            'referensi' => [
-                'select' => ['kode', 'kode_kegiatan', 'nama'],
-                'searchable' => ['kode', 'nama'],
-                'order_by' => 'kode ASC'
-            ],
-            'edit' => [
-                'select' => ['*'],
-                'searchable' => ['*'],
-                'order_by' => 'kode ASC'
-            ]
+    'table' => 'sub_kegiatan',
+    'primary_key' => 'kode',
+    'modes' => [
+        'dropdown' => [
+            'select' => ['kode as id', 'nama as uraian'],
+            'searchable' => ['kode', 'nama'],
+            'order_by' => 'kode ASC'
+        ],
+        'default' => [
+            'select' => ['kode as id', 'kode', 'kode_kegiatan', 'nama'],
+            'searchable' => ['kode', 'nama'],
+            'order_by' => 'kode ASC'
+        ],
+        'referensi' => [
+            'select' => ['kode as id', 'kode', 'kode_kegiatan', 'nama'],
+            'searchable' => ['kode', 'nama'],
+            'order_by' => 'kode ASC'
+        ],
+        'edit' => [
+            'select' => ['*'],
+            'searchable' => ['*'],
+            'order_by' => 'kode ASC'
         ]
-    ],
+    ]
+],
 ];
