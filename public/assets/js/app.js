@@ -89,9 +89,22 @@ class AjaxEngine {
 
 				if (success) success(res);
 			},
-			error: function (err) {
-				console.error("AJAX ERROR:", err);
-				if (error) error(err);
+			error: function (xhr) {
+				let response = xhr.responseJSON;
+
+				if (response) {
+					ToastEngine.show({
+						success: false,
+						message: response.message || "Terjadi kesalahan",
+					});
+
+					if (error) error(response);
+				} else {
+					ToastEngine.show({
+						success: false,
+						message: "Server error",
+					});
+				}
 			},
 			complete: function () {
 				if (complete) complete();
@@ -436,6 +449,8 @@ class FormEngine {
 		const { tag, prop = {} } = el;
 
 		switch (tag) {
+			case "fieldAction":
+				return this.fieldWrapper(this.inputAction(prop), prop);
 			/* ===== SINGLE FIELD ===== */
 			case "fieldCalendar":
 				return this.fieldWrapper(this.calendar(prop), prop);
@@ -627,7 +642,21 @@ class FormEngine {
 				   ${prop.atribut || ""}>
 		`;
 	}
-
+	static inputAction(prop) {
+		return `
+        <div class="ui action input ${prop.classInput || ""}">
+            <input type="text"
+                   name="${prop.name}"
+                   placeholder="${prop.placeholder || ""}">
+            <button class="ui ${prop.button?.class || ""} icon button"
+                ${Object.entries(prop.button?.attr || {})
+									.map(([k, v]) => `${k}="${v}"`)
+									.join(" ")}>
+                <i class="${prop.button?.icon || "search"} icon"></i>
+            </button>
+        </div>
+    `;
+	}
 	/* ============================
 		 Dropdown
 	============================ */
@@ -1593,7 +1622,8 @@ class FormContainerManager {
 
 		// SUBMIT
 		$(document).on("click", ".btnSubmit", function () {
-			self.save();
+			let $form = self.getActiveForm();
+			$form.submit(); // trigger validation dulu
 		});
 
 		// CLOSE BUTTON
@@ -1606,6 +1636,7 @@ class FormContainerManager {
 			self.$flyout.sidebar("hide");
 		});
 	}
+
 	getActiveForm() {
 		if (this.activeContainer === "modal") {
 			return $("#form_modal");
@@ -1749,12 +1780,69 @@ class FormContainerManager {
 		}
 
 		FormEngine.render(target, config.elements);
+		// 🔥 INIT VALIDATION DENGAN TARGET
+		this.initValidation(target);
 		// 🔥 hydrate dropdown setelah render
 		this.loadDropdowns(target);
 		// ✅ Hidden ID hanya saat edit
 		if (AppState.mode === "edit") {
 			$(target).prepend(`<input type="hidden" name="id">`);
 		}
+	}
+	initValidation(target) {
+		const $form = $(target);
+
+		if (!$form.length) return;
+
+		let rules = {};
+		let elements = UIConfig[AppState.jenis]?.[AppState.tbl] || [];
+
+		elements.forEach((el) => {
+			if (!el.prop?.name) return;
+
+			let fieldRules = [];
+
+			// 🔥 REQUIRED detect dari classField
+			if (el.prop.classField?.includes("required")) {
+				fieldRules.push({
+					type: "empty",
+					prompt: el.prop.label + " wajib diisi",
+				});
+			}
+
+			// 🔥 EMAIL detect otomatis
+			if (el.prop.name === "email") {
+				fieldRules.push({
+					type: "email",
+					prompt: "Format email tidak valid",
+				});
+			}
+
+			// 🔥 NUMBER detect dari atribut
+			if (el.prop.atribut?.includes('type="number"')) {
+				fieldRules.push({
+					type: "number",
+					prompt: el.prop.label + " harus berupa angka",
+				});
+			}
+
+			if (fieldRules.length) {
+				rules[el.prop.name] = {
+					identifier: el.prop.name,
+					rules: fieldRules,
+				};
+			}
+		});
+
+		$form.form({
+			inline: true,
+			on: "blur",
+			fields: rules,
+			onSuccess: (event) => {
+				event.preventDefault();
+				this.save();
+			},
+		});
 	}
 
 	/* --------------------------------------------- */

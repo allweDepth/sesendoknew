@@ -206,7 +206,15 @@ class DynamicTableService
         if (empty($filtered)) {
             return JsonResponse::error("Tidak ada data yang bisa disimpan");
         }
+        /* =====================================================
+   VALIDASI HYBRID (PROFILE + SCHEMA)
+===================================================== */
+        $profile = $this->profiles[array_search($table, array_column($this->profiles, 'table'))] ?? [];
+        $errors = $this->validate($filtered, $table, $profile);
 
+        if (!empty($errors)) {
+            JsonResponse::error("Validation gagal", 422, $errors);
+        }
         /* =====================================================
        3️⃣ VALIDASI KHUSUS TABEL PERIODE RPJMD
        -----------------------------------------------------
@@ -394,7 +402,15 @@ Jika tabel misi_renstra_neo:
         if (empty($filtered)) {
             return JsonResponse::error("Tidak ada data yang bisa diupdate");
         }
+        /* =====================================================
+   VALIDASI HYBRID (PROFILE + SCHEMA)
+===================================================== */
+        $profile = $this->profiles[array_search($table, array_column($this->profiles, 'table'))] ?? [];
+        $errors = $this->validate($filtered, $table, $profile);
 
+        if (!empty($errors)) {
+            JsonResponse::error("Validation gagal", 422, $errors);
+        }
         // Inject audit otomatis
         $filtered = $this->injectAudit($filtered, 'update');
 
@@ -517,6 +533,121 @@ Jika tabel misi_renstra_neo:
     {
         $stmt = $this->db->query("SHOW COLUMNS FROM `$table`");
         return array_column($stmt->fetchAll(), 'Field');
+    }
+    /* =========================================================
+   HYBRID VALIDATION ENGINE
+   ---------------------------------------------------------
+   Prinsip:
+   1. Ambil rule dari profile['validation'] (jika ada)
+   2. Ambil rule otomatis dari schema database
+   3. Merge → profile override schema
+   4. Jalankan validasi
+========================================================= */
+    private function validate(array $data, string $table, array $profile): array
+    {
+        $errors = []; // Menyimpan semua error validasi
+
+        /* =====================================================
+       1️⃣ AMBIL RULE DARI PROFILE (JIKA ADA)
+    ===================================================== */
+        $customRules = $profile['validation'] ?? [];
+        // Jika table_profiles.php punya key 'validation',
+        // maka ambil rule tersebut
+        // Jika tidak ada → array kosong
+
+        /* =====================================================
+       2️⃣ BANGUN RULE OTOMATIS DARI SCHEMA DATABASE
+    ===================================================== */
+        $schemaRules = $this->buildRulesFromSchema($table);
+
+        /* =====================================================
+       3️⃣ MERGE RULE
+       - Custom override schema
+    ===================================================== */
+        $rules = array_merge($schemaRules, $customRules);
+
+        /* =====================================================
+       4️⃣ EKSEKUSI VALIDASI
+    ===================================================== */
+        foreach ($rules as $field => $fieldRules) {
+
+            $value = $data[$field] ?? null;
+
+            foreach ($fieldRules as $rule) {
+
+                /* ---------- REQUIRED ---------- */
+                if ($rule === 'required' && empty($value)) {
+                    $errors[$field] = "$field wajib diisi";
+                }
+
+                /* ---------- NUMERIC ---------- */
+                if ($rule === 'numeric' && !empty($value) && !is_numeric($value)) {
+                    $errors[$field] = "$field harus berupa angka";
+                }
+
+                /* ---------- EMAIL ---------- */
+                if ($rule === 'email' && !empty($value) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                    $errors[$field] = "$field tidak valid";
+                }
+
+                /* ---------- MAX LENGTH ---------- */
+                if (str_starts_with($rule, 'max:') && !empty($value)) {
+
+                    $max = (int)explode(':', $rule)[1];
+
+                    if (strlen($value) > $max) {
+                        $errors[$field] = "$field maksimal $max karakter";
+                    }
+                }
+            }
+        }
+
+        return $errors; // Kembalikan semua error (jika ada)
+    }
+    /* =========================================================
+   BUILD RULE DARI SCHEMA DATABASE
+   ---------------------------------------------------------
+   Otomatis:
+   - NOT NULL → required
+   - INT / DECIMAL → numeric
+   - VARCHAR(100) → max:100
+========================================================= */
+    private function buildRulesFromSchema(string $table): array
+    {
+        $rules = [];
+
+        // Ambil struktur lengkap kolom
+        $columns = $this->db->query("SHOW COLUMNS FROM `$table`")->fetchAll();
+
+        foreach ($columns as $col) {
+
+            $field = $col['Field'];
+            $type  = $col['Type'];
+            $null  = $col['Null'];
+
+            $fieldRules = [];
+
+            /* ---------- REQUIRED (NOT NULL) ---------- */
+            if ($null === 'NO' && $field !== 'id') {
+                $fieldRules[] = 'required';
+            }
+
+            /* ---------- NUMERIC ---------- */
+            if (str_contains($type, 'int') || str_contains($type, 'decimal')) {
+                $fieldRules[] = 'numeric';
+            }
+
+            /* ---------- MAX LENGTH ---------- */
+            if (preg_match('/varchar\((\d+)\)/', $type, $match)) {
+                $fieldRules[] = 'max:' . $match[1];
+            }
+
+            if (!empty($fieldRules)) {
+                $rules[$field] = $fieldRules;
+            }
+        }
+
+        return $rules;
     }
     /* =========================================================
    DROPDOWN ENGINE

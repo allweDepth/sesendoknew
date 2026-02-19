@@ -5,8 +5,12 @@ class JsonResponse
     public static function success(
         string $message = '',
         ?array $meta = null,
-        mixed $data = null
+        mixed $data = null,
+        int $code = 200
     ): string {
+
+        http_response_code($code);
+
         return json_encode([
             'success' => true,
             'message' => $message,
@@ -17,13 +21,18 @@ class JsonResponse
 
     public static function error(
         string $message = '',
-        ?array $meta = null
+        int $code = 400,
+        ?array $errors = null
     ): string {
+
+        http_response_code($code);
+
         return json_encode([
             'success' => false,
             'message' => $message,
-            'meta'    => $meta,
-            'data'    => null
+            'meta'    => null,
+            'data'    => null,
+            'errors'  => $errors
         ], JSON_UNESCAPED_UNICODE);
     }
 }
