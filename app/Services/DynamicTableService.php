@@ -141,7 +141,8 @@ class DynamicTableService
 
         $permissions = [
             'super_admin' => ['add', 'edit', 'delete', 'view'],
-            'admin'       => ['add', 'edit', 'delete', 'view'],
+            // 'admin'       => ['add', 'edit', 'delete', 'view'],
+            'admin_opd'       => ['add', 'edit', 'delete', 'view'],
             'editor'      => ['add', 'edit', 'view'],
             'viewer'      => ['view']
         ];
