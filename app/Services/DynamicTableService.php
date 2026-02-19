@@ -101,7 +101,13 @@ class DynamicTableService
                 $this->authorize('delete', $table);
                 return $this->delete($table, $profile, (int)$request['id_row']);
             }
-
+            /* ==============================
+   EXPORT
+============================== */
+            if ($jenis === 'export') {
+                $this->authorize('view', $table);
+                return $this->export($table, $profile, $request, 'default');
+            }
             /* ==============================
                DEFAULT → LISTING
             ============================== */
@@ -213,7 +219,7 @@ class DynamicTableService
         $errors = $this->validate($filtered, $table, $profile);
 
         if (!empty($errors)) {
-            JsonResponse::error("Validation gagal", 422, $errors);
+            return JsonResponse::error("Validation gagal", 422, $errors);
         }
         /* =====================================================
        3️⃣ VALIDASI KHUSUS TABEL PERIODE RPJMD
@@ -409,7 +415,7 @@ Jika tabel misi_renstra_neo:
         $errors = $this->validate($filtered, $table, $profile);
 
         if (!empty($errors)) {
-            JsonResponse::error("Validation gagal", 422, $errors);
+            return JsonResponse::error("Validation gagal", 422, $errors);
         }
         // Inject audit otomatis
         $filtered = $this->injectAudit($filtered, 'update');
@@ -495,7 +501,69 @@ Jika tabel misi_renstra_neo:
             $rows
         );
     }
+    /* =========================================================
+   GET ALL RAW DATA (UNTUK EXPORT / REPORT)
+   ---------------------------------------------------------
+   Fungsi ini berbeda dengan buildQuery():
+   - Tidak memakai limit pagination
+   - Tetap role aware (user scope)
+   - Tetap aman dari SQL injection
+========================================================= */
+    private function getAllRaw(
+        string $table,
+        array $profile,
+        array $request,
+        string $mode
+    ): array {
 
+        $modeConfig = $profile['modes'][$mode]
+            ?? $profile['modes']['default']
+            ?? [];
+
+        $select = $modeConfig['select'] ?? ['*'];
+        $selectClause = implode(',', $select);
+
+        list($userWhere, $userParams) = $this->applyUserScope($table);
+
+        $where = !empty($userWhere)
+            ? 'WHERE ' . implode(' AND ', $userWhere)
+            : '';
+
+        $query = "
+        SELECT $selectClause
+        FROM `$table`
+        $where
+        ORDER BY id DESC
+    ";
+
+        return $this->db->query($query, $userParams)->fetchAll();
+    }
+    /* =========================================================
+   EXPORT ENGINE
+   ---------------------------------------------------------
+   - Mengambil semua data tanpa pagination
+   - Tetap mengikuti mode (default/custom)
+   - Bisa dikembangkan ke Excel / CSV / PDF
+========================================================= */
+    private function export(
+        string $table,
+        array $profile,
+        array $request,
+        string $mode
+    ): string {
+
+        $this->authorize('view', $table);
+
+        $rows = $this->getAllRaw($table, $profile, $request, $mode);
+
+        return JsonResponse::success(
+            "Data export berhasil",
+            [
+                'total' => count($rows)
+            ],
+            $rows
+        );
+    }
     /* =========================================================
        APPLY USER SCOPE (ROLE AWARE)
     ========================================================= */

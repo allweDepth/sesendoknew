@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 19 Feb 2026 pada 11.14
+-- Waktu pembuatan: 19 Feb 2026 pada 13.37
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -144,6 +144,23 @@ CREATE TABLE `berita_neo` (
   `keterangan` varchar(255) NOT NULL,
   `urutan` int(11) DEFAULT NULL,
   `disable` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `bidang`
+--
+
+CREATE TABLE `bidang` (
+  `kode` varchar(10) NOT NULL,
+  `kode_urusan` varchar(10) NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `status` tinyint(4) DEFAULT 1,
+  `tgl_insert` datetime DEFAULT current_timestamp(),
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -594,9 +611,7 @@ CREATE TABLE `indikator_program_renstra_neo` (
   `target_t4` decimal(15,2) DEFAULT NULL,
   `target_t5` decimal(15,2) DEFAULT NULL,
   `tgl_insert` datetime DEFAULT NULL,
-  `user_insert` varchar(50) DEFAULT NULL,
   `tgl_update` datetime DEFAULT NULL,
-  `user_update` varchar(50) DEFAULT NULL,
   `username_insert` varchar(100) DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -624,9 +639,7 @@ CREATE TABLE `indikator_sasaran_renstra_neo` (
   `kategori_spm` tinyint(4) DEFAULT 0,
   `disable` tinyint(4) DEFAULT 0,
   `tgl_insert` datetime DEFAULT NULL,
-  `user_insert` varchar(50) DEFAULT NULL,
   `tgl_update` datetime DEFAULT NULL,
-  `user_update` varchar(50) DEFAULT NULL,
   `username_insert` varchar(100) DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -689,6 +702,23 @@ CREATE TABLE `kd_wilayah_neo` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `kegiatan`
+--
+
+CREATE TABLE `kegiatan` (
+  `kode` varchar(20) NOT NULL,
+  `kode_program` varchar(15) NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `status` tinyint(4) DEFAULT 1,
+  `tgl_insert` datetime DEFAULT current_timestamp(),
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `mapping_aset_akun`
 --
 
@@ -733,9 +763,9 @@ CREATE TABLE `misi_renstra_neo` (
   `uraian` text NOT NULL,
   `disable` tinyint(4) DEFAULT 0,
   `tgl_insert` datetime DEFAULT NULL,
-  `user_insert` varchar(50) DEFAULT NULL,
   `tgl_update` datetime DEFAULT NULL,
-  `user_update` varchar(50) DEFAULT NULL
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -926,6 +956,23 @@ CREATE TABLE `periode_rpjmd` (
   `tgl_insert` datetime DEFAULT current_timestamp(),
   `tgl_update` datetime DEFAULT NULL,
   `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `program`
+--
+
+CREATE TABLE `program` (
+  `kode` varchar(15) NOT NULL,
+  `kode_bidang` varchar(10) NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `status` tinyint(4) DEFAULT 1,
+  `tgl_insert` datetime DEFAULT current_timestamp(),
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -1235,9 +1282,9 @@ CREATE TABLE `sasaran_renstra_neo` (
   `uraian` text NOT NULL,
   `disable` tinyint(4) DEFAULT 0,
   `tgl_insert` datetime DEFAULT NULL,
-  `user_insert` varchar(50) DEFAULT NULL,
   `tgl_update` datetime DEFAULT NULL,
-  `user_update` varchar(50) DEFAULT NULL
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1367,6 +1414,26 @@ CREATE TABLE `ssh_neo` (
   `tgl_update` datetime NOT NULL,
   `username_update` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `sub_kegiatan`
+--
+
+CREATE TABLE `sub_kegiatan` (
+  `kode` varchar(25) NOT NULL,
+  `kode_kegiatan` varchar(20) NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `indikator` text DEFAULT NULL,
+  `satuan` varchar(100) DEFAULT NULL,
+  `peraturan` text DEFAULT NULL,
+  `status` tinyint(4) DEFAULT 1,
+  `tgl_insert` datetime DEFAULT current_timestamp(),
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1536,9 +1603,9 @@ CREATE TABLE `tujuan_renstra_neo` (
   `uraian` text NOT NULL,
   `disable` tinyint(4) DEFAULT 0,
   `tgl_insert` datetime DEFAULT NULL,
-  `user_insert` varchar(50) DEFAULT NULL,
   `tgl_update` datetime DEFAULT NULL,
-  `user_update` varchar(50) DEFAULT NULL
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1565,6 +1632,22 @@ CREATE TABLE `tujuan_sasaran_renstra_neo` (
   `setujui` tinyint(1) DEFAULT 0,
   `kunci` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `urusan`
+--
+
+CREATE TABLE `urusan` (
+  `kode` varchar(10) NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `status` tinyint(4) DEFAULT 1,
+  `tgl_insert` datetime DEFAULT current_timestamp(),
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1712,6 +1795,13 @@ ALTER TABLE `berita_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `bidang`
+--
+ALTER TABLE `bidang`
+  ADD PRIMARY KEY (`kode`),
+  ADD KEY `idx_kode_urusan` (`kode_urusan`);
+
+--
 -- Indeks untuk tabel `cache`
 --
 ALTER TABLE `cache`
@@ -1810,6 +1900,13 @@ ALTER TABLE `kd_wilayah_neo`
   ADD KEY `idx_kode_wilayah` (`kode`);
 
 --
+-- Indeks untuk tabel `kegiatan`
+--
+ALTER TABLE `kegiatan`
+  ADD PRIMARY KEY (`kode`),
+  ADD KEY `idx_kode_program` (`kode_program`);
+
+--
 -- Indeks untuk tabel `mapping_aset_akun`
 --
 ALTER TABLE `mapping_aset_akun`
@@ -1863,6 +1960,13 @@ ALTER TABLE `peraturan_neo`
 --
 ALTER TABLE `periode_rpjmd`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `program`
+--
+ALTER TABLE `program`
+  ADD PRIMARY KEY (`kode`),
+  ADD KEY `idx_kode_bidang` (`kode_bidang`);
 
 --
 -- Indeks untuk tabel `program_renstra_neo`
@@ -1956,6 +2060,13 @@ ALTER TABLE `ssh_neo`
 ALTER TABLE `ssh_neo` ADD FULLTEXT KEY `uraian_barang` (`uraian_barang`);
 
 --
+-- Indeks untuk tabel `sub_kegiatan`
+--
+ALTER TABLE `sub_kegiatan`
+  ADD PRIMARY KEY (`kode`),
+  ADD KEY `idx_kode_kegiatan` (`kode_kegiatan`);
+
+--
 -- Indeks untuk tabel `sub_kegiatan_neo`
 --
 ALTER TABLE `sub_kegiatan_neo`
@@ -1993,6 +2104,12 @@ ALTER TABLE `tujuan_renstra_neo`
 ALTER TABLE `tujuan_sasaran_renstra_neo`
   ADD PRIMARY KEY (`id`);
 ALTER TABLE `tujuan_sasaran_renstra_neo` ADD FULLTEXT KEY `text` (`text`);
+
+--
+-- Indeks untuk tabel `urusan`
+--
+ALTER TABLE `urusan`
+  ADD PRIMARY KEY (`kode`);
 
 --
 -- Indeks untuk tabel `users`

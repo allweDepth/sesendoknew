@@ -62,7 +62,17 @@ class DynamicController
         }
 
         // Ambil data via service
-        $data = DynamicTableService::getAll($table);
+        $service = new DynamicTableService();
+
+        $request = [
+            'tbl'   => $table,
+            'jenis' => 'export'
+        ];
+
+        $response = $service->handle($request);
+        $responseData = json_decode($response, true);
+
+        $data = $responseData['data'] ?? [];
 
         if (empty($data)) {
             die("Data kosong di tabel: " . $table);

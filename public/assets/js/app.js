@@ -51,9 +51,9 @@ const ToastEngine = {
 			displayTime: 3000,
 			showProgress: "bottom",
 			context: "#toastContainer",
-			position: "top right"
+			position: "top right",
 		});
-	}
+	},
 };
 /* =========================================================
 	 CORE AJAX ENGINE
@@ -925,7 +925,7 @@ const UIConfig = {
 		misi_renstra_neo: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Renstra", name: "id_renstra", source: "renstra_neo" },
+				prop: { label: "Renstra", name: "renstra_id", source: "renstra_neo" },
 			},
 			{
 				tag: "fieldTextarea",
@@ -936,7 +936,7 @@ const UIConfig = {
 		tujuan_renstra_neo: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Misi", name: "id_misi", source: "misi_renstra_neo" },
+				prop: { label: "Misi", name: "misi_id", source: "misi_renstra_neo" },
 			},
 			{
 				tag: "fieldTextarea",
@@ -949,11 +949,10 @@ const UIConfig = {
 				tag: "fieldDropdown",
 				prop: {
 					label: "Tujuan",
-					name: "id_tujuan",
+					name: "tujuan_id",
 					source: "tujuan_renstra_neo",
 				},
 			},
-			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{
 				tag: "fieldTextarea",
 				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
@@ -965,13 +964,18 @@ const UIConfig = {
 				tag: "fieldDropdown",
 				prop: {
 					label: "Sasaran",
-					name: "id_sasaran",
+					name: "sasaran_id",
 					source: "sasaran_renstra_neo",
 				},
 			},
-			{ tag: "field", prop: { label: "Indikator", name: "indikator" } },
+			{ tag: "field", prop: { label: "Indikator", name: "nama_indikator" } },
 			{ tag: "field", prop: { label: "Satuan", name: "satuan" } },
-			{ tag: "field", prop: { label: "Target", name: "target" } },
+			{ tag: "field", prop: { label: "Target T1", name: "target_t1" } },
+			{ tag: "field", prop: { label: "Target T2", name: "target_t2" } },
+			{ tag: "field", prop: { label: "Target T3", name: "target_t3" } },
+			{ tag: "field", prop: { label: "Target T4", name: "target_t4" } },
+			{ tag: "field", prop: { label: "Target T5", name: "target_t5" } },
+			{ tag: "field", prop: { label: "Target Akhir", name: "target_akhir" } },
 		],
 
 		program_renstra_neo: [
@@ -995,12 +999,17 @@ const UIConfig = {
 				tag: "fieldDropdown",
 				prop: {
 					label: "Program",
-					name: "id_program",
+					name: "program_id",
 					source: "program_renstra_neo",
 				},
 			},
-			{ tag: "field", prop: { label: "Indikator", name: "indikator" } },
-			{ tag: "field", prop: { label: "Target", name: "target" } },
+			{ tag: "field", prop: { label: "Indikator", name: "nama_indikator" } },
+			{ tag: "field", prop: { label: "Satuan", name: "satuan" } },
+			{ tag: "field", prop: { label: "Target T1", name: "target_t1" } },
+			{ tag: "field", prop: { label: "Target T2", name: "target_t2" } },
+			{ tag: "field", prop: { label: "Target T3", name: "target_t3" } },
+			{ tag: "field", prop: { label: "Target T4", name: "target_t4" } },
+			{ tag: "field", prop: { label: "Target T5", name: "target_t5" } },
 		],
 
 		anggaran_program_renstra_neo: [
