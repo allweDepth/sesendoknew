@@ -284,37 +284,116 @@ class DynamicController
      */
     public function import()
     {
-        $table = $_POST['tabel'] ?? null;
+        require_once __DIR__ . '/../Config/table_profiles.php';
 
-        if (!$table || !isset($_FILES['file'])) {
-            http_response_code(400);
+        $profiles = require __DIR__ . '/../Config/table_profiles.php';
+
+        $tableKey = $_POST['tabel'] ?? null;
+
+        if (!$tableKey || !isset($profiles[$tableKey])) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Tabel tidak diizinkan']);
             exit;
         }
 
-        $file = $_FILES['file']['tmp_name'];
+        if (!isset($_FILES['file'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'File tidak ditemukan']);
+            exit;
+        }
 
-        $spreadsheet = IOFactory::load($file);
+        $profile = $profiles[$tableKey];
+        $tableName = $profile['table'];
+
+        require_once __DIR__ . '/../../vendor/autoload.php';
+
+        $file = $_FILES['file']['tmp_name'];
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file);
         $sheet = $spreadsheet->getActiveSheet();
-        $rows = $sheet->toArray();
+        $rows = $sheet->toArray(null, true, true, false);
+
+        if (count($rows) < 2) {
+            echo json_encode(['error' => 'File kosong']);
+            exit;
+        }
+
+        $headers = array_map('trim', $rows[0]);
 
         $db = DB::getInstance();
+        $pdo = $db->getConnection(); // pastikan DB punya method ini
 
         try {
 
-            $headers = $rows[0];
+            $pdo->beginTransaction();
+
+            // Ambil kolom yang diizinkan dari mode default
+            $allowedColumns = $profile['modes']['default']['select'];
+
+            // Jika select = ['*'], ambil semua kolom dari database
+            if ($allowedColumns === ['*']) {
+                $stmt = $pdo->query("DESCRIBE $tableName");
+                $allowedColumns = array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'Field');
+            }
+
+            $inserted = 0;
 
             for ($i = 1; $i < count($rows); $i++) {
 
-                $rowData = array_combine($headers, $rows[$i]);
+                $excelRow = array_combine($headers, $rows[$i]);
 
-                $db->insert($table, $rowData);
+                if (!$excelRow) continue;
+
+                $data = [];
+
+                foreach ($allowedColumns as $col) {
+
+                    // Mapping Excel header = nama kolom DB
+                    if (isset($excelRow[$col])) {
+                        $data[$col] = $excelRow[$col];
+                    }
+                }
+
+                // ===============================
+                // 🔥 AUTO SYSTEM COLUMNS
+                // ===============================
+                if (in_array('tgl_insert', $allowedColumns)) {
+                    $data['tgl_insert'] = date('Y-m-d H:i:s');
+                }
+
+                if (in_array('username_insert', $allowedColumns)) {
+                    $data['username_insert'] = $_SESSION['username'] ?? 'system';
+                }
+
+                if (in_array('tahun', $allowedColumns) && isset($_SESSION['tahun'])) {
+                    $data['tahun'] = $_SESSION['tahun'];
+                }
+
+                if (empty($data)) continue;
+
+                $columns = array_keys($data);
+                $placeholders = implode(',', array_fill(0, count($columns), '?'));
+
+                $sql = "INSERT INTO $tableName (" . implode(',', $columns) . ") VALUES ($placeholders)";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute(array_values($data));
+
+                $inserted++;
             }
 
-            echo json_encode(['success' => true]);
+            $pdo->commit();
+
+            echo json_encode([
+                'success' => true,
+                'inserted' => $inserted
+            ]);
         } catch (Exception $e) {
 
+            $pdo->rollBack();
+
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            echo json_encode([
+                'error' => $e->getMessage()
+            ]);
         }
 
         exit;

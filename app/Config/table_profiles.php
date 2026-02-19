@@ -272,32 +272,7 @@ return [
         ]
     ],
 
-    'sub_kegiatan' => [
-        'table' => 'sub_kegiatan_neo',
-        'primary_key' => 'id',
-        'modes' => [
-            'dropdown' => [
-                'select' => ['id', 'kode', 'nomenklatur_urusan'],
-                'searchable' => ['kode', 'nomenklatur_urusan'],
-                'order_by' => 'kode ASC'
-            ],
-            'default' => [
-                'select' => ['*'],
-                'searchable' => ['kode', 'nomenklatur_urusan'],
-                'order_by' => 'kode ASC'
-            ],
-            'referensi' => [
-                'select' => ['id', 'kode', 'nomenklatur_urusan', 'kinerja', 'indikator'],
-                'searchable' => ['kode', 'nomenklatur_urusan'],
-                'order_by' => 'kode ASC'
-            ],
-            'edit' => [
-                'select' => ['*'],
-                'searchable' => ['*'],
-                'order_by' => 'kode ASC'
-            ]
-        ]
-    ],
+
 
     'sumber_dana' => [
         'table' => 'sumber_dana_neo',
@@ -746,4 +721,112 @@ return [
             ]
         ]
     ],
+    'urusan' => [
+        'table' => 'urusan',
+        'primary_key' => 'kode',
+        'modes' => [
+            'dropdown' => [
+                'select' => ['kode as id', 'nama as uraian'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'referensi' => [
+                'select' => ['kode', 'nama'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'kode ASC'
+            ]
+        ]
+    ],
+
+    'bidang' => [
+        'table' => 'bidang',
+        'primary_key' => 'kode',
+        'modes' => [
+            'dropdown' => [
+                'select' => ['kode as id', 'nama as uraian'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'referensi' => [
+                'select' => ['kode', 'kode_urusan', 'nama'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'kode ASC'
+            ]
+        ]
+    ],
+
+    'program' => [
+        'table' => 'program',
+        'primary_key' => 'kode',
+        'modes' => [
+            'dropdown' => [
+                'select' => ['kode as id', 'nama as uraian'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'referensi' => [
+                'select' => ['kode', 'kode_bidang', 'nama'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'kode ASC'
+            ]
+        ]
+    ],
+
+    'kegiatan' => [
+        'table' => 'kegiatan',
+        'primary_key' => 'kode',
+        'modes' => [
+            'dropdown' => [
+                'select' => ['kode as id', 'nama as uraian'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'referensi' => [
+                'select' => ['kode', 'kode_program', 'nama'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'kode ASC'
+            ]
+        ]
+    ],
+
 ];

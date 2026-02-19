@@ -488,6 +488,17 @@ class FormEngine {
 						</div>
 					</div>
 				`;
+			case "fieldFile":
+				return this.fieldWrapper(
+					`
+        <div class="ui file input">
+            <input type="file"
+                   name="${prop.name}"
+                   accept="${prop.accept || ""}">
+        </div>
+    `,
+					prop,
+				);
 
 			/* ===== GROUP FIELDS ===== */
 			case "fields":
@@ -1440,11 +1451,149 @@ const UIConfig = {
 	   REFERENSI
 	====================================================== */
 	referensi: {
-		/* sub_kegiatan_neo */
-		sub_kegiatan: [
+		/* ===================== URUSAN ===================== */
+		urusan: [
 			{
 				tag: "field",
-				prop: { label: "Kode", name: "kode", classField: "required" },
+				prop: {
+					label: "Kode Urusan",
+					name: "kode",
+					classField: "required",
+				},
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Nama Urusan",
+					name: "nama",
+					classField: "required",
+				},
+			},
+		],
+
+		/* ===================== BIDANG ===================== */
+		bidang: [
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Urusan",
+					name: "kode_urusan",
+					source: "urusan",
+				},
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Kode Bidang",
+					name: "kode",
+					classField: "required",
+				},
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Nama",
+					name: "nama",
+					classField: "required",
+				},
+			},
+		],
+
+		program: [
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Bidang",
+					name: "kode_bidang",
+					source: "bidang",
+				},
+			},
+			{
+				tag: "field",
+				prop: { label: "Kode Program", name: "kode", classField: "required" },
+			},
+			{
+				tag: "field",
+				prop: { label: "Nama", name: "nama", classField: "required" },
+			},
+		],
+		kegiatan: [
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Program",
+					name: "kode_program",
+					source: "program",
+				},
+			},
+			{
+				tag: "field",
+				prop: { label: "Kode Kegiatan", name: "kode", classField: "required" },
+			},
+			{
+				tag: "field",
+				prop: { label: "Nama", name: "nama", classField: "required" },
+			},
+		],
+		sub_kegiatan: [
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Mode Input",
+					name: "mode_input",
+					options: [
+						{ value: "manual", text: "Manual" },
+						{ value: "import", text: "Import Excel" },
+					],
+					classField: "required",
+				},
+			},
+
+			// ========================= MANUAL =========================
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Urusan",
+					name: "kode_urusan",
+					source: "urusan",
+					attr: { "data-mode": "manual" },
+				},
+			},
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Bidang",
+					name: "kode_bidang",
+					source: "bidang",
+					attr: { "data-mode": "manual" },
+				},
+			},
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Program",
+					name: "kode_program",
+					source: "program",
+					attr: { "data-mode": "manual" },
+				},
+			},
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Kegiatan",
+					name: "kode_kegiatan",
+					source: "kegiatan",
+					attr: { "data-mode": "manual" },
+				},
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Kode Sub Kegiatan",
+					name: "kode",
+					classField: "required",
+					attr: { "data-mode": "manual" },
+				},
 			},
 			{
 				tag: "field",
@@ -1452,12 +1601,37 @@ const UIConfig = {
 					label: "Nomenklatur Urusan",
 					name: "nomenklatur_urusan",
 					classField: "required",
+					attr: { "data-mode": "manual" },
 				},
 			},
-			{ tag: "field", prop: { label: "Kinerja", name: "kinerja" } },
-			{ tag: "field", prop: { label: "Indikator", name: "indikator" } },
-		],
+			{
+				tag: "field",
+				prop: {
+					label: "Kinerja",
+					name: "kinerja",
+					attr: { "data-mode": "manual" },
+				},
+			},
+			{
+				tag: "field",
+				prop: {
+					label: "Indikator",
+					name: "indikator",
+					attr: { "data-mode": "manual" },
+				},
+			},
 
+			// ========================= IMPORT =========================
+			{
+				tag: "fieldFile",
+				prop: {
+					label: "Upload File Excel",
+					name: "file_import",
+					accept: ".xlsx,.xls",
+					attr: { "data-mode": "import" },
+				},
+			},
+		],
 		/* rekanan_neo */
 		rekanan: [
 			{
@@ -1621,16 +1795,65 @@ class FormContainerManager {
 
 		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
 
-		this.initContainers(); // <-- TAMBAHKAN INI
+		// =============================
+		// 🔥 PLUGIN SYSTEM (TAMBAHAN)
+		// =============================
+		this.plugins = {};
+		this.beforeSavePlugins = {};
+
+		this.initContainers();
 	}
+
+	// =============================
+	// 🔥 REGISTER PLUGIN
+	// =============================
+	registerPlugin(key, callback) {
+		this.plugins[key] = callback;
+	}
+
+	registerBeforeSave(key, callback) {
+		this.beforeSavePlugins[key] = callback;
+	}
+
+	runPlugins() {
+		const exactKey = `${AppState.jenis}.${AppState.tbl}`;
+		const wildcardKey = `${AppState.jenis}.*`;
+
+		const payload = {
+			container: this.getActiveForm(),
+			state: AppState,
+			manager: this,
+		};
+
+		if (this.plugins[exactKey]) {
+			this.plugins[exactKey](payload);
+		}
+
+		if (this.plugins[wildcardKey]) {
+			this.plugins[wildcardKey](payload);
+		}
+	}
+
+	runBeforeSave(formData) {
+		const exactKey = `${AppState.jenis}.${AppState.tbl}`;
+		const wildcardKey = `${AppState.jenis}.*`;
+
+		if (this.beforeSavePlugins[exactKey]) {
+			this.beforeSavePlugins[exactKey](formData, AppState);
+		}
+
+		if (this.beforeSavePlugins[wildcardKey]) {
+			this.beforeSavePlugins[wildcardKey](formData, AppState);
+		}
+	}
+
+	/* --------------------------------------------- */
 	initContainers() {
-		// INIT FLYOUT HANYA SEKALI
 		if (this.$flyout.length && !this.$flyout.data("module-sidebar")) {
 			this.$flyout.sidebar({
 				context: $("#mainContext"),
 				transition: "push",
-				// dimPage: false,
-				closable: false, //saat dimmer di klik sidebar kanan tidak muncul
+				closable: false,
 				scrollLock: true,
 			});
 		}
@@ -1640,48 +1863,40 @@ class FormContainerManager {
 		}
 
 		this.bindEvents();
-
-		// Modal biasanya sudah aman, tapi boleh guard juga
-		if (this.$modal.length && !this.$modal.data("module-modal")) {
-			this.$modal.modal({
-				closable: false,
-			});
-		}
 	}
+
 	/* --------------------------------------------- */
 	bindEvents() {
-		const self = this; // 🔥 penting untuk jaga context
+		const self = this;
 
-		// OPEN FORM
 		$(document).on("click", '[data-ui="open-form"]', function (e) {
 			e.preventDefault();
 			self.open($(this));
 		});
 
-		// SUBMIT
 		$(document).on("click", ".btnSubmit", function () {
 			let $form = self.getActiveForm();
-			$form.submit(); // trigger validation dulu
+			$form.submit();
 		});
 
-		// CLOSE BUTTON
 		$(document).on("click", ".btnFlyoutClose", function () {
 			self.$flyout.sidebar("hide");
 		});
 
-		// ICON CLOSE
 		$(document).on("click", ".sidebarkanan .close.icon", function () {
 			self.$flyout.sidebar("hide");
 		});
 	}
 
 	getActiveForm() {
-		if (this.activeContainer === "modal") {
-			return $("#form_modal");
-		}
-		return $("#form_flyout");
+		return this.activeContainer === "modal"
+			? $("#form_modal")
+			: $("#form_flyout");
 	}
-	//=================
+
+	// =============================
+	// LOAD DROPDOWN (TIDAK DIUBAH)
+	// =============================
 	loadDropdowns(containerSelector) {
 		if (!AppState.serverSources.length) return;
 
@@ -1732,33 +1947,24 @@ class FormContainerManager {
 
 				res.data.forEach((item) => {
 					menu.append(`
-					<div class="item" data-value="${item.id}">
-						${item.uraian}
-					</div>
-				`);
+						<div class="item" data-value="${item.id}">
+							${item.uraian}
+						</div>
+					`);
 				});
 
 				$dropdown.dropdown("refresh");
 			},
 		});
 	}
+
 	/* --------------------------------------------- */
 	open($btn) {
 		const jenisMode = $btn.data("jns");
-		// Mode form: add / edit / detail
-
 		const tbl = $btn.attr("data-tbl") || AppState.tbl;
-		// 🔥 PRIORITAS:
-		// 1️⃣ Ambil tbl langsung dari tombol (data-tbl)
-		// 2️⃣ Jika tidak ada, fallback ke AppState.tbl
-		//
-		// Ini membuat tombol tidak bergantung pada state sebelumnya.
-		// Mencegah flyout kosong ketika AppState.tbl belum di-set.
 
 		AppState.tbl = tbl;
-		// ======================================
-		// LOAD SERVER DROPDOWN CONFIG
-		// ======================================
+
 		let serverAttr = $btn.attr("data-server");
 
 		if (serverAttr) {
@@ -1770,7 +1976,6 @@ class FormContainerManager {
 		} else {
 			AppState.serverSources = [];
 		}
-		// Sinkronisasi state global agar konsisten dengan tbl yang dipakai sekarang.
 
 		const container = $btn.data("container") || "flyout";
 		const idRow = $btn.data("id");
@@ -1779,20 +1984,14 @@ class FormContainerManager {
 		AppState.mode = jenisMode;
 
 		if (!AppState.jenis) {
-			// Jika jenis belum ada (misalnya halaman standalone),
-			// ambil dari URL path: contoh "/pengaturan" → "pengaturan"
 			AppState.jenis = window.location.pathname.replace(/^\/+/g, "");
 		}
 
 		let config = this.buildConfig(jenisMode, tbl);
-		// buildConfig akan mencari:
-		// UIConfig[AppState.jenis][tbl]
-		// Jika salah satu tidak ada → elements kosong.
 
 		this.render(config, container);
 
 		if ((jenisMode === "edit" || jenisMode === "detail") && idRow) {
-			// Jika edit/detail → load data dari server
 			this.loadData(idRow, container);
 		}
 
@@ -1804,7 +2003,6 @@ class FormContainerManager {
 		$("#form_modal").empty();
 		$("#form_flyout").empty();
 
-		// ✅ target HARUS dideklarasikan di luar if
 		let target;
 
 		if (container === "modal") {
@@ -1818,15 +2016,19 @@ class FormContainerManager {
 		}
 
 		FormEngine.render(target, config.elements);
-		// 🔥 INIT VALIDATION DENGAN TARGET
 		this.initValidation(target);
-		// 🔥 hydrate dropdown setelah render
 		this.loadDropdowns(target);
-		// ✅ Hidden ID hanya saat edit
+
 		if (AppState.mode === "edit") {
 			$(target).prepend(`<input type="hidden" name="id">`);
 		}
+
+		// =============================
+		// 🔥 JALANKAN PLUGIN
+		// =============================
+		this.runPlugins();
 	}
+
 	initValidation(target) {
 		const $form = $(target);
 		if (!$form.length) return;
@@ -1835,17 +2037,11 @@ class FormContainerManager {
 		let elements = UIConfig[AppState.jenis]?.[AppState.tbl] || [];
 
 		elements.forEach((el) => {
-			// 🔥 Pastikan field punya name
 			if (!el.prop?.name) return;
-
-			// 🔥 Pastikan field BENAR-BENAR ADA di DOM
 			if (!$form.find(`[name="${el.prop.name}"]`).length) return;
 
 			let fieldRules = [];
 
-			/* ===============================
-		   REQUIRED (classField)
-		=============================== */
 			if (el.prop.classField?.includes("required")) {
 				fieldRules.push({
 					type: "empty",
@@ -1853,9 +2049,6 @@ class FormContainerManager {
 				});
 			}
 
-			/* ===============================
-		   EMAIL
-		=============================== */
 			if (el.prop.name === "email") {
 				fieldRules.push({
 					type: "email",
@@ -1863,9 +2056,6 @@ class FormContainerManager {
 				});
 			}
 
-			/* ===============================
-		   NUMBER
-		=============================== */
 			if (el.prop.atribut?.includes('type="number"')) {
 				fieldRules.push({
 					type: "number",
@@ -1881,7 +2071,7 @@ class FormContainerManager {
 			}
 		});
 
-		$form.form("destroy"); // 🔥 penting supaya tidak double init
+		$form.form("destroy");
 
 		$form.form({
 			inline: true,
@@ -1894,24 +2084,18 @@ class FormContainerManager {
 		});
 	}
 
-	/* --------------------------------------------- */
 	show(container) {
-		if (container === "modal") {
-			this.$modal.modal("show");
-		} else {
-			this.$flyout.sidebar("show");
-		}
+		container === "modal"
+			? this.$modal.modal("show")
+			: this.$flyout.sidebar("show");
 	}
 
-	/* --------------------------------------------- */
 	hide(container) {
-		if (container === "modal") {
-			this.$modal.modal("hide");
-		} else {
-			this.$flyout.sidebar("hide");
-		}
+		container === "modal"
+			? this.$modal.modal("hide")
+			: this.$flyout.sidebar("hide");
 	}
-	/* --------------------------------------------- */
+
 	loadData(idRow, container) {
 		this.ajax.request({
 			data: {
@@ -1920,76 +2104,123 @@ class FormContainerManager {
 				id_row: idRow,
 			},
 			success: (res) => {
-				if (res.success && res.data) {
-					let $formTarget =
-						container === "modal" ? $("#form_modal") : $("#form_flyout");
+				if (!res.success || !res.data) return;
 
-					Object.keys(res.data).forEach((key) => {
-						let $field = $formTarget.find(`[name="${key}"]`);
+				let $formTarget =
+					container === "modal" ? $("#form_modal") : $("#form_flyout");
 
-						if (!$field.length) return;
+				Object.keys(res.data).forEach((key) => {
+					let $field = $formTarget.find(`[name="${key}"]`);
+					if (!$field.length) return;
 
-						// 🔹 Dropdown Fomantic
-						if ($field.closest(".ui.dropdown").length) {
-							$field
-								.closest(".ui.dropdown")
-								.dropdown("set selected", res.data[key]);
-						}
-
-						// 🔹 Checkbox
-						else if ($field.attr("type") === "checkbox") {
-							if (res.data[key] == 1 || res.data[key] === true) {
-								$field.closest(".ui.checkbox").checkbox("check");
-							} else {
-								$field.closest(".ui.checkbox").checkbox("uncheck");
-							}
-						}
-
-						// 🔹 File input (tidak bisa di-set demi security)
-						else if ($field.attr("type") === "file") {
-							// skip (browser tidak izinkan set value file)
-						}
-
-						// 🔹 Input biasa
-						else {
-							$field.val(res.data[key]);
-						}
-					});
-				}
+					if ($field.closest(".ui.dropdown").length) {
+						$field
+							.closest(".ui.dropdown")
+							.dropdown("set selected", res.data[key]);
+					} else if ($field.attr("type") === "checkbox") {
+						res.data[key] == 1
+							? $field.closest(".ui.checkbox").checkbox("check")
+							: $field.closest(".ui.checkbox").checkbox("uncheck");
+					} else if ($field.attr("type") !== "file") {
+						$field.val(res.data[key]);
+					}
+				});
 			},
 		});
 	}
-	/* --------------------------------------------- */
+
 	buildConfig(jenis, tbl) {
-		let config = {
-			icon: "folder icon",
-			header: "",
-			elements: [],
-		};
-
-		config.header =
-			jenis === "add"
-				? "Tambah Data"
-				: jenis === "edit"
-					? "Edit Data"
-					: "Detail Data";
-
-		config.icon =
-			jenis === "add"
-				? "plus icon"
-				: jenis === "edit"
-					? "edit icon"
-					: "eye icon";
-
-		if (UIConfig[AppState.jenis]?.[tbl]) {
-			config.elements = UIConfig[AppState.jenis][tbl];
+		// ===============================
+		// 🔥 MODE IMPORT XLSX
+		// ===============================
+		if (jenis === "import_xlsx") {
+			return {
+				icon: "upload icon",
+				header: "Import Excel",
+				elements: [
+					{
+						tag: "fieldFile",
+						prop: {
+							label: "Upload File Excel",
+							name: "file_import",
+							accept: ".xlsx,.xls",
+							classField: "required",
+						},
+					},
+				],
+			};
 		}
+
+		// ===============================
+		// DEFAULT MODE (add/edit/detail)
+		// ===============================
+		let config = {
+			icon:
+				jenis === "add"
+					? "plus icon"
+					: jenis === "edit"
+						? "edit icon"
+						: "eye icon",
+
+			header:
+				jenis === "add"
+					? "Tambah Data"
+					: jenis === "edit"
+						? "Edit Data"
+						: "Detail Data",
+
+			elements: UIConfig[AppState.jenis]?.[tbl] || [],
+		};
 
 		return config;
 	}
 
 	/* --------------------------------------------- */
 	save() {
+		// ===============================
+		// 🔥 MODE IMPORT XLSX
+		// ===============================
+		if (AppState.mode === "import_xlsx") {
+
+    let $formTarget = this.getActiveForm();
+    let formElement = $formTarget[0];
+
+    let formData = new FormData();
+
+    let fileInput = $formTarget.find('[name="file_import"]')[0];
+
+    if (!fileInput.files.length) {
+        alert("File belum dipilih");
+        return;
+    }
+
+    // 🔥 SINKRON DENGAN BACKEND
+    formData.append("file", fileInput.files[0]);
+    formData.append("tabel", AppState.tbl);
+
+    this.ajax.request({
+        url: AppConfig.apiUrl + "dynamic/import",
+        method: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: (res) => {
+            if (res.success) {
+                this.hide(this.activeContainer);
+                new TableManager().fetch();
+            } else {
+                alert(res.error || "Import gagal");
+            }
+        }
+    });
+
+    return; // 🔥 hentikan save normal
+}
+
+
+		// ===============================
+		// 🔥 SAVE NORMAL (ADD / EDIT)
+		// ===============================
 		let $formTarget = this.getActiveForm();
 		let formElement = $formTarget[0];
 
@@ -2008,13 +2239,14 @@ class FormContainerManager {
 			contentType: false,
 			success: (res) => {
 				if (res.success) {
-					this.hide(this.activeContainer); // <-- lebih aman
+					this.hide(this.activeContainer);
 					new TableManager().fetch();
 				}
 			},
 		});
 	}
 }
+
 // Kenapa Ini Versi CEO & Interaktif?
 function loadProfil() {
 	$.post(

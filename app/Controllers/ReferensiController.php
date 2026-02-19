@@ -5,6 +5,8 @@ require_once __DIR__ . '/../Core/DB.php';
 class ReferensiController extends Controller
 {
     private $allowedTables = [
+        'urusan',
+        'bidang',
         'program',
         'kegiatan',
         'sub_kegiatan',
@@ -19,6 +21,7 @@ class ReferensiController extends Controller
         'wilayah'
     ];
 
+
     public function index()
     {
         if (!Auth::check()) {
@@ -28,17 +31,16 @@ class ReferensiController extends Controller
 
         $tbl = $_GET['tbl'] ?? 'program';
 
+        // 🔥 Jika tidak diizinkan, fallback ke default
         if (!in_array($tbl, $this->allowedTables)) {
-            die("Tabel tidak diizinkan");
+            $tbl = 'program'; // fallback aman
         }
-
-        // ❌ HAPUS query DB
-        // Data sekarang di-load via DynamicTableService (AJAX)
 
         $this->view('referensi/index', [
             'tbl'  => $tbl
         ], 'app');
     }
+
 
 
     public function store()

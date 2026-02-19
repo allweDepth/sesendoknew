@@ -209,7 +209,8 @@
                     <i class="dropdown icon"></i> Referensi
                 </div>
                 <div class="content">
-                    <a class="item" href="/referensi?tbl=bidang_urusan"><i class="user plus icon"></i> Bidang Urusan</a>
+                    <a class="item" href="/referensi?tbl=urusan"><i class="user plus icon"></i>Urusan</a>
+                    <a class="item" href="/referensi?tbl=bidang"><i class="user plus icon"></i> Bidang </a>
                     <a class="item" href="/referensi?tbl=program"><i class="users icon"></i> Program</a>
                     <a class="item" href="/referensi?tbl=kegiatan"><i class="outdent icon"></i> Kegiatan</a>
                     <a class="item" href="/referensi?tbl=sub_kegiatan"><i class="layer group icon"></i> Sub Kegiatan</a>
