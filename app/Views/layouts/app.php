@@ -91,6 +91,14 @@
         .flyout-footer {
             border-top: 1px solid rgba(0, 0, 0, 0.05);
         }
+
+        #toastContainer {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            width: 350px;
+            z-index: 5;
+        }
     </style>
 </head>
 
@@ -134,7 +142,8 @@
             </div>
         </div>
     </div>
-
+    <div id="toastContainer"></div>
+    </div>
     <!-- SIDEBAR WRAPPER -->
     <div class="ui bottom attached segment pushable" id="mainContext">
         <!-- SIDEBAR -->

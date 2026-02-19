@@ -134,7 +134,88 @@ return [
             ]
         ]
     ],
+    'mapping' => [
+        'table' => 'mapping_aset_akun',
+        'primary_key' => 'id',
+        'modes' => [
 
+            'default' => [
+                'select' => [
+                    'id',
+                    'kd_aset',
+                    'uraian_aset',
+                    'kd_akun',
+                    'uraian_akun',
+                    'kelompok',
+                    'disable',
+                    'aksi',
+                    'keterangan',
+                    'peraturan',
+                    'tgl_insert',
+                    'username_insert',
+                    'tgl_update',
+                    'username_update'
+                ],
+                'searchable' => [
+                    'kd_aset',
+                    'uraian_aset',
+                    'kd_akun',
+                    'uraian_akun',
+                    'kelompok',
+                    'keterangan',
+                    'peraturan'
+                ],
+                'order_by' => 'kd_aset ASC'
+            ],
+
+            'referensi' => [
+                'select' => [
+                    'id',
+                    'kd_aset',
+                    'uraian_aset',
+                    'kd_akun',
+                    'uraian_akun',
+                    'kelompok',
+                    'keterangan',
+                    'peraturan'
+                ],
+                'searchable' => [
+                    'kd_aset',
+                    'uraian_aset',
+                    'kd_akun',
+                    'uraian_akun',
+                    'kelompok'
+                ],
+                'order_by' => 'kd_aset ASC'
+            ],
+
+            'aktif' => [
+                'select' => [
+                    'id',
+                    'kd_aset',
+                    'uraian_aset',
+                    'kd_akun',
+                    'uraian_akun',
+                    'kelompok'
+                ],
+                'searchable' => [
+                    'kd_aset',
+                    'uraian_aset',
+                    'kd_akun',
+                    'uraian_akun'
+                ],
+                'order_by' => 'kd_aset ASC',
+                'where' => "disable = 0"
+            ],
+
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+
+        ]
+    ],
     'aset' => [
         'table' => 'aset_neo',
         'primary_key' => 'id',

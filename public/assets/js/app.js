@@ -36,14 +36,24 @@ const ToastEngine = {
 	show({ success = true, message = "" }) {
 		if (!message) return;
 
-		$("body").toast({
+		let maxToast = 3;
+
+		// 🔥 batasi maksimal 3 toast
+		let existing = $("#toastContainer .ui.toast");
+
+		if (existing.length >= maxToast) {
+			existing.first().remove();
+		}
+
+		$("#toastContainer").toast({
 			message: message,
 			class: success ? "success" : "error",
-			position: "top right",
 			displayTime: 3000,
 			showProgress: "bottom",
+			context: "#toastContainer",
+			position: "top right"
 		});
-	},
+	}
 };
 /* =========================================================
 	 CORE AJAX ENGINE
