@@ -16,7 +16,7 @@
       data-container="flyout">
       <i class="plus icon"></i>
     </button>
-    <button class="ui button" data-ui="open-form" jns="import" data-tooltip="Import XLSX" data-position="bottom center" data-container="flyout"><i class="upload icon"></i></button> 
+    <button class="ui button" data-ui="open-form" data-tbl="<?= $tbl ?>" data-jns="import_xlsx" data-tooltip="Import XLSX" data-position="bottom center" data-container="flyout"><i class="upload icon"></i></button> 
     <button class="ui icon button"
       type="button"
       data-tooltip="Download"

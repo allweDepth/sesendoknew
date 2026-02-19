@@ -828,5 +828,30 @@ return [
             ]
         ]
     ],
-
+    'sub_kegiatan' => [
+        'table' => 'sub_kegiatan',
+        'primary_key' => 'kode',
+        'modes' => [
+            'dropdown' => [
+                'select' => ['kode as id', 'nama as uraian'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'referensi' => [
+                'select' => ['kode', 'kode_kegiatan', 'nama'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'kode ASC'
+            ]
+        ]
+    ],
 ];
