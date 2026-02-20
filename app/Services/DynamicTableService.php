@@ -181,24 +181,13 @@ class DynamicTableService
 
         return $data;
     }
-
     /* =========================================================
        INSERT
     ========================================================= */
     private function insert(string $table, array $request): string
     {
-        /* =====================================================
-       1️⃣ Ambil semua kolom tabel dari database
-       Digunakan untuk memfilter field yang valid saja
-    ===================================================== */
         $columns = $this->getTableColumns($table);
-
-        /* =====================================================
-       2️⃣ Filter request → hanya kolom yang ada di DB
-       Hindari field liar dari frontend
-    ===================================================== */
         $filtered = [];
-
         foreach ($request as $key => $value) {
 
             // Abaikan field kontrol sistem
@@ -214,22 +203,14 @@ class DynamicTableService
         if (empty($filtered)) {
             return JsonResponse::error("Tidak ada data yang bisa disimpan");
         }
-        /* =====================================================
-   VALIDASI HYBRID (PROFILE + SCHEMA)
-===================================================== */
-        $profile = $this->profiles[array_search($table, array_column($this->profiles, 'table'))] ?? [];
-        $errors = $this->validate($filtered, $table, $profile);
 
-        if (!empty($errors)) {
-            return JsonResponse::error("Validation gagal", 422, $errors);
-        }
         /* =====================================================
-       3️⃣ VALIDASI KHUSUS TABEL PERIODE RPJMD
-       -----------------------------------------------------
-       - Cek periode valid
-       - Cek overlap
-       - Set hanya 1 periode aktif per wilayah
-    ===================================================== */
+        3️⃣ VALIDASI KHUSUS TABEL PERIODE RPJMD
+        -----------------------------------------------------
+        - Cek periode valid
+        - Cek overlap
+        - Set hanya 1 periode aktif per wilayah
+        ===================================================== */
         if ($table === 'periode_rpjmd') {
 
             $mulai   = (int)($filtered['periode_mulai'] ?? 0);
@@ -279,14 +260,14 @@ class DynamicTableService
         }
 
         /* =====================================================
-       4️⃣ AUTO INJECT USER SCOPE
-       -----------------------------------------------------
-       Jika tabel punya kolom:
-       - kd_wilayah
-       - kd_opd
-       - tahun
-       maka isi otomatis dari session user
-    ===================================================== */
+        4️⃣ AUTO INJECT USER SCOPE
+        -----------------------------------------------------
+        Jika tabel punya kolom:
+        - kd_wilayah
+        - kd_opd
+        - tahun
+        maka isi otomatis dari session user
+        ===================================================== */
 
         $userScopeMapping = [
             'kd_wilayah' => $this->user['kd_wilayah'] ?? null,
@@ -340,13 +321,14 @@ class DynamicTableService
                 }
             }
         }
+
         /* =====================================================
-5️⃣.1 AUTO GENERATE KODE UNTUK MISI
------------------------------------------------------
-Jika tabel misi_renstra_neo:
-- Jangan percaya input user untuk kode
-- Generate otomatis berdasarkan renstra_id
-===================================================== */
+        5️⃣.1 AUTO GENERATE KODE UNTUK MISI
+        -----------------------------------------------------
+        Jika tabel misi_renstra_neo:
+        - Jangan percaya input user untuk kode
+        - Generate otomatis berdasarkan renstra_id
+        ===================================================== */
         if ($table === 'misi_renstra_neo' && in_array('kode', $columns)) {
 
             $renstraId = $filtered['renstra_id'] ?? null;
@@ -365,20 +347,33 @@ Jika tabel misi_renstra_neo:
             // Set kode baru
             $filtered['kode'] = $lastKode + 1;
         }
+
+        /* =====================================================
+        VALIDASI HYBRID (PROFILE + SCHEMA)
+        -----------------------------------------------------
+        Dijalankan SETELAH semua injection selesai
+        ===================================================== */
+        $profile = $this->getProfileByTable($table);
+        $errors = $this->validate($filtered, $table, $profile);
+
+        if (!empty($errors)) {
+            return JsonResponse::error("Validation gagal", 422, $errors);
+        }
+
         /* =====================================================
        6️⃣ AUDIT TRAIL
        -----------------------------------------------------
        Otomatis isi:
        - tgl_insert
        - username_insert
-    ===================================================== */
+        ===================================================== */
         $filtered = $this->injectAudit($filtered, 'insert');
 
         /* =====================================================
        7️⃣ FINAL INSERT
        -----------------------------------------------------
        Semua validasi selesai → simpan ke DB
-    ===================================================== */
+        ===================================================== */
         $this->db->insert($table, $filtered);
 
         return JsonResponse::success("Data berhasil disimpan");
@@ -479,15 +474,15 @@ Jika tabel misi_renstra_neo:
 
         // Apply scope berdasarkan role
         list($userWhere, $userParams) = $this->applyUserScope($table);
+
         /* =====================================================
-   SEARCH ENGINE
-===================================================== */
+           SEARCH ENGINE
+        ===================================================== */
         if (!empty($search) && !empty($modeConfig['searchable'])) {
 
             $searchParts = [];
             $searchableColumns = $modeConfig['searchable'];
 
-            // jika searchable = ['*'] → semua kolom
             if ($searchableColumns === ['*']) {
                 $searchableColumns = $this->getTableColumns($table);
             }
@@ -501,6 +496,7 @@ Jika tabel misi_renstra_neo:
                 $whereParts[] = "(" . implode(" OR ", $searchParts) . ")";
             }
         }
+
         $whereParts = array_merge($whereParts, $userWhere);
         $params     = array_merge($params, $userParams);
 
@@ -533,19 +529,15 @@ Jika tabel misi_renstra_neo:
                 'total' => (int)$totalRow,
                 'page'  => $page,
                 'limit' => $limit,
-                'primary_key' => $this->getPrimaryKey($table) // 🔥 TAMBAH INI
+                'primary_key' => $this->getPrimaryKey($table)
             ],
             $rows
         );
     }
+
     /* =========================================================
-   GET ALL RAW DATA (UNTUK EXPORT / REPORT)
-   ---------------------------------------------------------
-   Fungsi ini berbeda dengan buildQuery():
-   - Tidak memakai limit pagination
-   - Tetap role aware (user scope)
-   - Tetap aman dari SQL injection
-========================================================= */
+       GET ALL RAW DATA (UNTUK EXPORT / REPORT)
+    ========================================================= */
     private function getAllRaw(
         string $table,
         array $profile,
@@ -569,21 +561,18 @@ Jika tabel misi_renstra_neo:
         $primaryKey = $this->getPrimaryKey($table);
 
         $query = "
-    SELECT $selectClause
-    FROM `$table`
-    $where
-    ORDER BY `$primaryKey` DESC
-";
+            SELECT $selectClause
+            FROM `$table`
+            $where
+            ORDER BY `$primaryKey` DESC
+        ";
 
         return $this->db->query($query, $userParams)->fetchAll();
     }
+
     /* =========================================================
-   EXPORT ENGINE
-   ---------------------------------------------------------
-   - Mengambil semua data tanpa pagination
-   - Tetap mengikuti mode (default/custom)
-   - Bisa dikembangkan ke Excel / CSV / PDF
-========================================================= */
+       EXPORT ENGINE
+    ========================================================= */
     private function export(
         string $table,
         array $profile,
@@ -621,8 +610,8 @@ Jika tabel misi_renstra_neo:
         $params     = [];
 
         /* =====================================================
-       ADMIN WILAYAH
-    ===================================================== */
+           ADMIN WILAYAH
+        ===================================================== */
         if ($role === 'admin_wilayah') {
 
             if (in_array('kd_wilayah', $columns)) {
@@ -632,12 +621,12 @@ Jika tabel misi_renstra_neo:
         }
 
         /* =====================================================
-       ADMIN OPD
-       - kd_opd
-       - kd_wilayah (jika ada)
-       - tahun (jika ada)
-       - periode aktif (jika ada kolom periode_id)
-    ===================================================== */
+           ADMIN OPD
+           - kd_opd
+           - kd_wilayah (jika ada)
+           - tahun (jika ada)
+           - periode aktif (jika ada kolom periode_id)
+        ===================================================== */
         if ($role === 'admin_opd') {
 
             if (in_array('kd_opd', $columns)) {
@@ -661,12 +650,12 @@ Jika tabel misi_renstra_neo:
                 $kd_wilayah = $this->user['kd_wilayah'] ?? null;
 
                 $periodeAktif = $this->db->query("
-                SELECT id
-                FROM periode_rpjmd
-                WHERE kd_wilayah = ?
-                AND status_aktif = 1
-                LIMIT 1
-            ", [$kd_wilayah])->fetch();
+                    SELECT id
+                    FROM periode_rpjmd
+                    WHERE kd_wilayah = ?
+                    AND status_aktif = 1
+                    LIMIT 1
+                ", [$kd_wilayah])->fetch();
 
                 if ($periodeAktif) {
                     $whereParts[] = "`periode_id` = ?";
@@ -686,63 +675,37 @@ Jika tabel misi_renstra_neo:
         $stmt = $this->db->query("SHOW COLUMNS FROM `$table`");
         return array_column($stmt->fetchAll(), 'Field');
     }
+
     /* =========================================================
-   HYBRID VALIDATION ENGINE
-   ---------------------------------------------------------
-   Prinsip:
-   1. Ambil rule dari profile['validation'] (jika ada)
-   2. Ambil rule otomatis dari schema database
-   3. Merge → profile override schema
-   4. Jalankan validasi
-========================================================= */
+       HYBRID VALIDATION ENGINE
+    ========================================================= */
     private function validate(array $data, string $table, array $profile): array
     {
-        $errors = []; // Menyimpan semua error validasi
+        $errors = [];
 
-        /* =====================================================
-       1️⃣ AMBIL RULE DARI PROFILE (JIKA ADA)
-    ===================================================== */
         $customRules = $profile['validation'] ?? [];
-        // Jika table_profiles.php punya key 'validation',
-        // maka ambil rule tersebut
-        // Jika tidak ada → array kosong
-
-        /* =====================================================
-       2️⃣ BANGUN RULE OTOMATIS DARI SCHEMA DATABASE
-    ===================================================== */
         $schemaRules = $this->buildRulesFromSchema($table);
 
-        /* =====================================================
-       3️⃣ MERGE RULE
-       - Custom override schema
-    ===================================================== */
         $rules = array_merge($schemaRules, $customRules);
 
-        /* =====================================================
-       4️⃣ EKSEKUSI VALIDASI
-    ===================================================== */
         foreach ($rules as $field => $fieldRules) {
 
             $value = $data[$field] ?? null;
 
             foreach ($fieldRules as $rule) {
 
-                /* ---------- REQUIRED ---------- */
                 if ($rule === 'required' && empty($value)) {
                     $errors[$field] = "$field wajib diisi";
                 }
 
-                /* ---------- NUMERIC ---------- */
                 if ($rule === 'numeric' && !empty($value) && !is_numeric($value)) {
                     $errors[$field] = "$field harus berupa angka";
                 }
 
-                /* ---------- EMAIL ---------- */
                 if ($rule === 'email' && !empty($value) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
                     $errors[$field] = "$field tidak valid";
                 }
 
-                /* ---------- MAX LENGTH ---------- */
                 if (str_starts_with($rule, 'max:') && !empty($value)) {
 
                     $max = (int)explode(':', $rule)[1];
@@ -754,21 +717,16 @@ Jika tabel misi_renstra_neo:
             }
         }
 
-        return $errors; // Kembalikan semua error (jika ada)
+        return $errors;
     }
+
     /* =========================================================
-   BUILD RULE DARI SCHEMA DATABASE
-   ---------------------------------------------------------
-   Otomatis:
-   - NOT NULL → required
-   - INT / DECIMAL → numeric
-   - VARCHAR(100) → max:100
-========================================================= */
+       BUILD RULE DARI SCHEMA DATABASE
+    ========================================================= */
     private function buildRulesFromSchema(string $table): array
     {
         $rules = [];
 
-        // Ambil struktur lengkap kolom
         $columns = $this->db->query("SHOW COLUMNS FROM `$table`")->fetchAll();
 
         foreach ($columns as $col) {
@@ -779,17 +737,14 @@ Jika tabel misi_renstra_neo:
 
             $fieldRules = [];
 
-            /* ---------- REQUIRED (NOT NULL) ---------- */
             if ($null === 'NO' && $field !== 'id') {
                 $fieldRules[] = 'required';
             }
 
-            /* ---------- NUMERIC ---------- */
             if (str_contains($type, 'int') || str_contains($type, 'decimal')) {
                 $fieldRules[] = 'numeric';
             }
 
-            /* ---------- MAX LENGTH ---------- */
             if (preg_match('/varchar\((\d+)\)/', $type, $match)) {
                 $fieldRules[] = 'max:' . $match[1];
             }
@@ -801,9 +756,10 @@ Jika tabel misi_renstra_neo:
 
         return $rules;
     }
+
     /* =========================================================
-   DROPDOWN ENGINE (FIX UNIVERSAL PRIMARY KEY)
-========================================================= */
+       DROPDOWN ENGINE (FIX UNIVERSAL PRIMARY KEY)
+    ========================================================= */
     private function loadDropdown(string $source, $parentValue = null): string
     {
         if (!isset($this->profiles[$source])) {
@@ -813,20 +769,15 @@ Jika tabel misi_renstra_neo:
         $profile = $this->profiles[$source];
         $table   = $profile['table'];
 
-        // 🔥 Ambil primary key yang benar
         $primaryKey = $profile['primary_key'] ?? 'id';
-
-        // 🔥 Gunakan dropdown config jika ada
         $valueField = $profile['dropdown']['value'] ?? $primaryKey;
         $labelField = $profile['dropdown']['label'] ?? 'nama';
 
-        // Terapkan user scope (role aware)
         list($scopeWhere, $scopeParams) = $this->applyUserScope($table);
 
         $whereParts = $scopeWhere;
         $params     = $scopeParams;
 
-        // Parent dependency (cascading)
         if ($parentValue !== null) {
             foreach ($this->getTableColumns($table) as $col) {
                 if (str_starts_with($col, 'kode_') || str_starts_with($col, 'id_')) {
@@ -842,19 +793,20 @@ Jika tabel misi_renstra_neo:
             : "";
 
         $query = "
-        SELECT `$valueField` as id, `$labelField` as uraian
-        FROM `$table`
-        $where
-        ORDER BY `$valueField` ASC
-    ";
+            SELECT `$valueField` as id, `$labelField` as uraian
+            FROM `$table`
+            $where
+            ORDER BY `$valueField` ASC
+        ";
 
         $rows = $this->db->query($query, $params)->fetchAll();
 
         return JsonResponse::success("Dropdown loaded", [], $rows);
     }
+
     /* =========================================================
-   UTIL: GET PROFILE BY TABLE
-========================================================= */
+       UTIL: GET PROFILE BY TABLE
+    ========================================================= */
     private function getProfileByTable(string $table): array
     {
         foreach ($this->profiles as $profile) {
@@ -866,8 +818,8 @@ Jika tabel misi_renstra_neo:
     }
 
     /* =========================================================
-   UTIL: GET PRIMARY KEY
-========================================================= */
+       UTIL: GET PRIMARY KEY
+    ========================================================= */
     private function getPrimaryKey(string $table): string
     {
         $profile = $this->getProfileByTable($table);
@@ -875,8 +827,8 @@ Jika tabel misi_renstra_neo:
     }
 
     /* =========================================================
-   UTIL: CHECK ACCESS WITH SCOPE
-========================================================= */
+       UTIL: CHECK ACCESS WITH SCOPE
+    ========================================================= */
     private function checkAccess(string $table, $id): bool
     {
         $primaryKey = $this->getPrimaryKey($table);
