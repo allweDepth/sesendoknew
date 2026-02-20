@@ -317,47 +317,50 @@ class TableManager {
 		 Render isi tbody tabel
 	------------------------------------------------------ */
 	renderTable(rows) {
+		// 🔥 cari tbody apapun yang diawali tabel_
+		let $tbody = $('tbody[name^="tabel_"]').first();
 
-    let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
+		if (!$tbody.length) {
+			ToastEngine.show({
+				success: false,
+				message: "Struktur tabel belum siap atau belum dikonfigurasi.",
+			});
+			return;
+		}
 
-    if (!$tbody.length) {
-        console.warn("Tbody tidak ditemukan untuk:", AppState.tbl);
-        return;
-    }
+		let html = "";
 
-    let html = "";
-
-    if (!rows.length) {
-        html = `
+		if (!rows.length) {
+			html = `
         <tr>
             <td colspan="100%" class="center aligned">
                 Tidak ada data
             </td>
         </tr>`;
-        $tbody.html(html);
-        return;
-    }
+			$tbody.html(html);
+			return;
+		}
 
-    let elements = UIConfig[AppState.jenis]?.[AppState.tbl] || [];
-    let fields = elements.filter(e => e.prop?.name && !e.prop.non_data);
+		let elements = UIConfig[AppState.jenis]?.[AppState.tbl] || [];
+		let fields = elements.filter((e) => e.prop?.name && !e.prop.non_data);
 
-    rows.forEach(row => {
-        html += "<tr>";
+		rows.forEach((row) => {
+			html += "<tr>";
 
-        fields.forEach(field => {
-            let key = field.prop.name;
-            html += `<td>${row[key] ?? ""}</td>`;
-        });
+			fields.forEach((field) => {
+				let key = field.prop.name;
+				html += `<td>${row[key] ?? ""}</td>`;
+			});
 
-        html += `<td class="collapsing">
+			html += `<td class="collapsing">
                     ${this.buildActionButtons(row)}
                  </td>`;
 
-        html += "</tr>";
-    });
+			html += "</tr>";
+		});
 
-    $tbody.html(html);
-}
+		$tbody.html(html);
+	}
 
 	/* -----------------------------------------------------
 		 Render pagination
@@ -471,7 +474,9 @@ class TableManager {
 	}
 	renderHeader() {
 
-    let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
+    // 🔥 gunakan logic yang sama dengan renderTable
+    let $tbody = $('tbody[name^="tabel_"]').first();
+
     if (!$tbody.length) return;
 
     let $table = $tbody.closest("table");
