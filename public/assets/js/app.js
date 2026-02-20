@@ -1783,16 +1783,16 @@ class FormContainerManager {
 		// 🔥 BUILD CONFIG
 		// ==============================
 		let config = this.buildConfig(jenisMode, tbl);
-
 		if (!config.elements.length) {
+			ToastEngine.show({
+				success: false,
+				message: "Form belum dikonfigurasi. Hubungi administrator.",
+			});
 
-	ToastEngine.show({
-		success: false,
-		message: `UIConfig belum tersedia untuk module "${AppState.jenis}" dan tabel "${tbl}"`
-	});
+			console.warn("UIConfig missing:", AppState.jenis, tbl);
 
-	return;
-}
+			return;
+		}
 
 		// ==============================
 		// 🔥 DETECT DROPDOWN
