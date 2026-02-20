@@ -1128,18 +1128,23 @@ const UIConfig = {
 					source: "sasaran_renstra_neo",
 				},
 			},
-			{ tag: "field", prop: { label: "Kode Program", name: "kode_program" } },
 			{
-				tag: "fieldTextarea",
+				tag: "fieldDropdown",
 				prop: {
-					label: "Nama Program",
-					name: "nama_program",
-					atribut: `rows="2"`,
+					label: "Program (Permendagri)",
+					name: "kode_program",
+					source: "program",
+					searchable: true,
+					dropdownClass: "search selection scrolling",
 				},
 			},
 			{
 				tag: "fieldTextarea",
-				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
+				prop: {
+					label: "Keterangan",
+					name: "keterangan",
+					atribut: `rows="2"`,
+				},
 			},
 		],
 
