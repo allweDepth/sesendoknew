@@ -75,13 +75,18 @@ class DynamicController
         $data = $responseData['data'] ?? [];
 
         if (empty($data)) {
-            die("Data kosong di tabel: " . $table);
+            // die("Data kosong di tabel: " . $table);
+            $data = []; // tetap lanjut
         }
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $headers = array_keys($data[0]);
+        if (!empty($data)) {
+            $headers = array_keys($data[0]);
+        } else {
+            $headers = ['Keterangan'];
+        }
         $totalColumns = count($headers);
         $lastColumn = Coordinate::stringFromColumnIndex($totalColumns);
 
@@ -164,27 +169,34 @@ class DynamicController
          */
         $row = 6;
 
-        foreach ($data as $item) {
+        $row = 6;
 
-            $colIndex = 1;
+        if (!empty($data)) {
 
-            foreach ($item as $value) {
+            foreach ($data as $item) {
 
-                $columnLetter = Coordinate::stringFromColumnIndex($colIndex);
-                $cell = $columnLetter . $row;
+                $colIndex = 1;
 
-                $sheet->setCellValue($cell, $value);
+                foreach ($item as $value) {
 
-                // Jika numeric besar -> format rupiah
-                if (is_numeric($value) && $value > 1000) {
-                    $sheet->getStyle($cell)
-                        ->getNumberFormat()
-                        ->setFormatCode('"Rp" #,##0');
+                    $columnLetter = Coordinate::stringFromColumnIndex($colIndex);
+                    $cell = $columnLetter . $row;
+
+                    $sheet->setCellValue($cell, $value);
+
+                    if (is_numeric($value) && $value > 1000) {
+                        $sheet->getStyle($cell)
+                            ->getNumberFormat()
+                            ->setFormatCode('"Rp" #,##0');
+                    }
+
+                    $colIndex++;
                 }
 
-                $colIndex++;
+                $row++;
             }
-
+        } else {
+            $sheet->setCellValue('A6', 'Tidak ada data');
             $row++;
         }
 

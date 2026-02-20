@@ -1021,8 +1021,12 @@ const UIConfig = {
     ============================== */
 		misi_renstra_neo: [
 			{
-				tag: "field",
-				prop: { label: "Kode Misi", name: "kode_misi" },
+				tag: "fieldDropdown",
+				prop: {
+					label: "Pilih Visi",
+					name: "renstra_id",
+					source: "renstra_neo",
+				},
 			},
 			{
 				tag: "fieldTextarea",
@@ -1041,10 +1045,6 @@ const UIConfig = {
 			{
 				tag: "fieldDropdown",
 				prop: { label: "Misi", name: "misi_id", source: "misi_renstra_neo" },
-			},
-			{
-				tag: "field",
-				prop: { label: "Kode Tujuan", name: "kode_tujuan" },
 			},
 			{
 				tag: "fieldTextarea",
@@ -1071,10 +1071,6 @@ const UIConfig = {
 					name: "tujuan_id",
 					source: "tujuan_renstra_neo",
 				},
-			},
-			{
-				tag: "field",
-				prop: { label: "Kode Sasaran", name: "kode_sasaran" },
 			},
 			{
 				tag: "fieldTextarea",

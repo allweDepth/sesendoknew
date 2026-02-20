@@ -22,7 +22,7 @@ class DynamicTableService
     private DB $db;
     private array $profiles;
     private array $user;
-
+    private static array $columnCache = [];
     public function __construct()
     {
         $this->db = DB::getInstance();
@@ -182,28 +182,41 @@ class DynamicTableService
     /* =========================================================
        INSERT (FULL IDENTIK LOGIC ASLI)
     ========================================================= */
+    /* =========================================================
+   INSERT (FIXED STABLE VERSION v3.1)
+========================================================= */
     private function insert(string $table, array $request): string
     {
-        $columns = $this->getTableColumns($table);
+        $columns  = $this->getTableColumns($table);
         $filtered = [];
-
+        /* =====================================================
+        FILTER FIELD SESUAI KOLOM TABEL
+        ===================================================== */
         foreach ($request as $key => $value) {
 
-            // 🔥 Abaikan field kontrol sistem (SUDAH DIGANTI)
             if (in_array($key, ['action', 'module', 'tbl'])) continue;
 
-            // Hanya masukkan field yang memang ada di tabel
             if (in_array($key, $columns)) {
                 $filtered[$key] = $value;
             }
         }
-
         if (empty($filtered)) {
             return JsonResponse::error("Tidak ada data yang bisa disimpan");
         }
+        /* =====================================================
+       NORMALISASI CHECKBOX / BOOLEAN
+    ===================================================== */
+        foreach ($columns as $col) {
+
+            if (!isset($filtered[$col])) continue;
+
+            if ($filtered[$col] === 'on') {
+                $filtered[$col] = 1;
+            }
+        }
 
         /* =====================================================
-        VALIDASI KHUSUS TABEL PERIODE RPJMD
+        VALIDASI KHUSUS PERIODE RPJMD
         ===================================================== */
         if ($table === 'periode_rpjmd') {
 
@@ -220,32 +233,29 @@ class DynamicTableService
                 return JsonResponse::error("Periode tidak valid");
             }
 
-            // Cek overlap periode
             $cek = $this->db->query("
-                SELECT id FROM periode_rpjmd
-                WHERE kd_wilayah = ?
-                AND (
-                    (? BETWEEN periode_mulai AND periode_selesai)
-                    OR
-                    (? BETWEEN periode_mulai AND periode_selesai)
-                )
-            ", [$kd_wilayah, $mulai, $selesai])->fetch();
+            SELECT id FROM periode_rpjmd
+            WHERE kd_wilayah = ?
+            AND (
+                (? BETWEEN periode_mulai AND periode_selesai)
+                OR
+                (? BETWEEN periode_mulai AND periode_selesai)
+            )
+        ", [$kd_wilayah, $mulai, $selesai])->fetch();
 
             if ($cek) {
                 return JsonResponse::error("Periode tumpang tindih");
             }
 
-            // Inject wilayah dari session
             $filtered['kd_wilayah'] = $kd_wilayah;
 
-            // Jika diset aktif → nonaktifkan yang lain
             if (!empty($filtered['status_aktif'])) {
 
                 $this->db->query("
-                    UPDATE periode_rpjmd
-                    SET status_aktif = 0
-                    WHERE kd_wilayah = ?
-                ", [$kd_wilayah]);
+                UPDATE periode_rpjmd
+                SET status_aktif = 0
+                WHERE kd_wilayah = ?
+            ", [$kd_wilayah]);
 
                 $filtered['status_aktif'] = 1;
             } else {
@@ -254,8 +264,8 @@ class DynamicTableService
         }
 
         /* =====================================================
-        AUTO INJECT USER SCOPE
-        ===================================================== */
+       AUTO INJECT USER SCOPE (LEBIH AMAN)
+    ===================================================== */
         $userScopeMapping = [
             'kd_wilayah' => $this->user['kd_wilayah'] ?? null,
             'kd_opd'     => $this->user['kd_opd'] ?? null,
@@ -264,37 +274,37 @@ class DynamicTableService
 
         foreach ($userScopeMapping as $field => $value) {
 
-            if (in_array($field, $columns) && !isset($filtered[$field]) && $value !== null) {
+            if (in_array($field, $columns) && $value !== null) {
                 $filtered[$field] = $value;
             }
         }
 
         /* =====================================================
-        AUTO SET PERIODE AKTIF UNTUK RENSTRA
-        ===================================================== */
+       AUTO SET PERIODE AKTIF UNTUK RENSTRA
+    ===================================================== */
         if ($table === 'renstra_neo' && in_array('periode_id', $columns)) {
 
             $kd_wilayah = $this->user['kd_wilayah'] ?? null;
 
             $periodeAktif = $this->db->query("
-                SELECT id
-                FROM periode_rpjmd
-                WHERE kd_wilayah = ?
-                AND status_aktif = 1
-                LIMIT 1
-            ", [$kd_wilayah])->fetch();
+            SELECT id
+            FROM periode_rpjmd
+            WHERE kd_wilayah = ?
+            AND status_aktif = 1
+            LIMIT 1
+        ", [$kd_wilayah])->fetch();
 
             if ($periodeAktif) {
                 $filtered['periode_id'] = $periodeAktif['id'];
             } else {
 
                 $periodeTerbaru = $this->db->query("
-                    SELECT id
-                    FROM periode_rpjmd
-                    WHERE kd_wilayah = ?
-                    ORDER BY periode_mulai DESC
-                    LIMIT 1
-                ", [$kd_wilayah])->fetch();
+                SELECT id
+                FROM periode_rpjmd
+                WHERE kd_wilayah = ?
+                ORDER BY periode_mulai DESC
+                LIMIT 1
+            ", [$kd_wilayah])->fetch();
 
                 if ($periodeTerbaru) {
                     $filtered['periode_id'] = $periodeTerbaru['id'];
@@ -305,8 +315,8 @@ class DynamicTableService
         }
 
         /* =====================================================
-        AUTO GENERATE KODE MISI
-        ===================================================== */
+       AUTO GENERATE KODE MISI
+    ===================================================== */
         if ($table === 'misi_renstra_neo' && in_array('kode', $columns)) {
 
             $renstraId = $filtered['renstra_id'] ?? null;
@@ -316,43 +326,60 @@ class DynamicTableService
             }
 
             $lastKode = $this->db->query("
-                SELECT MAX(CAST(kode AS UNSIGNED)) as max_kode
-                FROM misi_renstra_neo
-                WHERE renstra_id = ?
-            ", [$renstraId])->fetch()['max_kode'] ?? 0;
+            SELECT MAX(CAST(kode AS UNSIGNED)) as max_kode
+            FROM misi_renstra_neo
+            WHERE renstra_id = ?
+        ", [$renstraId])->fetch()['max_kode'] ?? 0;
 
             $filtered['kode'] = $lastKode + 1;
         }
 
         /* =====================================================
-        VALIDASI HYBRID (PROFILE + SCHEMA)
-        ===================================================== */
+       AUDIT TRAIL (PINDAH SEBELUM VALIDASI)
+    ===================================================== */
+        $filtered = $this->injectAudit($filtered, 'insert');
+
+        /* =====================================================
+       VALIDASI HYBRID
+    ===================================================== */
         $profile = $this->getProfileByTable($table);
-        $errors = $this->validate($filtered, $table, $profile);
+        $errors  = $this->validate($filtered, $table, $profile);
 
         if (!empty($errors)) {
             return JsonResponse::error("Validation gagal", 422, $errors);
         }
 
         /* =====================================================
-        AUDIT TRAIL
-        ===================================================== */
-        $filtered = $this->injectAudit($filtered, 'insert');
+       FINAL INSERT
+    ===================================================== */
+        // $this->db->insert($table, $filtered);
+
+        // return JsonResponse::success("Data berhasil disimpan");
 
         /* =====================================================
-        FINAL INSERT
+        FINAL INSERT + AUDIT + TRANSACTION
         ===================================================== */
-        $this->db->insert($table, $filtered);
+        return $this->runTransaction(function () use ($table, $filtered) {
 
-        return JsonResponse::success("Data berhasil disimpan");
+            $this->db->insert($table, $filtered);
+
+            $id = $this->db->lastInsertId();
+
+            $this->logActivity($table, $id, 'insert', null, $filtered);
+
+            return JsonResponse::success("Data berhasil disimpan");
+        });
     }
     /* =========================================================
        UPDATE (FULL IDENTIK LOGIC ASLI)
     ========================================================= */
+    /* =========================================================
+   UPDATE (FIXED STABLE VERSION v3.1)
+========================================================= */
     private function update(string $table, array $request): string
     {
-        $columns = $this->getTableColumns($table);
-        $primaryKey = $this->getPrimaryKey($table);
+        $columns     = $this->getTableColumns($table);
+        $primaryKey  = $this->getPrimaryKey($table);
 
         $id = $request['id'] ?? null;
         if (!$id) {
@@ -363,9 +390,11 @@ class DynamicTableService
 
         $filtered = [];
 
+        /* =====================================================
+       FILTER FIELD SESUAI KOLOM
+    ===================================================== */
         foreach ($request as $key => $value) {
 
-            // 🔥 SUDAH DIGANTI (hapus action/module/tbl)
             if (in_array($key, ['action', 'module', 'tbl'])) continue;
 
             if (in_array($key, $columns)) {
@@ -377,29 +406,108 @@ class DynamicTableService
             return JsonResponse::error("Tidak ada data yang bisa diupdate");
         }
 
+        /* =====================================================
+       NORMALISASI CHECKBOX / BOOLEAN
+    ===================================================== */
+        foreach ($columns as $col) {
+
+            if (!isset($filtered[$col])) continue;
+
+            if ($filtered[$col] === 'on') {
+                $filtered[$col] = 1;
+            }
+        }
+
+        /* =====================================================
+       AUTO INJECT USER SCOPE (OPSIONAL SAFE OVERRIDE)
+       Supaya user tidak bisa ubah kd_opd/kd_wilayah manual
+    ===================================================== */
+        $userScopeMapping = [
+            'kd_wilayah' => $this->user['kd_wilayah'] ?? null,
+            'kd_opd'     => $this->user['kd_opd'] ?? null,
+            'tahun'      => $this->user['tahun'] ?? null,
+        ];
+
+        foreach ($userScopeMapping as $field => $value) {
+
+            if (in_array($field, $columns) && $value !== null) {
+                $filtered[$field] = $value;
+            }
+        }
+
+        /* =====================================================
+       AUDIT TRAIL (PINDAH SEBELUM VALIDASI)
+    ===================================================== */
+        $filtered = $this->injectAudit($filtered, 'update');
+
+        /* =====================================================
+       VALIDASI HYBRID
+    ===================================================== */
         $profile = $this->getProfileByTable($table);
-        $errors = $this->validate($filtered, $table, $profile);
+        $errors  = $this->validate($filtered, $table, $profile);
 
         if (!empty($errors)) {
             return JsonResponse::error("Validation gagal", 422, $errors);
         }
 
-        $filtered = $this->injectAudit($filtered, 'update');
-
+        /* =====================================================
+       CEK AKSES BERDASARKAN SCOPE
+    ===================================================== */
         if (!$this->checkAccess($table, $id)) {
             return JsonResponse::error("Tidak memiliki akses untuk update data ini");
         }
 
-        $this->db->update(
-            $table,
-            $filtered,
-            "WHERE `$primaryKey` = ?",
+        /* =====================================================
+        FINAL UPDATE
+        ===================================================== */
+        // $this->db->update(
+        //     $table,
+        //     $filtered,
+        //     "WHERE `$primaryKey` = ?",
+        //     [$id]
+        // );
+        // return JsonResponse::success("Data berhasil diupdate");
+        /* =====================================================
+        BACKUP EDIT
+        ===================================================== */
+        /* =====================================================
+   SMART DIFF + TRANSACTION + AUDIT
+===================================================== */
+        $oldData = $this->db->query(
+            "SELECT * FROM `$table` WHERE `$primaryKey` = ?",
             [$id]
-        );
+        )->fetch();
 
-        return JsonResponse::success("Data berhasil diupdate");
+        if (!$oldData) {
+            return JsonResponse::error("Data tidak ditemukan");
+        }
+
+        $diff = [];
+
+        foreach ($filtered as $key => $value) {
+            if (isset($oldData[$key]) && $oldData[$key] != $value) {
+                $diff[$key] = $value;
+            }
+        }
+
+        if (empty($diff)) {
+            return JsonResponse::success("Tidak ada perubahan");
+        }
+
+        return $this->runTransaction(function () use ($table, $primaryKey, $id, $diff, $oldData) {
+
+            $this->db->update(
+                $table,
+                $diff,
+                "WHERE `$primaryKey` = ?",
+                [$id]
+            );
+
+            $this->logActivity($table, $id, 'update', $oldData, $diff);
+
+            return JsonResponse::success("Data berhasil diupdate");
+        });
     }
-
     /* =========================================================
        DELETE (FULL IDENTIK LOGIC ASLI)
     ========================================================= */
@@ -408,21 +516,47 @@ class DynamicTableService
         $primaryKey = $this->getPrimaryKey($table);
 
         if (!$this->checkAccess($table, $id)) {
-            return JsonResponse::error("Tidak memiliki akses untuk menghapus data ini");
+            return JsonResponse::error("Tidak memiliki akses");
         }
 
-        $this->db->delete(
-            $table,
-            "WHERE `$primaryKey` = ?",
+        $oldData = $this->db->query(
+            "SELECT * FROM `$table` WHERE `$primaryKey` = ?",
             [$id]
-        );
+        )->fetch();
 
-        return JsonResponse::success('Data berhasil dihapus');
+        return $this->runTransaction(function () use ($table, $primaryKey, $id, $oldData) {
+
+            $columns = $this->getTableColumns($table);
+
+            if (in_array('deleted_at', $columns)) {
+
+                $this->db->update(
+                    $table,
+                    [
+                        'deleted_at' => date('Y-m-d H:i:s'),
+                        'deleted_by' => $this->user['username'] ?? 'system'
+                    ],
+                    "WHERE `$primaryKey` = ?",
+                    [$id]
+                );
+            } else {
+
+                $this->db->delete(
+                    $table,
+                    "WHERE `$primaryKey` = ?",
+                    [$id]
+                );
+            }
+
+            $this->logActivity($table, $id, 'delete', $oldData, null);
+
+            return JsonResponse::success("Data berhasil dihapus");
+        });
     }
 
     /* =========================================================
-       BUILD QUERY (LISTING + SEARCH + SCOPE FULL IDENTIK)
-    ========================================================= */
+        BUILD QUERY (LISTING + SEARCH + SCOPE FULL IDENTIK)
+        ========================================================= */
     private function buildQuery(
         string $table,
         array $profile,
@@ -829,5 +963,63 @@ class DynamicTableService
         )->fetch();
 
         return (bool)$row;
+    }
+    private function logActivity(
+        string $table,
+        $recordId,
+        string $action,
+        $oldData = null,
+        $newData = null
+    ): void {
+
+        if (!$this->tableExists('log_activity')) {
+            return;
+        }
+
+        try {
+
+            $this->db->insert('log_activity', [
+                'table_name' => $table,
+                'record_id'  => $recordId,
+                'action'     => $action,
+                'old_data'   => $oldData ? json_encode($oldData, JSON_UNESCAPED_UNICODE) : null,
+                'new_data'   => $newData ? json_encode($newData, JSON_UNESCAPED_UNICODE) : null,
+                'username'   => $this->user['username'] ?? 'system',
+                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+        } catch (Exception $e) {
+            // Jangan sampai audit log bikin sistem utama gagal
+        }
+    }
+    /* =========================================================
+   UTIL: CEK APAKAH TABEL ADA
+========================================================= */
+    private function tableExists(string $table): bool
+    {
+        $result = $this->db->query(
+            "SHOW TABLES LIKE ?",
+            [$table]
+        )->fetch();
+
+        return (bool)$result;
+    }
+    private function runTransaction(callable $callback)
+    {
+        try {
+
+            $this->db->query("START TRANSACTION");
+
+            $result = $callback();
+
+            $this->db->query("COMMIT");
+
+            return $result;
+        } catch (Exception $e) {
+
+            $this->db->query("ROLLBACK");
+            throw $e;
+        }
     }
 }

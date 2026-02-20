@@ -567,8 +567,8 @@ return [
     ],
     'modes' => [
         'default' => [
-            'select' => ['id','renstra_id','kode_misi','nama_misi','disable','keterangan'],
-            'searchable' => ['kode_misi','nama_misi'],
+            'select' => ['id','renstra_id','nama_misi','disable','keterangan'],
+            'searchable' => ['nama_misi'],
             'order_by' => 'id DESC',
         ],
         'edit' => [
@@ -588,8 +588,8 @@ return [
     ],
     'modes' => [
         'default' => [
-            'select' => ['id','misi_id','kode_tujuan','nama_tujuan','disable','keterangan'],
-            'searchable' => ['kode_tujuan','nama_tujuan'],
+            'select' => ['id','misi_id','nama_tujuan','disable','keterangan'],
+            'searchable' => ['nama_tujuan'],
             'order_by' => 'id DESC',
         ],
         'edit' => [
@@ -609,8 +609,8 @@ return [
     ],
     'modes' => [
         'default' => [
-            'select' => ['id','tujuan_id','kode_sasaran','nama_sasaran','disable','keterangan'],
-            'searchable' => ['kode_sasaran','nama_sasaran'],
+            'select' => ['id','tujuan_id','nama_sasaran','disable','keterangan'],
+            'searchable' => ['nama_sasaran'],
             'order_by' => 'id DESC',
         ],
         'edit' => [

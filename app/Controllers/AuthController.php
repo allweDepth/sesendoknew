@@ -29,50 +29,50 @@ class AuthController extends Controller
         exit;
     }
     public function register()
-{
-    header('Content-Type: application/json');
+    {
+        header('Content-Type: application/json');
 
-    $data = [
-        'username'      => $_POST['username'] ?? '',
-        'email'         => $_POST['email'] ?? '',
-        'nama'          => $_POST['nama'] ?? '',
-        'nip'           => $_POST['nip'] ?? '',
-        'kontak_person' => $_POST['kontak_person'] ?? '',
-        'alamat'        => $_POST['alamat'] ?? '',
-        'password'      => $_POST['password'] ?? '',
-        'kd_wilayah'    => $_POST['kd_wilayah'] ?? '',
-        'kd_opd'        => $_POST['kd_opd'] ?? '',
-    ];
+        $data = [
+            'username'      => $_POST['username'] ?? '',
+            'email'         => $_POST['email'] ?? '',
+            'nama'          => $_POST['nama'] ?? '',
+            'nip'           => $_POST['nip'] ?? '',
+            'kontak_person' => $_POST['kontak_person'] ?? '',
+            'alamat'        => $_POST['alamat'] ?? '',
+            'password'      => $_POST['password'] ?? '',
+            'kd_wilayah'    => $_POST['kd_wilayah'] ?? '',
+            'kd_opd'        => $_POST['kd_opd'] ?? '',
+        ];
 
-    // Validasi sederhana
-    if (empty($data['username']) || empty($data['password'])) {
+        // Validasi sederhana
+        if (empty($data['username']) || empty($data['password'])) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Username dan password wajib diisi'
+            ]);
+            exit;
+        }
+
+        // Hash password
+        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+
+        require_once __DIR__ . '/../Models/UserModel.php';
+        $userModel = new UserModel();
+
+        if (!$userModel->insertUser($data)) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Gagal menyimpan data'
+            ]);
+            exit;
+        }
+
         echo json_encode([
-            'status' => 'error',
-            'message' => 'Username dan password wajib diisi'
+            'status' => 'success',
+            'message' => 'Registrasi berhasil 🎉'
         ]);
         exit;
     }
-
-    // Hash password
-    $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-
-    require_once __DIR__ . '/../Models/UserModel.php';
-    $userModel = new UserModel();
-
-    if (!$userModel->insertUser($data)) {
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'Gagal menyimpan data'
-        ]);
-        exit;
-    }
-
-    echo json_encode([
-        'status' => 'success',
-        'message' => 'Registrasi berhasil 🎉'
-    ]);
-    exit;
-}
     public function getWilayah()
     {
         header('Content-Type: application/json');
