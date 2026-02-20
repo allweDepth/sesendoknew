@@ -561,6 +561,10 @@ return [
     'misi_renstra_neo' => [
         'table' => 'misi_renstra_neo',
         'primary_key' => 'id',
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'uraian'
+        ],
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -578,6 +582,10 @@ return [
     'tujuan_renstra_neo' => [
         'table' => 'tujuan_renstra_neo',
         'primary_key' => 'id',
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'uraian'
+        ],
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -595,6 +603,10 @@ return [
     'sasaran_renstra_neo' => [
         'table' => 'sasaran_renstra_neo',
         'primary_key' => 'id',
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'uraian'
+        ],
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -629,6 +641,10 @@ return [
     'program_renstra_neo' => [
         'table' => 'program_renstra_neo',
         'primary_key' => 'id',
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'uraian_program'
+        ],
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -829,29 +845,29 @@ return [
         ]
     ],
     'sub_kegiatan' => [
-    'table' => 'sub_kegiatan',
-    'primary_key' => 'kode',
-    'modes' => [
-        'dropdown' => [
-            'select' => ['kode as id', 'nama as uraian'],
-            'searchable' => ['kode', 'nama'],
-            'order_by' => 'kode ASC'
-        ],
-        'default' => [
-            'select' => ['kode as id', 'kode', 'kode_kegiatan', 'nama'],
-            'searchable' => ['kode', 'nama'],
-            'order_by' => 'kode ASC'
-        ],
-        'referensi' => [
-            'select' => ['kode as id', 'kode', 'kode_kegiatan', 'nama'],
-            'searchable' => ['kode', 'nama'],
-            'order_by' => 'kode ASC'
-        ],
-        'edit' => [
-            'select' => ['*'],
-            'searchable' => ['*'],
-            'order_by' => 'kode ASC'
+        'table' => 'sub_kegiatan',
+        'primary_key' => 'kode',
+        'modes' => [
+            'dropdown' => [
+                'select' => ['kode as id', 'nama as uraian'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'default' => [
+                'select' => ['kode as id', 'kode', 'kode_kegiatan', 'nama'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'referensi' => [
+                'select' => ['kode as id', 'kode', 'kode_kegiatan', 'nama'],
+                'searchable' => ['kode', 'nama'],
+                'order_by' => 'kode ASC'
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'kode ASC'
+            ]
         ]
-    ]
-],
+    ],
 ];

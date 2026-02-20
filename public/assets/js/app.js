@@ -238,17 +238,7 @@ const ActionConfig = {
 		},
 	},
 };
-// untuk renstra menu
-const RenstraHeaderConfig = {
-	renstra_neo: ["Periode Mulai", "Periode Selesai", "Visi"],
-	misi_renstra_neo: ["Kode", "Uraian"],
-	tujuan_renstra_neo: ["Kode", "Uraian"],
-	sasaran_renstra_neo: ["Kode", "Uraian"],
-	indikator_sasaran_renstra_neo: ["Indikator", "Satuan"],
-	program_renstra_neo: ["Kode Program", "Uraian"],
-	indikator_program_renstra_neo: ["Indikator", "Target"],
-	anggaran_program_renstra_neo: ["Tahun", "Pagu"],
-};
+
 /* =========================================================
 	 TABLE MANAGER
 	 ---------------------------------------------------------
@@ -277,7 +267,8 @@ class TableManager {
 		AppState.jenis = jenis;
 		AppState.tbl = tbl;
 		AppState.currentMenu = tbl;
-
+		// 🔥 HEADER DIBUAT DI SINI (sekali saja)
+		this.renderHeader();
 		this.fetch();
 	}
 
@@ -326,51 +317,47 @@ class TableManager {
 		 Render isi tbody tabel
 	------------------------------------------------------ */
 	renderTable(rows) {
-		if (AppState.jenis === "renstra") {
-			let headers = RenstraHeaderConfig[AppState.tbl] || [];
 
-			let theadHtml = "<tr>";
+    let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
 
-			headers.forEach((h) => {
-				theadHtml += `<th>${h}</th>`;
-			});
+    if (!$tbody.length) {
+        console.warn("Tbody tidak ditemukan untuk:", AppState.tbl);
+        return;
+    }
 
-			theadHtml += `<th class="collapsing">Aksi</th></tr>`;
+    let html = "";
 
-			$("thead tr").replaceWith(theadHtml);
-		}
-		let target = `tbody[name="tabel_${AppState.jenis}"]`;
-		let html = "";
+    if (!rows.length) {
+        html = `
+        <tr>
+            <td colspan="100%" class="center aligned">
+                Tidak ada data
+            </td>
+        </tr>`;
+        $tbody.html(html);
+        return;
+    }
 
-		if (!rows.length) {
-			html = `
-            <tr>
-                <td colspan="100%" class="center aligned">
-                    Tidak ada data
-                </td>
-            </tr>
-        `;
-			$(target).html(html);
-			return;
-		}
+    let elements = UIConfig[AppState.jenis]?.[AppState.tbl] || [];
+    let fields = elements.filter(e => e.prop?.name && !e.prop.non_data);
 
-		rows.forEach((row) => {
-			html += "<tr>";
+    rows.forEach(row => {
+        html += "<tr>";
 
-			Object.keys(row).forEach((key) => {
-				if (key === AppState.primaryKey) return;
-				html += `<td>${row[key] ?? ""}</td>`;
-			});
+        fields.forEach(field => {
+            let key = field.prop.name;
+            html += `<td>${row[key] ?? ""}</td>`;
+        });
 
-			html += `<td class="collapsing">
-            ${this.buildActionButtons(row)}
-        </td>`;
+        html += `<td class="collapsing">
+                    ${this.buildActionButtons(row)}
+                 </td>`;
 
-			html += "</tr>";
-		});
+        html += "</tr>";
+    });
 
-		$(target).html(html);
-	}
+    $tbody.html(html);
+}
 
 	/* -----------------------------------------------------
 		 Render pagination
@@ -482,6 +469,26 @@ class TableManager {
 		html += `</div>`;
 		return html;
 	}
+	renderHeader() {
+
+    let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
+    if (!$tbody.length) return;
+
+    let $table = $tbody.closest("table");
+
+    let elements = UIConfig[AppState.jenis]?.[AppState.tbl] || [];
+    let fields = elements.filter(el => el.prop?.name && !el.prop.non_data);
+
+    let theadHtml = "<tr>";
+
+    fields.forEach(field => {
+        theadHtml += `<th>${field.prop.label || field.prop.name}</th>`;
+    });
+
+    theadHtml += `<th class="collapsing">Aksi</th></tr>`;
+
+    $table.find("thead").html(theadHtml);
+}
 }
 /* =========================================================
 	 FORM ENGINE PRO - FIELD VARIATIONS (FOMANTIC STYLE)@note
@@ -595,10 +602,8 @@ class FormEngine {
 	static calendar(prop) {
 		let attrs = "";
 
-		if (prop.attr) {
-			Object.entries(prop.attr).forEach(([key, value]) => {
-				attrs += `${key}="${value}" `;
-			});
+		if (prop.atribut) {
+			attrs += prop.atribut;
 		}
 
 		return `
@@ -935,9 +940,9 @@ AppState.role = window.USER_ROLE || "viewer";
 // ======================================================
 
 const UIConfig = {
-	// ======================================================
-	// PENGATURAN
-	// ======================================================
+	/* ======================================================
+       PENGATURAN
+    ====================================================== */
 	pengaturan: {
 		periode_rpjmd: [
 			{
@@ -958,45 +963,28 @@ const UIConfig = {
 					atribut: `data-group="rpjmd" data-range="end"`,
 				},
 			},
-			{
-				tag: "field",
-				prop: {
-					label: "Keterangan",
-					name: "keterangan",
-				},
-			},
-			{
-				tag: "fieldCheckbox",
-				prop: {
-					label: "Aktif",
-					name: "status_aktif",
-				},
-			},
+			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
+			{ tag: "fieldCheckbox", prop: { label: "Aktif", name: "status_aktif" } },
 		],
 	},
 
-	// ======================================================
-	// RENSTRA
-	// ======================================================
+	/* ======================================================
+       RENSTRA
+    ====================================================== */
 	renstra: {
 		renstra_neo: [
 			{
-				tag: "fieldCalendar",
+				tag: "fieldDropdown",
 				prop: {
-					label: "Periode Mulai",
-					name: "periode_mulai",
-					calendarType: "year",
-					readonly: true,
+					label: "Periode RPJMD",
+					name: "periode_id",
+					source: "periode_rpjmd",
 				},
 			},
+
 			{
-				tag: "fieldCalendar",
-				prop: {
-					label: "Periode Selesai",
-					name: "periode_selesai",
-					calendarType: "year",
-					readonly: true,
-				},
+				tag: "fieldTextarea",
+				prop: { label: "Visi", name: "visi", atribut: `rows="3"` },
 			},
 			{
 				tag: "fieldTextarea",
@@ -1007,11 +995,7 @@ const UIConfig = {
 		misi_renstra_neo: [
 			{
 				tag: "fieldDropdown",
-				prop: {
-					label: "Renstra",
-					name: "renstra_id",
-					source: "renstra_neo",
-				},
+				prop: { label: "Renstra", name: "renstra_id", source: "renstra_neo" },
 			},
 			{
 				tag: "fieldTextarea",
@@ -1022,11 +1006,7 @@ const UIConfig = {
 		tujuan_renstra_neo: [
 			{
 				tag: "fieldDropdown",
-				prop: {
-					label: "Misi",
-					name: "misi_id",
-					source: "misi_renstra_neo",
-				},
+				prop: { label: "Misi", name: "misi_id", source: "misi_renstra_neo" },
 			},
 			{
 				tag: "fieldTextarea",
@@ -1049,6 +1029,19 @@ const UIConfig = {
 			},
 		],
 
+		indikator_sasaran_renstra_neo: [
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Sasaran",
+					name: "sasaran_id",
+					source: "sasaran_renstra_neo",
+				},
+			},
+			{ tag: "field", prop: { label: "Indikator", name: "indikator" } },
+			{ tag: "field", prop: { label: "Satuan", name: "satuan" } },
+		],
+
 		program_renstra_neo: [
 			{
 				tag: "fieldDropdown",
@@ -1058,20 +1051,54 @@ const UIConfig = {
 					source: "sasaran_renstra_neo",
 				},
 			},
-			{
-				tag: "field",
-				prop: { label: "Kode Program", name: "kode_program" },
-			},
+			{ tag: "field", prop: { label: "Kode Program", name: "kode_program" } },
 			{
 				tag: "fieldTextarea",
 				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
 			},
 		],
+
+		indikator_program_renstra_neo: [
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Program",
+					name: "program_id",
+					source: "program_renstra_neo",
+				},
+			},
+			{ tag: "field", prop: { label: "Indikator", name: "nama_indikator" } },
+			{ tag: "field", prop: { label: "Satuan", name: "satuan" } },
+			{ tag: "field", prop: { label: "Target T1", name: "target_t1" } },
+			{ tag: "field", prop: { label: "Target T2", name: "target_t2" } },
+			{ tag: "field", prop: { label: "Target T3", name: "target_t3" } },
+			{ tag: "field", prop: { label: "Target T4", name: "target_t4" } },
+			{ tag: "field", prop: { label: "Target T5", name: "target_t5" } },
+		],
+
+		anggaran_program_renstra_neo: [
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Program",
+					name: "program_id",
+					source: "program_renstra_neo",
+				},
+			},
+			{
+				tag: "field",
+				prop: { label: "Tahun", name: "tahun", atribut: `type="number"` },
+			},
+			{
+				tag: "field",
+				prop: { label: "Pagu", name: "pagu", atribut: `type="number"` },
+			},
+		],
 	},
 
-	// ======================================================
-	// REFERENSI
-	// ======================================================
+	/* ======================================================
+       REFERENSI
+    ====================================================== */
 	referensi: {
 		urusan: [
 			{
@@ -1087,12 +1114,7 @@ const UIConfig = {
 		bidang: [
 			{
 				tag: "fieldDropdown",
-				prop: {
-					label: "Urusan",
-					name: "kode_urusan",
-					source: "urusan",
-					search: true,
-				},
+				prop: { label: "Urusan", name: "kode_urusan", source: "urusan" },
 			},
 			{
 				tag: "field",
@@ -1107,12 +1129,7 @@ const UIConfig = {
 		program: [
 			{
 				tag: "fieldDropdown",
-				prop: {
-					label: "Bidang",
-					name: "kode_bidang",
-					source: "bidang",
-					search: true,
-				},
+				prop: { label: "Bidang", name: "kode_bidang", source: "bidang" },
 			},
 			{
 				tag: "field",
@@ -1127,12 +1144,7 @@ const UIConfig = {
 		kegiatan: [
 			{
 				tag: "fieldDropdown",
-				prop: {
-					label: "Program",
-					name: "kode_program",
-					source: "program",
-					search: true,
-				},
+				prop: { label: "Program", name: "kode_program", source: "program" },
 			},
 			{
 				tag: "field",
@@ -1143,11 +1155,12 @@ const UIConfig = {
 				prop: { label: "Nama", name: "nama", classField: "required" },
 			},
 		],
-	} /* ======================================================
-	   STANDAR HARGA
-	====================================================== */,
+	},
+
+	/* ======================================================
+       STANDAR HARGA
+    ====================================================== */
 	standar_harga: {
-		/* ===================== SBU (sbu_neo) ===================== */
 		sbu: [
 			{
 				tag: "field",
@@ -1166,47 +1179,24 @@ const UIConfig = {
 				},
 			},
 			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Satuan",
-					name: "satuan",
-					options: [],
-					classField: "required",
-				},
-			},
+			{ tag: "fieldDropdown", prop: { label: "Satuan", name: "satuan" } },
 			{
 				tag: "field",
 				prop: {
 					label: "Harga Satuan",
 					name: "harga_satuan",
 					atribut: `type="number"`,
-					classField: "required",
 				},
 			},
 			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
 		],
 
-		/* ===================== SSH (ssh_neo) ===================== */
 		ssh: [
-			{
-				tag: "field",
-				prop: { label: "Kode Aset", name: "kd_aset", classField: "required" },
-			},
+			{ tag: "field", prop: { label: "Kode Aset", name: "kd_aset" } },
 			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
-			{
-				tag: "field",
-				prop: {
-					label: "Uraian Barang",
-					name: "uraian_barang",
-					classField: "required",
-				},
-			},
+			{ tag: "field", prop: { label: "Uraian Barang", name: "uraian_barang" } },
 			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
-			{
-				tag: "fieldDropdown",
-				prop: { label: "Satuan", name: "satuan", options: [] },
-			},
+			{ tag: "fieldDropdown", prop: { label: "Satuan", name: "satuan" } },
 			{
 				tag: "field",
 				prop: {
@@ -1218,26 +1208,12 @@ const UIConfig = {
 			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
 		],
 
-		/* ===================== ASB (asb_neo) ===================== */
 		asb: [
-			{
-				tag: "field",
-				prop: { label: "Kode Aset", name: "kd_aset", classField: "required" },
-			},
+			{ tag: "field", prop: { label: "Kode Aset", name: "kd_aset" } },
 			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
-			{
-				tag: "field",
-				prop: {
-					label: "Uraian Barang",
-					name: "uraian_barang",
-					classField: "required",
-				},
-			},
+			{ tag: "field", prop: { label: "Uraian Barang", name: "uraian_barang" } },
 			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
-			{
-				tag: "fieldDropdown",
-				prop: { label: "Satuan", name: "satuan", options: [] },
-			},
+			{ tag: "fieldDropdown", prop: { label: "Satuan", name: "satuan" } },
 			{
 				tag: "field",
 				prop: {
@@ -1249,26 +1225,12 @@ const UIConfig = {
 			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
 		],
 
-		/* ===================== HSPK (hspk_neo) ===================== */
 		hspk: [
-			{
-				tag: "field",
-				prop: { label: "Kode Aset", name: "kd_aset", classField: "required" },
-			},
+			{ tag: "field", prop: { label: "Kode Aset", name: "kd_aset" } },
 			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
-			{
-				tag: "field",
-				prop: {
-					label: "Uraian Barang",
-					name: "uraian_barang",
-					classField: "required",
-				},
-			},
+			{ tag: "field", prop: { label: "Uraian Barang", name: "uraian_barang" } },
 			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
-			{
-				tag: "fieldDropdown",
-				prop: { label: "Satuan", name: "satuan", options: [] },
-			},
+			{ tag: "fieldDropdown", prop: { label: "Satuan", name: "satuan" } },
 			{
 				tag: "field",
 				prop: {
@@ -1282,8 +1244,8 @@ const UIConfig = {
 	},
 
 	/* ======================================================
-	   KEPEGAWAIAN (db_asn_pemda_neo)
-	====================================================== */
+       KEPEGAWAIAN
+    ====================================================== */
 	kepegawaian: {
 		asn: [
 			{
@@ -1298,6 +1260,7 @@ const UIConfig = {
 					accept: ".jpg,.png,.jpeg",
 				},
 			},
+
 			{
 				tag: "field",
 				prop: {
@@ -1307,6 +1270,7 @@ const UIConfig = {
 					classField: "required",
 				},
 			},
+
 			{
 				tag: "fieldAction",
 				prop: {
@@ -1325,6 +1289,7 @@ const UIConfig = {
 					classField: "required",
 				},
 			},
+
 			{
 				tag: "field",
 				prop: {
@@ -1334,6 +1299,7 @@ const UIConfig = {
 					non_data: true,
 				},
 			},
+
 			{
 				tag: "field",
 				prop: {
@@ -1343,6 +1309,7 @@ const UIConfig = {
 					non_data: true,
 				},
 			},
+
 			{
 				tag: "fieldDropdown",
 				prop: {
@@ -1358,6 +1325,7 @@ const UIConfig = {
 					],
 				},
 			},
+
 			{
 				tag: "field",
 				prop: {
@@ -1366,16 +1334,17 @@ const UIConfig = {
 					placeholder: "Jabatan...",
 				},
 			},
+
 			{
 				tag: "field",
 				prop: {
 					label: "Tempat Lahir",
 					name: "t4_lahir",
-					placeholder: "tempat lahir",
-					non_data: true,
+					placeholder: "Tempat lahir",
 					classField: "required",
 				},
 			},
+
 			{
 				tag: "fieldCalendar",
 				prop: {
@@ -1386,11 +1355,6 @@ const UIConfig = {
 					classField: "required",
 				},
 			},
-
-			,
-			// ==============================
-			// PANGKAT & GOLONGAN (DIPERTAHANKAN)
-			// ==============================
 
 			{
 				tag: "fieldDropdown",
@@ -1405,6 +1369,7 @@ const UIConfig = {
 					],
 				},
 			},
+
 			{
 				tag: "fieldDropdown",
 				prop: {
@@ -1439,6 +1404,7 @@ const UIConfig = {
 					],
 				},
 			},
+
 			{
 				tag: "fieldDropdown",
 				prop: {
@@ -1456,34 +1422,12 @@ const UIConfig = {
 					],
 				},
 			},
-			{
-				tag: "field",
-				prop: {
-					label: "Nomor KTP",
-					name: "no_ktp",
-					placeholder: "Nomor ktp...",
-				},
-			},
-			{
-				tag: "field",
-				prop: { label: "NPWP", name: "npwp", placeholder: "NPWP..." },
-			},
-			{
-				tag: "field",
-				prop: { label: "Alamat", name: "alamat", placeholder: "Alamat..." },
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Kontak Person",
-					name: "kontak_person",
-					placeholder: "Kontak Person...",
-				},
-			},
-			{
-				tag: "field",
-				prop: { label: "email", name: "email", placeholder: "email..." },
-			},
+
+			{ tag: "field", prop: { label: "Nomor KTP", name: "no_ktp" } },
+			{ tag: "field", prop: { label: "NPWP", name: "npwp" } },
+			{ tag: "field", prop: { label: "Alamat", name: "alamat" } },
+			{ tag: "field", prop: { label: "Kontak Person", name: "kontak_person" } },
+			{ tag: "field", prop: { label: "Email", name: "email" } },
 
 			{
 				tag: "fieldDropdown",
@@ -1498,11 +1442,11 @@ const UIConfig = {
 						{ value: "hindu", text: "Hindu" },
 						{ value: "budha", text: "Budha" },
 						{ value: "konghucu", text: "Konghucu" },
-						{ value: "yahudi", text: "Yahudi" },
 						{ value: "kepercayaan", text: "Kepercayaan Tuhan YME." },
 					],
 				},
 			},
+
 			{
 				tag: "fieldDropdown",
 				prop: {
@@ -1515,6 +1459,7 @@ const UIConfig = {
 					],
 				},
 			},
+
 			{
 				tag: "fieldDropdown",
 				prop: {
@@ -1527,22 +1472,21 @@ const UIConfig = {
 					],
 				},
 			},
+
 			{
 				tag: "fieldTextarea",
 				prop: {
 					label: "Keterangan",
 					name: "keterangan",
-					rows: 2,
-					non_data: true,
+					atribut: `rows="2"`,
 				},
 			},
+
 			{
 				tag: "fieldCheckbox",
 				prop: {
 					label: "Non Aktif",
 					name: "disable",
-					type: "toggle",
-					non_data: true,
 				},
 			},
 		],
@@ -1788,9 +1732,7 @@ class FormContainerManager {
 				success: false,
 				message: "Form belum dikonfigurasi. Hubungi administrator.",
 			});
-
 			console.warn("UIConfig missing:", AppState.jenis, tbl);
-
 			return;
 		}
 
@@ -1942,6 +1884,32 @@ class FormContainerManager {
 						res.data[key] == 1
 							? $field.closest(".ui.checkbox").checkbox("check")
 							: $field.closest(".ui.checkbox").checkbox("uncheck");
+					} else if ($field.closest(".ui.calendar").length) {
+						let value = res.data[key];
+						if (!value) return;
+
+						let $calendar = $field.closest(".ui.calendar");
+						let type = $field.data("type") || "date";
+
+						let dateObj;
+
+						if (type === "year") {
+							// ambil 4 digit tahun
+							let year = String(value).substring(0, 4);
+							dateObj = new Date(parseInt(year), 0, 1);
+						} else {
+							// parse YYYY-MM-DD (format SQL)
+							if (typeof value === "string" && value.includes("-")) {
+								let parts = value.split("-");
+								dateObj = new Date(parts[0], parts[1] - 1, parts[2] || 1);
+							} else {
+								dateObj = new Date(value);
+							}
+						}
+
+						if (!isNaN(dateObj.getTime())) {
+							$calendar.calendar("set date", dateObj);
+						}
 					} else if ($field.attr("type") !== "file") {
 						$field.val(res.data[key]);
 					}
