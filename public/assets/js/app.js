@@ -28,6 +28,7 @@ const AppState = {
 	currentMenu: "", // Tracking menu sebelumnya
 	serverSources: [], // 🔥 @note daftar dropdown yang boleh fetch server
 	primaryKey: "id",
+	page: "", // untuk antisipasi seperti 1 halaman mempunyai banyak menu
 };
 /* =========================================================
    GLOBAL TOAST ENGINE
@@ -37,7 +38,7 @@ const ToastEngine = {
 	show({ success = true, message = "" }) {
 		if (!message) return;
 
-		let maxToast = 3;
+		let maxToast = 5;
 
 		// 🔥 batasi maksimal 3 toast
 		let existing = $("#toastContainer .ui.toast");
@@ -344,7 +345,7 @@ class TableManager {
 			return;
 		}
 
-		let elements = UIConfig[AppState.module]?.[AppState.tbl] || [];
+		let elements = UIConfig[AppState.page]?.[AppState.tbl] || [];
 		let fields = elements.filter((e) => e.prop?.name && !e.prop.non_data);
 
 		rows.forEach((row) => {
@@ -485,7 +486,7 @@ class TableManager {
 
 		let $table = $tbody.closest("table");
 
-		let elements = UIConfig[AppState.module]?.[AppState.tbl] || [];
+		let elements = UIConfig[AppState.page]?.[AppState.tbl] || [];
 		let fields = elements.filter((el) => el.prop?.name && !el.prop.non_data);
 
 		let theadHtml = "<tr>";
@@ -1845,10 +1846,12 @@ class FormContainerManager {
 
 	/* --------------------------------------------- */
 	open($btn) {
+		// 🔥 FORCE RENSTRA MODULE
+		if (window.location.pathname.replace(/^\/+/g, "") === "renstra") {
+			AppState.module = "renstra";
+		}
 		const jenisMode = $btn.data("jns");
-		const jenisFromBtn = $btn.data("jenis");
-		// const tbl = $btn.data("tbl");
-		const tbl = $btn.data("tbl") || AppState.tbl;
+		const tbl = $btn.attr("data-tbl") || AppState.tbl;
 
 		// ==============================
 		// 🔥 VALIDASI WAJIB
@@ -1861,16 +1864,21 @@ class FormContainerManager {
 		// ==============================
 		// 🔥 SET JENIS
 		// ==============================
-		if (jenisFromBtn) {
-			AppState.module =
-				$btn.data("module") ||
-				AppState.module ||
-				window.location.pathname.replace(/^\/+/g, "");
-		}
+		// ==================================
+		// 🔥 PASTIKAN MODULE TIDAK KACAU
+		// ==================================
+		let moduleFromBtn = $btn.attr("data-module");
 
-		if (!AppState.module) {
+		// Jika tombol punya data-module → pakai itu
+		if (moduleFromBtn) {
+			AppState.module = moduleFromBtn;
+		}
+		// Jika tidak, dan belum ada module → ambil dari URL
+		else if (!AppState.module) {
 			AppState.module = window.location.pathname.replace(/^\/+/g, "");
 		}
+
+		// 🔥 JANGAN pernah override module jika sudah ada
 
 		AppState.tbl = tbl;
 		AppState.action = jenisMode;
@@ -1956,7 +1964,7 @@ class FormContainerManager {
 		if (!$form.length) return;
 
 		let rules = {};
-		let elements = UIConfig[AppState.module]?.[AppState.tbl] || [];
+		let elements = UIConfig[AppState.page]?.[AppState.tbl] || [];
 
 		elements.forEach((el) => {
 			if (!el.prop?.name) return;
@@ -2118,7 +2126,7 @@ class FormContainerManager {
 						? "Edit Data"
 						: "Detail Data",
 
-			elements: UIConfig[AppState.module]?.[tbl] || [],
+			elements: UIConfig[AppState.page]?.[tbl] || [],
 		};
 
 		return config;
@@ -2265,6 +2273,9 @@ $(document).ready(function () {
 	   Ambil path aktif
 	---------------------------------------------- */
 	const currentPath = window.location.pathname.replace(/^\/+/g, "");
+
+	// 🔥 SINKRONKAN PAGE GLOBAL
+	AppState.page = currentPath;
 
 	/* ---------------------------------------------
 	   Sinkronisasi jumlah rows pertama kali
