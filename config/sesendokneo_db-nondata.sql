@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 20 Feb 2026 pada 09.03
+-- Waktu pembuatan: 20 Feb 2026 pada 21.00
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -665,6 +665,25 @@ CREATE TABLE `kegiatan_renstra_neo` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `log_activity`
+--
+
+CREATE TABLE `log_activity` (
+  `id` bigint(20) NOT NULL,
+  `table_name` varchar(100) NOT NULL,
+  `record_id` bigint(20) NOT NULL,
+  `action` enum('insert','update','delete','restore') NOT NULL,
+  `old_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`old_data`)),
+  `new_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`new_data`)),
+  `username` varchar(100) NOT NULL,
+  `ip_address` varchar(50) DEFAULT NULL,
+  `user_agent` text DEFAULT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `mapping_aset_akun`
 --
 
@@ -694,7 +713,6 @@ CREATE TABLE `mapping_aset_akun` (
 CREATE TABLE `misi_renstra_neo` (
   `id` int(11) NOT NULL,
   `renstra_id` int(11) NOT NULL,
-  `kode_misi` varchar(10) DEFAULT NULL,
   `nama_misi` text NOT NULL,
   `disable` tinyint(1) DEFAULT 0,
   `keterangan` text DEFAULT NULL,
@@ -1080,7 +1098,7 @@ CREATE TABLE `renja_neo` (
 CREATE TABLE `renja_p_neo` (
   `id` int(11) NOT NULL,
   `kd_wilayah` varchar(50) NOT NULL,
-  `kd_opd` varchar(22) NOT NULL,
+  `kd_opd` varchar(60) NOT NULL,
   `tahun` year(4) NOT NULL,
   `kd_sub_keg` varchar(50) NOT NULL,
   `kd_akun` varchar(50) NOT NULL,
@@ -1142,7 +1160,7 @@ CREATE TABLE `renja_p_neo` (
 CREATE TABLE `renstra_neo` (
   `id` int(11) NOT NULL,
   `kd_wilayah` varchar(10) NOT NULL,
-  `kd_opd` varchar(20) NOT NULL,
+  `kd_opd` varchar(60) NOT NULL,
   `periode_id` int(11) NOT NULL,
   `visi` text NOT NULL,
   `status` varchar(50) DEFAULT NULL,
@@ -1759,6 +1777,15 @@ ALTER TABLE `kegiatan_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `log_activity`
+--
+ALTER TABLE `log_activity`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_table_record` (`table_name`,`record_id`),
+  ADD KEY `idx_created_at` (`created_at`),
+  ADD KEY `idx_action` (`action`);
+
+--
 -- Indeks untuk tabel `mapping_aset_akun`
 --
 ALTER TABLE `mapping_aset_akun`
@@ -2060,6 +2087,12 @@ ALTER TABLE `kd_wilayah_neo`
 --
 ALTER TABLE `kegiatan_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `log_activity`
+--
+ALTER TABLE `log_activity`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `mapping_aset_akun`
