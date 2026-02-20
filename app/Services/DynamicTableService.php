@@ -126,14 +126,16 @@ class DynamicTableService
     ========================================================= */
     private function getById(string $table, int $id): string
     {
+        $primaryKey = $this->getPrimaryKey($table);
+
+        if (!$this->checkAccess($table, $id)) {
+            return JsonResponse::error("Data tidak ditemukan atau tidak memiliki akses");
+        }
+
         $row = $this->db->query(
-            "SELECT * FROM `$table` WHERE id = ? LIMIT 1",
+            "SELECT * FROM `$table` WHERE `$primaryKey` = ? LIMIT 1",
             [$id]
         )->fetch();
-
-        if (!$row) {
-            return JsonResponse::error("Data tidak ditemukan");
-        }
 
         return JsonResponse::success("Data ditemukan", null, $row);
     }
@@ -146,11 +148,11 @@ class DynamicTableService
         $role = $this->user['type_user'] ?? 'viewer';
 
         $permissions = [
-            'super_admin' => ['add', 'edit', 'delete', 'view'],
-            // 'admin'       => ['add', 'edit', 'delete', 'view'],
-            'admin_opd'       => ['add', 'edit', 'delete', 'view'],
-            'editor'      => ['add', 'edit', 'view'],
-            'viewer'      => ['view']
+            'super_admin'   => ['add', 'edit', 'delete', 'view'],
+            'admin_wilayah' => ['add', 'edit', 'delete', 'view'],
+            'admin_opd'     => ['add', 'edit', 'delete', 'view'],
+            'editor'        => ['add', 'edit', 'view'],
+            'viewer'        => ['view']
         ];
 
         if (!in_array($action, $permissions[$role] ?? [])) {
@@ -388,6 +390,7 @@ Jika tabel misi_renstra_neo:
     private function update(string $table, array $request): string
     {
         $columns = $this->getTableColumns($table);
+        $primaryKey = $this->getPrimaryKey($table);
 
         $id = $request['id'] ?? null;
         if (!$id) {
@@ -408,19 +411,26 @@ Jika tabel misi_renstra_neo:
         if (empty($filtered)) {
             return JsonResponse::error("Tidak ada data yang bisa diupdate");
         }
-        /* =====================================================
-   VALIDASI HYBRID (PROFILE + SCHEMA)
-===================================================== */
-        $profile = $this->profiles[array_search($table, array_column($this->profiles, 'table'))] ?? [];
+
+        $profile = $this->getProfileByTable($table);
         $errors = $this->validate($filtered, $table, $profile);
 
         if (!empty($errors)) {
             return JsonResponse::error("Validation gagal", 422, $errors);
         }
-        // Inject audit otomatis
+
         $filtered = $this->injectAudit($filtered, 'update');
 
-        $this->db->update($table, $filtered, "WHERE id = ?", [$id]);
+        if (!$this->checkAccess($table, $id)) {
+            return JsonResponse::error("Tidak memiliki akses untuk update data ini");
+        }
+
+        $this->db->update(
+            $table,
+            $filtered,
+            "WHERE `$primaryKey` = ?",
+            [$id]
+        );
 
         return JsonResponse::success("Data berhasil diupdate");
     }
@@ -430,7 +440,11 @@ Jika tabel misi_renstra_neo:
     ========================================================= */
     private function delete(string $table, array $profile, int $id): string
     {
-        $primaryKey = $profile['primary_key'] ?? 'id';
+        $primaryKey = $this->getPrimaryKey($table);
+
+        if (!$this->checkAccess($table, $id)) {
+            return JsonResponse::error("Tidak memiliki akses untuk menghapus data ini");
+        }
 
         $this->db->delete(
             $table,
@@ -496,7 +510,8 @@ Jika tabel misi_renstra_neo:
             [
                 'total' => (int)$totalRow,
                 'page'  => $page,
-                'limit' => $limit
+                'limit' => $limit,
+                'primary_key' => $this->getPrimaryKey($table) // 🔥 TAMBAH INI
             ],
             $rows
         );
@@ -581,14 +596,59 @@ Jika tabel misi_renstra_neo:
         $whereParts = [];
         $params     = [];
 
-        if ($role === 'admin_wilayah' && in_array('kd_wilayah', $columns)) {
-            $whereParts[] = "`kd_wilayah` = ?";
-            $params[] = $this->user['kd_wilayah'] ?? null;
+        /* =====================================================
+       ADMIN WILAYAH
+    ===================================================== */
+        if ($role === 'admin_wilayah') {
+
+            if (in_array('kd_wilayah', $columns)) {
+                $whereParts[] = "`kd_wilayah` = ?";
+                $params[] = $this->user['kd_wilayah'] ?? null;
+            }
         }
 
-        if ($role === 'admin_opd' && in_array('kd_opd', $columns)) {
-            $whereParts[] = "`kd_opd` = ?";
-            $params[] = $this->user['kd_opd'] ?? null;
+        /* =====================================================
+       ADMIN OPD
+       - kd_opd
+       - kd_wilayah (jika ada)
+       - tahun (jika ada)
+       - periode aktif (jika ada kolom periode_id)
+    ===================================================== */
+        if ($role === 'admin_opd') {
+
+            if (in_array('kd_opd', $columns)) {
+                $whereParts[] = "`kd_opd` = ?";
+                $params[] = $this->user['kd_opd'] ?? null;
+            }
+
+            if (in_array('kd_wilayah', $columns)) {
+                $whereParts[] = "`kd_wilayah` = ?";
+                $params[] = $this->user['kd_wilayah'] ?? null;
+            }
+
+            if (in_array('tahun', $columns) && isset($this->user['tahun'])) {
+                $whereParts[] = "`tahun` = ?";
+                $params[] = $this->user['tahun'];
+            }
+
+            // Scope periode aktif
+            if (in_array('periode_id', $columns)) {
+
+                $kd_wilayah = $this->user['kd_wilayah'] ?? null;
+
+                $periodeAktif = $this->db->query("
+                SELECT id
+                FROM periode_rpjmd
+                WHERE kd_wilayah = ?
+                AND status_aktif = 1
+                LIMIT 1
+            ", [$kd_wilayah])->fetch();
+
+                if ($periodeAktif) {
+                    $whereParts[] = "`periode_id` = ?";
+                    $params[] = $periodeAktif['id'];
+                }
+            }
         }
 
         return [$whereParts, $params];
@@ -718,7 +778,7 @@ Jika tabel misi_renstra_neo:
         return $rules;
     }
     /* =========================================================
-   DROPDOWN ENGINE
+   DROPDOWN ENGINE (FIX UNIVERSAL PRIMARY KEY)
 ========================================================= */
     private function loadDropdown(string $source, $parentValue = null): string
     {
@@ -729,16 +789,23 @@ Jika tabel misi_renstra_neo:
         $profile = $this->profiles[$source];
         $table   = $profile['table'];
 
+        // 🔥 Ambil primary key yang benar
+        $primaryKey = $profile['primary_key'] ?? 'id';
+
+        // 🔥 Gunakan dropdown config jika ada
+        $valueField = $profile['dropdown']['value'] ?? $primaryKey;
+        $labelField = $profile['dropdown']['label'] ?? 'nama';
+
         // Terapkan user scope (role aware)
         list($scopeWhere, $scopeParams) = $this->applyUserScope($table);
 
         $whereParts = $scopeWhere;
         $params     = $scopeParams;
 
-        // Jika dropdown punya parent dependency
+        // Parent dependency (cascading)
         if ($parentValue !== null) {
             foreach ($this->getTableColumns($table) as $col) {
-                if (str_starts_with($col, 'id_')) {
+                if (str_starts_with($col, 'kode_') || str_starts_with($col, 'id_')) {
                     $whereParts[] = "`$col` = ?";
                     $params[] = $parentValue;
                     break;
@@ -750,9 +817,6 @@ Jika tabel misi_renstra_neo:
             ? "WHERE " . implode(" AND ", $whereParts)
             : "";
 
-        $valueField = $profile['dropdown']['value'] ?? 'id';
-        $labelField = $profile['dropdown']['label'] ?? 'uraian';
-
         $query = "
         SELECT `$valueField` as id, `$labelField` as uraian
         FROM `$table`
@@ -763,5 +827,43 @@ Jika tabel misi_renstra_neo:
         $rows = $this->db->query($query, $params)->fetchAll();
 
         return JsonResponse::success("Dropdown loaded", [], $rows);
+    }
+    /* =========================================================
+   UTIL: GET PROFILE BY TABLE
+========================================================= */
+    private function getProfileByTable(string $table): array
+    {
+        return $this->profiles[array_search($table, array_column($this->profiles, 'table'))] ?? [];
+    }
+
+    /* =========================================================
+   UTIL: GET PRIMARY KEY
+========================================================= */
+    private function getPrimaryKey(string $table): string
+    {
+        $profile = $this->getProfileByTable($table);
+        return $profile['primary_key'] ?? 'id';
+    }
+
+    /* =========================================================
+   UTIL: CHECK ACCESS WITH SCOPE
+========================================================= */
+    private function checkAccess(string $table, $id): bool
+    {
+        $primaryKey = $this->getPrimaryKey($table);
+
+        list($scopeWhere, $scopeParams) = $this->applyUserScope($table);
+
+        $whereParts = array_merge(["`$primaryKey` = ?"], $scopeWhere);
+        $params     = array_merge([$id], $scopeParams);
+
+        $where = "WHERE " . implode(" AND ", $whereParts);
+
+        $row = $this->db->query(
+            "SELECT `$primaryKey` FROM `$table` $where LIMIT 1",
+            $params
+        )->fetch();
+
+        return (bool)$row;
     }
 }

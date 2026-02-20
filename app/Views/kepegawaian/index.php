@@ -7,26 +7,42 @@
   <div class="ui hidden divider"></div>
 
   <div class="ui right floated basic icon buttons">
+
+    <!-- ADD -->
     <button class="ui button"
-      data-ui="open-form"
-      data-jns="add"
-      data-tbl="<?= $tbl ?>"
-      data-tooltip="Tambah Data"
-      data-position="bottom center"
-      data-container="flyout">
-      <i class="plus icon"></i>
+        data-ui="open-form"
+        data-jns="add"
+        data-tbl="<?= $tbl ?>"
+        data-jenis="<?= $jenis ?>"
+        data-container="flyout"
+        data-tooltip="Tambah Data"
+        data-position="bottom center">
+        <i class="plus icon"></i>
     </button>
-    <button class="ui button" data-ui="open-form" data-tbl="asn" data-jns="import" data-tooltip="Import XLSX" data-position="bottom center"><i class="upload icon"></i></button>
+
+    <!-- IMPORT XLSX -->
+    <button class="ui button"
+        data-ui="open-form"
+        data-jns="import_xlsx"
+        data-tbl="<?= $tbl ?>"
+        data-jenis="<?= $jenis ?>"
+        data-container="modal"
+        data-tooltip="Import XLSX"
+        data-position="bottom center">
+        <i class="upload icon"></i>
+    </button>
+
+    <!-- EXPORT -->
     <button class="ui icon button"
-      type="button"
-      data-tooltip="Download"
-      data-position="bottom center"
-      data-container="flyout"
-      data-action="export"
-      data-tbl="asn">
-      <i class="alternate download icon"></i>
+        type="button"
+        data-action="export"
+        data-tbl="<?= $tbl ?>"
+        data-tooltip="Download"
+        data-position="bottom center">
+        <i class="alternate download icon"></i>
     </button>
-  </div>
+
+</div>
 
   <h3 class="ui dividing header">
     <i class="left align icon"></i>

@@ -348,6 +348,9 @@
     </div>
 
     <!-- JS -->
+    <script>
+        window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
+    </script>
     <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/js/fomantic.min.js"></script>
     <script src="/assets/js/app.js"></script>
