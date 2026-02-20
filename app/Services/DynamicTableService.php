@@ -115,7 +115,6 @@ class DynamicTableService
             $mode = $action ?: 'default';
 
             return $this->buildQuery($table, $profile, $request, $mode);
-
         } catch (Exception $e) {
             return JsonResponse::error($e->getMessage());
         }
@@ -180,7 +179,7 @@ class DynamicTableService
 
         return $data;
     }
-        /* =========================================================
+    /* =========================================================
        INSERT (FULL IDENTIK LOGIC ASLI)
     ========================================================= */
     private function insert(string $table, array $request): string
@@ -347,7 +346,7 @@ class DynamicTableService
 
         return JsonResponse::success("Data berhasil disimpan");
     }
-        /* =========================================================
+    /* =========================================================
        UPDATE (FULL IDENTIK LOGIC ASLI)
     ========================================================= */
     private function update(string $table, array $request): string
@@ -511,7 +510,7 @@ class DynamicTableService
             $rows
         );
     }
-        /* =========================================================
+    /* =========================================================
        GET ALL RAW DATA (UNTUK EXPORT / REPORT)
     ========================================================= */
     private function getAllRaw(
@@ -559,6 +558,17 @@ class DynamicTableService
         $this->authorize('view', $table);
 
         $rows = $this->getAllRaw($table, $profile, $request, $mode);
+
+        // 🔥 Jika kosong tetap success tapi beri pesan
+        if (empty($rows)) {
+            return JsonResponse::success(
+                "Data kosong",
+                [
+                    'total' => 0
+                ],
+                []
+            );
+        }
 
         return JsonResponse::success(
             "Data export berhasil",
