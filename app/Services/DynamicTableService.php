@@ -479,7 +479,28 @@ Jika tabel misi_renstra_neo:
 
         // Apply scope berdasarkan role
         list($userWhere, $userParams) = $this->applyUserScope($table);
+        /* =====================================================
+   SEARCH ENGINE
+===================================================== */
+        if (!empty($search) && !empty($modeConfig['searchable'])) {
 
+            $searchParts = [];
+            $searchableColumns = $modeConfig['searchable'];
+
+            // jika searchable = ['*'] → semua kolom
+            if ($searchableColumns === ['*']) {
+                $searchableColumns = $this->getTableColumns($table);
+            }
+
+            foreach ($searchableColumns as $column) {
+                $searchParts[] = "`$column` LIKE ?";
+                $params[] = "%$search%";
+            }
+
+            if (!empty($searchParts)) {
+                $whereParts[] = "(" . implode(" OR ", $searchParts) . ")";
+            }
+        }
         $whereParts = array_merge($whereParts, $userWhere);
         $params     = array_merge($params, $userParams);
 
