@@ -493,7 +493,8 @@ Jika tabel misi_renstra_neo:
         $select = $modeConfig['select'] ?? ['*'];
         $selectClause = implode(',', $select);
 
-        $orderBy = $modeConfig['order_by'] ?? 'id DESC';
+        $primaryKey = $this->getPrimaryKey($table);
+        $orderBy = $modeConfig['order_by'] ?? "`$primaryKey` DESC";
 
         $dataQuery = "
             SELECT $selectClause
@@ -544,12 +545,14 @@ Jika tabel misi_renstra_neo:
             ? 'WHERE ' . implode(' AND ', $userWhere)
             : '';
 
+        $primaryKey = $this->getPrimaryKey($table);
+
         $query = "
-        SELECT $selectClause
-        FROM `$table`
-        $where
-        ORDER BY id DESC
-    ";
+    SELECT $selectClause
+    FROM `$table`
+    $where
+    ORDER BY `$primaryKey` DESC
+";
 
         return $this->db->query($query, $userParams)->fetchAll();
     }
@@ -832,9 +835,14 @@ Jika tabel misi_renstra_neo:
    UTIL: GET PROFILE BY TABLE
 ========================================================= */
     private function getProfileByTable(string $table): array
-    {
-        return $this->profiles[array_search($table, array_column($this->profiles, 'table'))] ?? [];
+{
+    foreach ($this->profiles as $profile) {
+        if (($profile['table'] ?? '') === $table) {
+            return $profile;
+        }
     }
+    return [];
+}
 
     /* =========================================================
    UTIL: GET PRIMARY KEY

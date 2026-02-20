@@ -460,9 +460,9 @@ class TableManager {
                     data-jns="edit"
                     data-jenis="${jenis}"
                     data-tbl="${tbl}"
-                    data-id="${row[AppState.primaryKey]}"
-                    <i class="edit outline blue icon"></i>
-                </button>
+                    data-id="${row[AppState.primaryKey]}"> 
+										<i class="edit outline blue icon"></i>
+										</button>
             `;
 			}
 
@@ -472,7 +472,7 @@ class TableManager {
                     data-ui="delete-row"
                     data-jns="delete"
                     data-tbl="${tbl}"
-                    data-id="${row.id}">
+                    data-id="${row[AppState.primaryKey]}">
                     <i class="trash alternate outline red icon"></i>
                 </button>
             `;
