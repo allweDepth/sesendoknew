@@ -4,16 +4,38 @@
     Modul Renstra
   </h2>
 
-  <!-- MENU -->
+  <!-- ======================================================
+     MENU RENSTRA (STRICT SESUAI STRUKTUR SQL)
+====================================================== -->
   <div class="ui secondary pointing menu" id="renstraMenu">
-    <a class="item" data-tbl="renstra_neo">Data Renstra</a>
+
+    <!-- Level 1 -->
+    <a class="item" data-tbl="renstra_neo">Renstra OPD</a>
+
+    <!-- Level 2 -->
     <a class="item active" data-tbl="misi_renstra_neo">Misi</a>
+
+    <!-- Level 3 -->
     <a class="item" data-tbl="tujuan_renstra_neo">Tujuan</a>
+
+    <!-- Level 4 -->
     <a class="item" data-tbl="sasaran_renstra_neo">Sasaran</a>
+
+    <!-- Level 5 -->
     <a class="item" data-tbl="indikator_sasaran_renstra_neo">Indikator Sasaran</a>
+
+    <!-- Level 6 -->
     <a class="item" data-tbl="program_renstra_neo">Program</a>
+
+    <!-- Level 7 -->
     <a class="item" data-tbl="indikator_program_renstra_neo">Indikator Program</a>
-    <a class="item" data-tbl="anggaran_program_renstra_neo">Anggaran</a>
+
+    <!-- Level 8 -->
+    <a class="item" data-tbl="kegiatan_renstra_neo">Kegiatan</a>
+
+    <!-- Level 9 -->
+    <a class="item" data-tbl="sub_kegiatan_renstra_neo">Sub Kegiatan</a>
+
   </div>
 
   <!-- ACTION BUTTON -->
@@ -24,7 +46,7 @@
       data-tbl="misi_renstra_neo"
       data-server='["renstra_neo"]'
       id="btnTambah">
-      
+
       <i class="plus icon"></i>
     </button>
 
@@ -50,27 +72,26 @@
 
   <!-- SATU TABEL SAJA -->
   <table class="ui celled striped table">
-  <thead>
-    <tr>
-      <th>Data</th>
-      <th class="collapsing">Aksi</th>
-    </tr>
-  </thead>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th class="collapsing">Aksi</th>
+      </tr>
+    </thead>
 
-  <tbody name="tabel_renstra">
-    <tr>
-      <td colspan="2">
-        <div class="ui active inline loader"></div>
-      </td>
-    </tr>
-  </tbody>
+    <tbody name="tabel_renstra">
+      <tr>
+        <td colspan="2">
+          <div class="ui active inline loader"></div>
+        </td>
+      </tr>
+    </tbody>
 
-  <tfoot>
-    <tr>
-      <td colspan="2" class="right aligned">
-        <div name="pagination_renstra"></div>
-      </td>
-    </tr>
-  </tfoot>
-</table>
-
+    <tfoot>
+      <tr>
+        <td colspan="2" class="right aligned">
+          <div name="pagination_renstra"></div>
+        </td>
+      </tr>
+    </tfoot>
+  </table>

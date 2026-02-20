@@ -1,88 +1,149 @@
-+----+---------------+------------+---------+---------------+----------+
-| ID | TYPE_USER     | WILAYAH    | OPD     | SUB_KEGIATAN | APPROVE  |
-+----+---------------+------------+---------+---------------+----------+
-| 4  | super_admin   | Semua      | Semua   | Semua         | Ya       |
-| 3  | admin_wilayah | 1 wilayah  | Semua   | Semua         | Ya       |
-| 2  | admin_opd     | 1 wilayah  | 1 OPD   | Mapping       | Tidak    |
-| 1  | viewer        | 1 wilayah  | 1 OPD   | Mapping       | Tidak    |
-+----+---------------+------------+---------+---------------+----------+
-ID = 4
-type_user = super_admin
-Wilayah = Semua
-OPD = Semua
-Sub Kegiatan = Semua
-Approve = Ya
+CREATE TABLE renstra_neo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    kd_wilayah VARCHAR(10) NOT NULL,
+    kd_opd VARCHAR(20) NOT NULL,
+    periode_id INT NOT NULL,
+    visi TEXT NOT NULL,
+    status VARCHAR(50),
+    kunci TINYINT(1) DEFAULT 0,
+    setujui TINYINT(1) DEFAULT 0,
+    disable TINYINT(1) DEFAULT 0,
+    keterangan TEXT,
+    tgl_insert DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    tgl_update DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    username_insert VARCHAR(100) NOT NULL,
+    username_update VARCHAR(100)
+);
+CREATE TABLE misi_renstra_neo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    renstra_id INT NOT NULL,
+    kode_misi VARCHAR(10),
+    nama_misi TEXT NOT NULL,
+    disable TINYINT(1) DEFAULT 0,
+    keterangan TEXT,
+    tgl_insert DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    username_insert VARCHAR(100) NOT NULL,
+    tgl_update DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    username_update VARCHAR(100)
+);
+CREATE TABLE tujuan_renstra_neo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    misi_id INT NOT NULL,
+    kode_tujuan VARCHAR(10),
+    nama_tujuan TEXT NOT NULL,
+    disable TINYINT(1) DEFAULT 0,
+    keterangan TEXT,
+    tgl_insert DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    username_insert VARCHAR(100) NOT NULL,
+    tgl_update DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    username_update VARCHAR(100)
+);
+CREATE TABLE sasaran_renstra_neo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tujuan_id INT NOT NULL,
+    kode_sasaran VARCHAR(10),
+    nama_sasaran TEXT NOT NULL,
+    disable TINYINT(1) DEFAULT 0,
+    keterangan TEXT,
+    tgl_insert DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    username_insert VARCHAR(100) NOT NULL,
+    tgl_update DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    username_update VARCHAR(100)
+);
+CREATE TABLE indikator_sasaran_renstra_neo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sasaran_id INT NOT NULL,
+    nama_indikator TEXT NOT NULL,
+    satuan VARCHAR(50),
+    baseline DECIMAL(18,2) DEFAULT 0,
+    target_t1 DECIMAL(18,2) DEFAULT 0,
+    target_t2 DECIMAL(18,2) DEFAULT 0,
+    target_t3 DECIMAL(18,2) DEFAULT 0,
+    target_t4 DECIMAL(18,2) DEFAULT 0,
+    target_t5 DECIMAL(18,2) DEFAULT 0,
+    target_akhir DECIMAL(18,2) DEFAULT 0,
+    disable TINYINT(1) DEFAULT 0,
+    keterangan TEXT,
+    tgl_insert DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    username_insert VARCHAR(100) NOT NULL,
+    tgl_update DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    username_update VARCHAR(100)
+);
+CREATE TABLE program_renstra_neo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sasaran_id INT NOT NULL,
+    kode_program VARCHAR(20),
+    nama_program TEXT NOT NULL,
+    disable TINYINT(1) DEFAULT 0,
+    keterangan TEXT,
+    tgl_insert DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    username_insert VARCHAR(100) NOT NULL,
+    tgl_update DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    username_update VARCHAR(100)
+);
+CREATE TABLE indikator_program_renstra_neo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    program_id INT NOT NULL,
+    nama_indikator TEXT NOT NULL,
+    satuan VARCHAR(50),
+    baseline DECIMAL(18,2) DEFAULT 0,
+    target_t1 DECIMAL(18,2) DEFAULT 0,
+    target_t2 DECIMAL(18,2) DEFAULT 0,
+    target_t3 DECIMAL(18,2) DEFAULT 0,
+    target_t4 DECIMAL(18,2) DEFAULT 0,
+    target_t5 DECIMAL(18,2) DEFAULT 0,
+    target_akhir DECIMAL(18,2) DEFAULT 0,
+    disable TINYINT(1) DEFAULT 0,
+    keterangan TEXT,
+    tgl_insert DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    username_insert VARCHAR(100) NOT NULL,
+    tgl_update DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    username_update VARCHAR(100)
+);
+CREATE TABLE kegiatan_renstra_neo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    program_id INT NOT NULL,
+    kode_kegiatan VARCHAR(20),
+    nama_kegiatan TEXT NOT NULL,
+    disable TINYINT(1) DEFAULT 0,
+    keterangan TEXT,
+    tgl_insert DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    username_insert VARCHAR(100) NOT NULL,
+    tgl_update DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    username_update VARCHAR(100)
+);
+CREATE TABLE sub_kegiatan_renstra_neo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
 
+    kegiatan_renstra_id INT NOT NULL,
+    master_sub_kegiatan_id INT NOT NULL,
 
-ID = 3
-type_user = admin_wilayah
-Wilayah = 1 wilayah
-OPD = Semua OPD di wilayah tersebut
-Sub Kegiatan = Semua
-Approve = Ya
+    lokasi VARCHAR(255),
+    kelompok_sasaran VARCHAR(255),
 
+    baseline DECIMAL(18,2) DEFAULT 0,
 
-ID = 2
-type_user = admin_opd
-Wilayah = 1 wilayah
-OPD = 1 OPD
-Sub Kegiatan = Berdasarkan mapping user_sub_kegiatan
-Approve = Tidak
+    target_t1 DECIMAL(18,2) DEFAULT 0,
+    anggaran_t1 DECIMAL(18,2) DEFAULT 0,
 
+    target_t2 DECIMAL(18,2) DEFAULT 0,
+    anggaran_t2 DECIMAL(18,2) DEFAULT 0,
 
-ID = 1
-type_user = viewer
-Wilayah = 1 wilayah
-OPD = 1 OPD
-Sub Kegiatan = Berdasarkan mapping user_sub_kegiatan
-Approve = Tidak
-┌───────────────────────────────────────────┐
-│                FRONTEND                   │
-│-------------------------------------------│
-│  app.js                                   │
-│   • TableManager                          │
-│   • FormContainerManager                  │
-│   • FormEngine                            │
-│   • AjaxEngine                            │
-│                                           │
-│  UIConfig                                 │
-│  ActionConfig                             │
-│  RenstraHeaderConfig                      │
-└──────────────────────┬────────────────────┘
-                       │ AJAX (POST /dynamic)
-                       ▼
-┌───────────────────────────────────────────┐
-│         DynamicTableService              │
-│-------------------------------------------│
-│  handle()                                │
-│    ├─ add      → insert()                │
-│    ├─ edit     → update()                │
-│    ├─ delete   → delete()                │
-│    ├─ dropdown → loadDropdown()          │
-│    └─ lainnya  → buildQuery(mode)        │
-│                                           │
-│  Mode Aware + Action Aware               │
-│  User Scope Aware                        │
-└──────────────────────┬────────────────────┘
-                       ▼
-┌───────────────────────────────────────────┐
-│         table_profiles.php               │
-│-------------------------------------------│
-│  • table                                 │
-│  • primary_key                           │
-│  • modes                                 │
-│     ├─ default                           │
-│     ├─ kepegawaian                       │
-│     ├─ referensi                         │
-│     └─ dll                               │
-└──────────────────────┬────────────────────┘ 
-                       ▼
-┌───────────────────────────────────────────┐
-│                DATABASE                  │
-│-------------------------------------------│
-│  sk_asn_neo                              │
-│  renstra_neo                             │
-│  misi_renstra_neo                        │
-│  tujuan_renstra_neo                      │
-│  dll                                     │
-└───────────────────────────────────────────┘
+    target_t3 DECIMAL(18,2) DEFAULT 0,
+    anggaran_t3 DECIMAL(18,2) DEFAULT 0,
+
+    target_t4 DECIMAL(18,2) DEFAULT 0,
+    anggaran_t4 DECIMAL(18,2) DEFAULT 0,
+
+    target_t5 DECIMAL(18,2) DEFAULT 0,
+    anggaran_t5 DECIMAL(18,2) DEFAULT 0,
+
+    target_akhir DECIMAL(18,2) DEFAULT 0,
+
+    disable TINYINT(1) DEFAULT 0,
+    keterangan TEXT,
+    tgl_insert DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    username_insert VARCHAR(100) NOT NULL,
+    tgl_update DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    username_update VARCHAR(100)
+);

@@ -4,21 +4,16 @@ require_once __DIR__ . '/JsonResponse.php';
 
 /**
  * ============================================================
- * DYNAMIC TABLE SERVICE v2.0
+ * DYNAMIC TABLE SERVICE v3.0 (FULL IDENTIK + ACTION VERSION)
  * ============================================================
  *
- * Prinsip:
+ * PERUBAHAN:
  * ------------------------------------------------------------
- * - jenis = menentukan aksi (add, edit, delete, dropdown)
- * - edit = dual mode (load data / update data)
- * - selain aksi = dianggap mode listing (buildQuery)
+ * ❌ jenis  → diganti action
+ * ❌ mode   → diganti action
+ * ✅ module → hanya konteks (tidak mengganggu logic lama)
  *
- * Keamanan:
- * ------------------------------------------------------------
- * ✔ Role enforcement full server-side
- * ✔ User scope filtering otomatis
- * ✔ Audit trail otomatis (tgl_insert, username_update, dll)
- *
+ * Semua fitur lama DIPERTAHANKAN 100%
  * ============================================================
  */
 
@@ -42,13 +37,15 @@ class DynamicTableService
     {
         try {
 
-            $jenis = $request['jenis'] ?? '';
-            $tbl   = $request['tbl'] ?? '';
+            // 🔥 ARSITEKTUR BARU
+            $action = $request['action'] ?? '';
+            $module = $request['module'] ?? ''; // hanya konteks
+            $tbl    = $request['tbl'] ?? '';
 
             /* ==============================
                DROPDOWN
             ============================== */
-            if ($jenis === 'dropdown' && !empty($request['source'])) {
+            if ($action === 'dropdown' && !empty($request['source'])) {
                 return $this->loadDropdown(
                     $request['source'],
                     $request['parent_value'] ?? null
@@ -69,7 +66,7 @@ class DynamicTableService
             /* ==============================
                ADD (INSERT)
             ============================== */
-            if ($jenis === 'add') {
+            if ($action === 'add') {
                 $this->authorize('add', $table);
                 return $this->insert($table, $request);
             }
@@ -77,10 +74,10 @@ class DynamicTableService
             /* ==============================
                EDIT (DUAL MODE)
             ============================== */
-            if ($jenis === 'edit') {
+            if ($action === 'edit') {
 
                 // MODE LOAD DATA
-                if (!empty($request['id_row']) && count($request) <= 3) {
+                if (!empty($request['id_row']) && count($request) <= 4) {
                     $this->authorize('view', $table);
                     return $this->getById($table, (int)$request['id_row']);
                 }
@@ -97,25 +94,28 @@ class DynamicTableService
             /* ==============================
                DELETE
             ============================== */
-            if ($jenis === 'delete' && !empty($request['id_row'])) {
+            if ($action === 'delete' && !empty($request['id_row'])) {
                 $this->authorize('delete', $table);
                 return $this->delete($table, $profile, (int)$request['id_row']);
             }
+
             /* ==============================
-   EXPORT
-============================== */
-            if ($jenis === 'export') {
+               EXPORT
+            ============================== */
+            if ($action === 'export') {
                 $this->authorize('view', $table);
                 return $this->export($table, $profile, $request, 'default');
             }
+
             /* ==============================
                DEFAULT → LISTING
             ============================== */
             $this->authorize('view', $table);
 
-            $mode = $jenis ?: 'default';
+            $mode = $action ?: 'default';
 
             return $this->buildQuery($table, $profile, $request, $mode);
+
         } catch (Exception $e) {
             return JsonResponse::error($e->getMessage());
         }
@@ -141,7 +141,7 @@ class DynamicTableService
     }
 
     /* =========================================================
-       ROLE AUTHORIZATION (SERVER-SIDE ENFORCEMENT)
+       ROLE AUTHORIZATION (TIDAK DIUBAH)
     ========================================================= */
     private function authorize(string $action, string $table): void
     {
@@ -161,8 +161,7 @@ class DynamicTableService
     }
 
     /* =========================================================
-       AUDIT TRAIL INJECTION
-       Otomatis isi tgl_insert, username_update, dll
+       AUDIT TRAIL (TIDAK DIUBAH)
     ========================================================= */
     private function injectAudit(array $data, string $mode): array
     {
@@ -181,17 +180,18 @@ class DynamicTableService
 
         return $data;
     }
-    /* =========================================================
-       INSERT
+        /* =========================================================
+       INSERT (FULL IDENTIK LOGIC ASLI)
     ========================================================= */
     private function insert(string $table, array $request): string
     {
         $columns = $this->getTableColumns($table);
         $filtered = [];
+
         foreach ($request as $key => $value) {
 
-            // Abaikan field kontrol sistem
-            if (in_array($key, ['jenis', 'tbl'])) continue;
+            // 🔥 Abaikan field kontrol sistem (SUDAH DIGANTI)
+            if (in_array($key, ['action', 'module', 'tbl'])) continue;
 
             // Hanya masukkan field yang memang ada di tabel
             if (in_array($key, $columns)) {
@@ -199,17 +199,12 @@ class DynamicTableService
             }
         }
 
-        // Jika tidak ada data valid → hentikan
         if (empty($filtered)) {
             return JsonResponse::error("Tidak ada data yang bisa disimpan");
         }
 
         /* =====================================================
-        3️⃣ VALIDASI KHUSUS TABEL PERIODE RPJMD
-        -----------------------------------------------------
-        - Cek periode valid
-        - Cek overlap
-        - Set hanya 1 periode aktif per wilayah
+        VALIDASI KHUSUS TABEL PERIODE RPJMD
         ===================================================== */
         if ($table === 'periode_rpjmd') {
 
@@ -228,30 +223,30 @@ class DynamicTableService
 
             // Cek overlap periode
             $cek = $this->db->query("
-            SELECT id FROM periode_rpjmd
-            WHERE kd_wilayah = ?
-            AND (
-                (? BETWEEN periode_mulai AND periode_selesai)
-                OR
-                (? BETWEEN periode_mulai AND periode_selesai)
-            )
-        ", [$kd_wilayah, $mulai, $selesai])->fetch();
+                SELECT id FROM periode_rpjmd
+                WHERE kd_wilayah = ?
+                AND (
+                    (? BETWEEN periode_mulai AND periode_selesai)
+                    OR
+                    (? BETWEEN periode_mulai AND periode_selesai)
+                )
+            ", [$kd_wilayah, $mulai, $selesai])->fetch();
 
             if ($cek) {
                 return JsonResponse::error("Periode tumpang tindih");
             }
 
-            // Inject wilayah dari session (tidak boleh dari form)
+            // Inject wilayah dari session
             $filtered['kd_wilayah'] = $kd_wilayah;
 
             // Jika diset aktif → nonaktifkan yang lain
             if (!empty($filtered['status_aktif'])) {
 
                 $this->db->query("
-                UPDATE periode_rpjmd
-                SET status_aktif = 0
-                WHERE kd_wilayah = ?
-            ", [$kd_wilayah]);
+                    UPDATE periode_rpjmd
+                    SET status_aktif = 0
+                    WHERE kd_wilayah = ?
+                ", [$kd_wilayah]);
 
                 $filtered['status_aktif'] = 1;
             } else {
@@ -260,15 +255,8 @@ class DynamicTableService
         }
 
         /* =====================================================
-        4️⃣ AUTO INJECT USER SCOPE
-        -----------------------------------------------------
-        Jika tabel punya kolom:
-        - kd_wilayah
-        - kd_opd
-        - tahun
-        maka isi otomatis dari session user
+        AUTO INJECT USER SCOPE
         ===================================================== */
-
         $userScopeMapping = [
             'kd_wilayah' => $this->user['kd_wilayah'] ?? null,
             'kd_opd'     => $this->user['kd_opd'] ?? null,
@@ -277,42 +265,37 @@ class DynamicTableService
 
         foreach ($userScopeMapping as $field => $value) {
 
-            // Jika kolom ada di tabel DAN belum diset sebelumnya
             if (in_array($field, $columns) && !isset($filtered[$field]) && $value !== null) {
                 $filtered[$field] = $value;
             }
         }
 
         /* =====================================================
-        5️⃣ AUTO SET PERIODE AKTIF UNTUK RENSTRA
-        -----------------------------------------------------
-        renstra_neo harus selalu terikat ke:
-        periode_rpjmd.status_aktif = 1
+        AUTO SET PERIODE AKTIF UNTUK RENSTRA
         ===================================================== */
         if ($table === 'renstra_neo' && in_array('periode_id', $columns)) {
 
             $kd_wilayah = $this->user['kd_wilayah'] ?? null;
 
             $periodeAktif = $this->db->query("
-            SELECT id
-            FROM periode_rpjmd
-            WHERE kd_wilayah = ?
-            AND status_aktif = 1
-            LIMIT 1
+                SELECT id
+                FROM periode_rpjmd
+                WHERE kd_wilayah = ?
+                AND status_aktif = 1
+                LIMIT 1
             ", [$kd_wilayah])->fetch();
 
             if ($periodeAktif) {
                 $filtered['periode_id'] = $periodeAktif['id'];
             } else {
 
-                // fallback ambil periode terbaru
                 $periodeTerbaru = $this->db->query("
-            SELECT id
-            FROM periode_rpjmd
-            WHERE kd_wilayah = ?
-            ORDER BY periode_mulai DESC
-            LIMIT 1
-        ", [$kd_wilayah])->fetch();
+                    SELECT id
+                    FROM periode_rpjmd
+                    WHERE kd_wilayah = ?
+                    ORDER BY periode_mulai DESC
+                    LIMIT 1
+                ", [$kd_wilayah])->fetch();
 
                 if ($periodeTerbaru) {
                     $filtered['periode_id'] = $periodeTerbaru['id'];
@@ -323,11 +306,7 @@ class DynamicTableService
         }
 
         /* =====================================================
-        5️⃣.1 AUTO GENERATE KODE UNTUK MISI
-        -----------------------------------------------------
-        Jika tabel misi_renstra_neo:
-        - Jangan percaya input user untuk kode
-        - Generate otomatis berdasarkan renstra_id
+        AUTO GENERATE KODE MISI
         ===================================================== */
         if ($table === 'misi_renstra_neo' && in_array('kode', $columns)) {
 
@@ -337,21 +316,17 @@ class DynamicTableService
                 return JsonResponse::error("Renstra wajib dipilih");
             }
 
-            // Ambil kode terakhir dalam renstra yang sama
             $lastKode = $this->db->query("
-        SELECT MAX(CAST(kode AS UNSIGNED)) as max_kode
-        FROM misi_renstra_neo
-        WHERE renstra_id = ?
-    ", [$renstraId])->fetch()['max_kode'] ?? 0;
+                SELECT MAX(CAST(kode AS UNSIGNED)) as max_kode
+                FROM misi_renstra_neo
+                WHERE renstra_id = ?
+            ", [$renstraId])->fetch()['max_kode'] ?? 0;
 
-            // Set kode baru
             $filtered['kode'] = $lastKode + 1;
         }
 
         /* =====================================================
         VALIDASI HYBRID (PROFILE + SCHEMA)
-        -----------------------------------------------------
-        Dijalankan SETELAH semua injection selesai
         ===================================================== */
         $profile = $this->getProfileByTable($table);
         $errors = $this->validate($filtered, $table, $profile);
@@ -361,26 +336,19 @@ class DynamicTableService
         }
 
         /* =====================================================
-       6️⃣ AUDIT TRAIL
-       -----------------------------------------------------
-       Otomatis isi:
-       - tgl_insert
-       - username_insert
+        AUDIT TRAIL
         ===================================================== */
         $filtered = $this->injectAudit($filtered, 'insert');
 
         /* =====================================================
-       7️⃣ FINAL INSERT
-       -----------------------------------------------------
-       Semua validasi selesai → simpan ke DB
+        FINAL INSERT
         ===================================================== */
         $this->db->insert($table, $filtered);
 
         return JsonResponse::success("Data berhasil disimpan");
     }
-
-    /* =========================================================
-       UPDATE
+        /* =========================================================
+       UPDATE (FULL IDENTIK LOGIC ASLI)
     ========================================================= */
     private function update(string $table, array $request): string
     {
@@ -397,7 +365,10 @@ class DynamicTableService
         $filtered = [];
 
         foreach ($request as $key => $value) {
-            if (in_array($key, ['jenis', 'tbl'])) continue;
+
+            // 🔥 SUDAH DIGANTI (hapus action/module/tbl)
+            if (in_array($key, ['action', 'module', 'tbl'])) continue;
+
             if (in_array($key, $columns)) {
                 $filtered[$key] = $value;
             }
@@ -431,7 +402,7 @@ class DynamicTableService
     }
 
     /* =========================================================
-       DELETE
+       DELETE (FULL IDENTIK LOGIC ASLI)
     ========================================================= */
     private function delete(string $table, array $profile, int $id): string
     {
@@ -451,7 +422,7 @@ class DynamicTableService
     }
 
     /* =========================================================
-       BUILD QUERY (LISTING)
+       BUILD QUERY (LISTING + SEARCH + SCOPE FULL IDENTIK)
     ========================================================= */
     private function buildQuery(
         string $table,
@@ -472,11 +443,11 @@ class DynamicTableService
         $whereParts = [];
         $params     = [];
 
-        // Apply scope berdasarkan role
+        // 🔥 Apply scope berdasarkan role
         list($userWhere, $userParams) = $this->applyUserScope($table);
 
         /* =====================================================
-           SEARCH ENGINE
+           SEARCH ENGINE (TIDAK DIUBAH)
         ===================================================== */
         if (!empty($search) && !empty($modeConfig['searchable'])) {
 
@@ -504,9 +475,15 @@ class DynamicTableService
             ? 'WHERE ' . implode(' AND ', $whereParts)
             : '';
 
+        /* ==============================
+           TOTAL COUNT
+        ============================== */
         $totalQuery = "SELECT COUNT(*) as total FROM `$table` $where";
         $totalRow = $this->db->query($totalQuery, $params)->fetch()['total'] ?? 0;
 
+        /* ==============================
+           SELECT CLAUSE
+        ============================== */
         $select = $modeConfig['select'] ?? ['*'];
         $selectClause = implode(',', $select);
 
@@ -534,8 +511,7 @@ class DynamicTableService
             $rows
         );
     }
-
-    /* =========================================================
+        /* =========================================================
        GET ALL RAW DATA (UNTUK EXPORT / REPORT)
     ========================================================= */
     private function getAllRaw(
@@ -592,8 +568,9 @@ class DynamicTableService
             $rows
         );
     }
+
     /* =========================================================
-       APPLY USER SCOPE (ROLE AWARE)
+       APPLY USER SCOPE (ROLE AWARE FULL IDENTIK)
     ========================================================= */
     private function applyUserScope(string $table): array
     {
@@ -622,10 +599,6 @@ class DynamicTableService
 
         /* =====================================================
            ADMIN OPD
-           - kd_opd
-           - kd_wilayah (jika ada)
-           - tahun (jika ada)
-           - periode aktif (jika ada kolom periode_id)
         ===================================================== */
         if ($role === 'admin_opd') {
 
@@ -677,7 +650,7 @@ class DynamicTableService
     }
 
     /* =========================================================
-       HYBRID VALIDATION ENGINE
+       HYBRID VALIDATION ENGINE (FULL IDENTIK)
     ========================================================= */
     private function validate(array $data, string $table, array $profile): array
     {
@@ -758,7 +731,7 @@ class DynamicTableService
     }
 
     /* =========================================================
-       DROPDOWN ENGINE (FIX UNIVERSAL PRIMARY KEY)
+       DROPDOWN ENGINE (FULL IDENTIK)
     ========================================================= */
     private function loadDropdown(string $source, $parentValue = null): string
     {

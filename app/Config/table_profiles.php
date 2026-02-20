@@ -717,6 +717,69 @@ return [
             ],
         ]
     ],
+    'kegiatan_renstra_neo' => [
+
+        'table' => 'kegiatan_renstra_neo',
+        'primary_key' => 'id',
+
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'nama_kegiatan'
+        ],
+
+        'modes' => [
+            'default' => [
+                'select' => ['id', 'program_id', 'kode_kegiatan', 'nama_kegiatan', 'keterangan'],
+                'searchable' => ['kode_kegiatan', 'nama_kegiatan'],
+                'order_by' => 'id DESC'
+            ]
+        ],
+
+        'validation' => [
+            'program_id'    => ['required', 'numeric'],
+            'nama_kegiatan' => ['required']
+        ]
+    ],
+    'sub_kegiatan_renstra_neo' => [
+
+        'table' => 'sub_kegiatan_renstra_neo',
+        'primary_key' => 'id',
+
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'master_sub_kegiatan_id'
+        ],
+
+        'modes' => [
+            'default' => [
+                'select' => [
+                    'id',
+                    'kegiatan_renstra_id',
+                    'master_sub_kegiatan_id',
+                    'lokasi',
+                    'baseline',
+                    'target_t1',
+                    'anggaran_t1',
+                    'target_t2',
+                    'anggaran_t2',
+                    'target_t3',
+                    'anggaran_t3',
+                    'target_t4',
+                    'anggaran_t4',
+                    'target_t5',
+                    'anggaran_t5',
+                    'target_akhir'
+                ],
+                'searchable' => ['lokasi', 'kelompok_sasaran'],
+                'order_by' => 'id DESC'
+            ]
+        ],
+
+        'validation' => [
+            'kegiatan_renstra_id'   => ['required', 'numeric'],
+            'master_sub_kegiatan_id' => ['required', 'numeric']
+        ]
+    ],
     'periode_rpjmd' => [
         'table' => 'periode_rpjmd',
         'primary_key' => 'id',

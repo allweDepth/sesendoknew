@@ -21,8 +21,8 @@ const AppConfig = {
 const AppState = {
 	halaman: 1, // Halaman aktif saat ini
 	rows: 10, // Jumlah data per halaman
-	jenis: "", // Module aktif (referensi, renstra, dll)
-	mode: "", // add / edit / detail  <-- TAMBAH INI
+	module: "", // Module aktif (referensi, renstra, dll)
+	action: "", // add / edit / detail  <-- TAMBAH INI
 	tbl: "", // Tabel aktif
 	cari: "", // Keyword pencarian
 	currentMenu: "", // Tracking menu sebelumnya
@@ -258,13 +258,13 @@ class TableManager {
 		 Load tabel berdasarkan module & nama tabel
 		 Dipanggil saat klik menu
 	------------------------------------------------------ */
-	load(jenis, tbl) {
+	load(module, tbl) {
 		// Reset halaman jika pindah menu
 		if (AppState.currentMenu !== tbl) {
 			AppState.halaman = 1;
 		}
 
-		AppState.jenis = jenis;
+		AppState.module = module;
 		AppState.tbl = tbl;
 		AppState.currentMenu = tbl;
 		// 🔥 HEADER DIBUAT DI SINI (sekali saja)
@@ -286,7 +286,8 @@ class TableManager {
 
 		this.ajax.request({
 			data: {
-				jenis: AppState.jenis,
+				module: AppState.module,
+				action: "list",
 				tbl: AppState.tbl,
 				halaman: AppState.halaman,
 				rows: AppState.rows,
@@ -317,8 +318,10 @@ class TableManager {
 		 Render isi tbody tabel
 	------------------------------------------------------ */
 	renderTable(rows) {
-		// 🔥 cari tbody apapun yang diawali tabel_
-		let $tbody = $('tbody[name^="tabel_"]').first();
+		let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
+		if (!$tbody.length) {
+			$tbody = $('tbody[name^="tabel_"]').first();
+		}
 
 		if (!$tbody.length) {
 			ToastEngine.show({
@@ -341,7 +344,7 @@ class TableManager {
 			return;
 		}
 
-		let elements = UIConfig[AppState.jenis]?.[AppState.tbl] || [];
+		let elements = UIConfig[AppState.module]?.[AppState.tbl] || [];
 		let fields = elements.filter((e) => e.prop?.name && !e.prop.non_data);
 
 		rows.forEach((row) => {
@@ -367,7 +370,7 @@ class TableManager {
 		 ⚠️ LOGIC ASLI TIDAK DIUBAH
 	------------------------------------------------------ */
 	renderPagination(meta) {
-		let target = `div[name="pagination_${AppState.jenis}"]`;
+		let target = `div[name="pagination_${AppState.module}"]`;
 
 		if (!meta || !meta.total) {
 			$(target).html("");
@@ -422,11 +425,11 @@ class TableManager {
 		 Build tombol aksi (edit/delete/detail)
 	------------------------------------------------------ */
 	buildActionButtons(row) {
-		let jenis = AppState.jenis;
+		let module = AppState.module;
 		let tbl = AppState.tbl;
 		let role = AppState.role;
 
-		let moduleConfig = ActionConfig[jenis]?.[tbl];
+		let moduleConfig = ActionConfig[module]?.[tbl];
 		let defaultConfig = ActionConfig.default;
 
 		let buttons = [];
@@ -448,8 +451,8 @@ class TableManager {
                     data-ui="open-form"
                     data-container="flyout"
                     data-jns="edit"
-                    data-jenis="${jenis}"
                     data-tbl="${tbl}"
+										data-module="${module}"
                     data-id="${row[AppState.primaryKey]}"> 
 										<i class="edit outline blue icon"></i>
 										</button>
@@ -473,27 +476,28 @@ class TableManager {
 		return html;
 	}
 	renderHeader() {
+		let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
+		if (!$tbody.length) {
+			$tbody = $('tbody[name^="tabel_"]').first();
+		}
 
-    // 🔥 gunakan logic yang sama dengan renderTable
-    let $tbody = $('tbody[name^="tabel_"]').first();
+		if (!$tbody.length) return;
 
-    if (!$tbody.length) return;
+		let $table = $tbody.closest("table");
 
-    let $table = $tbody.closest("table");
+		let elements = UIConfig[AppState.module]?.[AppState.tbl] || [];
+		let fields = elements.filter((el) => el.prop?.name && !el.prop.non_data);
 
-    let elements = UIConfig[AppState.jenis]?.[AppState.tbl] || [];
-    let fields = elements.filter(el => el.prop?.name && !el.prop.non_data);
+		let theadHtml = "<tr>";
 
-    let theadHtml = "<tr>";
+		fields.forEach((field) => {
+			theadHtml += `<th>${field.prop.label || field.prop.name}</th>`;
+		});
 
-    fields.forEach(field => {
-        theadHtml += `<th>${field.prop.label || field.prop.name}</th>`;
-    });
+		theadHtml += `<th class="collapsing">Aksi</th></tr>`;
 
-    theadHtml += `<th class="collapsing">Aksi</th></tr>`;
-
-    $table.find("thead").html(theadHtml);
-}
+		$table.find("thead").html(theadHtml);
+	}
 }
 /* =========================================================
 	 FORM ENGINE PRO - FIELD VARIATIONS (FOMANTIC STYLE)@note
@@ -977,6 +981,9 @@ const UIConfig = {
        RENSTRA
     ====================================================== */
 	renstra: {
+		/* ==============================
+       1. RENSTRA
+    ============================== */
 		renstra_neo: [
 			{
 				tag: "fieldDropdown",
@@ -986,39 +993,75 @@ const UIConfig = {
 					source: "periode_rpjmd",
 				},
 			},
-
 			{
 				tag: "fieldTextarea",
 				prop: { label: "Visi", name: "visi", atribut: `rows="3"` },
 			},
 			{
+				tag: "fieldCheckbox",
+				prop: { label: "Status", name: "status" },
+			},
+			{
+				tag: "fieldCheckbox",
+				prop: { label: "Kunci", name: "kunci" },
+			},
+			{
+				tag: "fieldCheckbox",
+				prop: { label: "Setujui", name: "setujui" },
+			},
+			{
 				tag: "fieldTextarea",
-				prop: { label: "Visi", name: "visi", atribut: `rows="3"` },
+				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
 			},
 		],
 
+		/* ==============================
+       2. MISI
+    ============================== */
 		misi_renstra_neo: [
 			{
-				tag: "fieldDropdown",
-				prop: { label: "Renstra", name: "renstra_id", source: "renstra_neo" },
+				tag: "field",
+				prop: { label: "Kode Misi", name: "kode_misi" },
 			},
 			{
 				tag: "fieldTextarea",
-				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
+				prop: { label: "Nama Misi", name: "nama_misi", atribut: `rows="2"` },
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
 			},
 		],
 
+		/* ==============================
+       3. TUJUAN
+    ============================== */
 		tujuan_renstra_neo: [
 			{
 				tag: "fieldDropdown",
 				prop: { label: "Misi", name: "misi_id", source: "misi_renstra_neo" },
 			},
 			{
+				tag: "field",
+				prop: { label: "Kode Tujuan", name: "kode_tujuan" },
+			},
+			{
 				tag: "fieldTextarea",
-				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
+				prop: {
+					label: "Nama Tujuan",
+					name: "nama_tujuan",
+					atribut: `rows="2"`,
+				},
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
 			},
 		],
 
+		/* ==============================
+       4. SASARAN
+    ============================== */
 		sasaran_renstra_neo: [
 			{
 				tag: "fieldDropdown",
@@ -1029,11 +1072,26 @@ const UIConfig = {
 				},
 			},
 			{
+				tag: "field",
+				prop: { label: "Kode Sasaran", name: "kode_sasaran" },
+			},
+			{
 				tag: "fieldTextarea",
-				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
+				prop: {
+					label: "Nama Sasaran",
+					name: "nama_sasaran",
+					atribut: `rows="2"`,
+				},
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
 			},
 		],
 
+		/* ==============================
+       5. INDIKATOR SASARAN
+    ============================== */
 		indikator_sasaran_renstra_neo: [
 			{
 				tag: "fieldDropdown",
@@ -1043,26 +1101,54 @@ const UIConfig = {
 					source: "sasaran_renstra_neo",
 				},
 			},
-			{ tag: "field", prop: { label: "Indikator", name: "indikator" } },
+			{
+				tag: "field",
+				prop: { label: "Nama Indikator", name: "nama_indikator" },
+			},
 			{ tag: "field", prop: { label: "Satuan", name: "satuan" } },
+			{ tag: "field", prop: { label: "Baseline", name: "baseline" } },
+			{ tag: "field", prop: { label: "Target T1", name: "target_t1" } },
+			{ tag: "field", prop: { label: "Target T2", name: "target_t2" } },
+			{ tag: "field", prop: { label: "Target T3", name: "target_t3" } },
+			{ tag: "field", prop: { label: "Target T4", name: "target_t4" } },
+			{ tag: "field", prop: { label: "Target T5", name: "target_t5" } },
+			{ tag: "field", prop: { label: "Target Akhir", name: "target_akhir" } },
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
+			},
 		],
 
+		/* ==============================
+       6. PROGRAM
+    ============================== */
 		program_renstra_neo: [
 			{
 				tag: "fieldDropdown",
 				prop: {
 					label: "Sasaran",
-					name: "id_sasaran",
+					name: "sasaran_id",
 					source: "sasaran_renstra_neo",
 				},
 			},
 			{ tag: "field", prop: { label: "Kode Program", name: "kode_program" } },
 			{
 				tag: "fieldTextarea",
-				prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` },
+				prop: {
+					label: "Nama Program",
+					name: "nama_program",
+					atribut: `rows="2"`,
+				},
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
 			},
 		],
 
+		/* ==============================
+       7. INDIKATOR PROGRAM
+    ============================== */
 		indikator_program_renstra_neo: [
 			{
 				tag: "fieldDropdown",
@@ -1072,16 +1158,28 @@ const UIConfig = {
 					source: "program_renstra_neo",
 				},
 			},
-			{ tag: "field", prop: { label: "Indikator", name: "nama_indikator" } },
+			{
+				tag: "field",
+				prop: { label: "Nama Indikator", name: "nama_indikator" },
+			},
 			{ tag: "field", prop: { label: "Satuan", name: "satuan" } },
+			{ tag: "field", prop: { label: "Baseline", name: "baseline" } },
 			{ tag: "field", prop: { label: "Target T1", name: "target_t1" } },
 			{ tag: "field", prop: { label: "Target T2", name: "target_t2" } },
 			{ tag: "field", prop: { label: "Target T3", name: "target_t3" } },
 			{ tag: "field", prop: { label: "Target T4", name: "target_t4" } },
 			{ tag: "field", prop: { label: "Target T5", name: "target_t5" } },
+			{ tag: "field", prop: { label: "Target Akhir", name: "target_akhir" } },
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
+			},
 		],
 
-		anggaran_program_renstra_neo: [
+		/* ==============================
+       8. KEGIATAN
+    ============================== */
+		kegiatan_renstra_neo: [
 			{
 				tag: "fieldDropdown",
 				prop: {
@@ -1090,13 +1188,64 @@ const UIConfig = {
 					source: "program_renstra_neo",
 				},
 			},
+			{ tag: "field", prop: { label: "Kode Kegiatan", name: "kode_kegiatan" } },
 			{
-				tag: "field",
-				prop: { label: "Tahun", name: "tahun", atribut: `type="number"` },
+				tag: "fieldTextarea",
+				prop: {
+					label: "Nama Kegiatan",
+					name: "nama_kegiatan",
+					atribut: `rows="2"`,
+				},
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
+			},
+		],
+
+		/* ==============================
+       9. SUB KEGIATAN
+    ============================== */
+		sub_kegiatan_renstra_neo: [
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Kegiatan",
+					name: "kegiatan_renstra_id",
+					source: "kegiatan_renstra_neo",
+				},
 			},
 			{
 				tag: "field",
-				prop: { label: "Pagu", name: "pagu", atribut: `type="number"` },
+				prop: { label: "Master Sub Kegiatan", name: "master_sub_kegiatan_id" },
+			},
+			{ tag: "field", prop: { label: "Lokasi", name: "lokasi" } },
+			{
+				tag: "field",
+				prop: { label: "Kelompok Sasaran", name: "kelompok_sasaran" },
+			},
+			{ tag: "field", prop: { label: "Baseline", name: "baseline" } },
+
+			{ tag: "field", prop: { label: "Target T1", name: "target_t1" } },
+			{ tag: "field", prop: { label: "Anggaran T1", name: "anggaran_t1" } },
+
+			{ tag: "field", prop: { label: "Target T2", name: "target_t2" } },
+			{ tag: "field", prop: { label: "Anggaran T2", name: "anggaran_t2" } },
+
+			{ tag: "field", prop: { label: "Target T3", name: "target_t3" } },
+			{ tag: "field", prop: { label: "Anggaran T3", name: "anggaran_t3" } },
+
+			{ tag: "field", prop: { label: "Target T4", name: "target_t4" } },
+			{ tag: "field", prop: { label: "Anggaran T4", name: "anggaran_t4" } },
+
+			{ tag: "field", prop: { label: "Target T5", name: "target_t5" } },
+			{ tag: "field", prop: { label: "Anggaran T5", name: "anggaran_t5" } },
+
+			{ tag: "field", prop: { label: "Target Akhir", name: "target_akhir" } },
+
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
 			},
 		],
 	},
@@ -1536,8 +1685,8 @@ class FormContainerManager {
 	}
 
 	runPlugins() {
-		const exactKey = `${AppState.jenis}.${AppState.tbl}`;
-		const wildcardKey = `${AppState.jenis}.*`;
+		const exactKey = `${AppState.module}.${AppState.tbl}`;
+		const wildcardKey = `${AppState.module}.*`;
 
 		const payload = {
 			container: this.getActiveForm(),
@@ -1664,7 +1813,8 @@ class FormContainerManager {
 
 	fetchDropdown($dropdown, source, parentValue = null) {
 		let payload = {
-			jenis: "dropdown",
+			module: AppState.module,
+			action: "dropdown",
 			source: source,
 		};
 
@@ -1697,7 +1847,8 @@ class FormContainerManager {
 	open($btn) {
 		const jenisMode = $btn.data("jns");
 		const jenisFromBtn = $btn.data("jenis");
-		const tbl = $btn.data("tbl");
+		// const tbl = $btn.data("tbl");
+		const tbl = $btn.data("tbl") || AppState.tbl;
 
 		// ==============================
 		// 🔥 VALIDASI WAJIB
@@ -1711,21 +1862,24 @@ class FormContainerManager {
 		// 🔥 SET JENIS
 		// ==============================
 		if (jenisFromBtn) {
-			AppState.jenis = jenisFromBtn;
+			AppState.module =
+				$btn.data("module") ||
+				AppState.module ||
+				window.location.pathname.replace(/^\/+/g, "");
 		}
 
-		if (!AppState.jenis) {
-			AppState.jenis = window.location.pathname.replace(/^\/+/g, "");
+		if (!AppState.module) {
+			AppState.module = window.location.pathname.replace(/^\/+/g, "");
 		}
 
 		AppState.tbl = tbl;
-		AppState.mode = jenisMode;
+		AppState.action = jenisMode;
 
 		// ==============================
 		// 🔥 DEBUG
 		// ==============================
 		console.log("OPEN FORM:");
-		console.log("JENIS:", AppState.jenis);
+		console.log("MODULE:", AppState.module);
 		console.log("TBL:", AppState.tbl);
 
 		// ==============================
@@ -1787,7 +1941,7 @@ class FormContainerManager {
 		this.initValidation(target);
 		this.loadDropdowns(target);
 
-		if (AppState.mode === "edit") {
+		if (AppState.action === "edit") {
 			$(target).prepend(`<input type="hidden" name="id">`);
 		}
 
@@ -1802,7 +1956,7 @@ class FormContainerManager {
 		if (!$form.length) return;
 
 		let rules = {};
-		let elements = UIConfig[AppState.jenis]?.[AppState.tbl] || [];
+		let elements = UIConfig[AppState.module]?.[AppState.tbl] || [];
 
 		elements.forEach((el) => {
 			if (!el.prop?.name) return;
@@ -1867,7 +2021,8 @@ class FormContainerManager {
 	loadData(idRow, container) {
 		this.ajax.request({
 			data: {
-				jenis: "edit",
+				module: AppState.module,
+				action: "edit",
 				tbl: AppState.tbl,
 				id_row: idRow,
 			},
@@ -1963,7 +2118,7 @@ class FormContainerManager {
 						? "Edit Data"
 						: "Detail Data",
 
-			elements: UIConfig[AppState.jenis]?.[tbl] || [],
+			elements: UIConfig[AppState.module]?.[tbl] || [],
 		};
 
 		return config;
@@ -1974,7 +2129,7 @@ class FormContainerManager {
 		// ===============================
 		// 🔥 MODE IMPORT XLSX
 		// ===============================
-		if (AppState.mode === "import_xlsx") {
+		if (AppState.action === "import_xlsx") {
 			let $formTarget = this.getActiveForm();
 			let formElement = $formTarget[0];
 
@@ -2020,7 +2175,8 @@ class FormContainerManager {
 
 		let formData = new FormData(formElement);
 
-		formData.append("jenis", AppState.mode);
+		formData.append("module", AppState.module);
+		formData.append("action", AppState.action);
 		formData.append("tbl", AppState.tbl);
 
 		this.ajax.request({
@@ -2276,7 +2432,8 @@ $(document).ready(function () {
 			$.post(
 				AppConfig.apiUrl + "dynamic",
 				{
-					jenis: "delete",
+					module: AppState.module,
+					action: "delete",
 					tbl: tbl,
 					id_row: id,
 				},
