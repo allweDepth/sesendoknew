@@ -835,14 +835,14 @@ Jika tabel misi_renstra_neo:
    UTIL: GET PROFILE BY TABLE
 ========================================================= */
     private function getProfileByTable(string $table): array
-{
-    foreach ($this->profiles as $profile) {
-        if (($profile['table'] ?? '') === $table) {
-            return $profile;
+    {
+        foreach ($this->profiles as $profile) {
+            if (($profile['table'] ?? '') === $table) {
+                return $profile;
+            }
         }
+        return [];
     }
-    return [];
-}
 
     /* =========================================================
    UTIL: GET PRIMARY KEY
