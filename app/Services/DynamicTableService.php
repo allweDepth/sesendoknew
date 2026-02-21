@@ -200,7 +200,40 @@ class DynamicTableService
                 $filtered[$col] = 1;
             }
         }
+        /* =====================================================
+   NORMALISASI FORMAT DATE (DD/MM/YYYY → YYYY-MM-DD)
+===================================================== */
 
+        foreach ($columns as $col) {
+
+            if (!isset($filtered[$col])) continue;
+
+            // cek apakah kolom bertipe date
+            $schema = $this->buildRulesFromSchema($table);
+
+            if (isset($schema[$col])) {
+
+                $columnInfo = $this->db->query("SHOW COLUMNS FROM `$table` LIKE ?", [$col])->fetch();
+                $type = $columnInfo['Type'] ?? '';
+
+                if (str_contains($type, 'date')) {
+
+                    $value = $filtered[$col];
+
+                    if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
+
+                        $parts = explode('/', $value);
+
+                        $filtered[$col] = sprintf(
+                            '%04d-%02d-%02d',
+                            $parts[2],
+                            $parts[1],
+                            $parts[0]
+                        );
+                    }
+                }
+            }
+        }
         /* =====================================================
         VALIDASI KHUSUS PERIODE RPJMD
         ===================================================== */
@@ -319,7 +352,58 @@ class DynamicTableService
 
             $filtered['kode'] = $lastKode + 1;
         }
+        /* =====================================================
+   AUTO DEFAULT SYSTEM FIELDS (STRICT MODE)
+   HARD STOP PRODUCTION SAFE
+===================================================== */
 
+        if (in_array('disable', $columns) && !isset($filtered['disable'])) {
+            $filtered['disable'] = 0;
+        }
+
+        if (in_array('is_deleted', $columns) && !isset($filtered['is_deleted'])) {
+            $filtered['is_deleted'] = 0;
+        }
+
+        /* =====================================================
+   STRICT PERATURAN VALIDATION
+===================================================== */
+
+        if (in_array('peraturan', $columns) && !isset($filtered['peraturan'])) {
+
+            $pengaturan = $this->getPengaturanAktif();
+
+            if (!$pengaturan) {
+                return JsonResponse::error(
+                    "Pengaturan aktif tidak ditemukan. Silakan set pengaturan terlebih dahulu."
+                );
+            }
+
+            $map = [
+                'ssh_neo'     => 'aturan_ssh',
+                'sbu_neo'     => 'aturan_sbu',
+                'asb_neo'     => 'aturan_asb',
+                'hspk_neo'    => 'aturan_hspk',
+                'akun_neo'    => 'aturan_akun',
+                'satuan_neo'  => 'aturan_ssh'
+            ];
+
+            if (!isset($map[$table])) {
+                return JsonResponse::error(
+                    "Mapping peraturan untuk tabel '{$table}' belum dikonfigurasi."
+                );
+            }
+
+            $aturanField = $map[$table];
+
+            if (!isset($pengaturan[$aturanField]) || empty($pengaturan[$aturanField])) {
+                return JsonResponse::error(
+                    "Field '{$aturanField}' pada pengaturan aktif belum diisi."
+                );
+            }
+
+            $filtered['peraturan'] = $pengaturan[$aturanField];
+        }
         /* =====================================================
        AUDIT TRAIL (PINDAH SEBELUM VALIDASI)
     ===================================================== */
@@ -430,7 +514,7 @@ class DynamicTableService
        VALIDASI HYBRID
     ===================================================== */
         $profile = $this->getProfileByTable($table);
-        $errors  = $this->validate($filtered, $table, $profile);
+        $errors  = $this->validate($filtered, $table, $profile, $id);
 
         if (!empty($errors)) {
             return JsonResponse::error("Validation gagal", 422, $errors);
@@ -777,7 +861,7 @@ class DynamicTableService
     /* =========================================================
        HYBRID VALIDATION ENGINE (FULL IDENTIK)
     ========================================================= */
-    private function validate(array $data, string $table, array $profile): array
+    private function validate(array $data, string $table, array $profile, $currentId = null): array
     {
         $errors = [];
 
@@ -792,7 +876,7 @@ class DynamicTableService
 
             foreach ($fieldRules as $rule) {
 
-                if ($rule === 'required' && empty($value)) {
+                if ($rule === 'required' && ($value === null || $value === '')) {
                     $errors[$field] = "$field wajib diisi";
                 }
 
@@ -803,7 +887,32 @@ class DynamicTableService
                 if ($rule === 'email' && !empty($value) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
                     $errors[$field] = "$field tidak valid";
                 }
+                //rule validasi
+                if ($rule === 'unique' && ($value !== null && $value !== '')) {
 
+                    $primaryKey = $this->getPrimaryKey($table);
+
+                    if ($currentId) {
+                        $exists = $this->db->query(
+                            "SELECT $primaryKey FROM `$table` 
+                            WHERE `$field` = ? 
+                            AND `$primaryKey` != ? 
+                            LIMIT 1",
+                            [$value, $currentId]
+                        )->fetch();
+                    } else {
+                        $exists = $this->db->query(
+                            "SELECT $primaryKey FROM `$table` 
+                            WHERE `$field` = ? 
+                            LIMIT 1",
+                            [$value]
+                        )->fetch();
+                    }
+
+                    if ($exists) {
+                        $errors[$field] = "$field sudah digunakan";
+                    }
+                }
                 if (str_starts_with($rule, 'max:') && !empty($value)) {
 
                     $max = (int)explode(':', $rule)[1];
@@ -1021,7 +1130,7 @@ class DynamicTableService
             return null;
         }
 
-        $this->pengaturanAktifCache = $this->db->query("
+        $result = $this->db->query("
             SELECT *
             FROM pengaturan_neo
             WHERE kd_wilayah = ?
@@ -1029,6 +1138,8 @@ class DynamicTableService
             AND disable = 0
             LIMIT 1
         ", [$kd_wilayah, $tahun])->fetch();
+
+        $this->pengaturanAktifCache = $result ?: null;
 
         return $this->pengaturanAktifCache;
     }

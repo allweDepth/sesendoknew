@@ -433,6 +433,9 @@ return [
     'asn' => [
         'table' => 'db_asn_pemda_neo',
         'primary_key' => 'id',
+        'validation' => [
+            'nip' => ['required', 'unique']
+        ],
         'modes' => [
             'dropdown' => [
                 'select' => ['id', 'nama', 'nip', 'alamat', 'golongan', 'ruang', 'jabatan', 'keterangan'],
@@ -558,207 +561,237 @@ return [
             ]
         ]
     ],
-'misi_renstra_neo' => [
-    'table' => 'misi_renstra_neo',
-    'primary_key' => 'id',
-    'dropdown' => [
-        'value' => 'id',
-        'label' => 'nama_misi'
-    ],
-    'modes' => [
-        'default' => [
-            'select' => ['id','renstra_id','nama_misi','disable','keterangan'],
-            'searchable' => ['nama_misi'],
-            'order_by' => 'id DESC',
+    'misi_renstra_neo' => [
+        'table' => 'misi_renstra_neo',
+        'primary_key' => 'id',
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'nama_misi'
         ],
-        'edit' => [
-            'select' => ['*'],
-            'searchable' => ['*'],
-            'order_by' => 'id ASC'
-        ]
-    ]
-],
-
-'tujuan_renstra_neo' => [
-    'table' => 'tujuan_renstra_neo',
-    'primary_key' => 'id',
-    'dropdown' => [
-        'value' => 'id',
-        'label' => 'nama_tujuan'
-    ],
-    'modes' => [
-        'default' => [
-            'select' => ['id','misi_id','nama_tujuan','disable','keterangan'],
-            'searchable' => ['nama_tujuan'],
-            'order_by' => 'id DESC',
-        ],
-        'edit' => [
-            'select' => ['*'],
-            'searchable' => ['*'],
-            'order_by' => 'id ASC'
-        ]
-    ]
-],
-
-'sasaran_renstra_neo' => [
-    'table' => 'sasaran_renstra_neo',
-    'primary_key' => 'id',
-    'dropdown' => [
-        'value' => 'id',
-        'label' => 'nama_sasaran'
-    ],
-    'modes' => [
-        'default' => [
-            'select' => ['id','tujuan_id','nama_sasaran','disable','keterangan'],
-            'searchable' => ['nama_sasaran'],
-            'order_by' => 'id DESC',
-        ],
-        'edit' => [
-            'select' => ['*'],
-            'searchable' => ['*'],
-            'order_by' => 'id ASC'
-        ]
-    ]
-],
-
-'indikator_sasaran_renstra_neo' => [
-    'table' => 'indikator_sasaran_renstra_neo',
-    'primary_key' => 'id',
-    'modes' => [
-        'default' => [
-            'select' => [
-                'id','sasaran_id','nama_indikator','satuan',
-                'baseline','target_t1','target_t2','target_t3',
-                'target_t4','target_t5','target_akhir','keterangan'
+        'modes' => [
+            'default' => [
+                'select' => ['id', 'renstra_id', 'nama_misi', 'disable', 'keterangan'],
+                'searchable' => ['nama_misi'],
+                'order_by' => 'id DESC',
             ],
-            'searchable' => ['nama_indikator','satuan'],
-            'order_by' => 'id DESC',
-        ],
-        'edit' => [
-            'select' => ['*'],
-            'searchable' => ['*'],
-            'order_by' => 'id ASC'
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
         ]
-    ]
-],
-
-'program_renstra_neo' => [
-    'table' => 'program_renstra_neo',
-    'primary_key' => 'id',
-    'dropdown' => [
-        'value' => 'id',
-        'label' => 'nama_program'
     ],
-    'modes' => [
-        'default' => [
-            'select' => ['id','sasaran_id','kode_program','nama_program','disable','keterangan'],
-            'searchable' => ['kode_program','nama_program'],
-            'order_by' => 'id DESC',
-        ],
-        'edit' => [
-            'select' => ['*'],
-            'searchable' => ['*'],
-            'order_by' => 'id ASC'
-        ]
-    ]
-],
 
-'indikator_program_renstra_neo' => [
-    'table' => 'indikator_program_renstra_neo',
-    'primary_key' => 'id',
-    'modes' => [
-        'default' => [
-            'select' => [
-                'id','program_id','nama_indikator','satuan',
-                'baseline','target_t1','target_t2','target_t3',
-                'target_t4','target_t5','target_akhir','keterangan'
+    'tujuan_renstra_neo' => [
+        'table' => 'tujuan_renstra_neo',
+        'primary_key' => 'id',
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'nama_tujuan'
+        ],
+        'modes' => [
+            'default' => [
+                'select' => ['id', 'misi_id', 'nama_tujuan', 'disable', 'keterangan'],
+                'searchable' => ['nama_tujuan'],
+                'order_by' => 'id DESC',
             ],
-            'searchable' => ['nama_indikator','satuan'],
-            'order_by' => 'id DESC',
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+        ]
+    ],
+
+    'sasaran_renstra_neo' => [
+        'table' => 'sasaran_renstra_neo',
+        'primary_key' => 'id',
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'nama_sasaran'
         ],
-        'edit' => [
-            'select' => ['*'],
-            'searchable' => ['*'],
-            'order_by' => 'id ASC'
-        ]
-    ]
-],
-
-'kegiatan_renstra_neo' => [
-    'table' => 'kegiatan_renstra_neo',
-    'primary_key' => 'id',
-    'dropdown' => [
-        'value' => 'id',
-        'label' => 'nama_kegiatan'
-    ],
-    'modes' => [
-        'default' => [
-            'select' => ['id','program_id','kode_kegiatan','nama_kegiatan','keterangan'],
-            'searchable' => ['kode_kegiatan','nama_kegiatan'],
-            'order_by' => 'id DESC'
-        ]
-    ],
-    'validation' => [
-        'program_id'    => ['required','numeric'],
-        'nama_kegiatan' => ['required']
-    ]
-],
-
-'sub_kegiatan_renstra_neo' => [
-    'table' => 'sub_kegiatan_renstra_neo',
-    'primary_key' => 'id',
-    'dropdown' => [
-        'value' => 'id',
-        'label' => 'master_sub_kegiatan_id'
-    ],
-    'modes' => [
-        'default' => [
-            'select' => [
-                'id',
-                'kegiatan_renstra_id',
-                'master_sub_kegiatan_id',
-                'lokasi',
-                'kelompok_sasaran',
-                'baseline',
-                'target_t1','anggaran_t1',
-                'target_t2','anggaran_t2',
-                'target_t3','anggaran_t3',
-                'target_t4','anggaran_t4',
-                'target_t5','anggaran_t5',
-                'target_akhir'
+        'modes' => [
+            'default' => [
+                'select' => ['id', 'tujuan_id', 'nama_sasaran', 'disable', 'keterangan'],
+                'searchable' => ['nama_sasaran'],
+                'order_by' => 'id DESC',
             ],
-            'searchable' => ['lokasi','kelompok_sasaran'],
-            'order_by' => 'id DESC'
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
         ]
     ],
-    'validation' => [
-        'kegiatan_renstra_id'    => ['required','numeric'],
-        'master_sub_kegiatan_id' => ['required','numeric']
-    ]
-],
 
-'renstra_neo' => [
-    'table' => 'renstra_neo',
-    'primary_key' => 'id',
-    'dropdown' => [
-        'value' => 'id',
-        'label' => 'visi'
-    ],
-    'modes' => [
-        'default' => [
-            'select' => [
-                'id','periode_id','visi','status','kunci','setujui','disable','keterangan'
+    'indikator_sasaran_renstra_neo' => [
+        'table' => 'indikator_sasaran_renstra_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => [
+                    'id',
+                    'sasaran_id',
+                    'nama_indikator',
+                    'satuan',
+                    'baseline',
+                    'target_t1',
+                    'target_t2',
+                    'target_t3',
+                    'target_t4',
+                    'target_t5',
+                    'target_akhir',
+                    'keterangan'
+                ],
+                'searchable' => ['nama_indikator', 'satuan'],
+                'order_by' => 'id DESC',
             ],
-            'searchable' => ['visi'],
-            'order_by' => 'id DESC'
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+        ]
+    ],
+
+    'program_renstra_neo' => [
+        'table' => 'program_renstra_neo',
+        'primary_key' => 'id',
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'nama_program'
         ],
-        'edit' => [
-            'select' => ['*'],
-            'searchable' => ['*'],
-            'order_by' => 'id ASC'
+        'modes' => [
+            'default' => [
+                'select' => ['id', 'sasaran_id', 'kode_program', 'nama_program', 'disable', 'keterangan'],
+                'searchable' => ['kode_program', 'nama_program'],
+                'order_by' => 'id DESC',
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
         ]
-    ]
-],
+    ],
+
+    'indikator_program_renstra_neo' => [
+        'table' => 'indikator_program_renstra_neo',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => [
+                    'id',
+                    'program_id',
+                    'nama_indikator',
+                    'satuan',
+                    'baseline',
+                    'target_t1',
+                    'target_t2',
+                    'target_t3',
+                    'target_t4',
+                    'target_t5',
+                    'target_akhir',
+                    'keterangan'
+                ],
+                'searchable' => ['nama_indikator', 'satuan'],
+                'order_by' => 'id DESC',
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+        ]
+    ],
+
+    'kegiatan_renstra_neo' => [
+        'table' => 'kegiatan_renstra_neo',
+        'primary_key' => 'id',
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'nama_kegiatan'
+        ],
+        'modes' => [
+            'default' => [
+                'select' => ['id', 'program_id', 'kode_kegiatan', 'nama_kegiatan', 'keterangan'],
+                'searchable' => ['kode_kegiatan', 'nama_kegiatan'],
+                'order_by' => 'id DESC'
+            ]
+        ],
+        'validation' => [
+            'program_id'    => ['required', 'numeric'],
+            'nama_kegiatan' => ['required']
+        ]
+    ],
+
+    'sub_kegiatan_renstra_neo' => [
+        'table' => 'sub_kegiatan_renstra_neo',
+        'primary_key' => 'id',
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'master_sub_kegiatan_id'
+        ],
+        'modes' => [
+            'default' => [
+                'select' => [
+                    'id',
+                    'kegiatan_renstra_id',
+                    'master_sub_kegiatan_id',
+                    'lokasi',
+                    'kelompok_sasaran',
+                    'baseline',
+                    'target_t1',
+                    'anggaran_t1',
+                    'target_t2',
+                    'anggaran_t2',
+                    'target_t3',
+                    'anggaran_t3',
+                    'target_t4',
+                    'anggaran_t4',
+                    'target_t5',
+                    'anggaran_t5',
+                    'target_akhir'
+                ],
+                'searchable' => ['lokasi', 'kelompok_sasaran'],
+                'order_by' => 'id DESC'
+            ]
+        ],
+        'validation' => [
+            'kegiatan_renstra_id'    => ['required', 'numeric'],
+            'master_sub_kegiatan_id' => ['required', 'numeric']
+        ]
+    ],
+
+    'renstra_neo' => [
+        'table' => 'renstra_neo',
+        'primary_key' => 'id',
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'visi'
+        ],
+        'modes' => [
+            'default' => [
+                'select' => [
+                    'id',
+                    'periode_id',
+                    'visi',
+                    'status',
+                    'kunci',
+                    'setujui',
+                    'disable',
+                    'keterangan'
+                ],
+                'searchable' => ['visi'],
+                'order_by' => 'id DESC'
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
+        ]
+    ],
     'periode_rpjmd' => [
         'table' => 'periode_rpjmd',
         'primary_key' => 'id',
