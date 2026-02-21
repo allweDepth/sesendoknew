@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 20 Feb 2026 pada 21.00
+-- Waktu pembuatan: 21 Feb 2026 pada 06.10
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -157,6 +157,7 @@ CREATE TABLE `bidang` (
   `kode_urusan` varchar(10) NOT NULL,
   `nama` varchar(255) NOT NULL,
   `status` tinyint(4) DEFAULT 1,
+  `peraturan` int(11) NOT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
@@ -637,6 +638,7 @@ CREATE TABLE `kegiatan` (
   `kode_program` varchar(15) NOT NULL,
   `nama` varchar(255) NOT NULL,
   `status` tinyint(4) DEFAULT 1,
+  `peraturan` int(11) NOT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
@@ -912,6 +914,7 @@ CREATE TABLE `program` (
   `kode_bidang` varchar(10) NOT NULL,
   `nama` varchar(255) NOT NULL,
   `status` tinyint(4) DEFAULT 1,
+  `peraturan` int(11) NOT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
@@ -1543,6 +1546,7 @@ CREATE TABLE `urusan` (
   `kode` varchar(10) NOT NULL,
   `nama` varchar(255) NOT NULL,
   `status` tinyint(4) DEFAULT 1,
+  `peraturan` int(11) NOT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
