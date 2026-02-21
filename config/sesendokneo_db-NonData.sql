@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 21 Feb 2026 pada 17.36
+-- Waktu pembuatan: 21 Feb 2026 pada 22.10
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -1003,6 +1003,157 @@ CREATE TABLE `rab_paket_neo` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `ref_jenis_naskah`
+--
+
+CREATE TABLE `ref_jenis_naskah` (
+  `id` int(11) NOT NULL,
+  `kelompok_id` int(11) DEFAULT NULL,
+  `nama` varchar(200) DEFAULT NULL,
+  `sub_kategori` varchar(200) DEFAULT NULL,
+  `urutan` int(11) DEFAULT 0,
+  `schema_json` longtext DEFAULT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `keterangan` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `ref_jenis_naskah`
+--
+
+INSERT INTO `ref_jenis_naskah` (`id`, `kelompok_id`, `nama`, `sub_kategori`, `urutan`, `schema_json`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`) VALUES
+(1, 1, 'Peraturan Arsip Nasional Republik Indonesia', 'Pengaturan', 1, '[\r\n  {\"type\":\"auto_nomor\",\"label\":\"Nomor\",\"name\":\"nomor\"},\r\n  {\"type\":\"text\",\"label\":\"Tentang\",\"name\":\"tentang\"},\r\n  {\"type\":\"date\",\"label\":\"Tanggal\",\"name\":\"tanggal\"}\r\n]', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, 1, 'Instruksi', 'Pengaturan', 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, 1, 'Surat Edaran', 'Pengaturan', 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 1, 'Standar Operasional Prosedur Administrasi Pemerintah', 'Pengaturan', 4, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 1, 'Naskah Dinas Penetapan', 'Penetapan', 5, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(6, 1, 'Naskah Dinas Penugasan', 'Penugasan', 6, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(7, 2, 'Nota Dinas', 'Internal', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(8, 2, 'Memorandum', 'Internal', 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(9, 2, 'Disposisi', 'Internal', 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(10, 2, 'Surat Undangan Internal', 'Internal', 4, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(11, 2, 'Naskah Dinas Korespondensi Eksternal', 'Eksternal', 5, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(12, 3, 'Surat Perjanjian', '', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(13, 3, 'Surat Kuasa', '', 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(14, 3, 'Berita Acara', '', 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(15, 3, 'Surat Keterangan', '', 4, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(16, 3, 'Surat Pengantar', '', 5, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(17, 3, 'Pengumuman', '', 6, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(18, 3, 'Laporan', '', 7, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(19, 3, 'Telaah Staf', '', 8, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(20, 3, 'Notula', '', 9, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(21, 3, 'Sambutan Tertulis', '', 10, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(22, 3, 'Siaran Pers', '', 11, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(23, 3, 'Sertifikat', '', 12, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(24, 3, 'Surat Tanda Tamat Pelatihan', '', 13, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(25, 3, 'Piagam Penghargaan', '', 14, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `ref_jenis_naskah_dinas`
+--
+
+CREATE TABLE `ref_jenis_naskah_dinas` (
+  `id` int(11) NOT NULL,
+  `kode` varchar(20) DEFAULT NULL,
+  `nama` varchar(150) DEFAULT NULL,
+  `kategori` varchar(50) DEFAULT NULL,
+  `orientasi` varchar(20) DEFAULT NULL,
+  `template_default` text DEFAULT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `keterangan` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `ref_kelompok_naskah`
+--
+
+CREATE TABLE `ref_kelompok_naskah` (
+  `id` int(11) NOT NULL,
+  `kode` varchar(5) DEFAULT NULL,
+  `nama` varchar(150) DEFAULT NULL,
+  `urutan` int(11) DEFAULT 0,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `keterangan` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `ref_kelompok_naskah`
+--
+
+INSERT INTO `ref_kelompok_naskah` (`id`, `kode`, `nama`, `urutan`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`) VALUES
+(1, 'A', 'Naskah Dinas Arahan', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, 'B', 'Naskah Dinas Korespondensi', 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, 'C', 'Naskah Dinas Khusus', 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `ref_klasifikasi_keamanan`
+--
+
+CREATE TABLE `ref_klasifikasi_keamanan` (
+  `id` int(11) NOT NULL,
+  `kode` varchar(5) DEFAULT NULL,
+  `nama` varchar(50) DEFAULT NULL,
+  `warna` varchar(20) DEFAULT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `keterangan` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `ref_template_naskah`
+--
+
+CREATE TABLE `ref_template_naskah` (
+  `id` int(11) NOT NULL,
+  `jenis_id` int(11) NOT NULL,
+  `nama_template` varchar(150) DEFAULT NULL,
+  `form_schema` longtext DEFAULT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `keterangan` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `ref_template_naskah`
+--
+
+INSERT INTO `ref_template_naskah` (`id`, `jenis_id`, `nama_template`, `form_schema`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`) VALUES
+(1, 5, 'Template Penetapan', '[\r\n        {\"type\":\"auto_nomor\",\"label\":\"Nomor Surat\",\"name\":\"nomor\"},\r\n        {\"type\":\"date\",\"label\":\"Tanggal Surat\",\"name\":\"tanggal_surat\"},\r\n        {\"type\":\"text\",\"label\":\"Perihal\",\"name\":\"perihal\"},\r\n        {\"type\":\"dropdown_klasifikasi\",\"label\":\"Klasifikasi\",\"name\":\"klasifikasi_id\"},\r\n        {\"type\":\"editor\",\"label\":\"Isi Penetapan\",\"name\":\"isi\"}\r\n    ]', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `register_naskah_dinas`
 --
 
@@ -1562,6 +1713,89 @@ CREATE TABLE `sumber_dana_neo` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `trx_naskah_dinas`
+--
+
+CREATE TABLE `trx_naskah_dinas` (
+  `id` bigint(20) NOT NULL,
+  `uuid` varchar(100) DEFAULT NULL,
+  `jenis_id` int(11) DEFAULT NULL,
+  `nomor` varchar(100) DEFAULT NULL,
+  `nomor_urut` int(11) DEFAULT NULL,
+  `tahun` year(4) DEFAULT NULL,
+  `klasifikasi_id` int(11) DEFAULT NULL,
+  `tanggal_surat` date DEFAULT NULL,
+  `perihal` varchar(255) DEFAULT NULL,
+  `status` enum('draft','final') DEFAULT 'draft',
+  `file_pdf` varchar(255) DEFAULT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `workflow_status` varchar(20) DEFAULT 'draft',
+  `verified_by` varchar(100) DEFAULT NULL,
+  `verified_at` datetime DEFAULT NULL,
+  `signed_by` varchar(100) DEFAULT NULL,
+  `signed_at` datetime DEFAULT NULL,
+  `final_at` datetime DEFAULT NULL,
+  `document_hash` varchar(64) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `trx_naskah_meta`
+--
+
+CREATE TABLE `trx_naskah_meta` (
+  `id` bigint(20) NOT NULL,
+  `naskah_id` bigint(20) DEFAULT NULL,
+  `meta_key` varchar(100) DEFAULT NULL,
+  `meta_value` longtext DEFAULT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `trx_naskah_struktur`
+--
+
+CREATE TABLE `trx_naskah_struktur` (
+  `id` bigint(20) NOT NULL,
+  `naskah_id` bigint(20) NOT NULL,
+  `struktur_json` longtext NOT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `tahun` int(11) DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `trx_nomor_counter`
+--
+
+CREATE TABLE `trx_nomor_counter` (
+  `id` int(11) NOT NULL,
+  `klasifikasi_id` int(11) DEFAULT NULL,
+  `tahun` int(11) DEFAULT NULL,
+  `last_number` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `tujuan_renstra_neo`
 --
 
@@ -1632,6 +1866,8 @@ CREATE TABLE `user_sesendok_biila` (
   `kd_wilayah` varchar(255) NOT NULL,
   `type_user` varchar(20) NOT NULL,
   `photo` varchar(255) NOT NULL DEFAULT 'default.jpeg',
+  `signature_image` varchar(255) DEFAULT NULL,
+  `signature_verified` tinyint(4) DEFAULT 0,
   `tgl_daftar` datetime NOT NULL,
   `tgl_login` datetime DEFAULT NULL,
   `tahun` year(4) NOT NULL,
@@ -1654,12 +1890,12 @@ CREATE TABLE `user_sesendok_biila` (
 -- Dumping data untuk tabel `user_sesendok_biila`
 --
 
-INSERT INTO `user_sesendok_biila` (`id`, `username`, `email`, `nama`, `nip`, `password`, `remember_token`, `kd_opd`, `nama_org`, `kd_wilayah`, `type_user`, `photo`, `tgl_daftar`, `tgl_login`, `tahun`, `kontak_person`, `alamat`, `font_size`, `theme`, `warna_tbl`, `scrolling_table`, `disable_login`, `disable_anggaran`, `disable_kontrak`, `disable_realisasi`, `disable_chat`, `ket`, `disable`) VALUES
-(1, 'alwi_mansyur', 'alwi@gmail.com', 'Alwi Mansyur', '1980', '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_wilayah', 'images/avatar/default.jpeg', '2018-06-04 21:57:05', '2024-10-23 15:03:04', '2024', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
-(2, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_opd', 'img/avatar/username(nabiila)_dok(photo)_wilayah(76.01)_2305070e99916190687b3774c0d56f134b954d74_2.jpg', '2018-06-09 15:54:29', '2026-02-18 21:07:55', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
-(3, 'inayah', 'inayah@gmail.com', 'Inayah Nadhilah', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'super_admin', 'images/avatar/default.jpeg', '2018-06-22 22:04:17', '2020-03-08 02:30:41', '2026', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'dimana mana hatiku senang oke', 0),
-(4, 'Arlinda', 'arlinda@gmail.com', 'Arlinda Achmad', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '', 'Prof', '', 'admin_opd', 'images/avatar/default.jpeg', '2018-07-10 14:27:06', '2018-10-21 12:23:09', '2024', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu.', 0),
-(5, 'administrator', 'alwi.mansyur@gmail.com', 'administrator', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '', 'administrator AHSP', '', 'user', 'images/avatar/c14719a7f71e46badf2cf93ae373ae9797281782_9.png', '2023-02-09 23:41:34', '2023-02-23 00:05:26', '2024', '08128886665', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk mu', 0);
+INSERT INTO `user_sesendok_biila` (`id`, `username`, `email`, `nama`, `nip`, `password`, `remember_token`, `kd_opd`, `nama_org`, `kd_wilayah`, `type_user`, `photo`, `signature_image`, `signature_verified`, `tgl_daftar`, `tgl_login`, `tahun`, `kontak_person`, `alamat`, `font_size`, `theme`, `warna_tbl`, `scrolling_table`, `disable_login`, `disable_anggaran`, `disable_kontrak`, `disable_realisasi`, `disable_chat`, `ket`, `disable`) VALUES
+(1, 'alwi_mansyur', 'alwi@gmail.com', 'Alwi Mansyur', '1980', '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_wilayah', 'images/avatar/default.jpeg', NULL, 0, '2018-06-04 21:57:05', '2024-10-23 15:03:04', '2024', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(2, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_opd', 'img/avatar/username(nabiila)_dok(photo)_wilayah(76.01)_2305070e99916190687b3774c0d56f134b954d74_2.jpg', NULL, 0, '2018-06-09 15:54:29', '2026-02-22 04:54:17', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
+(3, 'inayah', 'inayah@gmail.com', 'Inayah Nadhilah', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'super_admin', 'images/avatar/default.jpeg', NULL, 0, '2018-06-22 22:04:17', '2020-03-08 02:30:41', '2026', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'dimana mana hatiku senang oke', 0),
+(4, 'Arlinda', 'arlinda@gmail.com', 'Arlinda Achmad', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '', 'Prof', '', 'admin_opd', 'images/avatar/default.jpeg', NULL, 0, '2018-07-10 14:27:06', '2018-10-21 12:23:09', '2024', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu.', 0),
+(5, 'administrator', 'alwi.mansyur@gmail.com', 'administrator', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '', 'administrator AHSP', '', 'user', 'images/avatar/c14719a7f71e46badf2cf93ae373ae9797281782_9.png', NULL, 0, '2023-02-09 23:41:34', '2023-02-23 00:05:26', '2024', '08128886665', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk mu', 0);
 
 -- --------------------------------------------------------
 
@@ -1896,6 +2132,36 @@ ALTER TABLE `rab_paket_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `ref_jenis_naskah`
+--
+ALTER TABLE `ref_jenis_naskah`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `ref_jenis_naskah_dinas`
+--
+ALTER TABLE `ref_jenis_naskah_dinas`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `ref_kelompok_naskah`
+--
+ALTER TABLE `ref_kelompok_naskah`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `ref_klasifikasi_keamanan`
+--
+ALTER TABLE `ref_klasifikasi_keamanan`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `ref_template_naskah`
+--
+ALTER TABLE `ref_template_naskah`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indeks untuk tabel `register_naskah_dinas`
 --
 ALTER TABLE `register_naskah_dinas`
@@ -1994,6 +2260,32 @@ ALTER TABLE `sub_keg_renja_neo`
 --
 ALTER TABLE `sumber_dana_neo`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `trx_naskah_dinas`
+--
+ALTER TABLE `trx_naskah_dinas`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `trx_naskah_meta`
+--
+ALTER TABLE `trx_naskah_meta`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `trx_naskah_struktur`
+--
+ALTER TABLE `trx_naskah_struktur`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_naskah_struktur` (`naskah_id`);
+
+--
+-- Indeks untuk tabel `trx_nomor_counter`
+--
+ALTER TABLE `trx_nomor_counter`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unik` (`klasifikasi_id`,`tahun`);
 
 --
 -- Indeks untuk tabel `tujuan_renstra_neo`
@@ -2198,6 +2490,36 @@ ALTER TABLE `rab_paket_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `ref_jenis_naskah`
+--
+ALTER TABLE `ref_jenis_naskah`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+
+--
+-- AUTO_INCREMENT untuk tabel `ref_jenis_naskah_dinas`
+--
+ALTER TABLE `ref_jenis_naskah_dinas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `ref_kelompok_naskah`
+--
+ALTER TABLE `ref_kelompok_naskah`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT untuk tabel `ref_klasifikasi_keamanan`
+--
+ALTER TABLE `ref_klasifikasi_keamanan`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `ref_template_naskah`
+--
+ALTER TABLE `ref_template_naskah`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT untuk tabel `register_naskah_dinas`
 --
 ALTER TABLE `register_naskah_dinas`
@@ -2288,6 +2610,30 @@ ALTER TABLE `sumber_dana_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `trx_naskah_dinas`
+--
+ALTER TABLE `trx_naskah_dinas`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `trx_naskah_meta`
+--
+ALTER TABLE `trx_naskah_meta`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `trx_naskah_struktur`
+--
+ALTER TABLE `trx_naskah_struktur`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `trx_nomor_counter`
+--
+ALTER TABLE `trx_nomor_counter`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `tujuan_renstra_neo`
 --
 ALTER TABLE `tujuan_renstra_neo`
@@ -2316,6 +2662,16 @@ ALTER TABLE `wallchat`
 --
 ALTER TABLE `wilayah_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
+--
+
+--
+-- Ketidakleluasaan untuk tabel `trx_naskah_struktur`
+--
+ALTER TABLE `trx_naskah_struktur`
+  ADD CONSTRAINT `fk_naskah_struktur` FOREIGN KEY (`naskah_id`) REFERENCES `trx_naskah_dinas` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

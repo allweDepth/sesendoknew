@@ -32,13 +32,13 @@ class TataNaskahController extends Controller
   }
 
   public function loadJenis()
-{
+  {
     $kelompokId = $_POST['kelompok_id'] ?? null;
 
     if (!$kelompokId) {
-        header('Content-Type: application/json');
-        echo json_encode([]);
-        return;
+      header('Content-Type: application/json');
+      echo json_encode([]);
+      return;
     }
 
     $db = DB::getInstance();
@@ -58,10 +58,12 @@ class TataNaskahController extends Controller
 
     header('Content-Type: application/json');
     echo json_encode($jenis);
-}
+  }
 
-  public function loadForm()
+public function loadForm()
 {
+    header('Content-Type: application/json');
+
     $jenisId = $_POST['jenis_id'] ?? null;
 
     if (!$jenisId) {
@@ -72,16 +74,15 @@ class TataNaskahController extends Controller
     $db = DB::getInstance();
 
     $jenis = $db->query(
-      "SELECT schema_json FROM ref_jenis_naskah WHERE id = ?",
-      [$jenisId]
+        "SELECT schema_json FROM ref_jenis_naskah WHERE id = ?",
+        [$jenisId]
     )->fetch();
 
     if (!$jenis || empty($jenis['schema_json'])) {
-      echo json_encode([]);
-      return;
+        echo json_encode([]);
+        return;
     }
 
-    header('Content-Type: application/json');
     echo $jenis['schema_json'];
 }
 
@@ -265,7 +266,7 @@ class TataNaskahController extends Controller
 
     return JsonResponse::success("Status diperbarui");
   }
- 
+
   public function uploadSignature()
   {
     if (!isset($_FILES['signature'])) {
