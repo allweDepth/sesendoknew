@@ -53,46 +53,46 @@ class TataNaskahController extends Controller
   }
 
   public function loadForm()
-{
+  {
     $jenisId = $_POST['jenis_id'] ?? null;
 
     if (!$jenisId) {
-        echo json_encode([]);
-        return;
+      echo json_encode([]);
+      return;
     }
 
     $db = DB::getInstance();
 
     $template = $db->first(
-        'ref_template_naskah',
-        'WHERE jenis_id = ?',
-        [$jenisId]
+      'ref_template_naskah',
+      'WHERE jenis_id = ?',
+      [$jenisId]
     );
 
     if (!$template || empty($template['form_schema'])) {
-        echo json_encode([]);
-        return;
+      echo json_encode([]);
+      return;
     }
 
     header('Content-Type: application/json');
     echo $template['form_schema'];
-}
+  }
 
   public function generate_pdf()
   {
     echo json_encode(['status' => 'not_ready']);
   }
   public function generateNomor()
-{
+  {
     $jenisId = $_POST['jenis_id'];
     $tahun = date('Y');
 
     $db = DB::getInstance();
 
     $count = $db->query(
-        "SELECT COUNT(*) as total FROM trx_naskah_dinas 
+      "SELECT COUNT(*) as total FROM trx_naskah_dinas 
          WHERE jenis_id = ? AND tahun = ?",
-        [$jenisId, $tahun]
+      [$jenisId, $tahun]
     )->fetch()['total'];
 
     $nomorUrut = $count + 1;
@@ -100,8 +100,63 @@ class TataNaskahController extends Controller
     $nomor = $nomorUrut . '/TN/' . $tahun;
 
     echo json_encode([
-        'nomor' => $nomor,
-        'nomor_urut' => $nomorUrut
+      'nomor' => $nomor,
+      'nomor_urut' => $nomorUrut
     ]);
-}
+  }
+  public function simpan()
+  {
+    $db = DB::getInstance();
+
+    $jenisId = $_POST['jenis_id'] ?? null;
+    $strukturJson = $_POST['struktur_json'] ?? null;
+
+    if (!$jenisId || !$strukturJson) {
+      return JsonResponse::error("Data tidak lengkap");
+    }
+
+    $db->query("START TRANSACTION");
+
+    try {
+
+      /* ==============================
+           SIMPAN METADATA
+        ============================== */
+
+      $db->insert("trx_naskah_dinas", [
+        "jenis_id" => $jenisId,
+        "status" => "draft",
+        "tgl_insert" => date("Y-m-d H:i:s"),
+        "username_insert" => $_SESSION['user']['username'] ?? 'system'
+      ]);
+
+      $naskahId = $db->lastInsertId();
+
+      /* ==============================
+           SIMPAN STRUKTUR JSON
+        ============================== */
+
+      $db->insert("trx_naskah_struktur", [
+        "naskah_id" => $naskahId,
+        "struktur_json" => $strukturJson,
+        "tgl_insert" => date("Y-m-d H:i:s"),
+        "username_insert" => $_SESSION['user']['username'] ?? 'system'
+      ]);
+
+      $db->query("COMMIT");
+
+      return JsonResponse::success("Berhasil disimpan");
+    } catch (Exception $e) {
+
+      $db->query("ROLLBACK");
+      return JsonResponse::error($e->getMessage());
+    }
+  }
+  public function cetak($id)
+  {
+    $service = new TataNaskahPdfService();
+    $file = $service->generate($id);
+
+    return JsonResponse::success("PDF dibuat", ["file" => $file]);
+  }
 }

@@ -43,7 +43,5 @@
     <div class="ui relaxed divided list" id="jenis-list"></div>
   </div>
 
-  <!-- STEP 3: FORM DINAMIS -->
-  <div id="form-container" class="ui segment hidden" style="margin-top:30px"></div>
 
 </div>

@@ -1,26 +1,31 @@
 function loadKlasifikasi() {
-    $.post(
-        "/dynamic",
-        {
-            tbl: "ref_klasifikasi_keamanan",
-            action: "dropdown"
-        },
-        function (res) {
-            let data = res.data || [];
-            let options = '<option value="">Pilih Klasifikasi</option>';
+	$.post(
+		"/dynamic",
+		{
+			tbl: "ref_klasifikasi_keamanan",
+			action: "dropdown",
+		},
+		function (res) {
+			let data = res.data || [];
+			let options = '<option value="">Pilih Klasifikasi</option>';
 
-            data.forEach((d) => {
-                options += `<option value="${d.id}">
+			data.forEach((d) => {
+				options += `<option value="${d.id}">
                                 ${d.uraian}
                             </option>`;
-            });
+			});
 
-            $(".klasifikasi-dropdown").html(options);
-            $(".klasifikasi-dropdown").dropdown("refresh");
-        },
-        "json"
-    );
+			$(".klasifikasi-dropdown").html(options);
+			$(".klasifikasi-dropdown").dropdown("refresh");
+		},
+		"json",
+	);
 }
+const kelompokStyle = {
+	A: { icon: "sitemap", color: "teal" },
+	B: { icon: "mail", color: "blue" },
+	C: { icon: "shield alternate", color: "purple" },
+};
 $(document).ready(function () {
 	let selectedJenisId = null;
 	$(".kelompok-card").on("click", function () {
@@ -48,7 +53,12 @@ $(document).ready(function () {
 				grouped[kategori].forEach((j) => {
 					html += `
                 <div class="item">
-                    <a href="#" class="jenis-item" data-id="${j.id}">
+                    <a href="#"
+                    class="jenis-item"
+                    data-id="${j.id}"
+                    data-nama="${j.nama}"
+                    data-kelompok="${j.kelompok_kode}"
+                    data-kelompok-nama="${j.kelompok_nama}">
                         <i class="file outline icon"></i>
                         <div class="content">
                             <div class="header">${j.nama}</div>
@@ -71,25 +81,64 @@ $(document).ready(function () {
 
 		let id = $(this).data("id");
 		selectedJenisId = id;
+
+		// ===============================
+		// 🔥 TAMBAHKAN BAGIAN INI
+		// ===============================
+
+		let namaJenis = $(this).data("nama");
+		let kodeKelompok = $(this).data("kelompok");
+		let namaKelompok = $(this).data("kelompok-nama");
+
+		let style = kelompokStyle[kodeKelompok] || {
+			icon: "file alternate",
+			color: "grey",
+		};
+
+		// Ubah icon
+		$("#icon_modal_main")
+			.removeClass()
+			.addClass(style.color + " " + style.icon + " icon");
+
+		// Ubah header + badge
+		$("#content_modal").html(`
+        ${namaJenis}
+        <div class="ui tiny ${style.color} label" style="margin-left:10px">
+            ${kodeKelompok} — ${namaKelompok}
+        </div>
+    `);
+
+		// ===============================
+		// LANJUT LOAD FORM
+		// ===============================
+
 		$.post(
 			"/tata_naskah/load_form",
 			{ jenis_id: id },
 			function (schema) {
 				if (!schema) return;
 
-				let formSchema = schema; // SUDAH OBJECT
+				let formSchema = schema;
 				let html = buildForm(formSchema);
 
-				$("#form-container").html(html).removeClass("hidden");
+				$("#form_modal").html(html);
+
+				$("#mainModal")
+					.modal({
+						autofocus: false,
+						closable: false,
+						transition: "fade up",
+					})
+					.modal("show");
 
 				setTimeout(function () {
 					$(".ui.dropdown").dropdown();
 					loadASN();
 					loadKlasifikasi();
 					initEditor();
-				}, 100);
+				}, 200);
 			},
-			"json", // <-- PENTING
+			"json",
 		);
 	});
 
@@ -150,28 +199,28 @@ $(document).ready(function () {
 	}
 
 	function loadASN() {
-    $.post(
-        "/dynamic",
-        {
-            tbl: "asn",
-            action: "dropdown"
-        },
-        function (res) {
-            let data = res.data || [];
-            let options = '<option value="">Pilih ASN</option>';
+		$.post(
+			"/dynamic",
+			{
+				tbl: "asn",
+				action: "dropdown",
+			},
+			function (res) {
+				let data = res.data || [];
+				let options = '<option value="">Pilih ASN</option>';
 
-            data.forEach((d) => {
-                options += `<option value="${d.id}">
+				data.forEach((d) => {
+					options += `<option value="${d.id}">
                                 ${d.uraian}
                             </option>`;
-            });
+				});
 
-            $(".asn-dropdown").html(options);
-            $(".asn-dropdown").dropdown("refresh");
-        },
-        "json"
-    );
-}
+				$(".asn-dropdown").html(options);
+				$(".asn-dropdown").dropdown("refresh");
+			},
+			"json",
+		);
+	}
 	$(document).on("click", ".generate-nomor", function () {
 		$.post(
 			"/tata_naskah/generate_nomor",
