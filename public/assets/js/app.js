@@ -372,16 +372,15 @@ class TableManager {
 
 		// Jika tidak ada data
 		if (!rows.length) {
-			html = `
-			<tr>
+			html = `<tr>
 				<td colspan="100%" class="center aligned">
 					<div class="ui placeholder segment">
-  <div class="ui icon header">
-    <i class="inbox icon"></i>
-    Belum ada data tersedia
-  </div>
-  <p>Tambahkan data baru untuk mulai mengisi tabel ini.</p>
-</div>
+				<div class="ui icon header">
+					<i class="inbox icon"></i>
+					Belum ada data tersedia
+				</div>
+				<p>Tambahkan data baru untuk mulai mengisi tabel ini.</p>
+			</div>
 				</td>
 			</tr>`;
 			$tbody.html(html);
@@ -1435,12 +1434,188 @@ const UIConfig = {
 		],
 
 		rekanan: [
+			// ===============================
+			// DATA PERUSAHAAN
+			// ===============================
+			{
+				tag: "divider",
+				prop: { label: "Data Perusahaan" },
+			},
+
 			{
 				tag: "field",
-				prop: { label: "Nama Perusahaan", name: "nama_perusahaan" },
+				prop: {
+					label: "Nama Perusahaan",
+					name: "nama_perusahaan",
+					classField: "required",
+				},
 			},
 			{ tag: "field", prop: { label: "NPWP", name: "npwp" } },
-			{ tag: "field", prop: { label: "Alamat", name: "alamat" } },
+
+			{ tag: "field", prop: { label: "Email", name: "email" } },
+
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Alamat Perusahaan",
+					name: "alamat",
+					atribut: `rows="2"`,
+				},
+			},
+
+			// ===============================
+			// DATA REKENING
+			// ===============================
+			{
+				tag: "divider",
+				prop: { label: "Data Rekening" },
+			},
+
+			{ tag: "field", prop: { label: "Nomor Rekening", name: "no_rekening" } },
+
+			{ tag: "field", prop: { label: "Bank", name: "bank_rekening" } },
+
+			{
+				tag: "field",
+				prop: { label: "Atas Nama Rekening", name: "atas_nama_rekening" },
+			},
+
+			// ===============================
+			// DATA DIREKTUR
+			// ===============================
+			{
+				tag: "divider",
+				prop: { label: "Data Direktur" },
+			},
+
+			{ tag: "field", prop: { label: "Nama Direktur", name: "direktur" } },
+
+			{ tag: "field", prop: { label: "Jabatan", name: "jabatan" } },
+
+			{ tag: "field", prop: { label: "No KTP", name: "no_ktp" } },
+
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Alamat Direktur",
+					name: "alamat_dir",
+					atribut: `rows="2"`,
+				},
+			},
+
+			// ===============================
+			// DATA AKTA & NOTARIS
+			// ===============================
+			{
+				tag: "divider",
+				prop: { label: "Akta Pendirian" },
+			},
+
+			{
+				tag: "field",
+				prop: { label: "No Akta Pendirian", name: "no_akta_pendirian" },
+			},
+
+			{
+				tag: "fieldCalendar",
+				prop: {
+					label: "Tanggal Akta Pendirian",
+					name: "tgl_akta_pendirian",
+					calendarType: "date",
+				},
+			},
+
+			{
+				tag: "fields",
+				prop: {
+					classGroup: "two",
+					children: [
+						{
+							tag: "field",
+							prop: {
+								label: "Nama Notaris Pendirian",
+								name: "nama_notaris_pendirian",
+							},
+						},
+						{
+							tag: "field",
+							prop: {
+								label: "Lokasi Notaris Pendirian",
+								name: "lokasi_notaris_pendirian",
+							},
+						},
+					],
+				},
+			},
+
+			{
+				tag: "divider",
+				prop: { label: "Akta Perubahan" },
+			},
+
+			{
+				tag: "field",
+				prop: { label: "No Akta Perubahan", name: "no_akta_perubahan" },
+			},
+
+			{
+				tag: "fieldCalendar",
+				prop: {
+					label: "Tanggal Akta Perubahan",
+					name: "tgl_akta_perubahan",
+					calendarType: "date",
+				},
+			},
+
+			{
+				tag: "fields",
+				prop: {
+					classGroup: "two",
+					children: [
+						{
+							tag: "field",
+							prop: {
+								label: "Nama Notaris Perubahan",
+								name: "nama_notaris_perubahan",
+							},
+						},
+						{
+							tag: "field",
+							prop: {
+								label: "Lokasi Notaris Perubahan",
+								name: "lokasi_notaris_perubahan",
+							},
+						},
+					],
+				},
+			},
+
+			// ===============================
+			// DATA LAIN
+			// ===============================
+			{
+				tag: "divider",
+				prop: { label: "Informasi Tambahan" },
+			},
+
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Data Lain", name: "data_lain", atribut: `rows="2"` },
+			},
+
+			{
+				tag: "fieldFile",
+				prop: { label: "Upload Dokumen", name: "file" },
+			},
+
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
+			},
+			{
+				tag: "fieldCheckbox",
+				prop: { label: "Non Aktif", name: "disable" },
+			},
 		],
 
 		sumber_dana: [

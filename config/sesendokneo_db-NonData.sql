@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 21 Feb 2026 pada 15.37
+-- Waktu pembuatan: 21 Feb 2026 pada 17.36
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -1066,7 +1066,11 @@ CREATE TABLE `rekanan_neo` (
   `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
   `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `username_update` varchar(100) DEFAULT NULL,
-  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
+  `no_akta_perubahan` varchar(255) DEFAULT NULL,
+  `tgl_akta_perubahan` date DEFAULT NULL,
+  `nama_notaris_perubahan` varchar(255) DEFAULT NULL,
+  `lokasi_notaris_perubahan` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -1653,7 +1657,7 @@ CREATE TABLE `user_sesendok_biila` (
 INSERT INTO `user_sesendok_biila` (`id`, `username`, `email`, `nama`, `nip`, `password`, `remember_token`, `kd_opd`, `nama_org`, `kd_wilayah`, `type_user`, `photo`, `tgl_daftar`, `tgl_login`, `tahun`, `kontak_person`, `alamat`, `font_size`, `theme`, `warna_tbl`, `scrolling_table`, `disable_login`, `disable_anggaran`, `disable_kontrak`, `disable_realisasi`, `disable_chat`, `ket`, `disable`) VALUES
 (1, 'alwi_mansyur', 'alwi@gmail.com', 'Alwi Mansyur', '1980', '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_wilayah', 'images/avatar/default.jpeg', '2018-06-04 21:57:05', '2024-10-23 15:03:04', '2024', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
 (2, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_opd', 'img/avatar/username(nabiila)_dok(photo)_wilayah(76.01)_2305070e99916190687b3774c0d56f134b954d74_2.jpg', '2018-06-09 15:54:29', '2026-02-18 21:07:55', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
-(3, 'inayah', 'inayah@gmail.com', 'Inayah Nadhilah', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'super_admin', 'images/avatar/default.jpeg', '2018-06-22 22:04:17', '2020-03-08 02:30:41', '2024', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'dimana mana hatiku senang oke', 0),
+(3, 'inayah', 'inayah@gmail.com', 'Inayah Nadhilah', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'super_admin', 'images/avatar/default.jpeg', '2018-06-22 22:04:17', '2020-03-08 02:30:41', '2026', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'dimana mana hatiku senang oke', 0),
 (4, 'Arlinda', 'arlinda@gmail.com', 'Arlinda Achmad', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '', 'Prof', '', 'admin_opd', 'images/avatar/default.jpeg', '2018-07-10 14:27:06', '2018-10-21 12:23:09', '2024', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu.', 0),
 (5, 'administrator', 'alwi.mansyur@gmail.com', 'administrator', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '', 'administrator AHSP', '', 'user', 'images/avatar/c14719a7f71e46badf2cf93ae373ae9797281782_9.png', '2023-02-09 23:41:34', '2023-02-23 00:05:26', '2024', '08128886665', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk mu', 0);
 
@@ -1767,7 +1771,8 @@ ALTER TABLE `daftar_uraian_paket`
 -- Indeks untuk tabel `db_asn_pemda_neo`
 --
 ALTER TABLE `db_asn_pemda_neo`
-  ADD UNIQUE KEY `id` (`id`);
+  ADD UNIQUE KEY `id` (`id`),
+  ADD UNIQUE KEY `nip` (`nip`);
 
 --
 -- Indeks untuk tabel `dpa_neo`
