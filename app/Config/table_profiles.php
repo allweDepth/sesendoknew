@@ -945,4 +945,28 @@ return [
             ]
         ]
     ],
+    'trx_naskah_dinas' => [
+    'table' => 'trx_naskah_dinas',
+    'primary_key' => 'id',
+    'modes' => [
+        'default' => [
+            'select' => [
+                'id',
+                'nomor',
+                'tanggal_surat',
+                'perihal',
+                'status',
+                'file_pdf',
+                'tgl_insert'
+            ],
+            'searchable' => ['nomor','perihal'],
+            'order_by' => 'tgl_insert DESC'
+        ],
+        'edit' => [
+            'select' => ['*'],
+            'searchable' => ['*'],
+            'order_by' => 'id ASC'
+        ]
+    ]
+],
 ];

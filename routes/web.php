@@ -88,4 +88,12 @@ return [
   //untuk login register
   '/wilayah/load' => ['AuthController', 'getWilayah'],
   '/organisasi/load' => ['AuthController', 'getOrganisasi'],
+// ==============================
+// T A T A  N A S K A H
+// ==============================
+'/tata_naskah/dashboard' => ['TataNaskahController', 'dashboard'],
+'/tata_naskah/buat' => ['TataNaskahController', 'buat'],
+'/tata_naskah/load_jenis' => ['TataNaskahController', 'loadJenis'],
+'/tata_naskah/load_form' => ['TataNaskahController', 'loadForm'],
+'/tata_naskah/generate_pdf' => ['TataNaskahController', 'generate_pdf'],
 ];
