@@ -252,34 +252,53 @@ const ActionConfig = {
 
 class TableManager {
 	constructor() {
+		// -------------------------------------------------
+		// Inisialisasi engine AJAX
+		// Semua request ke backend melalui endpoint dynamic
+		// -------------------------------------------------
 		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
 	}
 
-	/* -----------------------------------------------------
-		 Load tabel berdasarkan module & nama tabel
-		 Dipanggil saat klik menu
-	------------------------------------------------------ */
+	/* =====================================================
+	   LOAD TABLE
+	   -----------------------------------------------------
+	   Dipanggil saat klik menu
+	   - Reset halaman jika pindah menu
+	   - Set module & table aktif
+	   - Render header (sekali saja)
+	   - Lakukan fetch data
+	===================================================== */
 	load(module, tbl) {
-		// Reset halaman jika pindah menu
+		// Reset halaman jika user pindah menu
 		if (AppState.currentMenu !== tbl) {
 			AppState.halaman = 1;
 		}
 
+		// Simpan state aktif
 		AppState.module = module;
 		AppState.tbl = tbl;
 		AppState.currentMenu = tbl;
-		// 🔥 HEADER DIBUAT DI SINI (sekali saja)
+
+		// Render header tabel
 		this.renderHeader();
+
+		// Ambil data dari backend
 		this.fetch();
 	}
 
-	/* -----------------------------------------------------
-		 Fetch data dari backend
-		 Mengirim:
-				 jenis, tbl, halaman, rows, cari
-	------------------------------------------------------ */
+	/* =====================================================
+	   FETCH DATA
+	   -----------------------------------------------------
+	   Kirim parameter ke backend:
+	   - module
+	   - action (list)
+	   - tbl
+	   - halaman
+	   - rows
+	   - cari
+	===================================================== */
 	fetch() {
-		// Sinkronisasi jumlah rows dari dropdown (Fomantic UI)
+		// Sinkronisasi jumlah row dari dropdown Fomantic
 		if ($("#countRow").length) {
 			let value = $("#countRow").dropdown("get value");
 			AppState.rows = parseInt(value) || AppState.rows;
@@ -295,31 +314,48 @@ class TableManager {
 				cari: AppState.cari,
 			},
 			success: (res) => {
+				// Validasi response
 				if (!res || res.success !== true) {
 					console.warn(res?.message || "Response tidak valid");
 					this.renderTable([]);
+					this.renderFooterStatic(); // 🔥 jika gagal → tetap buat footer
 					return;
 				}
 
 				let rows = Array.isArray(res.data) ? res.data : [];
 				let meta = res.meta || {};
+
+				// Simpan primary key dari backend
 				AppState.primaryKey = meta.primary_key || "id";
+
+				// Render isi tabel
 				this.renderTable(rows);
 
-				this.renderPagination({
-					total: meta.total || 0,
-					limit: meta.limit || AppState.rows,
-					page: meta.page || AppState.halaman,
-				});
+				// 🔥 LOGIC BARU:
+				// Jika data kosong → render footer
+				// Jika ada data → render pagination
+				if (!rows.length) {
+					this.renderFooterStatic();
+				} else {
+					this.renderPagination({
+						total: meta.total || 0,
+						limit: meta.limit || AppState.rows,
+						page: meta.page || AppState.halaman,
+					});
+				}
 			},
 		});
 	}
 
-	/* -----------------------------------------------------
-		 Render isi tbody tabel
-	------------------------------------------------------ */
+	/* =====================================================
+	   RENDER TBODY
+	   -----------------------------------------------------
+	   Mengisi isi tabel berdasarkan data backend
+	===================================================== */
 	renderTable(rows) {
 		let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
+
+		// Fallback jika tidak ketemu
 		if (!$tbody.length) {
 			$tbody = $('tbody[name^="tabel_"]').first();
 		}
@@ -334,31 +370,36 @@ class TableManager {
 
 		let html = "";
 
+		// Jika tidak ada data
 		if (!rows.length) {
 			html = `
-        <tr>
-            <td colspan="100%" class="center aligned">
-                Tidak ada data
-            </td>
-        </tr>`;
+			<tr>
+				<td colspan="100%" class="center aligned">
+					Tidak ada data
+				</td>
+			</tr>`;
 			$tbody.html(html);
 			return;
 		}
 
+		// Ambil konfigurasi field dari UIConfig
 		let elements = UIConfig[AppState.page]?.[AppState.tbl] || [];
 		let fields = elements.filter((e) => e.prop?.name && !e.prop.non_data);
 
+		// Loop setiap baris data
 		rows.forEach((row) => {
 			html += "<tr>";
 
+			// Loop setiap kolom field
 			fields.forEach((field) => {
 				let key = field.prop.name;
 				html += `<td>${row[key] ?? ""}</td>`;
 			});
 
+			// Kolom aksi
 			html += `<td class="collapsing">
-                    ${this.buildActionButtons(row)}
-                 </td>`;
+						${this.buildActionButtons(row)}
+					</td>`;
 
 			html += "</tr>";
 		});
@@ -366,10 +407,52 @@ class TableManager {
 		$tbody.html(html);
 	}
 
-	/* -----------------------------------------------------
-		 Render pagination
-		 ⚠️ LOGIC ASLI TIDAK DIUBAH
-	------------------------------------------------------ */
+	/* =====================================================
+	   RENDER FOOTER STATIC
+	   -----------------------------------------------------
+	   Digunakan jika tidak ada data
+	   Jumlah kolom disamakan dengan header
+	===================================================== */
+	renderFooterStatic() {
+		// Ambil table aktif
+		let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
+		if (!$tbody.length) {
+			$tbody = $('tbody[name^="tabel_"]').first();
+		}
+		if (!$tbody.length) return;
+
+		let $table = $tbody.closest("table");
+
+		// 🔥 Hitung kolom dari HEADER (bukan body)
+		let headerCount = $table.find("thead tr:first th").length;
+
+		if (!headerCount) return;
+
+		let tfootHtml = "<tr>";
+
+		// Buat jumlah <td> sesuai jumlah <th>
+		for (let i = 0; i < headerCount; i++) {
+			tfootHtml += `<td></td>`;
+		}
+
+		tfootHtml += "</tr>";
+
+		// Jika belum ada tfoot → buat
+		if (!$table.find("tfoot").length) {
+			$table.append("<tfoot></tfoot>");
+		}
+
+		$table.find("tfoot").html(tfootHtml);
+
+		// Kosongkan pagination
+		$(`div[name="pagination_${AppState.module}"]`).html("");
+	}
+
+	/* =====================================================
+	   RENDER PAGINATION
+	   -----------------------------------------------------
+	   ⚠️ LOGIC ASLI TIDAK DIUBAH
+	===================================================== */
 	renderPagination(meta) {
 		let target = `div[name="pagination_${AppState.module}"]`;
 
@@ -391,12 +474,12 @@ class TableManager {
 
 		if (currentPage > 1) {
 			html += `<a class="item" data-page="1">
-					<i class="angle double left chevron icon"></i>
-				 </a>`;
+				<i class="angle double left chevron icon"></i>
+			</a>`;
 
 			html += `<a class="item" data-page="${currentPage - 1}">
-					<i class="angle left icon"></i>
-				 </a>`;
+				<i class="angle left icon"></i>
+			</a>`;
 		}
 
 		let start = Math.max(1, currentPage - 1);
@@ -409,22 +492,34 @@ class TableManager {
 
 		if (currentPage < totalPage) {
 			html += `<a class="item" data-page="${currentPage + 1}">
-					<i class="angle right icon"></i>
-				 </a>`;
+				<i class="angle right icon"></i>
+			</a>`;
 
 			html += `<a class="item" data-page="${totalPage}">
-					<i class="angle double right chevron icon"></i>
-				 </a>`;
+				<i class="angle double right chevron icon"></i>
+			</a>`;
 		}
 
 		html += `</div>`;
 
 		$(target).html(html);
+		// 🔥 Samakan colspan footer dengan jumlah header
+		let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
+		if ($tbody.length) {
+			let $table = $tbody.closest("table");
+			let headerCount = $table.find("thead tr:first th").length;
+
+			if (headerCount) {
+				$table.find("tfoot td").attr("colspan", headerCount);
+			}
+		}
 	}
 
-	/* -----------------------------------------------------
-		 Build tombol aksi (edit/delete/detail)
-	------------------------------------------------------ */
+	/* =====================================================
+	   BUILD ACTION BUTTONS
+	   -----------------------------------------------------
+	   Menentukan tombol edit/delete sesuai role
+	===================================================== */
 	buildActionButtons(row) {
 		let module = AppState.module;
 		let tbl = AppState.tbl;
@@ -448,34 +543,39 @@ class TableManager {
 		buttons.forEach((btn) => {
 			if (btn === "edit") {
 				html += `
-                <button class="ui button"
-                    data-ui="open-form"
-                    data-container="flyout"
-                    data-jns="edit"
-                    data-tbl="${tbl}"
-										data-module="${module}"
-                    data-id="${row[AppState.primaryKey]}"> 
-										<i class="edit outline blue icon"></i>
-										</button>
-            `;
+				<button class="ui button"
+					data-ui="open-form"
+					data-container="flyout"
+					data-jns="edit"
+					data-tbl="${tbl}"
+					data-module="${module}"
+					data-id="${row[AppState.primaryKey]}"> 
+					<i class="edit outline blue icon"></i>
+				</button>`;
 			}
 
 			if (btn === "delete") {
 				html += `
-                <button class="ui red button"
-                    data-ui="delete-row"
-                    data-jns="delete"
-                    data-tbl="${tbl}"
-                    data-id="${row[AppState.primaryKey]}">
-                    <i class="trash alternate outline red icon"></i>
-                </button>
-            `;
+				<button class="ui red button"
+					data-ui="delete-row"
+					data-jns="delete"
+					data-tbl="${tbl}"
+					data-id="${row[AppState.primaryKey]}">
+					<i class="trash alternate outline red icon"></i>
+				</button>`;
 			}
 		});
 
 		html += `</div>`;
 		return html;
 	}
+
+	/* =====================================================
+	   RENDER HEADER
+	   -----------------------------------------------------
+	   Membuat thead berdasarkan UIConfig
+	   Dieksekusi sekali saat load
+	===================================================== */
 	renderHeader() {
 		let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
 		if (!$tbody.length) {
@@ -1257,14 +1357,8 @@ const UIConfig = {
     ====================================================== */
 	referensi: {
 		urusan: [
-			{
-				tag: "field",
-				prop: { label: "Kode Urusan", name: "kode", classField: "required" },
-			},
-			{
-				tag: "field",
-				prop: { label: "Nama Urusan", name: "nama", classField: "required" },
-			},
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
+			{ tag: "field", prop: { label: "Nama", name: "nama" } },
 		],
 
 		bidang: [
@@ -1272,14 +1366,8 @@ const UIConfig = {
 				tag: "fieldDropdown",
 				prop: { label: "Urusan", name: "kode_urusan", source: "urusan" },
 			},
-			{
-				tag: "field",
-				prop: { label: "Kode Bidang", name: "kode", classField: "required" },
-			},
-			{
-				tag: "field",
-				prop: { label: "Nama", name: "nama", classField: "required" },
-			},
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
+			{ tag: "field", prop: { label: "Nama", name: "nama" } },
 		],
 
 		program: [
@@ -1287,14 +1375,8 @@ const UIConfig = {
 				tag: "fieldDropdown",
 				prop: { label: "Bidang", name: "kode_bidang", source: "bidang" },
 			},
-			{
-				tag: "field",
-				prop: { label: "Kode Program", name: "kode", classField: "required" },
-			},
-			{
-				tag: "field",
-				prop: { label: "Nama", name: "nama", classField: "required" },
-			},
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
+			{ tag: "field", prop: { label: "Nama", name: "nama" } },
 		],
 
 		kegiatan: [
@@ -1302,14 +1384,75 @@ const UIConfig = {
 				tag: "fieldDropdown",
 				prop: { label: "Program", name: "kode_program", source: "program" },
 			},
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
+			{ tag: "field", prop: { label: "Nama", name: "nama" } },
+		],
+
+		sub_kegiatan: [
+			{
+				tag: "fieldDropdown",
+				prop: { label: "Kegiatan", name: "kode_kegiatan", source: "kegiatan" },
+			},
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
+			{ tag: "field", prop: { label: "Nama", name: "nama" } },
+		],
+
+		akun: [
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
+			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
+			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
+		],
+
+		satuan: [
+			{ tag: "field", prop: { label: "Value", name: "value" } },
+			{ tag: "field", prop: { label: "Item", name: "item" } },
+			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
+		],
+
+		organisasi: [
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
+			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
+			{ tag: "field", prop: { label: "Alamat", name: "alamat" } },
+			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
+		],
+
+		wilayah: [
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
+			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
+			{ tag: "field", prop: { label: "Status", name: "status" } },
+		],
+
+		peraturan: [
+			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
+			{ tag: "field", prop: { label: "Judul", name: "judul" } },
+			{ tag: "field", prop: { label: "Status", name: "status" } },
+		],
+
+		rekanan: [
 			{
 				tag: "field",
-				prop: { label: "Kode Kegiatan", name: "kode", classField: "required" },
+				prop: { label: "Nama Perusahaan", name: "nama_perusahaan" },
 			},
-			{
-				tag: "field",
-				prop: { label: "Nama", name: "nama", classField: "required" },
-			},
+			{ tag: "field", prop: { label: "NPWP", name: "npwp" } },
+			{ tag: "field", prop: { label: "Alamat", name: "alamat" } },
+		],
+
+		sumber_dana: [
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
+			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
+			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
+		],
+
+		mapping: [
+			{ tag: "field", prop: { label: "Kode Aset", name: "kd_aset" } },
+			{ tag: "field", prop: { label: "Uraian Aset", name: "uraian_aset" } },
+			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
+			{ tag: "field", prop: { label: "Uraian Akun", name: "uraian_akun" } },
+		],
+
+		aset: [
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
+			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
 		],
 	},
 

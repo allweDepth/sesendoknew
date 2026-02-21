@@ -10,39 +10,39 @@
 
     <!-- ADD -->
     <button class="ui button"
-        data-ui="open-form"
-        data-jns="add"
-        data-tbl="<?= $tbl ?>"
-        data-jenis="<?= $jenis ?>"
-        data-container="flyout"
-        data-tooltip="Tambah Data"
-        data-position="bottom center">
-        <i class="plus icon"></i>
+      data-ui="open-form"
+      data-jns="add"
+      data-tbl="<?= $tbl ?>"
+      data-jenis="<?= $jenis ?>"
+      data-container="flyout"
+      data-tooltip="Tambah Data"
+      data-position="bottom center">
+      <i class="plus icon"></i>
     </button>
 
     <!-- IMPORT XLSX -->
     <button class="ui button"
-        data-ui="open-form"
-        data-jns="import_xlsx"
-        data-tbl="<?= $tbl ?>"
-        data-jenis="<?= $jenis ?>"
-        data-container="modal"
-        data-tooltip="Import XLSX"
-        data-position="bottom center">
-        <i class="upload icon"></i>
+      data-ui="open-form"
+      data-jns="import_xlsx"
+      data-tbl="<?= $tbl ?>"
+      data-jenis="<?= $jenis ?>"
+      data-container="modal"
+      data-tooltip="Import XLSX"
+      data-position="bottom center">
+      <i class="upload icon"></i>
     </button>
 
     <!-- EXPORT -->
     <button class="ui icon button"
-        type="button"
-        data-action="export"
-        data-tbl="<?= $tbl ?>"
-        data-tooltip="Download"
-        data-position="bottom center">
-        <i class="alternate download icon"></i>
+      type="button"
+      data-action="export"
+      data-tbl="<?= $tbl ?>"
+      data-tooltip="Download"
+      data-position="bottom center">
+      <i class="alternate download icon"></i>
     </button>
 
-</div>
+  </div>
 
   <h3 class="ui dividing header">
     <i class="left align icon"></i>
@@ -116,9 +116,9 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="<?= $totalCol ?>" class="right aligned">
-          <div class="ui center pagination menu" name="pagination_kepegawaian"></div>
-          </th>
+        <td colspan="100%" class="right aligned">
+          <div name="pagination_kepegawaian"></div>
+        </td>
       </tr>
     </tfoot>
   </table>

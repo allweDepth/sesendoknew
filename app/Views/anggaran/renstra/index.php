@@ -86,11 +86,10 @@
         </td>
       </tr>
     </tbody>
-
     <tfoot>
       <tr>
-        <td colspan="2" class="right aligned">
-          <div name="pagination_renstra"></div>
+        <td colspan="100%" class="right aligned">
+          <div name="agination_renstra"></div>
         </td>
       </tr>
     </tfoot>

@@ -16,7 +16,7 @@
       data-container="flyout">
       <i class="plus icon"></i>
     </button>
-    <button class="ui button" data-ui="open-form" jns="import" data-tooltip="Import XLSX" data-position="bottom center"><i class="upload icon"></i></button> 
+    <button class="ui button" data-ui="open-form" jns="import" data-tooltip="Import XLSX" data-position="bottom center"><i class="upload icon"></i></button>
     <button class="ui icon button"
       type="button"
       data-tooltip="Download"
@@ -36,7 +36,7 @@
   <div class="ui hidden divider"></div>
 
   <table class="ui celled striped table">
-      <thead>
+    <thead>
       <?php
 
       $columns = [
@@ -87,22 +87,22 @@
 
         <th class="collapsing">Aksi</th>
       </tr>
-  </thead>
+    </thead>
 
 
     <!-- INI SAJA YANG BERBEDA -->
     <tbody name="tabel_standar_harga">
-    <tr>
-      <td colspan="<?= $totalCol ?>">
-        <div class="ui active inline loader"></div>
-      </td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td colspan="<?= $totalCol ?>" class="right aligned">
-          <div class="ui center pagination menu" name="pagination_standar_harga"></div>
-        </th>
+      <tr>
+        <td colspan="<?= $totalCol ?>">
+          <div class="ui active inline loader"></div>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="100%" class="right aligned">
+          <div name="pagination_standar_harga"></div>
+        </td>
       </tr>
     </tfoot>
   </table>

@@ -131,9 +131,9 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="<?= $totalCol ?>" class="right aligned">
-          <div class="ui center pagination menu" name="pagination_referensi"></div>
-          </th>
+        <td colspan="100%" class="right aligned">
+          <div name="pagination_referensi"></div>
+        </td>
       </tr>
     </tfoot>
   </table>
