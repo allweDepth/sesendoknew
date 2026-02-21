@@ -231,6 +231,8 @@
     <script src="/assets/js/app.js"></script>
     <?php if (strpos($_SERVER['REQUEST_URI'], 'tata_naskah') !== false): ?>
         <script src="/assets/js/modules/tata_naskah.js"></script>
+        <link rel="stylesheet" href="/assets/vendor/quill/quill.snow.css">
+        <script src="/assets/vendor/quill/quill.min.js"></script>
     <?php endif; ?>
 </body>
 

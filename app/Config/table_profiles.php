@@ -969,4 +969,20 @@ return [
         ]
     ]
 ],
+'ref_klasifikasi_keamanan' => [
+    'table' => 'ref_klasifikasi_keamanan',
+    'primary_key' => 'id',
+    'modes' => [
+        'dropdown' => [
+            'select' => ['id', 'nama'],
+            'searchable' => ['nama'],
+            'order_by' => 'nama ASC'
+        ],
+        'default' => [
+            'select' => ['*'],
+            'searchable' => ['nama'],
+            'order_by' => 'id ASC'
+        ]
+    ]
+],
 ];

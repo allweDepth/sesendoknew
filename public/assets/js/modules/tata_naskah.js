@@ -1,14 +1,52 @@
-$(document).ready(function(){
-$('.kelompok-card').on('click', function () {
-    let id = $(this).data('id');
+function loadKlasifikasi() {
+    $.post(
+        "/dynamic",
+        {
+            tbl: "ref_klasifikasi_keamanan",
+            action: "dropdown"
+        },
+        function (res) {
+            let data = res.data || [];
+            let options = '<option value="">Pilih Klasifikasi</option>';
 
-    $.post('/tata_naskah/load_jenis', {kelompok_id: id}, function (res) {
-        let data = JSON.parse(res);
+            data.forEach((d) => {
+                options += `<option value="${d.id}">
+                                ${d.uraian}
+                            </option>`;
+            });
 
-        let html = '';
+            $(".klasifikasi-dropdown").html(options);
+            $(".klasifikasi-dropdown").dropdown("refresh");
+        },
+        "json"
+    );
+}
+$(document).ready(function () {
+	let selectedJenisId = null;
+	$(".kelompok-card").on("click", function () {
+		let id = $(this).data("id");
 
-        data.forEach(j => {
-            html += `
+		$.post("/tata_naskah/load_jenis", { kelompok_id: id }, function (res) {
+			let data = JSON.parse(res);
+
+			let grouped = {};
+
+			data.forEach((j) => {
+				if (!grouped[j.sub_kategori]) {
+					grouped[j.sub_kategori] = [];
+				}
+				grouped[j.sub_kategori].push(j);
+			});
+
+			let html = "";
+
+			for (let kategori in grouped) {
+				html += `<div class="ui segment">
+                    <h4 class="ui dividing header">${kategori || "Lainnya"}</h4>
+                    <div class="ui relaxed divided list">`;
+
+				grouped[kategori].forEach((j) => {
+					html += `
                 <div class="item">
                     <a href="#" class="jenis-item" data-id="${j.id}">
                         <i class="file outline icon"></i>
@@ -18,43 +56,158 @@ $('.kelompok-card').on('click', function () {
                     </a>
                 </div>
             `;
-        });
+				});
 
-        $('#jenis-list').html(html);
-        $('#jenis-container').removeClass('hidden');
-        $('#form-container').addClass('hidden');
-    });
-});
+				html += `</div></div>`;
+			}
 
-$(document).on('click', '.jenis-item', function (e) {
-    e.preventDefault();
+			$("#jenis-list").html(html);
+			$("#jenis-container").removeClass("hidden");
+		});
+	});
 
-    let id = $(this).data('id');
+	$(document).on("click", ".jenis-item", function (e) {
+		e.preventDefault();
 
-    $.post('/tata_naskah/load_form', {jenis_id: id}, function (schema) {
-        if (!schema) return;
+		let id = $(this).data("id");
+		selectedJenisId = id;
+		$.post(
+			"/tata_naskah/load_form",
+			{ jenis_id: id },
+			function (schema) {
+				if (!schema) return;
 
-        let formSchema = JSON.parse(schema);
-        let html = buildForm(formSchema);
+				let formSchema = schema; // SUDAH OBJECT
+				let html = buildForm(formSchema);
 
-        $('#form-container').html(html).removeClass('hidden');
-    });
-});
+				$("#form-container").html(html).removeClass("hidden");
 
-function buildForm(schema) {
-    let html = '<form class="ui form">';
-    schema.forEach(field => {
-        html += `
-            <div class="field">
-                <label>${field.label}</label>
-                <input type="text" name="${field.name}">
-            </div>
-        `;
-    });
+				setTimeout(function () {
+					$(".ui.dropdown").dropdown();
+					loadASN();
+					loadKlasifikasi();
+					initEditor();
+				}, 100);
+			},
+			"json", // <-- PENTING
+		);
+	});
 
-    html += '<button class="ui primary button">Simpan Draft</button>';
-    html += '</form>';
+	function buildForm(schema) {
+		let html = '<form class="ui form" id="formNaskah">';
 
-    return html;
+		schema.forEach((field) => {
+			html += `<div class="field">
+                    <label>${field.label}</label>`;
+
+			switch (field.type) {
+				case "text":
+					html += `<input type="text" name="${field.name}">`;
+					break;
+
+				case "date":
+					html += `<input type="date" name="${field.name}">`;
+					break;
+
+				case "auto_nomor":
+					html += `<div class="ui action input">
+                            <input type="text" name="${field.name}" readonly>
+                            <button type="button" class="ui button generate-nomor">
+                                Generate
+                            </button>
+                         </div>`;
+					break;
+
+				case "dropdown_asn":
+					html += `<select class="ui dropdown asn-dropdown" name="${field.name}"></select>`;
+					break;
+
+				case "dropdown_klasifikasi":
+					html += `<select class="ui dropdown klasifikasi-dropdown" name="${field.name}"></select>`;
+					break;
+
+				case "editor":
+					html += `
+                        <div id="editor-${field.name}" 
+                            class="quill-editor" 
+                            style="height:250px;"></div>
+                        <input type="hidden" name="${field.name}">
+                    `;
+
+					break;
+			}
+
+			html += `</div>`;
+		});
+
+		html += `<button class="ui primary button">
+                Simpan Draft
+             </button>`;
+
+		html += "</form>";
+
+		return html;
+	}
+
+	function loadASN() {
+    $.post(
+        "/dynamic",
+        {
+            tbl: "asn",
+            action: "dropdown"
+        },
+        function (res) {
+            let data = res.data || [];
+            let options = '<option value="">Pilih ASN</option>';
+
+            data.forEach((d) => {
+                options += `<option value="${d.id}">
+                                ${d.uraian}
+                            </option>`;
+            });
+
+            $(".asn-dropdown").html(options);
+            $(".asn-dropdown").dropdown("refresh");
+        },
+        "json"
+    );
 }
+	$(document).on("click", ".generate-nomor", function () {
+		$.post(
+			"/tata_naskah/generate_nomor",
+			{
+				jenis_id: selectedJenisId,
+			},
+			function (res) {
+				$('input[name="nomor"]').val(res.nomor);
+			},
+			"json",
+		);
+	});
+	function initEditor() {
+		$(".quill-editor").each(function () {
+			let editorId = $(this).attr("id");
+
+			let quill = new Quill("#" + editorId, {
+				theme: "snow",
+				placeholder: "Tulis isi naskah...",
+				modules: {
+					toolbar: [
+						[{ header: [1, 2, false] }],
+						["bold", "italic", "underline"],
+						[{ list: "ordered" }, { list: "bullet" }],
+						["link"],
+						["clean"],
+					],
+				},
+			});
+
+			quill.on("text-change", function () {
+				let hiddenInput = $(
+					'input[name="' + editorId.replace("editor-", "") + '"]',
+				);
+				hiddenInput.val(quill.root.innerHTML);
+			});
+		});
+	}
 });
