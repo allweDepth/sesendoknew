@@ -375,7 +375,13 @@ class TableManager {
 			html = `
 			<tr>
 				<td colspan="100%" class="center aligned">
-					Tidak ada data
+					<div class="ui placeholder segment">
+  <div class="ui icon header">
+    <i class="inbox icon"></i>
+    Belum ada data tersedia
+  </div>
+  <p>Tambahkan data baru untuk mulai mengisi tabel ini.</p>
+</div>
 				</td>
 			</tr>`;
 			$tbody.html(html);

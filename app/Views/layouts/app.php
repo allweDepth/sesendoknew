@@ -100,6 +100,7 @@
             z-index: 5;
         }
 
+        /* untuk tabel */
         .table-wrapper {
             overflow-x: auto;
         }

@@ -54,7 +54,7 @@
     <table class="ui very compact celled striped unstackable table">
       <thead>
         <tr>
-            <th></th>
+          <th></th>
           <th class="collapsing">Aksi</th>
         </tr>
       </thead>

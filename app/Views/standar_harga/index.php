@@ -34,76 +34,29 @@
   </h3>
 
   <div class="ui hidden divider"></div>
-
-  <table class="ui celled striped table">
-    <thead>
-      <?php
-
-      $columns = [
-        'ssh' => [
-          'Kode Aset',
-          'Kode Akun',
-          'Uraian',
-          'Spesifikasi',
-          'Satuan',
-          'Harga Satuan'
-        ],
-        'hspk' => [
-          'Kode Aset',
-          'Kode Akun',
-          'Uraian',
-          'Spesifikasi',
-          'Satuan',
-          'Harga Satuan'
-        ],
-        'asb' => [
-          'Kode Aset',
-          'Kode Akun',
-          'Uraian',
-          'Spesifikasi',
-          'Satuan',
-          'Harga Satuan'
-        ],
-        'sbu' => [
-          'Kode Aset',
-          'Kode Akun',
-          'Uraian',
-          'Spesifikasi',
-          'Satuan',
-          'Harga Satuan'
-        ]
-      ];
-
-      $currentColumns = $columns[$tbl] ?? ['Nama'];
-
-      $totalCol = count($currentColumns) + 1; // +1 untuk kolom Aksi
-
-      ?>
-
-      <tr>
-        <?php foreach ($currentColumns as $col): ?>
-          <th><?= $col ?></th>
-        <?php endforeach; ?>
-
-        <th class="collapsing">Aksi</th>
-      </tr>
-    </thead>
-
-
-    <!-- INI SAJA YANG BERBEDA -->
-    <tbody name="tabel_standar_harga">
-      <tr>
-        <td colspan="<?= $totalCol ?>">
-          <div class="ui active inline loader"></div>
-        </td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="100%" class="right aligned">
-          <div name="pagination_standar_harga"></div>
-        </td>
-      </tr>
-    </tfoot>
-  </table>
+  <div class="table-wrapper">
+    <table class="ui very compact celled striped unstackable table">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="collapsing">Aksi</th>
+        </tr>
+      </thead>
+      <!-- INI SAJA YANG BERBEDA -->
+      <tbody name="tabel_standar_harga">
+        <tr>
+          <td colspan="<?= $totalCol ?>">
+            <div class="ui active inline loader"></div>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="100%" class="right aligned">
+            <div name="pagination_standar_harga"></div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>
