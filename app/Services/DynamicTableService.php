@@ -22,7 +22,14 @@ class DynamicTableService
     private DB $db;
     private array $profiles;
     private array $user;
+
+    /* =========================================================
+       INTERNAL CACHE (ANTI DOUBLE QUERY)
+    ========================================================= */
     private static array $columnCache = [];
+    private static array $schemaCache = [];
+    private ?array $pengaturanAktifCache = null;
+    private ?array $periodeAktifCache = null;
     public function __construct()
     {
         $this->db = DB::getInstance();
@@ -37,14 +44,10 @@ class DynamicTableService
     {
         try {
 
-            // 🔥 ARSITEKTUR BARU
             $action = $request['action'] ?? '';
-            $module = $request['module'] ?? ''; // hanya konteks
+            $module = $request['module'] ?? '';
             $tbl    = $request['tbl'] ?? '';
 
-            /* ==============================
-               DROPDOWN
-            ============================== */
             if ($action === 'dropdown' && !empty($request['source'])) {
                 return $this->loadDropdown(
                     $request['source'],
@@ -63,26 +66,18 @@ class DynamicTableService
             $profile = $this->profiles[$tbl];
             $table   = $profile['table'];
 
-            /* ==============================
-               ADD (INSERT)
-            ============================== */
             if ($action === 'add') {
                 $this->authorize('add', $table);
                 return $this->insert($table, $request);
             }
 
-            /* ==============================
-               EDIT (DUAL MODE)
-            ============================== */
             if ($action === 'edit') {
 
-                // MODE LOAD DATA
                 if (!empty($request['id_row']) && count($request) <= 4) {
                     $this->authorize('view', $table);
                     return $this->getById($table, (int)$request['id_row']);
                 }
 
-                // MODE UPDATE
                 if (!empty($request['id'])) {
                     $this->authorize('edit', $table);
                     return $this->update($table, $request);
@@ -91,27 +86,17 @@ class DynamicTableService
                 return JsonResponse::error("ID tidak ditemukan");
             }
 
-            /* ==============================
-               DELETE
-            ============================== */
             if ($action === 'delete' && !empty($request['id_row'])) {
                 $this->authorize('delete', $table);
                 return $this->delete($table, $profile, (int)$request['id_row']);
             }
 
-            /* ==============================
-               EXPORT
-            ============================== */
             if ($action === 'export') {
                 $this->authorize('view', $table);
                 return $this->export($table, $profile, $request, 'default');
             }
 
-            /* ==============================
-               DEFAULT → LISTING
-            ============================== */
             $this->authorize('view', $table);
-
             $mode = $action ?: 'default';
 
             return $this->buildQuery($table, $profile, $request, $mode);
@@ -119,6 +104,7 @@ class DynamicTableService
             return JsonResponse::error($e->getMessage());
         }
     }
+
 
     /* =========================================================
        GET SINGLE ROW
@@ -716,11 +702,14 @@ class DynamicTableService
     /* =========================================================
        APPLY USER SCOPE (ROLE AWARE FULL IDENTIK)
     ========================================================= */
+    /* =========================================================
+       APPLY USER SCOPE (LOGIC TIDAK DIUBAH)
+       HANYA PERIODE AKTIF DI-CACHE
+    ========================================================= */
     private function applyUserScope(string $table): array
     {
         $role = $this->user['type_user'] ?? 'viewer';
 
-        // super admin lihat semua
         if ($role === 'super_admin') {
             return [[], []];
         }
@@ -730,9 +719,6 @@ class DynamicTableService
         $whereParts = [];
         $params     = [];
 
-        /* =====================================================
-           ADMIN WILAYAH
-        ===================================================== */
         if ($role === 'admin_wilayah') {
 
             if (in_array('kd_wilayah', $columns)) {
@@ -741,9 +727,6 @@ class DynamicTableService
             }
         }
 
-        /* =====================================================
-           ADMIN OPD
-        ===================================================== */
         if ($role === 'admin_opd') {
 
             if (in_array('kd_opd', $columns)) {
@@ -761,18 +744,9 @@ class DynamicTableService
                 $params[] = $this->user['tahun'];
             }
 
-            // Scope periode aktif
             if (in_array('periode_id', $columns)) {
 
-                $kd_wilayah = $this->user['kd_wilayah'] ?? null;
-
-                $periodeAktif = $this->db->query("
-                    SELECT id
-                    FROM periode_rpjmd
-                    WHERE kd_wilayah = ?
-                    AND status_aktif = 1
-                    LIMIT 1
-                ", [$kd_wilayah])->fetch();
+                $periodeAktif = $this->getPeriodeAktif();
 
                 if ($periodeAktif) {
                     $whereParts[] = "`periode_id` = ?";
@@ -785,12 +759,19 @@ class DynamicTableService
     }
 
     /* =========================================================
-       UTIL: GET TABLE COLUMNS
+       CACHE OPTIMIZATION SECTION
     ========================================================= */
+
     private function getTableColumns(string $table): array
     {
+        if (isset(self::$columnCache[$table])) {
+            return self::$columnCache[$table];
+        }
+
         $stmt = $this->db->query("SHOW COLUMNS FROM `$table`");
-        return array_column($stmt->fetchAll(), 'Field');
+        self::$columnCache[$table] = array_column($stmt->fetchAll(), 'Field');
+
+        return self::$columnCache[$table];
     }
 
     /* =========================================================
@@ -842,8 +823,11 @@ class DynamicTableService
     ========================================================= */
     private function buildRulesFromSchema(string $table): array
     {
-        $rules = [];
+        if (isset(self::$schemaCache[$table])) {
+            return self::$schemaCache[$table];
+        }
 
+        $rules = [];
         $columns = $this->db->query("SHOW COLUMNS FROM `$table`")->fetchAll();
 
         foreach ($columns as $col) {
@@ -870,6 +854,8 @@ class DynamicTableService
                 $rules[$field] = $fieldRules;
             }
         }
+
+        self::$schemaCache[$table] = $rules;
 
         return $rules;
     }
@@ -1024,6 +1010,10 @@ class DynamicTableService
     }
     private function getPengaturanAktif(): ?array
     {
+        if ($this->pengaturanAktifCache !== null) {
+            return $this->pengaturanAktifCache;
+        }
+
         $kd_wilayah = $this->user['kd_wilayah'] ?? null;
         $tahun      = $this->user['tahun'] ?? null;
 
@@ -1031,13 +1021,37 @@ class DynamicTableService
             return null;
         }
 
-        return $this->db->query("
-        SELECT *
-        FROM pengaturan_neo
-        WHERE kd_wilayah = ?
-        AND tahun = ?
-        AND disable = 0
-        LIMIT 1
-    ", [$kd_wilayah, $tahun])->fetch();
+        $this->pengaturanAktifCache = $this->db->query("
+            SELECT *
+            FROM pengaturan_neo
+            WHERE kd_wilayah = ?
+            AND tahun = ?
+            AND disable = 0
+            LIMIT 1
+        ", [$kd_wilayah, $tahun])->fetch();
+
+        return $this->pengaturanAktifCache;
+    }
+    private function getPeriodeAktif(): ?array
+    {
+        if ($this->periodeAktifCache !== null) {
+            return $this->periodeAktifCache;
+        }
+
+        $kd_wilayah = $this->user['kd_wilayah'] ?? null;
+
+        if (!$kd_wilayah) {
+            return null;
+        }
+
+        $this->periodeAktifCache = $this->db->query("
+            SELECT id
+            FROM periode_rpjmd
+            WHERE kd_wilayah = ?
+            AND status_aktif = 1
+            LIMIT 1
+        ", [$kd_wilayah])->fetch();
+
+        return $this->periodeAktifCache;
     }
 }
