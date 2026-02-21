@@ -1022,4 +1022,22 @@ class DynamicTableService
             throw $e;
         }
     }
+    private function getPengaturanAktif(): ?array
+    {
+        $kd_wilayah = $this->user['kd_wilayah'] ?? null;
+        $tahun      = $this->user['tahun'] ?? null;
+
+        if (!$kd_wilayah || !$tahun) {
+            return null;
+        }
+
+        return $this->db->query("
+        SELECT *
+        FROM pengaturan_neo
+        WHERE kd_wilayah = ?
+        AND tahun = ?
+        AND disable = 0
+        LIMIT 1
+    ", [$kd_wilayah, $tahun])->fetch();
+    }
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 21 Feb 2026 pada 06.10
+-- Waktu pembuatan: 21 Feb 2026 pada 15.37
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -43,10 +43,11 @@ CREATE TABLE `akun_neo` (
   `disable` tinyint(1) NOT NULL DEFAULT 0,
   `aksi` varchar(255) DEFAULT NULL,
   `keterangan` text DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(100) NOT NULL
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -60,10 +61,13 @@ CREATE TABLE `anggaran_program_renstra_neo` (
   `program_id` bigint(20) NOT NULL,
   `tahun` year(4) NOT NULL,
   `pagu` decimal(18,2) DEFAULT NULL,
-  `tgl_insert` datetime DEFAULT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
   `user_insert` varchar(50) DEFAULT NULL,
-  `tgl_update` datetime DEFAULT NULL,
-  `user_update` varchar(50) DEFAULT NULL
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `user_update` varchar(50) DEFAULT NULL,
+  `username_insert` varchar(100) NOT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -88,10 +92,11 @@ CREATE TABLE `asb_neo` (
   `disable` tinyint(1) NOT NULL DEFAULT 0,
   `aksi` varchar(255) DEFAULT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `username_update` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -116,10 +121,11 @@ CREATE TABLE `aset_neo` (
   `disable` tinyint(1) NOT NULL DEFAULT 0,
   `aksi` varchar(255) DEFAULT NULL,
   `keterangan` text DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `username_update` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -137,13 +143,14 @@ CREATE TABLE `berita_neo` (
   `uraian_html` text NOT NULL,
   `uraian_singkat` text DEFAULT NULL,
   `tanggal` date NOT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_insert` varchar(50) NOT NULL,
-  `username_update` varchar(50) NOT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
   `keterangan` varchar(255) NOT NULL,
   `urutan` int(11) DEFAULT NULL,
-  `disable` tinyint(1) NOT NULL DEFAULT 0
+  `disable` tinyint(1) NOT NULL DEFAULT 0,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -160,7 +167,7 @@ CREATE TABLE `bidang` (
   `peraturan` int(11) NOT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) DEFAULT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `tgl_update` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -218,10 +225,10 @@ CREATE TABLE `daftar_paket_neo` (
   `no_pho` varchar(255) DEFAULT NULL,
   `tgl_fho` datetime DEFAULT NULL,
   `no_fho` varchar(255) DEFAULT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL,
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
   `keterangan` varchar(400) DEFAULT NULL,
   `file_kontrak` varchar(255) DEFAULT NULL,
   `file_addendum` varchar(255) DEFAULT NULL,
@@ -234,7 +241,8 @@ CREATE TABLE `daftar_paket_neo` (
   `file_dokumentasi100` varchar(255) DEFAULT NULL,
   `disable` tinyint(1) DEFAULT 0,
   `setujui` tinyint(1) DEFAULT 0,
-  `kunci` tinyint(1) DEFAULT 0
+  `kunci` tinyint(1) DEFAULT 0,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -260,12 +268,13 @@ CREATE TABLE `daftar_realisasi_neo` (
   `jumlah` decimal(36,12) NOT NULL,
   `tanggal` date NOT NULL,
   `file` varchar(400) DEFAULT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `username_update` varchar(255) NOT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
+  `username_insert` varchar(100) NOT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `keterangan` varchar(400) NOT NULL,
-  `disable` tinyint(1) NOT NULL DEFAULT 0
+  `disable` tinyint(1) NOT NULL DEFAULT 0,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -294,8 +303,8 @@ CREATE TABLE `daftar_uraian_paket` (
   `keterangan` varchar(400) DEFAULT NULL,
   `tgl_insert` datetime NOT NULL,
   `username_insert` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -409,10 +418,11 @@ CREATE TABLE `db_asn_pemda_neo` (
   `follow` int(11) DEFAULT NULL,
   `keterangan` varchar(400) DEFAULT NULL,
   `disable` tinyint(1) NOT NULL DEFAULT 0,
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_insert` varchar(256) NOT NULL,
-  `username_update` varchar(255) NOT NULL
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -455,13 +465,14 @@ CREATE TABLE `dpa_neo` (
   `sumber_dana` varchar(255) DEFAULT NULL,
   `keterangan` varchar(400) DEFAULT NULL,
   `disable` tinyint(1) NOT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `username_update` varchar(255) NOT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
   `kunci` tinyint(1) DEFAULT 0,
   `setujui` tinyint(1) DEFAULT 0,
-  `id_renja` int(11) DEFAULT NULL
+  `id_renja` int(11) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -517,14 +528,15 @@ CREATE TABLE `dppa_neo` (
   `sumber_dana_p` varchar(255) DEFAULT NULL,
   `keterangan` varchar(400) DEFAULT NULL,
   `disable` tinyint(1) NOT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `username_update` varchar(255) NOT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
   `kunci` tinyint(1) DEFAULT 0,
   `setujui` tinyint(1) DEFAULT 0,
   `id_dpa` int(11) DEFAULT NULL,
-  `id_renja_p` int(11) DEFAULT NULL
+  `id_renja_p` int(11) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -549,10 +561,11 @@ CREATE TABLE `hspk_neo` (
   `disable` tinyint(1) NOT NULL DEFAULT 0,
   `aksi` varchar(255) DEFAULT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -577,8 +590,9 @@ CREATE TABLE `indikator_program_renstra_neo` (
   `keterangan` text DEFAULT NULL,
   `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
   `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `username_update` varchar(100) DEFAULT NULL
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -603,8 +617,9 @@ CREATE TABLE `indikator_sasaran_renstra_neo` (
   `keterangan` text DEFAULT NULL,
   `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
   `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `username_update` varchar(100) DEFAULT NULL
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -621,10 +636,11 @@ CREATE TABLE `kd_wilayah_neo` (
   `disable` int(11) DEFAULT NULL,
   `peraturan` int(11) NOT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -641,7 +657,7 @@ CREATE TABLE `kegiatan` (
   `peraturan` int(11) NOT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) DEFAULT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `tgl_update` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -660,8 +676,9 @@ CREATE TABLE `kegiatan_renstra_neo` (
   `keterangan` text DEFAULT NULL,
   `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
   `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `username_update` varchar(100) DEFAULT NULL
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -702,8 +719,8 @@ CREATE TABLE `mapping_aset_akun` (
   `peraturan` varchar(255) NOT NULL,
   `tgl_insert` datetime NOT NULL,
   `username_insert` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(150) NOT NULL
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -720,8 +737,9 @@ CREATE TABLE `misi_renstra_neo` (
   `keterangan` text DEFAULT NULL,
   `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
   `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `username_update` varchar(100) DEFAULT NULL
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -764,11 +782,12 @@ CREATE TABLE `naskah_dinas_neo` (
   `text_7` text DEFAULT NULL,
   `file` varchar(255) DEFAULT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL,
-  `disable` tinyint(1) NOT NULL DEFAULT 0
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `disable` tinyint(1) NOT NULL DEFAULT 0,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -791,10 +810,11 @@ CREATE TABLE `organisasi_neo` (
   `disable` tinyint(1) NOT NULL DEFAULT 0,
   `aksi` varchar(255) DEFAULT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -848,10 +868,11 @@ CREATE TABLE `pengaturan_neo` (
   `setujui_realisasi` tinyint(1) DEFAULT NULL,
   `id_opd_tampilkan` int(11) NOT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(266) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -877,11 +898,12 @@ CREATE TABLE `peraturan_neo` (
   `disable` tinyint(1) NOT NULL DEFAULT 0,
   `aksi` varchar(50) DEFAULT NULL,
   `file` varchar(400) DEFAULT NULL,
-  `username_insert` varchar(255) DEFAULT NULL,
-  `tgl_insert` date NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL,
-  `keterangan` varchar(255) NOT NULL
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `keterangan` varchar(255) NOT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -917,7 +939,7 @@ CREATE TABLE `program` (
   `peraturan` int(11) NOT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) DEFAULT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `tgl_update` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -936,8 +958,9 @@ CREATE TABLE `program_renstra_neo` (
   `keterangan` text DEFAULT NULL,
   `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
   `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `username_update` varchar(100) DEFAULT NULL
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -970,10 +993,11 @@ CREATE TABLE `rab_paket_neo` (
   `jumlah_negoisasi` decimal(36,12) DEFAULT NULL,
   `KBBI` varchar(255) DEFAULT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -1003,8 +1027,8 @@ CREATE TABLE `register_naskah_dinas` (
   `file` varchar(400) DEFAULT NULL,
   `username_insert` varchar(255) NOT NULL,
   `tgl_insert` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
   `disable` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -1038,10 +1062,11 @@ CREATE TABLE `rekanan_neo` (
   `keterangan` varchar(255) DEFAULT NULL,
   `no_sortir` int(11) DEFAULT NULL,
   `disable` tinyint(1) NOT NULL DEFAULT 0,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -1084,12 +1109,13 @@ CREATE TABLE `renja_neo` (
   `sumber_dana` varchar(255) DEFAULT NULL,
   `keterangan` varchar(400) DEFAULT NULL,
   `disable` tinyint(1) NOT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `username_update` varchar(255) NOT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
   `kunci` tinyint(1) DEFAULT 0,
-  `setujui` tinyint(1) DEFAULT 0
+  `setujui` tinyint(1) DEFAULT 0,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -1145,13 +1171,14 @@ CREATE TABLE `renja_p_neo` (
   `sumber_dana_p` varchar(255) DEFAULT NULL,
   `keterangan` varchar(400) DEFAULT NULL,
   `disable` tinyint(1) NOT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `username_update` varchar(255) NOT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
   `kunci` tinyint(1) DEFAULT 0,
   `setujui` tinyint(1) DEFAULT 0,
-  `id_dpa` int(11) DEFAULT NULL
+  `id_dpa` int(11) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -1172,9 +1199,10 @@ CREATE TABLE `renstra_neo` (
   `disable` tinyint(1) DEFAULT 0,
   `keterangan` text DEFAULT NULL,
   `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `username_insert` varchar(100) NOT NULL,
-  `username_update` varchar(100) DEFAULT NULL
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1192,8 +1220,9 @@ CREATE TABLE `sasaran_renstra_neo` (
   `keterangan` text DEFAULT NULL,
   `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
   `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `username_update` varchar(100) DEFAULT NULL
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1211,10 +1240,11 @@ CREATE TABLE `satuan_neo` (
   `aksi` varchar(50) DEFAULT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
   `peraturan` varchar(255) NOT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(150) NOT NULL
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -1239,10 +1269,11 @@ CREATE TABLE `sbu_neo` (
   `disable` tinyint(1) NOT NULL DEFAULT 0,
   `aksi` varchar(255) DEFAULT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -1274,11 +1305,12 @@ CREATE TABLE `sk_asn_neo` (
   `tembusan` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `file` varchar(255) DEFAULT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL,
-  `disable` tinyint(1) NOT NULL DEFAULT 0
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `disable` tinyint(1) NOT NULL DEFAULT 0,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -1303,10 +1335,11 @@ CREATE TABLE `ssh_neo` (
   `disable` tinyint(1) NOT NULL DEFAULT 0,
   `aksi` varchar(255) DEFAULT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -1325,7 +1358,7 @@ CREATE TABLE `sub_kegiatan` (
   `status` tinyint(4) DEFAULT 1,
   `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) DEFAULT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `tgl_update` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -1351,10 +1384,11 @@ CREATE TABLE `sub_kegiatan_neo` (
   `disable` tinyint(1) NOT NULL DEFAULT 0,
   `aksi` varchar(255) DEFAULT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(100) NOT NULL
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -1385,8 +1419,9 @@ CREATE TABLE `sub_kegiatan_renstra_neo` (
   `keterangan` text DEFAULT NULL,
   `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
   `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `username_update` varchar(100) DEFAULT NULL
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1430,14 +1465,15 @@ CREATE TABLE `sub_keg_dpa_neo` (
   `keterangan` varchar(255) DEFAULT NULL,
   `kelompok_json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '{}',
   `keterangan_json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '{}' CHECK (json_valid(`keterangan_json`)),
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `username_insert` varchar(100) NOT NULL,
   `setujui` tinyint(1) DEFAULT 0,
   `kunci` tinyint(1) DEFAULT 0,
   `setujui_p` tinyint(1) DEFAULT 0,
-  `kunci_p` tinyint(1) DEFAULT 0
+  `kunci_p` tinyint(1) DEFAULT 0,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -1481,14 +1517,15 @@ CREATE TABLE `sub_keg_renja_neo` (
   `keterangan` varchar(255) DEFAULT NULL,
   `kelompok_json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '{}',
   `keterangan_json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '{}' CHECK (json_valid(`keterangan_json`)),
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `username_insert` varchar(100) NOT NULL,
   `setujui` tinyint(1) DEFAULT 0,
   `kunci` tinyint(1) DEFAULT 0,
   `setujui_p` tinyint(1) DEFAULT 0,
-  `kunci_p` tinyint(1) DEFAULT 0
+  `kunci_p` tinyint(1) DEFAULT 0,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -1511,10 +1548,11 @@ CREATE TABLE `sumber_dana_neo` (
   `disable` tinyint(1) NOT NULL DEFAULT 0,
   `aksi` varchar(255) DEFAULT NULL,
   `keterangan` text DEFAULT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_insert` datetime NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
@@ -1532,8 +1570,9 @@ CREATE TABLE `tujuan_renstra_neo` (
   `keterangan` text DEFAULT NULL,
   `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
   `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `username_update` varchar(100) DEFAULT NULL
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1549,7 +1588,7 @@ CREATE TABLE `urusan` (
   `peraturan` int(11) NOT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) DEFAULT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `tgl_update` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -1655,11 +1694,12 @@ CREATE TABLE `wilayah_neo` (
   `peta` varchar(255) DEFAULT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
   `disable` tinyint(1) NOT NULL DEFAULT 0,
-  `tgl_insert` datetime NOT NULL,
-  `username_insert` varchar(255) NOT NULL,
-  `tgl_update` datetime NOT NULL,
-  `username_update` varchar(255) NOT NULL,
-  `file` varchar(255) DEFAULT NULL
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) NOT NULL,
+  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `file` varchar(255) DEFAULT NULL,
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
