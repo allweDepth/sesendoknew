@@ -99,6 +99,10 @@
             width: 350px;
             z-index: 5;
         }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
     </style>
 </head>
 

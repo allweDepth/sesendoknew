@@ -35,93 +35,14 @@
 
   <div class="ui hidden divider"></div>
 
-  <table class="ui celled striped table">
-    <thead>
-      <?php
-
-      $columns = [
-        'sub_kegiatan' => [
-          'Kode',
-          'Nama Sub Kegiatan',
-          'Kinerja',
-
-          'Indikator'
-        ],
-        'kegiatan' => [
-          'Kode',
-          'Nama Kegiatan'
-        ],
-        'program' => [
-          'Kode',
-          'Nama Program'
-        ],
-        'rekanan' => [
-          'Perusahaan',
-          'Alamat',
-          'email',
-          'NPWP',
-          'No. Rekening',
-          'Nama Bank',
-          'Direktur'
-        ],
-        'satuan' => [
-          'Value',
-          'Item',
-          'Keterangan'
-        ],
-        'aset' => [
-          'Kode',
-          'Uraian',
-          'Keterangan'
-        ],
-        'akun' => [
-          'Kode',
-          'Uraian',
-          'Keterangan'
-        ],
-        'sumber_dana' => [
-          'Kode',
-          'Uraian',
-          'Keterangan'
-        ],
-        'organisasi' => [
-          'Kode',
-          'Uraian',
-          'Alamat',
-          'Keterangan'
-        ],
-        'peraturan' => [
-          'Nomor',
-          'Uraian',
-          'Tanggal Penetapan',
-          'status',
-          'Keterangan'
-        ],
-        'wilayah' => [
-          'Kode',
-          'Uraian',
-          'Status',
-          'Jumlah Kec.',
-          'Jumlah Desa',
-          'Luas',
-          'Keterangan'
-        ]
-      ];
-
-      $currentColumns = $columns[$tbl] ?? ['Nama'];
-
-      $totalCol = count($currentColumns) + 1; // +1 untuk kolom Aksi
-
-      ?>
-
-      <tr>
-        <?php foreach ($currentColumns as $col): ?>
-          <th><?= $col ?></th>
-        <?php endforeach; ?>
-
-        <th class="collapsing">Aksi</th>
-      </tr>
-    </thead>
+  <div class="table-wrapper">
+    <table class="ui very compact celled striped unstackable table">
+      <thead>
+        <tr>
+            <th></th>
+          <th class="collapsing">Aksi</th>
+        </tr>
+      </thead>
     <tbody name="tabel_referensi">
       <tr>
         <td colspan="<?= $totalCol ?>">
@@ -137,4 +58,5 @@
       </tr>
     </tfoot>
   </table>
+</div>
 </div>

@@ -50,76 +50,29 @@
   </h3>
 
   <div class="ui hidden divider"></div>
-
-  <table class="ui celled striped table">
-    <thead>
-      <?php
-
-      $columns = [
-        'asn' => [
-          'Nama',
-          'NIP',
-          'Alamat',
-          'Golongan',
-          'ruang',
-          'Jabatan',
-          'Keterangan'
-        ],
-        'sk_asn' => [
-          'Nomor',
-          'Tanggal Surat',
-          'Tentang',
-          'Pemberi Tugas',
-          'Keterangan'
-        ],
-        'register_surat' => [
-          'Jenis Naskah',
-          'Sifat',
-          'Nomor',
-          'Tanggal',
-          'Uraian',
-          'File',
-          'Keterangan'
-        ],
-        'tata_naskah' => [
-          'Jenis',
-          'Nomor',
-          'Tanggal',
-          'Uraian',
-          'Keterangan'
-        ]
-      ];
-
-      $currentColumns = $columns[$tbl] ?? ['Nama'];
-
-      $totalCol = count($currentColumns) + 1; // +1 untuk kolom Aksi
-
-      ?>
-
-      <tr>
-        <?php foreach ($currentColumns as $col): ?>
-          <th><?= $col ?></th>
-        <?php endforeach; ?>
-
-        <th class="collapsing">Aksi</th>
-      </tr>
-    </thead>
-
-
-    <!-- INI SAJA YANG BERBEDA -->
-    <tbody name="tabel_kepegawaian">
-      <tr>
-        <td colspan="<?= $totalCol ?>">
-          <div class="ui active inline loader"></div>
-        </td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="100%" class="right aligned">
-          <div name="pagination_kepegawaian"></div>
-        </td>
-      </tr>
-    </tfoot>
-  </table>
+  <div class="table-wrapper">
+    <table class="ui very compact celled striped unstackable table">
+      <thead>
+        <tr>
+            <th></th>
+          <th class="collapsing">Aksi</th>
+        </tr>
+      </thead>
+      <!-- INI SAJA YANG BERBEDA -->
+      <tbody name="tabel_kepegawaian">
+        <tr>
+          <td colspan="<?= $totalCol ?>">
+            <div class="ui active inline loader"></div>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="100%" class="right aligned">
+            <div name="pagination_kepegawaian"></div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>
