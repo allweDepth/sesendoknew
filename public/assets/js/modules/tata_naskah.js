@@ -10,33 +10,6 @@
 ============================================================ */
 
 /* ============================================================
-   LOAD DROPDOWN KLASIFIKASI
-============================================================ */
-function loadKlasifikasi() {
-	$.post(
-		"/dynamic",
-		{
-			tbl: "ref_klasifikasi_keamanan",
-			action: "dropdown",
-		},
-		function (res) {
-			let data = res.data || [];
-			let options = '<option value="">Pilih Klasifikasi</option>';
-
-			data.forEach((d) => {
-				options += `<option value="${d.id}">
-					${d.uraian}
-				</option>`;
-			});
-
-			$(".klasifikasi-dropdown").html(options);
-			$(".klasifikasi-dropdown").dropdown("refresh");
-		},
-		"json",
-	);
-}
-
-/* ============================================================
    STYLE ICON BERDASARKAN KELOMPOK
 ============================================================ */
 const kelompokStyle = {
@@ -55,31 +28,30 @@ $(document).ready(function () {
 	   STEP 1: KLIK KELOMPOK
 	======================================================== */
 	$(".kelompok-card").on("click", function () {
-    let id = $(this).data("id");
+		let id = $(this).data("id");
 
-    $.post(
-        "/tata_naskah/load_jenis",
-        { kelompok_id: id },
-        function (data) {
+		$.post(
+			"/tata_naskah/load_jenis",
+			{ kelompok_id: id },
+			function (data) {
+				let grouped = {};
 
-            let grouped = {};
+				data.forEach((j) => {
+					if (!grouped[j.sub_kategori]) {
+						grouped[j.sub_kategori] = [];
+					}
+					grouped[j.sub_kategori].push(j);
+				});
 
-            data.forEach((j) => {
-                if (!grouped[j.sub_kategori]) {
-                    grouped[j.sub_kategori] = [];
-                }
-                grouped[j.sub_kategori].push(j);
-            });
+				let html = "";
 
-            let html = "";
-
-            for (let kategori in grouped) {
-                html += `<div class="ui segment">
+				for (let kategori in grouped) {
+					html += `<div class="ui segment">
                         <h4 class="ui dividing header">${kategori || "Lainnya"}</h4>
                         <div class="ui relaxed divided list">`;
 
-                grouped[kategori].forEach((j) => {
-                    html += `
+					grouped[kategori].forEach((j) => {
+						html += `
                         <div class="item">
                             <a href="#"
                                 class="jenis-item"
@@ -93,17 +65,17 @@ $(document).ready(function () {
                                 </div>
                             </a>
                         </div>`;
-                });
+					});
 
-                html += `</div></div>`;
-            }
+					html += `</div></div>`;
+				}
 
-            $("#jenis-list").html(html);
-            $("#jenis-container").removeClass("hidden");
-        },
-        "json"
-    );
-});
+				$("#jenis-list").html(html);
+				$("#jenis-container").removeClass("hidden");
+			},
+			"json",
+		);
+	});
 
 	/* ========================================================
 	   STEP 2: KLIK JENIS NASKAH
@@ -143,18 +115,22 @@ $(document).ready(function () {
 		   LOAD FORM SCHEMA
 		============================== */
 		$.post(
-			"/tata_naskah/load_form",
+			"/tata_naskah/schema",
 			{ jenis_id: id },
-			function (schema) {
-				if (!schema) return;
+			function (res) {
+				if (!res || !res.schema) return;
 
-				let formSchema = schema;
+				let formSchema = res.schema;
 				let html = buildForm(formSchema);
 
-				// Inject ke modal
 				$("#form_modal").html(html);
-
-				// Tampilkan modal
+				/* ===============================
+					PRELOAD NOMOR OTOMATIS
+				=============================== */
+				let nomorInput = $('input[name="nomor"]');
+				if (res.nomor_auto && nomorInput.length) {
+					nomorInput.val(res.nomor_auto);
+				}
 				$("#mainModal")
 					.modal({
 						autofocus: false,
@@ -163,13 +139,28 @@ $(document).ready(function () {
 					})
 					.modal("show");
 
-				// Inisialisasi komponen UI
 				setTimeout(function () {
 					$(".ui.dropdown").dropdown();
-					loadASN();
-					loadKlasifikasi();
+
+					// isi dropdown ASN
+					let asnOptions = '<option value="">Pilih ASN</option>';
+					res.asn.forEach((a) => {
+						asnOptions += `<option value="${a.id}">${a.uraian}</option>`;
+					});
+					$(".asn-dropdown").html(asnOptions);
+
+					// isi dropdown klasifikasi
+					let klasifikasiOptions =
+						'<option value="">Pilih Klasifikasi</option>';
+					res.klasifikasi.forEach((k) => {
+						klasifikasiOptions += `<option value="${k.id}">${k.uraian}</option>`;
+					});
+					$(".klasifikasi-dropdown").html(klasifikasiOptions);
+
+					$(".ui.dropdown").dropdown("refresh");
+
 					initEditor();
-				}, 200);
+				}, 100);
 			},
 			"json",
 		);
@@ -231,33 +222,6 @@ $(document).ready(function () {
 		</form>`;
 
 		return html;
-	}
-
-	/* ========================================================
-	   LOAD ASN DROPDOWN
-	======================================================== */
-	function loadASN() {
-		$.post(
-			"/dynamic",
-			{
-				tbl: "asn",
-				action: "dropdown",
-			},
-			function (res) {
-				let data = res.data || [];
-				let options = '<option value="">Pilih ASN</option>';
-
-				data.forEach((d) => {
-					options += `<option value="${d.id}">
-						${d.uraian}
-					</option>`;
-				});
-
-				$(".asn-dropdown").html(options);
-				$(".asn-dropdown").dropdown("refresh");
-			},
-			"json",
-		);
 	}
 
 	/* ========================================================

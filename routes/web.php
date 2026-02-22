@@ -96,4 +96,5 @@ return [
 '/tata_naskah/load_jenis' => ['TataNaskahController', 'loadJenis'],
 '/tata_naskah/load_form' => ['TataNaskahController', 'loadForm'],
 '/tata_naskah/generate_pdf' => ['TataNaskahController', 'generate_pdf'],
+'/tata_naskah/schema' => ['TataNaskahController', 'schema'],
 ];

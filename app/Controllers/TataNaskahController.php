@@ -59,33 +59,6 @@ class TataNaskahController extends Controller
     header('Content-Type: application/json');
     echo json_encode($jenis);
   }
-
-public function loadForm()
-{
-    header('Content-Type: application/json');
-
-    $jenisId = $_POST['jenis_id'] ?? null;
-
-    if (!$jenisId) {
-        echo json_encode([]);
-        return;
-    }
-
-    $db = DB::getInstance();
-
-    $jenis = $db->query(
-        "SELECT schema_json FROM ref_jenis_naskah WHERE id = ?",
-        [$jenisId]
-    )->fetch();
-
-    if (!$jenis || empty($jenis['schema_json'])) {
-        echo json_encode([]);
-        return;
-    }
-
-    echo $jenis['schema_json'];
-}
-
   public function generate_pdf()
   {
     echo json_encode(['status' => 'not_ready']);
@@ -297,5 +270,148 @@ public function loadForm()
     );
 
     return JsonResponse::success("TTD berhasil diupload, menunggu verifikasi");
+  }
+  public function schema()
+  {
+    header('Content-Type: application/json');
+
+    $jenisId = $_POST['jenis_id'] ?? null;
+
+    if (!$jenisId) {
+      echo json_encode([]);
+      return;
+    }
+
+    $db = DB::getInstance();
+
+    /* ===============================
+       AMBIL DATA JENIS
+    =============================== */
+    $jenis = $db->query(
+      "SELECT * FROM ref_jenis_naskah WHERE id = ?",
+      [$jenisId]
+    )->fetch();
+
+    if (!$jenis) {
+      echo json_encode([]);
+      return;
+    }
+
+    /* ===============================
+       CEK PERMISSION
+    =============================== */
+    $userRole = $_SESSION['user']['type_user'] ?? null;
+
+    if (!empty($jenis['allowed_roles'])) {
+
+      $allowed = explode(',', $jenis['allowed_roles']);
+
+      if (!in_array($userRole, $allowed)) {
+        echo json_encode([
+          "error" => "Anda tidak memiliki akses ke jenis ini"
+        ]);
+        return;
+      }
+    }
+    /* ===============================
+   CACHING SCHEMA (AMAN FINAL)
+=============================== */
+
+    $schema = [];
+
+    $cache = $db->query(
+      "SELECT schema_json FROM cache_schema_naskah 
+     WHERE jenis_id = ? AND schema_version = ?",
+      [$jenisId, $jenis['schema_version']]
+    )->fetch();
+
+    if ($cache && !empty($cache['schema_json'])) {
+
+      $decoded = json_decode($cache['schema_json'], true);
+      if (is_array($decoded)) {
+        $schema = $decoded;
+      }
+    } else {
+
+      if (!empty($jenis['schema_json'])) {
+
+        $decoded = json_decode($jenis['schema_json'], true);
+
+        if (is_array($decoded)) {
+          $schema = $decoded;
+
+          // simpan ke cache hanya jika valid
+          $db->insert("cache_schema_naskah", [
+            "jenis_id" => $jenisId,
+            "schema_version" => $jenis['schema_version'],
+            "schema_json" => $jenis['schema_json'],
+            "tgl_insert" => date("Y-m-d H:i:s")
+          ]);
+        }
+      }
+    }
+
+    /* ===============================
+       PRELOAD NOMOR OTOMATIS
+    =============================== */
+
+    $nomor = null;
+
+    if (!empty($jenis['auto_generate_nomor'])) {
+      $nomor = $this->generateNomorInternal();
+    }
+
+    /* ===============================
+       AMBIL ASN
+    =============================== */
+    /* ===============================
+   AMBIL ASN (db_asn_pemda_neo)
+=============================== */
+    $asn = $db->query(
+      "SELECT 
+        id, 
+        CONCAT(
+            IFNULL(gelar_depan,''), 
+            IF(gelar_depan IS NULL OR gelar_depan = '', '', ' '),
+            nama,
+            IF(gelar IS NULL OR gelar = '', '', CONCAT(', ', gelar))
+        ) AS uraian
+     FROM db_asn_pemda_neo
+     WHERE disable = 0 
+       AND is_deleted = 0
+     ORDER BY nama ASC"
+    )->fetchAll();
+
+    /* ===============================
+       AMBIL KLASIFIKASI
+    =============================== */
+    $klasifikasi = $db->query(
+      "SELECT id,CONCAT(kode, ' - ', nama) AS uraian
+     FROM ref_klasifikasi_keamanan
+     ORDER BY kode ASC"
+    )->fetchAll();
+
+    echo json_encode([
+      "schema" => $schema,
+      "asn" => $asn,
+      "klasifikasi" => $klasifikasi,
+      "nomor_auto" => $nomor
+    ]);
+  }
+  private function generateNomorInternal()
+  {
+    $tahun = date('Y');
+
+    $db = DB::getInstance();
+
+    $count = $db->query(
+      "SELECT COUNT(*) as total FROM trx_naskah_dinas 
+         WHERE tahun = ?",
+      [$tahun]
+    )->fetch()['total'];
+
+    $number = $count + 1;
+
+    return sprintf("%03d/TN/%s", $number, $tahun);
   }
 }
