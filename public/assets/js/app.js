@@ -710,18 +710,14 @@ class FormEngine {
 	============================ */
 	static render(container, elements = []) {
 		let html = this.build(elements);
-
 		$(container).html(html);
-
 		this.init();
 	}
-
 	/* ============================
 		 Build All Elements
 	============================ */
 	static build(elements = []) {
 		let html = "";
-
 		elements.forEach((el) => {
 			if (el.prop?.role) {
 				if (!el.prop.role.includes(AppState.role)) return;
@@ -2964,7 +2960,7 @@ class FormContainerManager {
 							classField: "required",
 							options: [
 								{ value: "0", text: "0 Baris Header" },
-								{ value: "1", text: "1 Baris Header",class: " active selected"},
+								{ value: "1", text: "1 Baris Header",class: " active selected"},// @audit
 								{ value: "2", text: "2 Baris Header" },
 								{ value: "3", text: "3 Baris Header" },
 								{ value: "4", text: "4 Baris Header" },
