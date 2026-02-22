@@ -1971,6 +1971,80 @@ const UIConfig = {
 			},
 		],
 	},
+	tata_naskah: {
+		sk: [
+			{
+				tag: "field",
+				prop: {
+					label: "Nomor",
+					name: "nomor",
+					classField: "required",
+					atribut: "readonly",
+				},
+			},
+
+			{
+				tag: "fieldCalendar",
+				prop: {
+					label: "Tanggal",
+					name: "tanggal",
+					calendarType: "date",
+					classField: "required",
+				},
+			},
+
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Tentang",
+					name: "tentang",
+					atribut: 'rows="2"',
+				},
+			},
+
+			{
+				tag: "divider",
+				prop: { label: "MENIMBANG" },
+			},
+
+			{
+				tag: "field",
+				prop: {
+					name: "menimbang_container",
+					non_data: true,
+					classField: "dynamic-menimbang",
+				},
+			},
+
+			{
+				tag: "divider",
+				prop: { label: "MENGINGAT" },
+			},
+
+			{
+				tag: "field",
+				prop: {
+					name: "mengingat_container",
+					non_data: true,
+					classField: "dynamic-mengingat",
+				},
+			},
+
+			{
+				tag: "divider",
+				prop: { label: "MENETAPKAN" },
+			},
+
+			{
+				tag: "field",
+				prop: {
+					name: "menetapkan_container",
+					non_data: true,
+					classField: "dynamic-menetapkan",
+				},
+			},
+		],
+	},
 };
 
 /* =========================================================
