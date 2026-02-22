@@ -1972,14 +1972,17 @@ const UIConfig = {
 		],
 	},
 	tata_naskah: {
+		/* ======================================================
+       1️⃣ SK (MENIMBANG, MENGINGAT, MENETAPKAN)
+    ====================================================== */
 		sk: [
 			{
 				tag: "field",
 				prop: {
 					label: "Nomor",
 					name: "nomor",
-					classField: "required",
 					atribut: "readonly",
+					classField: "required",
 				},
 			},
 
@@ -1995,17 +1998,10 @@ const UIConfig = {
 
 			{
 				tag: "fieldTextarea",
-				prop: {
-					label: "Tentang",
-					name: "tentang",
-					atribut: 'rows="2"',
-				},
+				prop: { label: "Tentang", name: "tentang", atribut: 'rows="2"' },
 			},
 
-			{
-				tag: "divider",
-				prop: { label: "MENIMBANG" },
-			},
+			{ tag: "divider", prop: { label: "MENIMBANG" } },
 
 			{
 				tag: "field",
@@ -2016,10 +2012,7 @@ const UIConfig = {
 				},
 			},
 
-			{
-				tag: "divider",
-				prop: { label: "MENGINGAT" },
-			},
+			{ tag: "divider", prop: { label: "MENGINGAT" } },
 
 			{
 				tag: "field",
@@ -2030,10 +2023,7 @@ const UIConfig = {
 				},
 			},
 
-			{
-				tag: "divider",
-				prop: { label: "MENETAPKAN" },
-			},
+			{ tag: "divider", prop: { label: "MENETAPKAN" } },
 
 			{
 				tag: "field",
@@ -2041,6 +2031,199 @@ const UIConfig = {
 					name: "menetapkan_container",
 					non_data: true,
 					classField: "dynamic-menetapkan",
+				},
+			},
+		],
+
+		/* ======================================================
+       2️⃣ SURAT INTERNAL
+    ====================================================== */
+		surat_internal: [
+			{
+				tag: "field",
+				prop: { label: "Nomor", name: "nomor", atribut: "readonly" },
+			},
+
+			{
+				tag: "fieldCalendar",
+				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
+			},
+
+			{
+				tag: "field",
+				prop: { label: "Kepada", name: "kepada", classField: "required" },
+			},
+
+			{ tag: "field", prop: { label: "Dari", name: "dari" } },
+
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Perihal", name: "perihal", atribut: 'rows="2"' },
+			},
+
+			{ tag: "divider", prop: { label: "ISI NASKAH" } },
+
+			{
+				tag: "fieldTextarea",
+				prop: { label: "", name: "isi", atribut: 'rows="8"' },
+			},
+		],
+
+		/* ======================================================
+       3️⃣ SURAT BEBAS (FREE EDITOR)
+    ====================================================== */
+		surat_bebas: [
+			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
+
+			{
+				tag: "fieldCalendar",
+				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
+			},
+
+			{ tag: "field", prop: { label: "Tujuan", name: "tujuan" } },
+
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Perihal", name: "perihal", atribut: 'rows="2"' },
+			},
+
+			{ tag: "divider", prop: { label: "ISI SURAT" } },
+
+			{
+				tag: "fieldTextarea",
+				prop: { label: "", name: "isi", atribut: 'rows="10"' },
+			},
+		],
+
+		/* ======================================================
+       4️⃣ AKTA / PERJANJIAN / BERITA ACARA
+    ====================================================== */
+		akta: [
+			{ tag: "field", prop: { label: "Nomor Dokumen", name: "nomor" } },
+
+			{
+				tag: "fieldCalendar",
+				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
+			},
+
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Judul / Tentang",
+					name: "tentang",
+					atribut: 'rows="2"',
+				},
+			},
+
+			{ tag: "divider", prop: { label: "PIHAK TERLIBAT" } },
+
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Pihak Pertama",
+					name: "pihak_pertama",
+					atribut: 'rows="2"',
+				},
+			},
+
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Pihak Kedua",
+					name: "pihak_kedua",
+					atribut: 'rows="2"',
+				},
+			},
+
+			{ tag: "divider", prop: { label: "ISI PERJANJIAN" } },
+
+			{
+				tag: "fieldTextarea",
+				prop: { label: "", name: "isi", atribut: 'rows="8"' },
+			},
+		],
+
+		/* ======================================================
+       5️⃣ SURAT KETERANGAN / SERTIFIKAT
+    ====================================================== */
+		surat_keterangan: [
+			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
+
+			{
+				tag: "fieldCalendar",
+				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
+			},
+
+			{
+				tag: "field",
+				prop: {
+					label: "Nama Penerima",
+					name: "nama_penerima",
+					classField: "required",
+				},
+			},
+
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Keterangan", name: "keterangan", atribut: 'rows="4"' },
+			},
+		],
+
+		/* ======================================================
+       6️⃣ LAPORAN / NOTULA
+    ====================================================== */
+		laporan: [
+			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
+
+			{
+				tag: "fieldCalendar",
+				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
+			},
+
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Judul Laporan", name: "judul", atribut: 'rows="2"' },
+			},
+
+			{ tag: "divider", prop: { label: "ISI LAPORAN" } },
+
+			{
+				tag: "fieldTextarea",
+				prop: { label: "", name: "isi", atribut: 'rows="10"' },
+			},
+		],
+
+		/* ======================================================
+       7️⃣ TELAAH STAF
+    ====================================================== */
+		telaah_staf: [
+			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
+
+			{
+				tag: "fieldCalendar",
+				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
+			},
+
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Permasalahan",
+					name: "permasalahan",
+					atribut: 'rows="3"',
+				},
+			},
+
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Analisis", name: "analisis", atribut: 'rows="5"' },
+			},
+
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Rekomendasi",
+					name: "rekomendasi",
+					atribut: 'rows="3"',
 				},
 			},
 		],

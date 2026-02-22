@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../Core/Controller.php';
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../Core/DB.php';
+require_once __DIR__ . '/../Services/JsonResponse.php';
 
 class TataNaskahController extends Controller
 {
@@ -31,14 +32,13 @@ class TataNaskahController extends Controller
     ]);
   }
 
-  public function loadJenis()
-  {
+public function loadJenis()
+{
     $kelompokId = $_POST['kelompok_id'] ?? null;
 
     if (!$kelompokId) {
-      header('Content-Type: application/json');
-      echo json_encode([]);
-      return;
+        echo JsonResponse::success("Kosong", null, []);
+        return;
     }
 
     $db = DB::getInstance();
@@ -47,6 +47,7 @@ class TataNaskahController extends Controller
         SELECT 
             j.id,
             j.nama,
+            j.kode_form,
             j.sub_kategori,
             k.kode AS kelompok_kode,
             k.nama AS kelompok_nama
@@ -56,9 +57,8 @@ class TataNaskahController extends Controller
         ORDER BY j.sub_kategori ASC, j.urutan ASC
     ", [$kelompokId])->fetchAll();
 
-    header('Content-Type: application/json');
-    echo json_encode($jenis);
-  }
+    echo JsonResponse::success("Data ditemukan", null, $jenis);
+}
   public function generate_pdf()
   {
     echo json_encode(['status' => 'not_ready']);
