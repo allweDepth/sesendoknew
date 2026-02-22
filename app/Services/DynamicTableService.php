@@ -75,7 +75,7 @@ class DynamicTableService
 
                 if (!empty($request['id_row']) && count($request) <= 4) {
                     $this->authorize('view', $table);
-                    return $this->getById($table, (int)$request['id_row']);
+                    return $this->getById($table, $request['id_row']);
                 }
 
                 if (!empty($request['id'])) {
@@ -88,7 +88,7 @@ class DynamicTableService
 
             if ($action === 'delete' && !empty($request['id_row'])) {
                 $this->authorize('delete', $table);
-                return $this->delete($table, $profile, (int)$request['id_row']);
+                return $this->delete($table, $profile, $request['id_row']);
             }
 
             if ($action === 'export') {
@@ -100,7 +100,7 @@ class DynamicTableService
             $mode = $action ?: 'default';
 
             return $this->buildQuery($table, $profile, $request, $mode);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return JsonResponse::error($e->getMessage());
         }
     }
@@ -109,7 +109,7 @@ class DynamicTableService
     /* =========================================================
        GET SINGLE ROW
     ========================================================= */
-    private function getById(string $table, int $id): string
+    private function getById(string $table, int|string $id): string
     {
         $primaryKey = $this->getPrimaryKey($table);
 
@@ -592,7 +592,7 @@ class DynamicTableService
     /* =========================================================
        DELETE (FULL IDENTIK LOGIC ASLI)
     ========================================================= */
-    private function delete(string $table, array $profile, int $id): string
+    private function delete(string $table, array $profile, int|string $id): string
     {
         $primaryKey = $this->getPrimaryKey($table);
 
@@ -1123,7 +1123,6 @@ class DynamicTableService
 
             return $result;
         } catch (Exception $e) {
-
             $this->db->query("ROLLBACK");
             throw $e;
         }

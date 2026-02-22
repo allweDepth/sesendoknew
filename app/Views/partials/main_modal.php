@@ -47,3 +47,23 @@
         </div>
 
     </div>
+
+    <!-- MODAL KONFIRMASI -->
+   <div class="ui small modal" id="globalDialog">
+	<div class="header" id="dialogTitle">
+		Konfirmasi
+	</div>
+
+	<div class="content">
+		<p id="dialogMessage"></p>
+	</div>
+	<div class="actions">
+		<button class="ui button cancel">
+			Batal
+		</button>
+		<button class="ui red button approve">
+			<i class="check icon"></i>
+			<span class="btn-text">Ya</span>
+		</button>
+	</div>
+</div>

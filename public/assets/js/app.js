@@ -57,6 +57,96 @@ const ToastEngine = {
 		});
 	},
 };
+
+/* =========================================================
+	 MODAL KONFIRMASI
+	 ---------------------------------------------------------
+	 → Konfirmasi data di hapus
+========================================================= */
+
+const DialogEngine = {
+	show({
+		title = "Konfirmasi",
+		message = "Yakin?",
+		approveText = "Ya",
+		cancelText = "Batal",
+		icon = null,
+		onApprove = null,
+	}) {
+		return new Promise((resolve, reject) => {
+			const $modal = $("#globalDialog");
+			const $approveBtn = $modal.find(".approve");
+			const $cancelBtn = $modal.find(".cancel");
+
+			// ============================
+			// SET CONTENT
+			// ============================
+			$("#dialogTitle").html(
+				icon ? `<i class="${icon} icon"></i> ${title}` : title,
+			);
+
+			$("#dialogMessage").html(message);
+
+			$approveBtn.find(".btn-text").text(approveText);
+			$cancelBtn.text(cancelText);
+
+			// Reset state
+			$approveBtn.removeClass("loading disabled");
+			$cancelBtn.removeClass("disabled");
+
+			// ============================
+			// INIT MODAL
+			// ============================
+			$modal
+				.modal({
+					closable: false,
+					transition: "fade up",
+					duration: 200,
+
+					onApprove: function () {
+						// Auto loading state
+						$approveBtn.addClass("loading disabled");
+						$cancelBtn.addClass("disabled");
+
+						// Jika async function
+						if (typeof onApprove === "function") {
+							let result = onApprove();
+
+							if (result instanceof Promise) {
+								result
+									.then(() => {
+										$modal.modal("hide");
+										resolve(true);
+									})
+									.catch(() => {
+										$approveBtn.removeClass("loading disabled");
+										$cancelBtn.removeClass("disabled");
+									});
+							} else {
+								$modal.modal("hide");
+								resolve(true);
+							}
+						} else {
+							$modal.modal("hide");
+							resolve(true);
+						}
+
+						return false; // prevent auto close
+					},
+
+					onDeny: function () {
+						reject(false);
+					},
+
+					onHidden: function () {
+						$approveBtn.removeClass("loading disabled");
+						$cancelBtn.removeClass("disabled");
+					},
+				})
+				.modal("show");
+		});
+	},
+};
 /* =========================================================
 	 CORE AJAX ENGINE
 	 ---------------------------------------------------------
@@ -565,8 +655,7 @@ class TableManager {
 			if (btn === "delete") {
 				html += `
 				<button class="ui red button"
-					data-ui="delete-row"
-					data-jns="delete"
+				data-action="delete"
 					data-tbl="${tbl}"
 					data-id="${row[AppState.primaryKey]}">
 					<i class="trash alternate outline red icon"></i>
@@ -2696,46 +2785,45 @@ class FormContainerManager {
 		let flatElements = flatten(elements);
 
 		flatElements.forEach((el) => {
+			if (!el.prop || !el.prop.name) return;
 
-	if (!el.prop || !el.prop.name) return;
+			// 🔥 SKIP VALIDATION JIKA validate:false
+			if (el.prop.validate === false) return;
 
-	// 🔥 SKIP VALIDATION JIKA validate:false
-	if (el.prop.validate === false) return;
+			let name = el.prop.name;
 
-	let name = el.prop.name;
+			if (!$form.find(`[name="${name}"]`).length) return;
 
-	if (!$form.find(`[name="${name}"]`).length) return;
+			let fieldRules = [];
 
-	let fieldRules = [];
+			if (el.prop.classField?.includes("required")) {
+				fieldRules.push({
+					type: "empty",
+					prompt: (el.prop.label || name) + " wajib diisi",
+				});
+			}
 
-	if (el.prop.classField?.includes("required")) {
-		fieldRules.push({
-			type: "empty",
-			prompt: (el.prop.label || name) + " wajib diisi",
+			if (name === "email") {
+				fieldRules.push({
+					type: "email",
+					prompt: "Format email tidak valid",
+				});
+			}
+
+			if (el.prop.atribut?.includes('type="number"')) {
+				fieldRules.push({
+					type: "number",
+					prompt: (el.prop.label || name) + " harus berupa angka",
+				});
+			}
+
+			if (fieldRules.length) {
+				rules[name] = {
+					identifier: name,
+					rules: fieldRules,
+				};
+			}
 		});
-	}
-
-	if (name === "email") {
-		fieldRules.push({
-			type: "email",
-			prompt: "Format email tidak valid",
-		});
-	}
-
-	if (el.prop.atribut?.includes('type="number"')) {
-		fieldRules.push({
-			type: "number",
-			prompt: (el.prop.label || name) + " harus berupa angka",
-		});
-	}
-
-	if (fieldRules.length) {
-		rules[name] = {
-			identifier: name,
-			rules: fieldRules,
-		};
-	}
-});
 
 		$form.form("destroy");
 		$form.removeData("module-form");
@@ -3212,53 +3300,108 @@ $(document).ready(function () {
 			function (res) {
 				if (res.status) {
 					$("#modalPrivateMessage").modal("hide");
-					Swal.fire({
-						icon: "success",
-						title: "Berhasil",
-						text: res.message,
+					DialogEngine.show({
+						title: "Hapus Data",
+						message: "Data yang dihapus tidak dapat dikembalikan.",
+						icon: "trash alternate outline red",
+						approveText: "Hapus",
+						onApprove: () => {
+							return new Promise((resolve, reject) => {
+								$.post(
+									AppConfig.apiUrl + "dynamic",
+									{
+										module: AppState.module,
+										action: "delete",
+										tbl: tbl,
+										id_row: id,
+									},
+									function (res) {
+										if (res.success) {
+											tableManager.fetch();
+											resolve();
+										} else {
+											reject();
+										}
+									},
+									"json",
+								);
+							});
+						},
 					});
 				}
 			},
 			"json",
 		);
 	});
-	/* ---------------------------------------------
-	   Handler Delete
-	---------------------------------------------- */
-	$(document).on("click", '[data-ui="delete-row"]', function () {
-		let tbl = $(this).data("tbl");
-		let id = $(this).data("id");
-
-		Swal.fire({
-			title: "Yakin hapus data?",
-			icon: "warning",
-			showCancelButton: true,
-		}).then((result) => {
-			if (!result.isConfirmed) return;
-
-			$.post(
-				AppConfig.apiUrl + "dynamic",
-				{
-					module: AppState.module,
-					action: "delete",
-					tbl: tbl,
-					id_row: id,
-				},
-				function () {
-					tableManager.fetch();
-				},
-			);
-		});
-	});
-	// export excel
-	$(document).on("click", 'button[data-action="export"]', function (e) {
-		console.log("EXPORT CLICKED");
-
+	// ======================================================
+	// 🔥 GLOBAL ACTION DISPATCHER
+	// ======================================================
+	$(document).on("click", "[data-action]", function (e) {
 		e.preventDefault();
 
-		const table = $(this).data("tbl");
+		let action = $(this).data("action");
 
-		window.location.href = AppConfig.apiUrl + "export?tabel=" + table;
+		switch (action) {
+			// ==========================
+			// LOGOUT
+			// ==========================
+			case "logout":
+				DialogEngine.show({
+					title: "Logout",
+					message: "Anda yakin ingin keluar?",
+					icon: "sign out alternate",
+					approveText: "Logout",
+					onApprove: () => {
+						window.location.href = "/logout";
+					},
+				});
+				break;
+
+			// ==========================
+			// EXPORT
+			// ==========================
+			case "export":
+				let table = $(this).data("tbl");
+				window.location.href = AppConfig.apiUrl + "export?tabel=" + table;
+				break;
+
+			// ==========================
+			// DELETE (Fallback)
+			// ==========================
+			case "delete":
+				let tbl = $(this).data("tbl");
+				let id = $(this).data("id");
+
+				DialogEngine.show({
+					title: "Hapus Data",
+					message: "Data yang dihapus tidak dapat dikembalikan.",
+					icon: "trash alternate outline red",
+					approveText: "Hapus",
+					onApprove: () => {
+						return new Promise((resolve, reject) => {
+							$.post(
+								AppConfig.apiUrl + "dynamic",
+								{
+									module: AppState.module,
+									action: "delete",
+									tbl: tbl,
+									id_row: id,
+								},
+								function (res) {
+									if (res.success) {
+										tableManager.fetch();
+										resolve();
+									} else {
+										reject();
+									}
+								},
+								"json",
+							);
+						});
+					},
+				});
+				break;
+		}
 	});
 
 	/* ---------------------------------------------
