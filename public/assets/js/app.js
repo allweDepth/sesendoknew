@@ -1982,33 +1982,138 @@ const UIConfig = {
        1️⃣ SK (MENIMBANG, MENGINGAT, MENETAPKAN)
     ====================================================== */
 		sk: [
-    {
-        tag: "field",
-        prop: {
-            label: "Nomor",
-            name: "nomor",
-            atribut: "readonly",
-            classField: "required"
-        }
-    },
-    {
-        tag: "fieldCalendar",
-        prop: {
-            label: "Tanggal",
-            name: "tanggal",
-            calendarType: "date",
-            classField: "required"
-        }
-    },
-    {
-        tag: "fieldTextarea",
-        prop: {
-            label: "Tentang",
-            name: "tentang",
-            atribut: 'rows="2"'
-        }
-    }
-],
+			// =========================
+			// NOMOR & TANGGAL
+			// =========================
+			{
+				tag: "fields",
+				prop: {
+					classGroup: "three",
+					children: [
+						{
+							tag: "field",
+							prop: {
+								label: "Nomor Surat",
+								name: "nomor",
+								classField: "required",
+							},
+						},
+
+						{
+							tag: "fieldCalendar",
+							prop: {
+								label: "Tanggal Surat",
+								name: "tgl_surat_dibuat",
+								calendarType: "date",
+								classField: "required",
+							},
+						},
+
+						{
+							tag: "fieldFile",
+							prop: {
+								label: "File Dokumen",
+								name: "file",
+								accept: ".jpg,.jpeg,.png,.pdf,.docx",
+							},
+						},
+					],
+				},
+			},
+
+			// =========================
+			// TENTANG
+			// =========================
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Tentang",
+					name: "tentang",
+					atribut: 'rows="2"',
+					classField: "required",
+				},
+			},
+
+			// =========================
+			// PEMBERI TUGAS
+			// =========================
+			{
+				tag: "fields",
+				prop: {
+					classGroup: "three",
+					children: [
+						{
+							tag: "fieldDropdown",
+							prop: {
+								label: "Pemberi Tugas",
+								name: "pemberi_tgs",
+								source: "asn", // ← ini penting
+								search: true,
+								clearable: true,
+								classField: "required",
+							},
+						},
+
+						{
+							tag: "field",
+							prop: {
+								label: "Jabatan Pemberi Tugas",
+								name: "jbt_pemberi_tgs",
+								classField: "required",
+							},
+						},
+
+						{
+							tag: "field",
+							prop: {
+								label: "Pangkat Pemberi Tugas",
+								name: "pangkat_pemberi_tgs",
+								classField: "required",
+							},
+						},
+					],
+				},
+			},
+
+			// =========================
+			// ASN DITUGASKAN (DROPDOWN)
+			// =========================
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Nama ASN ditugaskan",
+					name: "asn",
+					source: "asn",
+					search: true,
+					clearable: true,
+				},
+			},
+
+			{
+				tag: "fieldCheckbox",
+				prop: {
+					label: "Lampiran SK bentuk tabel",
+					name: "bentuk_lampiran",
+				},
+			},
+
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Keterangan",
+					name: "keterangan",
+					atribut: 'rows="2"',
+				},
+			},
+
+			{
+				tag: "fieldCheckbox",
+				prop: {
+					label: "Non Aktif",
+					name: "disable",
+				},
+			},
+		],
 
 		/* ======================================================
        2️⃣ SURAT INTERNAL
@@ -2241,22 +2346,35 @@ class FormContainerManager {
 	registerBeforeSave(key, callback) {
 		this.beforeSavePlugins[key] = callback;
 	}
-collectDocumentStructure() {
+	collectDocumentStructure() {
+		let data = {};
 
-    let data = {};
+		this.getActiveForm()
+			.find("table[name]")
+			.each(function () {
+				let section = $(this).attr("name");
 
-    this.getActiveForm()
-        .find("input[name$='[]'], textarea[name$='[]']")
-        .each(function(){
+				data[section] = [];
 
-            let name = $(this).attr("name").replace("[]","");
-            if (!data[name]) data[name] = [];
+				$(this)
+					.find("tbody tr")
+					.each(function () {
+						let text = $(this).find(".doc-text").val();
 
-            data[name].push($(this).val());
-        });
+						let type =
+							$(this).find(".doc-type").dropdown("get value") || "paragraph";
 
-    return data;
-}
+						if (!text) return;
+
+						data[section].push({
+							type: type,
+							text: text,
+						});
+					});
+			});
+
+		return data;
+	}
 	runPlugins() {
 		const exactKey = `${AppState.module}.${AppState.tbl}`;
 		const wildcardKey = `${AppState.module}.*`;
@@ -2502,100 +2620,125 @@ collectDocumentStructure() {
 
 	/* --------------------------------------------- */
 	render(config, container) {
+		$("#form_modal").empty();
+		$("#form_flyout").empty();
 
-    $("#form_modal").empty();
-    $("#form_flyout").empty();
+		let target;
 
-    let target;
+		if (container === "modal") {
+			target = "#form_modal";
+			$("#icon_modal").attr("class", config.icon);
+			$("#content_modal").text(config.headerTitle || config.header);
+		} else {
+			target = "#form_flyout";
+			$("#icon_flyout").attr("class", config.icon);
+			$("#content_flyout").text(config.headerTitle || config.header);
+		}
 
-    if (container === "modal") {
-        target = "#form_modal";
-        $("#icon_modal").attr("class", config.icon);
-        $("#content_modal").text(config.headerTitle || config.header);
-    } else {
-        target = "#form_flyout";
-        $("#icon_flyout").attr("class", config.icon);
-        $("#content_flyout").text(config.headerTitle || config.header);
-    }
+		// ===================================================
+		// 🔥 KHUSUS DOCUMENT ENGINE
+		// ===================================================
+		if (config.type === "document") {
+			FormEngine.render(target, config.elements);
 
-    // ===================================================
-    // 🔥 KHUSUS DOCUMENT ENGINE
-    // ===================================================
-    if (config.type === "document") {
+			let builder = new DocumentBuilder($(target), AppState.tbl);
+			builder.render();
 
-        // render header fields saja
-        FormEngine.render(target, config.header || []);
+			// 🔥 JANGAN VALIDASI DENGAN UIConfig RULES
+			// this.initValidation(target);
 
-        // inject document structure
-        let builder = new DocumentBuilder($(target), AppState.tbl);
-builder.render();
+			this.loadDropdowns(target);
+			this.runPlugins();
+			return;
+		}
 
-        this.initValidation(target);
-        this.loadDropdowns(target);
-this.runPlugins();
-        return; // stop di sini
-    }
+		// ===================================================
+		// DEFAULT FORM (CRUD NORMAL)
+		// ===================================================
+		FormEngine.render(target, config.elements);
+		this.initValidation(target);
+		this.loadDropdowns(target);
 
-    // ===================================================
-    // DEFAULT FORM (CRUD NORMAL)
-    // ===================================================
-    FormEngine.render(target, config.elements);
-    this.initValidation(target);
-    this.loadDropdowns(target);
+		if (AppState.action === "edit") {
+			$(target).prepend(`<input type="hidden" name="id">`);
+		}
 
-    if (AppState.action === "edit") {
-        $(target).prepend(`<input type="hidden" name="id">`);
-    }
-
-    this.runPlugins();
-}
+		this.runPlugins();
+	}
 
 	initValidation(target) {
 		const $form = $(target);
 		if (!$form.length) return;
 
 		let rules = {};
+
 		let elements =
 			UIConfig[AppState.module]?.[AppState.tbl] ||
 			UIConfig[AppState.page]?.[AppState.tbl] ||
 			[];
 
-		elements.forEach((el) => {
-			if (!el.prop?.name) return;
-			if (!$form.find(`[name="${el.prop.name}"]`).length) return;
+		// ==============================
+		// 🔥 FLATTEN ELEMENTS (AMBIL CHILDREN)
+		// ==============================
+		function flatten(arr, result = []) {
+			arr.forEach((el) => {
+				if (el.tag === "fields" || el.tag === "inlineFields") {
+					if (el.prop?.children) {
+						flatten(el.prop.children, result);
+					}
+				} else {
+					result.push(el);
+				}
+			});
+			return result;
+		}
 
-			let fieldRules = [];
+		let flatElements = flatten(elements);
 
-			if (el.prop.classField?.includes("required")) {
-				fieldRules.push({
-					type: "empty",
-					prompt: (el.prop.label || el.prop.name) + " wajib diisi",
-				});
-			}
+		flatElements.forEach((el) => {
 
-			if (el.prop.name === "email") {
-				fieldRules.push({
-					type: "email",
-					prompt: "Format email tidak valid",
-				});
-			}
+	if (!el.prop || !el.prop.name) return;
 
-			if (el.prop.atribut?.includes('type="number"')) {
-				fieldRules.push({
-					type: "number",
-					prompt: (el.prop.label || el.prop.name) + " harus berupa angka",
-				});
-			}
+	// 🔥 SKIP VALIDATION JIKA validate:false
+	if (el.prop.validate === false) return;
 
-			if (fieldRules.length) {
-				rules[el.prop.name] = {
-					identifier: el.prop.name,
-					rules: fieldRules,
-				};
-			}
+	let name = el.prop.name;
+
+	if (!$form.find(`[name="${name}"]`).length) return;
+
+	let fieldRules = [];
+
+	if (el.prop.classField?.includes("required")) {
+		fieldRules.push({
+			type: "empty",
+			prompt: (el.prop.label || name) + " wajib diisi",
 		});
+	}
+
+	if (name === "email") {
+		fieldRules.push({
+			type: "email",
+			prompt: "Format email tidak valid",
+		});
+	}
+
+	if (el.prop.atribut?.includes('type="number"')) {
+		fieldRules.push({
+			type: "number",
+			prompt: (el.prop.label || name) + " harus berupa angka",
+		});
+	}
+
+	if (fieldRules.length) {
+		rules[name] = {
+			identifier: name,
+			rules: fieldRules,
+		};
+	}
+});
 
 		$form.form("destroy");
+		$form.removeData("module-form");
 
 		$form.form({
 			inline: true,
@@ -2676,6 +2819,33 @@ this.runPlugins();
 						$field.val(res.data[key]);
 					}
 				});
+				// ==========================================
+				// 🔥 LOAD STRUKTUR JSON UNTUK tata_naskah
+				// ==========================================
+				if (AppState.module === "tata_naskah" && res.data.struktur_json) {
+					let struktur = {};
+
+					try {
+						struktur = JSON.parse(res.data.struktur_json);
+					} catch (e) {
+						console.error("JSON struktur rusak");
+					}
+
+					Object.keys(struktur).forEach((section) => {
+						struktur[section].forEach((item) => {
+							let text = item.text || "";
+							let type = item.type || "paragraph";
+
+							let builder = new DocumentBuilder($formTarget, AppState.tbl);
+
+							let row = builder.buildRow(section, text, type);
+
+							$formTarget.find(`table[name="${section}"] tbody`).append(row);
+						});
+					});
+
+					$formTarget.find(".ui.dropdown").dropdown();
+				}
 			},
 		});
 	}
@@ -2725,17 +2895,15 @@ this.runPlugins();
 				UIConfig[AppState.page]?.[tbl] ||
 				[],
 		};
-// 🔥 DETECT DOCUMENT MODULE
-if (AppState.module === "tata_naskah") {
-
-    return {
-        type: "document",
-        icon: "file alternate outline icon",
-        headerTitle: "Dokumen Naskah",
-        header: UIConfig.tata_naskah[tbl] || [],
-        elements: [] // kosongkan
-    };
-}
+		// 🔥 DETECT DOCUMENT MODULE
+		if (AppState.module === "tata_naskah") {
+			return {
+				type: "document",
+				icon: "file alternate outline icon",
+				headerTitle: "Dokumen Naskah",
+				elements: UIConfig[AppState.module]?.[tbl] || [],
+			};
+		}
 		return config;
 	}
 
@@ -2790,18 +2958,17 @@ if (AppState.module === "tata_naskah") {
 
 		let formData = new FormData(formElement);
 
-// =====================================
-// 🔥 KHUSUS tata_naskah → KIRIM STRUKTUR
-// =====================================
-if (AppState.module === "tata_naskah") {
+		// =====================================
+		// 🔥 KHUSUS tata_naskah → KIRIM STRUKTUR
+		// =====================================
+		if (AppState.module === "tata_naskah") {
+			let struktur = this.collectDocumentStructure();
+			formData.append("struktur_json", JSON.stringify(struktur));
+		}
 
-    let struktur = this.collectDocumentStructure();
-    formData.append("struktur_json", JSON.stringify(struktur));
-}
-
-formData.append("module", AppState.module);
-formData.append("action", AppState.action);
-formData.append("tbl", AppState.tbl);
+		formData.append("module", AppState.module);
+		formData.append("action", AppState.action);
+		formData.append("tbl", AppState.tbl);
 
 		this.ajax.request({
 			url: AppConfig.apiUrl + "dynamic",
@@ -2985,16 +3152,18 @@ $(document).ready(function () {
 	// let flyoutManager = new FlyoutManager("#mainContext");
 	let formContainerManager = new FormContainerManager();
 	formContainerManager.registerPlugin("tata_naskah.*", ({ container }) => {
+		if (AppState.action !== "add") return;
 
-    if (AppState.action !== "add") return;
-
-    $.post(AppConfig.apiUrl + "tata_naskah/generateNomor", function(res){
-        if (res.success && res.data?.nomor) {
-            container.find('[name="nomor"]').val(res.data.nomor);
-        }
-    }, "json");
-
-});
+		$.post(
+			AppConfig.apiUrl + "tata_naskah/generateNomor",
+			function (res) {
+				if (res.success && res.data?.nomor) {
+					container.find('[name="nomor"]').val(res.data.nomor);
+				}
+			},
+			"json",
+		);
+	});
 	/* =========================================
 	   WALLCHAT MODULE (TETAP UTUH)
 	========================================= */

@@ -1,122 +1,112 @@
 class DocumentBuilder {
+	constructor(container, type) {
+		this.container = container;
+		this.type = type;
+		this.schema = DocumentSchema[type] || null;
+	}
 
-    constructor(container, type) {
-        this.container = container;
-        this.type = type;
-        this.schema = DocumentSchema[type];
-    }
+	render() {
+		if (!this.schema) return;
 
-    render() {
+		this.schema.sections.forEach((section) => {
+			this.renderSection(section);
+		});
 
-        if (!this.schema) {
-            this.container.append(`
-                <div class="ui warning message">
-                    Schema tidak ditemukan untuk tipe ini
-                </div>
-            `);
-            return;
-        }
+		this.bindEvents();
+	}
 
-        this.schema.sections.forEach(section => {
+	renderSection(section) {
+		let html = `
+			<h4 class="ui horizontal divider header">
+				<i class="feather alternate icon"></i> ${section.label}
+			</h4>
 
-            this.container.append(`
-                <h4 class="ui horizontal divider header">
-                    ${section.label}
-                </h4>
-            `);
+			<table class="ui celled structured table" name="${section.key}">
+				<thead>
+					<tr>
+						<th>URAIAN</th>
+						<th class="collapsing">
+							<button type="button"
+								class="ui green icon mini button btn-add-row"
+								data-section="${section.key}">
+								<i class="plus icon"></i>
+							</button>
+						</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		`;
 
-            this.renderSection(section);
+		this.container.append(html);
+	}
 
-        });
+	buildRow(section, text = "", type = "paragraph") {
 
-        this.bindEvents();
-    }
+	return `
+	<tr>
 
-    renderSection(section) {
+		<td>
 
-        switch(section.type) {
+			<textarea class="doc-text"
+	rows="2"
+	data-ignore-validation="true">${text}</textarea>
 
-            case "list":
-                this.container.append(`
-                    <div class="ui fluid action input section-${section.key}">
-                        <input type="text" placeholder="Uraian">
-                        <button class="ui green icon button btn-add"
-                                data-section="${section.key}">
-                            <i class="plus icon"></i>
-                        </button>
-                    </div>
-                    <div class="list-${section.key}"></div>
-                `);
-                break;
+		</td>
 
-            case "numbered":
-                this.container.append(`
-                    <div class="list-${section.key}"></div>
-                    <button class="ui blue mini button btn-add-numbered"
-                            data-section="${section.key}">
-                        + Tambah
-                    </button>
-                `);
-                break;
+		<td class="collapsing right aligned">
 
-            case "textarea":
-                this.container.append(`
-                    <div class="field">
-                        <textarea name="${section.key}" rows="6"></textarea>
-                    </div>
-                `);
-                break;
+			<div class="ui icon mini buttons">
 
-            case "table":
-                this.container.append(`
-                    <div class="ui message">
-                        (Engine Table akan dibuat berikutnya)
-                    </div>
-                `);
-                break;
-        }
-    }
+				<div class="ui floating dropdown icon button upward doc-type"
+					data-value="${type}">
+					<i class="wrench icon"></i>
 
-    bindEvents() {
+					<div class="menu">
+						<div class="item" data-value="paragraph">
+							<i class="align left icon"></i> Paragraf
+						</div>
+						<div class="item" data-value="list">
+							<i class="list icon"></i> List
+						</div>
+						<div class="item" data-value="numbered">
+							<i class="ordered list icon"></i> Numbered
+						</div>
+					</div>
+				</div>
 
-        const self = this;
+				<button type="button"
+					class="ui red icon button btn-del-row">
+					<i class="trash alternate outline icon"></i>
+				</button>
 
-        // ===============================
-        // LIST TYPE
-        // ===============================
-        this.container.on("click", ".btn-add", function(){
+			</div>
 
-            let key = $(this).data("section");
-            let input = self.container.find(`.section-${key} input`);
-            let value = input.val();
+		</td>
 
-            if(!value) return;
+	</tr>
+	`;
+}
 
-            self.container.find(`.list-${key}`).append(`
-                <div class="ui segment small item">
-                    <input type="hidden" name="${key}[]" value="${value}">
-                    ${value}
-                </div>
-            `);
+	bindEvents() {
+		const self = this;
 
-            input.val("");
-        });
+		// ADD ROW
+		this.container.on("click", ".btn-add-row", function () {
+			let section = $(this).data("section");
 
-        // ===============================
-        // NUMBERED TYPE
-        // ===============================
-        this.container.on("click", ".btn-add-numbered", function(){
+			let row = self.buildRow(section);
 
-            let key = $(this).data("section");
-            let index = self.container.find(`.list-${key} .item`).length + 1;
+			let $tbody = self.container.find(`table[name="${section}"] tbody`);
 
-            self.container.find(`.list-${key}`).append(`
-                <div class="ui segment small item">
-                    <label>${index}.</label>
-                    <textarea name="${key}[]" rows="2"></textarea>
-                </div>
-            `);
-        });
+			$tbody.append(row);
 
-    }
+			$tbody.find(".ui.dropdown").dropdown();
+		});
+
+		// DELETE ROW
+		this.container.on("click", ".btn-del-row", function () {
+			$(this).closest("tr").remove();
+		});
+	}
 }

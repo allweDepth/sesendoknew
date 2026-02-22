@@ -374,29 +374,40 @@ class DynamicTableService
             $pengaturan = $this->getPengaturanAktif();
 
             if (!$pengaturan) {
-                return JsonResponse::error(
-                    "Pengaturan aktif tidak ditemukan. Silakan set pengaturan terlebih dahulu."
-                );
+                return JsonResponse::error("Pengaturan aktif tidak ditemukan.");
             }
 
-            $map = [
-                'ssh_neo'     => 'aturan_ssh',
-                'sbu_neo'     => 'aturan_sbu',
-                'asb_neo'     => 'aturan_asb',
-                'hspk_neo'    => 'aturan_hspk',
-                'akun_neo'    => 'aturan_akun',
-                'satuan_neo'  => 'aturan_ssh'
-            ];
+            // 🔥 Tentukan field aturan
+            if (in_array($table, [
+                'urusan',
+                'bidang',
+                'program',
+                'kegiatan',
+                'sub_kegiatan'
+            ])) {
 
-            if (!isset($map[$table])) {
-                return JsonResponse::error(
-                    "Mapping peraturan untuk tabel '{$table}' belum dikonfigurasi."
-                );
+                $aturanField = 'aturan_sub_kegiatan';
+            } else {
+
+                $map = [
+                    'ssh_neo'     => 'aturan_ssh',
+                    'sbu_neo'     => 'aturan_sbu',
+                    'asb_neo'     => 'aturan_asb',
+                    'hspk_neo'    => 'aturan_hspk',
+                    'akun_neo'    => 'aturan_akun',
+                    'satuan_neo'  => 'aturan_ssh'
+                ];
+
+                if (!isset($map[$table])) {
+                    return JsonResponse::error(
+                        "Mapping peraturan untuk tabel '{$table}' belum dikonfigurasi."
+                    );
+                }
+
+                $aturanField = $map[$table];
             }
 
-            $aturanField = $map[$table];
-
-            if (!isset($pengaturan[$aturanField]) || empty($pengaturan[$aturanField])) {
+            if (empty($pengaturan[$aturanField])) {
                 return JsonResponse::error(
                     "Field '{$aturanField}' pada pengaturan aktif belum diisi."
                 );
