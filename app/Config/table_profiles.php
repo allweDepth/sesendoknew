@@ -5,6 +5,8 @@ return [
     'akun' => [
         'table' => 'akun_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin'],
+        'soft_lock' => true,
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -26,6 +28,8 @@ return [
     'sbu' => [
         'table' => 'sbu_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin'],
+        'soft_lock' => true,
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -56,6 +60,8 @@ return [
     'ssh' => [
         'table' => 'ssh_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin'],
+        'soft_lock' => true,
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -83,6 +89,8 @@ return [
     'asb' => [
         'table' => 'asb_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin'],
+        'soft_lock' => true,
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -110,6 +118,8 @@ return [
     'hspk' => [
         'table' => 'hspk_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin'],
+        'soft_lock' => true,
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -137,6 +147,8 @@ return [
     'mapping' => [
         'table' => 'mapping_aset_akun',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah'],
+        'soft_lock' => true,
         'modes' => [
 
             'default' => [
@@ -219,6 +231,8 @@ return [
     'aset' => [
         'table' => 'aset_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah'],
+        'soft_lock' => true,
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -236,6 +250,8 @@ return [
     'organisasi' => [
         'table' => 'organisasi_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah'],
+        'soft_lock' => true,
         'modes' => [
             'default' => [
                 'select' => ['id', 'kode', 'uraian', 'singkatan'],
@@ -253,6 +269,8 @@ return [
     'satuan' => [
         'table' => 'satuan_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah'],
+        'soft_lock' => true,
         'modes' => [
             'dropdown' => [
                 'select' => ['id', 'value', 'item'],
@@ -277,6 +295,8 @@ return [
     'sumber_dana' => [
         'table' => 'sumber_dana_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah'],
+        'soft_lock' => true,
         'modes' => [
             'default' => [
                 'select' => ['id', 'kode', 'uraian'],
@@ -294,6 +314,8 @@ return [
     'wilayah' => [
         'table' => 'wilayah_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah'],
+        'soft_lock' => true,
         'modes' => [
             'default' => [
                 'select' => ['id', 'kode', 'uraian', 'status'],
@@ -311,6 +333,8 @@ return [
     'peraturan' => [
         'table' => 'peraturan_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah'],
+        'soft_lock' => true,
         'modes' => [
             'default' => [
                 'select' => ['id', 'kode', 'judul', 'nomor'],
@@ -328,6 +352,9 @@ return [
     'rekanan' => [
         'table' => 'rekanan_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'modes' => [
             'default' => [
                 'select' => ['id', 'nama_perusahaan', 'npwp'],
@@ -345,6 +372,9 @@ return [
     'renja' => [
         'table' => 'renja_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -360,6 +390,9 @@ return [
     'renja_p' => [
         'table' => 'renja_p_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -375,6 +408,9 @@ return [
     'renstra_skpd' => [
         'table' => 'renstra_skpd_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -390,6 +426,9 @@ return [
     'tujuan_sasaran_renstra' => [
         'table' => 'tujuan_sasaran_renstra_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'modes' => [
 
             'tujuan' => [
@@ -433,6 +472,9 @@ return [
     'asn' => [
         'table' => 'db_asn_pemda_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'validation' => [
             'nip' => ['required', 'unique']
         ],
@@ -462,6 +504,9 @@ return [
     'sk_asn' => [
         'table' => 'sk_asn_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'modes' => [
             'dropdown' => [
                 'select' => ['id', 'nomor', 'tgl_surat_dibuat', 'tentang', 'pemberi_tgs', 'keterangan'],
@@ -538,6 +583,9 @@ return [
     'tata_naskah' => [
         'table' => 'naskah_dinas_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'modes' => [
             'dropdown' => [
                 'select' => ['id', 'jenis_naskah_dinas', 'nomor', 'tgl_surat_dibuat', 'klasifikasi_keamanan', 'tentang', 'keterangan'],
@@ -564,6 +612,9 @@ return [
     'misi_renstra_neo' => [
         'table' => 'misi_renstra_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'dropdown' => [
             'value' => 'id',
             'label' => 'nama_misi'
@@ -585,6 +636,9 @@ return [
     'tujuan_renstra_neo' => [
         'table' => 'tujuan_renstra_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'dropdown' => [
             'value' => 'id',
             'label' => 'nama_tujuan'
@@ -606,6 +660,9 @@ return [
     'sasaran_renstra_neo' => [
         'table' => 'sasaran_renstra_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'dropdown' => [
             'value' => 'id',
             'label' => 'nama_sasaran'
@@ -627,6 +684,9 @@ return [
     'indikator_sasaran_renstra_neo' => [
         'table' => 'indikator_sasaran_renstra_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'modes' => [
             'default' => [
                 'select' => [
@@ -657,6 +717,9 @@ return [
     'program_renstra_neo' => [
         'table' => 'program_renstra_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'dropdown' => [
             'value' => 'id',
             'label' => 'nama_program'
@@ -678,6 +741,9 @@ return [
     'indikator_program_renstra_neo' => [
         'table' => 'indikator_program_renstra_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'modes' => [
             'default' => [
                 'select' => [
@@ -708,6 +774,9 @@ return [
     'kegiatan_renstra_neo' => [
         'table' => 'kegiatan_renstra_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'dropdown' => [
             'value' => 'id',
             'label' => 'nama_kegiatan'
@@ -728,6 +797,9 @@ return [
     'sub_kegiatan_renstra_neo' => [
         'table' => 'sub_kegiatan_renstra_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'dropdown' => [
             'value' => 'id',
             'label' => 'master_sub_kegiatan_id'
@@ -766,6 +838,9 @@ return [
     'renstra_neo' => [
         'table' => 'renstra_neo',
         'primary_key' => 'id',
+        'allowed_roles' => ['admin_opd'],
+        'soft_lock' => true,
+        'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'dropdown' => [
             'value' => 'id',
             'label' => 'visi'
@@ -815,6 +890,14 @@ return [
     'urusan' => [
         'table' => 'urusan',
         'primary_key' => 'kode',
+
+        'allowed_roles' => ['super_admin'],
+        'soft_lock' => true,
+
+        'auto_session' => [
+            'peraturan'
+        ],
+
         'modes' => [
             'dropdown' => [
                 'select' => ['kode as id', 'nama as uraian'],
@@ -842,6 +925,8 @@ return [
     'bidang' => [
         'table' => 'bidang',
         'primary_key' => 'kode',
+        'allowed_roles' => ['super_admin'],
+        'soft_lock' => true,
         'modes' => [
             'dropdown' => [
                 'select' => ['kode as id', 'nama as uraian'],
@@ -869,6 +954,8 @@ return [
     'program' => [
         'table' => 'program',
         'primary_key' => 'kode',
+        'allowed_roles' => ['super_admin'],
+        'soft_lock' => true,
         'modes' => [
             'dropdown' => [
                 'select' => ['kode as id', 'nama as uraian'],
@@ -922,6 +1009,8 @@ return [
     'sub_kegiatan' => [
         'table' => 'sub_kegiatan',
         'primary_key' => 'kode',
+        'allowed_roles' => ['superadmin'],
+        'soft_lock' => true,
         'modes' => [
             'dropdown' => [
                 'select' => ['kode as id', 'nama as uraian'],
@@ -946,43 +1035,43 @@ return [
         ]
     ],
     'trx_naskah_dinas' => [
-    'table' => 'trx_naskah_dinas',
-    'primary_key' => 'id',
-    'modes' => [
-        'default' => [
-            'select' => [
-                'id',
-                'nomor',
-                'tanggal_surat',
-                'perihal',
-                'status',
-                'file_pdf',
-                'tgl_insert'
+        'table' => 'trx_naskah_dinas',
+        'primary_key' => 'id',
+        'modes' => [
+            'default' => [
+                'select' => [
+                    'id',
+                    'nomor',
+                    'tanggal_surat',
+                    'perihal',
+                    'status',
+                    'file_pdf',
+                    'tgl_insert'
+                ],
+                'searchable' => ['nomor', 'perihal'],
+                'order_by' => 'tgl_insert DESC'
             ],
-            'searchable' => ['nomor','perihal'],
-            'order_by' => 'tgl_insert DESC'
-        ],
-        'edit' => [
-            'select' => ['*'],
-            'searchable' => ['*'],
-            'order_by' => 'id ASC'
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC'
+            ]
         ]
-    ]
-],
-'ref_klasifikasi_keamanan' => [
-    'table' => 'ref_klasifikasi_keamanan',
-    'primary_key' => 'id',
-    'modes' => [
-        'dropdown' => [
-            'select' => ['id', 'nama'],
-            'searchable' => ['nama'],
-            'order_by' => 'nama ASC'
-        ],
-        'default' => [
-            'select' => ['*'],
-            'searchable' => ['nama'],
-            'order_by' => 'id ASC'
+    ],
+    'ref_klasifikasi_keamanan' => [
+        'table' => 'ref_klasifikasi_keamanan',
+        'primary_key' => 'id',
+        'modes' => [
+            'dropdown' => [
+                'select' => ['id', 'nama'],
+                'searchable' => ['nama'],
+                'order_by' => 'nama ASC'
+            ],
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['nama'],
+                'order_by' => 'id ASC'
+            ]
         ]
-    ]
-],
+    ],
 ];
