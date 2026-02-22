@@ -388,7 +388,10 @@ class TableManager {
 		}
 
 		// Ambil konfigurasi field dari UIConfig
-		let elements = UIConfig[AppState.page]?.[AppState.tbl] || [];
+		let elements =
+			UIConfig[AppState.module]?.[AppState.tbl] ||
+			UIConfig[AppState.page]?.[AppState.tbl] ||
+			[];
 		let fields = elements.filter((e) => e.prop?.name && !e.prop.non_data);
 
 		// Loop setiap baris data
@@ -591,7 +594,10 @@ class TableManager {
 
 		let $table = $tbody.closest("table");
 
-		let elements = UIConfig[AppState.page]?.[AppState.tbl] || [];
+		let elements =
+			UIConfig[AppState.module]?.[AppState.tbl] ||
+			UIConfig[AppState.page]?.[AppState.tbl] ||
+			[];
 		let fields = elements.filter((el) => el.prop?.name && !el.prop.non_data);
 
 		let theadHtml = "<tr>";
@@ -1976,64 +1982,33 @@ const UIConfig = {
        1️⃣ SK (MENIMBANG, MENGINGAT, MENETAPKAN)
     ====================================================== */
 		sk: [
-			{
-				tag: "field",
-				prop: {
-					label: "Nomor",
-					name: "nomor",
-					atribut: "readonly",
-					classField: "required",
-				},
-			},
-
-			{
-				tag: "fieldCalendar",
-				prop: {
-					label: "Tanggal",
-					name: "tanggal",
-					calendarType: "date",
-					classField: "required",
-				},
-			},
-
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Tentang", name: "tentang", atribut: 'rows="2"' },
-			},
-
-			{ tag: "divider", prop: { label: "MENIMBANG" } },
-
-			{
-				tag: "field",
-				prop: {
-					name: "menimbang_container",
-					non_data: true,
-					classField: "dynamic-menimbang",
-				},
-			},
-
-			{ tag: "divider", prop: { label: "MENGINGAT" } },
-
-			{
-				tag: "field",
-				prop: {
-					name: "mengingat_container",
-					non_data: true,
-					classField: "dynamic-mengingat",
-				},
-			},
-
-			{ tag: "divider", prop: { label: "MENETAPKAN" } },
-
-			{
-				tag: "field",
-				prop: {
-					name: "menetapkan_container",
-					non_data: true,
-					classField: "dynamic-menetapkan",
-				},
-			},
-		],
+    {
+        tag: "field",
+        prop: {
+            label: "Nomor",
+            name: "nomor",
+            atribut: "readonly",
+            classField: "required"
+        }
+    },
+    {
+        tag: "fieldCalendar",
+        prop: {
+            label: "Tanggal",
+            name: "tanggal",
+            calendarType: "date",
+            classField: "required"
+        }
+    },
+    {
+        tag: "fieldTextarea",
+        prop: {
+            label: "Tentang",
+            name: "tentang",
+            atribut: 'rows="2"'
+        }
+    }
+],
 
 		/* ======================================================
        2️⃣ SURAT INTERNAL
@@ -2266,7 +2241,22 @@ class FormContainerManager {
 	registerBeforeSave(key, callback) {
 		this.beforeSavePlugins[key] = callback;
 	}
+collectDocumentStructure() {
 
+    let data = {};
+
+    this.getActiveForm()
+        .find("input[name$='[]'], textarea[name$='[]']")
+        .each(function(){
+
+            let name = $(this).attr("name").replace("[]","");
+            if (!data[name]) data[name] = [];
+
+            data[name].push($(this).val());
+        });
+
+    return data;
+}
 	runPlugins() {
 		const exactKey = `${AppState.module}.${AppState.tbl}`;
 		const wildcardKey = `${AppState.module}.*`;
@@ -2476,12 +2466,12 @@ class FormContainerManager {
 		// 🔥 BUILD CONFIG
 		// ==============================
 		let config = this.buildConfig(jenisMode, tbl);
-		if (!config.elements.length) {
+		if (!config.elements.length && config.type !== "document") {
 			ToastEngine.show({
 				success: false,
 				message: "Form belum dikonfigurasi. Hubungi administrator.",
 			});
-			console.warn("UIConfig missing:", AppState.jenis, tbl);
+			console.warn("UIConfig missing:", AppState.module, tbl);
 			return;
 		}
 
@@ -2512,41 +2502,63 @@ class FormContainerManager {
 
 	/* --------------------------------------------- */
 	render(config, container) {
-		$("#form_modal").empty();
-		$("#form_flyout").empty();
 
-		let target;
+    $("#form_modal").empty();
+    $("#form_flyout").empty();
 
-		if (container === "modal") {
-			target = "#form_modal";
-			$("#icon_modal").attr("class", config.icon);
-			$("#content_modal").text(config.header);
-		} else {
-			target = "#form_flyout";
-			$("#icon_flyout").attr("class", config.icon);
-			$("#content_flyout").text(config.header);
-		}
+    let target;
 
-		FormEngine.render(target, config.elements);
-		this.initValidation(target);
-		this.loadDropdowns(target);
+    if (container === "modal") {
+        target = "#form_modal";
+        $("#icon_modal").attr("class", config.icon);
+        $("#content_modal").text(config.headerTitle || config.header);
+    } else {
+        target = "#form_flyout";
+        $("#icon_flyout").attr("class", config.icon);
+        $("#content_flyout").text(config.headerTitle || config.header);
+    }
 
-		if (AppState.action === "edit") {
-			$(target).prepend(`<input type="hidden" name="id">`);
-		}
+    // ===================================================
+    // 🔥 KHUSUS DOCUMENT ENGINE
+    // ===================================================
+    if (config.type === "document") {
 
-		// =============================
-		// 🔥 JALANKAN PLUGIN
-		// =============================
-		this.runPlugins();
-	}
+        // render header fields saja
+        FormEngine.render(target, config.header || []);
+
+        // inject document structure
+        let builder = new DocumentBuilder($(target), AppState.tbl);
+builder.render();
+
+        this.initValidation(target);
+        this.loadDropdowns(target);
+this.runPlugins();
+        return; // stop di sini
+    }
+
+    // ===================================================
+    // DEFAULT FORM (CRUD NORMAL)
+    // ===================================================
+    FormEngine.render(target, config.elements);
+    this.initValidation(target);
+    this.loadDropdowns(target);
+
+    if (AppState.action === "edit") {
+        $(target).prepend(`<input type="hidden" name="id">`);
+    }
+
+    this.runPlugins();
+}
 
 	initValidation(target) {
 		const $form = $(target);
 		if (!$form.length) return;
 
 		let rules = {};
-		let elements = UIConfig[AppState.page]?.[AppState.tbl] || [];
+		let elements =
+			UIConfig[AppState.module]?.[AppState.tbl] ||
+			UIConfig[AppState.page]?.[AppState.tbl] ||
+			[];
 
 		elements.forEach((el) => {
 			if (!el.prop?.name) return;
@@ -2708,9 +2720,22 @@ class FormContainerManager {
 						? "Edit Data"
 						: "Detail Data",
 
-			elements: UIConfig[AppState.page]?.[tbl] || [],
+			elements:
+				UIConfig[AppState.module]?.[tbl] ||
+				UIConfig[AppState.page]?.[tbl] ||
+				[],
 		};
+// 🔥 DETECT DOCUMENT MODULE
+if (AppState.module === "tata_naskah") {
 
+    return {
+        type: "document",
+        icon: "file alternate outline icon",
+        headerTitle: "Dokumen Naskah",
+        header: UIConfig.tata_naskah[tbl] || [],
+        elements: [] // kosongkan
+    };
+}
 		return config;
 	}
 
@@ -2765,9 +2790,18 @@ class FormContainerManager {
 
 		let formData = new FormData(formElement);
 
-		formData.append("module", AppState.module);
-		formData.append("action", AppState.action);
-		formData.append("tbl", AppState.tbl);
+// =====================================
+// 🔥 KHUSUS tata_naskah → KIRIM STRUKTUR
+// =====================================
+if (AppState.module === "tata_naskah") {
+
+    let struktur = this.collectDocumentStructure();
+    formData.append("struktur_json", JSON.stringify(struktur));
+}
+
+formData.append("module", AppState.module);
+formData.append("action", AppState.action);
+formData.append("tbl", AppState.tbl);
 
 		this.ajax.request({
 			url: AppConfig.apiUrl + "dynamic",
@@ -2950,6 +2984,17 @@ $(document).ready(function () {
 	---------------------------------------------- */
 	// let flyoutManager = new FlyoutManager("#mainContext");
 	let formContainerManager = new FormContainerManager();
+	formContainerManager.registerPlugin("tata_naskah.*", ({ container }) => {
+
+    if (AppState.action !== "add") return;
+
+    $.post(AppConfig.apiUrl + "tata_naskah/generateNomor", function(res){
+        if (res.success && res.data?.nomor) {
+            container.find('[name="nomor"]').val(res.data.nomor);
+        }
+    }, "json");
+
+});
 	/* =========================================
 	   WALLCHAT MODULE (TETAP UTUH)
 	========================================= */

@@ -153,7 +153,7 @@
     <?php require __DIR__ . '/../partials/sidebar.php'; ?>
     <!-- FLYOUT -->
     <?php require __DIR__ . '/../partials/flyout.php'; ?>
-<!-- MAIN MODAL -->
+    <!-- MAIN MODAL -->
     <?php require __DIR__ . '/../partials/main_modal.php'; ?>
     <!-- PUSHER -->
     <div class="pusher">
@@ -181,6 +181,10 @@
     </script>
     <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/js/fomantic.min.js"></script>
+    <?php if (strpos($_SERVER['REQUEST_URI'], 'tata_naskah') !== false): ?>
+        <script src="/assets/js/engine/document/document_schema.js"></script>
+<script src="/assets/js/engine/document/document_builder.js"></script>
+    <?php endif; ?>
     <script src="/assets/js/app.js"></script>
     <?php if (strpos($_SERVER['REQUEST_URI'], 'tata_naskah') !== false): ?>
         <script src="/assets/js/modules/tata_naskah.js"></script>
