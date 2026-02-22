@@ -701,7 +701,7 @@ class TableManager {
 	}
 }
 /* =========================================================
-	 FORM ENGINE PRO - FIELD VARIATIONS (FOMANTIC STYLE)@note
+	 FORM ENGINE PRO - FIELD VARIATIONS (FOMANTIC STYLE) @note FormEngine
 ========================================================= */
 
 class FormEngine {
@@ -962,10 +962,10 @@ class FormEngine {
 	static dropdown(prop) {
 		let staticOptions = "";
 
-		if (prop.options && prop.options.length) {
+		if (prop.options && prop.options.length) { // @audit
 			prop.options.forEach((opt) => {
 				staticOptions += `
-				<div class="item" data-value="${opt.value}">
+				<div class="item${prop.class || ""}" data-value="${opt.value}">
 					${opt.text}
 				</div>
 			`;
@@ -2956,6 +2956,22 @@ class FormContainerManager {
 							classField: "required",
 						},
 					},
+					{
+						tag: "fieldDropdown",
+						prop: {
+							label: "Status",
+							name: "jml_header",
+							classField: "required",
+							options: [
+								{ value: "0", text: "0 Baris Header" },
+								{ value: "1", text: "1 Baris Header",class: " active selected"},
+								{ value: "2", text: "2 Baris Header" },
+								{ value: "3", text: "3 Baris Header" },
+								{ value: "4", text: "4 Baris Header" },
+								{ value: "5", text: "5 Baris Header" },
+							],
+						},
+					},
 				],
 			};
 		}
@@ -3117,8 +3133,8 @@ function loadProfil() {
 			 - Flyout
 ========================================================= */
 
-$(document).ready(function () {
-	//@note $ready
+$(document).ready(function () { // @note $ready
+	
 	/* ---------------------------------------------
 	   Inisialisasi Table Manager
 	---------------------------------------------- */
