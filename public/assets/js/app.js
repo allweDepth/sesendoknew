@@ -2955,7 +2955,7 @@ class FormContainerManager {
 					{
 						tag: "fieldDropdown",
 						prop: {
-							label: "Status",
+							label: "Jumlah Header",
 							name: "jml_header",
 							classField: "required",
 							options: [

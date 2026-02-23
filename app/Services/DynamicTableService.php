@@ -1175,4 +1175,351 @@ class DynamicTableService
 
         return $this->periodeAktifCache;
     }
+    /* =========================================================
+   NORMALIZE HEADER XLSX → snake_case
+========================================================= */
+    private function normalizeHeader(string $header): string
+    {
+        return strtolower(
+            preg_replace('/[^a-z0-9]+/i', '_', trim($header))
+        );
+    }
+    /* =========================================================
+   VALIDASI IMPORT PERMISSION
+========================================================= */
+    private function validateImportPermission(string $table): void
+    {
+        $role = $this->user['type_user'] ?? 'viewer';
+
+        $restricted = [
+            'urusan_neo',
+            'bidang_neo',
+            'program_neo',
+            'kegiatan_neo',
+            'sub_kegiatan_neo'
+        ];
+
+        if ($role === 'admin_opd' && in_array($table, $restricted)) {
+            throw new Exception("Admin OPD tidak diperbolehkan import tabel master.");
+        }
+    }
+    /* =========================================================
+   VALIDASI DUPLICATE GLOBAL
+========================================================= */
+    private function validateDuplicate(string $table, array $data): void
+    {
+        $columns = $this->getTableColumns($table);
+
+        $uniqueFields = [];
+
+        foreach (['kd_wilayah', 'kd_opd', 'tahun', 'peraturan', 'kode', 'rekening'] as $field) {
+            if (in_array($field, $columns) && isset($data[$field])) {
+                $uniqueFields[$field] = $data[$field];
+            }
+        }
+
+        if (empty($uniqueFields)) return;
+
+        $whereParts = [];
+        $params = [];
+
+        foreach ($uniqueFields as $field => $value) {
+            $whereParts[] = "`$field` = ?";
+            $params[] = $value;
+        }
+
+        $exists = $this->db->query(
+            "SELECT id FROM `$table`
+         WHERE " . implode(" AND ", $whereParts) . "
+         LIMIT 1",
+            $params
+        )->fetch();
+
+        if ($exists) {
+            throw new Exception("Duplicate data terdeteksi.");
+        }
+    }
+    /* =========================================================
+   VALIDASI HIERARKI & DEPENDENSI LINTAS TABEL
+========================================================= */
+    private function validateHierarchy(string $table, array $data): void
+    {
+        $rules = [
+
+            // Struktur kode
+            'bidang_neo' => [
+                'parent_table' => 'urusan_neo',
+                'match' => ['urusan_id' => 'id']
+            ],
+            'program_neo' => [
+                'parent_table' => 'bidang_neo',
+                'match' => ['bidang_id' => 'id']
+            ],
+            'kegiatan_neo' => [
+                'parent_table' => 'program_neo',
+                'match' => ['program_id' => 'id']
+            ],
+            'sub_kegiatan_neo' => [
+                'parent_table' => 'kegiatan_neo',
+                'match' => ['kegiatan_id' => 'id']
+            ],
+
+            // Renstra
+            'renstra_neo' => [
+                'parent_table' => 'periode_rpjmd',
+                'match' => ['periode_id' => 'id']
+            ],
+
+            // Renja
+            'renja_neo' => [
+                'parent_table' => 'renstra_neo',
+                'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
+            ],
+            'renja_p_neo' => [
+                'parent_table' => 'renja_neo',
+                'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
+            ],
+
+            // DPA
+            'dpa_neo' => [
+                'parent_table' => 'renja_neo',
+                'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
+            ],
+            'dpppa_neo' => [
+                'parent_table' => 'dpa_neo',
+                'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
+            ],
+        ];
+
+        if (!isset($rules[$table])) return;
+
+        $rule = $rules[$table];
+        $parent = $rule['parent_table'];
+
+        // Foreign key match
+        if (isset($rule['match'])) {
+            foreach ($rule['match'] as $childField => $parentField) {
+
+                if (empty($data[$childField])) {
+                    throw new Exception("Field $childField wajib diisi.");
+                }
+
+                $exists = $this->db->query(
+                    "SELECT id FROM `$parent`
+                 WHERE `$parentField` = ?
+                 LIMIT 1",
+                    [$data[$childField]]
+                )->fetch();
+
+                if (!$exists) {
+                    throw new Exception("Parent di $parent belum tersedia.");
+                }
+            }
+        }
+
+        // Scope match
+        if (isset($rule['match_scope'])) {
+
+            $where = [];
+            $params = [];
+
+            foreach ($rule['match_scope'] as $field) {
+
+                if (!isset($data[$field])) {
+                    throw new Exception("Field $field wajib ada.");
+                }
+
+                $where[] = "`$field` = ?";
+                $params[] = $data[$field];
+            }
+
+            $exists = $this->db->query(
+                "SELECT id FROM `$parent`
+             WHERE " . implode(" AND ", $where) . "
+             LIMIT 1",
+                $params
+            )->fetch();
+
+            if (!$exists) {
+                throw new Exception("Parent scope di $parent belum tersedia.");
+            }
+        }
+    }
+    /* =========================================================
+   IMPORT STRICT MODE (NO PARTIAL INSERT)
+========================================================= */
+    /* =========================================================
+   IMPORT STRICT MODE (ENTERPRISE SAFE)
+   ---------------------------------------------------------
+   - Role aware
+   - Config aware
+   - Duplicate aware
+   - Hierarchy aware
+   - Soft lock aware
+   - Auto session aware
+   - Strict fail (1 error stop)
+========================================================= */
+    public function importStrict(string $tableKey, string $filePath, int $jmlHeader = 1): string
+    {
+        /* =====================================================
+       VALIDASI PROFILE TERDAFTAR
+    ===================================================== */
+        if (!isset($this->profiles[$tableKey])) {
+            return JsonResponse::error("Tabel tidak terdaftar.");
+        }
+
+        $profile = $this->profiles[$tableKey];
+        $table   = $profile['table'];
+
+        /* =====================================================
+       VALIDASI IMPORT CONFIG
+    ===================================================== */
+        $config = $this->validateImportConfig($tableKey);
+
+        /* =====================================================
+       CEK SOFT LOCK
+    ===================================================== */
+        if (($profile['soft_lock'] ?? false) === true) {
+
+            if (in_array('kunci', $this->getTableColumns($table))) {
+
+                $locked = $this->db->query(
+                    "SELECT COUNT(*) as jml FROM `$table` WHERE kunci = 1"
+                )->fetch()['jml'] ?? 0;
+
+                if ($locked > 0) {
+                    return JsonResponse::error("Tabel sedang dikunci dan tidak dapat diimport.");
+                }
+            }
+        }
+
+        /* =====================================================
+       CEK ONCE ONLY
+    ===================================================== */
+        if (($config['once_only'] ?? false) === true) {
+
+            $count = $this->db->query(
+                "SELECT COUNT(*) as jml FROM `$table`"
+            )->fetch()['jml'] ?? 0;
+
+            if ($count > 0) {
+                return JsonResponse::error("Tabel hanya boleh diimport sekali.");
+            }
+        }
+
+        /* =====================================================
+       LOAD FILE
+    ===================================================== */
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
+        $rows = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
+
+        if (count($rows) <= $jmlHeader) {
+            return JsonResponse::error("File kosong atau header tidak sesuai.");
+        }
+
+        /* =====================================================
+       NORMALISASI HEADER
+    ===================================================== */
+        $headers = array_map([$this, 'normalizeHeader'], $rows[$jmlHeader - 1]);
+
+        $inserted = 0;
+
+        /* =====================================================
+       LOOP DATA
+    ===================================================== */
+        foreach (array_slice($rows, $jmlHeader) as $rowIndex => $row) {
+
+            if (empty(array_filter($row))) {
+                continue; // skip baris kosong
+            }
+
+            $data = [];
+
+            foreach ($headers as $i => $col) {
+                if (!empty($col)) {
+                    $data[$col] = $row[$i] ?? null;
+                }
+            }
+
+            /* =================================================
+           AUTO SESSION INJECTION
+        ================================================= */
+            if (!empty($profile['auto_session'])) {
+
+                foreach ($profile['auto_session'] as $field) {
+
+                    if (!isset($data[$field]) && isset($this->user[$field])) {
+                        $data[$field] = $this->user[$field];
+                    }
+                }
+            }
+
+            /* =================================================
+           DUPLICATE CHECK
+        ================================================= */
+            if (($config['check_duplicate'] ?? false) === true) {
+                $this->validateDuplicate($table, $data);
+            }
+
+            /* =================================================
+           HIERARCHY CHECK
+        ================================================= */
+            if (($config['check_hierarchy'] ?? false) === true) {
+                $this->validateHierarchy($table, $data);
+            }
+
+            /* =================================================
+           INSERT VIA ENGINE
+        ================================================= */
+            $response = $this->handle(array_merge(
+                $data,
+                [
+                    'action' => 'add',
+                    'tbl'    => $tableKey
+                ]
+            ));
+
+            $decoded = json_decode($response, true);
+
+            if (empty($decoded['success'])) {
+                return JsonResponse::error(
+                    "Error pada baris ke " . ($rowIndex + 1),
+                    422,
+                    $decoded
+                );
+            }
+
+            $inserted++;
+        }
+
+        /* =====================================================
+       SUCCESS
+    ===================================================== */
+        return JsonResponse::success("Import berhasil.", [
+            'inserted' => $inserted
+        ]);
+    }
+    /* =========================================================
+   VALIDASI IMPORT CONFIG DARI PROFILE
+========================================================= */
+    private function validateImportConfig(string $tableKey): array
+    {
+        if (!isset($this->profiles[$tableKey]['import'])) {
+            throw new Exception("Import belum dikonfigurasi.");
+        }
+
+        $config = $this->profiles[$tableKey]['import'];
+
+        if (!($config['enabled'] ?? false)) {
+            throw new Exception("Import tidak diizinkan untuk tabel ini.");
+        }
+
+        $role = $this->user['type_user'] ?? 'viewer';
+
+        if (!in_array($role, $config['allowed_roles'] ?? [])) {
+            throw new Exception("Role tidak diizinkan untuk import.");
+        }
+
+        return $config;
+    }
 }
