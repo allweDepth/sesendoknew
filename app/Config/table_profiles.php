@@ -932,7 +932,7 @@ return [
         'primary_key' => 'id', // 🔥 PK konsisten id
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
-
+        'normalize_space' => ['nama'],
         // 🔥 Otomatis isi kd_wilayah & peraturan saat INSERT
         'auto_session' => ['kd_wilayah', 'peraturan'],
 
@@ -1029,6 +1029,7 @@ return [
         'primary_key' => 'id',
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
+        'normalize_space' => ['nama'],
         'auto_session' => ['kd_wilayah', 'peraturan'],
 
         'modes' => [
@@ -1072,7 +1073,7 @@ return [
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
         'auto_session' => ['kd_wilayah', 'peraturan'],
-
+        'normalize_space' => ['nama'],
         'modes' => [
             'dropdown' => [
                 'select' => ['kode as id', 'nama as uraian'],
@@ -1131,6 +1132,7 @@ return [
         'primary_key' => 'id',
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
+        'normalize_space' => ['nama'],
         'auto_session' => ['kd_wilayah', 'peraturan'],
 
         'modes' => [
