@@ -932,7 +932,7 @@ return [
         'primary_key' => 'id', // 🔥 PK konsisten id
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
-        'normalize_space' => ['nama'],
+        'normalize_space' => ['nama'],//untuk menormalkan spasi berlenih
         // 🔥 Otomatis isi kd_wilayah & peraturan saat INSERT
         'auto_session' => ['kd_wilayah', 'peraturan'],
 

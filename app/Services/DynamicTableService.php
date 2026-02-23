@@ -464,9 +464,9 @@ class DynamicTableService
             $filtered['peraturan'] = $pengaturan[$aturanField];
         }
         /* =====================================================
-   APPLY NORMALISASI DARI PROFILE
+   ENTERPRISE SANITATION
 ===================================================== */
-        $filtered = $this->applyNormalization($table, $filtered);
+        $filtered = $this->applySanitization($table, $filtered);
         /* =====================================================
        AUDIT TRAIL (PINDAH SEBELUM VALIDASI)
     ===================================================== */
@@ -568,9 +568,9 @@ class DynamicTableService
             }
         }
         /* =====================================================
-   APPLY NORMALISASI DARI PROFILE
+   ENTERPRISE SANITATION
 ===================================================== */
-        $filtered = $this->applyNormalization($table, $filtered);
+        $filtered = $this->applySanitization($table, $filtered);
         /* =====================================================
        AUDIT TRAIL (PINDAH SEBELUM VALIDASI)
     ===================================================== */
@@ -1861,9 +1861,9 @@ class DynamicTableService
             return $exists['id'];
         }
         /* =====================================================
-   APPLY NORMALISASI DARI PROFILE
+   ENTERPRISE SANITATION
 ===================================================== */
-        $filtered = $this->applyNormalization($table, $filtered);
+        $filtered = $this->applySanitization($table, $filtered);
         $filtered = $this->injectAudit($filtered, 'insert');
 
         $this->db->insert($table, $filtered);
@@ -1924,5 +1924,63 @@ class DynamicTableService
     {
         $value = trim($value);
         return preg_replace('/\s+/u', ' ', $value);
+    }
+    /* =========================================================
+   SANITIZE SINGLE VALUE
+========================================================= */
+    private function sanitizeValue(string $value, ?array $rules = null): string
+    {
+        // 1️⃣ Trim
+        $value = trim($value);
+
+        // 2️⃣ Hapus control characters
+        $value = preg_replace('/[\x00-\x1F\x7F]/u', '', $value);
+
+        // 3️⃣ Normalize multi space
+        $value = preg_replace('/\s+/u', ' ', $value);
+
+        // 4️⃣ Strip dangerous HTML
+        $value = strip_tags($value);
+
+        // 5️⃣ Case transformation (optional per profile)
+        if (!empty($rules['case'])) {
+
+            switch ($rules['case']) {
+
+                case 'upper':
+                    $value = mb_strtoupper($value);
+                    break;
+
+                case 'lower':
+                    $value = mb_strtolower($value);
+                    break;
+
+                case 'title':
+                    $value = mb_convert_case($value, MB_CASE_TITLE);
+                    break;
+            }
+        }
+
+        return $value;
+    }
+    /* =========================================================
+   ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filtered);
+========================================================= */
+    private function applySanitization(string $table, array $data): array
+    {
+        $profile = $this->getProfileByTable($table);
+
+        foreach ($data as $field => $value) {
+
+            if (!is_string($value)) {
+                continue;
+            }
+
+            $rules = $profile['sanitize'][$field] ?? null;
+
+            $data[$field] = $this->sanitizeValue($value, $rules);
+        }
+
+        return $data;
     }
 }
