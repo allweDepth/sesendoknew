@@ -1,109 +1,113 @@
 const SPARouter = (function () {
+	const container = ".content-scroll";
+	let loading = false;
 
-    const container = ".content-scroll";
-    let loading = false;
+	function init() {
+		bindLinks();
+		handlePopState();
+	}
 
-    function init() {
-        bindLinks();
-        handlePopState();
-    }
+	function bindLinks() {
+		$(document).on("click", "a", function (e) {
+			const href = $(this).attr("href");
 
-    function bindLinks() {
-        $(document).on("click", "a", function (e) {
+			if (!shouldHandle(href, this)) return;
 
-            const href = $(this).attr("href");
+			e.preventDefault();
+			navigate(href);
+		});
+	}
 
-            if (!shouldHandle(href, this)) return;
+	function shouldHandle(href, el) {
+		if (!href) return false;
+		if (href.startsWith("#")) return false;
+		if ($(el).attr("target") === "_blank") return false;
+		if ($(el).hasClass("no-spa")) return false;
+		if (href.startsWith("http")) return false;
+		return true;
+	}
 
-            e.preventDefault();
-            navigate(href);
-        });
-    }
+	function navigate(url, push = true) {
+		if (loading) return;
+		loading = true;
 
-    function shouldHandle(href, el) {
-        if (!href) return false;
-        if (href.startsWith("#")) return false;
-        if ($(el).attr("target") === "_blank") return false;
-        if ($(el).hasClass("no-spa")) return false;
-        if (href.startsWith("http")) return false;
-        return true;
-    }
+		showProgress();
 
-    function navigate(url, push = true) {
+		$.ajax({
+			url: url,
+			headers: { "X-Requested-With": "XMLHttpRequest" },
+			success: function (response) {
 
-        if (loading) return;
-        loading = true;
+    $(container).html(response);
 
-        showProgress();
+    if (push) history.pushState({}, "", url);
 
-        $.ajax({
-            url: url,
-            headers: { "X-Requested-With": "XMLHttpRequest" },
-            success: function (response) {
+    // 🔥 HITUNG ULANG PATH
+    const currentPath = window.location.pathname.replace(/^\/+/g, "");
+    AppState.page = currentPath;
 
-                $(container).fadeOut(100, function () {
+    const params = new URLSearchParams(window.location.search);
 
-                    $(this).html(response).fadeIn(150);
+    const moduleConfig = UIConfig[currentPath];
 
-                    if (push) history.pushState({}, "", url);
+    if (moduleConfig) {
+        let tbl = params.get("tbl") || Object.keys(moduleConfig)[0];
 
-                    reInitComponents();
-                });
-            },
-            error: function () {
-                window.location.href = url;
-            },
-            complete: function () {
-                loading = false;
-                hideProgress();
-            }
-        });
-    }
-
-    function handlePopState() {
-        window.onpopstate = function () {
-            navigate(location.pathname, false);
-        };
-    }
-
-    function reInitComponents() {
-
-        if (typeof FormEngine !== "undefined") FormEngine.init?.();
-        if (typeof TableManager !== "undefined") TableManager.init?.();
-        if (typeof FormContainerManager !== "undefined") FormContainerManager.init?.();
-
-        $('.ui.dropdown').dropdown();
-        $('.ui.checkbox').checkbox();
-    }
-
-    function showProgress() {
-        if (!$("#spa-progress").length) {
-            $("body").append('<div id="spa-progress"></div>');
+        if (tbl) {
+            tableManager.load(currentPath, tbl);
         }
-
-        $("#spa-progress").css({
-            position: "fixed",
-            top: 0,
-            left: 0,
-            height: "3px",
-            width: "0%",
-            background: "#2185d0",
-            zIndex: 9999,
-            transition: "width 0.3s ease"
-        });
-
-        setTimeout(() => {
-            $("#spa-progress").css("width", "70%");
-        }, 100);
     }
+},
+			error: function () {
+				window.location.href = url;
+			},
+			complete: function () {
+				loading = false;
+				hideProgress();
+			},
+		});
+	}
 
-    function hideProgress() {
-        $("#spa-progress").css("width", "100%");
-        setTimeout(() => {
-            $("#spa-progress").remove();
-        }, 200);
-    }
+	function handlePopState() {
+		window.onpopstate = function () {
+			navigate(location.pathname, false);
+		};
+	}
 
-    return { init, navigate };
+	function reInitComponents() {
+		// 🔥 Re-init seluruh aplikasi sesuai lifecycle asli
+		if (typeof App !== "undefined" && typeof App.init === "function") {
+			App.init();
+		}
+	}
 
+	function showProgress() {
+		if (!$("#spa-progress").length) {
+			$("body").append('<div id="spa-progress"></div>');
+		}
+
+		$("#spa-progress").css({
+			position: "fixed",
+			top: 0,
+			left: 0,
+			height: "3px",
+			width: "0%",
+			background: "#2185d0",
+			zIndex: 9999,
+			transition: "width 0.3s ease",
+		});
+
+		setTimeout(() => {
+			$("#spa-progress").css("width", "70%");
+		}, 100);
+	}
+
+	function hideProgress() {
+		$("#spa-progress").css("width", "100%");
+		setTimeout(() => {
+			$("#spa-progress").remove();
+		}, 200);
+	}
+
+	return { init, navigate };
 })();
