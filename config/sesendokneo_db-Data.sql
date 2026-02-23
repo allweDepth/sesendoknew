@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 23 Feb 2026 pada 08.30
+-- Waktu pembuatan: 23 Feb 2026 pada 08.40
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -9826,7 +9826,9 @@ CREATE TABLE `berita_neo` (
 --
 
 CREATE TABLE `bidang` (
+  `id` bigint(20) NOT NULL,
   `kode` varchar(10) NOT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
   `kode_urusan` varchar(10) NOT NULL,
   `nama` varchar(255) NOT NULL,
   `status` tinyint(4) DEFAULT 1,
@@ -9841,8 +9843,8 @@ CREATE TABLE `bidang` (
 -- Dumping data untuk tabel `bidang`
 --
 
-INSERT INTO `bidang` (`kode`, `kode_urusan`, `nama`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
-('12', '500', 'bidang a', 1, 0, '2026-02-19 19:22:30', 'inayah', NULL, NULL);
+INSERT INTO `bidang` (`id`, `kode`, `kd_wilayah`, `kode_urusan`, `nama`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+(1, '12', '', '500', 'bidang a', 1, 0, '2026-02-19 19:22:30', 'inayah', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -10636,7 +10638,9 @@ CREATE TABLE `kd_wilayah_neo` (
 --
 
 CREATE TABLE `kegiatan` (
+  `id` bigint(20) NOT NULL,
   `kode` varchar(20) NOT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
   `kode_program` varchar(15) NOT NULL,
   `nama` varchar(255) NOT NULL,
   `status` tinyint(4) DEFAULT 1,
@@ -13914,7 +13918,9 @@ INSERT INTO `periode_rpjmd` (`id`, `kd_wilayah`, `periode_mulai`, `periode_seles
 --
 
 CREATE TABLE `program` (
+  `id` bigint(20) NOT NULL,
   `kode` varchar(15) NOT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
   `kode_bidang` varchar(10) NOT NULL,
   `nama` varchar(255) NOT NULL,
   `status` tinyint(4) DEFAULT 1,
@@ -13929,8 +13935,8 @@ CREATE TABLE `program` (
 -- Dumping data untuk tabel `program`
 --
 
-INSERT INTO `program` (`kode`, `kode_bidang`, `nama`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
-('1298', '12', 'program', 1, 0, '2026-02-19 19:35:48', 'inayah', '2026-02-21 05:53:13', NULL);
+INSERT INTO `program` (`id`, `kode`, `kd_wilayah`, `kode_bidang`, `nama`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+(1, '1298', '', '12', 'program', 1, 0, '2026-02-19 19:35:48', 'inayah', '2026-02-21 05:53:13', NULL);
 
 -- --------------------------------------------------------
 
@@ -30768,7 +30774,9 @@ INSERT INTO `ssh_neo` (`id`, `kd_wilayah`, `tahun`, `kd_aset`, `uraian_barang`, 
 --
 
 CREATE TABLE `sub_kegiatan` (
+  `id` bigint(20) NOT NULL,
   `kode` varchar(25) NOT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
   `kode_kegiatan` varchar(20) NOT NULL,
   `nama` varchar(255) NOT NULL,
   `indikator` text DEFAULT NULL,
@@ -35956,7 +35964,9 @@ INSERT INTO `tujuan_renstra_neo` (`id`, `misi_id`, `kode_tujuan`, `nama_tujuan`,
 --
 
 CREATE TABLE `urusan` (
+  `id` bigint(20) NOT NULL,
   `kode` varchar(10) NOT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
   `nama` varchar(255) NOT NULL,
   `status` tinyint(4) DEFAULT 1,
   `peraturan` int(11) NOT NULL,
@@ -35970,8 +35980,8 @@ CREATE TABLE `urusan` (
 -- Dumping data untuk tabel `urusan`
 --
 
-INSERT INTO `urusan` (`kode`, `nama`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
-('500', 'apalah', 1, 0, '2026-02-19 18:17:54', 'inayah', NULL, NULL);
+INSERT INTO `urusan` (`id`, `kode`, `kd_wilayah`, `nama`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+(1, '500', '', 'apalah', 1, 0, '2026-02-19 18:17:54', 'inayah', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -36148,7 +36158,8 @@ ALTER TABLE `berita_neo`
 -- Indeks untuk tabel `bidang`
 --
 ALTER TABLE `bidang`
-  ADD PRIMARY KEY (`kode`),
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_urusan_scope` (`kd_wilayah`,`peraturan`,`kode`),
   ADD KEY `idx_kode_urusan` (`kode_urusan`);
 
 --
@@ -36230,7 +36241,8 @@ ALTER TABLE `kd_wilayah_neo`
 -- Indeks untuk tabel `kegiatan`
 --
 ALTER TABLE `kegiatan`
-  ADD PRIMARY KEY (`kode`),
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_urusan_scope` (`kd_wilayah`,`peraturan`,`kode`),
   ADD KEY `idx_kode_program` (`kode_program`);
 
 --
@@ -36294,7 +36306,8 @@ ALTER TABLE `periode_rpjmd`
 -- Indeks untuk tabel `program`
 --
 ALTER TABLE `program`
-  ADD PRIMARY KEY (`kode`),
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_urusan_scope` (`kd_wilayah`,`peraturan`,`kode`),
   ADD KEY `idx_kode_bidang` (`kode_bidang`);
 
 --
@@ -36405,7 +36418,8 @@ ALTER TABLE `ssh_neo` ADD FULLTEXT KEY `uraian_barang` (`uraian_barang`);
 -- Indeks untuk tabel `sub_kegiatan`
 --
 ALTER TABLE `sub_kegiatan`
-  ADD PRIMARY KEY (`kode`),
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_urusan_scope` (`kd_wilayah`,`peraturan`,`kode`) USING HASH,
   ADD KEY `idx_kode_kegiatan` (`kode_kegiatan`);
 
 --
@@ -36475,7 +36489,8 @@ ALTER TABLE `tujuan_renstra_neo`
 -- Indeks untuk tabel `urusan`
 --
 ALTER TABLE `urusan`
-  ADD PRIMARY KEY (`kode`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_urusan_scope` (`kd_wilayah`,`peraturan`,`kode`);
 
 --
 -- Indeks untuk tabel `users`
@@ -36540,6 +36555,12 @@ ALTER TABLE `aset_neo`
 --
 ALTER TABLE `berita_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `bidang`
+--
+ALTER TABLE `bidang`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `daftar_paket_neo`
@@ -36608,6 +36629,12 @@ ALTER TABLE `kd_wilayah_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `kegiatan`
+--
+ALTER TABLE `kegiatan`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `kegiatan_renstra_neo`
 --
 ALTER TABLE `kegiatan_renstra_neo`
@@ -36660,6 +36687,12 @@ ALTER TABLE `peraturan_neo`
 --
 ALTER TABLE `periode_rpjmd`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT untuk tabel `program`
+--
+ALTER TABLE `program`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `program_renstra_neo`
@@ -36764,6 +36797,12 @@ ALTER TABLE `ssh_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12389;
 
 --
+-- AUTO_INCREMENT untuk tabel `sub_kegiatan`
+--
+ALTER TABLE `sub_kegiatan`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `sub_kegiatan_neo`
 --
 ALTER TABLE `sub_kegiatan_neo`
@@ -36822,6 +36861,12 @@ ALTER TABLE `trx_nomor_counter`
 --
 ALTER TABLE `tujuan_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT untuk tabel `urusan`
+--
+ALTER TABLE `urusan`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `users`
