@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
 	// ==========================
 	// GLOBAL INIT (JALAN SEKALI)
 	// ==========================
@@ -39,7 +38,6 @@ $(document).ready(function () {
 
 	window.App = {
 		init() {
-
 			const currentPath = window.location.pathname.replace(/^\/+/g, "");
 			AppState.page = currentPath;
 
@@ -58,7 +56,7 @@ $(document).ready(function () {
 			if (window.location.pathname === "/profil") {
 				ProfilModule.load();
 			}
-		}
+		},
 	};
 
 	// ==========================
@@ -155,10 +153,17 @@ $(document).ready(function () {
 		}
 	});
 
+	// DARK TOGGLE (register sekali saja)
+	$(document)
+		.off("click", "#darkToggle")
+		.on("click", "#darkToggle", function () {
+			const isDark = document.body.classList.toggle("dark-mode");
+
+			localStorage.setItem("darkMode", isDark ? "true" : "false");
+		});
 	// ==========================
 	// INIT PERTAMA
 	// ==========================
-
 	App.init();
 
 	if (typeof SPARouter !== "undefined") {
