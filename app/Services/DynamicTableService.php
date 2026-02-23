@@ -30,7 +30,6 @@ class DynamicTableService
     private static array $schemaCache = [];
     private ?array $pengaturanAktifCache = null;
     private ?array $periodeAktifCache = null;
-    private array $importCache = [];
     public function __construct()
     {
         $this->db = DB::getInstance();
@@ -1576,116 +1575,179 @@ if ($action === 'import_struktur') {
     /* =========================================================
    IMPORT STRUKTUR NASIONAL (GLOBAL HIRARKI)
 ========================================================= */
-    public function importStruktur(string $filePath, int $jmlHeader = 2): string
+    public function importStruktur(string $filePath, int $jmlHeader = 1): string
 {
     return $this->runTransaction(function () use ($filePath, $jmlHeader) {
 
+        // 🔹 Load file Excel
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
+
+        // 🔹 Ambil semua baris jadi array
         $rows = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
 
+        // 🔹 Validasi minimal baris
         if (count($rows) <= $jmlHeader) {
             throw new Exception("File kosong atau header tidak sesuai.");
         }
 
         $inserted = 0;
 
+        // 🔹 Loop mulai setelah header
         foreach (array_slice($rows, $jmlHeader) as $rowIndex => $row) {
 
-            if (empty(array_filter($row))) continue;
-
+            // 🔹 Hitung nomor baris asli Excel
             $excelRow = $rowIndex + $jmlHeader + 1;
 
-            $kode = trim($row[0] ?? '');
-            $nama = trim($row[1] ?? '');
+            // 🔹 Ambil kolom pertama = kode
+            $kode = trim((string)($row[0] ?? ''));
 
-            if (!$kode || !$nama) continue;
+            // 🔹 Ambil kolom kedua = nama
+            $nama = trim((string)($row[1] ?? ''));
 
-            $level = substr_count($kode, '.');
+            // 🔹 Skip jika kosong
+            if ($kode === '' || $nama === '') {
+                continue;
+            }
+
+            // 🔹 Pecah kode berdasarkan titik
+            $segments = explode('.', $kode);
+
+            // 🔹 Hitung jumlah segment
+            $segmentCount = count($segments);
+
+            // 🔹 Validasi semua segment harus angka
+            foreach ($segments as $seg) {
+                if ($seg === '' || !ctype_digit($seg)) {
+                    // Lompat ke baris Excel berikutnya
+                    continue 2;
+                }
+            }
 
             try {
 
-                switch ($level) {
+                switch ($segmentCount) {
 
-                    // URUSAN → 1
-                    case 0:
+                    // ==================================================
+                    // 1 SEGMENT = URUSAN
+                    // contoh: 1
+                    // ==================================================
+                    case 1:
+
                         $this->insertIfNotExists('urusan', [
                             'kode' => $kode,
                             'nama' => $nama
                         ]);
+
                         break;
 
-                    // BIDANG → 1.01
-                    case 1:
+
+                    // ==================================================
+                    // 2 SEGMENT = BIDANG
+                    // contoh: 1.01
+                    // ==================================================
+                    case 2:
+
+                        // parent = urusan
+                        $kodeUrusan = $segments[0];
+
+                        // pastikan urusan ada
                         $this->ensureParentExists('urusan', [
-                            'kode' => explode('.', $kode)[0]
+                            'kode' => $kodeUrusan
                         ]);
 
                         $this->insertIfNotExists('bidang', [
                             'kode' => $kode,
-                            'kode_urusan' => explode('.', $kode)[0],
+                            'kode_urusan' => $kodeUrusan,
                             'nama' => $nama
                         ]);
+
                         break;
 
-                    // PROGRAM → 1.01.02
-                    case 2:
-                        $parentBidang = implode('.', array_slice(explode('.', $kode), 0, 2));
+
+                    // ==================================================
+                    // 3 SEGMENT = PROGRAM
+                    // contoh: 1.01.02
+                    // ==================================================
+                    case 3:
+
+                        // parent = bidang
+                        $kodeBidang = implode('.', array_slice($segments, 0, 2));
 
                         $this->ensureParentExists('bidang', [
-                            'kode' => $parentBidang
+                            'kode' => $kodeBidang
                         ]);
 
                         $this->insertIfNotExists('program', [
                             'kode' => $kode,
-                            'kode_urusan' => explode('.', $kode)[0],
-                            'kode_bidang' => $parentBidang,
+                            'kode_urusan' => $segments[0],
+                            'kode_bidang' => $kodeBidang,
                             'nama' => $nama
                         ]);
+
                         break;
 
-                    // KEGIATAN → 1.01.02.001
-                    case 3:
-                        $parentProgram = implode('.', array_slice(explode('.', $kode), 0, 3));
+
+                    // ==================================================
+                    // 5 SEGMENT = KEGIATAN
+                    // contoh: 1.01.02.2.01
+                    // ==================================================
+                    case 5:
+
+                        // parent = program (3 segment pertama)
+                        $kodeProgram = implode('.', array_slice($segments, 0, 3));
 
                         $this->ensureParentExists('program', [
-                            'kode' => $parentProgram
+                            'kode' => $kodeProgram
                         ]);
 
                         $this->insertIfNotExists('kegiatan', [
                             'kode' => $kode,
-                            'kode_urusan' => explode('.', $kode)[0],
-                            'kode_bidang' => implode('.', array_slice(explode('.', $kode), 0, 2)),
-                            'kode_program' => $parentProgram,
+                            'kode_urusan' => $segments[0],
+                            'kode_bidang' => implode('.', array_slice($segments, 0, 2)),
+                            'kode_program' => $kodeProgram,
                             'nama' => $nama
                         ]);
+
                         break;
 
-                    // SUB KEGIATAN → 1.01.02.001.0001
-                    case 4:
-                        $parentKegiatan = implode('.', array_slice(explode('.', $kode), 0, 4));
+
+                    // ==================================================
+                    // 6 SEGMENT = SUB KEGIATAN
+                    // contoh: 1.01.02.2.01.0001
+                    // ==================================================
+                    case 6:
+
+                        // parent = kegiatan (5 segment pertama)
+                        $kodeKegiatan = implode('.', array_slice($segments, 0, 5));
 
                         $this->ensureParentExists('kegiatan', [
-                            'kode' => $parentKegiatan
+                            'kode' => $kodeKegiatan
                         ]);
 
                         $this->insertIfNotExists('sub_kegiatan', [
                             'kode' => $kode,
-                            'kode_urusan' => explode('.', $kode)[0],
-                            'kode_bidang' => implode('.', array_slice(explode('.', $kode), 0, 2)),
-                            'kode_program' => implode('.', array_slice(explode('.', $kode), 0, 3)),
-                            'kode_kegiatan' => $parentKegiatan,
+                            'kode_urusan' => $segments[0],
+                            'kode_bidang' => implode('.', array_slice($segments, 0, 2)),
+                            'kode_program' => implode('.', array_slice($segments, 0, 3)),
+                            'kode_kegiatan' => $kodeKegiatan,
                             'nama' => $nama
                         ]);
+
                         break;
 
+
+                    // ==================================================
+                    // Format lain diabaikan
+                    // ==================================================
                     default:
-                        throw new Exception("Format kode tidak dikenali: $kode");
+                        continue 2;
                 }
 
                 $inserted++;
 
             } catch (\Throwable $e) {
 
+                // 🔥 Jika error, tampilkan baris Excel
                 throw new Exception(
                     "Baris Excel {$excelRow} gagal → " . $e->getMessage()
                 );
@@ -1699,20 +1761,27 @@ if ($action === 'import_struktur') {
 }
     private function ensureParentExists(string $table, array $data): void
 {
-    $kode = $data['kode'] ?? null;
-    if (!$kode) {
-        throw new Exception("Kode parent kosong.");
+    $columns = $this->getTableColumns($table);
+
+    $whereParts = ["`kode` = ?"];
+    $params = [$data['kode']];
+
+    if (in_array('kd_wilayah', $columns)) {
+        $whereParts[] = "`kd_wilayah` = ?";
+        $params[] = $this->user['kd_wilayah'];
     }
 
-    // 🔥 Cek cache dulu
-    if (isset($this->importCache[$table][$kode])) {
-        return;
+    if (in_array('peraturan', $columns)) {
+        $pengaturan = $this->getPengaturanAktif();
+        $whereParts[] = "`peraturan` = ?";
+        $params[] = $pengaturan['aturan_sub_kegiatan'];
     }
 
-    // 🔥 Cek database
     $exists = $this->db->query(
-        "SELECT id FROM `$table` WHERE kode = ? LIMIT 1",
-        [$kode]
+        "SELECT id FROM `$table`
+         WHERE " . implode(" AND ", $whereParts) . "
+         LIMIT 1",
+        $params
     )->fetch();
 
     if (!$exists) {
@@ -1735,34 +1804,63 @@ if ($action === 'import_struktur') {
 }
     private function insertIfNotExists(string $table, array $data): ?int
 {
-    $kode = $data['kode'] ?? null;
-    if (!$kode) return null;
+    $columns = $this->getTableColumns($table);
 
-    // 🔥 Cek cache dulu
-    if (isset($this->importCache[$table][$kode])) {
-        return $this->importCache[$table][$kode];
+    // 🔥 Filter hanya kolom yang benar-benar ada
+    $filtered = [];
+
+    foreach ($data as $key => $value) {
+        if (in_array($key, $columns)) {
+            $filtered[$key] = $value;
+        }
     }
 
-    // 🔥 Cek database
+    if (!isset($filtered['kode'])) {
+        return null;
+    }
+
+    $whereParts = ["`kode` = ?"];
+    $params     = [$filtered['kode']];
+
+    // 🔥 Scope kd_wilayah
+    if (in_array('kd_wilayah', $columns)) {
+        $filtered['kd_wilayah'] = $this->user['kd_wilayah'] ?? null;
+        $whereParts[] = "`kd_wilayah` = ?";
+        $params[] = $filtered['kd_wilayah'];
+    }
+
+    // 🔥 Scope peraturan
+    if (in_array('peraturan', $columns)) {
+
+        $pengaturan = $this->getPengaturanAktif();
+
+        if (!$pengaturan || empty($pengaturan['aturan_sub_kegiatan'])) {
+            throw new Exception("Peraturan aktif belum dikonfigurasi.");
+        }
+
+        $filtered['peraturan'] = $pengaturan['aturan_sub_kegiatan'];
+
+        $whereParts[] = "`peraturan` = ?";
+        $params[] = $filtered['peraturan'];
+    }
+
+    // 🔥 Cek duplicate
     $exists = $this->db->query(
-        "SELECT id FROM `$table` WHERE kode = ? LIMIT 1",
-        [$kode]
+        "SELECT id FROM `$table`
+         WHERE " . implode(" AND ", $whereParts) . "
+         LIMIT 1",
+        $params
     )->fetch();
 
     if ($exists) {
-        $this->importCache[$table][$kode] = $exists['id'];
         return $exists['id'];
     }
 
-    $data = $this->injectAudit($data, 'insert');
-    $this->db->insert($table, $data);
+    $filtered = $this->injectAudit($filtered, 'insert');
 
-    $id = $this->db->lastInsertId();
+    $this->db->insert($table, $filtered);
 
-    // 🔥 Simpan ke cache
-    $this->importCache[$table][$kode] = $id;
-
-    return $id;
+    return $this->db->lastInsertId();
 }
     /* =========================================================
     VALIDASI IMPORT CONFIG DARI PROFILE
