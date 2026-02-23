@@ -1,7 +1,9 @@
 $(document).ready(function () {
+
 	// ==========================
-	// INIT CORE
+	// GLOBAL INIT (JALAN SEKALI)
 	// ==========================
+
 	window.tableManager = new TableManager();
 	const formContainerManager = new FormContainerManager();
 
@@ -22,44 +24,47 @@ $(document).ready(function () {
 	const $context = $("#mainContext");
 	const $sidebarUtama = $(".sidebarutama");
 
-	const params = new URLSearchParams(window.location.search);
-	const currentPath = window.location.pathname.replace(/^\/+/g, "");
-	AppState.page = currentPath;
-
-	// ==========================
-	// SIDEBAR
-	// ==========================
 	$sidebarUtama.sidebar({
 		context: $context,
 		transition: "push",
 	});
-
-	// ==========================
-	// INIT GLOBAL UI COMPONENTS
-	// ==========================
-	$(".ui.dropdown").dropdown();
-	$(".ui.accordion").accordion({ exclusive: false });
 
 	$("#toggleSidebar").on("click", function () {
 		$sidebarUtama.sidebar("toggle");
 	});
 
 	// ==========================
-	// GLOBAL MODULE AUTO INIT
+	// APP LIFECYCLE (PER PAGE)
 	// ==========================
-	const moduleConfig = UIConfig[currentPath];
 
-	if (moduleConfig) {
-		let tbl = params.get("tbl") || Object.keys(moduleConfig)[0];
+	window.App = {
+		init() {
 
-		if (tbl) {
-			tableManager.load(currentPath, tbl);
+			const currentPath = window.location.pathname.replace(/^\/+/g, "");
+			AppState.page = currentPath;
+
+			// UI components rebind
+			$(".ui.dropdown").dropdown();
+			$(".ui.accordion").accordion({ exclusive: false });
+
+			// 🔥 Load tabel sesuai URL
+			PageLoader.loadFromUrl();
+
+			// 🔥 Module init berbasis page
+			WallchatModule.init();
+			PengaturanModule.init(currentPath, tableManager);
+			RenstraModule.init(currentPath, tableManager);
+
+			if (window.location.pathname === "/profil") {
+				ProfilModule.load();
+			}
 		}
-	}
+	};
 
 	// ==========================
-	// MENU CLICK LOAD TABLE
+	// EVENT GLOBAL (sekali saja)
 	// ==========================
+
 	$(document).on("click", '[name="menu_table"]', function (e) {
 		e.preventDefault();
 		let jenis = $(this).attr("jenis");
@@ -67,9 +72,6 @@ $(document).ready(function () {
 		tableManager.load(jenis, tbl);
 	});
 
-	// ==========================
-	// DROPDOWN COUNT ROW
-	// ==========================
 	$("#countRow").dropdown({
 		onChange: function (value) {
 			AppState.rows = parseInt(value) || 10;
@@ -78,9 +80,6 @@ $(document).ready(function () {
 		},
 	});
 
-	// ==========================
-	// PAGINATION
-	// ==========================
 	$(document).on("click", '[name^="pagination_"] .item', function () {
 		let page = parseInt($(this).data("page"));
 		if (!page) return;
@@ -88,11 +87,8 @@ $(document).ready(function () {
 		tableManager.fetch();
 	});
 
-	// ==========================
-	// SEARCH
-	// ==========================
 	let searchTimer;
-	$("#cari_data").on("input", function () {
+	$(document).on("input", "#cari_data", function () {
 		clearTimeout(searchTimer);
 		searchTimer = setTimeout(() => {
 			AppState.cari = $(this).val().trim();
@@ -101,9 +97,6 @@ $(document).ready(function () {
 		}, 700);
 	});
 
-	// ==========================
-	// GLOBAL ACTION DISPATCHER
-	// ==========================
 	$(document).on("click", "[data-action]", function (e) {
 		e.preventDefault();
 		let action = $(this).data("action");
@@ -163,32 +156,12 @@ $(document).ready(function () {
 	});
 
 	// ==========================
-	// MODULE INIT (UI ONLY)
+	// INIT PERTAMA
 	// ==========================
-	WallchatModule.init();
-	PengaturanModule.init(currentPath, tableManager);
-	RenstraModule.init(currentPath, tableManager);
 
-	if (window.location.pathname === "/profil") {
-		ProfilModule.load();
-	}
-	// DARK MODULE
-	document.getElementById("darkToggle").addEventListener("click", function () {
-		document.body.classList.toggle("dark-mode");
+	App.init();
 
-		localStorage.setItem(
-			"darkMode",
-			document.body.classList.contains("dark-mode"),
-		);
-	});
-
-	window.addEventListener("load", function () {
-		if (localStorage.getItem("darkMode") === "true") {
-			document.body.classList.add("dark-mode");
-		}
-	});
-	//SPA
 	if (typeof SPARouter !== "undefined") {
-        SPARouter.init();
-    }
+		SPARouter.init();
+	}
 });

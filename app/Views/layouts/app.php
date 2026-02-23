@@ -165,6 +165,7 @@
     <!-- ================= ENGINE ================= -->
     <script src="/assets/js/engine/form-engine.js"></script>
     <script src="/assets/js/engine/table-manager.js"></script>
+    <script src="/assets/js/core/page-loader.js"></script>
     <script src="/assets/js/engine/form-container-manager.js"></script>
 
     <?php if (strpos($_SERVER['REQUEST_URI'], 'tata_naskah') !== false): ?>

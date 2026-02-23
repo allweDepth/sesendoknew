@@ -37,27 +37,15 @@ const SPARouter = (function () {
 			url: url,
 			headers: { "X-Requested-With": "XMLHttpRequest" },
 			success: function (response) {
+				$(container).html(response);
 
-    $(container).html(response);
+				if (push) history.pushState({}, "", url);
 
-    if (push) history.pushState({}, "", url);
-
-    // 🔥 HITUNG ULANG PATH
-    const currentPath = window.location.pathname.replace(/^\/+/g, "");
-    AppState.page = currentPath;
-
-    const params = new URLSearchParams(window.location.search);
-
-    const moduleConfig = UIConfig[currentPath];
-
-    if (moduleConfig) {
-        let tbl = params.get("tbl") || Object.keys(moduleConfig)[0];
-
-        if (tbl) {
-            tableManager.load(currentPath, tbl);
-        }
-    }
-},
+				// 🔥 panggil lifecycle per page
+				if (typeof App !== "undefined") {
+					App.init();
+				}
+			},
 			error: function () {
 				window.location.href = url;
 			},
