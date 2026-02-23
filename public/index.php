@@ -31,5 +31,8 @@ if($route){
     $method=$route[1];
     $controller->$method();
 }else{
-    echo "404 Not Found";
+    // echo "404 Not Found";
+    http_response_code(404);
+    require __DIR__.'/../app/Views/errors/404.php';
+    exit;
 }

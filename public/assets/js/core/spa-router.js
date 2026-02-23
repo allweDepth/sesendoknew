@@ -19,13 +19,20 @@ const SPARouter = (function () {
 	}
 
 	function shouldHandle(href, el) {
-		if (!href) return false;
-		if (href.startsWith("#")) return false;
-		if ($(el).attr("target") === "_blank") return false;
-		if ($(el).hasClass("no-spa")) return false;
-		if (href.startsWith("http")) return false;
-		return true;
-	}
+    if (!href) return false;
+    if (href.startsWith("#")) return false;
+    if ($(el).attr("target") === "_blank") return false;
+    if ($(el).hasClass("no-spa")) return false;
+    if (href.startsWith("http")) return false;
+// ❗ Jangan SPA kalau ada data-action
+    if ($(el).data("action")) return false;
+    // ❗ Jangan SPA untuk auth
+    if (href.includes("logout") || href.includes("login")) {
+        return false;
+    }
+
+    return true;
+}
 
 	function navigate(url, push = true) {
 		if (loading) return;
