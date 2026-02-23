@@ -541,8 +541,20 @@ class FormContainerManager {
 		// ===============================
 		// 🔥 MODE IMPORT XLSX
 		// ===============================
-		if (jenis === "import_xlsx") {
+		if (["import_xlsx", "import_struktur"].includes(jenis)) {
+			const isStruktur = jenis === "import_struktur";
 			return {
+				title: isStruktur ? "Import Struktur Nasional" : "Import Data XLSX",
+				fields: [
+					{
+						type: "file",
+						name: "file",
+						accept: ".xlsx",
+					},
+				],
+				extra: {
+					mode: jenis,
+				},
 				icon: "upload icon",
 				header: "Import Excel",
 				elements: [
@@ -563,7 +575,11 @@ class FormContainerManager {
 							classField: "required",
 							options: [
 								{ value: "0", text: "0 Baris Header" },
-								{ value: "1", text: "1 Baris Header",class: " active selected"},// @audit
+								{
+									value: "1",
+									text: "1 Baris Header",
+									class: " active selected",
+								}, // @audit
 								{ value: "2", text: "2 Baris Header" },
 								{ value: "3", text: "3 Baris Header" },
 								{ value: "4", text: "4 Baris Header" },
@@ -615,25 +631,36 @@ class FormContainerManager {
 		// ===============================
 		// 🔥 MODE IMPORT XLSX
 		// ===============================
-		if (AppState.action === "import_xlsx") {
+		if (
+			AppState.action === "import_xlsx" ||
+			AppState.action === "import_struktur"
+		) {
 			let $formTarget = this.getActiveForm();
 			let formElement = $formTarget[0];
 
-			let formData = new FormData();
-
 			let fileInput = $formTarget.find('[name="file_import"]')[0];
 
-			if (!fileInput.files.length) {
+			if (!fileInput || !fileInput.files.length) {
 				alert("File belum dipilih");
 				return;
 			}
 
-			// 🔥 SINKRON DENGAN BACKEND
-			formData.append("file", fileInput.files[0]);
-			formData.append("tabel", AppState.tbl);
+			// 🔥 Ambil semua field dari form (termasuk jml_header)
+			let formData = new FormData(formElement);
+
+			// Pastikan file override ke name yang benar
+			formData.set("file", fileInput.files[0]);
+
+			if (AppState.action === "import_struktur") {
+				formData.set("jns", "import_struktur");
+			}
+
+			if (AppState.action === "import_xlsx") {
+				formData.set("tabel", AppState.tbl);
+			}
 
 			this.ajax.request({
-				url: AppConfig.apiUrl + "dynamic/import",
+				url: AppConfig.apiUrl + "import",
 				method: "POST",
 				data: formData,
 				processData: false,
@@ -648,7 +675,7 @@ class FormContainerManager {
 				},
 			});
 
-			return; // 🔥 hentikan save normal
+			return;
 		}
 
 		// ===============================

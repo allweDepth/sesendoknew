@@ -30,6 +30,7 @@ class DynamicTableService
     private static array $schemaCache = [];
     private ?array $pengaturanAktifCache = null;
     private ?array $periodeAktifCache = null;
+    private array $importCache = [];
     public function __construct()
     {
         $this->db = DB::getInstance();
@@ -66,6 +67,51 @@ class DynamicTableService
             $profile = $this->profiles[$tbl];
             $table   = $profile['table'];
 
+            /* =====================================================
+           🔥 IMPORT STRUKTUR NASIONAL
+        ===================================================== */
+            /* =====================================================
+   🔥 IMPORT STRUKTUR NASIONAL
+===================================================== */
+if ($action === 'import_struktur') {
+
+    if (empty($_FILES['file']['tmp_name'])) {
+        return JsonResponse::error("File tidak ditemukan.");
+    }
+
+    $this->authorize('add', $table);
+
+    // 🔥 Ambil jml_header dari request
+    $jmlHeader = (int)($request['jml_header'] ?? 1);
+
+    return $this->importStruktur(
+        $_FILES['file']['tmp_name'],
+        $jmlHeader
+    );
+}
+
+            /* =====================================================
+           🔥 IMPORT XLSX PER TABEL (STRICT MODE)
+        ===================================================== */
+            if ($action === 'import_xlsx') {
+
+                if (empty($_FILES['file']['tmp_name'])) {
+                    return JsonResponse::error("File tidak ditemukan.");
+                }
+
+                $this->authorize('add', $table);
+
+                return $this->importStrict(
+                    $tbl,
+                    $_FILES['file']['tmp_name'],
+                    (int)($request['jml_header'] ?? 1)
+                );
+            }
+
+            /* =====================================================
+           CRUD NORMAL (TIDAK DIUBAH)
+        ===================================================== */
+
             if ($action === 'add') {
                 $this->authorize('add', $table);
                 return $this->insert($table, $request);
@@ -96,6 +142,9 @@ class DynamicTableService
                 return $this->export($table, $profile, $request, 'default');
             }
 
+            /* =====================================================
+           DEFAULT LISTING
+        ===================================================== */
             $this->authorize('view', $table);
             $mode = $action ?: 'default';
 
@@ -1147,31 +1196,29 @@ class DynamicTableService
         }
     }
     private function getPengaturanAktif(): ?array
-    {
-        if ($this->pengaturanAktifCache !== null) {
-            return $this->pengaturanAktifCache;
-        }
-
-        $kd_wilayah = $this->user['kd_wilayah'] ?? null;
-        $tahun      = $this->user['tahun'] ?? null;
-
-        if (!$kd_wilayah || !$tahun) {
-            return null;
-        }
-
-        $result = $this->db->query("
-            SELECT *
-            FROM pengaturan_neo
-            WHERE kd_wilayah = ?
-            AND tahun = ?
-            AND disable = 0
-            LIMIT 1
-        ", [$kd_wilayah, $tahun])->fetch();
-
-        $this->pengaturanAktifCache = $result ?: null;
-
+{
+    if ($this->pengaturanAktifCache !== null) {
         return $this->pengaturanAktifCache;
     }
+
+    $kd_wilayah = $this->user['kd_wilayah'] ?? null;
+
+    if (!$kd_wilayah) {
+        return null;
+    }
+
+    $result = $this->db->query("
+        SELECT *
+        FROM pengaturan_neo
+        WHERE kd_wilayah = ?
+        AND disable = 0
+        LIMIT 1
+    ", [$kd_wilayah])->fetch();
+
+    $this->pengaturanAktifCache = $result ?: null;
+
+    return $this->pengaturanAktifCache;
+}
     private function getPeriodeAktif(): ?array
     {
         if ($this->periodeAktifCache !== null) {
@@ -1197,10 +1244,20 @@ class DynamicTableService
     /* =========================================================
    NORMALIZE HEADER XLSX → snake_case
 ========================================================= */
-    private function normalizeHeader(string $header): string
+    private function normalizeHeader(?string $header): string
     {
+        if ($header === null) {
+            return '';
+        }
+
+        $header = trim($header);
+
+        if ($header === '') {
+            return '';
+        }
+
         return strtolower(
-            preg_replace('/[^a-z0-9]+/i', '_', trim($header))
+            preg_replace('/[^a-z0-9_]/', '', $header)
         );
     }
     /* =========================================================
@@ -1211,11 +1268,11 @@ class DynamicTableService
         $role = $this->user['type_user'] ?? 'viewer';
 
         $restricted = [
-            'urusan_neo',
-            'bidang_neo',
-            'program_neo',
-            'kegiatan_neo',
-            'sub_kegiatan_neo'
+            'urusan',
+            'bidang',
+            'program',
+            'kegiatan',
+            'sub_kegiatan'
         ];
 
         if ($role === 'admin_opd' && in_array($table, $restricted)) {
@@ -1299,20 +1356,20 @@ class DynamicTableService
         $rules = [
 
             // Struktur kode
-            'bidang_neo' => [
-                'parent_table' => 'urusan_neo',
+            'bidang' => [
+                'parent_table' => 'urusan',
                 'match' => ['urusan_id' => 'id']
             ],
-            'program_neo' => [
-                'parent_table' => 'bidang_neo',
+            'program' => [
+                'parent_table' => 'bidang',
                 'match' => ['bidang_id' => 'id']
             ],
-            'kegiatan_neo' => [
-                'parent_table' => 'program_neo',
+            'kegiatan' => [
+                'parent_table' => 'program',
                 'match' => ['program_id' => 'id']
             ],
-            'sub_kegiatan_neo' => [
-                'parent_table' => 'kegiatan_neo',
+            'sub_kegiatan' => [
+                'parent_table' => 'kegiatan',
                 'match' => ['kegiatan_id' => 'id']
             ],
 
@@ -1519,96 +1576,194 @@ class DynamicTableService
     /* =========================================================
    IMPORT STRUKTUR NASIONAL (GLOBAL HIRARKI)
 ========================================================= */
-    public function importStruktur(string $filePath): string
-    {
-        return $this->runTransaction(function () use ($filePath) {
+    public function importStruktur(string $filePath, int $jmlHeader = 2): string
+{
+    return $this->runTransaction(function () use ($filePath, $jmlHeader) {
 
-            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
-            $rows = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
+        $rows = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
 
-            if (count($rows) < 2) {
-                throw new Exception("File kosong.");
-            }
+        if (count($rows) <= $jmlHeader) {
+            throw new Exception("File kosong atau header tidak sesuai.");
+        }
 
-            $headers = array_map([$this, 'normalizeHeader'], $rows[0]);
+        $inserted = 0;
 
-            foreach (array_slice($rows, 1) as $row) {
+        foreach (array_slice($rows, $jmlHeader) as $rowIndex => $row) {
 
-                if (empty(array_filter($row))) continue;
+            if (empty(array_filter($row))) continue;
 
-                $data = [];
+            $excelRow = $rowIndex + $jmlHeader + 1;
 
-                foreach ($headers as $i => $col) {
-                    $data[$col] = $row[$i] ?? null;
+            $kode = trim($row[0] ?? '');
+            $nama = trim($row[1] ?? '');
+
+            if (!$kode || !$nama) continue;
+
+            $level = substr_count($kode, '.');
+
+            try {
+
+                switch ($level) {
+
+                    // URUSAN → 1
+                    case 0:
+                        $this->insertIfNotExists('urusan', [
+                            'kode' => $kode,
+                            'nama' => $nama
+                        ]);
+                        break;
+
+                    // BIDANG → 1.01
+                    case 1:
+                        $this->ensureParentExists('urusan', [
+                            'kode' => explode('.', $kode)[0]
+                        ]);
+
+                        $this->insertIfNotExists('bidang', [
+                            'kode' => $kode,
+                            'kode_urusan' => explode('.', $kode)[0],
+                            'nama' => $nama
+                        ]);
+                        break;
+
+                    // PROGRAM → 1.01.02
+                    case 2:
+                        $parentBidang = implode('.', array_slice(explode('.', $kode), 0, 2));
+
+                        $this->ensureParentExists('bidang', [
+                            'kode' => $parentBidang
+                        ]);
+
+                        $this->insertIfNotExists('program', [
+                            'kode' => $kode,
+                            'kode_urusan' => explode('.', $kode)[0],
+                            'kode_bidang' => $parentBidang,
+                            'nama' => $nama
+                        ]);
+                        break;
+
+                    // KEGIATAN → 1.01.02.001
+                    case 3:
+                        $parentProgram = implode('.', array_slice(explode('.', $kode), 0, 3));
+
+                        $this->ensureParentExists('program', [
+                            'kode' => $parentProgram
+                        ]);
+
+                        $this->insertIfNotExists('kegiatan', [
+                            'kode' => $kode,
+                            'kode_urusan' => explode('.', $kode)[0],
+                            'kode_bidang' => implode('.', array_slice(explode('.', $kode), 0, 2)),
+                            'kode_program' => $parentProgram,
+                            'nama' => $nama
+                        ]);
+                        break;
+
+                    // SUB KEGIATAN → 1.01.02.001.0001
+                    case 4:
+                        $parentKegiatan = implode('.', array_slice(explode('.', $kode), 0, 4));
+
+                        $this->ensureParentExists('kegiatan', [
+                            'kode' => $parentKegiatan
+                        ]);
+
+                        $this->insertIfNotExists('sub_kegiatan', [
+                            'kode' => $kode,
+                            'kode_urusan' => explode('.', $kode)[0],
+                            'kode_bidang' => implode('.', array_slice(explode('.', $kode), 0, 2)),
+                            'kode_program' => implode('.', array_slice(explode('.', $kode), 0, 3)),
+                            'kode_kegiatan' => $parentKegiatan,
+                            'nama' => $nama
+                        ]);
+                        break;
+
+                    default:
+                        throw new Exception("Format kode tidak dikenali: $kode");
                 }
 
-                // ===============================
-                // 1️⃣ URUSAN
-                // ===============================
-                $this->insertIfNotExists('urusan_neo', [
-                    'kode' => $data['kode_urusan'] ?? null,
-                    'nama' => $data['nama_urusan'] ?? null
-                ]);
+                $inserted++;
 
-                // ===============================
-                // 2️⃣ BIDANG
-                // ===============================
-                $bidangId = $this->insertIfNotExists('bidang_neo', [
-                    'kode' => $data['kode_bidang'] ?? null,
-                    'nama' => $data['nama_bidang'] ?? null
-                ]);
+            } catch (\Throwable $e) {
 
-                // ===============================
-                // 3️⃣ PROGRAM
-                // ===============================
-                $programId = $this->insertIfNotExists('program_neo', [
-                    'kode' => $data['kode_program'] ?? null,
-                    'nama' => $data['nama_program'] ?? null
-                ]);
-
-                // ===============================
-                // 4️⃣ KEGIATAN
-                // ===============================
-                $kegiatanId = $this->insertIfNotExists('kegiatan_neo', [
-                    'kode' => $data['kode_kegiatan'] ?? null,
-                    'nama' => $data['nama_kegiatan'] ?? null
-                ]);
-
-                // ===============================
-                // 5️⃣ SUB KEGIATAN
-                // ===============================
-                $this->insertIfNotExists('sub_kegiatan_neo', [
-                    'kode' => $data['kode_sub_kegiatan'] ?? null,
-                    'nama' => $data['nama_sub_kegiatan'] ?? null
-                ]);
+                throw new Exception(
+                    "Baris Excel {$excelRow} gagal → " . $e->getMessage()
+                );
             }
+        }
 
-            return JsonResponse::success("Import struktur berhasil.");
-        });
+        return JsonResponse::success("Import struktur berhasil.", [
+            'inserted' => $inserted
+        ]);
+    });
+}
+    private function ensureParentExists(string $table, array $data): void
+{
+    $kode = $data['kode'] ?? null;
+    if (!$kode) {
+        throw new Exception("Kode parent kosong.");
     }
+
+    // 🔥 Cek cache dulu
+    if (isset($this->importCache[$table][$kode])) {
+        return;
+    }
+
+    // 🔥 Cek database
+    $exists = $this->db->query(
+        "SELECT id FROM `$table` WHERE kode = ? LIMIT 1",
+        [$kode]
+    )->fetch();
+
+    if (!$exists) {
+        throw new Exception("Parent $table belum tersedia.");
+    }
+}
+    private function safeInsert(string $table, array $data, int $excelRow): void
+{
+    try {
+
+        $this->insertIfNotExists($table, $data);
+
+    } catch (\Throwable $e) {
+
+        throw new Exception(
+            "Tabel {$table} gagal pada baris Excel {$excelRow} → " 
+            . $e->getMessage()
+        );
+    }
+}
     private function insertIfNotExists(string $table, array $data): ?int
-    {
-        $columns = $this->getTableColumns($table);
+{
+    $kode = $data['kode'] ?? null;
+    if (!$kode) return null;
 
-        if (!in_array('kode', $columns) || empty($data['kode'])) {
-            return null;
-        }
-
-        $exists = $this->db->query(
-            "SELECT id FROM `$table` WHERE kode = ? LIMIT 1",
-            [$data['kode']]
-        )->fetch();
-
-        if ($exists) {
-            return $exists['id'];
-        }
-
-        $data = $this->injectAudit($data, 'insert');
-
-        $this->db->insert($table, $data);
-
-        return $this->db->lastInsertId();
+    // 🔥 Cek cache dulu
+    if (isset($this->importCache[$table][$kode])) {
+        return $this->importCache[$table][$kode];
     }
+
+    // 🔥 Cek database
+    $exists = $this->db->query(
+        "SELECT id FROM `$table` WHERE kode = ? LIMIT 1",
+        [$kode]
+    )->fetch();
+
+    if ($exists) {
+        $this->importCache[$table][$kode] = $exists['id'];
+        return $exists['id'];
+    }
+
+    $data = $this->injectAudit($data, 'insert');
+    $this->db->insert($table, $data);
+
+    $id = $this->db->lastInsertId();
+
+    // 🔥 Simpan ke cache
+    $this->importCache[$table][$kode] = $id;
+
+    return $id;
+}
     /* =========================================================
     VALIDASI IMPORT CONFIG DARI PROFILE
     ========================================================= */
