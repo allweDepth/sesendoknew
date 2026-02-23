@@ -1,0 +1,157 @@
+/* ===============================
+   DARK PREMIUM MODE
+   =============================== */
+
+body.dark-mode {
+    background: #0f172a !important;
+    color: #f1f5f9 !important;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ===============================
+   SURFACE / CARD / SEGMENT
+   =============================== */
+
+body.dark-mode .ui.segment,
+body.dark-mode .ui.card,
+body.dark-mode .ui.menu,
+body.dark-mode .ui.modal,
+body.dark-mode .ui.sidebar {
+    background: #1e293b !important;
+    color: #f1f5f9 !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+    border-radius: 10px !important;
+}
+
+/* ===============================
+   TABLE (DATA FRIENDLY)
+   =============================== */
+
+body.dark-mode .ui.table {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark-mode .ui.table thead th {
+    background: #0f172a !important;
+    color: #ffffff !important;
+    border-bottom: 1px solid #334155 !important;
+}
+
+body.dark-mode .ui.table tbody tr:hover {
+    background: #263449 !important;
+}
+
+/* ===============================
+   INPUT & FORM
+   =============================== */
+
+body.dark-mode .ui.input input,
+body.dark-mode .ui.form input,
+body.dark-mode .ui.form textarea,
+body.dark-mode .ui.dropdown {
+    background: #0f172a !important;
+    color: #f8fafc !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark-mode .ui.input input:focus,
+body.dark-mode .ui.form input:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.3) !important;
+}
+
+/* ===============================
+   BUTTON
+   =============================== */
+
+body.dark-mode .ui.button {
+    background: #334155 !important;
+    color: #ffffff !important;
+    border-radius: 8px !important;
+}
+
+body.dark-mode .ui.primary.button {
+    background: #3b82f6 !important;
+}
+
+body.dark-mode .ui.primary.button:hover {
+    background: #2563eb !important;
+}
+
+/* ===============================
+   MENU / NAVBAR
+   =============================== */
+
+body.dark-mode .ui.menu {
+    background: #1e293b !important;
+    border-bottom: 1px solid #334155 !important;
+}
+
+body.dark-mode .ui.menu .item {
+    color: #cbd5e1 !important;
+}
+
+body.dark-mode .ui.menu .item:hover {
+    background: #263449 !important;
+    color: #ffffff !important;
+}
+
+/* ===============================
+   MODAL
+   =============================== */
+
+body.dark-mode .ui.modal > .header {
+    background: #0f172a !important;
+    color: #ffffff !important;
+    border-bottom: 1px solid #334155 !important;
+}
+
+/* ===============================
+   SCROLLBAR PREMIUM
+   =============================== */
+
+body.dark-mode ::-webkit-scrollbar {
+    width: 8px;
+}
+
+body.dark-mode ::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+/* =====================================
+   TEXT COLOR FIX (FOMANTIC SAFE)
+   ===================================== */
+body.dark-mode .ui.message {
+    background: #1e293b !important;
+    color: #f1f5f9 !important;
+    border: 1px solid #334155 !important;
+}
+
+body.dark-mode .ui.message .header {
+    color: #ffffff !important;
+}
+body.dark-mode .ui.list > .item,
+body.dark-mode .ui.list .list > .item {
+    color: #e2e8f0 !important;
+}
+body.dark-mode .ui.header,
+body.dark-mode .ui.header .sub.header,
+body.dark-mode .ui.text,
+body.dark-mode .ui.list > .item,
+body.dark-mode .ui.message,
+body.dark-mode .ui.segment,
+body.dark-mode .ui.card,
+body.dark-mode .ui.menu .item,
+body.dark-mode .ui.table,
+body.dark-mode .ui.table td,
+body.dark-mode .ui.table th,
+body.dark-mode .ui.form label {
+    color: #f1f5f9 !important;
+}

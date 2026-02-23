@@ -6,6 +6,7 @@
     <title>SIPD</title>
 
     <link rel="stylesheet" href="/assets/css/fomantic.min.css">
+    <link rel="stylesheet" href="/assets/css/dark.css">
     <style>
         #mainContext {
             min-height: calc(100vh - 40px);

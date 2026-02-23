@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
 	// ==========================
 	// INIT CORE
 	// ==========================
@@ -110,7 +109,6 @@ $(document).ready(function () {
 		let action = $(this).data("action");
 
 		switch (action) {
-
 			case "logout":
 				DialogEngine.show({
 					title: "Logout",
@@ -125,8 +123,7 @@ $(document).ready(function () {
 
 			case "export":
 				let table = $(this).data("tbl");
-				window.location.href =
-					AppConfig.apiUrl + "export?tabel=" + table;
+				window.location.href = AppConfig.apiUrl + "export?tabel=" + table;
 				break;
 
 			case "delete":
@@ -175,4 +172,19 @@ $(document).ready(function () {
 	if (window.location.pathname === "/profil") {
 		ProfilModule.load();
 	}
+	// DARK MODULE
+	document.getElementById("darkToggle").addEventListener("click", function () {
+		document.body.classList.toggle("dark-mode");
+
+		localStorage.setItem(
+			"darkMode",
+			document.body.classList.contains("dark-mode"),
+		);
+	});
+
+	window.addEventListener("load", function () {
+		if (localStorage.getItem("darkMode") === "true") {
+			document.body.classList.add("dark-mode");
+		}
+	});
 });

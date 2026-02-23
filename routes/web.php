@@ -97,4 +97,13 @@ return [
 '/tata_naskah/load_form' => ['TataNaskahController', 'loadForm'],
 '/tata_naskah/generate_pdf' => ['TataNaskahController', 'generate_pdf'],
 '/tata_naskah/schema' => ['TataNaskahController', 'schema'],
+// ==============================
+// R E S E T  T A B E L
+// ==============================
+'/reset_tabel' => ['ResetTabelController', 'index'],
+'/reset_tabel/load' => ['ResetTabelController', 'load'],
+'/reset_tabel/store' => ['ResetTabelController', 'store'],
+'/reset_tabel/update' => ['ResetTabelController', 'update'],
+'/reset_tabel/delete' => ['ResetTabelController', 'delete'],
+'/reset_tabel/reset' => ['ResetTabelController', 'reset'],
 ];
