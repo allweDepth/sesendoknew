@@ -1,9 +1,11 @@
 $(document).ready(function () {
+
 	// ==========================
 	// INIT CORE
 	// ==========================
 	window.tableManager = new TableManager();
 	const formContainerManager = new FormContainerManager();
+
 	formContainerManager.registerPlugin("tata_naskah.*", ({ container }) => {
 		if (AppState.action !== "add") return;
 
@@ -17,12 +19,11 @@ $(document).ready(function () {
 			"json",
 		);
 	});
+
 	const $context = $("#mainContext");
 	const $sidebarUtama = $(".sidebarutama");
 
 	const params = new URLSearchParams(window.location.search);
-	const tblFromUrl = params.get("tbl");
-
 	const currentPath = window.location.pathname.replace(/^\/+/g, "");
 	AppState.page = currentPath;
 
@@ -34,9 +35,28 @@ $(document).ready(function () {
 		transition: "push",
 	});
 
+	// ==========================
+	// INIT GLOBAL UI COMPONENTS
+	// ==========================
+	$(".ui.dropdown").dropdown();
+	$(".ui.accordion").accordion({ exclusive: false });
+
 	$("#toggleSidebar").on("click", function () {
 		$sidebarUtama.sidebar("toggle");
 	});
+
+	// ==========================
+	// GLOBAL MODULE AUTO INIT
+	// ==========================
+	const moduleConfig = UIConfig[currentPath];
+
+	if (moduleConfig) {
+		let tbl = params.get("tbl") || Object.keys(moduleConfig)[0];
+
+		if (tbl) {
+			tableManager.load(currentPath, tbl);
+		}
+	}
 
 	// ==========================
 	// MENU CLICK LOAD TABLE
@@ -90,6 +110,7 @@ $(document).ready(function () {
 		let action = $(this).data("action");
 
 		switch (action) {
+
 			case "logout":
 				DialogEngine.show({
 					title: "Logout",
@@ -104,7 +125,8 @@ $(document).ready(function () {
 
 			case "export":
 				let table = $(this).data("tbl");
-				window.location.href = AppConfig.apiUrl + "export?tabel=" + table;
+				window.location.href =
+					AppConfig.apiUrl + "export?tabel=" + table;
 				break;
 
 			case "delete":
@@ -144,13 +166,13 @@ $(document).ready(function () {
 	});
 
 	// ==========================
-	// MODULE INIT
+	// MODULE INIT (UI ONLY)
 	// ==========================
 	WallchatModule.init();
 	PengaturanModule.init(currentPath, tableManager);
+	RenstraModule.init(currentPath, tableManager);
+
 	if (window.location.pathname === "/profil") {
 		ProfilModule.load();
 	}
-	//Module Renstra
-	RenstraModule.init(currentPath, tableManager);
 });
