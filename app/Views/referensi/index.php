@@ -16,25 +16,37 @@
       data-container="flyout">
       <i class="plus icon"></i>
     </button>
-    <button class="ui button" data-ui="open-form" data-tbl="<?= $tbl ?>" data-jns="import_xlsx" data-tooltip="Import XLSX" data-position="bottom center" data-container="flyout"><i class="upload icon"></i></button>
     <?php if (in_array($tbl, [
-      'urusan',
-      'bidang',
-      'program',
-      'kegiatan',
-      'sub_kegiatan'
-    ])): ?>
+  'urusan',
+  'bidang',
+  'program',
+  'kegiatan',
+  'sub_kegiatan'
+])): ?>
 
-      <button class="ui button"
-        data-ui="open-form"
-        data-jns="import_struktur"
-        data-tooltip="Import Struktur Nasional"
-        data-position="bottom center"
-        data-container="flyout">
-        <i class="sitemap icon"></i>
-      </button>
+  <button class="ui button"
+    data-ui="open-form"
+    data-jns="import_struktur"
+    data-tbl="<?= $tbl ?>"
+    data-tooltip="Import Struktur Nasional"
+    data-position="bottom center"
+    data-container="flyout">
+    <i class="sitemap icon"></i>
+  </button>
 
-    <?php endif; ?>
+<?php else: ?>
+
+  <button class="ui button"
+    data-ui="open-form"
+    data-tbl="<?= $tbl ?>"
+    data-jns="import_xlsx"
+    data-tooltip="Import XLSX"
+    data-position="bottom center"
+    data-container="flyout">
+    <i class="upload icon"></i>
+  </button>
+
+<?php endif; ?>
     <button class="ui icon button"
       type="button"
       data-tooltip="Download"
