@@ -156,7 +156,7 @@
     <script src="/assets/js/core/toast.js"></script>
     <script src="/assets/js/core/dialog.js"></script>
     <script src="/assets/js/core/ajax.js"></script>
-
+<script src="/assets/js/core/spa-router.js"></script>
     <!-- ================= CONFIG ================= -->
     <script src="/assets/js/config/role-config.js"></script>
     <script src="/assets/js/config/action-config.js"></script>

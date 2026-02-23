@@ -187,4 +187,8 @@ $(document).ready(function () {
 			document.body.classList.add("dark-mode");
 		}
 	});
+	//SPA
+	if (typeof SPARouter !== "undefined") {
+        SPARouter.init();
+    }
 });
