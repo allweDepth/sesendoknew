@@ -111,7 +111,7 @@
 
 
     <!-- NAVBAR (DI LUAR PUSHABLE) @note navbar -->
-      <?php require __DIR__ . '/../partials/auth_navbar.php'; ?>
+    <?php require __DIR__ . '/../partials/auth_navbar.php'; ?>
 
     <div id="toastContainer"></div>
     </div>
@@ -145,18 +145,46 @@
     <script>
         window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
     </script>
+
     <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/js/fomantic.min.js"></script>
+
+    <!-- ================= CORE ================= -->
+    <script src="/assets/js/core/config.js"></script>
+    <script src="/assets/js/core/state.js"></script>
+    <script src="/assets/js/core/toast.js"></script>
+    <script src="/assets/js/core/dialog.js"></script>
+    <script src="/assets/js/core/ajax.js"></script>
+
+    <!-- ================= CONFIG ================= -->
+    <script src="/assets/js/config/role-config.js"></script>
+    <script src="/assets/js/config/action-config.js"></script>
+    <script src="/assets/js/config/ui-config.js"></script>
+
+    <!-- ================= ENGINE ================= -->
+    <script src="/assets/js/engine/form-engine.js"></script>
+    <script src="/assets/js/engine/table-manager.js"></script>
+    <script src="/assets/js/engine/form-container-manager.js"></script>
+
     <?php if (strpos($_SERVER['REQUEST_URI'], 'tata_naskah') !== false): ?>
         <script src="/assets/js/engine/document/document_schema.js"></script>
-<script src="/assets/js/engine/document/document_builder.js"></script>
+        <script src="/assets/js/engine/document/document_builder.js"></script>
     <?php endif; ?>
-    <script src="/assets/js/app.js"></script>
+
+    <!-- ================= MODULES ================= -->
+    <script src="/assets/js/modules/renstra.js"></script>
+    <script src="/assets/js/modules/pengaturan.js"></script>
+    <script src="/assets/js/modules/wallchat.js"></script>
+    <script src="/assets/js/modules/profil.js"></script>
+
     <?php if (strpos($_SERVER['REQUEST_URI'], 'tata_naskah') !== false): ?>
         <script src="/assets/js/modules/tata_naskah.js"></script>
         <link rel="stylesheet" href="/assets/vendor/quill/quill.snow.css">
         <script src="/assets/vendor/quill/quill.min.js"></script>
     <?php endif; ?>
+
+    <!-- ================= INIT (ENTRY POINT) ================= -->
+    <script src="/assets/js/app-init.js"></script>
 </body>
 
 </html>

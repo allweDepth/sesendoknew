@@ -2,9 +2,21 @@ $(document).ready(function () {
 	// ==========================
 	// INIT CORE
 	// ==========================
-	tableManager = new TableManager();
+	window.tableManager = new TableManager();
 	const formContainerManager = new FormContainerManager();
+	formContainerManager.registerPlugin("tata_naskah.*", ({ container }) => {
+		if (AppState.action !== "add") return;
 
+		$.post(
+			AppConfig.apiUrl + "tata_naskah/generateNomor",
+			function (res) {
+				if (res.success && res.data?.nomor) {
+					container.find('[name="nomor"]').val(res.data.nomor);
+				}
+			},
+			"json",
+		);
+	});
 	const $context = $("#mainContext");
 	const $sidebarUtama = $(".sidebarutama");
 
@@ -139,6 +151,6 @@ $(document).ready(function () {
 	if (window.location.pathname === "/profil") {
 		ProfilModule.load();
 	}
-  //Module Renstra
-  RenstraModule.init(currentPath, tableManager);
+	//Module Renstra
+	RenstraModule.init(currentPath, tableManager);
 });
