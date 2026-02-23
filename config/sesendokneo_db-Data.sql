@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 22 Feb 2026 pada 08.43
+-- Waktu pembuatan: 23 Feb 2026 pada 08.30
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -10537,6 +10537,26 @@ CREATE TABLE `hspk_neo` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `import_logs`
+--
+
+CREATE TABLE `import_logs` (
+  `id` bigint(20) NOT NULL,
+  `tabel` varchar(100) DEFAULT NULL,
+  `file_name` varchar(255) DEFAULT NULL,
+  `total_rows` int(11) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  `created_by` varchar(100) DEFAULT NULL,
+  `role` varchar(50) DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `approved_by` varchar(100) DEFAULT NULL,
+  `approved_at` datetime DEFAULT NULL,
+  `notes` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `indikator_program_renstra_neo`
 --
 
@@ -10672,7 +10692,8 @@ CREATE TABLE `log_activity` (
 
 INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data`, `new_data`, `username`, `ip_address`, `user_agent`, `created_at`) VALUES
 (1, 'satuan_neo', 431, 'insert', NULL, '{\"value\":\"val\",\"item\":\"item\",\"keterangan\":\"keterangan\",\"disable\":0,\"is_deleted\":0,\"peraturan\":4,\"tgl_insert\":\"2026-02-21 16:12:03\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Safari/605.1.15', '2026-02-21 16:12:03'),
-(2, 'db_asn_pemda_neo', 112, 'insert', NULL, '{\"nama\":\"sakonne\",\"nip\":\"123456789012345671\",\"gelar\":\"\",\"gelar_depan\":\"\",\"kelompok\":\"4\",\"jabatan\":\"non\",\"t4_lahir\":\"Mamuju\",\"tgl_lahir\":\"2026-02-22\",\"golongan\":\"4\",\"ruang\":\"c\",\"jenis_kepeg\":\"pnsd2\",\"status_kepeg\":\"peg_tetap\",\"no_ktp\":\"\",\"npwp\":\"\",\"alamat\":\"\",\"kontak_person\":\"\",\"email\":\"alwi@gmail\",\"agama\":\"islam\",\"kelamin\":\"pria\",\"status\":\"menikah\",\"keterangan\":\"\",\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-02-21 16:17:25\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Safari/605.1.15', '2026-02-21 16:17:25');
+(2, 'db_asn_pemda_neo', 112, 'insert', NULL, '{\"nama\":\"sakonne\",\"nip\":\"123456789012345671\",\"gelar\":\"\",\"gelar_depan\":\"\",\"kelompok\":\"4\",\"jabatan\":\"non\",\"t4_lahir\":\"Mamuju\",\"tgl_lahir\":\"2026-02-22\",\"golongan\":\"4\",\"ruang\":\"c\",\"jenis_kepeg\":\"pnsd2\",\"status_kepeg\":\"peg_tetap\",\"no_ktp\":\"\",\"npwp\":\"\",\"alamat\":\"\",\"kontak_person\":\"\",\"email\":\"alwi@gmail\",\"agama\":\"islam\",\"kelamin\":\"pria\",\"status\":\"menikah\",\"keterangan\":\"\",\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-02-21 16:17:25\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Safari/605.1.15', '2026-02-21 16:17:25'),
+(3, 'urusan', 0, 'insert', NULL, '{\"kode\":\"kode\",\"nama\":\"nama\",\"peraturan\":4,\"tgl_insert\":\"2026-02-22 13:15:46\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Safari/605.1.15', '2026-02-22 13:15:46');
 
 -- --------------------------------------------------------
 
@@ -36180,6 +36201,12 @@ ALTER TABLE `hspk_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `import_logs`
+--
+ALTER TABLE `import_logs`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indeks untuk tabel `indikator_program_renstra_neo`
 --
 ALTER TABLE `indikator_program_renstra_neo`
@@ -36557,6 +36584,12 @@ ALTER TABLE `hspk_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `import_logs`
+--
+ALTER TABLE `import_logs`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `indikator_program_renstra_neo`
 --
 ALTER TABLE `indikator_program_renstra_neo`
@@ -36584,7 +36617,7 @@ ALTER TABLE `kegiatan_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `log_activity`
 --
 ALTER TABLE `log_activity`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `mapping_aset_akun`
