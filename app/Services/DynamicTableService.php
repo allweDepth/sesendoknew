@@ -520,7 +520,26 @@ class DynamicTableService
        AUDIT TRAIL (PINDAH SEBELUM VALIDASI)
     ===================================================== */
         $filtered = $this->injectAudit($filtered, 'update');
+        /* =====================================================
+   AUTO PRESERVE REQUIRED COLUMNS (FIX 422 UPDATE)
+===================================================== */
 
+        $oldRow = $this->db->query(
+            "SELECT * FROM `$table` WHERE `$primaryKey` = ?",
+            [$id]
+        )->fetch();
+
+        if ($oldRow) {
+
+            foreach ($oldRow as $field => $value) {
+
+                // Jika field tidak dikirim saat update
+                if (!isset($filtered[$field])) {
+
+                    $filtered[$field] = $value;
+                }
+            }
+        }
         /* =====================================================
        VALIDASI HYBRID
     ===================================================== */
@@ -1496,6 +1515,99 @@ class DynamicTableService
                 'inserted' => $inserted
             ]);
         });
+    }
+    /* =========================================================
+   IMPORT STRUKTUR NASIONAL (GLOBAL HIRARKI)
+========================================================= */
+    public function importStruktur(string $filePath): string
+    {
+        return $this->runTransaction(function () use ($filePath) {
+
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
+            $rows = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
+
+            if (count($rows) < 2) {
+                throw new Exception("File kosong.");
+            }
+
+            $headers = array_map([$this, 'normalizeHeader'], $rows[0]);
+
+            foreach (array_slice($rows, 1) as $row) {
+
+                if (empty(array_filter($row))) continue;
+
+                $data = [];
+
+                foreach ($headers as $i => $col) {
+                    $data[$col] = $row[$i] ?? null;
+                }
+
+                // ===============================
+                // 1️⃣ URUSAN
+                // ===============================
+                $this->insertIfNotExists('urusan_neo', [
+                    'kode' => $data['kode_urusan'] ?? null,
+                    'nama' => $data['nama_urusan'] ?? null
+                ]);
+
+                // ===============================
+                // 2️⃣ BIDANG
+                // ===============================
+                $bidangId = $this->insertIfNotExists('bidang_neo', [
+                    'kode' => $data['kode_bidang'] ?? null,
+                    'nama' => $data['nama_bidang'] ?? null
+                ]);
+
+                // ===============================
+                // 3️⃣ PROGRAM
+                // ===============================
+                $programId = $this->insertIfNotExists('program_neo', [
+                    'kode' => $data['kode_program'] ?? null,
+                    'nama' => $data['nama_program'] ?? null
+                ]);
+
+                // ===============================
+                // 4️⃣ KEGIATAN
+                // ===============================
+                $kegiatanId = $this->insertIfNotExists('kegiatan_neo', [
+                    'kode' => $data['kode_kegiatan'] ?? null,
+                    'nama' => $data['nama_kegiatan'] ?? null
+                ]);
+
+                // ===============================
+                // 5️⃣ SUB KEGIATAN
+                // ===============================
+                $this->insertIfNotExists('sub_kegiatan_neo', [
+                    'kode' => $data['kode_sub_kegiatan'] ?? null,
+                    'nama' => $data['nama_sub_kegiatan'] ?? null
+                ]);
+            }
+
+            return JsonResponse::success("Import struktur berhasil.");
+        });
+    }
+    private function insertIfNotExists(string $table, array $data): ?int
+    {
+        $columns = $this->getTableColumns($table);
+
+        if (!in_array('kode', $columns) || empty($data['kode'])) {
+            return null;
+        }
+
+        $exists = $this->db->query(
+            "SELECT id FROM `$table` WHERE kode = ? LIMIT 1",
+            [$data['kode']]
+        )->fetch();
+
+        if ($exists) {
+            return $exists['id'];
+        }
+
+        $data = $this->injectAudit($data, 'insert');
+
+        $this->db->insert($table, $data);
+
+        return $this->db->lastInsertId();
     }
     /* =========================================================
     VALIDASI IMPORT CONFIG DARI PROFILE

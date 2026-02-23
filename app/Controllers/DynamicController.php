@@ -299,7 +299,18 @@ class DynamicController
         try {
 
             $profiles = require __DIR__ . '/../Config/table_profiles.php';
+            $jns = $_POST['jns'] ?? null;
 
+            if ($jns === 'import_struktur') {
+
+                $service = new DynamicTableService();
+
+                echo $service->importStruktur(
+                    $_FILES['file']['tmp_name']
+                );
+
+                exit;
+            }
             $tableKey = $_POST['tabel'] ?? null;
             $jmlHeader = (int)($_POST['jml_header'] ?? 1);
 
