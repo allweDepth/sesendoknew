@@ -679,7 +679,8 @@ class FormContainerManager {
 				contentType: false,
 				success: (res) => {
 					if (res.success) {
-						this.hide(this.activeContainer);
+						// ❌ jangan tutup modal
+						// this.hide(this.activeContainer);
 						new TableManager().fetch();
 					} else {
 						alert(res.error || "Import gagal");

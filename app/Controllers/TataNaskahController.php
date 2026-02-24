@@ -70,7 +70,8 @@ class TataNaskahController extends Controller
     $klasifikasiId = $_POST['klasifikasi_id'] ?? null;
 
     if (!$klasifikasiId) {
-      return JsonResponse::error("Klasifikasi wajib dipilih");
+      echo JsonResponse::error("Klasifikasi wajib dipilih");
+      return;
     }
 
     $tahun = date('Y');
@@ -84,7 +85,8 @@ class TataNaskahController extends Controller
     )->fetch();
 
     if (!$klasifikasi) {
-      return JsonResponse::error("Klasifikasi tidak ditemukan");
+      echo JsonResponse::error("Klasifikasi tidak ditemukan");
+      return;
     }
 
     $kodeKlasifikasi = $klasifikasi['kode'];
@@ -127,9 +129,10 @@ class TataNaskahController extends Controller
 
     $nomorFinal = "$nomorUrut/$kodeKlasifikasi/$kodeOpd/$tahun";
 
-    return JsonResponse::success("Nomor dibuat", [
+    echo JsonResponse::success("Nomor dibuat", [
       "nomor" => $nomorFinal
     ]);
+    return;
   }
   public function simpan()
   {
@@ -138,7 +141,8 @@ class TataNaskahController extends Controller
     $jenisId = $_POST['jenis_id'] ?? null;
 
     if (!$jenisId) {
-      return JsonResponse::error("Jenis tidak ditemukan");
+      echo JsonResponse::error("Jenis tidak ditemukan");
+      return;
     }
 
     $db->query("START TRANSACTION");
@@ -178,7 +182,8 @@ class TataNaskahController extends Controller
 
       $db->query("COMMIT");
 
-      return JsonResponse::success("Berhasil disimpan");
+      echo JsonResponse::success("Berhasil disimpan");
+      return;
     } catch (Exception $e) {
       $db->query("ROLLBACK");
       die($e->getMessage());
@@ -189,7 +194,8 @@ class TataNaskahController extends Controller
     $service = new TataNaskahPdfService();
     $file = $service->generate($id);
 
-    return JsonResponse::success("PDF dibuat", ["file" => $file]);
+    echo JsonResponse::success("PDF dibuat", ["file" => $file]);
+    return;
   }
   public function updateStatus()
   {
@@ -210,13 +216,15 @@ class TataNaskahController extends Controller
       $update['final_at'] = date("Y-m-d H:i:s");
     }
     if (!$id || !$status) {
-      return JsonResponse::error("Data tidak lengkap");
+      echo JsonResponse::error("Data tidak lengkap");
+      return;
     }
 
     $allowed = ['draft', 'verifikasi', 'ttd', 'final'];
 
     if (!in_array($status, $allowed)) {
-      return JsonResponse::error("Status tidak valid");
+      echo JsonResponse::error("Status tidak valid");
+      return;
     }
 
     $update = [
@@ -239,20 +247,23 @@ class TataNaskahController extends Controller
 
     $db->update("trx_naskah_dinas", $update, "WHERE id = ?", [$id]);
 
-    return JsonResponse::success("Status diperbarui");
+    echo JsonResponse::success("Status diperbarui");
+    return;
   }
 
   public function uploadSignature()
   {
     if (!isset($_FILES['signature'])) {
-      return JsonResponse::error("File tidak ditemukan");
+      echo JsonResponse::error("File tidak ditemukan");
+      return;
     }
 
     $file = $_FILES['signature'];
     $ext  = pathinfo($file['name'], PATHINFO_EXTENSION);
 
     if (!in_array(strtolower($ext), ['png'])) {
-      return JsonResponse::error("Format harus PNG");
+      echo JsonResponse::error("Format harus PNG");
+      return;
     }
 
     $filename = "ttd_" . $_SESSION['user']['id'] . ".png";
@@ -271,7 +282,8 @@ class TataNaskahController extends Controller
       [$_SESSION['user']['id']]
     );
 
-    return JsonResponse::success("TTD berhasil diupload, menunggu verifikasi");
+    echo JsonResponse::success("TTD berhasil diupload, menunggu verifikasi");
+    return;
   }
   public function schema()
   {
