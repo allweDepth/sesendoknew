@@ -3,111 +3,95 @@
    FULLY INTEGRATED WITH MASTER ENGINE (app.js)
 ============================================================ */
 const TataNaskahModule = {
+	init(path) {
+		if (!path.startsWith("tata_naskah")) return;
 
-    init(path) {
+		// ==============================
+		// 1️⃣ DASHBOARD
+		// ==============================
+		if (path === "tata_naskah/dashboard") {
+			this.initDashboard();
+		}
 
-        if (!path.startsWith("tata_naskah")) return;
+		// ==============================
+		// 2️⃣ DAFTAR (PAKAI DYNAMIC)
+		// ==============================
+		if (path === "tata_naskah/daftar") {
+			this.initDaftar();
+		}
 
-        // ==============================
-        // 1️⃣ DASHBOARD
-        // ==============================
-        if (path === "tata_naskah/dashboard") {
-            this.initDashboard();
-        }
+		// ==============================
+		// 3️⃣ BUAT (PAKAI SCHEMA)
+		// ==============================
+		if (path === "tata_naskah/buat") {
+			this.initBuat();
+		}
+	},
 
-        // ==============================
-        // 2️⃣ DAFTAR (PAKAI DYNAMIC)
-        // ==============================
-        if (path === "tata_naskah/daftar") {
-            this.initDaftar();
-        }
+	// ==========================================
+	// DAFTAR NASKAH → Dynamic Engine
+	// ==========================================
+	initDaftar() {
+		 tableManager.load("tata_naskah", "trx_naskah_dinas");
+	},
 
-        // ==============================
-        // 3️⃣ BUAT (PAKAI SCHEMA)
-        // ==============================
-        if (path === "tata_naskah/buat") {
-            this.initBuat();
-        }
-    },
+	// ==========================================
+	// FORM BUAT NASKAH → Schema Engine
+	// ==========================================
+	initBuat() {
+		// Reset state
+		AppState.module = "tata_naskah";
+		AppState.action = "add";
 
+		// Clear container
+		$("#formContainer").html("");
 
-    // ==========================================
-    // DAFTAR NASKAH → Dynamic Engine
-    // ==========================================
-    initDaftar() {
+		// Tunggu user pilih jenis dulu
+		// Schema akan dipanggil setelah klik jenis
 
-        AppState.module = "tata_naskah";
-        AppState.tbl = "trx_naskah_dinas";
-        AppState.action = "default";
-        // AppState.halaman = 1;
+		$(document).off("click", ".btn-open-naskah");
 
-        tableManager.fetch();
-    },
+		$(document).on("click", ".btn-open-naskah", function () {
+			let jenisId = $(this).data("jenis-id");
 
+			if (!jenisId) return;
 
-    // ==========================================
-    // FORM BUAT NASKAH → Schema Engine
-    // ==========================================
-    initBuat() {
+			$.ajax({
+				url: AppConfig.apiUrl + "tata_naskah/schema",
+				method: "POST",
+				data: { jenis_id: jenisId },
+				dataType: "json",
+				success: function (res) {
+					if (res.error) {
+						Toast.show("error", res.error);
+						return;
+					}
 
-        // Reset state
-        AppState.module = "tata_naskah";
-        AppState.action = "add";
+					if (!res.schema) return;
 
-        // Clear container
-        $("#formContainer").html("");
+					// Build form via engine
+					if (window.formContainerManager) {
+						window.formContainerManager.render({
+							schema: res.schema,
+							asn: res.asn || [],
+							klasifikasi: res.klasifikasi || [],
+							nomor_auto: res.nomor_auto || null,
+						});
+					}
+				},
+				error: function () {
+					Toast.show("error", "Gagal memuat schema");
+				},
+			});
+		});
+	},
 
-        // Tunggu user pilih jenis dulu
-        // Schema akan dipanggil setelah klik jenis
-
-        $(document).off("click", ".btn-open-naskah");
-
-        $(document).on("click", ".btn-open-naskah", function () {
-
-            let jenisId = $(this).data("jenis-id");
-
-            if (!jenisId) return;
-
-            $.ajax({
-                url: AppConfig.apiUrl + "tata_naskah/schema",
-                method: "POST",
-                data: { jenis_id: jenisId },
-                dataType: "json",
-                success: function (res) {
-
-                    if (res.error) {
-                        Toast.show("error", res.error);
-                        return;
-                    }
-
-                    if (!res.schema) return;
-
-                    // Build form via engine
-                    if (window.formContainerManager) {
-                        window.formContainerManager.render({
-                            schema: res.schema,
-                            asn: res.asn || [],
-                            klasifikasi: res.klasifikasi || [],
-                            nomor_auto: res.nomor_auto || null
-                        });
-                    }
-                },
-                error: function () {
-                    Toast.show("error", "Gagal memuat schema");
-                }
-            });
-
-        });
-    },
-
-
-    // ==========================================
-    // DASHBOARD (Optional)
-    // ==========================================
-    initDashboard() {
-        console.log("Tata Naskah Dashboard Loaded");
-    }
-
+	// ==========================================
+	// DASHBOARD (Optional)
+	// ==========================================
+	initDashboard() {
+		console.log("Tata Naskah Dashboard Loaded");
+	},
 };
 $(document).ready(function () {
 	/* ========================================================
@@ -123,9 +107,7 @@ $(document).ready(function () {
        CLICK KELOMPOK → LOAD JENIS (VIA AjaxEngine)
     ======================================================== */
 	// const ajaxJenis = new AjaxEngine("/tata_naskah/load_jenis");
-	const ajaxJenis = new AjaxEngine(
-    AppConfig.apiUrl + "tata_naskah/load_jenis"
-);
+	const ajaxJenis = new AjaxEngine(AppConfig.apiUrl + "tata_naskah/load_jenis");
 
 	$(document).on("click", ".kelompok-card", function () {
 		let kelompokId = $(this).data("id");
