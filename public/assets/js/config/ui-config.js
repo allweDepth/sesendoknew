@@ -925,142 +925,386 @@ const UIConfig = {
 		],
 	},
 	tata_naskah: {
-
-    /* ======================================================
+		/* ======================================================
        📄 1️⃣ DAFTAR NASKAH (DYNAMIC ENGINE)
     ====================================================== */
-    
-trx_naskah_dinas: [
-    { tag: "field", prop: { label: "Nomor", name: "nomor" } },
-    { tag: "field", prop: { label: "Status", name: "workflow_status" } },
-    { tag: "field", prop: { label: "OPD", name: "kd_opd" } },
-    { tag: "field", prop: { label: "Tahun", name: "tahun" } },
-    { tag: "field", prop: { label: "Tanggal Dibuat", name: "tgl_insert" } }
-],
 
-    /* ======================================================
+		trx_naskah_dinas: [
+			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
+			{ tag: "field", prop: { label: "Status", name: "workflow_status" } },
+			{ tag: "field", prop: { label: "OPD", name: "kd_opd" } },
+			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
+			{ tag: "field", prop: { label: "Tanggal Dibuat", name: "tgl_insert" } },
+		],
+
+		/* ======================================================
        🧾 2️⃣ SK (Schema Based)
     ====================================================== */
-    sk: [
-        {
-            tag: "field",
-            prop: {
-                label: "Nomor Surat",
-                name: "nomor",
-                classField: "required"
-            }
-        },
-        {
-            tag: "fieldCalendar",
-            prop: {
-                label: "Tanggal Surat",
-                name: "tgl_surat_dibuat",
-                calendarType: "date",
-                classField: "required"
-            }
-        },
-        {
-            tag: "fieldTextarea",
-            prop: {
-                label: "Tentang",
-                name: "tentang",
-                atribut: 'rows="2"',
-                classField: "required"
-            }
-        },
-        {
-            tag: "fieldDropdown",
-            prop: {
-                label: "Pemberi Tugas",
-                name: "pemberi_tgs",
-                source: "asn",
-                search: true,
-                clearable: true
-            }
-        },
-        {
-            tag: "fieldTextarea",
-            prop: {
-                label: "Keterangan",
-                name: "keterangan",
-                atribut: 'rows="2"'
-            }
-        }
-    ],
+		sk: [
+			{
+				tag: "field",
+				prop: {
+					label: "Nomor Surat",
+					name: "nomor",
+					classField: "required",
+				},
+			},
+			{
+				tag: "fieldCalendar",
+				prop: {
+					label: "Tanggal Surat",
+					name: "tgl_surat_dibuat",
+					calendarType: "date",
+					classField: "required",
+				},
+			},
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Tentang",
+					name: "tentang",
+					atribut: 'rows="2"',
+					classField: "required",
+				},
+			},
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Pemberi Tugas",
+					name: "pemberi_tgs",
+					source: "asn",
+					search: true,
+					clearable: true,
+				},
+			},
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Keterangan",
+					name: "keterangan",
+					atribut: 'rows="2"',
+				},
+			},
+		],
 
-
-    /* ======================================================
+		/* ======================================================
        📩 3️⃣ SURAT INTERNAL
     ====================================================== */
-    surat_internal: [
-        {
-            tag: "field",
-            prop: { label: "Nomor", name: "nomor" }
-        },
-        {
-            tag: "fieldCalendar",
-            prop: { label: "Tanggal", name: "tanggal", calendarType: "date" }
-        },
-        {
-            tag: "field",
-            prop: { label: "Kepada", name: "kepada", classField: "required" }
-        },
-        {
-            tag: "fieldTextarea",
-            prop: { label: "Perihal", name: "perihal", atribut: 'rows="2"' }
-        },
-        {
-            tag: "fieldTextarea",
-            prop: { label: "Isi Surat", name: "isi", atribut: 'rows="6"' }
-        }
-    ],
+		surat_internal: [
+			{
+				tag: "field",
+				prop: { label: "Nomor", name: "nomor" },
+			},
+			{
+				tag: "fieldCalendar",
+				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
+			},
+			{
+				tag: "field",
+				prop: { label: "Kepada", name: "kepada", classField: "required" },
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Perihal", name: "perihal", atribut: 'rows="2"' },
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Isi Surat", name: "isi", atribut: 'rows="6"' },
+			},
+		],
 
-
-    /* ======================================================
+		/* ======================================================
        📃 4️⃣ SURAT BEBAS
     ====================================================== */
-    surat_bebas: [
-        {
-            tag: "field",
-            prop: { label: "Nomor", name: "nomor" }
-        },
-        {
-            tag: "fieldCalendar",
-            prop: { label: "Tanggal", name: "tanggal", calendarType: "date" }
-        },
-        {
-            tag: "fieldTextarea",
-            prop: { label: "Isi Surat", name: "isi", atribut: 'rows="8"' }
-        }
-    ],
+		surat_bebas: [
+			{
+				tag: "field",
+				prop: { label: "Nomor", name: "nomor" },
+			},
+			{
+				tag: "fieldCalendar",
+				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Isi Surat", name: "isi", atribut: 'rows="8"' },
+			},
+		],
 
-
-    /* ======================================================
+		/* ======================================================
        📑 5️⃣ TELAAH STAF
     ====================================================== */
-    telaah_staf: [
-        {
-            tag: "field",
-            prop: { label: "Nomor", name: "nomor" }
-        },
-        {
-            tag: "fieldCalendar",
-            prop: { label: "Tanggal", name: "tanggal", calendarType: "date" }
-        },
-        {
-            tag: "fieldTextarea",
-            prop: { label: "Permasalahan", name: "permasalahan", atribut: 'rows="3"' }
-        },
-        {
-            tag: "fieldTextarea",
-            prop: { label: "Analisis", name: "analisis", atribut: 'rows="5"' }
-        },
-        {
-            tag: "fieldTextarea",
-            prop: { label: "Rekomendasi", name: "rekomendasi", atribut: 'rows="3"' }
-        }
-    ]
+		telaah_staf: [
+			{
+				tag: "field",
+				prop: { label: "Nomor", name: "nomor" },
+			},
+			{
+				tag: "fieldCalendar",
+				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
+			},
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Permasalahan",
+					name: "permasalahan",
+					atribut: 'rows="3"',
+				},
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Analisis", name: "analisis", atribut: 'rows="5"' },
+			},
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Rekomendasi",
+					name: "rekomendasi",
+					atribut: 'rows="3"',
+				},
+			},
+		],
+	},
+	/* ======================================================
+   🌐 GLOBAL PRINT CONFIG
+   Digunakan SEMUA MODULE
+   Layout dibuat PERSIS seperti contoh
+====================================================== */
+	global_print: [
+		// ID ROW (hidden)
+		{
+			tag: "fieldHidden",
+			prop: { name: "id_row" },
+		},
 
-},
+		// ==============================================
+		// DOKUMEN + TANGGAL
+		// ==============================================
+		{
+			tag: "fields",
+			prop: {
+				classGroup: "two",
+				children: [
+					{
+						tag: "fieldDropdown",
+						prop: {
+							label: "Dokumen",
+							name: "dokumen",
+							classField: "required",
+							dropdownClass: "read-only selection inverted lainnya",
+							options: [],
+						},
+					},
 
+					{
+						tag: "fieldCalendar",
+						prop: {
+							label: "Tanggal Surat",
+							name: "tgl_surat_dibuat",
+							calendarType: "date",
+							classField: "required",
+						},
+					},
+				],
+			},
+		},
+
+		// ==============================================
+		// UKURAN KERTAS + UKURAN HURUF
+		// ==============================================
+		{
+			tag: "fields",
+			prop: {
+				classGroup: "two",
+				children: [
+					{
+						tag: "fieldDropdown",
+						prop: {
+							label: "Ukuran Kertas",
+							name: "ukuran_kertas",
+							classField: "required",
+							dropdownClass: "selection inverted lainnya",
+							options: [
+								{ value: "letter", text: "Letter (216 x 279 mm)" },
+								{ value: "legal", text: "Legal (216 x 356 mm)" },
+								{ value: "A4", text: "A4 (210 x 297 mm)" },
+								{ value: "A3", text: "A3 (297 x 420 mm)" },
+								{
+									value: "F4",
+									text: "F4 (215 x 330 mm)",
+									class: "active selected",
+								},
+								{ value: "custom", text: "Custom" },
+							],
+						},
+					},
+
+					{
+						tag: "field",
+						prop: {
+							label: "Ukuran Huruf (%)",
+							name: "ukuran_huruf",
+							atribut: `value="100"`,
+							classField: "required",
+						},
+					},
+				],
+			},
+		},
+
+		// ==============================================
+		// ORIENTASI (CUSTOM LAYOUT)
+		// ==============================================
+		{
+			tag: "fieldCustom",
+			prop: {
+				html: `
+<div class="field">
+<label>Orientasi</label>
+<input type="hidden" name="orientasi" value="portrait">
+<div class="ui compact labeled icon menu inverted">
+<a class="item aksi active" value="portrait" jns="orientasi">
+<i class="id badge icon inverted"></i>Portrait
+</a>
+<a class="item aksi" value="landscape" jns="orientasi">
+<i class="id card icon inverted"></i>Landscape
+</a>
+</div>
+</div>
+`,
+			},
+		},
+
+		{ tag: "divider" },
+
+		{ tag: "header", prop: { label: "Margin Halaman (mm)" } },
+
+		// ==============================================
+		// MARGIN ATAS & BAWAH
+		// ==============================================
+		{
+			tag: "fields",
+			prop: {
+				classGroup: "two",
+				children: [
+					{
+						tag: "field",
+						prop: {
+							label: "Atas",
+							name: "margin_top",
+							atribut: `value="20"`,
+							classField: "required",
+						},
+					},
+					{
+						tag: "field",
+						prop: {
+							label: "Bawah",
+							name: "margin_bottom",
+							atribut: `value="20"`,
+							classField: "required",
+						},
+					},
+				],
+			},
+		},
+
+		// ==============================================
+		// MARGIN KIRI & KANAN
+		// ==============================================
+		{
+			tag: "fields",
+			prop: {
+				classGroup: "two",
+				children: [
+					{
+						tag: "field",
+						prop: {
+							label: "Kiri",
+							name: "margin_kiri",
+							atribut: `value="20"`,
+							classField: "required",
+						},
+					},
+					{
+						tag: "field",
+						prop: {
+							label: "Kanan",
+							name: "margin_kanan",
+							atribut: `value="20"`,
+							classField: "required",
+						},
+					},
+				],
+			},
+		},
+
+		{ tag: "divider" },
+
+		// HEADER & FOOTER TOGGLE
+		{
+			tag: "fields",
+			prop: {
+				classGroup: "two",
+				children: [
+					{
+						tag: "fieldCheckbox",
+						prop: { label: "Aktifkan Header", name: "header" },
+					},
+					{
+						tag: "fieldCheckbox",
+						prop: { label: "Aktifkan Footer", name: "footer" },
+					},
+				],
+			},
+		},
+
+		// MARGIN HEADER & FOOTER
+		{
+			tag: "fields",
+			prop: {
+				classGroup: "two",
+				children: [
+					{
+						tag: "field",
+						prop: {
+							label: "Header",
+							name: "margin_header",
+							atribut: `value="10"`,
+							classField: "required",
+						},
+					},
+					{
+						tag: "field",
+						prop: {
+							label: "Footer",
+							name: "margin_footer",
+							atribut: `value="10"`,
+							classField: "required",
+						},
+					},
+				],
+			},
+		},
+
+		{ tag: "divider" },
+
+		{ tag: "header", prop: { label: "Kop Surat" } },
+
+		{
+			tag: "fieldCheckbox",
+			prop: { label: "Cetak Kop Surat", name: "cetak_kop", default: true },
+		},
+
+		{
+			tag: "fieldRadio",
+			prop: {
+				name: "kop_dns",
+				options: [
+					{ value: "standar", text: "Kop standar dinas", checked: true },
+					{ value: "custom", text: "Kop gambar (custom)" },
+				],
+			},
+		},
+	],
 };

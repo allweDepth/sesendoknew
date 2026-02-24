@@ -268,6 +268,10 @@ class FormContainerManager {
 
 		AppState.tbl = tbl;
 		AppState.action = jenisMode;
+		// =====================================================
+		// Simpan ID baris (untuk print TCPDF)
+		// =====================================================
+		AppState.idRow = $btn.data("id") || null;
 		// 🔥 Khusus tata_naskah saja
 		if (AppState.module === "tata_naskah") {
 			AppState.jenisId = $btn.data("jenis-id");
@@ -341,7 +345,12 @@ class FormContainerManager {
 		// 1️⃣ Render Metadata (UIConfig)
 		// ===============================
 		FormEngine.render(target, config.elements);
-
+		// =====================================================
+		// 🔥 INJECT ID ROW KE FIELD HIDDEN (PRINT)
+		// =====================================================
+		if (AppState.action === "print" && AppState.idRow) {
+			$(target).find('[name="id_row"]').val(AppState.idRow);
+		}
 		if (AppState.action === "edit") {
 			$(target).prepend(`<input type="hidden" name="id">`);
 		}
@@ -561,6 +570,19 @@ class FormContainerManager {
 	}
 
 	buildConfig(jenis, tbl) {
+		// =====================================================
+		// 🔥 GLOBAL PRINT MODE
+		// Berlaku untuk SEMUA MODULE
+		// Tidak tergantung tata_naskah
+		// =====================================================
+		if (jenis === "print") {
+			return {
+				icon: "print icon",
+				headerTitle: "Pengaturan Cetak Dokumen",
+				elements: UIConfig.global_print,
+				type: "print"
+			};
+		}
 		// ===============================
 		// 🔥 MODE IMPORT XLSX
 		// ===============================
@@ -640,6 +662,37 @@ class FormContainerManager {
 
 	/* --------------------------------------------- */
 	save() {
+		// =====================================================
+		// MODE PRINT → KIRIM KE TCPDF
+		// =====================================================
+		if (AppState.action === "print") {
+			let $formTarget = this.getActiveForm();
+			let formElement = $formTarget[0];
+
+			if (!formElement) return;
+
+			let formData = new FormData(formElement);
+
+			// kirim juga module & table
+			formData.append("module", AppState.module);
+			formData.append("tbl", AppState.tbl);
+			formData.append("action", "print");
+
+			this.ajax.request({
+				url: AppConfig.apiUrl + "print",
+				method: "POST",
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: (res) => {
+					if (res.success && res.url) {
+						window.open(res.url, "_blank");
+					}
+				},
+			});
+
+			return;
+		}
 		// ===============================
 		// 🔥 MODE IMPORT XLSX
 		// ===============================
