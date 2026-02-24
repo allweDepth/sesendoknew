@@ -7,33 +7,32 @@ $(document).ready(function () {
 	const formContainerManager = new FormContainerManager();
 
 	formContainerManager.registerPlugin("tata_naskah.*", ({ container }) => {
+		if (AppState.action !== "add") return;
 
-	if (AppState.action !== "add") return;
+		// Pastikan field nomor ada dulu
+		let $nomor = container.find('[name="nomor"]');
+		if (!$nomor.length) return;
 
-	// Pastikan field nomor ada dulu
-	let $nomor = container.find('[name="nomor"]');
-	if (!$nomor.length) return;
+		// Pastikan klasifikasi sudah dipilih
+		let klasifikasiId = container.find('[name="klasifikasi_id"]').val();
+		if (!klasifikasiId) return;
 
-	// Pastikan klasifikasi sudah dipilih
-	let klasifikasiId = container.find('[name="klasifikasi_id"]').val();
-	if (!klasifikasiId) return;
-
-	$.ajax({
-		url: AppConfig.apiUrl + "tata_naskah/generateNomor",
-		method: "POST",
-		data: { klasifikasi_id: klasifikasiId },
-		dataType: "json"
-	})
-	.done(function (res) {
-		if (res.success && res.data?.nomor) {
-			$nomor.val(res.data.nomor);
-		}
-	})
-	.fail(function () {
-		// Jangan bikin sistem berhenti
-		console.warn("generateNomor gagal, tidak fatal.");
+		$.ajax({
+			url: AppConfig.apiUrl + "tata_naskah/generateNomor",
+			method: "POST",
+			data: { klasifikasi_id: klasifikasiId },
+			dataType: "json",
+		})
+			.done(function (res) {
+				if (res.success && res.data?.nomor) {
+					$nomor.val(res.data.nomor);
+				}
+			})
+			.fail(function () {
+				// Jangan bikin sistem berhenti
+				console.warn("generateNomor gagal, tidak fatal.");
+			});
 	});
-});
 
 	const $context = $("#mainContext");
 	const $sidebarUtama = $(".sidebarutama");
@@ -67,7 +66,9 @@ $(document).ready(function () {
 			WallchatModule.init();
 			PengaturanModule.init(currentPath, tableManager);
 			RenstraModule.init(currentPath, tableManager);
-
+			if (typeof TataNaskahModule !== "undefined") {
+				TataNaskahModule.init(currentPath);
+			}
 			if (window.location.pathname === "/profil") {
 				ProfilModule.load();
 			}

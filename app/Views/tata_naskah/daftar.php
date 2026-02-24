@@ -62,14 +62,3 @@ $totalCol = $totalCol ?? 5;
 
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    AppState.module = "dynamic";
-    AppState.tbl = "<?= $tbl ?>";
-    AppState.action = "default";
-
-    new TableManager().fetch();
-
-});
-</script>
