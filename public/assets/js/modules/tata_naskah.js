@@ -16,7 +16,10 @@ $(document).ready(function () {
 	/* ========================================================
        CLICK KELOMPOK → LOAD JENIS (VIA AjaxEngine)
     ======================================================== */
-	const ajaxJenis = new AjaxEngine("/tata_naskah/load_jenis");
+	// const ajaxJenis = new AjaxEngine("/tata_naskah/load_jenis");
+	const ajaxJenis = new AjaxEngine(
+    AppConfig.apiUrl + "tata_naskah/load_jenis"
+);
 
 	$(document).on("click", ".kelompok-card", function () {
 		let kelompokId = $(this).data("id");

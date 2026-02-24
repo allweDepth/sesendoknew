@@ -7,7 +7,8 @@ class DocumentBuilder {
 
 	render() {
 		if (!this.schema) return;
-
+		// 🔥 CLEAR supaya tidak double
+		this.container.empty();
 		this.schema.sections.forEach((section) => {
 			this.renderSection(section);
 		});
@@ -42,8 +43,7 @@ class DocumentBuilder {
 	}
 
 	buildRow(section, text = "", type = "paragraph") {
-
-	return `
+		return `
 	<tr>
 
 		<td>
@@ -86,27 +86,29 @@ class DocumentBuilder {
 
 	</tr>
 	`;
-}
+	}
 
 	bindEvents() {
-		const self = this;
+    const self = this;
 
-		// ADD ROW
-		this.container.on("click", ".btn-add-row", function () {
-			let section = $(this).data("section");
+    // 🔥 HAPUS EVENT LAMA DULU
+    this.container.off("click", ".btn-add-row");
+    this.container.off("click", ".btn-del-row");
 
-			let row = self.buildRow(section);
+    // ADD ROW
+    this.container.on("click", ".btn-add-row", function () {
 
-			let $tbody = self.container.find(`table[name="${section}"] tbody`);
+        let section = $(this).data("section");
+        let row = self.buildRow(section);
+        let $tbody = self.container.find(`table[name="${section}"] tbody`);
 
-			$tbody.append(row);
+        $tbody.append(row);
+        $tbody.find(".ui.dropdown").dropdown();
+    });
 
-			$tbody.find(".ui.dropdown").dropdown();
-		});
-
-		// DELETE ROW
-		this.container.on("click", ".btn-del-row", function () {
-			$(this).closest("tr").remove();
-		});
-	}
+    // DELETE ROW
+    this.container.on("click", ".btn-del-row", function () {
+        $(this).closest("tr").remove();
+    });
+}
 }
