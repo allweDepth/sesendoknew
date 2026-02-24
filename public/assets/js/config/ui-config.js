@@ -925,363 +925,171 @@ const UIConfig = {
 		],
 	},
 	tata_naskah: {
-		/* ======================================================
-       1️⃣ SK (MENIMBANG, MENGINGAT, MENETAPKAN)
+
+    /* ======================================================
+       📄 1️⃣ DAFTAR NASKAH (DYNAMIC ENGINE)
     ====================================================== */
-		sk: [
-			// =========================
-			// NOMOR & TANGGAL
-			// =========================
-			{
-				tag: "fields",
-				prop: {
-					classGroup: "three",
-					children: [
-						{
-							tag: "field",
-							prop: {
-								label: "Nomor Surat",
-								name: "nomor",
-								classField: "required",
-							},
-						},
-
-						{
-							tag: "fieldCalendar",
-							prop: {
-								label: "Tanggal Surat",
-								name: "tgl_surat_dibuat",
-								calendarType: "date",
-								classField: "required",
-							},
-						},
-
-						{
-							tag: "fieldFile",
-							prop: {
-								label: "File Dokumen",
-								name: "file",
-								accept: ".jpg,.jpeg,.png,.pdf,.docx",
-							},
-						},
-					],
-				},
-			},
-
-			// =========================
-			// TENTANG
-			// =========================
-			{
-				tag: "fieldTextarea",
-				prop: {
-					label: "Tentang",
-					name: "tentang",
-					atribut: 'rows="2"',
-					classField: "required",
-				},
-			},
-
-			// =========================
-			// PEMBERI TUGAS
-			// =========================
-			{
-				tag: "fields",
-				prop: {
-					classGroup: "three",
-					children: [
-						{
-							tag: "fieldDropdown",
-							prop: {
-								label: "Pemberi Tugas",
-								name: "pemberi_tgs",
-								source: "asn", // ← ini penting
-								search: true,
-								clearable: true,
-								classField: "required",
-							},
-						},
-
-						{
-							tag: "field",
-							prop: {
-								label: "Jabatan Pemberi Tugas",
-								name: "jbt_pemberi_tgs",
-								classField: "required",
-							},
-						},
-
-						{
-							tag: "field",
-							prop: {
-								label: "Pangkat Pemberi Tugas",
-								name: "pangkat_pemberi_tgs",
-								classField: "required",
-							},
-						},
-					],
-				},
-			},
-
-			// =========================
-			// ASN DITUGASKAN (DROPDOWN)
-			// =========================
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Nama ASN ditugaskan",
-					name: "asn",
-					source: "asn",
-					search: true,
-					clearable: true,
-				},
-			},
-
-			{
-				tag: "fieldCheckbox",
-				prop: {
-					label: "Lampiran SK bentuk tabel",
-					name: "bentuk_lampiran",
-				},
-			},
-
-			{
-				tag: "fieldTextarea",
-				prop: {
-					label: "Keterangan",
-					name: "keterangan",
-					atribut: 'rows="2"',
-				},
-			},
-
-			{
-				tag: "fieldCheckbox",
-				prop: {
-					label: "Non Aktif",
-					name: "disable",
-				},
-			},
-		],
-
-		/* ======================================================
-       2️⃣ SURAT INTERNAL
-    ====================================================== */
-		surat_internal: [
-			{
-				tag: "field",
-				prop: { label: "Nomor", name: "nomor", atribut: "readonly" },
-			},
-
-			{
-				tag: "fieldCalendar",
-				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
-			},
-
-			{
-				tag: "field",
-				prop: { label: "Kepada", name: "kepada", classField: "required" },
-			},
-
-			{ tag: "field", prop: { label: "Dari", name: "dari" } },
-
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Perihal", name: "perihal", atribut: 'rows="2"' },
-			},
-
-			{ tag: "divider", prop: { label: "ISI NASKAH" } },
-
-			{
-				tag: "fieldTextarea",
-				prop: { label: "", name: "isi", atribut: 'rows="8"' },
-			},
-		],
-
-		/* ======================================================
-       3️⃣ SURAT BEBAS (FREE EDITOR)
-    ====================================================== */
-		surat_bebas: [
-			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
-
-			{
-				tag: "fieldCalendar",
-				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
-			},
-
-			{ tag: "field", prop: { label: "Tujuan", name: "tujuan" } },
-
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Perihal", name: "perihal", atribut: 'rows="2"' },
-			},
-
-			{ tag: "divider", prop: { label: "ISI SURAT" } },
-
-			{
-				tag: "fieldTextarea",
-				prop: { label: "", name: "isi", atribut: 'rows="10"' },
-			},
-		],
-
-		/* ======================================================
-       4️⃣ AKTA / PERJANJIAN / BERITA ACARA
-    ====================================================== */
-		akta: [
-			{ tag: "field", prop: { label: "Nomor Dokumen", name: "nomor" } },
-
-			{
-				tag: "fieldCalendar",
-				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
-			},
-
-			{
-				tag: "fieldTextarea",
-				prop: {
-					label: "Judul / Tentang",
-					name: "tentang",
-					atribut: 'rows="2"',
-				},
-			},
-
-			{ tag: "divider", prop: { label: "PIHAK TERLIBAT" } },
-
-			{
-				tag: "fieldTextarea",
-				prop: {
-					label: "Pihak Pertama",
-					name: "pihak_pertama",
-					atribut: 'rows="2"',
-				},
-			},
-
-			{
-				tag: "fieldTextarea",
-				prop: {
-					label: "Pihak Kedua",
-					name: "pihak_kedua",
-					atribut: 'rows="2"',
-				},
-			},
-
-			{ tag: "divider", prop: { label: "ISI PERJANJIAN" } },
-
-			{
-				tag: "fieldTextarea",
-				prop: { label: "", name: "isi", atribut: 'rows="8"' },
-			},
-		],
-
-		/* ======================================================
-       5️⃣ SURAT KETERANGAN / SERTIFIKAT
-    ====================================================== */
-		surat_keterangan: [
-			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
-
-			{
-				tag: "fieldCalendar",
-				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
-			},
-
-			{
-				tag: "field",
-				prop: {
-					label: "Nama Penerima",
-					name: "nama_penerima",
-					classField: "required",
-				},
-			},
-
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Keterangan", name: "keterangan", atribut: 'rows="4"' },
-			},
-		],
-
-		/* ======================================================
-       6️⃣ LAPORAN / NOTULA
-    ====================================================== */
-		laporan: [
-			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
-
-			{
-				tag: "fieldCalendar",
-				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
-			},
-
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Judul Laporan", name: "judul", atribut: 'rows="2"' },
-			},
-
-			{ tag: "divider", prop: { label: "ISI LAPORAN" } },
-
-			{
-				tag: "fieldTextarea",
-				prop: { label: "", name: "isi", atribut: 'rows="10"' },
-			},
-		],
-
-		/* ======================================================
-       7️⃣ TELAAH STAF
-    ====================================================== */
-		telaah_staf: [
-			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
-
-			{
-				tag: "fieldCalendar",
-				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
-			},
-
-			{
-				tag: "fieldTextarea",
-				prop: {
-					label: "Permasalahan",
-					name: "permasalahan",
-					atribut: 'rows="3"',
-				},
-			},
-
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Analisis", name: "analisis", atribut: 'rows="5"' },
-			},
-
-			{
-				tag: "fieldTextarea",
-				prop: {
-					label: "Rekomendasi",
-					name: "rekomendasi",
-					atribut: 'rows="3"',
-				},
-			},
-		],
-		
-	},
-	daftar: {
-			trx_naskah_dinas: {
-				columns: [
-					{ field: "nomor", label: "Nomor" },
-					{ field: "workflow_status", label: "Status" },
-					{ field: "tgl_insert", label: "Tanggal" },
-				],
-			},
-		},
-		tata_naskah: {
-			trx_naskah_dinas: {
-				columns: [
-					{ field: "nomor", label: "Nomor" },
-					{ field: "workflow_status", label: "Status" },
-					{ field: "tgl_insert", label: "Tanggal" },
-				],
-			},
-			
-		},
-		"tata_naskah/daftar": {
     trx_naskah_dinas: {
+
         columns: [
             { field: "nomor", label: "Nomor" },
             { field: "workflow_status", label: "Status" },
-            { field: "tgl_insert", label: "Tanggal" }
-        ]
-    }
+            { field: "kd_opd", label: "OPD" },
+            { field: "tahun", label: "Tahun" },
+            { field: "tgl_insert", label: "Tanggal Dibuat" }
+        ],
+
+        orderBy: "id DESC",
+
+        searchable: [
+            "nomor",
+            "workflow_status"
+        ],
+
+        actions: {
+            edit: true,
+            delete: true,
+            custom: [
+                {
+                    icon: "print",
+                    color: "blue",
+                    action: "print_naskah",
+                    tooltip: "Cetak"
+                },
+                {
+                    icon: "check",
+                    color: "green",
+                    action: "final_naskah",
+                    tooltip: "Finalisasi"
+                }
+            ]
+        }
+    },
+
+
+    /* ======================================================
+       🧾 2️⃣ SK (Schema Based)
+    ====================================================== */
+    sk: [
+        {
+            tag: "field",
+            prop: {
+                label: "Nomor Surat",
+                name: "nomor",
+                classField: "required"
+            }
+        },
+        {
+            tag: "fieldCalendar",
+            prop: {
+                label: "Tanggal Surat",
+                name: "tgl_surat_dibuat",
+                calendarType: "date",
+                classField: "required"
+            }
+        },
+        {
+            tag: "fieldTextarea",
+            prop: {
+                label: "Tentang",
+                name: "tentang",
+                atribut: 'rows="2"',
+                classField: "required"
+            }
+        },
+        {
+            tag: "fieldDropdown",
+            prop: {
+                label: "Pemberi Tugas",
+                name: "pemberi_tgs",
+                source: "asn",
+                search: true,
+                clearable: true
+            }
+        },
+        {
+            tag: "fieldTextarea",
+            prop: {
+                label: "Keterangan",
+                name: "keterangan",
+                atribut: 'rows="2"'
+            }
+        }
+    ],
+
+
+    /* ======================================================
+       📩 3️⃣ SURAT INTERNAL
+    ====================================================== */
+    surat_internal: [
+        {
+            tag: "field",
+            prop: { label: "Nomor", name: "nomor" }
+        },
+        {
+            tag: "fieldCalendar",
+            prop: { label: "Tanggal", name: "tanggal", calendarType: "date" }
+        },
+        {
+            tag: "field",
+            prop: { label: "Kepada", name: "kepada", classField: "required" }
+        },
+        {
+            tag: "fieldTextarea",
+            prop: { label: "Perihal", name: "perihal", atribut: 'rows="2"' }
+        },
+        {
+            tag: "fieldTextarea",
+            prop: { label: "Isi Surat", name: "isi", atribut: 'rows="6"' }
+        }
+    ],
+
+
+    /* ======================================================
+       📃 4️⃣ SURAT BEBAS
+    ====================================================== */
+    surat_bebas: [
+        {
+            tag: "field",
+            prop: { label: "Nomor", name: "nomor" }
+        },
+        {
+            tag: "fieldCalendar",
+            prop: { label: "Tanggal", name: "tanggal", calendarType: "date" }
+        },
+        {
+            tag: "fieldTextarea",
+            prop: { label: "Isi Surat", name: "isi", atribut: 'rows="8"' }
+        }
+    ],
+
+
+    /* ======================================================
+       📑 5️⃣ TELAAH STAF
+    ====================================================== */
+    telaah_staf: [
+        {
+            tag: "field",
+            prop: { label: "Nomor", name: "nomor" }
+        },
+        {
+            tag: "fieldCalendar",
+            prop: { label: "Tanggal", name: "tanggal", calendarType: "date" }
+        },
+        {
+            tag: "fieldTextarea",
+            prop: { label: "Permasalahan", name: "permasalahan", atribut: 'rows="3"' }
+        },
+        {
+            tag: "fieldTextarea",
+            prop: { label: "Analisis", name: "analisis", atribut: 'rows="5"' }
+        },
+        {
+            tag: "fieldTextarea",
+            prop: { label: "Rekomendasi", name: "rekomendasi", atribut: 'rows="3"' }
+        }
+    ]
+
 },
+
 };
