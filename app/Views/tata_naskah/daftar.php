@@ -53,7 +53,7 @@ $totalCol = $totalCol ?? 5;
       <tfoot>
         <tr>
           <td colspan="100%" class="right aligned">
-            <div name="pagination_<?= $tbl ?>"></div>
+            <div name="pagination_tata_naskah"></div>
           </td>
         </tr>
       </tfoot>

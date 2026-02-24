@@ -149,26 +149,23 @@ class TataNaskahController extends Controller
 
     try {
 
-      // Simpan header umum saja
-      $db->insert("trx_naskah_dinas", [
-        "jenis_id" => $jenisId,
-        "nomor" => $_POST['nomor'] ?? null,
-        "workflow_status" => "draft",
-        "kd_opd" => $_SESSION['user']['kd_opd'],
-        "kd_wilayah" => $_SESSION['user']['kd_wilayah'],
-        "tahun" => $_SESSION['user']['tahun'],
-        "tgl_insert" => date("Y-m-d H:i:s"),
-        "username_insert" => $_SESSION['user']['username']
-      ]);
+      // ==============================
+      // 1️⃣ PREPARE DATA
+      // ==============================
 
+      $header = $this->buildHeaderData($_POST, $jenisId);
+      $payload = $this->extractPayload($_POST);
+
+      // ==============================
+      // 2️⃣ INSERT HEADER
+      // ==============================
+
+      $db->insert("trx_naskah_dinas", $header);
       $naskahId = $db->lastInsertId();
 
-      // 🔥 Gabungkan semua POST kecuali sistem field
-      $payload = $_POST;
-      unset($payload['jenis_id']);
-      unset($payload['module']);
-      unset($payload['action']);
-      unset($payload['tbl']);
+      // ==============================
+      // 3️⃣ INSERT PAYLOAD
+      // ==============================
 
       $db->insert("trx_naskah_struktur", [
         "naskah_id" => $naskahId,
@@ -186,8 +183,86 @@ class TataNaskahController extends Controller
       return;
     } catch (Exception $e) {
       $db->query("ROLLBACK");
-      die($e->getMessage());
+      echo JsonResponse::error($e->getMessage());
     }
+  }
+  private function extractPayload($post)
+  {
+    $systemFields = [
+      'jenis_id',
+      'module',
+      'action',
+      'tbl',
+      'nomor',
+      'klasifikasi_id',
+      'tanggal_surat',
+      'perihal'
+    ];
+
+    $payload = $post;
+
+    foreach ($systemFields as $field) {
+      unset($payload[$field]);
+    }
+
+    return $payload;
+  }
+  private function resolveNomor($post)
+  {
+    $db = DB::getInstance();
+    $tahun = $_SESSION['user']['tahun'];
+
+    // Jika user isi manual → pakai manual
+    if (!empty($post['nomor'])) {
+
+      $nomorUrut = intval(preg_replace('/[^0-9]/', '', $post['nomor']));
+
+      return [
+        "nomor" => $post['nomor'],
+        "nomor_urut" => $nomorUrut
+      ];
+    }
+
+    // AUTO GENERATE
+    $last = $db->query(
+      "SELECT MAX(nomor_urut) as max_nomor 
+         FROM trx_naskah_dinas 
+         WHERE tahun = ?",
+      [$tahun]
+    )->fetch();
+
+    $next = ($last['max_nomor'] ?? 0) + 1;
+
+    $nomorFormat = sprintf("%03d/TN/%s", $next, $tahun);
+
+    return [
+      "nomor" => $nomorFormat,
+      "nomor_urut" => $next
+    ];
+  }
+  private function buildHeaderData($post, $jenisId)
+  {
+    $tahun = $_SESSION['user']['tahun'];
+
+    // 🔥 Nomor bisa auto atau manual
+    $nomorData = $this->resolveNomor($post);
+
+    return [
+      "uuid" => uniqid(),
+      "jenis_id" => $jenisId,
+      "nomor" => $nomorData['nomor'],
+      "nomor_urut" => $nomorData['nomor_urut'],
+      "tahun" => $tahun,
+      "klasifikasi_id" => $post['klasifikasi_id'] ?? null,
+      "tanggal_surat" => $post['tanggal_surat'] ?? null,
+      "perihal" => $post['perihal'] ?? null,
+      "status" => "draft",
+      "workflow_status" => "draft",
+      "kd_wilayah" => $_SESSION['user']['kd_wilayah'],
+      "kd_opd" => $_SESSION['user']['kd_opd'],
+      "tgl_insert" => date("Y-m-d H:i:s"),
+      "username_insert" => $_SESSION['user']['username']
+    ];
   }
   public function cetak($id)
   {
@@ -431,9 +506,9 @@ class TataNaskahController extends Controller
   public function daftar()
   {
     $this->view('tata_naskah/daftar', [
-        'tbl'      => 'trx_naskah_dinas',
-        'jenis'    => 'default',
-        'totalCol' => 5
+      'tbl'      => 'trx_naskah_dinas',
+      'jenis'    => 'default',
+      'totalCol' => 5
     ]);
   }
 }
