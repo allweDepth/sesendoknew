@@ -294,44 +294,67 @@ class TableManager {
 		let moduleConfig = ActionConfig[module]?.[tbl];
 		let defaultConfig = ActionConfig.default;
 
-		let buttons = [];
-
-		if (moduleConfig?.roles?.[role]) {
-			buttons = moduleConfig.roles[role];
-		} else if (defaultConfig?.roles?.[role]) {
-			buttons = defaultConfig.roles[role];
-		}
+		let buttons =
+			moduleConfig?.roles?.[role] ??
+			moduleConfig?.roles?.default ??
+			defaultConfig?.roles?.[role] ??
+			[];
 
 		if (!buttons.length) return "";
 
 		let html = `<div class="ui icon basic mini buttons">`;
 
 		buttons.forEach((btn) => {
-			if (btn === "edit") {
-				html += `
-				<button class="ui button"
-					data-ui="open-form"
-					data-container="flyout"
-					data-jns="edit"
-					data-tbl="${tbl}"
-					data-module="${module}"
-					data-id="${row[AppState.primaryKey]}"> 
-					<i class="edit outline blue icon"></i>
-				</button>`;
+			if (typeof btn === "string") {
+				if (btn === "edit") {
+					html += `
+                    <button class="ui button"
+                        data-ui="open-form"
+                        data-container="flyout"
+                        data-jns="edit"
+                        data-tbl="${tbl}"
+                        data-module="${module}"
+                        data-id="${row[AppState.primaryKey]}">
+                        <i class="edit outline blue icon"></i>
+                    </button>`;
+				}
+
+				if (btn === "delete") {
+					html += `
+                    <button class="ui red button"
+                        data-action="delete"
+                        data-tbl="${tbl}"
+                        data-id="${row[AppState.primaryKey]}">
+                        <i class="trash alternate outline icon"></i>
+                    </button>`;
+				}
 			}
 
-			if (btn === "delete") {
+			if (typeof btn === "object") {
+				let extraAttr = "";
+
+				if (btn.container) {
+					extraAttr += ` data-container="${btn.container}"`;
+				}
+
+				if (btn.ui) {
+					extraAttr += ` data-ui="${btn.ui}"`;
+				}
+
 				html += `
-				<button class="ui red button"
-				data-action="delete"
-					data-tbl="${tbl}"
-					data-id="${row[AppState.primaryKey]}">
-					<i class="trash alternate outline red icon"></i>
-				</button>`;
+        <button class="ui ${btn.color || "grey"} button"
+            data-action="${btn.action}"
+            data-module="${module}"
+            data-tbl="${tbl}"
+            data-id="${row[AppState.primaryKey]}"
+            ${extraAttr}>
+            <i class="${btn.icon || "circle"} icon"></i>
+        </button>`;
 			}
 		});
 
 		html += `</div>`;
+
 		return html;
 	}
 
