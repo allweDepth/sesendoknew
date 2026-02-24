@@ -36,10 +36,10 @@ const TataNaskahModule = {
     // ==========================================
     initDaftar() {
 
-        AppState.module = "dynamic";
+        AppState.module = "tata_naskah";
         AppState.tbl = "trx_naskah_dinas";
         AppState.action = "default";
-        AppState.halaman = 1;
+        // AppState.halaman = 1;
 
         tableManager.fetch();
     },

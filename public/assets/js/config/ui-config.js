@@ -929,43 +929,14 @@ const UIConfig = {
     /* ======================================================
        📄 1️⃣ DAFTAR NASKAH (DYNAMIC ENGINE)
     ====================================================== */
-    trx_naskah_dinas: {
-
-        columns: [
-            { field: "nomor", label: "Nomor" },
-            { field: "workflow_status", label: "Status" },
-            { field: "kd_opd", label: "OPD" },
-            { field: "tahun", label: "Tahun" },
-            { field: "tgl_insert", label: "Tanggal Dibuat" }
-        ],
-
-        orderBy: "id DESC",
-
-        searchable: [
-            "nomor",
-            "workflow_status"
-        ],
-
-        actions: {
-            edit: true,
-            delete: true,
-            custom: [
-                {
-                    icon: "print",
-                    color: "blue",
-                    action: "print_naskah",
-                    tooltip: "Cetak"
-                },
-                {
-                    icon: "check",
-                    color: "green",
-                    action: "final_naskah",
-                    tooltip: "Finalisasi"
-                }
-            ]
-        }
-    },
-
+    
+trx_naskah_dinas: [
+    { tag: "field", prop: { label: "Nomor", name: "nomor" } },
+    { tag: "field", prop: { label: "Status", name: "workflow_status" } },
+    { tag: "field", prop: { label: "OPD", name: "kd_opd" } },
+    { tag: "field", prop: { label: "Tahun", name: "tahun" } },
+    { tag: "field", prop: { label: "Tanggal Dibuat", name: "tgl_insert" } }
+],
 
     /* ======================================================
        🧾 2️⃣ SK (Schema Based)
