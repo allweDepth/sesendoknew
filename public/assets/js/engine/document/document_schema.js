@@ -1,28 +1,18 @@
 const DocumentSchema = {
+
 	sk: {
 		sections: [
-			{
-				key: "menimbang",
-				label: "Menimbang",
-				required: true,
-				multiple: true,
-			},
-			{
-				key: "mengingat",
-				label: "Mengingat",
-				required: true,
-				multiple: true,
-			},
-			{
-				key: "memutuskan",
-				label: "Memutuskan",
-				required: true,
-				multiple: false,
-			},
-		],
+			{ key: "menimbang", label: "MENIMBANG", type: "list" },
+			{ key: "mengingat", label: "MENGINGAT", type: "list" },
+			{ key: "menetapkan", label: "MENETAPKAN", type: "list" },
+			{ key: "tembusan", label: "TEMBUSAN", type: "list" }
+		]
 	},
 
 	surat_internal: {
-		sections: [{ key: "isi", label: "ISI SURAT", type: "textarea" }],
-	},
+		sections: [
+			{ key: "isi", label: "ISI SURAT", type: "textarea" }
+		]
+	}
+
 };

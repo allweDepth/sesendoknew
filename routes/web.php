@@ -98,6 +98,7 @@ return [
 '/tata_naskah/generate_pdf' => ['TataNaskahController', 'generate_pdf'],
 '/tata_naskah/schema' => ['TataNaskahController', 'schema'],
 '/tata_naskah/generateNomor' => ['TataNaskahController', 'generateNomor'],
+'/tata_naskah/simpan' => ['TataNaskahController', 'simpan'],
 // ==============================
 // R E S E T  T A B E L
 // ==============================

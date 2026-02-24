@@ -77,6 +77,7 @@ $(document).ready(function () {
                             data-module="tata_naskah"
                             data-jns="add"
                             data-tbl="${j.kode_form}"
+														 data-jenis-id="${j.id}"
                             data-kelompok="${j.kelompok_kode}"
                             data-kelompok-nama="${j.kelompok_nama}"
                             data-nama="${j.nama}">

@@ -32,13 +32,13 @@ class TataNaskahController extends Controller
     ]);
   }
 
-public function loadJenis()
-{
+  public function loadJenis()
+  {
     $kelompokId = $_POST['kelompok_id'] ?? null;
 
     if (!$kelompokId) {
-        echo JsonResponse::success("Kosong", null, []);
-        return;
+      echo JsonResponse::success("Kosong", null, []);
+      return;
     }
 
     $db = DB::getInstance();
@@ -58,7 +58,7 @@ public function loadJenis()
     ", [$kelompokId])->fetchAll();
 
     echo JsonResponse::success("Data ditemukan", null, $jenis);
-}
+  }
   public function generate_pdf()
   {
     echo json_encode(['status' => 'not_ready']);
@@ -136,22 +136,19 @@ public function loadJenis()
     $db = DB::getInstance();
 
     $jenisId = $_POST['jenis_id'] ?? null;
-    $strukturJson = $_POST['struktur_json'] ?? null;
 
-    if (!$jenisId || !$strukturJson) {
-      return JsonResponse::error("Data tidak lengkap");
+    if (!$jenisId) {
+      return JsonResponse::error("Jenis tidak ditemukan");
     }
 
     $db->query("START TRANSACTION");
 
     try {
 
-      /* ==============================
-           SIMPAN METADATA
-        ============================== */
-
+      // Simpan header umum saja
       $db->insert("trx_naskah_dinas", [
         "jenis_id" => $jenisId,
+        "nomor" => $_POST['nomor'] ?? null,
         "workflow_status" => "draft",
         "kd_opd" => $_SESSION['user']['kd_opd'],
         "kd_wilayah" => $_SESSION['user']['kd_wilayah'],
@@ -162,24 +159,29 @@ public function loadJenis()
 
       $naskahId = $db->lastInsertId();
 
-      /* ==============================
-           SIMPAN STRUKTUR JSON
-        ============================== */
+      // 🔥 Gabungkan semua POST kecuali sistem field
+      $payload = $_POST;
+      unset($payload['jenis_id']);
+      unset($payload['module']);
+      unset($payload['action']);
+      unset($payload['tbl']);
 
       $db->insert("trx_naskah_struktur", [
         "naskah_id" => $naskahId,
-        "struktur_json" => $strukturJson,
+        "struktur_json" => json_encode($payload),
+        "kd_wilayah" => $_SESSION['user']['kd_wilayah'],
+        "kd_opd" => $_SESSION['user']['kd_opd'],
+        "tahun" => $_SESSION['user']['tahun'],
         "tgl_insert" => date("Y-m-d H:i:s"),
-        "username_insert" => $_SESSION['user']['username'] ?? 'system'
+        "username_insert" => $_SESSION['user']['username']
       ]);
 
       $db->query("COMMIT");
 
       return JsonResponse::success("Berhasil disimpan");
     } catch (Exception $e) {
-
       $db->query("ROLLBACK");
-      return JsonResponse::error($e->getMessage());
+      die($e->getMessage());
     }
   }
   public function cetak($id)

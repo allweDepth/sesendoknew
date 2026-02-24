@@ -107,7 +107,15 @@ class FormContainerManager {
 		}
 
 		if (this.$modal.length && !this.$modal.data("module-modal")) {
-			this.$modal.modal({ closable: false });
+			this.$modal.modal({
+				closable: false,
+				allowMultiple: true,
+				autofocus: false,
+				observeChanges: true,
+				onApprove: function () {
+					return false; // 🔥 cegah auto close
+				},
+			});
 		}
 
 		this.bindEvents();
@@ -260,6 +268,12 @@ class FormContainerManager {
 
 		AppState.tbl = tbl;
 		AppState.action = jenisMode;
+		// 🔥 Khusus tata_naskah saja
+		if (AppState.module === "tata_naskah") {
+			AppState.jenisId = $btn.data("jenis-id");
+		} else {
+			AppState.jenisId = null;
+		}
 
 		// ==============================
 		// 🔥 DEBUG
@@ -323,32 +337,34 @@ class FormContainerManager {
 			$("#content_flyout").text(config.headerTitle || config.header);
 		}
 
-		// ===================================================
-		// 🔥 KHUSUS DOCUMENT ENGINE
-		// ===================================================
-		if (config.type === "document") {
-			FormEngine.render(target, config.elements);
-
-			let builder = new DocumentBuilder($(target), AppState.tbl);
-			builder.render();
-
-			// 🔥 JANGAN VALIDASI DENGAN UIConfig RULES
-			// this.initValidation(target);
-
-			this.loadDropdowns(target);
-			this.runPlugins();
-			return;
-		}
-
-		// ===================================================
-		// DEFAULT FORM (CRUD NORMAL)
-		// ===================================================
+		// ===============================
+		// 1️⃣ Render Metadata (UIConfig)
+		// ===============================
 		FormEngine.render(target, config.elements);
-		this.initValidation(target);
-		this.loadDropdowns(target);
 
 		if (AppState.action === "edit") {
 			$(target).prepend(`<input type="hidden" name="id">`);
+		}
+
+		this.initValidation(target);
+		this.loadDropdowns(target);
+
+		// ===============================
+		// 2️⃣ Tambahkan DocumentBuilder
+		// ===============================
+		if (AppState.module === "tata_naskah") {
+			// tambahkan container document
+			$(target).append(`
+            <div class="ui divider"></div>
+            <div id="document-builder-container"></div>
+        `);
+
+			let builder = new DocumentBuilder(
+				$("#document-builder-container"),
+				AppState.tbl,
+			);
+
+			builder.render();
 		}
 
 		this.runPlugins();
@@ -510,24 +526,31 @@ class FormContainerManager {
 				// 🔥 LOAD STRUKTUR JSON UNTUK tata_naskah
 				// ==========================================
 				if (AppState.module === "tata_naskah" && res.data.struktur_json) {
-					let struktur = {};
+					let parsed = {};
 
 					try {
-						struktur = JSON.parse(res.data.struktur_json);
+						parsed = JSON.parse(res.data.struktur_json);
 					} catch (e) {
 						console.error("JSON struktur rusak");
 					}
 
+					let struktur = parsed.sections || parsed; // support versi lama
+
+					let builder = new DocumentBuilder($formTarget, AppState.tbl);
+
 					Object.keys(struktur).forEach((section) => {
+						let $tbody = $formTarget.find(`table[name="${section}"] tbody`);
+
+						$tbody.empty(); // 🔥 WAJIB CLEAR
+
 						struktur[section].forEach((item) => {
-							let text = item.text || "";
-							let type = item.type || "paragraph";
+							let row = builder.buildRow(
+								section,
+								item.text || "",
+								item.type || "paragraph",
+							);
 
-							let builder = new DocumentBuilder($formTarget, AppState.tbl);
-
-							let row = builder.buildRow(section, text, type);
-
-							$formTarget.find(`table[name="${section}"] tbody`).append(row);
+							$tbody.append(row);
 						});
 					});
 
@@ -545,16 +568,6 @@ class FormContainerManager {
 			const isStruktur = jenis === "import_struktur";
 			return {
 				title: isStruktur ? "Import Struktur Nasional" : "Import Data XLSX",
-				fields: [
-					{
-						type: "file",
-						name: "file",
-						accept: ".xlsx",
-					},
-				],
-				extra: {
-					mode: jenis,
-				},
 				icon: "upload icon",
 				header: "Import Excel",
 				elements: [
@@ -578,8 +591,8 @@ class FormContainerManager {
 								{
 									value: "1",
 									text: "1 Baris Header",
-									class: " active selected",
-								}, // @audit
+									class: "active selected",
+								},
 								{ value: "2", text: "2 Baris Header" },
 								{ value: "3", text: "3 Baris Header" },
 								{ value: "4", text: "4 Baris Header" },
@@ -592,38 +605,37 @@ class FormContainerManager {
 		}
 
 		// ===============================
-		// DEFAULT MODE (add/edit/detail)
+		// DEFAULT MODE (NORMAL UIConfig)
 		// ===============================
-		let config = {
+
+		let elements =
+			UIConfig[AppState.module]?.[tbl] || UIConfig[AppState.page]?.[tbl] || [];
+
+		// 🔥 HANYA pakai document engine kalau memang dikonfigurasi
+		if (elements && elements.type === "document") {
+			return {
+				type: "document",
+				icon: "file alternate outline icon",
+				headerTitle: "Dokumen Naskah",
+				elements: elements.elements || [],
+			};
+		}
+
+		return {
 			icon:
 				jenis === "add"
 					? "plus icon"
 					: jenis === "edit"
 						? "edit icon"
 						: "eye icon",
-
 			header:
 				jenis === "add"
 					? "Tambah Data"
 					: jenis === "edit"
 						? "Edit Data"
 						: "Detail Data",
-
-			elements:
-				UIConfig[AppState.module]?.[tbl] ||
-				UIConfig[AppState.page]?.[tbl] ||
-				[],
+			elements: elements,
 		};
-		// 🔥 DETECT DOCUMENT MODULE
-		if (AppState.module === "tata_naskah") {
-			return {
-				type: "document",
-				icon: "file alternate outline icon",
-				headerTitle: "Dokumen Naskah",
-				elements: UIConfig[AppState.module]?.[tbl] || [],
-			};
-		}
-		return config;
 	}
 
 	/* --------------------------------------------- */
@@ -691,9 +703,38 @@ class FormContainerManager {
 		// =====================================
 		// 🔥 KHUSUS tata_naskah → KIRIM STRUKTUR
 		// =====================================
+		// ===============================
+		// 🔥 SAVE KHUSUS TATA_NASKAH
+		// ===============================
+
 		if (AppState.module === "tata_naskah") {
 			let struktur = this.collectDocumentStructure();
+
+			// 🔥 WAJIB TAMBAH INI
+			formData.append("jenis_id", AppState.jenisId);
+
 			formData.append("struktur_json", JSON.stringify(struktur));
+
+			this.ajax.request({
+				url: AppConfig.apiUrl + "tata_naskah/simpan",
+				method: "POST",
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: (res) => {
+					if (res.success) {
+						this.hide(this.activeContainer);
+						new TableManager().fetch();
+					} else {
+						ToastEngine.show({
+							success: false,
+							message: res.message || "Gagal menyimpan",
+						});
+					}
+				},
+			});
+
+			return;
 		}
 
 		formData.append("module", AppState.module);

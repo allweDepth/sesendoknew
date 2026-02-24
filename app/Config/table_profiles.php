@@ -932,7 +932,7 @@ return [
         'primary_key' => 'id', // 🔥 PK konsisten id
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
-        'normalize_space' => ['nama'],//untuk menormalkan spasi berlenih
+        'normalize_space' => ['nama'], //untuk menormalkan spasi berlenih
         // 🔥 Otomatis isi kd_wilayah & peraturan saat INSERT
         'auto_session' => ['kd_wilayah', 'peraturan'],
 
@@ -978,17 +978,16 @@ return [
     ],
 
     /*
-|--------------------------------------------------------------------------
-| BIDANG
-|--------------------------------------------------------------------------
-*/
+        |--------------------------------------------------------------------------
+        | BIDANG
+        |--------------------------------------------------------------------------
+        */
     'bidang' => [
         'table' => 'bidang',
         'primary_key' => 'id',
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
         'auto_session' => ['kd_wilayah', 'peraturan'],
-
         'modes' => [
             'dropdown' => [
                 'select' => ['kode as id', 'nama as uraian'],
@@ -1222,6 +1221,63 @@ return [
                 'searchable' => ['nama'],
                 'order_by' => 'id ASC'
             ]
+        ]
+    ],
+    'sk' => [
+        'table' => 'trx_naskah_dinas',
+        'primary_key' => 'id',
+        // SK hanya untuk user login biasa
+        'allowed_roles' => ['super_admin', 'admin_opd'],
+
+        'soft_lock' => false,
+
+        // ambil otomatis dari session
+        'auto_session' => ['kd_opd', 'kd_wilayah', 'tahun'],
+
+        'modes' => [
+
+            // ==========================
+            // MODE DEFAULT (TABLE VIEW)
+            // ==========================
+            'default' => [
+                'select' => [
+                    'id',
+                    'jenis_id',
+                    'workflow_status',
+                    'tahun',
+                    'tgl_insert'
+                ],
+                'searchable' => [
+                    'workflow_status'
+                ],
+                'order_by' => 'id DESC',
+                'where' => [
+                    'kd_opd' => 'user',
+                    'tahun' => 'user'
+                ]
+            ],
+
+            // ==========================
+            // MODE DROPDOWN (jika perlu)
+            // ==========================
+            'dropdown' => [
+                'select' => [
+                    'id',
+                    'id as uraian'
+                ],
+                'searchable' => ['id'],
+                'order_by' => 'id DESC',
+                'where' => [
+                    'kd_opd' => 'user'
+                ]
+            ]
+        ],
+
+        // ==========================
+        // IMPORT (tidak dipakai)
+        // ==========================
+        'import' => [
+            'enabled' => false
         ]
     ],
 ];
