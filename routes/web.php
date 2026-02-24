@@ -99,6 +99,7 @@ return [
 '/tata_naskah/schema' => ['TataNaskahController', 'schema'],
 '/tata_naskah/generateNomor' => ['TataNaskahController', 'generateNomor'],
 '/tata_naskah/simpan' => ['TataNaskahController', 'simpan'],
+'/tata_naskah/daftar' => ['TataNaskahController', 'daftar'],
 // ==============================
 // R E S E T  T A B E L
 // ==============================

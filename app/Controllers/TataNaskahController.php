@@ -428,4 +428,12 @@ class TataNaskahController extends Controller
 
     return sprintf("%03d/TN/%s", $number, $tahun);
   }
+  public function daftar()
+  {
+    $this->view('tata_naskah/daftar', [
+        'tbl'      => 'trx_naskah_dinas',
+        'jenis'    => 'default',
+        'totalCol' => 5
+    ]);
+  }
 }

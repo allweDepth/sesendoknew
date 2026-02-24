@@ -2,7 +2,18 @@
    MODULE: TATA NASKAH DINAS
    FULLY INTEGRATED WITH MASTER ENGINE (app.js)
 ============================================================ */
+const TataNaskahModule = {
 
+    initDaftar() {
+
+        AppState.module = "dynamic";
+        AppState.tbl = "trx_naskah_dinas";
+        AppState.action = "default";
+
+        new TableManager().fetch();
+    }
+
+};
 $(document).ready(function () {
 	/* ========================================================
        STYLE ICON KELOMPOK

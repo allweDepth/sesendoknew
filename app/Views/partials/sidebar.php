@@ -119,7 +119,7 @@
           <i class="plus icon"></i> Buat Naskah
         </a>
 
-        <a class="item" href="/dynamic?tbl=trx_naskah_dinas">
+        <a class="item" href="/tata_naskah/daftar">
           <i class="file alternate icon"></i> Daftar Naskah
         </a>
 

@@ -1254,5 +1254,34 @@ const UIConfig = {
 				},
 			},
 		],
+		
 	},
+	daftar: {
+			trx_naskah_dinas: {
+				columns: [
+					{ field: "nomor", label: "Nomor" },
+					{ field: "workflow_status", label: "Status" },
+					{ field: "tgl_insert", label: "Tanggal" },
+				],
+			},
+		},
+		tata_naskah: {
+			trx_naskah_dinas: {
+				columns: [
+					{ field: "nomor", label: "Nomor" },
+					{ field: "workflow_status", label: "Status" },
+					{ field: "tgl_insert", label: "Tanggal" },
+				],
+			},
+			
+		},
+		"tata_naskah/daftar": {
+    trx_naskah_dinas: {
+        columns: [
+            { field: "nomor", label: "Nomor" },
+            { field: "workflow_status", label: "Status" },
+            { field: "tgl_insert", label: "Tanggal" }
+        ]
+    }
+},
 };
