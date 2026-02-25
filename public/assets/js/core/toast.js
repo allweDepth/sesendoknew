@@ -16,61 +16,37 @@
 
 class ToastEngine {
 
-	/**
-	 * Method utama untuk menampilkan notifikasi
-	 *
-	 * @param {Object} options
-	 * @param {Boolean} options.success - status berhasil / gagal
-	 * @param {String} options.message - pesan yang ditampilkan
-	 */
-	static show({ success = true, message = "" }) {
+    static show({ success = true, message = "" }) {
 
-		// Jika tidak ada pesan, tidak perlu tampilkan apa pun
-		if (!message) return;
+        if (!message) return;
 
-		/**
-		 * Tentukan warna berdasarkan status
-		 * true  -> hijau
-		 * false -> merah
-		 */
-		let colorClass = success ? "positive" : "negative";
+        let colorClass = success ? "positive" : "negative";
 
-		/**
-		 * Struktur HTML toast menggunakan UI framework
-		 * (tetap mempertahankan struktur lama)
-		 */
-		let html = `
-			<div class="ui ${colorClass} message toast-global">
-				<i class="close icon"></i>
-				<div class="header">
-					${success ? "Berhasil" : "Gagal"}
-				</div>
-				<p>${message}</p>
-			</div>
-		`;
+        let html = `
+            <div class="ui ${colorClass} message toast-global">
+                <i class="close icon"></i>
+                <div class="header">
+                    ${success ? "Berhasil" : "Gagal"}
+                </div>
+                <p>${message}</p>
+            </div>
+        `;
 
-		/**
-		 * Tambahkan ke body
-		 * Tidak diubah agar kompatibel
-		 */
-		$("body").append(html);
+        $("#toastContainer").append(html);
 
-		/**
-		 * Aktifkan tombol close (x)
-		 */
-		$(".toast-global .close")
-			.off("click")
-			.on("click", function () {
-				$(this).closest(".toast-global").remove();
-			});
+        $(".toast-global .close")
+            .off("click")
+            .on("click", function () {
+                $(this).closest(".toast-global").remove();
+            });
 
-		/**
-		 * Auto remove setelah 4 detik
-		 */
-		setTimeout(function () {
-			$(".toast-global").fadeOut(300, function () {
-				$(this).remove();
-			});
-		}, 4000);
-	}
+        setTimeout(function () {
+            $(".toast-global").fadeOut(300, function () {
+                $(this).remove();
+            });
+        }, 4000);
+    }
 }
+
+// 🔥 WAJIB TAMBAH INI
+window.ToastEngine = ToastEngine;
