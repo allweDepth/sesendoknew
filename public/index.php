@@ -10,21 +10,15 @@ $basePath = '';
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
+// Hapus index.php jika ada
 $uri = str_replace('/index.php', '', $uri);
 
+// Normalisasi trailing slash
+$uri = rtrim($uri, '/');
+
+// Jika kosong → jadikan '/'
 if ($uri === '') {
     $uri = '/';
-}
-
-$uri = str_replace($basePath, '', $uri);
-
-if ($uri == '') $uri = '/';
-
-// ===============================
-// HANDLE SPA ?page=...
-// ===============================
-if (isset($_GET['page']) && $_GET['page'] !== '') {
-    $uri = '/' . $_GET['page'];
 }
 
 $route = Router::route($uri);
