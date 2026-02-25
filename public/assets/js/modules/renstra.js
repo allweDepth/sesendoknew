@@ -1,60 +1,74 @@
-const RenstraModule = {
+/**
+ * ============================================================
+ * RENSTRA MODULE
+ * ============================================================
+ */
 
-    init(currentPath, tableManager) {
+class RenstraModule {
 
-        if (currentPath !== "renstra") return;
+    constructor() {
 
-        this.bindTabClick(tableManager);
-        this.initDefault(tableManager);
-    },
+        this.state = window.app.state;
+        this.ajax = window.app.ajax;
 
-    bindTabClick(tableManager) {
+        this.state.setTable("renstra");
 
-        $(document).on("click", "#renstraMenu .item", function (e) {
-            e.preventDefault();
+        this.mainContainer = "#main-content";
 
-            let tbl = $(this).data("tbl");
-
-            // aktifkan menu
-            $("#renstraMenu .item").removeClass("active");
-            $(this).addClass("active");
-
-            // ubah judul
-            $("#judulTabel").text($(this).text().toUpperCase());
-
-            // ubah tombol
-            $("#btnTambah").attr("data-tbl", tbl);
-            $("#btnImport").attr("data-tbl", tbl);
-            $("#btnExport").attr("data-tbl", tbl);
-
-            // sinkronisasi state
-            AppState.tbl = tbl;
-            AppState.currentMenu = tbl;
-
-            tableManager.load("renstra", tbl);
-        });
-    },
-
-    initDefault(tableManager) {
-
-        if (AppState.currentMenu) return;
-
-        let $activeTab = $("#renstraMenu .item.active");
-
-        if (!$activeTab.length) {
-            $activeTab = $("#renstraMenu .item").first();
-            $activeTab.addClass("active");
-        }
-
-        let defaultTbl = $activeTab.data("tbl");
-
-        AppState.tbl = defaultTbl;
-        AppState.currentMenu = defaultTbl;
-
-        $("#btnTambah").attr("data-tbl", defaultTbl);
-        $("#btnImport").attr("data-tbl", defaultTbl);
-        $("#btnExport").attr("data-tbl", defaultTbl);
-
-        tableManager.load("renstra", defaultTbl);
+        this.tableManager = null;
+        this.formEngine = null;
+        this.formContainer = null;
     }
-};
+
+    init() {
+
+        this.renderLayout();
+        this.initEngine();
+    }
+
+    renderLayout() {
+
+        const html = `
+            <div class="ui segment">
+                <h3 class="ui header">Renstra</h3>
+                <div id="table-container"></div>
+                <div id="form-container" style="display:none;"></div>
+            </div>
+        `;
+
+        $(this.mainContainer).html(html);
+    }
+
+    initEngine() {
+
+        this.tableManager = new TableManager({
+            state: this.state,
+            ajax: this.ajax,
+            container: "#table-container"
+        });
+
+        this.formContainer = new FormContainerManager({
+            container: "#form-container"
+        });
+
+        this.formEngine = new FormEngine({
+            state: this.state,
+            ajax: this.ajax,
+            formSelector: "#dynamic-form"
+        });
+
+        this.tableManager.init();
+        this.formContainer.init();
+        this.formEngine.init();
+    }
+
+    destroy() {
+
+        this.tableManager.destroy();
+        this.formEngine.destroy();
+        this.formContainer.destroy();
+
+        $(this.mainContainer).empty();
+    }
+
+}

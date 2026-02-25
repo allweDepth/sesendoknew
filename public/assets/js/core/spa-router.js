@@ -1,108 +1,100 @@
-const SPARouter = (function () {
-	const container = ".content-scroll";
-	let loading = false;
+/**
+ * ======================================================
+ * SPA ROUTER
+ * ======================================================
+ * Bertugas:
+ * - Mengatur perpindahan halaman
+ * - Memanggil module yang sesuai
+ * - Mengontrol lifecycle module
+ */
 
-	function init() {
-		bindLinks();
-		handlePopState();
-	}
+class SpaRouter {
 
-	function bindLinks() {
-		$(document).on("click", "a", function (e) {
-			const href = $(this).attr("href");
+    constructor(state) {
 
-			if (!shouldHandle(href, this)) return;
+        this.state = state;
 
-			e.preventDefault();
-			navigate(href);
-		});
-	}
+        // Module aktif
+        this.currentModule = null;
 
-	function shouldHandle(href, el) {
-    if (!href) return false;
-    if (href.startsWith("#")) return false;
-    if ($(el).attr("target") === "_blank") return false;
-    if ($(el).hasClass("no-spa")) return false;
-    if (href.startsWith("http")) return false;
-// ❗ Jangan SPA kalau ada data-action
-    if ($(el).data("action")) return false;
-    // ❗ Jangan SPA untuk auth
-    if (href.includes("logout") || href.includes("login")) {
-        return false;
     }
 
-    return true;
+    /**
+     * INIT ROUTER
+     */
+    init() {
+
+        console.log("Router initialized.");
+
+    }
+
+    /**
+     * NAVIGATE
+     */
+    navigate(routeName) {
+
+        // Hancurkan module lama jika ada
+        this.destroyCurrentModule();
+
+        // Simpan module ke state
+        this.state.setModule(routeName);
+
+        // Load module sesuai route
+        this.loadModule(routeName);
+
+    }
+
+    /**
+     * LOAD MODULE
+     */
+    loadModule(routeName) {
+
+        switch (routeName) {
+
+            case "tata_naskah":
+                this.currentModule = new TataNaskahModule();
+                break;
+
+            case "pengaturan":
+                this.currentModule = new PengaturanModule();
+                break;
+
+            case "renstra":
+                this.currentModule = new RenstraModule();
+                break;
+
+            case "profil":
+                this.currentModule = new ProfilModule();
+                break;
+
+            case "wallchat":
+                this.currentModule = new WallchatModule();
+                break;
+
+            default:
+                console.warn("Module tidak ditemukan:", routeName);
+                return;
+        }
+
+        this.currentModule.init();
+    }
+
+    /**
+     * DESTROY MODULE LAMA
+     */
+    destroyCurrentModule() {
+
+        switch (typeof this.currentModule?.destroy) {
+
+            case "function":
+                this.currentModule.destroy();
+                break;
+
+            default:
+                break;
+        }
+
+        this.currentModule = null;
+    }
+
 }
-
-	function navigate(url, push = true) {
-		if (loading) return;
-		loading = true;
-
-		showProgress();
-
-		$.ajax({
-			url: url,
-			headers: { "X-Requested-With": "XMLHttpRequest" },
-			success: function (response) {
-				$(container).html(response);
-
-				if (push) history.pushState({}, "", url);
-
-				// 🔥 panggil lifecycle per page
-				if (typeof App !== "undefined") {
-					App.init();
-				}
-			},
-			error: function () {
-				window.location.href = url;
-			},
-			complete: function () {
-				loading = false;
-				hideProgress();
-			},
-		});
-	}
-
-	function handlePopState() {
-		window.onpopstate = function () {
-			navigate(location.pathname, false);
-		};
-	}
-
-	function reInitComponents() {
-		// 🔥 Re-init seluruh aplikasi sesuai lifecycle asli
-		if (typeof App !== "undefined" && typeof App.init === "function") {
-			App.init();
-		}
-	}
-
-	function showProgress() {
-		if (!$("#spa-progress").length) {
-			$("body").append('<div id="spa-progress"></div>');
-		}
-
-		$("#spa-progress").css({
-			position: "fixed",
-			top: 0,
-			left: 0,
-			height: "3px",
-			width: "0%",
-			background: "#2185d0",
-			zIndex: 9999,
-			transition: "width 0.3s ease",
-		});
-
-		setTimeout(() => {
-			$("#spa-progress").css("width", "70%");
-		}, 100);
-	}
-
-	function hideProgress() {
-		$("#spa-progress").css("width", "100%");
-		setTimeout(() => {
-			$("#spa-progress").remove();
-		}, 200);
-	}
-
-	return { init, navigate };
-})();

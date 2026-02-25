@@ -1,36 +1,74 @@
-const PengaturanModule = {
+/**
+ * ============================================================
+ * PENGATURAN MODULE
+ * ============================================================
+ */
 
-    init(currentPath, tableManager) {
+class PengaturanModule {
 
-        // ==============================
-        // INIT DEFAULT PENGATURAN
-        // ==============================
-        if (currentPath === "pengaturan" && !AppState.tbl) {
-            tableManager.load("pengaturan", "periode_rpjmd");
-        }
+    constructor() {
 
-        // ==============================
-        // INIT CALENDAR PENGATURAN
-        // ==============================
-        if (currentPath === "pengaturan") {
+        this.state = window.app.state;
+        this.ajax = window.app.ajax;
 
-            // Pastikan elemen ada sebelum init
-            if ($("#rpjmd_mulai_calendar").length) {
-                $("#rpjmd_mulai_calendar").calendar({
-                    type: "year",
-                    endCalendar: $("#rpjmd_selesai_calendar"),
-                });
-            }
+        this.state.setTable("pengaturan");
 
-            if ($("#rpjmd_selesai_calendar").length) {
-                $("#rpjmd_selesai_calendar").calendar({
-                    type: "year",
-                    startCalendar: $("#rpjmd_mulai_calendar"),
-                });
-            }
+        this.tableManager = null;
+        this.formEngine = null;
+        this.formContainer = null;
 
-        }
-
+        this.mainContainer = "#main-content";
     }
 
-};
+    init() {
+
+        this.renderLayout();
+        this.initEngine();
+    }
+
+    renderLayout() {
+
+        const html = `
+            <div class="ui segment">
+                <h3 class="ui header">Pengaturan</h3>
+                <div id="table-container"></div>
+                <div id="form-container" style="display:none;"></div>
+            </div>
+        `;
+
+        $(this.mainContainer).html(html);
+    }
+
+    initEngine() {
+
+        this.tableManager = new TableManager({
+            state: this.state,
+            ajax: this.ajax,
+            container: "#table-container"
+        });
+
+        this.formContainer = new FormContainerManager({
+            container: "#form-container"
+        });
+
+        this.formEngine = new FormEngine({
+            state: this.state,
+            ajax: this.ajax,
+            formSelector: "#dynamic-form"
+        });
+
+        this.tableManager.init();
+        this.formContainer.init();
+        this.formEngine.init();
+    }
+
+    destroy() {
+
+        this.tableManager.destroy();
+        this.formEngine.destroy();
+        this.formContainer.destroy();
+
+        $(this.mainContainer).empty();
+    }
+
+}

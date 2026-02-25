@@ -1,242 +1,146 @@
-/* ============================================================
-   MODULE: TATA NASKAH DINAS
-   FULLY INTEGRATED WITH MASTER ENGINE (app.js)
-============================================================ */
-const TataNaskahModule = {
-	init(path) {
-		if (!path.startsWith("tata_naskah")) return;
+/**
+ * ============================================================
+ * TATA NASKAH MODULE
+ * ============================================================
+ * Module untuk manajemen tata naskah
+ * Tidak mengatur AJAX langsung
+ * Tidak mengatur DOM langsung selain container utama
+ */
 
-		// ==============================
-		// 1️⃣ DASHBOARD
-		// ==============================
-		if (path === "tata_naskah/dashboard") {
-			this.initDashboard();
-		}
+class TataNaskahModule {
 
-		// ==============================
-		// 2️⃣ DAFTAR (PAKAI DYNAMIC)
-		// ==============================
-		if (path === "tata_naskah/daftar") {
-			this.initDaftar();
-		}
+    constructor() {
 
-		// ==============================
-		// 3️⃣ BUAT (PAKAI SCHEMA)
-		// ==============================
-		if (path === "tata_naskah/buat") {
-			this.initBuat();
-		}
-	},
+        // Ambil state dan ajax dari global App
+        this.state = window.app.state;
+        this.ajax = window.app.ajax;
 
-	// ==========================================
-	// DAFTAR NASKAH → Dynamic Engine
-	// ==========================================
-	initDaftar() {
-		 tableManager.load("tata_naskah", "trx_naskah_dinas");
-	},
+        // Set table aktif default
+        this.state.setTable("tata_naskah");
 
-	// ==========================================
-	// FORM BUAT NASKAH → Schema Engine
-	// ==========================================
-	initBuat() {
-		// Reset state
-		AppState.module = "tata_naskah";
-		AppState.action = "add";
+        // Inisialisasi engine
+        this.tableManager = null;
+        this.formEngine = null;
+        this.formContainer = null;
 
-		// Clear container
-		$("#formContainer").html("");
+        // Container utama
+        this.mainContainer = "#main-content";
+        this.formContainerSelector = "#form-container";
+    }
 
-		// Tunggu user pilih jenis dulu
-		// Schema akan dipanggil setelah klik jenis
+    /**
+     * INIT MODULE
+     */
+    init() {
 
-		$(document).off("click", ".btn-open-naskah");
+        this.renderLayout();
 
-		$(document).on("click", ".btn-open-naskah", function () {
-			let jenisId = $(this).data("jenis-id");
+        this.initEngine();
 
-			if (!jenisId) return;
+        this.bindEvents();
+    }
 
-			$.ajax({
-				url: AppConfig.apiUrl + "tata_naskah/schema",
-				method: "POST",
-				data: { jenis_id: jenisId },
-				dataType: "json",
-				success: function (res) {
-					if (res.error) {
-						Toast.show("error", res.error);
-						return;
-					}
+    /**
+     * RENDER LAYOUT DASAR
+     */
+    renderLayout() {
 
-					if (!res.schema) return;
-
-					// Build form via engine
-					if (window.formContainerManager) {
-						window.formContainerManager.render({
-							schema: res.schema,
-							asn: res.asn || [],
-							klasifikasi: res.klasifikasi || [],
-							nomor_auto: res.nomor_auto || null,
-						});
-					}
-				},
-				error: function () {
-					Toast.show("error", "Gagal memuat schema");
-				},
-			});
-		});
-	},
-
-	// ==========================================
-	// DASHBOARD (Optional)
-	// ==========================================
-	initDashboard() {
-		console.log("Tata Naskah Dashboard Loaded");
-	},
-};
-$(document).ready(function () {
-	/* ========================================================
-       STYLE ICON KELOMPOK
-    ======================================================== */
-	const kelompokStyle = {
-		A: { icon: "sitemap", color: "teal" },
-		B: { icon: "mail", color: "blue" },
-		C: { icon: "shield alternate", color: "purple" },
-	};
-
-	/* ========================================================
-       CLICK KELOMPOK → LOAD JENIS (VIA AjaxEngine)
-    ======================================================== */
-	// const ajaxJenis = new AjaxEngine("/tata_naskah/load_jenis");
-	const ajaxJenis = new AjaxEngine(AppConfig.apiUrl + "tata_naskah/load_jenis");
-
-	$(document).on("click", ".kelompok-card", function () {
-		let kelompokId = $(this).data("id");
-
-		ajaxJenis.request({
-			data: { kelompok_id: kelompokId },
-			success: function (res) {
-				let data;
-
-				// Jika backend return array langsung
-				if (Array.isArray(res)) {
-					data = res;
-				}
-				// Jika backend return format engine
-				else if (res.success && res.data) {
-					data = res.data;
-				}
-
-				if (!data || !data.length) return;
-
-				renderJenis(data);
-			},
-		});
-	});
-
-	/* ========================================================
-       RENDER LIST JENIS
-    ======================================================== */
-	function renderJenis(data) {
-		let grouped = {};
-
-		data.forEach((j) => {
-			if (!grouped[j.sub_kategori]) {
-				grouped[j.sub_kategori] = [];
-			}
-			grouped[j.sub_kategori].push(j);
-		});
-
-		let html = "";
-
-		for (let kategori in grouped) {
-			html += `
-                <div class="ui segment">
-                    <h4 class="ui dividing header">${kategori || "Lainnya"}</h4>
-                    <div class="ui relaxed divided list">
-            `;
-
-			grouped[kategori].forEach((j) => {
-				html += `
-                    <div class="item">
-                        <button 
-                            class="ui fluid basic button btn-open-naskah"
-                            data-ui="open-form"
-                            data-container="modal"
-                            data-module="tata_naskah"
-                            data-jns="add"
-                            data-tbl="${j.kode_form}"
-														 data-jenis-id="${j.id}"
-                            data-kelompok="${j.kelompok_kode}"
-                            data-kelompok-nama="${j.kelompok_nama}"
-                            data-nama="${j.nama}">
-                            ${j.nama}
-                        </button>
-                    </div>
-                `;
-			});
-
-			html += `</div></div>`;
-		}
-
-		$("#jenis-list").html(html);
-		$("#jenis-container").removeClass("hidden");
-	}
-
-	/* ========================================================
-       UPDATE HEADER MODAL SAAT OPEN FORM
-       (TIDAK override engine)
-    ======================================================== */
-	$(document).on("click", ".btn-open-naskah", function () {
-		let namaJenis = $(this).data("nama");
-		let kodeKelompok = $(this).data("kelompok");
-		let namaKelompok = $(this).data("kelompok-nama");
-
-		let style = kelompokStyle[kodeKelompok] || {
-			icon: "file alternate",
-			color: "grey",
-		};
-
-		$("#icon_modal").attr("class", style.color + " " + style.icon + " icon");
-
-		$("#content_modal").html(`
-            ${namaJenis}
-            <div class="ui tiny ${style.color} label" style="margin-left:10px">
-                ${kodeKelompok} — ${namaKelompok}
+        const html = `
+            <div class="ui segment">
+                <h3 class="ui header">Tata Naskah</h3>
+                <button class="ui primary button" id="btn-add">
+                    Tambah Data
+                </button>
+                <div id="table-container"></div>
+                <div id="form-container" style="display:none;"></div>
             </div>
-        `);
-	});
+        `;
 
-	/* ========================================================
-       PLUGIN: STRUCTURED SK (DINAMIS SECTION)
-       DIINTEGRASIKAN KE FormContainerManager
-    ======================================================== */
+        $(this.mainContainer).html(html);
+    }
 
-	if (window.formContainerManager) {
-		window.formContainerManager.registerPlugin(
-			"tata_naskah.sk",
-			function ({ container }) {
-				function addRow(group) {
-					let row = `
-                    <div class="ui fluid action input dynamic-row">
-                        <input type="text" name="${group}[]">
-                        <button type="button"
-                                class="ui red icon button remove-row">
-                            <i class="trash icon"></i>
-                        </button>
-                    </div>
-                `;
+    /**
+     * INIT ENGINE
+     */
+    initEngine() {
 
-					container.find(`.dynamic-${group}`).append(row);
-				}
+        // Table manager
+        this.tableManager = new TableManager({
+            state: this.state,
+            ajax: this.ajax,
+            container: "#table-container"
+        });
 
-				addRow("menimbang");
-				addRow("mengingat");
-				addRow("menetapkan");
+        // Form container
+        this.formContainer = new FormContainerManager({
+            container: this.formContainerSelector
+        });
 
-				container.on("click", ".remove-row", function () {
-					$(this).closest(".dynamic-row").remove();
-				});
-			},
-		);
-	}
-});
+        // Form engine
+        this.formEngine = new FormEngine({
+            state: this.state,
+            ajax: this.ajax,
+            formSelector: "#dynamic-form"
+        });
+
+        // Jalankan semuanya
+        this.tableManager.init();
+        this.formContainer.init();
+        this.formEngine.init();
+    }
+
+    /**
+     * BIND EVENTS
+     */
+    bindEvents() {
+
+        $(document).on("click", "#btn-add", () => {
+
+            this.showAddForm();
+
+        });
+
+        $(document).on("form:success", () => {
+
+            this.tableManager.loadData();
+
+        });
+
+    }
+
+    /**
+     * SHOW FORM TAMBAH
+     */
+    showAddForm() {
+
+        const html = `
+            <form id="dynamic-form" class="ui form">
+                <div class="field">
+                    <label>Judul</label>
+                    <input type="text" name="judul">
+                </div>
+                <button class="ui green button" type="submit">
+                    Simpan
+                </button>
+            </form>
+        `;
+
+        this.formContainer.show(html);
+    }
+
+    /**
+     * DESTROY MODULE
+     */
+    destroy() {
+
+        this.tableManager.destroy();
+        this.formEngine.destroy();
+        this.formContainer.destroy();
+
+        $(document).off("click", "#btn-add");
+        $(document).off("form:success");
+
+        $(this.mainContainer).empty();
+    }
+
+}

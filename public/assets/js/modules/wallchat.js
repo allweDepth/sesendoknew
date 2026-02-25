@@ -1,144 +1,68 @@
-const WallchatModule = {
-	init() {
-		this.bindPost();
-		this.bindComment();
-		this.bindPrivateMessage();
-	},
+/**
+ * ============================================================
+ * WALLCHAT MODULE
+ * ============================================================
+ * Modul khusus tanpa table
+ */
 
-	bindPost() {
-		$(document).on("submit", "#formPost", function (e) {
-			e.preventDefault();
-			$.post(
-				"/wallchat/store",
-				$(this).serialize(),
-				function (res) {
-					if (res.status) location.reload();
-				},
-				"json",
-			);
-		});
-	},
+class WallchatModule {
 
-	bindComment() {
-		$(document).on("submit", ".formComment", function (e) {
-			e.preventDefault();
+    constructor() {
 
-			let parent_id = $(this).data("id");
-			let content = $(this).find('input[name="content"]').val();
+        this.state = window.app.state;
+        this.ajax = window.app.ajax;
 
-			$.post(
-				"/wallchat/comment",
-				{
-					parent_id,
-					content,
-				},
-				function (res) {
-					if (res.status) location.reload();
-				},
-				"json",
-			);
-		});
-	},
+        this.mainContainer = "#main-content";
+    }
 
-	bindPrivateMessage() {
-		$(document).on("click", "#btnPrivateMessage", function () {
-			$("#modalPrivateMessage").modal("show");
-		});
+    init() {
 
-		$(document).on("submit", "#formPrivateMessage", function (e) {
-			e.preventDefault();
+        this.renderLayout();
+        this.bindEvents();
+    }
 
-			$.post(
-				"/wallchat/private",
-				$(this).serialize(),
-				function (res) {
-					if (res.status) {
-						$("#modalPrivateMessage").modal("hide");
-					}
-				},
-				"json",
-			);
-		});
-	},
-};
-/* =========================================
-	   WALLCHAT MODULE (TETAP UTUH)
-	========================================= */
+    renderLayout() {
 
-$(document).on("submit", "#formPost", function (e) {
-	e.preventDefault();
-	$.post(
-		"/wallchat/store",
-		$(this).serialize(),
-		function (res) {
-			if (res.status) location.reload();
-		},
-		"json",
-	);
-});
+        const html = `
+            <div class="ui segment">
+                <h3 class="ui header">Wallchat</h3>
+                <div id="chat-box"></div>
+                <form id="chat-form" class="ui form">
+                    <div class="field">
+                        <input type="text" name="message" placeholder="Ketik pesan...">
+                    </div>
+                    <button class="ui primary button">Kirim</button>
+                </form>
+            </div>
+        `;
 
-$(document).on("submit", ".formComment", function (e) {
-	e.preventDefault();
+        $(this.mainContainer).html(html);
+    }
 
-	let parent_id = $(this).data("id");
-	let content = $(this).find('input[name="content"]').val();
+    bindEvents() {
 
-	$.post(
-		"/wallchat/comment",
-		{
-			parent_id: parent_id,
-			content: content,
-		},
-		function (res) {
-			if (res.status) location.reload();
-		},
-		"json",
-	);
-});
+        $(document).on("submit", "#chat-form", (e) => {
 
-$(document).on("click", "#btnPrivateMessage", function () {
-	$("#modalPrivateMessage").modal("show");
-});
+            e.preventDefault();
 
-$(document).on("submit", "#formPrivateMessage", function (e) {
-	e.preventDefault();
+            const data = $("#chat-form").serialize();
 
-	$.post(
-		"/wallchat/private",
-		$(this).serialize(),
-		function (res) {
-			if (res.status) {
-				$("#modalPrivateMessage").modal("hide");
-				DialogEngine.show({
-					title: "Hapus Data",
-					message: "Data yang dihapus tidak dapat dikembalikan.",
-					icon: "trash alternate outline red",
-					approveText: "Hapus",
-					onApprove: () => {
-						return new Promise((resolve, reject) => {
-							$.post(
-								AppConfig.apiUrl + "dynamic",
-								{
-									module: AppState.module,
-									action: "delete",
-									tbl: tbl,
-									id_row: id,
-								},
-								function (res) {
-									if (res.success) {
-										tableManager.fetch();
-										resolve();
-									} else {
-										reject();
-									}
-								},
-								"json",
-							);
-						});
-					},
-				});
-			}
-		},
-		"json",
-	);
-});
+            this.ajax.request({
+                data: data,
+                success: () => {
+                    $("#chat-form")[0].reset();
+                }
+            });
+
+        });
+
+    }
+
+    destroy() {
+
+        $(document).off("submit", "#chat-form");
+
+        $(this.mainContainer).empty();
+    }
+
+}
