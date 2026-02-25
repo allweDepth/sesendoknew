@@ -34,16 +34,32 @@ class App {
 		}
 	}
 	loadModule(url) {
-		switch (true) {
-			case url.startsWith("/renstra"):
+		// ==============================
+		// NORMALISASI URL
+		// ==============================
+		let page = null;
+
+		// Jika format /?page=renstra
+		if (url.includes("?page=")) {
+			const parsed = new URL(url, window.location.origin);
+			page = parsed.searchParams.get("page");
+		}
+
+		// Jika format /renstra
+		else if (url.startsWith("/")) {
+			page = url.replace("/", "");
+		}
+
+		switch (page) {
+			case "renstra":
 				new RenstraModule().init();
 				break;
 
-			case url.startsWith("/referensi"):
+			case "referensi":
 				new ReferensiModule().init();
 				break;
 
-			case url.startsWith("/kepegawaian"):
+			case "kepegawaian":
 				new KepegawaianModule().init();
 				break;
 
@@ -53,3 +69,7 @@ class App {
 		}
 	}
 }
+// ======================================================
+// GLOBAL SINGLETON (WAJIB ADA SATU SAJA)
+// ======================================================
+window.Ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");

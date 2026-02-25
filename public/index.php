@@ -6,33 +6,36 @@ require_once '../app/Core/Auth.php';
 require_once '../app/Core/Controller.php';
 require_once '../app/Core/Router.php';
 
-// $basePath = '/sesendoknew/public'; // sesuaikan dengan folder kamu
 $basePath = '';
 
-// $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// Hapus index.php dari URI jika ada
 $uri = str_replace('/index.php', '', $uri);
 
-// Jika kosong jadikan '/'
 if ($uri === '') {
     $uri = '/';
 }
+
 $uri = str_replace($basePath, '', $uri);
 
-if($uri == '') $uri = '/';
+if ($uri == '') $uri = '/';
+
+// ===============================
+// HANDLE SPA ?page=...
+// ===============================
+if (isset($_GET['page']) && $_GET['page'] !== '') {
+    $uri = '/' . $_GET['page'];
+}
 
 $route = Router::route($uri);
 
-if($route){
-    require_once "../app/Controllers/".$route[0].".php";
-    $controller=new $route[0];
-    $method=$route[1];
+if ($route) {
+    require_once "../app/Controllers/" . $route[0] . ".php";
+    $controller = new $route[0];
+    $method = $route[1];
     $controller->$method();
-}else{
-    // echo "404 Not Found";
+} else {
     http_response_code(404);
-    require __DIR__.'/../app/Views/errors/404.php';
+    require __DIR__ . '/../app/Views/errors/404.php';
     exit;
 }

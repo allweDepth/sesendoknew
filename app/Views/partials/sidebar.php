@@ -28,19 +28,19 @@
         <i class="dropdown icon"></i> Anggaran
       </div>
       <div class="content">
-        <a class="item" href="/renstra" data-spa="client">
+        <a class="item" href="/?page=renstra" data-spa="client">
           <i class="purple sitemap icon"></i> RENSTRA
         </a>
-        <a class="item" href="/renja" data-spa="client">
+        <a class="item" href="/?page=renja" data-spa="client">
           <i class="violet tag icon"></i> RENJA
         </a>
-        <a class="item" href="/dpa" data-spa="client">
+        <a class="item" href="/?page=dpa" data-spa="client">
           <i class="yellow tags icon"></i> DPA
         </a>
-        <a class="item" href="/renja_perubahan" data-spa="client">
+        <a class="item" href="/?page=renja_perubahan" data-spa="client">
           <i class="orange edit icon"></i> RENJA Perubahan
         </a>
-        <a class="item" href="/dppa" data-spa="client">
+        <a class="item" href="/?page=dppa" data-spa="client">
           <i class="brown folder open icon"></i> DPPA
         </a>
       </div>
@@ -51,43 +51,43 @@
       <i class="file contract icon"></i> Kontrak
     </a>
 
-    <!-- REFERENSI (client) -->
+    <!-- REFERENSI -->
     <div class="ui accordion inverted item">
       <div class="title item">
         <i class="dropdown icon"></i> Referensi
       </div>
       <div class="content">
-        <a class="item" href="/referensi?tbl=urusan" data-spa="client">Urusan</a>
-        <a class="item" href="/referensi?tbl=bidang" data-spa="client">Bidang</a>
-        <a class="item" href="/referensi?tbl=program" data-spa="client">Program</a>
-        <a class="item" href="/referensi?tbl=kegiatan" data-spa="client">Kegiatan</a>
-        <a class="item" href="/referensi?tbl=sub_kegiatan" data-spa="client">Sub Kegiatan</a>
-        <a class="item" href="/referensi?tbl=rekanan" data-spa="client">Rekanan</a>
-        <a class="item" href="/referensi?tbl=satuan" data-spa="client">Satuan</a>
-        <a class="item" href="/referensi?tbl=mapping" data-spa="client">Mapping</a>
-        <a class="item" href="/referensi?tbl=aset" data-spa="client">Neraca</a>
-        <a class="item" href="/referensi?tbl=akun" data-spa="client">Akun</a>
-        <a class="item" href="/referensi?tbl=sumber_dana" data-spa="client">Sumber Dana</a>
-        <a class="item" href="/referensi?tbl=organisasi" data-spa="client">Organisasi</a>
-        <a class="item" href="/referensi?tbl=peraturan" data-spa="client">Peraturan</a>
-        <a class="item" href="/referensi?tbl=wilayah" data-spa="client">Wilayah</a>
+        <a class="item" href="/?page=referensi&tbl=urusan" data-spa="client">Urusan</a>
+        <a class="item" href="/?page=referensi&tbl=bidang" data-spa="client">Bidang</a>
+        <a class="item" href="/?page=referensi&tbl=program" data-spa="client">Program</a>
+        <a class="item" href="/?page=referensi&tbl=kegiatan" data-spa="client">Kegiatan</a>
+        <a class="item" href="/?page=referensi&tbl=sub_kegiatan" data-spa="client">Sub Kegiatan</a>
+        <a class="item" href="/?page=referensi&tbl=rekanan" data-spa="client">Rekanan</a>
+        <a class="item" href="/?page=referensi&tbl=satuan" data-spa="client">Satuan</a>
+        <a class="item" href="/?page=referensi&tbl=mapping" data-spa="client">Mapping</a>
+        <a class="item" href="/?page=referensi&tbl=aset" data-spa="client">Neraca</a>
+        <a class="item" href="/?page=referensi&tbl=akun" data-spa="client">Akun</a>
+        <a class="item" href="/?page=referensi&tbl=sumber_dana" data-spa="client">Sumber Dana</a>
+        <a class="item" href="/?page=referensi&tbl=organisasi" data-spa="client">Organisasi</a>
+        <a class="item" href="/?page=referensi&tbl=peraturan" data-spa="client">Peraturan</a>
+        <a class="item" href="/?page=referensi&tbl=wilayah" data-spa="client">Wilayah</a>
       </div>
     </div>
 
-    <!-- STANDAR HARGA (client) -->
+    <!-- STANDAR HARGA -->
     <div class="ui accordion inverted item">
       <div class="title item">
         <i class="dropdown icon"></i> Standar Harga Satuan
       </div>
       <div class="content">
-        <a class="item" href="/standar_harga?tbl=ssh" data-spa="client">SSH</a>
-        <a class="item" href="/standar_harga?tbl=hspk" data-spa="client">HSPK</a>
-        <a class="item" href="/standar_harga?tbl=asb" data-spa="client">ASB</a>
-        <a class="item" href="/standar_harga?tbl=sbu" data-spa="client">SBU</a>
+        <a class="item" href="/?page=standar_harga&tbl=ssh" data-spa="client">SSH</a>
+        <a class="item" href="/?page=standar_harga&tbl=hspk" data-spa="client">HSPK</a>
+        <a class="item" href="/?page=standar_harga&tbl=asb" data-spa="client">ASB</a>
+        <a class="item" href="/?page=standar_harga&tbl=sbu" data-spa="client">SBU</a>
       </div>
     </div>
 
-    <!-- KEPEGAWAIAN (client) -->
+    <!-- KEPEGAWAIAN -->
     <div class="ui accordion inverted item">
       <div class="title item">
         <i class="dropdown icon"></i>
@@ -95,12 +95,12 @@
         Kepegawaian
       </div>
       <div class="content">
-        <a class="item" href="/kepegawaian?tbl=asn" data-spa="client">Data ASN</a>
-        <a class="item" href="/kepegawaian?tbl=pppk" data-spa="client">PPPK</a>
-        <a class="item" href="/kepegawaian?tbl=riwayat_jabatan" data-spa="client">Riwayat Jabatan</a>
-        <a class="item" href="/kepegawaian?tbl=riwayat_pangkat" data-spa="client">Riwayat Pangkat</a>
-        <a class="item" href="/kepegawaian?tbl=cuti" data-spa="client">Cuti & Izin</a>
-        <a class="item" href="/kepegawaian?tbl=sk_pegawai" data-spa="client">SK Pegawai</a>
+        <a class="item" href="/?page=kepegawaian&tbl=asn" data-spa="client">Data ASN</a>
+        <a class="item" href="/?page=kepegawaian&tbl=pppk" data-spa="client">PPPK</a>
+        <a class="item" href="/?page=kepegawaian&tbl=riwayat_jabatan" data-spa="client">Riwayat Jabatan</a>
+        <a class="item" href="/?page=kepegawaian&tbl=riwayat_pangkat" data-spa="client">Riwayat Pangkat</a>
+        <a class="item" href="/?page=kepegawaian&tbl=cuti" data-spa="client">Cuti & Izin</a>
+        <a class="item" href="/?page=kepegawaian&tbl=sk_pegawai" data-spa="client">SK Pegawai</a>
       </div>
     </div>
 
@@ -112,7 +112,9 @@
       <div class="content">
         <a class="item" href="/tata_naskah/dashboard" data-spa="server">Dashboard</a>
         <a class="item" href="/tata_naskah/buat" data-spa="server">Buat Naskah</a>
-        <a class="item" href="/tata_naskah/daftar" data-spa="client">Daftar Naskah</a>
+        <a class="item" href="/?page=tata_naskah&tbl=daftar" data-spa="client">
+          Daftar Naskah
+        </a>
       </div>
     </div>
 
