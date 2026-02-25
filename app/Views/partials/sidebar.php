@@ -95,15 +95,66 @@
 
     <!-- KEPEGAWAIAN -->
     <div class="ui accordion inverted item">
+
       <div class="title item">
-        <i class="dropdown icon"></i> Kepegawaian
+        <i class="dropdown icon"></i>
+        <i class="users icon"></i>
+        Kepegawaian
       </div>
+
       <div class="content">
-        <a class="item" href="/kepegawaian?tbl=asn"><i class="users icon"></i> ASN</a>
-        <a class="item" href="/kepegawaian?tbl=sk_asn"><i class="file signature icon"></i> Surat Keputusan (SK)</a>
-        <a class="item" href="/kepegawaian?tbl=register_surat"><i class="clipboard list icon"></i> Register Surat</a>
-        <a class="item" href="/kepegawaian?tbl=tata_naskah"><i class="edit icon"></i> Tata Naskah</a>
+
+        <a class="item"
+          href="/kepegawaian/dashboard"
+          data-spa>
+          <i class="chart pie icon"></i>
+          Dashboard
+        </a>
+
+        <a class="item"
+          href="/kepegawaian?tbl=asn"
+          data-spa>
+          <i class="users icon"></i>
+          Data ASN
+        </a>
+
+        <a class="item"
+          href="/kepegawaian?tbl=pppk"
+          data-spa>
+          <i class="user outline icon"></i>
+          PPPK
+        </a>
+
+        <a class="item"
+          href="/kepegawaian?tbl=riwayat_jabatan"
+          data-spa>
+          <i class="briefcase icon"></i>
+          Riwayat Jabatan
+        </a>
+
+        <a class="item"
+          href="/kepegawaian?tbl=riwayat_pangkat"
+          data-spa>
+          <i class="angle up icon"></i>
+          Riwayat Pangkat
+        </a>
+
+        <a class="item"
+          href="/kepegawaian?tbl=cuti"
+          data-spa>
+          <i class="calendar icon"></i>
+          Cuti & Izin
+        </a>
+
+        <a class="item"
+          href="/kepegawaian?tbl=sk_pegawai"
+          data-spa>
+          <i class="file signature icon"></i>
+          SK Pegawai
+        </a>
+
       </div>
+
     </div>
     <!-- TATA NASKAH -->
     <div class="ui accordion inverted item">
