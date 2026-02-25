@@ -75,7 +75,7 @@ const DialogEngine = {
 					},
 
 					onDeny: function () {
-						reject(false);
+						resolve(false);
 					},
 
 					onHidden: function () {
