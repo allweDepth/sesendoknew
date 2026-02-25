@@ -1,62 +1,77 @@
 /* =========================================================
-	 TABLE MANAGER
-	 ---------------------------------------------------------
-	 → Engine utama load & render tabel
-	 → Mengatur:
-			 - Load data
-			 - Render table
-			 - Render pagination
-========================================================= */
+		TABLE MANAGER
+		---------------------------------------------------------
+		TANGGUNG JAWAB:
+		→ Mengelola lifecycle tabel dynamic
+				- Load tabel berdasarkan module & tbl
+				- Fetch data dari backend
+				- Render header
+				- Render body
+				- Render pagination / footer
+		---------------------------------------------------------
+		CATATAN:
+		- Tidak menyentuh Form
+		- Tidak menyentuh Modal
+		- Tidak menyentuh Router
+		- Hanya fokus tabel
+	========================================================= */
 
 class TableManager {
 	constructor() {
-		// -------------------------------------------------
-		// Inisialisasi engine AJAX
-		// Semua request ke backend melalui endpoint dynamic
-		// -------------------------------------------------
+		/* ---------------------------------------------
+				AJAX ENGINE
+				Semua komunikasi backend lewat endpoint dynamic
+			--------------------------------------------- */
 		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
 	}
 
 	/* =====================================================
-	   LOAD TABLE
-	   -----------------------------------------------------
-	   Dipanggil saat klik menu
-	   - Reset halaman jika pindah menu
-	   - Set module & table aktif
-	   - Render header (sekali saja)
-	   - Lakukan fetch data
-	===================================================== */
+			LOAD TABLE
+			-----------------------------------------------------
+			Dipanggil saat:
+			- Klik menu
+			- Tab switching
+			- SPA refresh
+			-----------------------------------------------------
+			Tugas:
+			- Set AppState
+			- Reset halaman jika pindah tabel
+			- Render header
+			- Fetch data
+		===================================================== */
 	load(module, tbl) {
-		// Reset halaman jika user pindah menu
+		// Reset halaman jika user pindah tabel
 		if (AppState.currentMenu !== tbl) {
 			AppState.halaman = 1;
 		}
 
-		// Simpan state aktif
+		// Sinkronisasi state global
 		AppState.module = module;
 		AppState.tbl = tbl;
 		AppState.currentMenu = tbl;
 
-		// Render header tabel
+		// Render ulang header
 		this.renderHeader();
 
-		// Ambil data dari backend
+		// Ambil data
 		this.fetch();
 	}
 
 	/* =====================================================
-	   FETCH DATA
-	   -----------------------------------------------------
-	   Kirim parameter ke backend:
-	   - module
-	   - action (list)
-	   - tbl
-	   - halaman
-	   - rows
-	   - cari
-	===================================================== */
+			FETCH DATA
+			-----------------------------------------------------
+			Kirim parameter:
+			- module
+			- action:list
+			- tbl
+			- halaman
+			- rows
+			- cari
+		===================================================== */
 	fetch() {
-		// Sinkronisasi jumlah row dari dropdown Fomantic
+		/* ---------------------------------------------
+				Sinkronisasi jumlah row dari dropdown
+			--------------------------------------------- */
 		if ($("#countRow").length) {
 			let value = $("#countRow").dropdown("get value");
 			AppState.rows = parseInt(value) || AppState.rows;
@@ -72,26 +87,26 @@ class TableManager {
 				cari: AppState.cari,
 			},
 			success: (res) => {
-				// Validasi response
+				/* -----------------------------------------
+						VALIDASI RESPONSE
+					----------------------------------------- */
 				if (!res || res.success !== true) {
 					console.warn(res?.message || "Response tidak valid");
 					this.renderTable([]);
-					this.renderFooterStatic(); // 🔥 jika gagal → tetap buat footer
+					this.renderFooterStatic();
 					return;
 				}
 
 				let rows = Array.isArray(res.data) ? res.data : [];
 				let meta = res.meta || {};
 
-				// Simpan primary key dari backend
+				// Simpan primary key global
 				AppState.primaryKey = meta.primary_key || "id";
 
-				// Render isi tabel
+				// Render body
 				this.renderTable(rows);
 
-				// 🔥 LOGIC BARU:
-				// Jika data kosong → render footer
-				// Jika ada data → render pagination
+				// Tentukan pagination atau footer kosong
 				if (!rows.length) {
 					this.renderFooterStatic();
 				} else {
@@ -106,17 +121,26 @@ class TableManager {
 	}
 
 	/* =====================================================
-	   RENDER TBODY
-	   -----------------------------------------------------
-	   Mengisi isi tabel berdasarkan data backend
-	===================================================== */
-	renderTable(rows) {
+			HELPER: GET TBODY AKTIF
+			-----------------------------------------------------
+			Menghindari duplikasi fallback selector
+		===================================================== */
+	getActiveTbody() {
 		let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
 
-		// Fallback jika tidak ketemu
+		// fallback universal
 		if (!$tbody.length) {
 			$tbody = $('tbody[name^="tabel_"]').first();
 		}
+
+		return $tbody;
+	}
+
+	/* =====================================================
+			RENDER TABLE BODY
+		===================================================== */
+	renderTable(rows) {
+		const $tbody = this.getActiveTbody();
 
 		if (!$tbody.length) {
 			ToastEngine.show({
@@ -126,46 +150,57 @@ class TableManager {
 			return;
 		}
 
-		let html = "";
-
-		// Jika tidak ada data
+		/* ---------------------------------------------
+				Jika data kosong → tampilkan placeholder
+			--------------------------------------------- */
 		if (!rows.length) {
-			html = `<tr>
-				<td colspan="100%" class="center aligned">
-					<div class="ui placeholder segment">
-				<div class="ui icon header">
-					<i class="inbox icon"></i>
-					Belum ada data tersedia
-				</div>
-				<p>Tambahkan data baru untuk mulai mengisi tabel ini.</p>
-			</div>
-				</td>
-			</tr>`;
-			$tbody.html(html);
+			$tbody.html(`
+					<tr>
+						<td colspan="100%" class="center aligned">
+							<div class="ui placeholder segment">
+								<div class="ui icon header">
+									<i class="inbox icon"></i>
+									Belum ada data tersedia
+								</div>
+								<p>Tambahkan data baru untuk mulai mengisi tabel ini.</p>
+							</div>
+						</td>
+					</tr>
+				`);
+
 			return;
 		}
 
-		// Ambil konfigurasi field dari UIConfig
+		/* ---------------------------------------------
+				Ambil field dari UIConfig
+			--------------------------------------------- */
 		let elements =
 			UIConfig[AppState.module]?.[AppState.tbl] ||
 			UIConfig[AppState.page]?.[AppState.tbl] ||
 			[];
+
 		let fields = elements.filter((e) => e.prop?.name && !e.prop.non_data);
 
-		// Loop setiap baris data
+		/* ---------------------------------------------
+				Generate HTML row
+			--------------------------------------------- */
+		let html = "";
+
 		rows.forEach((row) => {
 			html += "<tr>";
 
-			// Loop setiap kolom field
+			// Kolom data
 			fields.forEach((field) => {
 				let key = field.prop.name;
 				html += `<td>${row[key] ?? ""}</td>`;
 			});
 
 			// Kolom aksi
-			html += `<td class="collapsing">
+			html += `
+					<td class="collapsing">
 						${this.buildActionButtons(row)}
-					</td>`;
+					</td>
+				`;
 
 			html += "</tr>";
 		});
@@ -174,36 +209,29 @@ class TableManager {
 	}
 
 	/* =====================================================
-	   RENDER FOOTER STATIC
-	   -----------------------------------------------------
-	   Digunakan jika tidak ada data
-	   Jumlah kolom disamakan dengan header
-	===================================================== */
+			RENDER FOOTER STATIC
+			-----------------------------------------------------
+			Digunakan saat:
+			- Data kosong
+			- Response gagal
+		===================================================== */
 	renderFooterStatic() {
-		// Ambil table aktif
-		let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
-		if (!$tbody.length) {
-			$tbody = $('tbody[name^="tabel_"]').first();
-		}
+		const $tbody = this.getActiveTbody();
 		if (!$tbody.length) return;
 
-		let $table = $tbody.closest("table");
+		const $table = $tbody.closest("table");
 
-		// 🔥 Hitung kolom dari HEADER (bukan body)
 		let headerCount = $table.find("thead tr:first th").length;
-
 		if (!headerCount) return;
 
 		let tfootHtml = "<tr>";
 
-		// Buat jumlah <td> sesuai jumlah <th>
 		for (let i = 0; i < headerCount; i++) {
-			tfootHtml += `<td></td>`;
+			tfootHtml += "<td></td>";
 		}
 
 		tfootHtml += "</tr>";
 
-		// Jika belum ada tfoot → buat
 		if (!$table.find("tfoot").length) {
 			$table.append("<tfoot></tfoot>");
 		}
@@ -215,10 +243,10 @@ class TableManager {
 	}
 
 	/* =====================================================
-	   RENDER PAGINATION
-	   -----------------------------------------------------
-	   ⚠️ LOGIC ASLI TIDAK DIUBAH
-	===================================================== */
+			RENDER PAGINATION
+			-----------------------------------------------------
+			Tidak mengubah logic asli
+		===================================================== */
 	renderPagination(meta) {
 		let target = `div[name="pagination_${AppState.module}"]`;
 
@@ -239,13 +267,14 @@ class TableManager {
 		let html = `<div class="ui pagination menu">`;
 
 		if (currentPage > 1) {
-			html += `<a class="item" data-page="1">
-				<i class="angle double left chevron icon"></i>
-			</a>`;
-
-			html += `<a class="item" data-page="${currentPage - 1}">
-				<i class="angle left icon"></i>
-			</a>`;
+			html += `
+					<a class="item" data-page="1">
+						<i class="angle double left chevron icon"></i>
+					</a>
+					<a class="item" data-page="${currentPage - 1}">
+						<i class="angle left icon"></i>
+					</a>
+				`;
 		}
 
 		let start = Math.max(1, currentPage - 1);
@@ -257,22 +286,24 @@ class TableManager {
 		}
 
 		if (currentPage < totalPage) {
-			html += `<a class="item" data-page="${currentPage + 1}">
-				<i class="angle right icon"></i>
-			</a>`;
-
-			html += `<a class="item" data-page="${totalPage}">
-				<i class="angle double right chevron icon"></i>
-			</a>`;
+			html += `
+					<a class="item" data-page="${currentPage + 1}">
+						<i class="angle right icon"></i>
+					</a>
+					<a class="item" data-page="${totalPage}">
+						<i class="angle double right chevron icon"></i>
+					</a>
+				`;
 		}
 
-		html += `</div>`;
+		html += "</div>";
 
 		$(target).html(html);
-		// 🔥 Samakan colspan footer dengan jumlah header
-		let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
+
+		// Samakan colspan footer
+		const $tbody = this.getActiveTbody();
 		if ($tbody.length) {
-			let $table = $tbody.closest("table");
+			const $table = $tbody.closest("table");
 			let headerCount = $table.find("thead tr:first th").length;
 
 			if (headerCount) {
@@ -282,10 +313,13 @@ class TableManager {
 	}
 
 	/* =====================================================
-	   BUILD ACTION BUTTONS
-	   -----------------------------------------------------
-	   Menentukan tombol edit/delete sesuai role
-	===================================================== */
+			BUILD ACTION BUTTONS
+			-----------------------------------------------------
+			Menentukan tombol berdasarkan:
+			- Module
+			- Table
+			- Role
+		===================================================== */
 	buildActionButtons(row) {
 		let module = AppState.module;
 		let tbl = AppState.tbl;
@@ -305,31 +339,39 @@ class TableManager {
 		let html = `<div class="ui icon basic mini buttons">`;
 
 		buttons.forEach((btn) => {
+			/* -----------------------------------------
+					String button (edit/delete)
+				----------------------------------------- */
 			if (typeof btn === "string") {
-				if (btn === "edit") {
-					html += `
-                    <button class="ui button"
-                        data-ui="open-form"
-                        data-container="flyout"
-                        data-jns="edit"
-                        data-tbl="${tbl}"
-                        data-module="${module}"
-                        data-id="${row[AppState.primaryKey]}">
-                        <i class="edit outline blue icon"></i>
-                    </button>`;
-				}
+				switch (btn) {
+					case "edit":
+						html += `
+								<button class="ui button"
+									data-ui="open-form"
+									data-container="flyout"
+									data-jns="edit"
+									data-tbl="${tbl}"
+									data-module="${module}"
+									data-id="${row[AppState.primaryKey]}">
+									<i class="edit outline blue icon"></i>
+								</button>`;
+						break;
 
-				if (btn === "delete") {
-					html += `
-                    <button class="ui red button"
-                        data-action="delete"
-                        data-tbl="${tbl}"
-                        data-id="${row[AppState.primaryKey]}">
-                        <i class="trash alternate outline icon"></i>
-                    </button>`;
+					case "delete":
+						html += `
+								<button class="ui red button"
+									data-action="delete"
+									data-tbl="${tbl}"
+									data-id="${row[AppState.primaryKey]}">
+									<i class="trash alternate outline icon"></i>
+								</button>`;
+						break;
 				}
 			}
 
+			/* -----------------------------------------
+					Custom button object
+				----------------------------------------- */
 			if (typeof btn === "object") {
 				let extraAttr = "";
 
@@ -342,42 +384,38 @@ class TableManager {
 				}
 
 				html += `
-        <button class="ui ${btn.color || "grey"} button"
-            data-action="${btn.action}"
-            data-module="${module}"
-            data-tbl="${tbl}"
-            data-id="${row[AppState.primaryKey]}"
-            ${extraAttr}>
-            <i class="${btn.icon || "circle"} icon"></i>
-        </button>`;
+						<button class="ui ${btn.color || "grey"} button"
+							data-action="${btn.action}"
+							data-module="${module}"
+							data-tbl="${tbl}"
+							data-id="${row[AppState.primaryKey]}"
+							${extraAttr}>
+							<i class="${btn.icon || "circle"} icon"></i>
+						</button>`;
 			}
 		});
 
-		html += `</div>`;
+		html += "</div>";
 
 		return html;
 	}
 
 	/* =====================================================
-	   RENDER HEADER
-	   -----------------------------------------------------
-	   Membuat thead berdasarkan UIConfig
-	   Dieksekusi sekali saat load
-	===================================================== */
+			RENDER HEADER
+			-----------------------------------------------------
+			Membuat <thead> berdasarkan UIConfig
+		===================================================== */
 	renderHeader() {
-		let $tbody = $(`tbody[name="tabel_${AppState.tbl}"]`);
-		if (!$tbody.length) {
-			$tbody = $('tbody[name^="tabel_"]').first();
-		}
-
+		const $tbody = this.getActiveTbody();
 		if (!$tbody.length) return;
 
-		let $table = $tbody.closest("table");
+		const $table = $tbody.closest("table");
 
 		let elements =
 			UIConfig[AppState.module]?.[AppState.tbl] ||
 			UIConfig[AppState.page]?.[AppState.tbl] ||
 			[];
+
 		let fields = elements.filter((el) => el.prop?.name && !el.prop.non_data);
 
 		let theadHtml = "<tr>";

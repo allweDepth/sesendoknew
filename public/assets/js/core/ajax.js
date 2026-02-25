@@ -1,66 +1,115 @@
 /* =========================================================
-	 CORE AJAX ENGINE
-	 ---------------------------------------------------------
-	 → Wrapper universal untuk semua AJAX request
-	 → Semua komunikasi backend lewat sini
+   CORE AJAX ENGINE
+   ---------------------------------------------------------
+   → Wrapper universal untuk semua AJAX request
+   → Semua komunikasi backend lewat sini
+   → Auto Toast global (jika res.success ada)
+   ---------------------------------------------------------
+   TIDAK mengubah behavior asli.
 ========================================================= */
 
 class AjaxEngine {
+
 	constructor(url = "") {
 		this.url = url;
 	}
 
-	request({
-		url = this.url,
-		method = AppConfig.defaultMethod,
-		data = {},
-		beforeSend = null,
-		success = null,
-		error = null,
-		complete = null,
-		processData = true,
-		contentType = "application/x-www-form-urlencoded; charset=UTF-8",
-	}) {
+	request(options = {}) {
+
+		const {
+			url = this.url,
+			method = AppConfig.defaultMethod,
+			data = {},
+			beforeSend = null,
+			success = null,
+			error = null,
+			complete = null,
+			processData = true,
+			contentType = "application/x-www-form-urlencoded; charset=UTF-8",
+		} = options;
+
 		return $.ajax({
+
 			type: method,
 			url: url,
 			data: data,
 			dataType: "json",
 			processData: processData,
 			contentType: contentType,
-			beforeSend: function () {
-				if (beforeSend) beforeSend();
+
+			/* --------------------------------------------------
+			   BEFORE SEND
+			-------------------------------------------------- */
+			beforeSend: () => {
+				if (typeof beforeSend === "function") {
+					beforeSend();
+				}
 			},
-			success: function (res) {
-				// 🔥 AUTO TOAST GLOBAL
-				if (res && typeof res.success !== "undefined") {
+
+			/* --------------------------------------------------
+			   SUCCESS HANDLER
+			-------------------------------------------------- */
+			success: (res) => {
+
+				// 🔥 AUTO TOAST GLOBAL (hanya jika res.success ada)
+				if (
+					res &&
+					typeof res.success !== "undefined" &&
+					typeof ToastEngine !== "undefined"
+				) {
 					ToastEngine.show({
 						success: res.success,
 						message: res.message || "",
 					});
 				}
 
-				if (success) success(res);
-			},
-			error: function (xhr) {
-				let response = xhr.responseJSON;
-
-				if (response) {
-					ToastEngine.show({
-						success: false,
-						message: response.message || "Terjadi kesalahan",
-					});
-
-					if (error) error(response);
-				} else {
-					ToastEngine.show({
-						success: false,
-						message: "Server error",
-					});
+				if (typeof success === "function") {
+					success(res);
 				}
 			},
-			complete: function () {
-				if (complete) complete();
+
+			/* --------------------------------------------------
+			   ERROR HANDLER
+			-------------------------------------------------- */
+			error: (xhr) => {
+
+				let response = xhr.responseJSON;
+
+				if (
+					response &&
+					typeof ToastEngine !== "undefined"
+				) {
+					ToastEngine.show({
+						success: false,
+						message:
+							response.message || "Terjadi kesalahan",
+					});
+
+					if (typeof error === "function") {
+						error(response);
+					}
+				} else {
+
+					if (typeof ToastEngine !== "undefined") {
+						ToastEngine.show({
+							success: false,
+							message: "Server error",
+						});
+					}
+
+					if (typeof error === "function") {
+						error(xhr);
+					}
+				}
+			},
+
+			/* --------------------------------------------------
+			   COMPLETE
+			-------------------------------------------------- */
+			complete: () => {
+				if (typeof complete === "function") {
+					complete();
+				}
 			},
 		});
 	}

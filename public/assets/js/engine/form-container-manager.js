@@ -1,9 +1,9 @@
 /* =========================================================
-   FORM CONTAINER MANAGER
-   Bisa tampil di:
-   - Flyout
-   - Modal
-========================================================= */
+		FORM CONTAINER MANAGER
+		Bisa tampil di:
+		- Flyout
+		- Modal
+	========================================================= */
 
 class FormContainerManager {
 	// @note FormContainerManager
@@ -219,10 +219,10 @@ class FormContainerManager {
 
 				res.data.forEach((item) => {
 					menu.append(`
-						<div class="item" data-value="${item.id}">
-							${item.uraian}
-						</div>
-					`);
+							<div class="item" data-value="${item.id}">
+								${item.uraian}
+							</div>
+						`);
 				});
 
 				$dropdown.dropdown("refresh");
@@ -355,9 +355,9 @@ class FormContainerManager {
 		if (AppState.module === "tata_naskah") {
 			// tambahkan container document
 			$(target).append(`
-            <div class="ui divider"></div>
-            <div id="document-builder-container"></div>
-        `);
+							<div class="ui divider"></div>
+							<div id="document-builder-container"></div>
+					`);
 
 			let builder = new DocumentBuilder(
 				$("#document-builder-container"),
@@ -561,182 +561,177 @@ class FormContainerManager {
 	}
 
 	buildConfig(jenis, tbl) {
-		// ===============================
-		// 🔥 MODE IMPORT XLSX
-		// ===============================
-		if (["import_xlsx", "import_struktur"].includes(jenis)) {
-			const isStruktur = jenis === "import_struktur";
-			return {
-				title: isStruktur ? "Import Struktur Nasional" : "Import Data XLSX",
-				icon: "upload icon",
-				header: "Import Excel",
-				elements: [
-					{
-						tag: "fieldFile",
-						prop: {
-							label: "Upload File Excel",
-							name: "file_import",
-							accept: ".xlsx,.xls",
-							classField: "required",
+		switch (jenis) {
+			/* ==========================================
+				IMPORT XLSX / STRUKTUR
+			========================================== */
+			case "import_xlsx":
+			case "import_struktur":
+				const isStruktur = jenis === "import_struktur";
+
+				return {
+					title: isStruktur ? "Import Struktur Nasional" : "Import Data XLSX",
+					icon: "upload icon",
+					header: "Import Excel",
+					elements: [
+						{
+							tag: "fieldFile",
+							prop: {
+								label: "Upload File Excel",
+								name: "file_import",
+								accept: ".xlsx,.xls",
+								classField: "required",
+							},
 						},
-					},
-					{
-						tag: "fieldDropdown",
-						prop: {
-							label: "Jumlah Header",
-							name: "jml_header",
-							classField: "required",
-							options: [
-								{ value: "0", text: "0 Baris Header" },
-								{
-									value: "1",
-									text: "1 Baris Header",
-									class: "active selected",
-								},
-								{ value: "2", text: "2 Baris Header" },
-								{ value: "3", text: "3 Baris Header" },
-								{ value: "4", text: "4 Baris Header" },
-								{ value: "5", text: "5 Baris Header" },
-							],
+						{
+							tag: "fieldDropdown",
+							prop: {
+								label: "Jumlah Header",
+								name: "jml_header",
+								classField: "required",
+								options: [
+									{ value: "0", text: "0 Baris Header" },
+									{
+										value: "1",
+										text: "1 Baris Header",
+										class: "active selected",
+									},
+									{ value: "2", text: "2 Baris Header" },
+									{ value: "3", text: "3 Baris Header" },
+									{ value: "4", text: "4 Baris Header" },
+									{ value: "5", text: "5 Baris Header" },
+								],
+							},
 						},
-					},
-				],
-			};
+					],
+				};
+
+			/* ==========================================
+				DEFAULT (ADD / EDIT / DETAIL)
+			========================================== */
+			default:
+				let elements =
+					UIConfig[AppState.module]?.[tbl] ||
+					UIConfig[AppState.page]?.[tbl] ||
+					[];
+
+				if (elements && elements.type === "document") {
+					return {
+						type: "document",
+						icon: "file alternate outline icon",
+						headerTitle: "Dokumen Naskah",
+						elements: elements.elements || [],
+					};
+				}
+
+				return {
+					icon:
+						jenis === "add"
+							? "plus icon"
+							: jenis === "edit"
+								? "edit icon"
+								: "eye icon",
+					header:
+						jenis === "add"
+							? "Tambah Data"
+							: jenis === "edit"
+								? "Edit Data"
+								: "Detail Data",
+					elements: elements,
+				};
 		}
-
-		// ===============================
-		// DEFAULT MODE (NORMAL UIConfig)
-		// ===============================
-
-		let elements =
-			UIConfig[AppState.module]?.[tbl] || UIConfig[AppState.page]?.[tbl] || [];
-
-		// 🔥 HANYA pakai document engine kalau memang dikonfigurasi
-		if (elements && elements.type === "document") {
-			return {
-				type: "document",
-				icon: "file alternate outline icon",
-				headerTitle: "Dokumen Naskah",
-				elements: elements.elements || [],
-			};
-		}
-
-		return {
-			icon:
-				jenis === "add"
-					? "plus icon"
-					: jenis === "edit"
-						? "edit icon"
-						: "eye icon",
-			header:
-				jenis === "add"
-					? "Tambah Data"
-					: jenis === "edit"
-						? "Edit Data"
-						: "Detail Data",
-			elements: elements,
-		};
 	}
 
 	/* --------------------------------------------- */
 	save() {
-		// ===============================
-		// 🔥 MODE IMPORT XLSX
-		// ===============================
-		if (
-			AppState.action === "import_xlsx" ||
-			AppState.action === "import_struktur"
-		) {
-			let $formTarget = this.getActiveForm();
-			let formElement = $formTarget[0];
-
-			let fileInput = $formTarget.find('[name="file_import"]')[0];
-
-			if (!fileInput || !fileInput.files.length) {
-				alert("File belum dipilih");
-				return;
-			}
-
-			// 🔥 Ambil semua field dari form (termasuk jml_header)
-			let formData = new FormData(formElement);
-
-			// Pastikan file override ke name yang benar
-			formData.set("file", fileInput.files[0]);
-
-			if (AppState.action === "import_struktur") {
-				formData.set("jns", "import_struktur");
-			}
-
-			if (AppState.action === "import_xlsx") {
-				formData.set("tabel", AppState.tbl);
-			}
-
-			this.ajax.request({
-				url: AppConfig.apiUrl + "import",
-				method: "POST",
-				data: formData,
-				processData: false,
-				contentType: false,
-				success: (res) => {
-					if (res.success) {
-						// ❌ jangan tutup modal
-						// this.hide(this.activeContainer);
-						new TableManager().fetch();
-					} else {
-						alert(res.error || "Import gagal");
-					}
-				},
-			});
-
-			return;
-		}
-
-		// ===============================
-		// 🔥 SAVE NORMAL (ADD / EDIT)
-		// ===============================
-		let $formTarget = this.getActiveForm();
-		let formElement = $formTarget[0];
+		const $formTarget = this.getActiveForm();
+		const formElement = $formTarget[0];
 
 		if (!formElement) return;
 
-		let formData = new FormData(formElement);
+		switch (AppState.action) {
+			/* ==========================================
+				IMPORT MODE
+			========================================== */
+			case "import_xlsx":
+			case "import_struktur":
+				this.handleImport($formTarget, formElement);
+				break;
 
-		// =====================================
-		// 🔥 KHUSUS tata_naskah → KIRIM STRUKTUR
-		// =====================================
-		// ===============================
-		// 🔥 SAVE KHUSUS TATA_NASKAH
-		// ===============================
+			/* ==========================================
+				DEFAULT SAVE
+			========================================== */
+			default:
+				if (AppState.module === "tata_naskah") {
+					this.handleTataNaskahSave($formTarget, formElement);
+				} else {
+					this.handleDefaultSave(formElement);
+				}
+		}
+	}
+	handleImport($formTarget, formElement) {
+		const fileInput = $formTarget.find('[name="file_import"]')[0];
 
-		if (AppState.module === "tata_naskah") {
-			let struktur = this.collectDocumentStructure();
-
-			// 🔥 WAJIB TAMBAH INI
-			formData.append("jenis_id", AppState.jenisId);
-
-			formData.append("struktur_json", JSON.stringify(struktur));
-
-			this.ajax.request({
-				url: AppConfig.apiUrl + "tata_naskah/simpan",
-				method: "POST",
-				data: formData,
-				processData: false,
-				contentType: false,
-				success: (res) => {
-					if (res.success) {
-						this.hide(this.activeContainer);
-						new TableManager().fetch();
-					} else {
-						ToastEngine.show({
-							success: false,
-							message: res.message || "Gagal menyimpan",
-						});
-					}
-				},
-			});
-
+		if (!fileInput || !fileInput.files.length) {
+			alert("File belum dipilih");
 			return;
 		}
+
+		let formData = new FormData(formElement);
+		formData.set("file", fileInput.files[0]);
+
+		if (AppState.action === "import_struktur") {
+			formData.set("jns", "import_struktur");
+		}
+
+		if (AppState.action === "import_xlsx") {
+			formData.set("tabel", AppState.tbl);
+		}
+
+		this.ajax.request({
+			url: AppConfig.apiUrl + "import",
+			method: "POST",
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: (res) => {
+				if (res.success) {
+					new TableManager().fetch();
+				} else {
+					alert(res.error || "Import gagal");
+				}
+			},
+		});
+	}
+	handleTataNaskahSave($formTarget, formElement) {
+		let formData = new FormData(formElement);
+
+		let struktur = this.collectDocumentStructure();
+
+		formData.append("jenis_id", AppState.jenisId);
+		formData.append("struktur_json", JSON.stringify(struktur));
+
+		this.ajax.request({
+			url: AppConfig.apiUrl + "tata_naskah/simpan",
+			method: "POST",
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: (res) => {
+				if (res.success) {
+					this.hide(this.activeContainer);
+					new TableManager().fetch();
+				} else {
+					ToastEngine.show({
+						success: false,
+						message: res.message || "Gagal menyimpan",
+					});
+				}
+			},
+		});
+	}
+	handleDefaultSave(formElement) {
+		let formData = new FormData(formElement);
 
 		formData.append("module", AppState.module);
 		formData.append("action", AppState.action);
