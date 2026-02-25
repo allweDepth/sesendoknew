@@ -1,27 +1,49 @@
+/* =========================================================
+   PAGE LOADER (MODULE PATTERN)
+   ---------------------------------------------------------
+   Bertugas menentukan tabel mana yang harus dimuat
+   berdasarkan URL aktif.
+
+   Pola:
+   - Ambil path dari browser
+   - Tentukan module
+   - Tentukan tbl aktif
+   - Panggil tableManager.load()
+
+   Tidak diubah ke class.
+   Tidak mengubah logika.
+========================================================= */
+
 const PageLoader = (function () {
 
-    function loadFromUrl() {
+	function loadFromUrl() {
 
-        const currentPath = window.location.pathname.replace(/^\/+/g, "");
-        AppState.page = currentPath;
+		const currentPath = window.location.pathname.replace(/^\/+/g, "");
 
-        const params = new URLSearchParams(window.location.search);
-        // const moduleConfig = UIConfig[currentPath];
-const segments = currentPath.split("/");
-const moduleName = segments[0];
+		AppState.page = currentPath;
 
-const moduleConfig = UIConfig[moduleName];
-        if (!moduleConfig) return;
+		const params = new URLSearchParams(window.location.search);
 
-        let tbl = params.get("tbl") || Object.keys(moduleConfig)[0];
+		const segments = currentPath.split("/");
 
-        if (!tbl) return;
+		const moduleName = segments[0];
 
-        if (typeof tableManager !== "undefined") {
-            tableManager.load(currentPath, tbl);
-        }
-    }
+		const moduleConfig = UIConfig[moduleName];
 
-    return { loadFromUrl };
+		if (!moduleConfig) return;
+
+		let tbl = params.get("tbl") || Object.keys(moduleConfig)[0];
+
+		if (!tbl) return;
+
+		if (typeof tableManager !== "undefined") {
+			// 🔥 PERBAIKAN DI SINI
+			tableManager.load(moduleName, tbl);
+		}
+	}
+
+	return {
+		loadFromUrl
+	};
 
 })();
