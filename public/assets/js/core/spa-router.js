@@ -1,100 +1,199 @@
 /**
- * ======================================================
- * SPA ROUTER
- * ======================================================
- * Bertugas:
- * - Mengatur perpindahan halaman
- * - Memanggil module yang sesuai
- * - Mengontrol lifecycle module
+ * ============================================================
+ * SPA ROUTER - TRUE HISTORY MODE
+ * ============================================================
+ *
+ * - Menggunakan History API
+ * - Support Back / Forward
+ * - Tanpa reload halaman
  */
 
 class SpaRouter {
+	constructor(state) {
+		this.state = state;
 
-    constructor(state) {
+		this.currentModule = null;
 
-        this.state = state;
+		// Mapping route ke module
+		this.routes = {
+			"/dashboard": null,
+			"/tata-naskah": "tata_naskah",
+			"/pengaturan": "pengaturan",
+			"/renstra": "renstra",
+			"/profil": "profil",
+			"/wallchat": "wallchat",
+		};
+	}
 
-        // Module aktif
-        this.currentModule = null;
+	/**
+	 * ========================================================
+	 * INIT
+	 * ========================================================
+	 */
+	init() {
+		this.bindLinks();
 
-    }
+		this.handleInitialRoute();
 
-    /**
-     * INIT ROUTER
-     */
-    init() {
+		this.bindPopState();
+	}
 
-        console.log("Router initialized.");
+	/**
+	 * ========================================================
+	 * HANDLE INITIAL LOAD
+	 * ========================================================
+	 */
+	handleInitialRoute() {
+		const path = window.location.pathname;
 
-    }
+		this.loadRoute(path);
+	}
 
-    /**
-     * NAVIGATE
-     */
-    navigate(routeName) {
+	/**
+	 * ========================================================
+	 * LINK INTERCEPT
+	 * ========================================================
+	 */
+	bindLinks() {
+		document.addEventListener("click", (e) => {
+			const link = e.target.closest("[data-route]");
 
-        // Hancurkan module lama jika ada
-        this.destroyCurrentModule();
+			switch (true) {
+				case !!link:
+					e.preventDefault();
 
-        // Simpan module ke state
-        this.state.setModule(routeName);
+					const route = link.dataset.route;
 
-        // Load module sesuai route
-        this.loadModule(routeName);
+					this.navigate(route);
 
-    }
+					break;
 
-    /**
-     * LOAD MODULE
-     */
-    loadModule(routeName) {
+				default:
+					break;
+			}
+		});
+	}
 
-        switch (routeName) {
+	/**
+	 * ========================================================
+	 * NAVIGATE
+	 * ========================================================
+	 */
+	navigate(path) {
+		history.pushState({}, "", path);
 
-            case "tata_naskah":
-                this.currentModule = new TataNaskahModule();
-                break;
+		this.loadRoute(path);
+	}
 
-            case "pengaturan":
-                this.currentModule = new PengaturanModule();
-                break;
+	/**
+	 * ========================================================
+	 * POPSTATE (BACK/FORWARD)
+	 * ========================================================
+	 */
+	bindPopState() {
+		window.addEventListener("popstate", () => {
+			this.loadRoute(window.location.pathname);
+		});
+	}
 
-            case "renstra":
-                this.currentModule = new RenstraModule();
-                break;
+	/**
+	 * ========================================================
+	 * LOAD ROUTE
+	 * ========================================================
+	 */
+	loadRoute(path) {
+		this.destroyCurrentModule();
 
-            case "profil":
-                this.currentModule = new ProfilModule();
-                break;
+		const segments = path.split("/").filter(Boolean);
 
-            case "wallchat":
-                this.currentModule = new WallchatModule();
-                break;
+		const base = segments[0] ? "/" + segments[0] : "/dashboard";
 
-            default:
-                console.warn("Module tidak ditemukan:", routeName);
-                return;
-        }
+		switch (base) {
+			case "/renstra":
+				this.currentModule = new RenstraModule();
+				break;
 
-        this.currentModule.init();
-    }
+			case "/pengaturan":
+				this.currentModule = new PengaturanModule();
+				break;
 
-    /**
-     * DESTROY MODULE LAMA
-     */
-    destroyCurrentModule() {
+			case "/profil":
+				this.currentModule = new ProfilModule();
+				break;
 
-        switch (typeof this.currentModule?.destroy) {
+			case "/wallchat":
+				this.currentModule = new WallchatModule();
+				break;
 
-            case "function":
-                this.currentModule.destroy();
-                break;
+			case "/tata-naskah":
+				this.currentModule = new TataNaskahModule(segments[1] || null);
+				break;
 
-            default:
-                break;
-        }
+			case "/kepegawaian":
+				this.currentModule = new KepegawaianModule(segments[1] || null);
+				break;
 
-        this.currentModule = null;
-    }
+			case "/referensi":
+				this.currentModule = new ReferensiModule(segments[1] || null);
+				break;
 
+			case "/dashboard":
+				this.loadDashboard();
+				return;
+
+			default:
+				this.loadNotFound();
+				return;
+		}
+
+		this.state.setModule(base);
+
+		this.currentModule.init();
+	}
+
+	/**
+	 * ========================================================
+	 * DASHBOARD
+	 * ========================================================
+	 */
+	loadDashboard() {
+		document.getElementById("main-content").innerHTML = `
+            <div class="ui segment">
+                <h2 class="ui header">Dashboard</h2>
+                <p>Selamat datang di seSendok.</p>
+            </div>
+        `;
+	}
+
+	/**
+	 * ========================================================
+	 * 404
+	 * ========================================================
+	 */
+	loadNotFound() {
+		document.getElementById("main-content").innerHTML = `
+            <div class="ui negative message">
+                <div class="header">404</div>
+                <p>Halaman tidak ditemukan.</p>
+            </div>
+        `;
+	}
+
+	/**
+	 * ========================================================
+	 * DESTROY MODULE
+	 * ========================================================
+	 */
+	destroyCurrentModule() {
+		switch (typeof this.currentModule?.destroy) {
+			case "function":
+				this.currentModule.destroy();
+				break;
+
+			default:
+				break;
+		}
+
+		this.currentModule = null;
+	}
 }

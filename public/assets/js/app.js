@@ -9,67 +9,53 @@
  */
 
 class App {
+	constructor() {
+		// State global
+		this.state = new AppState();
 
-    constructor() {
+		// Gunakan AjaxEngine asli
+		this.ajax = new AjaxEngine();
 
-        // State global aplikasi
-        this.state = new AppState();
+		// Gunakan SpaRouter
+		this.router = new SpaRouter(this.state);
 
-        // HTTP handler
-        this.ajax = new AjaxService();
+		// Gunakan ToastEngine asli (TIDAK perlu instance)
+		this.toast = ToastEngine;
 
-        // Router SPA
-        this.router = new SpaRouter(this.state);
+		// Gunakan DialogEngine jika ada
+		this.dialog = window.DialogEngine || null;
 
-        // Toast notification
-        this.toast = new Toast();
+		// Gunakan PageLoader jika ada
+		this.loader = window.PageLoader || null;
+	}
 
-        // Dialog controller
-        this.dialog = new Dialog();
+	init() {
+		// Simpan global reference
+		window.app = this;
 
-        // Page Loader
-        this.loader = new PageLoader();
-    }
+		// Init router
+		this.router.init();
 
-    /**
-     * ==================================================
-     * INIT APPLICATION
-     * ==================================================
-     */
-    init() {
+		console.log("App initialized.");
+	}
 
-        // Inisialisasi router
-        this.router.init();
+	/**
+	 * ==================================================
+	 * GLOBAL EVENTS
+	 * ==================================================
+	 */
+	bindGlobalEvents() {
+		// Contoh global click handler
+		document.addEventListener("click", (event) => {
+			switch (true) {
+				case event.target.matches("[data-route]"):
+					event.preventDefault();
+					this.router.navigate(event.target.dataset.route);
+					break;
 
-        // Set event global
-        this.bindGlobalEvents();
-
-        console.log("Application initialized successfully.");
-    }
-
-    /**
-     * ==================================================
-     * GLOBAL EVENTS
-     * ==================================================
-     */
-    bindGlobalEvents() {
-
-        // Contoh global click handler
-        document.addEventListener("click", (event) => {
-
-            switch (true) {
-
-                case event.target.matches("[data-route]"):
-                    event.preventDefault();
-                    this.router.navigate(event.target.dataset.route);
-                    break;
-
-                default:
-                    break;
-            }
-
-        });
-
-    }
-
+				default:
+					break;
+			}
+		});
+	}
 }

@@ -1,19 +1,47 @@
-/**
- * ======================================================
- * APP INIT
- * ======================================================
- * File ini hanya bertugas:
- * - Menunggu DOM siap
- * - Menginisialisasi App
- * - Tidak boleh ada logic bisnis
- */
+document.addEventListener("DOMContentLoaded", function () {
 
-document.addEventListener("DOMContentLoaded", () => {
-
-    // Buat instance aplikasi utama
     const app = new App();
-
-    // Jalankan aplikasi
     app.init();
 
+    // =============================
+    // SIDEBAR INIT SESUAI SISTEM LAMA
+    // =============================
+
+    const $sidebarUtama = $(".sidebarutama");
+
+    $sidebarUtama.sidebar({
+        context: $("#mainContext")
+    });
+
+    $("#toggleSidebar").on("click", function () {
+        $sidebarUtama.sidebar("toggle");
+    });
+
 });
+
+
+/**
+ * ============================================
+ * INIT FOMANTIC UI
+ * ============================================
+ * Semua komponen UI harus diinit ulang
+ */
+function initFomantic() {
+
+    // Sidebar
+    $('.ui.sidebar').sidebar({
+        context: $('#mainContext')
+    });
+
+    // Accordion
+    $('.ui.accordion').accordion();
+
+    // Dropdown
+    $('.ui.dropdown').dropdown();
+
+    // Sticky
+    $('.ui.sticky').sticky({
+        context: '#mainContext'
+    });
+
+}
