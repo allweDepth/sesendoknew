@@ -129,7 +129,15 @@ class TableManager {
 			$(this.tbody).html(`
 				<tr>
 					<td colspan="100%" class="center aligned">
-						Tidak ada data
+						<div class="ui info icon message">
+  <i class="info circle icon"></i>
+  <div class="content">
+    <div class="header">
+      Tidak Ada Data
+    </div>
+    <p>Belum terdapat data pada modul ini.</p>
+  </div>
+</div>
 					</td>
 				</tr>
 			`);
