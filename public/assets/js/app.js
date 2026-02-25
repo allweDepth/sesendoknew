@@ -33,7 +33,25 @@ class App {
 				break;
 		}
 	}
+	loadModule(url) {
+		switch (true) {
+			case url.startsWith("/renstra"):
+				new RenstraModule().init();
+				break;
 
+			case url.startsWith("/referensi"):
+				new ReferensiModule().init();
+				break;
+
+			case url.startsWith("/kepegawaian"):
+				new KepegawaianModule().init();
+				break;
+
+			default:
+				console.warn("Module tidak dikenali:", url);
+				break;
+		}
+	}
 }
 // ======================================================
 // GLOBAL SINGLETON (WAJIB ADA SATU SAJA)

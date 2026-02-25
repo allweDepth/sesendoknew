@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
-    const app = new App();
-    app.init();
+    window.app = new App();
+    window.app.init();
 
     const $sidebarUtama = $(".sidebarutama");
     const $context = $("#mainContext");
