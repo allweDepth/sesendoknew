@@ -1,129 +1,121 @@
 class SpaRouter {
+	constructor() {
+		this.bindLinks();
+		this.bindPopState();
+		this.handleInitialLoad(); // 🔥 refresh masuk sini
+	}
 
-    constructor() {
-        this.bindLinks();
-        this.bindPopState();
-        this.handleInitialLoad(); // 🔥 refresh masuk sini
-    }
+	// ================================
+	// Tentukan mode berdasarkan URL
+	// ================================
+	resolveMode(url) {
+		// Client modules
+		const clientRoutes = ["/renstra", "/referensi", "/kepegawaian"];
 
-    // ================================
-    // Tentukan mode berdasarkan URL
-    // ================================
-    resolveMode(url) {
+		if (clientRoutes.some((route) => url.startsWith(route))) {
+			return "client";
+		}
 
-        // Client modules
-        const clientRoutes = [
-            "/renstra",
-            "/referensi",
-            "/kepegawaian"
-        ];
+		return "server";
+	}
 
-        if (clientRoutes.some(route => url.startsWith(route))) {
-            return "client";
-        }
+	// ================================
+	// INITIAL LOAD (REFRESH)
+	// ================================
+	handleInitialLoad() {
+		const url = window.location.pathname;
+		const mode = this.resolveMode(url);
 
-        return "server";
-    }
+		if (mode === "client") {
+			this.loadClientModule(url);
+		}
+	}
 
-    // ================================
-    // INITIAL LOAD (REFRESH)
-    // ================================
-    handleInitialLoad() {
+	// ================================
+	// CLICK HANDLER
+	// ================================
+	bindLinks() {
+		$(document).on("click", "[data-spa]", (e) => {
+			e.preventDefault();
 
-        const url = window.location.pathname;
-        const mode = this.resolveMode(url);
+			const url = $(e.currentTarget).attr("href");
+			const mode = $(e.currentTarget).data("spa");
 
-        if (mode === "client") {
-            this.loadClientModule(url);
-        }
-    }
+			history.pushState({ mode }, "", url);
 
-    // ================================
-    // CLICK HANDLER
-    // ================================
-    bindLinks() {
+			if (mode === "client") {
+				this.loadClientModule(url);
+			} else {
+				this.loadServerPartial(url);
+			}
+			const $link = $(e.currentTarget);
+			const iconClass = $link.find("i").attr("class");
+			const text = $link.text().trim();
 
-        $(document).on("click", "[data-spa]", (e) => {
+			// update header
+			$("#dynamicHeaderIcon").attr("class", iconClass);
+			$("#dynamicHeaderTitle").text(text);
+		});
+	}
 
-            e.preventDefault();
+	// ================================
+	// CLIENT MODE
+	// ================================
+	loadClientModule(url) {
+		fetch(url, {
+			headers: { "X-Requested-With": "XMLHttpRequest" },
+		})
+			.then((res) => res.text())
+			.then((html) => {
+				$("#main-content").html(html);
 
-            const url = $(e.currentTarget).attr("href");
-            const mode = $(e.currentTarget).data("spa");
+				if (window.app?.loadModule) {
+					window.app.loadModule(url);
+				}
 
-            history.pushState({ mode }, "", url);
+				if (typeof initFomantic === "function") {
+					initFomantic();
+				}
+			});
+	}
 
-            if (mode === "client") {
-                this.loadClientModule(url);
-            } else {
-                this.loadServerPartial(url);
-            }
-        });
-    }
+	// ================================
+	// SERVER MODE
+	// ================================
+	loadServerPartial(url) {
+		fetch(url, {
+			headers: { "X-Requested-With": "XMLHttpRequest" },
+		})
+			.then((res) => res.text())
+			.then((html) => {
+				$("#main-content").html(html);
 
-    // ================================
-    // CLIENT MODE
-    // ================================
-    loadClientModule(url) {
+				if (window.app?.initPage) {
+					window.app.initPage();
+				}
 
-    fetch(url, {
-        headers: { "X-Requested-With": "XMLHttpRequest" }
-    })
-    .then(res => res.text())
-    .then(html => {
+				if (typeof initFomantic === "function") {
+					initFomantic();
+				}
+			})
+			.catch(() => {
+				window.location.href = url;
+			});
+	}
 
-        $("#main-content").html(html);
+	// ================================
+	// BACK / FORWARD
+	// ================================
+	bindPopState() {
+		window.addEventListener("popstate", (event) => {
+			const url = window.location.pathname;
+			const mode = event.state?.mode || this.resolveMode(url);
 
-        if (window.app?.loadModule) {
-            window.app.loadModule(url);
-        }
-
-        if (typeof initFomantic === "function") {
-            initFomantic();
-        }
-    });
-}
-
-    // ================================
-    // SERVER MODE
-    // ================================
-    loadServerPartial(url) {
-
-        fetch(url, {
-            headers: { "X-Requested-With": "XMLHttpRequest" }
-        })
-        .then(res => res.text())
-        .then(html => {
-
-            $("#main-content").html(html);
-
-            if (window.app?.initPage) {
-                window.app.initPage();
-            }
-
-            if (typeof initFomantic === "function") {
-                initFomantic();
-            }
-        })
-        .catch(() => {
-            window.location.href = url;
-        });
-    }
-
-    // ================================
-    // BACK / FORWARD
-    // ================================
-    bindPopState() {
-
-        window.addEventListener("popstate", (event) => {
-
-            const url = window.location.pathname;
-            const mode = event.state?.mode || this.resolveMode(url);
-
-            if (mode === "client") {
-                this.loadClientModule(url);
-            } else {
-                this.loadServerPartial(url);
-            }
-        });
-    }
+			if (mode === "client") {
+				this.loadClientModule(url);
+			} else {
+				this.loadServerPartial(url);
+			}
+		});
+	}
 }

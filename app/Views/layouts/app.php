@@ -127,9 +127,9 @@
 
         <!-- sticky-->
         <div class="ui sticky">
-            <div class="ui icon message dashboard"><i class="home icon"></i>
+            <div class="ui icon message dashboard" id="dynamicHeader"><i class="home icon" id="dynamicHeaderIcon"></i>
                 <div class="content">
-                    <div class="header">DASHBOARD</div>
+                    <div class="header" id="dynamicHeaderTitle">DASHBOARD</div>
                     <div class="pDashboard">seSendok</div>
                 </div>
             </div>
