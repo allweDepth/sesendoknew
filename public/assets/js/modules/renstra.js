@@ -1,74 +1,19 @@
-/**
- * ============================================================
- * RENSTRA MODULE
- * ============================================================
- */
-
-class RenstraModule {
+class RenstraModule extends BaseCrudModule {
 
     constructor() {
-
-        this.state = window.app.state;
-        this.ajax = window.app.ajax;
-
-        this.state.setTable("renstra");
-
-        this.mainContainer = "#main-content";
-
-        this.tableManager = null;
-        this.formEngine = null;
-        this.formContainer = null;
-    }
-
-    init() {
-
-        this.renderLayout();
-        this.initEngine();
-    }
-
-    renderLayout() {
-
-        const html = `
-            <div class="ui segment">
-                <h3 class="ui header">Renstra</h3>
-                <div id="table-container"></div>
-                <div id="form-container" style="display:none;"></div>
-            </div>
-        `;
-
-        $(this.mainContainer).html(html);
-    }
-
-    initEngine() {
-
-        this.tableManager = new TableManager({
-            state: this.state,
-            ajax: this.ajax,
-            container: "#table-container"
+        super({
+            moduleName: "renstra",
+            menuItems: [
+                { label: "Misi", tbl: "misi_renstra_neo" },
+                { label: "Tujuan", tbl: "tujuan_renstra_neo" },
+                { label: "Sasaran", tbl: "sasaran_renstra_neo" },
+                { label: "Indikator Sasaran", tbl: "indikator_sasaran_renstra_neo" },
+                { label: "Program", tbl: "program_renstra_neo" },
+                { label: "Indikator Program", tbl: "indikator_program_renstra_neo" },
+                { label: "Kegiatan", tbl: "kegiatan_renstra_neo" },
+                { label: "Sub Kegiatan", tbl: "sub_kegiatan_renstra_neo" }
+            ]
         });
-
-        this.formContainer = new FormContainerManager({
-            container: "#form-container"
-        });
-
-        this.formEngine = new FormEngine({
-            state: this.state,
-            ajax: this.ajax,
-            formSelector: "#dynamic-form"
-        });
-
-        this.tableManager.init();
-        this.formContainer.init();
-        this.formEngine.init();
-    }
-
-    destroy() {
-
-        this.tableManager.destroy();
-        this.formEngine.destroy();
-        this.formContainer.destroy();
-
-        $(this.mainContainer).empty();
     }
 
 }

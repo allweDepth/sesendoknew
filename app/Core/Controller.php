@@ -10,27 +10,51 @@ class Controller
     }
 
     protected function view($path, $data = [], $layout = 'app')
-    {
+{
+    extract($data);
 
-        extract($data);
+    $basePath = __DIR__ . '/../Views/';
+    $viewPath = $basePath . $path . '.php';
 
-        ob_start();
-        require __DIR__ . '/../Views/' . $path . '.php';
-        $content = ob_get_clean();
+    // 🔎 Jika file tidak ada, coba folder/index.php
+    if (!file_exists($viewPath)) {
+        $viewPath = $basePath . $path . '/index.php';
+    }
 
-        // ✅ JIKA AJAX → kirim hanya content
+    // ❌ Jika tetap tidak ada → 404 elegan
+    if (!file_exists($viewPath)) {
+
+        http_response_code(404);
+
         if ($this->isAjax()) {
-            echo $content;
+            echo '<div class="ui negative message">
+                    <div class="header">404</div>
+                    <p>Halaman tidak ditemukan.</p>
+                  </div>';
             return;
         }
 
-        // ✅ JIKA NORMAL REQUEST → kirim layout
-        if ($layout === 'public') {
-            require __DIR__ . '/../Views/layouts/public.php';
-        } else {
-            require __DIR__ . '/../Views/layouts/app.php';
-        }
+        require $basePath . 'errors/404.php';
+        exit;
     }
+
+    ob_start();
+    require $viewPath;
+    $content = ob_get_clean();
+
+    // ✅ Jika AJAX → hanya kirim content
+    if ($this->isAjax()) {
+        echo $content;
+        return;
+    }
+
+    // ✅ Jika normal request → pakai layout
+    if ($layout === 'public') {
+        require $basePath . 'layouts/public.php';
+    } else {
+        require $basePath . 'layouts/app.php';
+    }
+}
 
     //SETELAH TIDAK DEV PAKAI INI
     /*

@@ -1,199 +1,108 @@
-/**
- * ============================================================
- * SPA ROUTER - TRUE HISTORY MODE
- * ============================================================
- *
- * - Menggunakan History API
- * - Support Back / Forward
- * - Tanpa reload halaman
- */
-
 class SpaRouter {
-	constructor(state) {
-		this.state = state;
 
-		this.currentModule = null;
+    constructor() {
+        this.bindLinks();
+        this.bindPopState();
+    }
 
-		// Mapping route ke module
-		this.routes = {
-			"/dashboard": null,
-			"/tata-naskah": "tata_naskah",
-			"/pengaturan": "pengaturan",
-			"/renstra": "renstra",
-			"/profil": "profil",
-			"/wallchat": "wallchat",
-		};
-	}
+    bindLinks() {
 
-	/**
-	 * ========================================================
-	 * INIT
-	 * ========================================================
-	 */
-	init() {
-		this.bindLinks();
+        $(document).on("click", "[data-spa]", (e) => {
 
-		this.handleInitialRoute();
+            e.preventDefault();
 
-		this.bindPopState();
-	}
+            const url = $(e.currentTarget).attr("href");
+            const mode = $(e.currentTarget).data("spa");
 
-	/**
-	 * ========================================================
-	 * HANDLE INITIAL LOAD
-	 * ========================================================
-	 */
-	handleInitialRoute() {
-		const path = window.location.pathname;
+            history.pushState({ mode }, "", url);
 
-		this.loadRoute(path);
-	}
+            switch (mode) {
 
-	/**
-	 * ========================================================
-	 * LINK INTERCEPT
-	 * ========================================================
-	 */
-	bindLinks() {
-		document.addEventListener("click", (e) => {
-			const link = e.target.closest("[data-route]");
+                case "client":
+                    this.loadClientModule(url);
+                    break;
 
-			switch (true) {
-				case !!link:
-					e.preventDefault();
+                case "server":
+                    this.loadServerPartial(url);
+                    break;
 
-					const route = link.dataset.route;
+                default:
+                    window.location.href = url;
+                    break;
+            }
+        });
+    }
 
-					this.navigate(route);
+    /**
+     * ================================
+     * CLIENT MODE
+     * ================================
+     */
+    loadClientModule(url) {
 
-					break;
+        $("#main-content").empty();
 
-				default:
-					break;
-			}
-		});
-	}
+        if (window.app && typeof window.app.loadModule === "function") {
+            window.app.loadModule(url);
+        }
+    }
 
-	/**
-	 * ========================================================
-	 * NAVIGATE
-	 * ========================================================
-	 */
-	navigate(path) {
-		history.pushState({}, "", path);
+    /**
+     * ================================
+     * SERVER MODE
+     * ================================
+     */
+    loadServerPartial(url) {
 
-		this.loadRoute(path);
-	}
+        fetch(url, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(res => res.text())
+        .then(html => {
 
-	/**
-	 * ========================================================
-	 * POPSTATE (BACK/FORWARD)
-	 * ========================================================
-	 */
-	bindPopState() {
-		window.addEventListener("popstate", () => {
-			this.loadRoute(window.location.pathname);
-		});
-	}
+            $("#main-content").html(html);
 
-	/**
-	 * ========================================================
-	 * LOAD ROUTE
-	 * ========================================================
-	 */
-	loadRoute(path) {
-		this.destroyCurrentModule();
+            if (window.app && typeof window.app.initPage === "function") {
+                window.app.initPage();
+            }
 
-		const segments = path.split("/").filter(Boolean);
+            if (typeof initFomantic === "function") {
+                initFomantic();
+            }
+        })
+        .catch(() => {
+            window.location.href = url;
+        });
+    }
 
-		const base = segments[0] ? "/" + segments[0] : "/dashboard";
+    /**
+     * ================================
+     * BACK / FORWARD
+     * ================================
+     */
+    bindPopState() {
 
-		switch (base) {
-			case "/renstra":
-				this.currentModule = new RenstraModule();
-				break;
+        window.addEventListener("popstate", (event) => {
 
-			case "/pengaturan":
-				this.currentModule = new PengaturanModule();
-				break;
+            const url = window.location.pathname + window.location.search;
+            const mode = event.state?.mode;
 
-			case "/profil":
-				this.currentModule = new ProfilModule();
-				break;
+            switch (mode) {
 
-			case "/wallchat":
-				this.currentModule = new WallchatModule();
-				break;
+                case "client":
+                    this.loadClientModule(url);
+                    break;
 
-			case "/tata-naskah":
-				this.currentModule = new TataNaskahModule(segments[1] || null);
-				break;
+                case "server":
+                    this.loadServerPartial(url);
+                    break;
 
-			case "/kepegawaian":
-				this.currentModule = new KepegawaianModule(segments[1] || null);
-				break;
-
-			case "/referensi":
-				this.currentModule = new ReferensiModule(segments[1] || null);
-				break;
-
-			case "/dashboard":
-				this.loadDashboard();
-				return;
-
-			default:
-				this.loadNotFound();
-				return;
-		}
-
-		this.state.setModule(base);
-
-		this.currentModule.init();
-	}
-
-	/**
-	 * ========================================================
-	 * DASHBOARD
-	 * ========================================================
-	 */
-	loadDashboard() {
-		document.getElementById("main-content").innerHTML = `
-            <div class="ui segment">
-                <h2 class="ui header">Dashboard</h2>
-                <p>Selamat datang di seSendok.</p>
-            </div>
-        `;
-	}
-
-	/**
-	 * ========================================================
-	 * 404
-	 * ========================================================
-	 */
-	loadNotFound() {
-		document.getElementById("main-content").innerHTML = `
-            <div class="ui negative message">
-                <div class="header">404</div>
-                <p>Halaman tidak ditemukan.</p>
-            </div>
-        `;
-	}
-
-	/**
-	 * ========================================================
-	 * DESTROY MODULE
-	 * ========================================================
-	 */
-	destroyCurrentModule() {
-		switch (typeof this.currentModule?.destroy) {
-			case "function":
-				this.currentModule.destroy();
-				break;
-
-			default:
-				break;
-		}
-
-		this.currentModule = null;
-	}
+                default:
+                    window.location.reload();
+                    break;
+            }
+        });
+    }
 }

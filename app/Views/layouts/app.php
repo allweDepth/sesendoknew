@@ -135,7 +135,9 @@
             </div>
         </div>
         <div class="content-scroll">
-            <?= $content ?>
+            <div id="main-content">
+                <?= $content ?>
+            </div>
         </div>
 
     </div>
@@ -166,7 +168,12 @@
     <script src="/assets/js/engine/form-container-manager.js"></script>
 
     <!-- ================= MODULES ================= -->
+    <script src="/assets/js/modules/base-crud-module.js"></script>
+
     <script src="/assets/js/modules/renstra.js"></script>
+    <script src="/assets/js/modules/referensi.js"></script>
+    <script src="/assets/js/modules/kepegawaian.js"></script>
+    <script src="/assets/js/modules/standar-harga.js"></script>
     <script src="/assets/js/modules/pengaturan.js"></script>
     <script src="/assets/js/modules/wallchat.js"></script>
     <script src="/assets/js/modules/profil.js"></script>

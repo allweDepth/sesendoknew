@@ -1,47 +1,23 @@
-document.addEventListener("DOMContentLoaded", function () {
+// INIT APP LANGSUNG TANPA DOMContentLoaded
 
-    const app = new App();
-    app.init();
+const app = new App();
+app.init();
 
-    // =============================
-    // SIDEBAR INIT SESUAI SISTEM LAMA
-    // =============================
+// INIT FOMANTIC UI
+const $sidebarUtama = $(".sidebarutama");
+const $context = $("#mainContext");
 
-    const $sidebarUtama = $(".sidebarutama");
-
-    $sidebarUtama.sidebar({
-        context: $("#mainContext")
-    });
-
-    $("#toggleSidebar").on("click", function () {
-        $sidebarUtama.sidebar("toggle");
-    });
-
+$sidebarUtama.sidebar({
+	context: $context,
+	transition: "push"
 });
 
+$("#toggleSidebar").on("click", function () {
+	$sidebarUtama.sidebar("toggle");
+});
 
-/**
- * ============================================
- * INIT FOMANTIC UI
- * ============================================
- * Semua komponen UI harus diinit ulang
- */
-function initFomantic() {
-
-    // Sidebar
-    $('.ui.sidebar').sidebar({
-        context: $('#mainContext')
-    });
-
-    // Accordion
-    $('.ui.accordion').accordion();
-
-    // Dropdown
-    $('.ui.dropdown').dropdown();
-
-    // Sticky
-    $('.ui.sticky').sticky({
-        context: '#mainContext'
-    });
-
-}
+$('.ui.accordion').accordion();
+$('.ui.dropdown').dropdown();
+$('.ui.sticky').sticky({
+	context: $context
+});
