@@ -3,8 +3,44 @@ class SpaRouter {
     constructor() {
         this.bindLinks();
         this.bindPopState();
+        this.handleInitialLoad(); // 🔥 refresh masuk sini
     }
 
+    // ================================
+    // Tentukan mode berdasarkan URL
+    // ================================
+    resolveMode(url) {
+
+        // Client modules
+        const clientRoutes = [
+            "/renstra",
+            "/referensi",
+            "/kepegawaian"
+        ];
+
+        if (clientRoutes.some(route => url.startsWith(route))) {
+            return "client";
+        }
+
+        return "server";
+    }
+
+    // ================================
+    // INITIAL LOAD (REFRESH)
+    // ================================
+    handleInitialLoad() {
+
+        const url = window.location.pathname;
+        const mode = this.resolveMode(url);
+
+        if (mode === "client") {
+            this.loadClientModule(url);
+        }
+    }
+
+    // ================================
+    // CLICK HANDLER
+    // ================================
     bindLinks() {
 
         $(document).on("click", "[data-spa]", (e) => {
@@ -16,55 +52,51 @@ class SpaRouter {
 
             history.pushState({ mode }, "", url);
 
-            switch (mode) {
-
-                case "client":
-                    this.loadClientModule(url);
-                    break;
-
-                case "server":
-                    this.loadServerPartial(url);
-                    break;
-
-                default:
-                    window.location.href = url;
-                    break;
+            if (mode === "client") {
+                this.loadClientModule(url);
+            } else {
+                this.loadServerPartial(url);
             }
         });
     }
 
-    /**
-     * ================================
-     * CLIENT MODE
-     * ================================
-     */
+    // ================================
+    // CLIENT MODE
+    // ================================
     loadClientModule(url) {
 
-        $("#main-content").empty();
+    fetch(url, {
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+    })
+    .then(res => res.text())
+    .then(html => {
 
-        if (window.app && typeof window.app.loadModule === "function") {
+        $("#main-content").html(html);
+
+        if (window.app?.loadModule) {
             window.app.loadModule(url);
         }
-    }
 
-    /**
-     * ================================
-     * SERVER MODE
-     * ================================
-     */
+        if (typeof initFomantic === "function") {
+            initFomantic();
+        }
+    });
+}
+
+    // ================================
+    // SERVER MODE
+    // ================================
     loadServerPartial(url) {
 
         fetch(url, {
-            headers: {
-                "X-Requested-With": "XMLHttpRequest"
-            }
+            headers: { "X-Requested-With": "XMLHttpRequest" }
         })
         .then(res => res.text())
         .then(html => {
 
             $("#main-content").html(html);
 
-            if (window.app && typeof window.app.initPage === "function") {
+            if (window.app?.initPage) {
                 window.app.initPage();
             }
 
@@ -77,31 +109,20 @@ class SpaRouter {
         });
     }
 
-    /**
-     * ================================
-     * BACK / FORWARD
-     * ================================
-     */
+    // ================================
+    // BACK / FORWARD
+    // ================================
     bindPopState() {
 
         window.addEventListener("popstate", (event) => {
 
-            const url = window.location.pathname + window.location.search;
-            const mode = event.state?.mode;
+            const url = window.location.pathname;
+            const mode = event.state?.mode || this.resolveMode(url);
 
-            switch (mode) {
-
-                case "client":
-                    this.loadClientModule(url);
-                    break;
-
-                case "server":
-                    this.loadServerPartial(url);
-                    break;
-
-                default:
-                    window.location.reload();
-                    break;
+            if (mode === "client") {
+                this.loadClientModule(url);
+            } else {
+                this.loadServerPartial(url);
             }
         });
     }

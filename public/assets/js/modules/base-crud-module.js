@@ -84,20 +84,47 @@ class BaseCrudModule {
      */
     loadTable(tbl) {
 
-        this.state.setModule(this.moduleName);
-        this.state.setTable(tbl);
+    // Set state module & tabel aktif
+    this.state.setModule(this.moduleName);
+    this.state.setTable(tbl);
 
-        if (this.tableManager) {
-            this.tableManager.destroy();
-        }
-
-        this.tableManager = new TableManager({
-            state: this.state,
-            ajax: this.ajax,
-            container: "#crud-table-container"
-        });
-
-        this.tableManager.init();
+    // Destroy instance lama jika ada
+    if (this.tableManager) {
+        this.tableManager.destroy();
     }
+
+    // ======================================================
+    // 🔥 RENDER TABLE LAYOUT DULU
+    // ======================================================
+    $("#crud-table-container").html(`
+        <div class="table-wrapper">
+            <table class="ui very compact celled striped table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Renstra ID</th>
+                        <th>Nama</th>
+                        <th>Disable</th>
+                        <th>Keterangan</th>
+                        <th class="collapsing">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="crud-tbody"></tbody>
+            </table>
+        </div>
+        <div id="crud-pagination"></div>
+    `);
+
+    // ======================================================
+    // 🔥 INISIALISASI TABLE MANAGER
+    // ======================================================
+    this.tableManager = new TableManager({
+        state: this.state,
+        tbody: "#crud-tbody",
+        pagination: "#crud-pagination"
+    });
+
+    this.tableManager.init();
+}
 
 }

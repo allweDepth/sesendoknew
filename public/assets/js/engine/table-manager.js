@@ -1,10 +1,8 @@
 class TableManager {
-
 	// ==========================================
 	// CONSTRUCTOR
 	// ==========================================
 	constructor(config = {}) {
-
 		// State global (module & tabel aktif)
 		this.state = config.state;
 
@@ -50,7 +48,6 @@ class TableManager {
 	// INIT TABLE
 	// ==========================================
 	init() {
-
 		// Pasang semua event listener
 		this.bindEvents();
 
@@ -62,40 +59,33 @@ class TableManager {
 	// AMBIL DATA DARI SERVER
 	// ==========================================
 	fetchData() {
-
 		// Tampilkan loader sebelum request
 		this.renderLoader();
 
 		// Kirim request ke /dynamic
 		this.ajax.request({
-
 			method: "POST", // Gunakan POST
 
 			data: {
-				module: this.state.module,      // Nama module (renstra, dll)
-				action: "list",                 // Action list (default listing)
-				tbl: this.state.tbl,            // Nama tabel
-				page: this.currentPage,         // Halaman aktif
-				limit: this.limit,              // Limit per halaman
-				search: this.searchQuery,       // Keyword pencarian
-				sort_by: this.sortBy,           // Field sorting
-				sort_dir: this.sortDir          // Arah sorting
+				module: this.state.module, // Nama module (renstra, dll)
+				action: "list", // Action list (default listing)
+				tbl: this.state.tbl, // Nama tabel
+				page: this.currentPage, // Halaman aktif
+				limit: this.limit, // Limit per halaman
+				search: this.searchQuery, // Keyword pencarian
+				sort_by: this.sortBy, // Field sorting
+				sort_dir: this.sortDir, // Arah sorting
 			},
 
 			success: (res) => {
-
-				// Simpan data hasil response
 				this.data = res.data || [];
 
-				// Proses pagination dari server
-				this.handlePagination(res.pagination || {});
+				// 🔥 Backend sekarang kirim "meta" bukan "pagination"
+				this.handlePagination(res.meta || {});
 
-				// Render ulang tabel
 				this.renderBody();
-
-				// Render ulang pagination
 				this.renderPagination();
-			}
+			},
 		});
 	}
 
@@ -103,7 +93,6 @@ class TableManager {
 	// PROSES DATA PAGINATION
 	// ==========================================
 	handlePagination(pagination) {
-
 		// Total data
 		this.totalRows = pagination.total || 0;
 
@@ -121,7 +110,6 @@ class TableManager {
 	// TAMPILKAN LOADER
 	// ==========================================
 	renderLoader() {
-
 		// Isi tbody dengan loader
 		$(this.tbody).html(`
 			<tr>
@@ -136,10 +124,8 @@ class TableManager {
 	// RENDER ISI TABEL
 	// ==========================================
 	renderBody() {
-
 		// Jika tidak ada data
 		if (this.data.length === 0) {
-
 			$(this.tbody).html(`
 				<tr>
 					<td colspan="100%" class="center aligned">
@@ -155,7 +141,6 @@ class TableManager {
 
 		// Loop setiap row dari server
 		this.data.forEach((row) => {
-
 			// Buat baris tabel
 			html += `<tr data-id="${row.id}">`;
 
@@ -189,7 +174,6 @@ class TableManager {
 	// RENDER PAGINATION
 	// ==========================================
 	renderPagination() {
-
 		// Jika hanya 1 halaman, kosongkan
 		if (this.totalPages <= 1) {
 			$(this.pagination).html("");
@@ -200,7 +184,6 @@ class TableManager {
 
 		// Loop jumlah halaman
 		for (let i = 1; i <= this.totalPages; i++) {
-
 			html += `
 				<a class="item ${i === this.currentPage ? "active" : ""}"
 				   data-page="${i}">
@@ -219,10 +202,8 @@ class TableManager {
 	// BIND EVENT
 	// ==========================================
 	bindEvents() {
-
 		// Event klik pagination
 		$(document).on("click", `${this.pagination} [data-page]`, (e) => {
-
 			const page = parseInt($(e.currentTarget).data("page"));
 
 			this.changePage(page);
@@ -230,7 +211,6 @@ class TableManager {
 
 		// Event klik tombol edit/delete
 		$(document).on("click", `${this.tbody} [data-action]`, (e) => {
-
 			const action = $(e.currentTarget).data("action");
 
 			const id = $(e.currentTarget).closest("tr").data("id");
@@ -243,7 +223,6 @@ class TableManager {
 	// PINDAH HALAMAN
 	// ==========================================
 	changePage(page) {
-
 		// Validasi range halaman
 		if (page < 1 || page > this.totalPages) return;
 
@@ -258,15 +237,12 @@ class TableManager {
 	// HANDLE AKSI EDIT / DELETE
 	// ==========================================
 	handleAction(action, id) {
-
 		if (action === "edit") {
-
 			// Trigger event global edit
 			$(document).trigger("table:edit", id);
 		}
 
 		if (action === "delete") {
-
 			// Jalankan delete
 			this.deleteRow(id);
 		}
@@ -276,23 +252,20 @@ class TableManager {
 	// DELETE DATA
 	// ==========================================
 	deleteRow(id) {
-
 		this.ajax.request({
-
 			method: "POST",
 
 			data: {
 				module: this.state.module,
-				action: "delete",   // Action delete
+				action: "delete", // Action delete
 				tbl: this.state.tbl,
-				id_row: id
+				id_row: id,
 			},
 
 			success: () => {
-
 				// Reload data setelah delete
 				this.fetchData();
-			}
+			},
 		});
 	}
 
@@ -300,7 +273,6 @@ class TableManager {
 	// DESTROY TABLE
 	// ==========================================
 	destroy() {
-
 		// Hapus semua event listener
 		$(document).off("click", `${this.pagination} [data-page]`);
 		$(document).off("click", `${this.tbody} [data-action]`);

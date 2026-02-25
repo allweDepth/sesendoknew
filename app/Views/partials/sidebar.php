@@ -28,7 +28,7 @@
         <i class="dropdown icon"></i> Anggaran
       </div>
       <div class="content">
-        <a class="item" href="/renstra" ata-spa="client">
+        <a class="item" href="/renstra" data-spa="client">
           <i class="purple sitemap icon"></i> RENSTRA
         </a>
         <a class="item" href="/renja" data-spa="server">

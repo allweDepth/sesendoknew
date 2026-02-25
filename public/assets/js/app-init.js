@@ -20,5 +20,8 @@ $(document).ready(function () {
     $('.ui.sticky').sticky({
         context: $context
     });
-
+// ===============================
+// AUTO INIT MODULE BERDASARKAN URL
+// ===============================
+const path = window.location.pathname;
 });
