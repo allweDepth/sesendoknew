@@ -24,4 +24,28 @@ $(document).ready(function () {
 // AUTO INIT MODULE BERDASARKAN URL
 // ===============================
 const path = window.location.pathname;
+$(document).on("click", "#btnLogout", function (e) {
+
+	e.preventDefault();
+
+	DialogEngine.show({
+		title: "Konfirmasi Logout",
+		message: "Yakin ingin keluar dari sistem?",
+		icon: "sign out alternate red",
+		approveText: "Ya, Logout",
+		cancelText: "Batal",
+
+		onApprove: () => {
+
+			// Return Promise agar loading state bekerja
+			return new Promise((resolve) => {
+
+				// Jika logout via server route
+				window.location.href = "/logout";
+
+				resolve();
+			});
+		}
+	});
+});
 });

@@ -31,7 +31,7 @@
                         <a class="item" data-tab="wallchat"><i class="circular comments outline icon"></i>Pesan</a>
                         <a class="item" id="darkToggle"><i class="circular moon icon"></i>Change Themes</a>
                         <a class="item" data-tab="profil"><i class="circular qrcode icon"></i>Pengaturan</a>
-                        <a class="item" href="/logout"><i class="circular sign out alternate icon"></i>Log Out</a>
+                        <a class="item" href="/logout" id="btnLogout"><i class="circular sign out alternate icon"></i>Log Out</a>
                       
                     </div>
                 </div>
