@@ -111,38 +111,4 @@ const ActionConfig = {
 			},
 		},
 	},
-	// ===============================
-	// TATA NASKAH
-	// ===============================
-	tata_naskah: {
-		trx_naskah_dinas: {
-			roles: {
-				super_admin: [
-					"edit",
-					"delete",
-					{
-						action: "print",
-						icon: "print",
-						color: "blue",
-						container: "modal",
-						ui: "open-form",
-					},
-				],
-
-				admin_opd: [
-					"edit",
-					"delete",
-					{
-						action: "print",
-						icon: "print",
-						color: "blue",
-						container: "modal",
-						ui: "open-form",
-					},
-				],
-
-				admin_wilayah: [{ action: "print", icon: "print", color: "blue" }],
-			},
-		},
-	},
 };

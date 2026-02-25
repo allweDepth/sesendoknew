@@ -66,7 +66,7 @@ $(document).ready(function () {
 			WallchatModule.init();
 			PengaturanModule.init(currentPath, tableManager);
 			RenstraModule.init(currentPath, tableManager);
-			if (typeof TataNaskahModule !== "undefined") {
+			if (window.TataNaskahModule) {
 				TataNaskahModule.init(currentPath);
 			}
 			if (window.location.pathname === "/profil") {
