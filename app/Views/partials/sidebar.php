@@ -31,16 +31,20 @@
         <a class="item" href="/renstra" data-spa="client">
           <i class="purple sitemap icon"></i> RENSTRA
         </a>
+
         <a class="item" href="/renja" data-spa="server">
-          <i class="violet tag icon"></i> RENJA
+          <i class="violet tasks icon"></i> RENJA
         </a>
-        <a class="item" href="/dpa" data-spa="server">
-          <i class="yellow tags icon"></i> DPA
+
+        <a class="item" href="/dpa" data-spa="client">
+          <i class="yellow file alternate icon"></i> DPA
         </a>
-        <a class="item" href="/renja_perubahan" data-spa="server">
-          <i class="orange edit icon"></i> RENJA Perubahan
+
+        <a class="item" href="/renja_perubahan" data-spa="client">
+          <i class="orange sync alternate icon"></i> RENJA Perubahan
         </a>
-        <a class="item" href="/dppa" data-spa="server">
+
+        <a class="item" href="/dppa" data-spa="client">
           <i class="brown folder open icon"></i> DPPA
         </a>
       </div>
@@ -57,20 +61,61 @@
         <i class="dropdown icon"></i> Referensi
       </div>
       <div class="content">
-        <a class="item" href="/referensi?tbl=urusan" data-spa="client">Urusan</a>
-        <a class="item" href="/referensi?tbl=bidang" data-spa="client">Bidang</a>
-        <a class="item" href="/referensi?tbl=program" data-spa="client">Program</a>
-        <a class="item" href="/referensi?tbl=kegiatan" data-spa="client">Kegiatan</a>
-        <a class="item" href="/referensi?tbl=sub_kegiatan" data-spa="client">Sub Kegiatan</a>
-        <a class="item" href="/referensi?tbl=rekanan" data-spa="client">Rekanan</a>
-        <a class="item" href="/referensi?tbl=satuan" data-spa="client">Satuan</a>
-        <a class="item" href="/referensi?tbl=mapping" data-spa="client">Mapping</a>
-        <a class="item" href="/referensi?tbl=aset" data-spa="client">Neraca</a>
-        <a class="item" href="/referensi?tbl=akun" data-spa="client">Akun</a>
-        <a class="item" href="/referensi?tbl=sumber_dana" data-spa="client">Sumber Dana</a>
-        <a class="item" href="/referensi?tbl=organisasi" data-spa="client">Organisasi</a>
-        <a class="item" href="/referensi?tbl=peraturan" data-spa="client">Peraturan</a>
-        <a class="item" href="/referensi?tbl=wilayah" data-spa="client">Wilayah</a>
+        <a class="item" href="/referensi?tbl=urusan" data-spa="client">
+          <i class="blue briefcase icon"></i> Urusan
+        </a>
+
+        <a class="item" href="/referensi?tbl=bidang" data-spa="client">
+          <i class="teal layer group icon"></i> Bidang
+        </a>
+
+        <a class="item" href="/referensi?tbl=program" data-spa="client">
+          <i class="green project diagram icon"></i> Program
+        </a>
+
+        <a class="item" href="/referensi?tbl=kegiatan" data-spa="client">
+          <i class="olive clipboard list icon"></i> Kegiatan
+        </a>
+
+        <a class="item" href="/referensi?tbl=sub_kegiatan" data-spa="client">
+          <i class="grey list alternate icon"></i> Sub Kegiatan
+        </a>
+
+        <a class="item" href="/referensi?tbl=rekanan" data-spa="client">
+          <i class="orange handshake icon"></i> Rekanan
+        </a>
+
+        <a class="item" href="/referensi?tbl=satuan" data-spa="client">
+          <i class="brown balance scale icon"></i> Satuan
+        </a>
+
+        <a class="item" href="/referensi?tbl=mapping" data-spa="client">
+          <i class="purple map icon"></i> Mapping
+        </a>
+
+        <a class="item" href="/referensi?tbl=aset" data-spa="client">
+          <i class="yellow warehouse icon"></i> Neraca
+        </a>
+
+        <a class="item" href="/referensi?tbl=akun" data-spa="client">
+          <i class="blue wallet icon"></i> Akun
+        </a>
+
+        <a class="item" href="/referensi?tbl=sumber_dana" data-spa="client">
+          <i class="green money bill alternate icon"></i> Sumber Dana
+        </a>
+
+        <a class="item" href="/referensi?tbl=organisasi" data-spa="client">
+          <i class="teal building icon"></i> Organisasi
+        </a>
+
+        <a class="item" href="/referensi?tbl=peraturan" data-spa="client">
+          <i class="red gavel icon"></i> Peraturan
+        </a>
+
+        <a class="item" href="/referensi?tbl=wilayah" data-spa="client">
+          <i class="violet globe asia icon"></i> Wilayah
+        </a>
       </div>
     </div>
 
@@ -80,10 +125,21 @@
         <i class="dropdown icon"></i> Standar Harga Satuan
       </div>
       <div class="content">
-        <a class="item" href="/standar_harga?tbl=ssh" data-spa="client">SSH</a>
-        <a class="item" href="/standar_harga?tbl=hspk" data-spa="client">HSPK</a>
-        <a class="item" href="/standar_harga?tbl=asb" data-spa="client">ASB</a>
-        <a class="item" href="/standar_harga?tbl=sbu" data-spa="client">SBU</a>
+        <a class="item" href="/standar_harga?tbl=ssh" data-spa="client">
+          <i class="green calculator icon"></i> SSH
+        </a>
+
+        <a class="item" href="/standar_harga?tbl=hspk" data-spa="client">
+          <i class="blue chart line icon"></i> HSPK
+        </a>
+
+        <a class="item" href="/standar_harga?tbl=asb" data-spa="client">
+          <i class="orange balance scale icon"></i> ASB
+        </a>
+
+        <a class="item" href="/standar_harga?tbl=sbu" data-spa="client">
+          <i class="teal file invoice dollar icon"></i> SBU
+        </a>
       </div>
     </div>
 
@@ -95,12 +151,29 @@
         Kepegawaian
       </div>
       <div class="content">
-        <a class="item" href="/kepegawaian?tbl=asn" data-spa="client">Data ASN</a>
-        <a class="item" href="/kepegawaian?tbl=pppk" data-spa="client">PPPK</a>
-        <a class="item" href="/kepegawaian?tbl=riwayat_jabatan" data-spa="client">Riwayat Jabatan</a>
-        <a class="item" href="/kepegawaian?tbl=riwayat_pangkat" data-spa="client">Riwayat Pangkat</a>
-        <a class="item" href="/kepegawaian?tbl=cuti" data-spa="client">Cuti & Izin</a>
-        <a class="item" href="/kepegawaian?tbl=sk_pegawai" data-spa="client">SK Pegawai</a>
+        <a class="item" href="/kepegawaian?tbl=asn" data-spa="client">
+          <i class="blue id badge icon"></i> Data ASN
+        </a>
+
+        <a class="item" href="/kepegawaian?tbl=pppk" data-spa="client">
+          <i class="teal user tie icon"></i> PPPK
+        </a>
+
+        <a class="item" href="/kepegawaian?tbl=riwayat_jabatan" data-spa="client">
+          <i class="orange briefcase icon"></i> Riwayat Jabatan
+        </a>
+
+        <a class="item" href="/kepegawaian?tbl=riwayat_pangkat" data-spa="client">
+          <i class="purple medal icon"></i> Riwayat Pangkat
+        </a>
+
+        <a class="item" href="/kepegawaian?tbl=cuti" data-spa="client">
+          <i class="yellow calendar alternate icon"></i> Cuti & Izin
+        </a>
+
+        <a class="item" href="/kepegawaian?tbl=sk_pegawai" data-spa="client">
+          <i class="green file signature icon"></i> SK Pegawai
+        </a>
       </div>
     </div>
 
@@ -110,9 +183,17 @@
         <i class="dropdown icon"></i> Tata Naskah
       </div>
       <div class="content">
-        <a class="item" href="/tata_naskah/dashboard" data-spa="server">Dashboard</a>
-        <a class="item" href="/tata_naskah/buat" data-spa="server">Buat Naskah</a>
-        <a class="item" href="/tata_naskah/daftar" data-spa="client">Daftar Naskah</a>
+        <a class="item" href="/tata_naskah/dashboard" data-spa="server">
+          <i class="blue chart pie icon"></i> Dashboard
+        </a>
+
+        <a class="item" href="/tata_naskah/buat" data-spa="server">
+          <i class="green pen square icon"></i> Buat Naskah
+        </a>
+
+        <a class="item" href="/tata_naskah/daftar" data-spa="client">
+          <i class="violet folder icon"></i> Daftar Naskah
+        </a>
       </div>
     </div>
 
