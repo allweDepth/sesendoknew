@@ -10,7 +10,7 @@ class SpaRouter {
 	// ================================
 	resolveMode(url) {
 		// Client modules
-		const clientRoutes = ["/renstra", "/referensi", "/kepegawaian", "/kepegawaian"];
+		const clientRoutes = ["/renstra", "/referensi", "/kepegawaian", "/pengaturan"];
 
 		if (clientRoutes.some((route) => url.startsWith(route))) {
 			return "client";
@@ -23,13 +23,17 @@ class SpaRouter {
 	// INITIAL LOAD (REFRESH)
 	// ================================
 	handleInitialLoad() {
-		const url = window.location.pathname;
-		const mode = this.resolveMode(url);
+    const url = window.location.pathname;
+    const mode = this.resolveMode(url);
 
-		if (mode === "client") {
-			this.loadClientModule(url);
-		}
-	}
+    if (mode === "client") {
+        this.loadClientModule(url);
+    } else {
+        if (window.app?.initPage) {
+            window.app.initPage();
+        }
+    }
+}
 
 	// ================================
 	// CLICK HANDLER
