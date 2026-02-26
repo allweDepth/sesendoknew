@@ -103,43 +103,106 @@ class BaseCrudModule {
 	 * ========================================================
 	 */
 	loadTable(tbl) {
-		// Set state module & tabel aktif
-		this.state.setModule(this.moduleName.toLowerCase());
-		this.state.setTable(tbl);
 
-		// Destroy instance lama jika ada
-		if (this.tableManager) {
-			this.tableManager.destroy();
-		}
+    this.state.setModule(this.moduleName.toLowerCase());
+    this.state.setTable(tbl);
 
-		// ======================================================
-		// 🔥 RENDER TABLE LAYOUT DULU
-		// ======================================================
-		$("#crud-table-container").html(`
-    <div class="table-wrapper">
-        <table class="ui very compact celled striped table">
-            <thead></thead>
-            <tbody id="crud-tbody"></tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="100%">
-                        <div id="crud-pagination"></div>
-                    </th>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
-`);
+    if (this.tableManager) {
+        this.tableManager.destroy();
+    }
 
-		// ======================================================
-		// 🔥 INISIALISASI TABLE MANAGER
-		// ======================================================
-		this.tableManager = new TableManager({
-			state: this.state,
-			tbody: "#crud-tbody",
-			pagination: "#crud-pagination",
-		});
+    const title = tbl.toUpperCase();
 
-		this.tableManager.init();
-	}
+    const actionHtml = `
+        ${this.buildActionButtons(tbl)}
+        <div class="ui hidden divider"></div>
+        <h3 class="ui dividing header">
+            <i class="left align icon"></i>
+            Tabel ${title}
+        </h3>
+    `;
+
+    $("#crud-table-container").html(`
+        ${actionHtml}
+
+        <div class="table-wrapper">
+            <table class="ui very compact celled striped table">
+                <thead></thead>
+                <tbody id="crud-tbody"></tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="100%">
+                            <div id="crud-pagination"></div>
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    `);
+
+    this.tableManager = new TableManager({
+        state: this.state,
+        tbody: "#crud-tbody",
+        pagination: "#crud-pagination",
+    });
+
+    this.tableManager.init();
+}
+	buildActionButtons(tbl) {
+
+    // 🔥 DEFAULT
+    let importType = "import";
+    let importIcon = "upload";
+
+    // 🔥 SWITCH KHUSUS MODULE
+    switch (this.moduleName) {
+
+        case "referensi":
+
+            // hanya untuk urusan → sub_kegiatan
+            const strukturList = [
+                "urusan",
+                "bidang",
+                "program",
+                "kegiatan",
+                "sub_kegiatan"
+            ];
+
+            if (strukturList.includes(tbl)) {
+                importType = "import_struktur";
+                importIcon = "sitemap";
+            }
+
+            break;
+
+        default:
+            break;
+    }
+
+    return `
+        <div class="ui right floated basic icon buttons" style="margin-top:10px;">
+
+            <button class="ui button"
+                data-ui="open-form"
+                data-jns="add"
+                data-tbl="${tbl}">
+                <i class="plus icon"></i>
+            </button>
+
+            <button class="ui button"
+                data-ui="open-form"
+                data-jns="${importType}"
+                data-tbl="${tbl}">
+                <i class="${importIcon} icon"></i>
+            </button>
+
+            <button class="ui icon button"
+                data-action="export"
+                data-tbl="${tbl}">
+                <i class="alternate download icon"></i>
+            </button>
+
+        </div>
+    `;
+}
 }
