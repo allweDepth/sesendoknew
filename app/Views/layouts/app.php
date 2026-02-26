@@ -151,7 +151,10 @@
     <script>
         window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
     </script>
-
+    <script>
+        window.app = window.app || {};
+        window.app.user = <?= json_encode($_SESSION['user'] ?? []); ?>;
+    </script>
     <!-- LIBRARY -->
     <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/js/fomantic.min.js"></script>

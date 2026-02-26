@@ -6,6 +6,7 @@ class App {
 		this.dialog = window.DialogEngine || null;
 		this.loader = window.PageLoader || null;
 		this.router = new SpaRouter(); // 🔥 INI WAJIB
+		this.user = window.app.user;
 	}
 
 	init() {
