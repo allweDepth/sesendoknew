@@ -1248,4 +1248,29 @@ return [
             'enabled' => false
         ]
     ],
+    'pengaturan' => [
+
+        'table' => 'pengaturan_neo',
+        'primary_key' => 'id',
+
+        'scope' => [
+            'kd_wilayah' => 'session'
+        ],
+
+        'columns' => [
+            'kd_wilayah' => ['type' => 'string'],
+            'tahun' => ['type' => 'integer'],
+            'tahun_renstra' => ['type' => 'integer'],
+            'awal_renja' => ['type' => 'datetime'],
+            'akhir_renja' => ['type' => 'datetime'],
+            'kunci' => ['type' => 'boolean'],
+        ],
+
+        'permissions' => [
+            'super_admin'   => ['view', 'add', 'edit'],
+            'admin_wilayah' => ['view', 'add', 'edit'],
+            'admin_opd'     => ['view'],
+            'viewer'        => ['view']
+        ],
+    ],
 ];

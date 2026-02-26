@@ -177,6 +177,13 @@
 
     <!-- ================= APP CORE ================= -->
     <script src="/assets/js/app.js"></script> <!-- SETELAH semua dependency -->
+    <!-- UI REGISTRY -->
+    <script src="/assets/js/ui/ui-registry.js"></script>
+
+    <!-- UI COMPONENTS -->
+    <script src="/assets/js/ui/ui-components.js"></script>
+
+
 
     <!-- ================= ENTRY POINT ================= -->
     <script src="/assets/js/app-init.js"></script>

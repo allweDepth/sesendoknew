@@ -12,6 +12,95 @@ const UIConfig = {
        PENGATURAN
     ====================================================== */
 	pengaturan: {
+		form: {
+			elements: [
+				// ========================
+				// IDENTITAS
+				// ========================
+
+				{
+					tag: "input",
+					prop: {
+						label: "Tahun Anggaran",
+						name: "tahun",
+						type: "number",
+					},
+				},
+
+				{
+					tag: "input",
+					prop: {
+						label: "Tahun Renstra",
+						name: "tahun_renstra",
+						type: "number",
+					},
+				},
+
+				// ========================
+				// RANGE PERIODE
+				// ========================
+
+				{
+					tag: "rangeCalendar",
+					prop: {
+						label: "Renja",
+						name: "renja",
+					},
+				},
+
+				{
+					tag: "rangeCalendar",
+					prop: {
+						label: "DPA",
+						name: "dpa",
+					},
+				},
+
+				{
+					tag: "rangeCalendar",
+					prop: {
+						label: "RKPD",
+						name: "rkpd",
+					},
+				},
+
+				// ========================
+				// KONTROL
+				// ========================
+
+				{
+					tag: "toggle",
+					prop: {
+						label: "Disable",
+						name: "disable",
+					},
+				},
+
+				{
+					tag: "toggle",
+					prop: {
+						label: "Kunci Global",
+						name: "kunci",
+					},
+				},
+
+				{
+					tag: "toggle",
+					prop: {
+						label: "Setujui Global",
+						name: "setujui",
+					},
+				},
+
+				{
+					tag: "textarea",
+					prop: {
+						label: "Keterangan",
+						name: "keterangan",
+					},
+				},
+			],
+		},
 		periode_rpjmd: [
 			{
 				tag: "fieldCalendar",
@@ -331,7 +420,12 @@ const UIConfig = {
 		program: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Bidang", name: "kode_bidang", source: "bidang",classInput: "search"  },
+				prop: {
+					label: "Bidang",
+					name: "kode_bidang",
+					source: "bidang",
+					classInput: "search",
+				},
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Nama", name: "nama" } },
@@ -340,7 +434,12 @@ const UIConfig = {
 		kegiatan: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Program", name: "kode_program", source: "program",classInput: "search" },
+				prop: {
+					label: "Program",
+					name: "kode_program",
+					source: "program",
+					classInput: "search",
+				},
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Nama", name: "nama" } },
@@ -349,7 +448,12 @@ const UIConfig = {
 		sub_kegiatan: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Kegiatan", name: "kode_kegiatan", source: "kegiatan",classInput: "search" },
+				prop: {
+					label: "Kegiatan",
+					name: "kode_kegiatan",
+					source: "kegiatan",
+					classInput: "search",
+				},
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Nama", name: "nama" } },

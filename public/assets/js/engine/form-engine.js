@@ -141,14 +141,14 @@ class FormEngine {
 	 * ============================================================
 	 */
 	static render(target, elements = [], instance = null) {
-		   // 🔥 Pastikan target adalah jQuery object
-    const $target = $(target);
+		// 🔥 Pastikan target adalah jQuery object
+		const $target = $(target);
 
-    // 🔥 DESTROY DROPDOWN LAMA (WAJIB)
-    $target.find('.ui.dropdown').dropdown('destroy');
+		// 🔥 DESTROY DROPDOWN LAMA (WAJIB)
+		$target.find(".ui.dropdown").dropdown("destroy");
 
-    // 🔥 KOSONGKAN FORM
-    $target.empty();
+		// 🔥 KOSONGKAN FORM
+		$target.empty();
 		const html = this.build(elements);
 
 		target.html(html);
@@ -406,5 +406,43 @@ class FormEngine {
 				},
 			});
 		});
+	}
+	renderConfig(config) {
+		let html = "";
+
+		config.elements.forEach((element) => {
+			html += UIComponentRegistry.render(element);
+		});
+
+		$(this.formSelector).html(html);
+
+		UIComponents.initAll();
+	}
+	renderFromConfig(config) {
+		let html = '<div class="ui form"><div class="ui stackable grid">';
+
+		config.elements.forEach((element) => {
+			if (element.tag === "rangeCalendar") {
+				html += UIComponentRegistry.render(element);
+			} else {
+				html += `
+                <div class="sixteen wide column">
+                    ${UIComponentRegistry.render(element)}
+                </div>
+            `;
+			}
+		});
+
+		html += "</div></div>";
+
+		$(this.formSelector).html(html);
+
+		UIComponents.initAll();
+
+		const rangeNames = config.elements
+			.filter((e) => e.tag === "rangeCalendar")
+			.map((e) => e.prop.name);
+
+		UIComponents.initRange(rangeNames);
 	}
 }
