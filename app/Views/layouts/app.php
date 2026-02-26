@@ -175,19 +175,6 @@
     <!-- ================= MODULES ================= -->
     <script src="/assets/js/modules/base-crud-module.js"></script>
 
-    <script src="/assets/js/modules/renstra.js"></script>
-    <script src="/assets/js/modules/referensi.js"></script>
-    <script src="/assets/js/modules/kepegawaian.js"></script>
-    <script src="/assets/js/modules/standar-harga.js"></script>
-    <script src="/assets/js/modules/pengaturan.js"></script>
-    <script src="/assets/js/modules/wallchat.js"></script>
-    <script src="/assets/js/modules/profil.js"></script>
-    <script src="/assets/js/modules/tata_naskah.js"></script>
-
-    <script src="/assets/js/engine/document/document_schema.js"></script>
-    <script src="/assets/js/engine/document/document_builder.js"></script>
-
-
     <!-- ================= APP CORE ================= -->
     <script src="/assets/js/app.js"></script> <!-- SETELAH semua dependency -->
 

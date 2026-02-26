@@ -11,7 +11,7 @@ class FlyoutController {
 		this.$flyout = null;
 		this.$modal = null;
 		this.activeContainer = "flyout";
-		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
+		this.ajax = window.Ajax;
 
 		$(document).ready(() => {
 			this.$flyout = $("#mainContext .sidebarkanan");
@@ -57,40 +57,50 @@ class FlyoutController {
 	}
 
 	open($btn) {
-		const jns = $btn.data("jns");
-		const tbl = $btn.data("tbl");
-		const id = $btn.data("id") || null;
-		const container = $btn.data("container") || "flyout";
 
-		if (!tbl) return;
+	const jns = $btn.data("jns");
+	const tbl = $btn.data("tbl");
+	const id = $btn.data("id") || null;
+	const container = $btn.data("container") || "flyout";
 
-		window.app.state.setTable(tbl);
-		window.app.state.action = jns;
+	if (!tbl) return;
 
-		this.activeContainer = container;
+	const state = window.app.state;
+	state.setTable(tbl);
 
-		const config = this.buildConfig(jns, tbl);
+	const formSelector =
+		container === "modal"
+			? "#form_modal"
+			: "#form_flyout";
 
-		if (!config.elements.length) {
-			ToastEngine.show({
-				success: false,
-				message: "UIConfig belum tersedia",
-			});
-			return;
-		}
+	// 🔥 BUAT INSTANCE DI SINI
+	this.formEngine = new FormEngine({
+		state: state,
+		ajax: window.Ajax,
+		formSelector: formSelector
+	});
 
-		this.render(config);
+	this.formEngine.init();
 
-		if (container === "modal") {
-			this.$modal.modal("show");
-		} else {
-			this.$flyout.sidebar("show");
-		}
+	// 🔥 Render pakai instance
+	FormEngine.render(
+		$(formSelector),
+		this.buildConfig(jns, tbl).elements,
+		this.formEngine
+	);
 
-		if (jns === "edit" && id) {
-			this.loadData(id);
-		}
+	// Show container
+	if (container === "modal") {
+		$("#mainModal").modal("show");
+	} else {
+		$(".sidebarkanan").sidebar("show");
 	}
+
+	// 🔥 Load edit data
+	if (jns === "edit" && id) {
+		this.formEngine.loadData(id);
+	}
+}
 
 	render(config) {
 		const target = this.getActiveForm();
@@ -101,7 +111,7 @@ class FlyoutController {
 
 		// Kalau FormEngine.render memang ada di sistem kamu
 		if (typeof FormEngine.render === "function") {
-			FormEngine.render(target, config.elements);
+			FormEngine.render(target, config.elements, formEngineInstance);
 		} else {
 			// fallback minimal kalau tidak ada
 			config.elements.forEach((el) => {

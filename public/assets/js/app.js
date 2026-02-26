@@ -34,37 +34,112 @@ class App {
 		}
 	}
 	loadModule(url) {
-    switch (true) {
 
-        case url.startsWith("/renstra"):
-            new RenstraModule().init();
-            break;
+	let moduleName = null;
 
-        case url.startsWith("/referensi"):
-            new ReferensiModule().init();
-            break;
+	switch (true) {
+		case url.startsWith("/renstra"):
+			moduleName = "renstra";
+			break;
 
-        case url.startsWith("/kepegawaian"):
-            new KepegawaianModule().init();
-            break;
+		case url.startsWith("/referensi"):
+			moduleName = "referensi";
+			break;
 
-        case url.startsWith("/standar_harga"):   // 🔥 TAMBAHKAN INI
-            new StandarHargaModule().init();
-            break;
+		case url.startsWith("/kepegawaian"):
+			moduleName = "kepegawaian";
+			break;
 
-        case url.startsWith("/pengaturan"):      // kalau ada
-            new PengaturanModule().init();
-            break;
+		case url.startsWith("/standar_harga"):
+			moduleName = "standar-harga";
+			break;
 
-        case url.startsWith("/tata_naskah"):     // kalau ada
-            new TataNaskahModule().init();
-            break;
+		case url.startsWith("/pengaturan"):
+			moduleName = "pengaturan";
+			break;
 
-        default:
-            console.warn("Module tidak dikenali:", url);
-            break;
-    }
+		case url.startsWith("/tata_naskah"):
+			moduleName = "tata_naskah";
+			break;
+
+		default:
+			console.warn("Module tidak dikenali:", url);
+			return;
+	}
+
+	this.loadedModules = this.loadedModules || [];
+
+	// Kalau sudah pernah load
+	if (this.loadedModules.includes(moduleName)) {
+		this.initModuleInstance(moduleName);
+		return;
+	}
+
+	/* ====================================================
+	   🔥 LOAD DEPENDENCY KHUSUS UNTUK TATA NASKAH
+	==================================================== */
+	if (moduleName === "tata_naskah") {
+
+		if (!this.loadedModules.includes("document_schema")) {
+			const schemaScript = document.createElement("script");
+			schemaScript.src = "/assets/js/engine/document/document_schema.js";
+			document.body.appendChild(schemaScript);
+			this.loadedModules.push("document_schema");
+		}
+
+		if (!this.loadedModules.includes("document_builder")) {
+			const builderScript = document.createElement("script");
+			builderScript.src = "/assets/js/engine/document/document_builder.js";
+			document.body.appendChild(builderScript);
+			this.loadedModules.push("document_builder");
+		}
+	}
+
+	/* ====================================================
+	   🔥 LOAD MODULE UTAMA
+	==================================================== */
+	const script = document.createElement("script");
+	script.src = `/assets/js/modules/${moduleName}.js`;
+	script.defer = true;
+
+	script.onload = () => {
+		this.loadedModules.push(moduleName);
+		this.initModuleInstance(moduleName);
+	};
+
+	document.body.appendChild(script);
 }
+	initModuleInstance(moduleName) {
+		switch (moduleName) {
+			case "renstra":
+				if (typeof RenstraModule === "function") new RenstraModule().init();
+				break;
+
+			case "referensi":
+				if (typeof ReferensiModule === "function") new ReferensiModule().init();
+				break;
+
+			case "kepegawaian":
+				if (typeof KepegawaianModule === "function")
+					new KepegawaianModule().init();
+				break;
+
+			case "standar-harga":
+				if (typeof StandarHargaModule === "function")
+					new StandarHargaModule().init();
+				break;
+
+			case "pengaturan":
+				if (typeof PengaturanModule === "function")
+					new PengaturanModule().init();
+				break;
+
+			case "tata_naskah":
+				if (typeof TataNaskahModule === "function")
+					new TataNaskahModule().init();
+				break;
+		}
+	}
 }
 // ======================================================
 // GLOBAL SINGLETON (WAJIB ADA SATU SAJA)
