@@ -8,7 +8,7 @@ class BaseCrudModule {
 		// 🔥 PERBAIKI LOGIKA useMenu
 		this.useMenu = config.useMenu === true;
 
-		this.container = "#main-content";
+		this.container = config.container || "#main-content";
 
 		this.state = window.app.state;
 		this.ajax = window.app.ajax;

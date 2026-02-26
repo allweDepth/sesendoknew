@@ -363,29 +363,29 @@ return [
     ],
 
     'peraturan' => [
-    'table' => 'peraturan_neo',
-    'primary_key' => 'id',
-    'allowed_roles' => ['super_admin', 'admin_wilayah'],
-    'soft_lock' => true,
+        'table' => 'peraturan_neo',
+        'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah'],
+        'soft_lock' => true,
 
-    'dropdown' => [
-        'value' => 'id',
-        'label' => 'judul'
-    ],
-
-    'modes' => [
-        'default' => [
-            'select' => ['id', 'kode', 'judul', 'nomor'],
-            'searchable' => ['kode', 'judul', 'nomor'],
-            'order_by' => 'tgl_penetapan DESC'
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'judul'
         ],
-        'referensi' => [
-            'select' => ['id', 'nomor', 'judul', 'tgl_penetapan', 'status', 'keterangan'],
-            'searchable' => ['kode', 'uraian', 'alamat', 'keterangan'],
-            'order_by' => 'kode ASC'
+
+        'modes' => [
+            'default' => [
+                'select' => ['id', 'kode', 'judul', 'nomor'],
+                'searchable' => ['kode', 'judul', 'nomor'],
+                'order_by' => 'tgl_penetapan DESC'
+            ],
+            'referensi' => [
+                'select' => ['id', 'nomor', 'judul', 'tgl_penetapan', 'status', 'keterangan'],
+                'searchable' => ['kode', 'uraian', 'alamat', 'keterangan'],
+                'order_by' => 'kode ASC'
+            ]
         ]
-    ]
-],
+    ],
 
     'rekanan' => [
         'table' => 'rekanan_neo',
@@ -921,9 +921,10 @@ return [
                     'id',
                     'periode_mulai',
                     'periode_selesai',
-                    'status_aktif'
+                    'status_aktif',
+                    'keterangan'
                 ],
-                'searchable' => ['periode_mulai', 'periode_selesai'],
+                'searchable' => ['periode_mulai', 'periode_selesai', 'keterangan'],
                 'order_by' => 'periode_mulai DESC'
             ]
         ]

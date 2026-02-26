@@ -42,41 +42,74 @@ class PengaturanModule {
 		const tahunLabel = this.user.tahun || "-";
 
 		$(this.container).html(`
-            <div class="ui container form-wrapper">
+        <div class="ui container form-wrapper">
 
-                <div class="ui top attached segment page-header">
-                    <div class="ui grid">
-                        <div class="twelve wide column">
-                            <h2 class="ui header">
-                                <i class="settings icon"></i>
-                                <div class="content">
-                                    Pengaturan Sistem
-                                    <div class="sub header">
-                                        Konfigurasi wilayah, periode & kontrol sistem
-                                    </div>
+            <!-- HEADER -->
+            <div class="ui top attached segment page-header">
+                <div class="ui grid">
+                    <div class="twelve wide column">
+                        <h2 class="ui header">
+                            <i class="settings icon"></i>
+                            <div class="content">
+                                Pengaturan Sistem
+                                <div class="sub header">
+                                    Konfigurasi wilayah, periode & kontrol sistem
                                 </div>
-                            </h2>
-                        </div>
-
-                        <div class="four wide right aligned column">
-                            <div class="ui tiny grey label">
-                                Tahun Aktif: ${tahunLabel}
                             </div>
+                        </h2>
+                    </div>
+
+                    <div class="four wide right aligned column">
+                        <div class="ui tiny grey label">
+                            Tahun Aktif: ${tahunLabel}
                         </div>
                     </div>
                 </div>
-
-                <div class="ui bottom attached raised very padded segment">
-                    <form class="ui form" id="form-pengaturan">
-                        ${this.renderForm()}
-                    </form>
-                </div>
-
             </div>
-        `);
+
+            <!-- TAB MENU -->
+            <div class="ui top attached tabular menu" id="pengaturan-tabs">
+                <a class="active item" data-tab="pengaturan">
+                    Pengaturan Wilayah
+                </a>
+                <a class="item" data-tab="periode">
+                    Periode RPJMD
+                </a>
+            </div>
+
+            <!-- TAB 1 -->
+            <div class="ui bottom attached tab segment active" data-tab="pengaturan">
+                <form class="ui form" id="form-pengaturan">
+                    ${this.renderForm()}
+                </form>
+            </div>
+
+            <!-- TAB 2 -->
+            <div class="ui bottom attached tab segment" data-tab="periode">
+                <div id="periode-rpjmd-container"></div>
+            </div>
+
+        </div>
+    `);
+
+	
 
 		this.initUI();
 		this.bindSubmit();
+
+		// lazy load periode module
+		let periodeModule = null;
+
+		$("#pengaturan-tabs .item").tab({
+			onVisible: function (tabPath) {
+				if (tabPath === "periode") {
+					if (!periodeModule) {
+						periodeModule = new PeriodeRPJMDModule();
+						periodeModule.init();
+					}
+				}
+			},
+		});
 	}
 
 	// ==================================================
@@ -390,4 +423,30 @@ class PengaturanModule {
 	destroy() {
 		$(this.container).empty();
 	}
+}
+if (typeof PeriodeRPJMDModule === "undefined") {
+
+    class PeriodeRPJMDModule extends BaseCrudModule {
+
+        constructor() {
+            super({
+                moduleName: "periode_rpjmd",
+                container: "#periode-rpjmd-container",
+                useMenu: false
+            });
+        }
+
+        init() {
+
+            // render wrapper BaseCrud
+            this.renderLayout();
+
+            // 🔥 langsung load table
+            this.loadTable("periode_rpjmd");
+
+        }
+
+    }
+
+    window.PeriodeRPJMDModule = PeriodeRPJMDModule;
 }
