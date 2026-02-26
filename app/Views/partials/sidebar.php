@@ -204,7 +204,7 @@
       <a class="item" href="/reset_tabel" data-spa="server">
         <i class="erase icon"></i> Reset Tabel
       </a>
-      <a class="item" href="/pengaturan" data-spa="server">
+      <a class="item" href="/pengaturan" data-spa="client">
         <i class="toolbox icon"></i> Pengaturan
       </a>
     <?php endif; ?>

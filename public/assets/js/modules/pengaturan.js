@@ -1,74 +1,25 @@
-/**
- * ============================================================
- * PENGATURAN MODULE
- * ============================================================
- */
-
 class PengaturanModule {
 
     constructor() {
-
-        this.state = window.app.state;
-        this.ajax = window.app.ajax;
-
-        this.state.setTable("pengaturan");
-
-        this.tableManager = null;
-        this.formEngine = null;
-        this.formContainer = null;
-
-        this.mainContainer = "#main-content";
+        this.container = "#main-content";
     }
 
     init() {
-
-        this.renderLayout();
-        this.initEngine();
-    }
-
-    renderLayout() {
-
-        const html = `
+        $(this.container).html(`
             <div class="ui segment">
-                <h3 class="ui header">Pengaturan</h3>
-                <div id="table-container"></div>
-                <div id="form-container" style="display:none;"></div>
+                <h3 class="ui header">
+                    <i class="settings icon"></i>
+                    Pengaturan Sistem
+                </h3>
+                <div id="pengaturan-wilayah"></div>
+                <div id="periode-rpjmd"></div>
             </div>
-        `;
+        `);
 
-        $(this.mainContainer).html(html);
-    }
-
-    initEngine() {
-
-        this.tableManager = new TableManager({
-            state: this.state,
-            ajax: this.ajax,
-            container: "#table-container"
-        });
-
-        this.formContainer = new FormContainerManager({
-            container: "#form-container"
-        });
-
-        this.formEngine = new FormEngine({
-            state: this.state,
-            ajax: this.ajax,
-            formSelector: "#dynamic-form"
-        });
-
-        this.tableManager.init();
-        this.formContainer.init();
-        this.formEngine.init();
+        console.log("Pengaturan module loaded");
     }
 
     destroy() {
-
-        this.tableManager.destroy();
-        this.formEngine.destroy();
-        this.formContainer.destroy();
-
-        $(this.mainContainer).empty();
+        $(this.container).empty();
     }
-
 }

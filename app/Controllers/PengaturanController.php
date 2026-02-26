@@ -4,8 +4,14 @@ class PengaturanController extends Controller
 {
     public function index()
     {
+        if (!Auth::check()) {
+            header("Location: /login");
+            exit;
+        }
+
         $this->view('pengaturan/index');
     }
+
     public function load_single()
     {
         $kd_wilayah = $_SESSION['user']['kd_wilayah'];
@@ -28,6 +34,6 @@ class PengaturanController extends Controller
             )->fetch();
         }
 
-        echo JsonResponse::success("Data ditemukan", $data);
+        echo JsonResponse::success("OK", $data);
     }
 }

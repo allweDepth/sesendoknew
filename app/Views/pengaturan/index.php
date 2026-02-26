@@ -1,12 +1,8 @@
-<div class="ui container">
+<div id="main-content"></div>
 
-    <h2 class="ui dividing header">
-        <i class="settings icon"></i>
-        <div class="content">
-            Pengaturan Sistem
-        </div>
-    </h2>
-
-    <?php include __DIR__ . '/form.php'; ?>
-    
-</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const module = new PengaturanModule();
+        module.init();
+    });
+</script>

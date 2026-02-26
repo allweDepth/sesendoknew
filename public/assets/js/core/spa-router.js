@@ -10,7 +10,7 @@ class SpaRouter {
 	// ================================
 	resolveMode(url) {
 		// Client modules
-		const clientRoutes = ["/renstra", "/referensi", "/kepegawaian"];
+		const clientRoutes = ["/renstra", "/referensi", "/kepegawaian", "/kepegawaian"];
 
 		if (clientRoutes.some((route) => url.startsWith(route))) {
 			return "client";
