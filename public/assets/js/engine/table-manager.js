@@ -150,20 +150,25 @@ class TableManager {
     const module = this.state.module;
     const tbl = this.state.tbl;
 
-    const config = window.UIConfig?.[module]?.[tbl];
-    if (!Array.isArray(config)) return [];
+    let config =
+    window.UIConfig?.[module]?.[tbl] ||
+    window.UIConfig?.[tbl];
+    if (!config) return [];
 
-    return config
+    // 🔥 SUPPORT DUA STRUKTUR
+    const columnsSource = Array.isArray(config)
+        ? config
+        : Array.isArray(config.columns)
+            ? config.columns
+            : [];
+
+    return columnsSource
         .filter((item) => {
-
-            // Harus punya nama field
             if (!item.prop?.name) return false;
 
-            // Skip elemen non-data
             if (["divider", "header", "fieldHidden", "fieldCustom"].includes(item.tag))
                 return false;
 
-            // 🔥 Jika visible diset false → jangan tampilkan
             if (item.prop.visible === false)
                 return false;
 

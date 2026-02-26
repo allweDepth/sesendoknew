@@ -1,17 +1,22 @@
 class BaseCrudModule {
 	constructor(config = {}) {
-		this.moduleName = config.moduleName;
-		this.useMenu = config.useMenu === true;
-		// default false, hanya true jika dikirim
-		this.useMenu = config.useMenu !== false; // default true
+    this.moduleName = config.moduleName;
 
-		this.container = "#main-content";
+    // 🔥 INI WAJIB ADA
+    this.menuItems = Array.isArray(config.menuItems)
+        ? config.menuItems
+        : [];
 
-		this.state = window.app.state;
-		this.ajax = window.app.ajax;
+    // 🔥 PERBAIKI LOGIKA useMenu
+    this.useMenu = config.useMenu === true;
 
-		this.tableManager = null;
-	}
+    this.container = "#main-content";
+
+    this.state = window.app.state;
+    this.ajax = window.app.ajax;
+
+    this.tableManager = null;
+}
 
 	init() {
     this.renderLayout();

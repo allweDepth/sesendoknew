@@ -1308,3 +1308,5 @@ const UIConfig = {
 		},
 	],
 };
+// 🔥 WAJIB agar bisa dibaca TableManager
+window.UIConfig = UIConfig;
