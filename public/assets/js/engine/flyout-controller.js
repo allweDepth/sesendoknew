@@ -21,11 +21,7 @@ class FlyoutController {
 	}
 
 	init() {
-		// INIT SIDEBAR
-		this.$flyout.sidebar({
-    transition: "overlay",
-    closable: false,
-});
+		
 
 		this.$modal.modal({
 			closable: false,
