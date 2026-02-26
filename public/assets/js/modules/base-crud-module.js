@@ -25,35 +25,45 @@ class BaseCrudModule {
      */
     renderLayout() {
 
-        let menuHtml = "";
+    let menuHtml = "";
 
-        this.menuItems.forEach((item, index) => {
-            menuHtml += `
-                <a class="item ${index === 0 ? "active" : ""}" 
-                   data-tbl="${item.tbl}">
-                   ${item.label}
-                </a>
-            `;
-        });
+    this.menuItems.forEach((item, index) => {
+        menuHtml += `
+            <a class="item ${index === 0 ? "active" : ""}" 
+               data-tbl="${item.tbl}">
+               ${item.label}
+            </a>
+        `;
+    });
 
-        const html = `
-            <div class="ui container">
+    const html = `
+        <div class="ui container">
 
-                <h2 class="ui dividing header">
-                    Modul ${this.moduleName.toUpperCase()}
-                </h2>
+            <h2 class="ui dividing header">
+                Modul ${this.moduleName.toUpperCase()}
+            </h2>
 
-                <div class="ui secondary pointing menu" id="crudMenu">
-                    ${menuHtml}
-                </div>
+            <div class="ui secondary pointing menu" id="crudMenu">
+                ${menuHtml}
+            </div>
 
-                <div id="crud-table-container"></div>
+            <!-- 🔥 TABEL WAJIB ADA -->
+            <div id="crud-table-container">
+
+                <table class="ui celled striped table">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+
+                <div class="pagination-wrapper"></div>
 
             </div>
-        `;
 
-        $(this.container).html(html);
-    }
+        </div>
+    `;
+
+    $(this.container).html(html);
+}
 
     /**
      * ========================================================
