@@ -98,7 +98,7 @@ class BaseCrudModule {
 	 */
 	loadTable(tbl) {
 		// Set state module & tabel aktif
-		this.state.setModule(this.moduleName);
+		this.state.setModule(this.moduleName.toLowerCase());
 		this.state.setTable(tbl);
 
 		// Destroy instance lama jika ada
