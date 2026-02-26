@@ -101,28 +101,7 @@ const UIConfig = {
 				},
 			],
 		},
-		periode_rpjmd: [
-			{
-				tag: "fieldCalendar",
-				prop: {
-					label: "Periode Mulai",
-					name: "periode_mulai",
-					calendarType: "year",
-					atribut: `data-group="rpjmd" data-range="start"`,
-				},
-			},
-			{
-				tag: "fieldCalendar",
-				prop: {
-					label: "Periode Selesai",
-					name: "periode_selesai",
-					calendarType: "year",
-					atribut: `data-group="rpjmd" data-range="end"`,
-				},
-			},
-			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
-			{ tag: "fieldCheckbox", prop: { label: "Aktif", name: "status_aktif" } },
-		],
+		
 	},
 
 	/* ======================================================
@@ -1414,3 +1393,37 @@ const UIConfig = {
 };
 // 🔥 WAJIB agar bisa dibaca TableManager
 window.UIConfig = UIConfig;
+window.UIConfig = window.UIConfig || {};
+
+UIConfig.periode_rpjmd = [
+    {
+        tag: "fieldCalendar",
+        prop: {
+            label: "Periode Mulai",
+            name: "periode_mulai",
+            calendarType: "year",
+        },
+    },
+    {
+        tag: "fieldCalendar",
+        prop: {
+            label: "Periode Selesai",
+            name: "periode_selesai",
+            calendarType: "year",
+        },
+    },
+    {
+        tag: "fieldTextarea",
+        prop: {
+            label: "Keterangan",
+            name: "keterangan",
+        },
+    },
+    {
+        tag: "fieldCheckbox",
+        prop: {
+            label: "Aktif",
+            name: "status_aktif",
+        },
+    },
+];
