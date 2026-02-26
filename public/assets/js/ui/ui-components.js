@@ -3,39 +3,38 @@
 // ======================================================
 
 class UIComponents {
+	// ==================================================
+	// BASIC INPUT
+	// ==================================================
 
-    // ==================================================
-    // BASIC INPUT
-    // ==================================================
-
-    static input(label, name, type = "text") {
-        return `
+	static input(label, name, type = "text") {
+		return `
         <div class="field">
             <label>${label}</label>
             <input type="${type}" name="${name}">
         </div>
         `;
-    }
+	}
 
-    // ==================================================
-    // TEXTAREA
-    // ==================================================
+	// ==================================================
+	// TEXTAREA
+	// ==================================================
 
-    static textarea(label, name) {
-        return `
+	static textarea(label, name) {
+		return `
         <div class="field">
             <label>${label}</label>
             <textarea name="${name}"></textarea>
         </div>
         `;
-    }
+	}
 
-    // ==================================================
-    // TOGGLE CHECKBOX
-    // ==================================================
+	// ==================================================
+	// TOGGLE CHECKBOX
+	// ==================================================
 
-    static toggle(label, name) {
-        return `
+	static toggle(label, name) {
+		return `
         <div class="field">
             <div class="ui toggle checkbox">
                 <input type="checkbox" name="${name}">
@@ -43,19 +42,18 @@ class UIComponents {
             </div>
         </div>
         `;
-    }
+	}
 
-    // ==================================================
-    // DROPDOWN STATIC
-    // ==================================================
+	// ==================================================
+	// DROPDOWN STATIC
+	// ==================================================
 
-    static dropdown(label, name, options = []) {
+	static dropdown(label, name, options = []) {
+		let items = options
+			.map((o) => `<div class="item" data-value="${o.value}">${o.text}</div>`)
+			.join("");
 
-        let items = options.map(o =>
-            `<div class="item" data-value="${o.value}">${o.text}</div>`
-        ).join("");
-
-        return `
+		return `
         <div class="field">
             <label>${label}</label>
             <div class="ui fluid selection dropdown">
@@ -68,15 +66,14 @@ class UIComponents {
             </div>
         </div>
         `;
-    }
+	}
 
-    // ==================================================
-    // SINGLE CALENDAR
-    // ==================================================
+	// ==================================================
+	// SINGLE CALENDAR
+	// ==================================================
 
-    static calendar(label, name) {
-
-        return `
+	static calendar(label, name) {
+		return `
         <div class="field">
             <label>${label}</label>
             <div class="ui calendar calendar_${name}">
@@ -87,15 +84,14 @@ class UIComponents {
             </div>
         </div>
         `;
-    }
+	}
 
-    // ==================================================
-    // RANGE CALENDAR
-    // ==================================================
+	// ==================================================
+	// RANGE CALENDAR
+	// ==================================================
 
-    static rangeCalendar(name, label) {
-
-    return `
+	static rangeCalendar(name, label, type = "datetime") {
+		return `
     <div class="eight wide computer eight wide tablet sixteen wide mobile column">
 
         <div class="field">
@@ -104,21 +100,19 @@ class UIComponents {
             <div class="two fields">
 
                 <div class="field">
-                    <div class="ui calendar start_${name}">
+                    <div class="ui calendar start_${name}" data-calendar-type="${type}">
                         <div class="ui input left icon">
                             <i class="calendar icon"></i>
-                            <input type="text"
-                                   name="awal_${name}">
+                            <input type="text" name="awal_${name}">
                         </div>
                     </div>
                 </div>
 
                 <div class="field">
-                    <div class="ui calendar end_${name}">
+                    <div class="ui calendar end_${name}" data-calendar-type="${type}">
                         <div class="ui input left icon">
                             <i class="calendar icon"></i>
-                            <input type="text"
-                                   name="akhir_${name}">
+                            <input type="text" name="akhir_${name}">
                         </div>
                     </div>
                 </div>
@@ -128,63 +122,64 @@ class UIComponents {
 
     </div>
     `;
+	}
+
+	// ==================================================
+	// INIT ALL FOMANTIC
+	// ==================================================
+
+	static initAll() {
+		$(".ui.dropdown").dropdown();
+		$(".ui.checkbox").checkbox();
+
+		$(".ui.calendar").calendar({
+			type: "datetime",
+		});
+	}
+
+	static initRange(names = []) {
+
+    names.forEach(name => {
+
+        const start = $(`.start_${name}`);
+        const end   = $(`.end_${name}`);
+
+        const calendarType = start.data("calendar-type") || "datetime";
+
+        start.calendar({
+            type: calendarType,
+            endCalendar: end
+        });
+
+        end.calendar({
+            type: calendarType,
+            startCalendar: start
+        });
+    });
 }
-
-    // ==================================================
-    // INIT ALL FOMANTIC
-    // ==================================================
-
-    static initAll() {
-
-        $('.ui.dropdown').dropdown();
-        $('.ui.checkbox').checkbox();
-
-        $('.ui.calendar').calendar({
-            type: "datetime"
-        });
-    }
-
-    static initRange(names = []) {
-
-        names.forEach(name => {
-
-            const start = $(`.start_${name}`);
-            const end   = $(`.end_${name}`);
-
-            start.calendar({
-                type: "datetime",
-                endCalendar: end
-            });
-
-            end.calendar({
-                type: "datetime",
-                startCalendar: start
-            });
-        });
-    }
 }
 // REGISTER ALL COMPONENTS
 
-UIComponentRegistry.register("input",
-    (p) => UIComponents.input(p.label, p.name, p.type || "text")
+UIComponentRegistry.register("input", (p) =>
+	UIComponents.input(p.label, p.name, p.type || "text"),
 );
 
-UIComponentRegistry.register("textarea",
-    (p) => UIComponents.textarea(p.label, p.name)
+UIComponentRegistry.register("textarea", (p) =>
+	UIComponents.textarea(p.label, p.name),
 );
 
-UIComponentRegistry.register("toggle",
-    (p) => UIComponents.toggle(p.label, p.name)
+UIComponentRegistry.register("toggle", (p) =>
+	UIComponents.toggle(p.label, p.name),
 );
 
-UIComponentRegistry.register("calendar",
-    (p) => UIComponents.calendar(p.label, p.name)
+UIComponentRegistry.register("calendar", (p) =>
+	UIComponents.calendar(p.label, p.name),
 );
 
-UIComponentRegistry.register("rangeCalendar",
-    (p) => UIComponents.rangeCalendar(p.name, p.label)
+UIComponentRegistry.register("rangeCalendar", (p) =>
+	UIComponents.rangeCalendar(p.name, p.label, p.calendarType || "datetime"),
 );
 
-UIComponentRegistry.register("dropdown",
-    (p) => UIComponents.dropdown(p.label, p.name, p.options || [])
+UIComponentRegistry.register("dropdown", (p) =>
+	UIComponents.dropdown(p.label, p.name, p.options || []),
 );

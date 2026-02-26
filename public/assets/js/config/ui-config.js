@@ -1397,33 +1397,25 @@ window.UIConfig = window.UIConfig || {};
 
 UIConfig.periode_rpjmd = [
     {
-        tag: "fieldCalendar",
+        tag: "rangeCalendar",
         prop: {
-            label: "Periode Mulai",
-            name: "periode_mulai",
-            calendarType: "year",
-        },
-    },
-    {
-        tag: "fieldCalendar",
-        prop: {
-            label: "Periode Selesai",
-            name: "periode_selesai",
-            calendarType: "year",
-        },
+            label: "Periode RPJMD",
+            name: "periode",
+            calendarType: "year"
+        }
     },
     {
         tag: "fieldTextarea",
         prop: {
             label: "Keterangan",
-            name: "keterangan",
-        },
+            name: "keterangan"
+        }
     },
     {
         tag: "fieldCheckbox",
         prop: {
             label: "Aktif",
-            name: "status_aktif",
-        },
-    },
+            name: "status_aktif"
+        }
+    }
 ];

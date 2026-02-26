@@ -168,8 +168,10 @@
     <script src="/assets/js/core/page-loader.js"></script>
     <script src="/assets/js/core/toast.js"></script>
     <script src="/assets/js/core/dialog.js"></script>
-
+    <!-- UI REGISTRY -->
+    <script src="/assets/js/ui/ui-registry.js"></script>
     <!-- ================= ENGINE ================= -->
+
     <script src="/assets/js/engine/table-manager.js"></script>
     <script src="/assets/js/engine/form-engine.js"></script>
     <script src="/assets/js/engine/form-container-manager.js"></script>
@@ -180,8 +182,8 @@
 
     <!-- ================= APP CORE ================= -->
     <script src="/assets/js/app.js"></script> <!-- SETELAH semua dependency -->
-    <!-- UI REGISTRY -->
-    <script src="/assets/js/ui/ui-registry.js"></script>
+
+
 
     <!-- UI COMPONENTS -->
     <script src="/assets/js/ui/ui-components.js"></script>
