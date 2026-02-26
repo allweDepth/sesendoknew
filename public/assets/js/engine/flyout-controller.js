@@ -21,8 +21,6 @@ class FlyoutController {
 	}
 
 	init() {
-		
-
 		this.$modal.modal({
 			closable: false,
 			allowMultiple: true,
@@ -66,8 +64,8 @@ class FlyoutController {
 
 		if (!tbl) return;
 
-		AppState.tbl = tbl;
-		AppState.action = jns;
+		window.app.state.setTable(tbl);
+		window.app.state.action = jns;
 
 		this.activeContainer = container;
 
@@ -98,41 +96,68 @@ class FlyoutController {
 		const target = this.getActiveForm();
 		target.empty();
 
-		FormEngine.render(target, config.elements);
+		// 🔥 PAKAI state yang benar
+		const action = window.app.state.action;
 
-		if (AppState.action === "edit") {
+		// Kalau FormEngine.render memang ada di sistem kamu
+		if (typeof FormEngine.render === "function") {
+			FormEngine.render(target, config.elements);
+		} else {
+			// fallback minimal kalau tidak ada
+			config.elements.forEach((el) => {
+				if (!el.prop?.name) return;
+
+				target.append(`
+				<div class="field">
+					<label>${el.prop.label || el.prop.name}</label>
+					<input type="text" name="${el.prop.name}">
+				</div>
+			`);
+			});
+		}
+
+		// 🔥 PERBAIKI INI
+		if (action === "edit") {
 			target.prepend(`<input type="hidden" name="id">`);
 		}
 
-		// LOAD DROPDOWN AUTO
-		this.loadDropdowns(target);
+		// tetap jalankan dropdown loader kalau ada
+		if (typeof this.loadDropdowns === "function") {
+			this.loadDropdowns(target);
+		}
 	}
 
 	loadData(id) {
-		this.ajax.request({
-			data: {
-				module: AppState.module,
-				action: "edit",
-				tbl: AppState.tbl,
-				id_row: id,
-			},
-			success: (res) => {
-				if (!res.success) return;
 
-				const $form = this.getActiveForm();
+	this.ajax.request({
+		method: "POST",
+		data: {
+			module: window.app.state.module,
+			action: "edit",
+			tbl: window.app.state.tbl,
+			id_row: id
+		},
+		success: (res) => {
 
-				Object.keys(res.data).forEach((key) => {
-					const $field = $form.find(`[name="${key}"]`);
-					if (!$field.length) return;
+			if (!res.success) return;
 
-					$field.val(res.data[key]);
-				});
-			},
-		});
-	}
+			const formSelector =
+				this.activeContainer === "modal"
+					? "#form_modal"
+					: "#form_flyout";
+
+			Object.keys(res.data).forEach((key) => {
+				$(`${formSelector} [name="${key}"]`).val(res.data[key]);
+			});
+		}
+	});
+}
 
 	buildConfig(jenis, tbl) {
-		let elements = UIConfig[AppState.module]?.[tbl] || [];
+		const module = window.app.state.module;
+
+		let elements =
+			window.UIConfig?.[module]?.[tbl] || window.UIConfig?.[tbl] || [];
 
 		return {
 			elements: elements,
