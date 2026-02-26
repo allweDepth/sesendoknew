@@ -34,24 +34,37 @@ class App {
 		}
 	}
 	loadModule(url) {
-		switch (true) {
-			case url.startsWith("/renstra"):
-				new RenstraModule().init();
-				break;
+    switch (true) {
 
-			case url.startsWith("/referensi"):
-				new ReferensiModule().init();
-				break;
+        case url.startsWith("/renstra"):
+            new RenstraModule().init();
+            break;
 
-			case url.startsWith("/kepegawaian"):
-				new KepegawaianModule().init();
-				break;
+        case url.startsWith("/referensi"):
+            new ReferensiModule().init();
+            break;
 
-			default:
-				console.warn("Module tidak dikenali:", url);
-				break;
-		}
-	}
+        case url.startsWith("/kepegawaian"):
+            new KepegawaianModule().init();
+            break;
+
+        case url.startsWith("/standar_harga"):   // 🔥 TAMBAHKAN INI
+            new StandarHargaModule().init();
+            break;
+
+        case url.startsWith("/pengaturan"):      // kalau ada
+            new PengaturanModule().init();
+            break;
+
+        case url.startsWith("/tata_naskah"):     // kalau ada
+            new TataNaskahModule().init();
+            break;
+
+        default:
+            console.warn("Module tidak dikenali:", url);
+            break;
+    }
+}
 }
 // ======================================================
 // GLOBAL SINGLETON (WAJIB ADA SATU SAJA)

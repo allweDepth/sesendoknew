@@ -1,35 +1,38 @@
 class BaseCrudModule {
 	constructor(config = {}) {
-    this.moduleName = config.moduleName;
+		this.moduleName = config.moduleName;
 
-    // 🔥 INI WAJIB ADA
-    this.menuItems = Array.isArray(config.menuItems)
-        ? config.menuItems
-        : [];
+		// 🔥 INI WAJIB ADA
+		this.menuItems = Array.isArray(config.menuItems) ? config.menuItems : [];
 
-    // 🔥 PERBAIKI LOGIKA useMenu
-    this.useMenu = config.useMenu === true;
+		// 🔥 PERBAIKI LOGIKA useMenu
+		this.useMenu = config.useMenu === true;
 
-    this.container = "#main-content";
+		this.container = "#main-content";
 
-    this.state = window.app.state;
-    this.ajax = window.app.ajax;
+		this.state = window.app.state;
+		this.ajax = window.app.ajax;
 
-    this.tableManager = null;
-}
+		this.tableManager = null;
+	}
 
 	init() {
-    this.renderLayout();
+		this.renderLayout();
 
-    if (this.useMenu) {
-        this.initMenu();
-    }
+		if (this.useMenu) {
+			this.initMenu();
+		}
 
-    // 🔥 GUARD WAJIB
-    if (this.menuItems.length > 0) {
-        this.loadTable(this.menuItems[0].tbl);
-    }
-}
+		// 🔥 AMBIL TBL DARI URL
+		const urlParams = new URLSearchParams(window.location.search);
+		const tblFromUrl = urlParams.get("tbl");
+
+		if (tblFromUrl) {
+			this.loadTable(tblFromUrl);
+		} else if (this.menuItems.length > 0) {
+			this.loadTable(this.menuItems[0].tbl);
+		}
+	}
 
 	/**
 	 * ========================================================
@@ -37,30 +40,33 @@ class BaseCrudModule {
 	 * ========================================================
 	 */
 	renderLayout() {
+		let menuHtml = "";
 
-    let menuHtml = "";
-
-    this.menuItems.forEach((item, index) => {
-        menuHtml += `
+		this.menuItems.forEach((item, index) => {
+			menuHtml += `
             <a class="item ${index === 0 ? "active" : ""}" 
                data-tbl="${item.tbl}">
                ${item.label}
             </a>
         `;
-    });
+		});
 
-    const html = `
+		const html = `
         <div class="ui container">
 
             <h2 class="ui dividing header">
                 Modul ${this.moduleName.toUpperCase()}
             </h2>
 
-            ${this.useMenu ? `
+            ${
+							this.useMenu
+								? `
             <div class="ui secondary pointing menu" id="crudMenu">
                 ${menuHtml}
             </div>
-            ` : ``}
+            `
+								: ``
+						}
 
             <!-- TABEL HARUS SELALU ADA -->
             <div id="crud-table-container"></div>
@@ -68,8 +74,8 @@ class BaseCrudModule {
         </div>
     `;
 
-    $(this.container).html(html);
-}
+		$(this.container).html(html);
+	}
 
 	/**
 	 * ========================================================
@@ -110,16 +116,20 @@ class BaseCrudModule {
 		// 🔥 RENDER TABLE LAYOUT DULU
 		// ======================================================
 		$("#crud-table-container").html(`
-        <div class="table-wrapper">
-            <table class="ui very compact celled striped table">
-                <thead>
-                   
-                </thead>
-                <tbody id="crud-tbody"></tbody>
-            </table>
-        </div>
-        <div id="crud-pagination"></div>
-    `);
+    <div class="table-wrapper">
+        <table class="ui very compact celled striped table">
+            <thead></thead>
+            <tbody id="crud-tbody"></tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="100%">
+                        <div id="crud-pagination"></div>
+                    </th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+`);
 
 		// ======================================================
 		// 🔥 INISIALISASI TABLE MANAGER

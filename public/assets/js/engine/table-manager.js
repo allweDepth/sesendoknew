@@ -420,6 +420,18 @@ class TableManager {
 				this.fetchData();
 			});
 		}
+		// ==========================================
+// SEARCH DARI NAVBAR (#cari_data)
+// ==========================================
+$(document).off("input.tableSearch");
+
+$(document).on("keypress.tableSearch", "#cari_data", (e) => {
+    if (e.which === 13) {
+        this.searchQuery = $(e.currentTarget).val();
+        this.currentPage = 1;
+        this.fetchData();
+    }
+});
 	}
 
 	/* =====================================================
