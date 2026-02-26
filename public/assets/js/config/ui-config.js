@@ -331,7 +331,7 @@ const UIConfig = {
 		program: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Bidang", name: "kode_bidang", source: "bidang" },
+				prop: { label: "Bidang", name: "kode_bidang", source: "bidang",classInput: "search"  },
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Nama", name: "nama" } },
@@ -340,7 +340,7 @@ const UIConfig = {
 		kegiatan: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Program", name: "kode_program", source: "program" },
+				prop: { label: "Program", name: "kode_program", source: "program",classInput: "search" },
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Nama", name: "nama" } },
@@ -349,7 +349,7 @@ const UIConfig = {
 		sub_kegiatan: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Kegiatan", name: "kode_kegiatan", source: "kegiatan" },
+				prop: { label: "Kegiatan", name: "kode_kegiatan", source: "kegiatan",classInput: "search" },
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Nama", name: "nama" } },

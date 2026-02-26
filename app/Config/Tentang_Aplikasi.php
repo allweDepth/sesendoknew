@@ -1246,3 +1246,202 @@ Apakah transaction wrap?
 ✔ Log error query
 ✔ Log import error
 ✔ Log login gagal
+==========================================================
+
+📘 PETA DEBUG KHUSUS UICONFIG
+
+==========================================================
+
+⸻
+
+🧠 APA ITU UICONFIG?
+
+UIConfig adalah:
+	•	Blueprint tampilan form
+	•	Blueprint field
+	•	Penentu dropdown source
+	•	Penentu struktur fields
+	•	Tidak berisi logic database
+
+UIConfig hanya menentukan:Apa yang dirender
+DynamicTableService menentukan:Data apa yang diambil
+FormEngine menentukan:Bagaimana field dirender
+==========================================================
+
+📂 LOKASI UICONFIG
+
+==========================================================
+
+Biasanya:public/assets/config/ui-config.js atau window.UIConfig = { ... }
+==========================================================
+
+🧩 STRUKTUR DASAR UICONFIG
+
+==========================================================
+
+Contoh:
+window.UIConfig = {
+
+    referensi: {
+
+        bidang: {
+            elements: [
+                {
+                    tag: "fieldDropdown",
+                    prop: {
+                        label: "Urusan",
+                        name: "kode_urusan",
+                        source: "urusan",
+                        classInput: "search"
+                    }
+                },
+                {
+                    tag: "field",
+                    prop: {
+                        label: "Kode",
+                        name: "kode"
+                    }
+                },
+                {
+                    tag: "field",
+                    prop: {
+                        label: "Nama",
+                        name: "nama"
+                    }
+                }
+            ]
+        }
+
+    }
+
+};
+==========================================================
+
+🧩 PETA DEBUG UICONFIG
+
+==========================================================
+
++–––––––––––––––––––––––––+———————————————–+
+| MAU CEK                                          | CEK DI UICONFIG                              |
++–––––––––––––––––––––––––+———————————————–+
+| Field tidak muncul                               | elements array                               |
+| Dropdown tidak load                              | source benar?                                |
+| Dropdown tidak searchable                        | classInput: “search” ada?                    |
+| Field tidak tersimpan                            | name sesuai kolom DB?                        |
+| Field tidak terisi saat edit                     | name sama dengan key JSON?                   |
+| Child dropdown tidak reload                      | data-parent ada?                             |
+| Dropdown salah tabel                             | source salah                                 |
+| Placeholder tidak muncul                         | prop.placeholder                             |
+| Calendar tidak muncul                            | tag: “fieldCalendar”                         |
+| Checkbox tidak muncul                            | tag: “fieldCheckbox”                         |
++–––––––––––––––––––––––––+———————————————–+
+
+⸻
+
+==========================================================
+
+🏷 FIELD TYPES YANG DIDUKUNG FORMENGINE
+
+==========================================================
+
++—————––+—————————+
+| tag               | Fungsi                    |
++—————––+—————————+
+| field             | input text                |
+| fieldTextarea     | textarea                  |
+| fieldDropdown     | dropdown fomantic         |
+| fieldCheckbox     | checkbox                  |
+| fieldCalendar     | datepicker                |
+| fieldFile         | upload file               |
+| fields            | grouping field            |
+| inlineFields      | inline grouping           |
+| divider           | section divider           |
+| fieldAction       | input dengan button       |
++—————––+—————————+
+
+⸻
+
+==========================================================
+
+🎯 CARA MEMBUAT DROPDOWN SEARCHABLE DI UICONFIG
+
+==========================================================
+
+Tambahkan:classInput: "search"
+Contoh final:
+{
+    tag: "fieldDropdown",
+    prop: {
+        label: "Urusan",
+        name: "kode_urusan",
+        source: "urusan",
+        classInput: "search",
+        placeholder: "Pilih Urusan"
+    }
+}
+Karena template dropdown Anda:<div class="ui selection dropdown ${prop.classInput || ""}">
+    ==========================================================
+
+🔄 CASCADE DROPDOWN DI UICONFIG
+
+==========================================================
+
+Jika ingin child reload otomatis:
+
+Tambahkan:dataParent: "kode_program"
+{
+    tag: "fieldDropdown",
+    prop: {
+        label: "Kegiatan",
+        name: "kode_kegiatan",
+        source: "kegiatan",
+        dataParent: "kode_program",
+        classInput: "search"
+    }
+}
+JS akan baca:
+	•	parent field = kode_program
+	•	reload child saat parent berubah
+==========================================================
+
+🚨 KESALAHAN UMUM DI UICONFIG
+
+==========================================================
+
+❌ name tidak sama dengan kolom DB
+❌ source tidak ada di table_profiles
+❌ lupa classInput search
+❌ tidak isi dataParent untuk cascade
+❌ salah label / placeholder
+❌ duplikasi name field
+
+⸻
+
+==========================================================
+
+🧠 PERBEDAAN TANGGUNG JAWAB
+
+==========================================================
+
++––––––––––+––––––––––––––––+
+| LAYER              | TANGGUNG JAWAB                |
++––––––––––+––––––––––––––––+
+| UIConfig           | Struktur form                  |
+| FormEngine         | Render & bind event            |
+| FlyoutController   | Buka & load form               |
+| DynamicService     | Data & query                   |
+| table_profiles     | Policy & relasi                |
++––––––––––+––––––––––––––––+
+
+Jangan campur.
+
+⸻
+
+==========================================================
+
+🔐 UICONFIG BEST PRACTICE UNTUK SISTEM ANDA
+
+==========================================================
+
+Untuk struktur referensi (urusan → sub_kegiatan):
+
