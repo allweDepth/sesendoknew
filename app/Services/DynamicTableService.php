@@ -1,306 +1,257 @@
-<?php
+    <?php
 
-require_once __DIR__ . '/JsonResponse.php';
+    require_once __DIR__ . '/JsonResponse.php';
 
-/**
- * ============================================================
- * DYNAMIC TABLE SERVICE v3.0 (FULL IDENTIK + ACTION VERSION)
- * ============================================================
- *
- * PERUBAHAN:
- * ------------------------------------------------------------
- * ❌ jenis  → diganti action
- * ❌ mode   → diganti action
- * ✅ module → hanya konteks (tidak mengganggu logic lama)
- *
- * Semua fitur lama DIPERTAHANKAN 100%
- * ============================================================
- */
+    /**
+     * ============================================================
+     * DYNAMIC TABLE SERVICE v3.0 (FULL IDENTIK + ACTION VERSION)
+     * ============================================================
+     *
+     * PERUBAHAN:
+     * ------------------------------------------------------------
+     * ❌ jenis  → diganti action
+     * ❌ mode   → diganti action
+     * ✅ module → hanya konteks (tidak mengganggu logic lama)
+     *
+     * Semua fitur lama DIPERTAHANKAN 100%
+     * ============================================================
+     */
 
-class DynamicTableService
-{
-    private DB $db;
-    private array $profiles;
-    private array $user;
-
-    /* =========================================================
-       INTERNAL CACHE (ANTI DOUBLE QUERY)
-    ========================================================= */
-    private static array $columnCache = [];
-    private static array $schemaCache = [];
-    private ?array $pengaturanAktifCache = null;
-    private ?array $periodeAktifCache = null;
-    public function __construct()
+    class DynamicTableService
     {
-        $this->db = DB::getInstance();
-        $this->profiles = require __DIR__ . '/../Config/table_profiles.php';
-        $this->user = $_SESSION['user'] ?? [];
-    }
+        private DB $db;
+        private array $profiles;
+        private array $user;
 
-    /* =========================================================
-       MAIN HANDLER (ENTRY POINT)
-    ========================================================= */
-    public function handle(array $request): string
-    {
-        try {
+        /* =========================================================
+        INTERNAL CACHE (ANTI DOUBLE QUERY)
+        ========================================================= */
+        private static array $columnCache = [];
+        private static array $schemaCache = [];
+        private ?array $pengaturanAktifCache = null;
+        private ?array $periodeAktifCache = null;
+        public function __construct()
+        {
+            $this->db = DB::getInstance();
+            $this->profiles = require __DIR__ . '/../Config/table_profiles.php';
+            $this->user = $_SESSION['user'] ?? [];
+        }
 
-            $action = $request['action'] ?? '';
-            $module = $request['module'] ?? '';
-            $tbl    = $request['tbl'] ?? '';
+        /* =========================================================
+        MAIN HANDLER (ENTRY POINT)
+        ========================================================= */
+        public function handle(array $request): string
+        {
+            try {
 
-            if ($action === 'dropdown' && !empty($request['source'])) {
-                return $this->loadDropdown(
-                    $request['source'],
-                    $request['parent_value'] ?? null
-                );
-            }
+                $action = $request['action'] ?? 'default';
+                $tbl    = $request['tbl'] ?? null;
 
-            if (!$tbl) {
-                return JsonResponse::error('Tabel tidak dikirim');
-            }
-
-            if (!isset($this->profiles[$tbl])) {
-                return JsonResponse::error('Tabel tidak terdaftar');
-            }
-
-            $profile = $this->profiles[$tbl];
-            $table   = $profile['table'];
-
-            /* =====================================================
-           🔥 IMPORT STRUKTUR NASIONAL
-        ===================================================== */
-            /* =====================================================
-   🔥 IMPORT STRUKTUR NASIONAL
-===================================================== */
-            if ($action === 'import_struktur') {
-
-                if (empty($_FILES['file']['tmp_name'])) {
-                    return JsonResponse::error("File tidak ditemukan.");
+                if (!$tbl) {
+                    return JsonResponse::error("Tabel tidak dikirim");
                 }
 
-                $this->authorize('add', $table);
-
-                // 🔥 Ambil jml_header dari request
-                $jmlHeader = (int)($request['jml_header'] ?? 1);
-
-                return $this->importStruktur(
-                    $_FILES['file']['tmp_name'],
-                    $jmlHeader
-                );
-            }
-
-            /* =====================================================
-           🔥 IMPORT XLSX PER TABEL (STRICT MODE)
-        ===================================================== */
-            if ($action === 'import_xlsx') {
-
-                if (empty($_FILES['file']['tmp_name'])) {
-                    return JsonResponse::error("File tidak ditemukan.");
+                if (!isset($this->profiles[$tbl])) {
+                    return JsonResponse::error("Tabel tidak terdaftar");
                 }
 
-                $this->authorize('add', $table);
+                $profile = $this->profiles[$tbl];
+                $table   = $profile['table'];
 
-                return $this->importStrict(
+                return $this->executeAction(
+                    $action,
                     $tbl,
-                    $_FILES['file']['tmp_name'],
-                    (int)($request['jml_header'] ?? 1)
+                    $table,
+                    $profile,
+                    $request
                 );
-            }
-
-            /* =====================================================
-           CRUD NORMAL (TIDAK DIUBAH)
-        ===================================================== */
-
-            if ($action === 'add') {
-                $this->authorize('add', $table);
-                return $this->insert($table, $request);
-            }
-
-            if ($action === 'edit') {
-
-                if (!empty($request['id_row']) && count($request) <= 4) {
-                    $this->authorize('view', $table);
-                    return $this->getById($table, $request['id_row']);
-                }
-
-                if (!empty($request['id'])) {
-                    $this->authorize('edit', $table);
-                    return $this->update($table, $request);
-                }
-
-                return JsonResponse::error("ID tidak ditemukan");
-            }
-
-            if ($action === 'delete' && !empty($request['id_row'])) {
-                $this->authorize('delete', $table);
-                return $this->delete($table, $profile, $request['id_row']);
-            }
-
-            if ($action === 'export') {
-                $this->authorize('view', $table);
-                return $this->export($table, $profile, $request, 'default');
-            }
-
-            /* =====================================================
-           DEFAULT LISTING
-        ===================================================== */
-            $this->authorize('view', $table);
-            $mode = $action ?: 'default';
-
-            return $this->buildQuery($table, $profile, $request, $mode);
-        } catch (\Throwable $e) {
-            return JsonResponse::error($e->getMessage());
-        }
-    }
-
-
-    /* =========================================================
-       GET SINGLE ROW
-    ========================================================= */
-    private function getById(string $table, int|string $id): string
-    {
-        $primaryKey = $this->getPrimaryKey($table);
-
-        if (!$this->checkAccess($table, $id)) {
-            return JsonResponse::error("Data tidak ditemukan atau tidak memiliki akses");
-        }
-
-        $row = $this->db->query(
-            "SELECT * FROM `$table` WHERE `$primaryKey` = ? LIMIT 1",
-            [$id]
-        )->fetch();
-
-        return JsonResponse::success("Data ditemukan", null, $row);
-    }
-
-    /* =========================================================
-       ROLE AUTHORIZATION (TIDAK DIUBAH)
-    ========================================================= */
-    private function authorize(string $action, string $table): void
-    {
-        $role = $this->user['type_user'] ?? 'viewer';
-
-        $permissions = [
-            'super_admin'   => ['add', 'edit', 'delete', 'view'],
-            'admin_wilayah' => ['add', 'edit', 'delete', 'view'],
-            'admin_opd'     => ['add', 'edit', 'delete', 'view'],
-            'editor'        => ['add', 'edit', 'view'],
-            'viewer'        => ['view']
-        ];
-
-        if (!in_array($action, $permissions[$role] ?? [])) {
-            throw new Exception("Tidak memiliki hak akses");
-        }
-    }
-
-    /* =========================================================
-       AUDIT TRAIL (TIDAK DIUBAH)
-    ========================================================= */
-    private function injectAudit(array $data, string $mode): array
-    {
-        $now  = date('Y-m-d H:i:s');
-        $user = $this->user['username'] ?? 'system';
-
-        if ($mode === 'insert') {
-            $data['tgl_insert'] = $now;
-            $data['username_insert'] = $user;
-        }
-
-        if ($mode === 'update') {
-            $data['tgl_update'] = $now;
-            $data['username_update'] = $user;
-        }
-
-        return $data;
-    }
-    /* =========================================================
-       INSERT (FULL IDENTIK LOGIC ASLI)
-    ========================================================= */
-    /* =========================================================
-   INSERT (FIXED STABLE VERSION v3.1)
-========================================================= */
-    private function insert(string $table, array $request): string
-    {
-        $columns  = $this->getTableColumns($table);
-        $filtered = [];
-        /* =====================================================
-        FILTER FIELD SESUAI KOLOM TABEL
-        ===================================================== */
-        foreach ($request as $key => $value) {
-
-            if (in_array($key, ['action', 'module', 'tbl'])) continue;
-
-            if (in_array($key, $columns)) {
-                $filtered[$key] = $value;
+            } catch (\Throwable $e) {
+                return JsonResponse::error($e->getMessage());
             }
         }
-        if (empty($filtered)) {
-            return JsonResponse::error("Tidak ada data yang bisa disimpan");
-        }
-        /* =====================================================
-       NORMALISASI CHECKBOX / BOOLEAN
-    ===================================================== */
-        foreach ($columns as $col) {
 
-            if (!isset($filtered[$col])) continue;
+        private function executeAction(
+            string $action,
+            string $tbl,
+            string $table,
+            array $profile,
+            array $request
+        ): string {
 
-            if ($filtered[$col] === 'on') {
-                $filtered[$col] = 1;
-            }
-        }
-        /* =====================================================
-   NORMALISASI FORMAT DATE (DD/MM/YYYY → YYYY-MM-DD)
-===================================================== */
+            switch ($action) {
 
-        foreach ($columns as $col) {
+                case 'add':
+                    $this->authorize('add', $table);
+                    return $this->insert($table, $request);
 
-            if (!isset($filtered[$col])) continue;
+                case 'edit':
 
-            // cek apakah kolom bertipe date
-            $schema = $this->buildRulesFromSchema($table);
-
-            if (isset($schema[$col])) {
-
-                $columnInfo = $this->db->query("SHOW COLUMNS FROM `$table` LIKE ?", [$col])->fetch();
-                $type = $columnInfo['Type'] ?? '';
-
-                if (str_contains($type, 'date')) {
-
-                    $value = $filtered[$col];
-
-                    if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
-
-                        $parts = explode('/', $value);
-
-                        $filtered[$col] = sprintf(
-                            '%04d-%02d-%02d',
-                            $parts[2],
-                            $parts[1],
-                            $parts[0]
-                        );
+                    if (!empty($request['id_row']) && count($request) <= 4) {
+                        $this->authorize('view', $table);
+                        return $this->getById($table, $request['id_row']);
                     }
-                }
+
+                    if (!empty($request['id'])) {
+                        $this->authorize('edit', $table);
+                        return $this->update($table, $request);
+                    }
+
+                    return JsonResponse::error("ID tidak ditemukan");
+
+                case 'delete':
+                    $this->authorize('delete', $table);
+                    return $this->delete($table, $profile, $request['id_row'] ?? null);
+
+                case 'dropdown':
+                    return $this->loadDropdown(
+                        $request['tbl'] ?? null,
+                        $request['parent_value'] ?? null
+                    );
+
+                case 'export':
+                    $this->authorize('view', $table);
+                    return $this->export($table, $profile, $request, 'default');
+
+                default:
+                    $this->authorize('view', $table);
+                    return $this->listing($table, $profile, $request, $action);
             }
         }
-        /* =====================================================
-        VALIDASI KHUSUS PERIODE RPJMD
-        ===================================================== */
-        if ($table === 'periode_rpjmd') {
+        /* =========================================================
+        GET SINGLE ROW
+        ========================================================= */
+        private function getById(string $table, int|string $id): string
+        {
+            $primaryKey = $this->getPrimaryKey($table);
 
-            $mulai   = (int)($filtered['periode_mulai'] ?? 0);
-            $selesai = (int)($filtered['periode_selesai'] ?? 0);
-
-            $kd_wilayah = $this->user['kd_wilayah'] ?? null;
-
-            if (!$kd_wilayah) {
-                return JsonResponse::error("Wilayah tidak ditemukan");
+            if (!$this->checkAccess($table, $id)) {
+                return JsonResponse::error("Data tidak ditemukan atau tidak memiliki akses");
             }
 
-            if ($mulai >= $selesai) {
-                return JsonResponse::error("Periode tidak valid");
+            $row = $this->db->query(
+                "SELECT * FROM `$table` WHERE `$primaryKey` = ? LIMIT 1",
+                [$id]
+            )->fetch();
+
+            return JsonResponse::success("Data ditemukan", null, $row);
+        }
+
+        /* =========================================================
+        ROLE AUTHORIZATION (TIDAK DIUBAH)
+        ========================================================= */
+        private function authorize(string $action, string $table): void
+        {
+            $role = $this->user['type_user'] ?? 'viewer';
+
+            $permissions = [
+                'super_admin'   => ['add', 'edit', 'delete', 'view'],
+                'admin_wilayah' => ['add', 'edit', 'delete', 'view'],
+                'admin_opd'     => ['add', 'edit', 'delete', 'view'],
+                'editor'        => ['add', 'edit', 'view'],
+                'viewer'        => ['view']
+            ];
+
+            if (!in_array($action, $permissions[$role] ?? [])) {
+                throw new Exception("Tidak memiliki hak akses");
+            }
+        }
+
+        /* =========================================================
+        AUDIT TRAIL (TIDAK DIUBAH)
+        ========================================================= */
+        private function injectAudit(array $data, string $mode): array
+        {
+            $now  = date('Y-m-d H:i:s');
+            $user = $this->user['username'] ?? 'system';
+
+            if ($mode === 'insert') {
+                $data['tgl_insert'] = $now;
+                $data['username_insert'] = $user;
             }
 
-            $cek = $this->db->query("
+            if ($mode === 'update') {
+                $data['tgl_update'] = $now;
+                $data['username_update'] = $user;
+            }
+
+            return $data;
+        }
+        /* =========================================================
+        INSERT (FULL IDENTIK LOGIC ASLI)
+        ========================================================= */
+        /* =========================================================
+        INSERT (FIXED STABLE VERSION v3.1)
+        ========================================================= */
+        private function insert(string $table, array $request): string
+        {
+            $columns  = $this->getTableColumns($table);
+            $filtered = [];
+
+            /* =====================================================
+            1️⃣ FILTER FIELD SESUAI KOLOM TABEL
+            ===================================================== */
+            foreach ($request as $key => $value) {
+
+                if (in_array($key, ['action', 'module', 'tbl'])) continue;
+
+                if (in_array($key, $columns)) {
+                    $filtered[$key] = $value;
+                }
+            }
+
+            if (empty($filtered)) {
+                return JsonResponse::error("Tidak ada data yang bisa disimpan");
+            }
+
+            /* =====================================================
+       2️⃣ NORMALISASI BOOLEAN & DATE
+    ===================================================== */
+            foreach ($filtered as $field => $value) {
+
+                // checkbox
+                if ($value === 'on') {
+                    $filtered[$field] = 1;
+                }
+
+                // date format
+                if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
+
+                    $parts = explode('/', $value);
+
+                    $filtered[$field] = sprintf(
+                        '%04d-%02d-%02d',
+                        $parts[2],
+                        $parts[1],
+                        $parts[0]
+                    );
+                }
+            }
+
+            /* =====================================================
+       3️⃣ AUTO FIELD RESOLUTION (SCOPE)
+    ===================================================== */
+            $filtered = $this->resolveAutoFields($table, $filtered);
+
+            /* =====================================================
+       4️⃣ SPECIAL TABLE RULES
+    ===================================================== */
+
+            // 🔥 Periode RPJMD
+            if ($table === 'periode_rpjmd') {
+
+                $mulai   = (int)($filtered['periode_mulai'] ?? 0);
+                $selesai = (int)($filtered['periode_selesai'] ?? 0);
+                $kd_wilayah = $this->user['kd_wilayah'] ?? null;
+
+                if (!$kd_wilayah) {
+                    return JsonResponse::error("Wilayah tidak ditemukan");
+                }
+
+                if ($mulai >= $selesai) {
+                    return JsonResponse::error("Periode tidak valid");
+                }
+
+                $cek = $this->db->query("
             SELECT id FROM periode_rpjmd
             WHERE kd_wilayah = ?
             AND (
@@ -310,1677 +261,1691 @@ class DynamicTableService
             )
         ", [$kd_wilayah, $mulai, $selesai])->fetch();
 
-            if ($cek) {
-                return JsonResponse::error("Periode tumpang tindih");
-            }
+                if ($cek) {
+                    return JsonResponse::error("Periode tumpang tindih");
+                }
 
-            $filtered['kd_wilayah'] = $kd_wilayah;
+                if (!empty($filtered['status_aktif'])) {
 
-            if (!empty($filtered['status_aktif'])) {
-
-                $this->db->query("
+                    $this->db->query("
                 UPDATE periode_rpjmd
                 SET status_aktif = 0
                 WHERE kd_wilayah = ?
             ", [$kd_wilayah]);
 
-                $filtered['status_aktif'] = 1;
-            } else {
-                $filtered['status_aktif'] = 0;
-            }
-        }
-
-        /* =====================================================
-       AUTO INJECT USER SCOPE (LEBIH AMAN)
-    ===================================================== */
-        $userScopeMapping = [
-            'kd_wilayah' => $this->user['kd_wilayah'] ?? null,
-            'kd_opd'     => $this->user['kd_opd'] ?? null,
-            'tahun'      => $this->user['tahun'] ?? null,
-        ];
-
-        foreach ($userScopeMapping as $field => $value) {
-
-            if (in_array($field, $columns) && $value !== null) {
-                $filtered[$field] = $value;
-            }
-        }
-
-        /* =====================================================
-       AUTO SET PERIODE AKTIF UNTUK RENSTRA
-    ===================================================== */
-        if ($table === 'renstra_neo' && in_array('periode_id', $columns)) {
-
-            $kd_wilayah = $this->user['kd_wilayah'] ?? null;
-
-            $periodeAktif = $this->db->query("
-            SELECT id
-            FROM periode_rpjmd
-            WHERE kd_wilayah = ?
-            AND status_aktif = 1
-            LIMIT 1
-        ", [$kd_wilayah])->fetch();
-
-            if ($periodeAktif) {
-                $filtered['periode_id'] = $periodeAktif['id'];
-            } else {
-
-                $periodeTerbaru = $this->db->query("
-                SELECT id
-                FROM periode_rpjmd
-                WHERE kd_wilayah = ?
-                ORDER BY periode_mulai DESC
-                LIMIT 1
-            ", [$kd_wilayah])->fetch();
-
-                if ($periodeTerbaru) {
-                    $filtered['periode_id'] = $periodeTerbaru['id'];
+                    $filtered['status_aktif'] = 1;
                 } else {
-                    return JsonResponse::error("Belum ada periode RPJMD terdaftar");
+                    $filtered['status_aktif'] = 0;
                 }
             }
-        }
 
-        /* =====================================================
-       AUTO GENERATE KODE MISI
-    ===================================================== */
-        if ($table === 'misi_renstra_neo' && in_array('kode', $columns)) {
+            // 🔥 Auto periode untuk renstra
+            $filtered = $this->resolvePeriode($table, $filtered);
 
-            $renstraId = $filtered['renstra_id'] ?? null;
+            // 🔥 Auto generate kode misi
+            if ($table === 'misi_renstra_neo') {
 
-            if (!$renstraId) {
-                return JsonResponse::error("Renstra wajib dipilih");
-            }
+                $renstraId = $filtered['renstra_id'] ?? null;
 
-            $lastKode = $this->db->query("
+                if (!$renstraId) {
+                    return JsonResponse::error("Renstra wajib dipilih");
+                }
+
+                $lastKode = $this->db->query("
             SELECT MAX(CAST(kode AS UNSIGNED)) as max_kode
             FROM misi_renstra_neo
             WHERE renstra_id = ?
         ", [$renstraId])->fetch()['max_kode'] ?? 0;
 
-            $filtered['kode'] = $lastKode + 1;
-        }
-        /* =====================================================
-   AUTO DEFAULT SYSTEM FIELDS (STRICT MODE)
-   HARD STOP PRODUCTION SAFE
-===================================================== */
-
-        if (in_array('disable', $columns) && !isset($filtered['disable'])) {
-            $filtered['disable'] = 0;
-        }
-
-        if (in_array('is_deleted', $columns) && !isset($filtered['is_deleted'])) {
-            $filtered['is_deleted'] = 0;
-        }
-
-        /* =====================================================
-   STRICT PERATURAN VALIDATION
-===================================================== */
-
-        if (in_array('peraturan', $columns) && !isset($filtered['peraturan'])) {
-
-            $pengaturan = $this->getPengaturanAktif();
-
-            if (!$pengaturan) {
-                return JsonResponse::error("Pengaturan aktif tidak ditemukan.");
+                $filtered['kode'] = $lastKode + 1;
             }
 
-            // 🔥 Tentukan field aturan
-            if (in_array($table, [
+            /* =====================================================
+       5️⃣ SYSTEM DEFAULT FIELD
+    ===================================================== */
+            if (in_array('disable', $columns) && !isset($filtered['disable'])) {
+                $filtered['disable'] = 0;
+            }
+
+            if (in_array('is_deleted', $columns) && !isset($filtered['is_deleted'])) {
+                $filtered['is_deleted'] = 0;
+            }
+
+            /* =====================================================
+       6️⃣ PERATURAN RESOLUTION (GLOBAL CLEAN)
+    ===================================================== */
+            $filtered = $this->resolvePeraturan($table, $filtered);
+
+            /* =====================================================
+       7️⃣ BUSINESS VALIDATION LAYER
+    ===================================================== */
+            $this->validateHierarchy($table, $filtered);
+            $this->validateDuplicate($table, $filtered);
+
+            /* =====================================================
+       8️⃣ SANITATION & AUDIT
+    ===================================================== */
+            $filtered = $this->applySanitization($table, $filtered);
+            $filtered = $this->injectAudit($filtered, 'insert');
+
+            /* =====================================================
+       9️⃣ HYBRID VALIDATION (SCHEMA + PROFILE)
+    ===================================================== */
+            $profile = $this->getProfileByTable($table);
+            $errors  = $this->validate($filtered, $table, $profile);
+
+            if (!empty($errors)) {
+                return JsonResponse::error("Validation gagal", 422, $errors);
+            }
+
+            /* =====================================================
+       🔟 FINAL TRANSACTION
+    ===================================================== */
+            return $this->runTransaction(function () use ($table, $filtered) {
+
+                $this->db->insert($table, $filtered);
+
+                $id = $this->db->lastInsertId();
+
+                $this->logActivity($table, $id, 'insert', null, $filtered);
+
+                return JsonResponse::success("Data berhasil disimpan");
+            });
+        }
+        /* =========================================================
+        UPDATE (FIXED STABLE VERSION v3.1)
+        ========================================================= */
+        private function update(string $table, array $request): string
+        {
+            $columns    = $this->getTableColumns($table);
+            $primaryKey = $this->getPrimaryKey($table);
+
+            $id = $request['id'] ?? null;
+
+            if (!$id) {
+                return JsonResponse::error("ID tidak ditemukan");
+            }
+
+            unset($request['id']);
+
+            /* =====================================================
+       1️⃣ FILTER FIELD SESUAI KOLOM
+    ===================================================== */
+            $filtered = [];
+
+            foreach ($request as $key => $value) {
+
+                if (in_array($key, ['action', 'module', 'tbl'])) continue;
+
+                if (in_array($key, $columns)) {
+                    $filtered[$key] = $value;
+                }
+            }
+
+            if (empty($filtered)) {
+                return JsonResponse::error("Tidak ada data yang bisa diupdate");
+            }
+
+            /* =====================================================
+       2️⃣ NORMALISASI BOOLEAN & DATE
+    ===================================================== */
+            foreach ($filtered as $field => $value) {
+
+                if ($value === 'on') {
+                    $filtered[$field] = 1;
+                }
+
+                if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
+
+                    $parts = explode('/', $value);
+
+                    $filtered[$field] = sprintf(
+                        '%04d-%02d-%02d',
+                        $parts[2],
+                        $parts[1],
+                        $parts[0]
+                    );
+                }
+            }
+
+            /* =====================================================
+       3️⃣ LOAD OLD DATA
+    ===================================================== */
+            $oldData = $this->db->query(
+                "SELECT * FROM `$table` WHERE `$primaryKey` = ?",
+                [$id]
+            )->fetch();
+
+            if (!$oldData) {
+                return JsonResponse::error("Data tidak ditemukan");
+            }
+
+            /* =====================================================
+       4️⃣ AUTO FIELD RESOLUTION
+    ===================================================== */
+            $filtered = $this->resolveAutoFields($table, $filtered);
+            $filtered = $this->resolvePeraturan($table, $filtered);
+            $filtered = $this->resolvePeriode($table, $filtered);
+
+            /* =====================================================
+       5️⃣ BUSINESS VALIDATION
+    ===================================================== */
+            $this->validateHierarchy($table, $filtered);
+
+            /* =====================================================
+       6️⃣ SANITATION & AUDIT
+    ===================================================== */
+            $filtered = $this->applySanitization($table, $filtered);
+            $filtered = $this->injectAudit($filtered, 'update');
+
+            /* =====================================================
+       7️⃣ PRESERVE REQUIRED FIELDS
+    ===================================================== */
+            foreach ($oldData as $field => $value) {
+                if (!isset($filtered[$field])) {
+                    $filtered[$field] = $value;
+                }
+            }
+
+            /* =====================================================
+       8️⃣ VALIDATION HYBRID
+    ===================================================== */
+            $profile = $this->getProfileByTable($table);
+            $errors  = $this->validate($filtered, $table, $profile, $id);
+
+            if (!empty($errors)) {
+                return JsonResponse::error("Validation gagal", 422, $errors);
+            }
+
+            /* =====================================================
+       9️⃣ DIFF CHECK
+    ===================================================== */
+            $diff = [];
+
+            foreach ($filtered as $key => $value) {
+                if (isset($oldData[$key]) && $oldData[$key] != $value) {
+                    $diff[$key] = $value;
+                }
+            }
+
+            if (empty($diff)) {
+                return JsonResponse::success("Tidak ada perubahan");
+            }
+
+            /* =====================================================
+       🔟 FINAL TRANSACTION
+    ===================================================== */
+            return $this->runTransaction(function () use ($table, $primaryKey, $id, $diff, $oldData) {
+
+                $this->db->update(
+                    $table,
+                    $diff,
+                    "WHERE `$primaryKey` = ?",
+                    [$id]
+                );
+
+                $this->logActivity($table, $id, 'update', $oldData, $diff);
+
+                return JsonResponse::success("Data berhasil diupdate");
+            });
+        }
+        /* =========================================================
+        DELETE (FULL IDENTIK LOGIC ASLI)
+        ========================================================= */
+        private function delete(string $table, array $profile, int|string $id): string
+        {
+            $primaryKey = $this->getPrimaryKey($table);
+
+            if (!$this->checkAccess($table, $id)) {
+                return JsonResponse::error("Tidak memiliki akses");
+            }
+
+            $oldData = $this->db->query(
+                "SELECT * FROM `$table` WHERE `$primaryKey` = ?",
+                [$id]
+            )->fetch();
+
+            return $this->runTransaction(function () use ($table, $primaryKey, $id, $oldData) {
+
+                $columns = $this->getTableColumns($table);
+
+                if (in_array('deleted_at', $columns)) {
+
+                    $this->db->update(
+                        $table,
+                        [
+                            'deleted_at' => date('Y-m-d H:i:s'),
+                            'deleted_by' => $this->user['username'] ?? 'system'
+                        ],
+                        "WHERE `$primaryKey` = ?",
+                        [$id]
+                    );
+                } else {
+
+                    $this->db->delete(
+                        $table,
+                        "WHERE `$primaryKey` = ?",
+                        [$id]
+                    );
+                }
+
+                $this->logActivity($table, $id, 'delete', $oldData, null);
+
+                return JsonResponse::success("Data berhasil dihapus");
+            });
+        }
+
+        /* =========================================================
+            BUILD QUERY (LISTING + SEARCH + SCOPE FULL IDENTIK)
+            ========================================================= */
+        private function listing(
+            string $table,
+            array $profile,
+            array $request,
+            string $mode
+        ): string {
+
+            $modeConfig = $profile['modes'][$mode]
+                ?? $profile['modes']['default']
+                ?? [];
+
+            $limit  = max(1, (int)($request['rows'] ?? 10));
+            $page   = max(1, (int)($request['halaman'] ?? 1));
+            $search = trim($request['cari'] ?? '');
+            $offset = ($page - 1) * $limit;
+
+            // 🔥 1️⃣ Resolve Scope
+            list($scopeWhere, $scopeParams) =
+                $this->resolveScope($table, $profile, $mode);
+
+            // 🔥 2️⃣ Resolve Search
+            list($searchWhere, $searchParams) =
+                $this->resolveSearch($table, $modeConfig, $search);
+
+            $whereParts = array_merge($scopeWhere, $searchWhere);
+            $params     = array_merge($scopeParams, $searchParams);
+
+            $where = !empty($whereParts)
+                ? "WHERE " . implode(" AND ", $whereParts)
+                : "";
+
+            $select = implode(',', $modeConfig['select'] ?? ['*']);
+
+            $primaryKey = $this->getPrimaryKey($table);
+            $orderBy = $modeConfig['order_by'] ?? "`$primaryKey` DESC";
+
+            $total = $this->db->query(
+                "SELECT COUNT(*) as total FROM `$table` $where",
+                $params
+            )->fetch()['total'] ?? 0;
+
+            $rows = $this->db->query(
+                "SELECT $select FROM `$table`
+         $where
+         ORDER BY $orderBy
+         LIMIT $offset, $limit",
+                $params
+            )->fetchAll();
+
+            return JsonResponse::success(
+                "Data berhasil ditampilkan",
+                [
+                    'total' => (int)$total,
+                    'page' => $page,
+                    'limit' => $limit,
+                    'primary_key' => $primaryKey
+                ],
+                $rows
+            );
+        }
+        /* =========================================================
+        GET ALL RAW DATA (UNTUK EXPORT / REPORT)
+        ========================================================= */
+        private function getAllRaw(
+            string $table,
+            array $profile,
+            array $request,
+            string $mode
+        ): array {
+
+            $modeConfig = $profile['modes'][$mode]
+                ?? $profile['modes']['default']
+                ?? [];
+
+            $select = $modeConfig['select'] ?? ['*'];
+            $selectClause = implode(',', $select);
+
+            list($userWhere, $userParams) = $this->applyUserScope($table);
+
+            $where = !empty($userWhere)
+                ? 'WHERE ' . implode(' AND ', $userWhere)
+                : '';
+
+            $primaryKey = $this->getPrimaryKey($table);
+
+            $query = "
+                SELECT $selectClause
+                FROM `$table`
+                $where
+                ORDER BY `$primaryKey` DESC
+            ";
+
+            return $this->db->query($query, $userParams)->fetchAll();
+        }
+
+        /* =========================================================
+        EXPORT ENGINE
+        ========================================================= */
+        private function export(
+            string $table,
+            array $profile,
+            array $request,
+            string $mode
+        ): string {
+
+            $this->authorize('view', $table);
+
+            $rows = $this->getAllRaw($table, $profile, $request, $mode);
+
+            // 🔥 Jika kosong tetap success tapi beri pesan
+            if (empty($rows)) {
+                return JsonResponse::success(
+                    "Data kosong",
+                    [
+                        'total' => 0
+                    ],
+                    []
+                );
+            }
+
+            return JsonResponse::success(
+                "Data export berhasil",
+                [
+                    'total' => count($rows)
+                ],
+                $rows
+            );
+        }
+
+        /* =========================================================
+        APPLY USER SCOPE (ROLE AWARE FULL IDENTIK)
+        ========================================================= */
+        /* =========================================================
+        APPLY USER SCOPE (LOGIC TIDAK DIUBAH)
+        HANYA PERIODE AKTIF DI-CACHE
+        ========================================================= */
+        private function applyUserScope(string $table): array
+        {
+            $role = $this->user['type_user'] ?? 'viewer';
+
+            if ($role === 'super_admin') {
+                return [[], []];
+            }
+
+            $columns = $this->getTableColumns($table);
+
+            $whereParts = [];
+            $params     = [];
+
+            if ($role === 'admin_wilayah') {
+
+                if (in_array('kd_wilayah', $columns)) {
+                    $whereParts[] = "`kd_wilayah` = ?";
+                    $params[] = $this->user['kd_wilayah'] ?? null;
+                }
+            }
+
+            if ($role === 'admin_opd') {
+
+                if (in_array('kd_opd', $columns)) {
+                    $whereParts[] = "`kd_opd` = ?";
+                    $params[] = $this->user['kd_opd'] ?? null;
+                }
+
+                if (in_array('kd_wilayah', $columns)) {
+                    $whereParts[] = "`kd_wilayah` = ?";
+                    $params[] = $this->user['kd_wilayah'] ?? null;
+                }
+
+                if (in_array('tahun', $columns) && isset($this->user['tahun'])) {
+                    $whereParts[] = "`tahun` = ?";
+                    $params[] = $this->user['tahun'];
+                }
+
+                if (in_array('periode_id', $columns)) {
+
+                    $periodeAktif = $this->getPeriodeAktif();
+
+                    if ($periodeAktif) {
+                        $whereParts[] = "`periode_id` = ?";
+                        $params[] = $periodeAktif['id'];
+                    }
+                }
+            }
+
+            return [$whereParts, $params];
+        }
+
+        /* =========================================================
+        CACHE OPTIMIZATION SECTION
+        ========================================================= */
+
+        private function getTableColumns(string $table): array
+        {
+            if (isset(self::$columnCache[$table])) {
+                return self::$columnCache[$table];
+            }
+
+            $stmt = $this->db->query("SHOW COLUMNS FROM `$table`");
+            self::$columnCache[$table] = array_column($stmt->fetchAll(), 'Field');
+
+            return self::$columnCache[$table];
+        }
+
+        /* =========================================================
+        HYBRID VALIDATION ENGINE (FULL IDENTIK)
+        ========================================================= */
+        private function validate(array $data, string $table, array $profile, $currentId = null): array
+        {
+            $errors = [];
+
+            $customRules = $profile['validation'] ?? [];
+            $schemaRules = $this->buildRulesFromSchema($table);
+
+            $rules = array_merge($schemaRules, $customRules);
+
+            foreach ($rules as $field => $fieldRules) {
+
+                $value = $data[$field] ?? null;
+
+                foreach ($fieldRules as $rule) {
+
+                    if ($rule === 'required' && ($value === null || $value === '')) {
+                        $errors[$field] = "$field wajib diisi";
+                    }
+
+                    if ($rule === 'numeric' && !empty($value) && !is_numeric($value)) {
+                        $errors[$field] = "$field harus berupa angka";
+                    }
+
+                    if ($rule === 'email' && !empty($value) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                        $errors[$field] = "$field tidak valid";
+                    }
+                    //rule validasi
+                    if ($rule === 'unique' && ($value !== null && $value !== '')) {
+
+                        $primaryKey = $this->getPrimaryKey($table);
+
+                        if ($currentId) {
+                            $exists = $this->db->query(
+                                "SELECT $primaryKey FROM `$table` 
+                                WHERE `$field` = ? 
+                                AND `$primaryKey` != ? 
+                                LIMIT 1",
+                                [$value, $currentId]
+                            )->fetch();
+                        } else {
+                            $exists = $this->db->query(
+                                "SELECT $primaryKey FROM `$table` 
+                                WHERE `$field` = ? 
+                                LIMIT 1",
+                                [$value]
+                            )->fetch();
+                        }
+
+                        if ($exists) {
+                            $errors[$field] = "$field sudah digunakan";
+                        }
+                    }
+                    if (str_starts_with($rule, 'max:') && !empty($value)) {
+
+                        $max = (int)explode(':', $rule)[1];
+
+                        if (strlen($value) > $max) {
+                            $errors[$field] = "$field maksimal $max karakter";
+                        }
+                    }
+                }
+            }
+
+            return $errors;
+        }
+
+        /* =========================================================
+        BUILD RULE DARI SCHEMA DATABASE
+        ========================================================= */
+        private function buildRulesFromSchema(string $table): array
+        {
+            if (isset(self::$schemaCache[$table])) {
+                return self::$schemaCache[$table];
+            }
+
+            $rules = [];
+            $columns = $this->db->query("SHOW COLUMNS FROM `$table`")->fetchAll();
+
+            foreach ($columns as $col) {
+
+                $field = $col['Field'];
+                $type  = $col['Type'];
+                $null  = $col['Null'];
+
+                $fieldRules = [];
+
+                if ($null === 'NO' && $field !== 'id') {
+                    $fieldRules[] = 'required';
+                }
+
+                if (str_contains($type, 'int') || str_contains($type, 'decimal')) {
+                    $fieldRules[] = 'numeric';
+                }
+
+                if (preg_match('/varchar\((\d+)\)/', $type, $match)) {
+                    $fieldRules[] = 'max:' . $match[1];
+                }
+
+                if (!empty($fieldRules)) {
+                    $rules[$field] = $fieldRules;
+                }
+            }
+
+            self::$schemaCache[$table] = $rules;
+
+            return $rules;
+        }
+
+        /* =========================================================
+        DROPDOWN ENGINE (FULL IDENTIK)
+        ========================================================= */
+        private function loadDropdown(string $source, $parentValue = null): string
+        {
+            if (!isset($this->profiles[$source])) {
+                return JsonResponse::error("Source tidak ditemukan");
+            }
+
+            $profile = $this->profiles[$source];
+            $table   = $profile['table'];
+
+            $primaryKey = $profile['primary_key'] ?? 'id';
+            $valueField = $profile['dropdown']['value'] ?? $primaryKey;
+            $labelField = $profile['dropdown']['label'] ?? 'nama';
+
+            $columns = $this->getTableColumns($table);
+
+            $whereParts = [];
+            $params = [];
+
+            // 🔥 RELATIONAL FILTER
+            if ($parentValue !== null && !empty($profile['relations'])) {
+
+                foreach ($profile['relations'] as $relation) {
+
+                    $localKey = $relation['local_key'] ?? null;
+
+                    if ($localKey && in_array($localKey, $columns)) {
+                        $whereParts[] = "`$localKey` = ?";
+                        $params[] = $parentValue;
+                    }
+                }
+            }
+
+            $where = !empty($whereParts)
+                ? "WHERE " . implode(" AND ", $whereParts)
+                : "";
+
+            $query = "
+        SELECT `$valueField` as id, `$labelField` as uraian
+        FROM `$table`
+        $where
+        ORDER BY `$valueField` ASC
+    ";
+
+            $rows = $this->db->query($query, $params)->fetchAll();
+
+            return JsonResponse::success("Dropdown loaded", [], $rows);
+        }
+
+        /* =========================================================
+        UTIL: GET PROFILE BY TABLE
+        ========================================================= */
+        private function getProfileByTable(string $table): array
+        {
+            foreach ($this->profiles as $profile) {
+                if (($profile['table'] ?? '') === $table) {
+                    return $profile;
+                }
+            }
+            return [];
+        }
+
+        /* =========================================================
+        UTIL: GET PRIMARY KEY
+        ========================================================= */
+        private function getPrimaryKey(string $table): string
+        {
+            $profile = $this->getProfileByTable($table);
+            return $profile['primary_key'] ?? 'id';
+        }
+
+        /* =========================================================
+        UTIL: CHECK ACCESS WITH SCOPE
+        ========================================================= */
+        private function checkAccess(string $table, $id): bool
+        {
+            $primaryKey = $this->getPrimaryKey($table);
+
+            list($scopeWhere, $scopeParams) = $this->applyUserScope($table);
+
+            $whereParts = array_merge(["`$primaryKey` = ?"], $scopeWhere);
+            $params     = array_merge([$id], $scopeParams);
+
+            $where = "WHERE " . implode(" AND ", $whereParts);
+
+            $row = $this->db->query(
+                "SELECT `$primaryKey` FROM `$table` $where LIMIT 1",
+                $params
+            )->fetch();
+
+            return (bool)$row;
+        }
+        private function logActivity(
+            string $table,
+            $recordId,
+            string $action,
+            $oldData = null,
+            $newData = null
+        ): void {
+
+            if (!$this->tableExists('log_activity')) {
+                return;
+            }
+
+            try {
+
+                $this->db->insert('log_activity', [
+                    'table_name' => $table,
+                    'record_id'  => $recordId,
+                    'action'     => $action,
+                    'old_data'   => $oldData ? json_encode($oldData, JSON_UNESCAPED_UNICODE) : null,
+                    'new_data'   => $newData ? json_encode($newData, JSON_UNESCAPED_UNICODE) : null,
+                    'username'   => $this->user['username'] ?? 'system',
+                    'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
+                    'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+                    'created_at' => date('Y-m-d H:i:s')
+                ]);
+            } catch (Exception $e) {
+                // Jangan sampai audit log bikin sistem utama gagal
+            }
+        }
+        /* =========================================================
+    UTIL: CEK APAKAH TABEL ADA
+    ========================================================= */
+        private function tableExists(string $table): bool
+        {
+            $result = $this->db->query(
+                "SHOW TABLES LIKE ?",
+                [$table]
+            )->fetch();
+
+            return (bool)$result;
+        }
+        private function runTransaction(callable $callback)
+        {
+            try {
+
+                $this->db->query("START TRANSACTION");
+
+                $result = $callback();
+
+                $this->db->query("COMMIT");
+
+                return $result;
+            } catch (Exception $e) {
+                $this->db->query("ROLLBACK");
+                throw $e;
+            }
+        }
+        private function getPengaturanAktif(): ?array
+        {
+            if ($this->pengaturanAktifCache !== null) {
+                return $this->pengaturanAktifCache;
+            }
+
+            $kd_wilayah = $this->user['kd_wilayah'] ?? null;
+
+            if (!$kd_wilayah) {
+                return null;
+            }
+
+            $result = $this->db->query("
+            SELECT *
+            FROM pengaturan_neo
+            WHERE kd_wilayah = ?
+            AND disable = 0
+            LIMIT 1
+        ", [$kd_wilayah])->fetch();
+
+            $this->pengaturanAktifCache = $result ?: null;
+
+            return $this->pengaturanAktifCache;
+        }
+        private function getPeriodeAktif(): ?array
+        {
+            if ($this->periodeAktifCache !== null) {
+                return $this->periodeAktifCache;
+            }
+
+            $kd_wilayah = $this->user['kd_wilayah'] ?? null;
+
+            if (!$kd_wilayah) {
+                return null;
+            }
+
+            $this->periodeAktifCache = $this->db->query("
+                SELECT id
+                FROM periode_rpjmd
+                WHERE kd_wilayah = ?
+                AND status_aktif = 1
+                LIMIT 1
+            ", [$kd_wilayah])->fetch();
+
+            return $this->periodeAktifCache;
+        }
+        /* =========================================================
+    NORMALIZE HEADER XLSX → snake_case
+    ========================================================= */
+        private function normalizeHeader(?string $header): string
+        {
+            if ($header === null) {
+                return '';
+            }
+
+            $header = trim($header);
+
+            if ($header === '') {
+                return '';
+            }
+
+            return strtolower(
+                preg_replace('/[^a-z0-9_]/', '', $header)
+            );
+        }
+        /* =========================================================
+    VALIDASI IMPORT PERMISSION
+    ========================================================= */
+        private function validateImportPermission(string $table): void
+        {
+            $role = $this->user['type_user'] ?? 'viewer';
+
+            $restricted = [
                 'urusan',
                 'bidang',
                 'program',
                 'kegiatan',
                 'sub_kegiatan'
-            ])) {
+            ];
 
-                $aturanField = 'aturan_sub_kegiatan';
-            } else {
-
-                $map = [
-                    'ssh_neo'     => 'aturan_ssh',
-                    'sbu_neo'     => 'aturan_sbu',
-                    'asb_neo'     => 'aturan_asb',
-                    'hspk_neo'    => 'aturan_hspk',
-                    'akun_neo'    => 'aturan_akun',
-                    'satuan_neo'  => 'aturan_ssh'
-                ];
-
-                if (!isset($map[$table])) {
-                    return JsonResponse::error(
-                        "Mapping peraturan untuk tabel '{$table}' belum dikonfigurasi."
-                    );
-                }
-
-                $aturanField = $map[$table];
+            if ($role === 'admin_opd' && in_array($table, $restricted)) {
+                throw new Exception("Admin OPD tidak diperbolehkan import tabel master.");
             }
-
-            if (empty($pengaturan[$aturanField])) {
-                return JsonResponse::error(
-                    "Field '{$aturanField}' pada pengaturan aktif belum diisi."
-                );
-            }
-
-            $filtered['peraturan'] = $pengaturan[$aturanField];
         }
-        /* =====================================================
-   ENTERPRISE SANITATION
-===================================================== */
-        $filtered = $this->applySanitization($table, $filtered);
-        /* =====================================================
-       AUDIT TRAIL (PINDAH SEBELUM VALIDASI)
-    ===================================================== */
-        $filtered = $this->injectAudit($filtered, 'insert');
-
-        /* =====================================================
-       VALIDASI HYBRID
-    ===================================================== */
-        $profile = $this->getProfileByTable($table);
-        $errors  = $this->validate($filtered, $table, $profile);
-
-        if (!empty($errors)) {
-            return JsonResponse::error("Validation gagal", 422, $errors);
-        }
-
-        /* =====================================================
-       FINAL INSERT
-    ===================================================== */
-        // $this->db->insert($table, $filtered);
-
-        // return JsonResponse::success("Data berhasil disimpan");
-
-        /* =====================================================
-        FINAL INSERT + AUDIT + TRANSACTION
-        ===================================================== */
-        return $this->runTransaction(function () use ($table, $filtered) {
-
-            $this->db->insert($table, $filtered);
-
-            $id = $this->db->lastInsertId();
-
-            $this->logActivity($table, $id, 'insert', null, $filtered);
-
-            return JsonResponse::success("Data berhasil disimpan");
-        });
-    }
-    /* =========================================================
-       UPDATE (FULL IDENTIK LOGIC ASLI)
+        /* =========================================================
+    VALIDASI DUPLICATE GLOBAL (SCOPE-AWARE PATCH)
+    ---------------------------------------------------------
+    - Composite aware
+    - Scope aware (kd_wilayah + peraturan)
+    - Tidak merusak arsitektur lama
     ========================================================= */
-    /* =========================================================
-   UPDATE (FIXED STABLE VERSION v3.1)
-========================================================= */
-    private function update(string $table, array $request): string
-    {
-        $columns     = $this->getTableColumns($table);
-        $primaryKey  = $this->getPrimaryKey($table);
-
-        $id = $request['id'] ?? null;
-        if (!$id) {
-            return JsonResponse::error("ID tidak ditemukan");
-        }
-
-        unset($request['id']);
-
-        $filtered = [];
-
-        /* =====================================================
-       FILTER FIELD SESUAI KOLOM
-    ===================================================== */
-        foreach ($request as $key => $value) {
-
-            if (in_array($key, ['action', 'module', 'tbl'])) continue;
-
-            if (in_array($key, $columns)) {
-                $filtered[$key] = $value;
-            }
-        }
-
-        if (empty($filtered)) {
-            return JsonResponse::error("Tidak ada data yang bisa diupdate");
-        }
-
-        /* =====================================================
-       NORMALISASI CHECKBOX / BOOLEAN
-    ===================================================== */
-        foreach ($columns as $col) {
-
-            if (!isset($filtered[$col])) continue;
-
-            if ($filtered[$col] === 'on') {
-                $filtered[$col] = 1;
-            }
-        }
-
-        /* =====================================================
-       AUTO INJECT USER SCOPE (OPSIONAL SAFE OVERRIDE)
-       Supaya user tidak bisa ubah kd_opd/kd_wilayah manual
-    ===================================================== */
-        $userScopeMapping = [
-            'kd_wilayah' => $this->user['kd_wilayah'] ?? null,
-            'kd_opd'     => $this->user['kd_opd'] ?? null,
-            'tahun'      => $this->user['tahun'] ?? null,
-        ];
-
-        foreach ($userScopeMapping as $field => $value) {
-
-            if (in_array($field, $columns) && $value !== null) {
-                $filtered[$field] = $value;
-            }
-        }
-        /* =====================================================
-   ENTERPRISE SANITATION
-===================================================== */
-        $filtered = $this->applySanitization($table, $filtered);
-        /* =====================================================
-       AUDIT TRAIL (PINDAH SEBELUM VALIDASI)
-    ===================================================== */
-        $filtered = $this->injectAudit($filtered, 'update');
-        /* =====================================================
-   AUTO PRESERVE REQUIRED COLUMNS (FIX 422 UPDATE)
-===================================================== */
-
-        $oldRow = $this->db->query(
-            "SELECT * FROM `$table` WHERE `$primaryKey` = ?",
-            [$id]
-        )->fetch();
-
-        if ($oldRow) {
-
-            foreach ($oldRow as $field => $value) {
-
-                // Jika field tidak dikirim saat update
-                if (!isset($filtered[$field])) {
-
-                    $filtered[$field] = $value;
-                }
-            }
-        }
-        /* =====================================================
-       VALIDASI HYBRID
-    ===================================================== */
-        $profile = $this->getProfileByTable($table);
-        $errors  = $this->validate($filtered, $table, $profile, $id);
-
-        if (!empty($errors)) {
-            return JsonResponse::error("Validation gagal", 422, $errors);
-        }
-
-        /* =====================================================
-       CEK AKSES BERDASARKAN SCOPE
-    ===================================================== */
-        if (!$this->checkAccess($table, $id)) {
-            return JsonResponse::error("Tidak memiliki akses untuk update data ini");
-        }
-
-        /* =====================================================
-        FINAL UPDATE
-        ===================================================== */
-        // $this->db->update(
-        //     $table,
-        //     $filtered,
-        //     "WHERE `$primaryKey` = ?",
-        //     [$id]
-        // );
-        // return JsonResponse::success("Data berhasil diupdate");
-        /* =====================================================
-        BACKUP EDIT
-        ===================================================== */
-        /* =====================================================
-   SMART DIFF + TRANSACTION + AUDIT
-===================================================== */
-        $oldData = $this->db->query(
-            "SELECT * FROM `$table` WHERE `$primaryKey` = ?",
-            [$id]
-        )->fetch();
-
-        if (!$oldData) {
-            return JsonResponse::error("Data tidak ditemukan");
-        }
-
-        $diff = [];
-
-        foreach ($filtered as $key => $value) {
-            if (isset($oldData[$key]) && $oldData[$key] != $value) {
-                $diff[$key] = $value;
-            }
-        }
-
-        if (empty($diff)) {
-            return JsonResponse::success("Tidak ada perubahan");
-        }
-
-        return $this->runTransaction(function () use ($table, $primaryKey, $id, $diff, $oldData) {
-
-            $this->db->update(
-                $table,
-                $diff,
-                "WHERE `$primaryKey` = ?",
-                [$id]
-            );
-
-            $this->logActivity($table, $id, 'update', $oldData, $diff);
-
-            return JsonResponse::success("Data berhasil diupdate");
-        });
-    }
-    /* =========================================================
-       DELETE (FULL IDENTIK LOGIC ASLI)
-    ========================================================= */
-    private function delete(string $table, array $profile, int|string $id): string
-    {
-        $primaryKey = $this->getPrimaryKey($table);
-
-        if (!$this->checkAccess($table, $id)) {
-            return JsonResponse::error("Tidak memiliki akses");
-        }
-
-        $oldData = $this->db->query(
-            "SELECT * FROM `$table` WHERE `$primaryKey` = ?",
-            [$id]
-        )->fetch();
-
-        return $this->runTransaction(function () use ($table, $primaryKey, $id, $oldData) {
-
+        private function validateDuplicate(string $table, array $data): void
+        {
             $columns = $this->getTableColumns($table);
 
-            if (in_array('deleted_at', $columns)) {
+            $uniqueFields = [];
 
-                $this->db->update(
-                    $table,
-                    [
-                        'deleted_at' => date('Y-m-d H:i:s'),
-                        'deleted_by' => $this->user['username'] ?? 'system'
-                    ],
-                    "WHERE `$primaryKey` = ?",
-                    [$id]
-                );
-            } else {
+            // 🔥 Composite utama untuk struktur
+            if (in_array('kode', $columns) && isset($data['kode'])) {
 
-                $this->db->delete(
-                    $table,
-                    "WHERE `$primaryKey` = ?",
-                    [$id]
-                );
+                $uniqueFields['kode'] = $data['kode'];
+
+                if (in_array('kd_wilayah', $columns)) {
+
+                    $uniqueFields['kd_wilayah'] =
+                        $data['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? null;
+
+                    if (empty($uniqueFields['kd_wilayah'])) {
+                        throw new Exception(
+                            "kd_wilayah tidak boleh kosong untuk validasi duplicate."
+                        );
+                    }
+                }
+
+                if (in_array('peraturan', $columns)) {
+
+                    $uniqueFields['peraturan'] =
+                        $data['peraturan'] ?? null;
+
+                    if (empty($uniqueFields['peraturan'])) {
+                        throw new Exception(
+                            "peraturan tidak boleh kosong untuk validasi duplicate."
+                        );
+                    }
+                }
             }
 
-            $this->logActivity($table, $id, 'delete', $oldData, null);
-
-            return JsonResponse::success("Data berhasil dihapus");
-        });
-    }
-
-    /* =========================================================
-        BUILD QUERY (LISTING + SEARCH + SCOPE FULL IDENTIK)
-        ========================================================= */
-    private function buildQuery(
-        string $table,
-        array $profile,
-        array $request,
-        string $mode
-    ): string {
-
-        $modeConfig = $profile['modes'][$mode]
-            ?? $profile['modes']['default']
-            ?? [];
-
-        $limit  = max(1, (int)($request['rows'] ?? 10));
-        $page   = max(1, (int)($request['halaman'] ?? 1));
-        $search = trim($request['cari'] ?? '');
-        $offset = ($page - 1) * $limit;
-
-        $whereParts = [];
-        $params     = [];
-
-        // 🔥 Apply scope berdasarkan role
-        list($userWhere, $userParams) = $this->applyUserScope($table);
-
-        /* =====================================================
-           SEARCH ENGINE (TIDAK DIUBAH)
-        ===================================================== */
-        if (!empty($search) && !empty($modeConfig['searchable'])) {
-
-            $searchParts = [];
-            $searchableColumns = $modeConfig['searchable'];
-
-            if ($searchableColumns === ['*']) {
-                $searchableColumns = $this->getTableColumns($table);
+            // 🔥 Tambahan rekening jika ada
+            if (in_array('rekening', $columns) && isset($data['rekening'])) {
+                $uniqueFields['rekening'] = $data['rekening'];
             }
 
-            foreach ($searchableColumns as $column) {
-                $searchParts[] = "`$column` LIKE ?";
-                $params[] = "%$search%";
+            if (empty($uniqueFields)) return;
+
+            $whereParts = [];
+            $params     = [];
+
+            foreach ($uniqueFields as $field => $value) {
+                $whereParts[] = "`$field` = ?";
+                $params[]     = $value;
             }
 
-            if (!empty($searchParts)) {
-                $whereParts[] = "(" . implode(" OR ", $searchParts) . ")";
+            $exists = $this->db->query(
+                "SELECT id FROM `$table`
+            WHERE " . implode(" AND ", $whereParts) . "
+            LIMIT 1",
+                $params
+            )->fetch();
+
+            if ($exists) {
+                throw new Exception("Duplicate data terdeteksi (composite scope).");
             }
         }
-
-        $whereParts = array_merge($whereParts, $userWhere);
-        $params     = array_merge($params, $userParams);
-
-        $where = !empty($whereParts)
-            ? 'WHERE ' . implode(' AND ', $whereParts)
-            : '';
-
-        /* ==============================
-           TOTAL COUNT
-        ============================== */
-        $totalQuery = "SELECT COUNT(*) as total FROM `$table` $where";
-        $totalRow = $this->db->query($totalQuery, $params)->fetch()['total'] ?? 0;
-
-        /* ==============================
-           SELECT CLAUSE
-        ============================== */
-        $select = $modeConfig['select'] ?? ['*'];
-        $selectClause = implode(',', $select);
-
-        $primaryKey = $this->getPrimaryKey($table);
-        $orderBy = $modeConfig['order_by'] ?? "`$primaryKey` DESC";
-
-        $dataQuery = "
-            SELECT $selectClause
-            FROM `$table`
-            $where
-            ORDER BY $orderBy
-            LIMIT $offset, $limit
-        ";
-
-        $rows = $this->db->query($dataQuery, $params)->fetchAll();
-
-        return JsonResponse::success(
-            'Data berhasil ditampilkan',
-            [
-                'total' => (int)$totalRow,
-                'page'  => $page,
-                'limit' => $limit,
-                'primary_key' => $this->getPrimaryKey($table)
-            ],
-            $rows
-        );
-    }
-    /* =========================================================
-       GET ALL RAW DATA (UNTUK EXPORT / REPORT)
+        /* =========================================================
+    VALIDASI HIERARKI & DEPENDENSI LINTAS TABEL
     ========================================================= */
-    private function getAllRaw(
-        string $table,
-        array $profile,
-        array $request,
-        string $mode
-    ): array {
+        private function validateHierarchy(string $table, array $data): void
+        {
+            $rules = [
 
-        $modeConfig = $profile['modes'][$mode]
-            ?? $profile['modes']['default']
-            ?? [];
-
-        $select = $modeConfig['select'] ?? ['*'];
-        $selectClause = implode(',', $select);
-
-        list($userWhere, $userParams) = $this->applyUserScope($table);
-
-        $where = !empty($userWhere)
-            ? 'WHERE ' . implode(' AND ', $userWhere)
-            : '';
-
-        $primaryKey = $this->getPrimaryKey($table);
-
-        $query = "
-            SELECT $selectClause
-            FROM `$table`
-            $where
-            ORDER BY `$primaryKey` DESC
-        ";
-
-        return $this->db->query($query, $userParams)->fetchAll();
-    }
-
-    /* =========================================================
-       EXPORT ENGINE
-    ========================================================= */
-    private function export(
-        string $table,
-        array $profile,
-        array $request,
-        string $mode
-    ): string {
-
-        $this->authorize('view', $table);
-
-        $rows = $this->getAllRaw($table, $profile, $request, $mode);
-
-        // 🔥 Jika kosong tetap success tapi beri pesan
-        if (empty($rows)) {
-            return JsonResponse::success(
-                "Data kosong",
-                [
-                    'total' => 0
+                // Struktur kode
+                'bidang' => [
+                    'parent_table' => 'urusan',
+                    'match' => ['urusan_id' => 'id']
                 ],
-                []
-            );
-        }
+                'program' => [
+                    'parent_table' => 'bidang',
+                    'match' => ['bidang_id' => 'id']
+                ],
+                'kegiatan' => [
+                    'parent_table' => 'program',
+                    'match' => ['program_id' => 'id']
+                ],
+                'sub_kegiatan' => [
+                    'parent_table' => 'kegiatan',
+                    'match' => ['kegiatan_id' => 'id']
+                ],
 
-        return JsonResponse::success(
-            "Data export berhasil",
-            [
-                'total' => count($rows)
-            ],
-            $rows
-        );
-    }
+                // Renstra
+                'renstra_neo' => [
+                    'parent_table' => 'periode_rpjmd',
+                    'match' => ['periode_id' => 'id']
+                ],
 
-    /* =========================================================
-       APPLY USER SCOPE (ROLE AWARE FULL IDENTIK)
-    ========================================================= */
-    /* =========================================================
-       APPLY USER SCOPE (LOGIC TIDAK DIUBAH)
-       HANYA PERIODE AKTIF DI-CACHE
-    ========================================================= */
-    private function applyUserScope(string $table): array
-    {
-        $role = $this->user['type_user'] ?? 'viewer';
+                // Renja
+                'renja_neo' => [
+                    'parent_table' => 'renstra_neo',
+                    'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
+                ],
+                'renja_p_neo' => [
+                    'parent_table' => 'renja_neo',
+                    'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
+                ],
 
-        if ($role === 'super_admin') {
-            return [[], []];
-        }
+                // DPA
+                'dpa_neo' => [
+                    'parent_table' => 'renja_neo',
+                    'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
+                ],
+                'dpppa_neo' => [
+                    'parent_table' => 'dpa_neo',
+                    'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
+                ],
+            ];
 
-        $columns = $this->getTableColumns($table);
+            if (!isset($rules[$table])) return;
 
-        $whereParts = [];
-        $params     = [];
+            $rule = $rules[$table];
+            $parent = $rule['parent_table'];
 
-        if ($role === 'admin_wilayah') {
+            // Foreign key match
+            if (isset($rule['match'])) {
+                foreach ($rule['match'] as $childField => $parentField) {
 
-            if (in_array('kd_wilayah', $columns)) {
-                $whereParts[] = "`kd_wilayah` = ?";
-                $params[] = $this->user['kd_wilayah'] ?? null;
-            }
-        }
-
-        if ($role === 'admin_opd') {
-
-            if (in_array('kd_opd', $columns)) {
-                $whereParts[] = "`kd_opd` = ?";
-                $params[] = $this->user['kd_opd'] ?? null;
-            }
-
-            if (in_array('kd_wilayah', $columns)) {
-                $whereParts[] = "`kd_wilayah` = ?";
-                $params[] = $this->user['kd_wilayah'] ?? null;
-            }
-
-            if (in_array('tahun', $columns) && isset($this->user['tahun'])) {
-                $whereParts[] = "`tahun` = ?";
-                $params[] = $this->user['tahun'];
-            }
-
-            if (in_array('periode_id', $columns)) {
-
-                $periodeAktif = $this->getPeriodeAktif();
-
-                if ($periodeAktif) {
-                    $whereParts[] = "`periode_id` = ?";
-                    $params[] = $periodeAktif['id'];
-                }
-            }
-        }
-
-        return [$whereParts, $params];
-    }
-
-    /* =========================================================
-       CACHE OPTIMIZATION SECTION
-    ========================================================= */
-
-    private function getTableColumns(string $table): array
-    {
-        if (isset(self::$columnCache[$table])) {
-            return self::$columnCache[$table];
-        }
-
-        $stmt = $this->db->query("SHOW COLUMNS FROM `$table`");
-        self::$columnCache[$table] = array_column($stmt->fetchAll(), 'Field');
-
-        return self::$columnCache[$table];
-    }
-
-    /* =========================================================
-       HYBRID VALIDATION ENGINE (FULL IDENTIK)
-    ========================================================= */
-    private function validate(array $data, string $table, array $profile, $currentId = null): array
-    {
-        $errors = [];
-
-        $customRules = $profile['validation'] ?? [];
-        $schemaRules = $this->buildRulesFromSchema($table);
-
-        $rules = array_merge($schemaRules, $customRules);
-
-        foreach ($rules as $field => $fieldRules) {
-
-            $value = $data[$field] ?? null;
-
-            foreach ($fieldRules as $rule) {
-
-                if ($rule === 'required' && ($value === null || $value === '')) {
-                    $errors[$field] = "$field wajib diisi";
-                }
-
-                if ($rule === 'numeric' && !empty($value) && !is_numeric($value)) {
-                    $errors[$field] = "$field harus berupa angka";
-                }
-
-                if ($rule === 'email' && !empty($value) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                    $errors[$field] = "$field tidak valid";
-                }
-                //rule validasi
-                if ($rule === 'unique' && ($value !== null && $value !== '')) {
-
-                    $primaryKey = $this->getPrimaryKey($table);
-
-                    if ($currentId) {
-                        $exists = $this->db->query(
-                            "SELECT $primaryKey FROM `$table` 
-                            WHERE `$field` = ? 
-                            AND `$primaryKey` != ? 
-                            LIMIT 1",
-                            [$value, $currentId]
-                        )->fetch();
-                    } else {
-                        $exists = $this->db->query(
-                            "SELECT $primaryKey FROM `$table` 
-                            WHERE `$field` = ? 
-                            LIMIT 1",
-                            [$value]
-                        )->fetch();
+                    if (empty($data[$childField])) {
+                        throw new Exception("Field $childField wajib diisi.");
                     }
 
-                    if ($exists) {
-                        $errors[$field] = "$field sudah digunakan";
+                    $parentColumns = $this->getTableColumns($parent);
+
+                    $where = ["`$parentField` = ?"];
+                    $params = [$data[$childField]];
+
+                    // 🔥 Tambah scope jika ada
+                    if (in_array('kd_wilayah', $parentColumns)) {
+                        $where[] = "`kd_wilayah` = ?";
+                        $params[] = $data['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? null;
                     }
-                }
-                if (str_starts_with($rule, 'max:') && !empty($value)) {
 
-                    $max = (int)explode(':', $rule)[1];
+                    if (in_array('peraturan', $parentColumns)) {
+                        $where[] = "`peraturan` = ?";
+                        $params[] = $data['peraturan'] ?? null;
+                    }
 
-                    if (strlen($value) > $max) {
-                        $errors[$field] = "$field maksimal $max karakter";
+                    $exists = $this->db->query(
+                        "SELECT id FROM `$parent`
+                        WHERE " . implode(" AND ", $where) . "
+                        LIMIT 1",
+                        $params
+                    )->fetch();
+
+                    if (!$exists) {
+                        throw new Exception("Parent di $parent belum tersedia.");
                     }
                 }
             }
-        }
 
-        return $errors;
-    }
+            // Scope match
+            if (isset($rule['match_scope'])) {
 
-    /* =========================================================
-       BUILD RULE DARI SCHEMA DATABASE
-    ========================================================= */
-    private function buildRulesFromSchema(string $table): array
-    {
-        if (isset(self::$schemaCache[$table])) {
-            return self::$schemaCache[$table];
-        }
+                $where = [];
+                $params = [];
 
-        $rules = [];
-        $columns = $this->db->query("SHOW COLUMNS FROM `$table`")->fetchAll();
+                foreach ($rule['match_scope'] as $field) {
 
-        foreach ($columns as $col) {
+                    if (!isset($data[$field])) {
+                        throw new Exception("Field $field wajib ada.");
+                    }
 
-            $field = $col['Field'];
-            $type  = $col['Type'];
-            $null  = $col['Null'];
-
-            $fieldRules = [];
-
-            if ($null === 'NO' && $field !== 'id') {
-                $fieldRules[] = 'required';
-            }
-
-            if (str_contains($type, 'int') || str_contains($type, 'decimal')) {
-                $fieldRules[] = 'numeric';
-            }
-
-            if (preg_match('/varchar\((\d+)\)/', $type, $match)) {
-                $fieldRules[] = 'max:' . $match[1];
-            }
-
-            if (!empty($fieldRules)) {
-                $rules[$field] = $fieldRules;
-            }
-        }
-
-        self::$schemaCache[$table] = $rules;
-
-        return $rules;
-    }
-
-    /* =========================================================
-       DROPDOWN ENGINE (FULL IDENTIK)
-    ========================================================= */
-    private function loadDropdown(string $source, $parentValue = null): string
-    {
-        if (!isset($this->profiles[$source])) {
-            return JsonResponse::error("Source tidak ditemukan");
-        }
-
-        $profile = $this->profiles[$source];
-        $table   = $profile['table'];
-
-        $primaryKey = $profile['primary_key'] ?? 'id';
-        $valueField = $profile['dropdown']['value'] ?? $primaryKey;
-        $labelField = $profile['dropdown']['label'] ?? 'nama';
-
-        list($scopeWhere, $scopeParams) = $this->applyUserScope($table);
-
-        $whereParts = $scopeWhere;
-        $params     = $scopeParams;
-
-        if ($parentValue !== null) {
-            foreach ($this->getTableColumns($table) as $col) {
-                if (str_starts_with($col, 'kode_') || str_starts_with($col, 'id_')) {
-                    $whereParts[] = "`$col` = ?";
-                    $params[] = $parentValue;
-                    break;
+                    $where[] = "`$field` = ?";
+                    $params[] = $data[$field];
                 }
-            }
-        }
-
-        $where = !empty($whereParts)
-            ? "WHERE " . implode(" AND ", $whereParts)
-            : "";
-
-        $query = "
-            SELECT `$valueField` as id, `$labelField` as uraian
-            FROM `$table`
-            $where
-            ORDER BY `$valueField` ASC
-        ";
-
-        $rows = $this->db->query($query, $params)->fetchAll();
-
-        return JsonResponse::success("Dropdown loaded", [], $rows);
-    }
-
-    /* =========================================================
-       UTIL: GET PROFILE BY TABLE
-    ========================================================= */
-    private function getProfileByTable(string $table): array
-    {
-        foreach ($this->profiles as $profile) {
-            if (($profile['table'] ?? '') === $table) {
-                return $profile;
-            }
-        }
-        return [];
-    }
-
-    /* =========================================================
-       UTIL: GET PRIMARY KEY
-    ========================================================= */
-    private function getPrimaryKey(string $table): string
-    {
-        $profile = $this->getProfileByTable($table);
-        return $profile['primary_key'] ?? 'id';
-    }
-
-    /* =========================================================
-       UTIL: CHECK ACCESS WITH SCOPE
-    ========================================================= */
-    private function checkAccess(string $table, $id): bool
-    {
-        $primaryKey = $this->getPrimaryKey($table);
-
-        list($scopeWhere, $scopeParams) = $this->applyUserScope($table);
-
-        $whereParts = array_merge(["`$primaryKey` = ?"], $scopeWhere);
-        $params     = array_merge([$id], $scopeParams);
-
-        $where = "WHERE " . implode(" AND ", $whereParts);
-
-        $row = $this->db->query(
-            "SELECT `$primaryKey` FROM `$table` $where LIMIT 1",
-            $params
-        )->fetch();
-
-        return (bool)$row;
-    }
-    private function logActivity(
-        string $table,
-        $recordId,
-        string $action,
-        $oldData = null,
-        $newData = null
-    ): void {
-
-        if (!$this->tableExists('log_activity')) {
-            return;
-        }
-
-        try {
-
-            $this->db->insert('log_activity', [
-                'table_name' => $table,
-                'record_id'  => $recordId,
-                'action'     => $action,
-                'old_data'   => $oldData ? json_encode($oldData, JSON_UNESCAPED_UNICODE) : null,
-                'new_data'   => $newData ? json_encode($newData, JSON_UNESCAPED_UNICODE) : null,
-                'username'   => $this->user['username'] ?? 'system',
-                'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
-                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
-        } catch (Exception $e) {
-            // Jangan sampai audit log bikin sistem utama gagal
-        }
-    }
-    /* =========================================================
-   UTIL: CEK APAKAH TABEL ADA
-========================================================= */
-    private function tableExists(string $table): bool
-    {
-        $result = $this->db->query(
-            "SHOW TABLES LIKE ?",
-            [$table]
-        )->fetch();
-
-        return (bool)$result;
-    }
-    private function runTransaction(callable $callback)
-    {
-        try {
-
-            $this->db->query("START TRANSACTION");
-
-            $result = $callback();
-
-            $this->db->query("COMMIT");
-
-            return $result;
-        } catch (Exception $e) {
-            $this->db->query("ROLLBACK");
-            throw $e;
-        }
-    }
-    private function getPengaturanAktif(): ?array
-    {
-        if ($this->pengaturanAktifCache !== null) {
-            return $this->pengaturanAktifCache;
-        }
-
-        $kd_wilayah = $this->user['kd_wilayah'] ?? null;
-
-        if (!$kd_wilayah) {
-            return null;
-        }
-
-        $result = $this->db->query("
-        SELECT *
-        FROM pengaturan_neo
-        WHERE kd_wilayah = ?
-        AND disable = 0
-        LIMIT 1
-    ", [$kd_wilayah])->fetch();
-
-        $this->pengaturanAktifCache = $result ?: null;
-
-        return $this->pengaturanAktifCache;
-    }
-    private function getPeriodeAktif(): ?array
-    {
-        if ($this->periodeAktifCache !== null) {
-            return $this->periodeAktifCache;
-        }
-
-        $kd_wilayah = $this->user['kd_wilayah'] ?? null;
-
-        if (!$kd_wilayah) {
-            return null;
-        }
-
-        $this->periodeAktifCache = $this->db->query("
-            SELECT id
-            FROM periode_rpjmd
-            WHERE kd_wilayah = ?
-            AND status_aktif = 1
-            LIMIT 1
-        ", [$kd_wilayah])->fetch();
-
-        return $this->periodeAktifCache;
-    }
-    /* =========================================================
-   NORMALIZE HEADER XLSX → snake_case
-========================================================= */
-    private function normalizeHeader(?string $header): string
-    {
-        if ($header === null) {
-            return '';
-        }
-
-        $header = trim($header);
-
-        if ($header === '') {
-            return '';
-        }
-
-        return strtolower(
-            preg_replace('/[^a-z0-9_]/', '', $header)
-        );
-    }
-    /* =========================================================
-   VALIDASI IMPORT PERMISSION
-========================================================= */
-    private function validateImportPermission(string $table): void
-    {
-        $role = $this->user['type_user'] ?? 'viewer';
-
-        $restricted = [
-            'urusan',
-            'bidang',
-            'program',
-            'kegiatan',
-            'sub_kegiatan'
-        ];
-
-        if ($role === 'admin_opd' && in_array($table, $restricted)) {
-            throw new Exception("Admin OPD tidak diperbolehkan import tabel master.");
-        }
-    }
-    /* =========================================================
-   VALIDASI DUPLICATE GLOBAL (SCOPE-AWARE PATCH)
-   ---------------------------------------------------------
-   - Composite aware
-   - Scope aware (kd_wilayah + peraturan)
-   - Tidak merusak arsitektur lama
-========================================================= */
-    private function validateDuplicate(string $table, array $data): void
-    {
-        $columns = $this->getTableColumns($table);
-
-        $uniqueFields = [];
-
-        // 🔥 Composite utama untuk struktur
-        if (in_array('kode', $columns) && isset($data['kode'])) {
-
-            $uniqueFields['kode'] = $data['kode'];
-
-            if (in_array('kd_wilayah', $columns)) {
-
-                $uniqueFields['kd_wilayah'] =
-                    $data['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? null;
-
-                if (empty($uniqueFields['kd_wilayah'])) {
-                    throw new Exception(
-                        "kd_wilayah tidak boleh kosong untuk validasi duplicate."
-                    );
-                }
-            }
-
-            if (in_array('peraturan', $columns)) {
-
-                $uniqueFields['peraturan'] =
-                    $data['peraturan'] ?? null;
-
-                if (empty($uniqueFields['peraturan'])) {
-                    throw new Exception(
-                        "peraturan tidak boleh kosong untuk validasi duplicate."
-                    );
-                }
-            }
-        }
-
-        // 🔥 Tambahan rekening jika ada
-        if (in_array('rekening', $columns) && isset($data['rekening'])) {
-            $uniqueFields['rekening'] = $data['rekening'];
-        }
-
-        if (empty($uniqueFields)) return;
-
-        $whereParts = [];
-        $params     = [];
-
-        foreach ($uniqueFields as $field => $value) {
-            $whereParts[] = "`$field` = ?";
-            $params[]     = $value;
-        }
-
-        $exists = $this->db->query(
-            "SELECT id FROM `$table`
-         WHERE " . implode(" AND ", $whereParts) . "
-         LIMIT 1",
-            $params
-        )->fetch();
-
-        if ($exists) {
-            throw new Exception("Duplicate data terdeteksi (composite scope).");
-        }
-    }
-    /* =========================================================
-   VALIDASI HIERARKI & DEPENDENSI LINTAS TABEL
-========================================================= */
-    private function validateHierarchy(string $table, array $data): void
-    {
-        $rules = [
-
-            // Struktur kode
-            'bidang' => [
-                'parent_table' => 'urusan',
-                'match' => ['urusan_id' => 'id']
-            ],
-            'program' => [
-                'parent_table' => 'bidang',
-                'match' => ['bidang_id' => 'id']
-            ],
-            'kegiatan' => [
-                'parent_table' => 'program',
-                'match' => ['program_id' => 'id']
-            ],
-            'sub_kegiatan' => [
-                'parent_table' => 'kegiatan',
-                'match' => ['kegiatan_id' => 'id']
-            ],
-
-            // Renstra
-            'renstra_neo' => [
-                'parent_table' => 'periode_rpjmd',
-                'match' => ['periode_id' => 'id']
-            ],
-
-            // Renja
-            'renja_neo' => [
-                'parent_table' => 'renstra_neo',
-                'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
-            ],
-            'renja_p_neo' => [
-                'parent_table' => 'renja_neo',
-                'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
-            ],
-
-            // DPA
-            'dpa_neo' => [
-                'parent_table' => 'renja_neo',
-                'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
-            ],
-            'dpppa_neo' => [
-                'parent_table' => 'dpa_neo',
-                'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
-            ],
-        ];
-
-        if (!isset($rules[$table])) return;
-
-        $rule = $rules[$table];
-        $parent = $rule['parent_table'];
-
-        // Foreign key match
-        if (isset($rule['match'])) {
-            foreach ($rule['match'] as $childField => $parentField) {
-
-                if (empty($data[$childField])) {
-                    throw new Exception("Field $childField wajib diisi.");
-                }
-
                 $parentColumns = $this->getTableColumns($parent);
 
-                $where = ["`$parentField` = ?"];
-                $params = [$data[$childField]];
-
-                // 🔥 Tambah scope jika ada
-                if (in_array('kd_wilayah', $parentColumns)) {
-                    $where[] = "`kd_wilayah` = ?";
-                    $params[] = $data['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? null;
-                }
-
-                if (in_array('peraturan', $parentColumns)) {
+                if (in_array('peraturan', $parentColumns) && isset($data['peraturan'])) {
                     $where[] = "`peraturan` = ?";
-                    $params[] = $data['peraturan'] ?? null;
+                    $params[] = $data['peraturan'];
                 }
-
                 $exists = $this->db->query(
                     "SELECT id FROM `$parent`
-                    WHERE " . implode(" AND ", $where) . "
-                    LIMIT 1",
+                WHERE " . implode(" AND ", $where) . "
+                LIMIT 1",
                     $params
                 )->fetch();
 
                 if (!$exists) {
-                    throw new Exception("Parent di $parent belum tersedia.");
+                    throw new Exception("Parent scope di $parent belum tersedia.");
                 }
             }
         }
+        /* =========================================================
+    IMPORT STRICT MODE (NO PARTIAL INSERT)
+    ========================================================= */
+        /* =========================================================
+    IMPORT STRICT MODE (ENTERPRISE SAFE)
+    ---------------------------------------------------------
+    - Role aware
+    - Config aware
+    - Duplicate aware
+    - Hierarchy aware
+    - Soft lock aware
+    - Auto session aware
+    - Strict fail (1 error stop)
+    ========================================================= */
+        public function importStrict(string $tableKey, string $filePath, int $jmlHeader = 1): string
+        {
+            if (!isset($this->profiles[$tableKey])) {
+                return JsonResponse::error("Tabel tidak terdaftar.");
+            }
 
-        // Scope match
-        if (isset($rule['match_scope'])) {
+            $profile = $this->profiles[$tableKey];
+            $table   = $profile['table'];
 
-            $where = [];
-            $params = [];
+            $config = $this->validateImportConfig($tableKey);
 
-            foreach ($rule['match_scope'] as $field) {
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
+            $rows = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
 
-                if (!isset($data[$field])) {
-                    throw new Exception("Field $field wajib ada.");
+            if (count($rows) <= $jmlHeader) {
+                return JsonResponse::error("File kosong atau header tidak sesuai.");
+            }
+
+            $headers = array_map([$this, 'normalizeHeader'], $rows[$jmlHeader - 1]);
+
+            return $this->runTransaction(function () use (
+                $rows,
+                $headers,
+                $jmlHeader,
+                $profile,
+                $table,
+                $config,
+                $tableKey
+            ) {
+
+                $inserted = 0;
+
+                foreach (array_slice($rows, $jmlHeader) as $rowIndex => $row) {
+
+                    if (empty(array_filter($row))) continue;
+
+                    $data = [];
+
+                    foreach ($headers as $i => $col) {
+                        if (!empty($col)) {
+                            $data[$col] = $row[$i] ?? null;
+                        }
+                    }
+
+                    if (!empty($profile['auto_session'])) {
+                        foreach ($profile['auto_session'] as $field) {
+                            if (!isset($data[$field]) && isset($this->user[$field])) {
+                                $data[$field] = $this->user[$field];
+                            }
+                        }
+                    }
+
+                    if (($config['check_duplicate'] ?? false)) {
+                        $this->validateDuplicate($table, $data);
+                    }
+
+                    if (($config['check_hierarchy'] ?? false)) {
+                        $this->validateHierarchy($table, $data);
+                    }
+
+                    $response = $this->handle(array_merge(
+                        $data,
+                        [
+                            'action' => 'add',
+                            'tbl'    => $tableKey
+                        ]
+                    ));
+
+                    $decoded = json_decode($response, true);
+
+                    if (empty($decoded['success'])) {
+                        throw new Exception(
+                            "Error pada baris ke " . ($rowIndex + 1)
+                        );
+                    }
+
+                    $inserted++;
                 }
 
-                $where[] = "`$field` = ?";
-                $params[] = $data[$field];
-            }
-            $parentColumns = $this->getTableColumns($parent);
+                return JsonResponse::success("Import berhasil.", [
+                    'inserted' => $inserted
+                ]);
+            });
+        }
+        /* =========================================================
+    IMPORT STRUKTUR NASIONAL (GLOBAL HIRARKI)
+    ========================================================= */
+        public function importStruktur(string $filePath, int $jmlHeader = 1): string
+        {
+            return $this->runTransaction(function () use ($filePath, $jmlHeader) {
 
-            if (in_array('peraturan', $parentColumns) && isset($data['peraturan'])) {
-                $where[] = "`peraturan` = ?";
-                $params[] = $data['peraturan'];
+                // 🔹 Load file Excel
+                $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
+
+                // 🔹 Ambil semua baris jadi array
+                $rows = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
+
+                // 🔹 Validasi minimal baris
+                if (count($rows) <= $jmlHeader) {
+                    throw new Exception("File kosong atau header tidak sesuai.");
+                }
+
+                $inserted = 0;
+
+                // 🔹 Loop mulai setelah header
+                foreach (array_slice($rows, $jmlHeader) as $rowIndex => $row) {
+
+                    // 🔹 Hitung nomor baris asli Excel
+                    $excelRow = $rowIndex + $jmlHeader + 1;
+
+                    // 🔹 Ambil kolom pertama = kode
+                    $kode = trim((string)($row[0] ?? ''));
+
+                    // 🔹 Ambil kolom kedua = nama
+                    $nama = trim((string)($row[1] ?? ''));
+
+                    // 🔹 Skip jika kosong
+                    if ($kode === '' || $nama === '') {
+                        continue;
+                    }
+
+                    // 🔹 Pecah kode berdasarkan titik
+                    $segments = explode('.', $kode);
+
+                    // 🔹 Hitung jumlah segment
+                    $segmentCount = count($segments);
+
+                    // 🔹 Validasi semua segment harus angka
+                    foreach ($segments as $seg) {
+                        if ($seg === '' || !ctype_digit($seg)) {
+                            // Lompat ke baris Excel berikutnya
+                            continue 2;
+                        }
+                    }
+
+                    try {
+
+                        switch ($segmentCount) {
+
+                            // ==================================================
+                            // 1 SEGMENT = URUSAN
+                            // contoh: 1
+                            // ==================================================
+                            case 1:
+
+                                $this->insertIfNotExists('urusan', [
+                                    'kode' => $kode,
+                                    'nama' => $nama
+                                ]);
+
+                                break;
+
+
+                            // ==================================================
+                            // 2 SEGMENT = BIDANG
+                            // contoh: 1.01
+                            // ==================================================
+                            case 2:
+
+                                // parent = urusan
+                                $kodeUrusan = $segments[0];
+
+                                // pastikan urusan ada
+                                $this->ensureParentExists('urusan', [
+                                    'kode' => $kodeUrusan
+                                ]);
+
+                                $this->insertIfNotExists('bidang', [
+                                    'kode' => $kode,
+                                    'kode_urusan' => $kodeUrusan,
+                                    'nama' => $nama
+                                ]);
+
+                                break;
+
+
+                            // ==================================================
+                            // 3 SEGMENT = PROGRAM
+                            // contoh: 1.01.02
+                            // ==================================================
+                            case 3:
+
+                                // parent = bidang
+                                $kodeBidang = implode('.', array_slice($segments, 0, 2));
+
+                                $this->ensureParentExists('bidang', [
+                                    'kode' => $kodeBidang
+                                ]);
+
+                                $this->insertIfNotExists('program', [
+                                    'kode' => $kode,
+                                    'kode_urusan' => $segments[0],
+                                    'kode_bidang' => $kodeBidang,
+                                    'nama' => $nama
+                                ]);
+
+                                break;
+
+
+                            // ==================================================
+                            // 5 SEGMENT = KEGIATAN
+                            // contoh: 1.01.02.2.01
+                            // ==================================================
+                            case 5:
+
+                                // parent = program (3 segment pertama)
+                                $kodeProgram = implode('.', array_slice($segments, 0, 3));
+
+                                $this->ensureParentExists('program', [
+                                    'kode' => $kodeProgram
+                                ]);
+
+                                $this->insertIfNotExists('kegiatan', [
+                                    'kode' => $kode,
+                                    'kode_urusan' => $segments[0],
+                                    'kode_bidang' => implode('.', array_slice($segments, 0, 2)),
+                                    'kode_program' => $kodeProgram,
+                                    'nama' => $nama
+                                ]);
+
+                                break;
+
+
+                            // ==================================================
+                            // 6 SEGMENT = SUB KEGIATAN
+                            // contoh: 1.01.02.2.01.0001
+                            // ==================================================
+                            case 6:
+
+                                // parent = kegiatan (5 segment pertama)
+                                $kodeKegiatan = implode('.', array_slice($segments, 0, 5));
+
+                                $this->ensureParentExists('kegiatan', [
+                                    'kode' => $kodeKegiatan
+                                ]);
+
+                                $this->insertIfNotExists('sub_kegiatan', [
+                                    'kode' => $kode,
+                                    'kode_urusan' => $segments[0],
+                                    'kode_bidang' => implode('.', array_slice($segments, 0, 2)),
+                                    'kode_program' => implode('.', array_slice($segments, 0, 3)),
+                                    'kode_kegiatan' => $kodeKegiatan,
+                                    'nama' => $nama
+                                ]);
+
+                                break;
+
+
+                            // ==================================================
+                            // Format lain diabaikan
+                            // ==================================================
+                            default:
+                                continue 2;
+                        }
+
+                        $inserted++;
+                    } catch (\Throwable $e) {
+
+                        // 🔥 Jika error, tampilkan baris Excel
+                        throw new Exception(
+                            "Baris Excel {$excelRow} gagal → " . $e->getMessage()
+                        );
+                    }
+                }
+
+                return JsonResponse::success("Import struktur berhasil.", [
+                    'inserted' => $inserted
+                ]);
+            });
+        }
+        private function ensureParentExists(string $table, array $data): void
+        {
+            $columns = $this->getTableColumns($table);
+
+            $whereParts = ["`kode` = ?"];
+            $params = [$data['kode']];
+
+            if (in_array('kd_wilayah', $columns)) {
+                $whereParts[] = "`kd_wilayah` = ?";
+                $params[] = $this->user['kd_wilayah'];
             }
+
+            if (in_array('peraturan', $columns)) {
+                $pengaturan = $this->getPengaturanAktif();
+                $whereParts[] = "`peraturan` = ?";
+                $params[] = $pengaturan['aturan_sub_kegiatan'];
+            }
+
             $exists = $this->db->query(
-                "SELECT id FROM `$parent`
-             WHERE " . implode(" AND ", $where) . "
-             LIMIT 1",
+                "SELECT id FROM `$table`
+            WHERE " . implode(" AND ", $whereParts) . "
+            LIMIT 1",
                 $params
             )->fetch();
 
             if (!$exists) {
-                throw new Exception("Parent scope di $parent belum tersedia.");
+                throw new Exception("Parent $table belum tersedia.");
             }
         }
-    }
-    /* =========================================================
-   IMPORT STRICT MODE (NO PARTIAL INSERT)
-========================================================= */
-    /* =========================================================
-   IMPORT STRICT MODE (ENTERPRISE SAFE)
-   ---------------------------------------------------------
-   - Role aware
-   - Config aware
-   - Duplicate aware
-   - Hierarchy aware
-   - Soft lock aware
-   - Auto session aware
-   - Strict fail (1 error stop)
-========================================================= */
-    public function importStrict(string $tableKey, string $filePath, int $jmlHeader = 1): string
-    {
-        if (!isset($this->profiles[$tableKey])) {
-            return JsonResponse::error("Tabel tidak terdaftar.");
+        private function safeInsert(string $table, array $data, int $excelRow): void
+        {
+            try {
+
+                $this->insertIfNotExists($table, $data);
+            } catch (\Throwable $e) {
+
+                throw new Exception(
+                    "Tabel {$table} gagal pada baris Excel {$excelRow} → "
+                        . $e->getMessage()
+                );
+            }
         }
+        private function insertIfNotExists(string $table, array $data): ?int
+        {
+            $columns = $this->getTableColumns($table);
 
-        $profile = $this->profiles[$tableKey];
-        $table   = $profile['table'];
+            // 🔥 Filter hanya kolom yang benar-benar ada
+            $filtered = [];
 
-        $config = $this->validateImportConfig($tableKey);
-
-        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
-        $rows = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
-
-        if (count($rows) <= $jmlHeader) {
-            return JsonResponse::error("File kosong atau header tidak sesuai.");
-        }
-
-        $headers = array_map([$this, 'normalizeHeader'], $rows[$jmlHeader - 1]);
-
-        return $this->runTransaction(function () use (
-            $rows,
-            $headers,
-            $jmlHeader,
-            $profile,
-            $table,
-            $config,
-            $tableKey
-        ) {
-
-            $inserted = 0;
-
-            foreach (array_slice($rows, $jmlHeader) as $rowIndex => $row) {
-
-                if (empty(array_filter($row))) continue;
-
-                $data = [];
-
-                foreach ($headers as $i => $col) {
-                    if (!empty($col)) {
-                        $data[$col] = $row[$i] ?? null;
-                    }
+            foreach ($data as $key => $value) {
+                if (in_array($key, $columns)) {
+                    $filtered[$key] = $value;
                 }
-
-                if (!empty($profile['auto_session'])) {
-                    foreach ($profile['auto_session'] as $field) {
-                        if (!isset($data[$field]) && isset($this->user[$field])) {
-                            $data[$field] = $this->user[$field];
-                        }
-                    }
-                }
-
-                if (($config['check_duplicate'] ?? false)) {
-                    $this->validateDuplicate($table, $data);
-                }
-
-                if (($config['check_hierarchy'] ?? false)) {
-                    $this->validateHierarchy($table, $data);
-                }
-
-                $response = $this->handle(array_merge(
-                    $data,
-                    [
-                        'action' => 'add',
-                        'tbl'    => $tableKey
-                    ]
-                ));
-
-                $decoded = json_decode($response, true);
-
-                if (empty($decoded['success'])) {
-                    throw new Exception(
-                        "Error pada baris ke " . ($rowIndex + 1)
-                    );
-                }
-
-                $inserted++;
             }
 
-            return JsonResponse::success("Import berhasil.", [
-                'inserted' => $inserted
-            ]);
-        });
-    }
-    /* =========================================================
-   IMPORT STRUKTUR NASIONAL (GLOBAL HIRARKI)
-========================================================= */
-    public function importStruktur(string $filePath, int $jmlHeader = 1): string
-    {
-        return $this->runTransaction(function () use ($filePath, $jmlHeader) {
-
-            // 🔹 Load file Excel
-            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
-
-            // 🔹 Ambil semua baris jadi array
-            $rows = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
-
-            // 🔹 Validasi minimal baris
-            if (count($rows) <= $jmlHeader) {
-                throw new Exception("File kosong atau header tidak sesuai.");
+            if (!isset($filtered['kode'])) {
+                return null;
             }
 
-            $inserted = 0;
+            $whereParts = ["`kode` = ?"];
+            $params     = [$filtered['kode']];
 
-            // 🔹 Loop mulai setelah header
-            foreach (array_slice($rows, $jmlHeader) as $rowIndex => $row) {
+            // 🔥 Scope kd_wilayah
+            if (in_array('kd_wilayah', $columns)) {
+                $filtered['kd_wilayah'] = $this->user['kd_wilayah'] ?? null;
+                $whereParts[] = "`kd_wilayah` = ?";
+                $params[] = $filtered['kd_wilayah'];
+            }
 
-                // 🔹 Hitung nomor baris asli Excel
-                $excelRow = $rowIndex + $jmlHeader + 1;
+            // 🔥 Scope peraturan
+            if (in_array('peraturan', $columns)) {
 
-                // 🔹 Ambil kolom pertama = kode
-                $kode = trim((string)($row[0] ?? ''));
+                $pengaturan = $this->getPengaturanAktif();
 
-                // 🔹 Ambil kolom kedua = nama
-                $nama = trim((string)($row[1] ?? ''));
+                if (!$pengaturan || empty($pengaturan['aturan_sub_kegiatan'])) {
+                    throw new Exception("Peraturan aktif belum dikonfigurasi.");
+                }
 
-                // 🔹 Skip jika kosong
-                if ($kode === '' || $nama === '') {
+                $filtered['peraturan'] = $pengaturan['aturan_sub_kegiatan'];
+
+                $whereParts[] = "`peraturan` = ?";
+                $params[] = $filtered['peraturan'];
+            }
+
+            // 🔥 Cek duplicate
+            $exists = $this->db->query(
+                "SELECT id FROM `$table`
+            WHERE " . implode(" AND ", $whereParts) . "
+            LIMIT 1",
+                $params
+            )->fetch();
+
+            if ($exists) {
+                return $exists['id'];
+            }
+            /* =====================================================
+    ENTERPRISE SANITATION
+    ===================================================== */
+            $filtered = $this->applySanitization($table, $filtered);
+            $filtered = $this->injectAudit($filtered, 'insert');
+
+            $this->db->insert($table, $filtered);
+
+            return $this->db->lastInsertId();
+        }
+        /* =========================================================
+        VALIDASI IMPORT CONFIG DARI PROFILE
+        ========================================================= */
+        private function validateImportConfig(string $tableKey): array
+        {
+            if (!isset($this->profiles[$tableKey]['import'])) {
+                throw new Exception("Import belum dikonfigurasi.");
+            }
+
+            $config = $this->profiles[$tableKey]['import'];
+
+            if (!($config['enabled'] ?? false)) {
+                throw new Exception("Import tidak diizinkan untuk tabel ini.");
+            }
+
+            $role = $this->user['type_user'] ?? 'viewer';
+
+            if (!in_array($role, $config['allowed_roles'] ?? [])) {
+                throw new Exception("Role tidak diizinkan untuk import.");
+            }
+
+            return $config;
+        }
+        /* =========================================================
+    APPLY NORMALISASI BERDASARKAN PROFILE app/Config/table_profiles.php'
+    program' => [
+        'table' => 'program',
+        'primary_key' => 'id',
+        'normalize_space' => ['nama']
+    ],
+    ========================================================= */
+        private function applyNormalization(string $table, array $data): array
+        {
+            $profile = $this->getProfileByTable($table);
+
+            if (empty($profile['normalize_space'])) {
+                return $data;
+            }
+
+            foreach ($profile['normalize_space'] as $field) {
+                if (isset($data[$field]) && is_string($data[$field])) {
+                    $data[$field] = $this->normalizeSpaces($data[$field]);
+                }
+            }
+
+            return $data;
+        }
+        /* =========================================================
+    NORMALISASI SPASI GLOBAL
+    ========================================================= */
+        private function normalizeSpaces(string $value): string
+        {
+            $value = trim($value);
+            return preg_replace('/\s+/u', ' ', $value);
+        }
+        /* =========================================================
+    SANITIZE SINGLE VALUE
+    ========================================================= */
+        private function sanitizeValue(string $value, ?array $rules = null): string
+        {
+            // 1️⃣ Trim
+            $value = trim($value);
+
+            // 2️⃣ Hapus control characters
+            $value = preg_replace('/[\x00-\x1F\x7F]/u', '', $value);
+
+            // 3️⃣ Normalize multi space
+            $value = preg_replace('/\s+/u', ' ', $value);
+
+            // 4️⃣ Strip dangerous HTML
+            $value = strip_tags($value);
+
+            // 5️⃣ Case transformation (optional per profile)
+            if (!empty($rules['case'])) {
+
+                switch ($rules['case']) {
+
+                    case 'upper':
+                        $value = mb_strtoupper($value);
+                        break;
+
+                    case 'lower':
+                        $value = mb_strtolower($value);
+                        break;
+
+                    case 'title':
+                        $value = mb_convert_case($value, MB_CASE_TITLE);
+                        break;
+                }
+            }
+
+            return $value;
+        }
+        /* =========================================================
+    ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filtered);
+    ========================================================= */
+        private function applySanitization(string $table, array $data): array
+        {
+            $profile = $this->getProfileByTable($table);
+
+            foreach ($data as $field => $value) {
+
+                if (!is_string($value)) {
                     continue;
                 }
 
-                // 🔹 Pecah kode berdasarkan titik
-                $segments = explode('.', $kode);
+                $rules = $profile['sanitize'][$field] ?? null;
 
-                // 🔹 Hitung jumlah segment
-                $segmentCount = count($segments);
-
-                // 🔹 Validasi semua segment harus angka
-                foreach ($segments as $seg) {
-                    if ($seg === '' || !ctype_digit($seg)) {
-                        // Lompat ke baris Excel berikutnya
-                        continue 2;
-                    }
-                }
-
-                try {
-
-                    switch ($segmentCount) {
-
-                        // ==================================================
-                        // 1 SEGMENT = URUSAN
-                        // contoh: 1
-                        // ==================================================
-                        case 1:
-
-                            $this->insertIfNotExists('urusan', [
-                                'kode' => $kode,
-                                'nama' => $nama
-                            ]);
-
-                            break;
-
-
-                        // ==================================================
-                        // 2 SEGMENT = BIDANG
-                        // contoh: 1.01
-                        // ==================================================
-                        case 2:
-
-                            // parent = urusan
-                            $kodeUrusan = $segments[0];
-
-                            // pastikan urusan ada
-                            $this->ensureParentExists('urusan', [
-                                'kode' => $kodeUrusan
-                            ]);
-
-                            $this->insertIfNotExists('bidang', [
-                                'kode' => $kode,
-                                'kode_urusan' => $kodeUrusan,
-                                'nama' => $nama
-                            ]);
-
-                            break;
-
-
-                        // ==================================================
-                        // 3 SEGMENT = PROGRAM
-                        // contoh: 1.01.02
-                        // ==================================================
-                        case 3:
-
-                            // parent = bidang
-                            $kodeBidang = implode('.', array_slice($segments, 0, 2));
-
-                            $this->ensureParentExists('bidang', [
-                                'kode' => $kodeBidang
-                            ]);
-
-                            $this->insertIfNotExists('program', [
-                                'kode' => $kode,
-                                'kode_urusan' => $segments[0],
-                                'kode_bidang' => $kodeBidang,
-                                'nama' => $nama
-                            ]);
-
-                            break;
-
-
-                        // ==================================================
-                        // 5 SEGMENT = KEGIATAN
-                        // contoh: 1.01.02.2.01
-                        // ==================================================
-                        case 5:
-
-                            // parent = program (3 segment pertama)
-                            $kodeProgram = implode('.', array_slice($segments, 0, 3));
-
-                            $this->ensureParentExists('program', [
-                                'kode' => $kodeProgram
-                            ]);
-
-                            $this->insertIfNotExists('kegiatan', [
-                                'kode' => $kode,
-                                'kode_urusan' => $segments[0],
-                                'kode_bidang' => implode('.', array_slice($segments, 0, 2)),
-                                'kode_program' => $kodeProgram,
-                                'nama' => $nama
-                            ]);
-
-                            break;
-
-
-                        // ==================================================
-                        // 6 SEGMENT = SUB KEGIATAN
-                        // contoh: 1.01.02.2.01.0001
-                        // ==================================================
-                        case 6:
-
-                            // parent = kegiatan (5 segment pertama)
-                            $kodeKegiatan = implode('.', array_slice($segments, 0, 5));
-
-                            $this->ensureParentExists('kegiatan', [
-                                'kode' => $kodeKegiatan
-                            ]);
-
-                            $this->insertIfNotExists('sub_kegiatan', [
-                                'kode' => $kode,
-                                'kode_urusan' => $segments[0],
-                                'kode_bidang' => implode('.', array_slice($segments, 0, 2)),
-                                'kode_program' => implode('.', array_slice($segments, 0, 3)),
-                                'kode_kegiatan' => $kodeKegiatan,
-                                'nama' => $nama
-                            ]);
-
-                            break;
-
-
-                        // ==================================================
-                        // Format lain diabaikan
-                        // ==================================================
-                        default:
-                            continue 2;
-                    }
-
-                    $inserted++;
-                } catch (\Throwable $e) {
-
-                    // 🔥 Jika error, tampilkan baris Excel
-                    throw new Exception(
-                        "Baris Excel {$excelRow} gagal → " . $e->getMessage()
-                    );
-                }
+                $data[$field] = $this->sanitizeValue($value, $rules);
             }
 
-            return JsonResponse::success("Import struktur berhasil.", [
-                'inserted' => $inserted
-            ]);
-        });
-    }
-    private function ensureParentExists(string $table, array $data): void
-    {
-        $columns = $this->getTableColumns($table);
-
-        $whereParts = ["`kode` = ?"];
-        $params = [$data['kode']];
-
-        if (in_array('kd_wilayah', $columns)) {
-            $whereParts[] = "`kd_wilayah` = ?";
-            $params[] = $this->user['kd_wilayah'];
-        }
-
-        if (in_array('peraturan', $columns)) {
-            $pengaturan = $this->getPengaturanAktif();
-            $whereParts[] = "`peraturan` = ?";
-            $params[] = $pengaturan['aturan_sub_kegiatan'];
-        }
-
-        $exists = $this->db->query(
-            "SELECT id FROM `$table`
-         WHERE " . implode(" AND ", $whereParts) . "
-         LIMIT 1",
-            $params
-        )->fetch();
-
-        if (!$exists) {
-            throw new Exception("Parent $table belum tersedia.");
-        }
-    }
-    private function safeInsert(string $table, array $data, int $excelRow): void
-    {
-        try {
-
-            $this->insertIfNotExists($table, $data);
-        } catch (\Throwable $e) {
-
-            throw new Exception(
-                "Tabel {$table} gagal pada baris Excel {$excelRow} → "
-                    . $e->getMessage()
-            );
-        }
-    }
-    private function insertIfNotExists(string $table, array $data): ?int
-    {
-        $columns = $this->getTableColumns($table);
-
-        // 🔥 Filter hanya kolom yang benar-benar ada
-        $filtered = [];
-
-        foreach ($data as $key => $value) {
-            if (in_array($key, $columns)) {
-                $filtered[$key] = $value;
-            }
-        }
-
-        if (!isset($filtered['kode'])) {
-            return null;
-        }
-
-        $whereParts = ["`kode` = ?"];
-        $params     = [$filtered['kode']];
-
-        // 🔥 Scope kd_wilayah
-        if (in_array('kd_wilayah', $columns)) {
-            $filtered['kd_wilayah'] = $this->user['kd_wilayah'] ?? null;
-            $whereParts[] = "`kd_wilayah` = ?";
-            $params[] = $filtered['kd_wilayah'];
-        }
-
-        // 🔥 Scope peraturan
-        if (in_array('peraturan', $columns)) {
-
-            $pengaturan = $this->getPengaturanAktif();
-
-            if (!$pengaturan || empty($pengaturan['aturan_sub_kegiatan'])) {
-                throw new Exception("Peraturan aktif belum dikonfigurasi.");
-            }
-
-            $filtered['peraturan'] = $pengaturan['aturan_sub_kegiatan'];
-
-            $whereParts[] = "`peraturan` = ?";
-            $params[] = $filtered['peraturan'];
-        }
-
-        // 🔥 Cek duplicate
-        $exists = $this->db->query(
-            "SELECT id FROM `$table`
-         WHERE " . implode(" AND ", $whereParts) . "
-         LIMIT 1",
-            $params
-        )->fetch();
-
-        if ($exists) {
-            return $exists['id'];
-        }
-        /* =====================================================
-   ENTERPRISE SANITATION
-===================================================== */
-        $filtered = $this->applySanitization($table, $filtered);
-        $filtered = $this->injectAudit($filtered, 'insert');
-
-        $this->db->insert($table, $filtered);
-
-        return $this->db->lastInsertId();
-    }
-    /* =========================================================
-    VALIDASI IMPORT CONFIG DARI PROFILE
-    ========================================================= */
-    private function validateImportConfig(string $tableKey): array
-    {
-        if (!isset($this->profiles[$tableKey]['import'])) {
-            throw new Exception("Import belum dikonfigurasi.");
-        }
-
-        $config = $this->profiles[$tableKey]['import'];
-
-        if (!($config['enabled'] ?? false)) {
-            throw new Exception("Import tidak diizinkan untuk tabel ini.");
-        }
-
-        $role = $this->user['type_user'] ?? 'viewer';
-
-        if (!in_array($role, $config['allowed_roles'] ?? [])) {
-            throw new Exception("Role tidak diizinkan untuk import.");
-        }
-
-        return $config;
-    }
-    /* =========================================================
-   APPLY NORMALISASI BERDASARKAN PROFILE app/Config/table_profiles.php'
-   program' => [
-    'table' => 'program',
-    'primary_key' => 'id',
-    'normalize_space' => ['nama']
-],
-========================================================= */
-    private function applyNormalization(string $table, array $data): array
-    {
-        $profile = $this->getProfileByTable($table);
-
-        if (empty($profile['normalize_space'])) {
             return $data;
         }
+        private function resolveScope(
+            string $table,
+            array $profile,
+            string $mode
+        ): array {
 
-        foreach ($profile['normalize_space'] as $field) {
-            if (isset($data[$field]) && is_string($data[$field])) {
-                $data[$field] = $this->normalizeSpaces($data[$field]);
-            }
-        }
+            $modeConfig = $profile['modes'][$mode] ?? [];
+            $columns = $this->getTableColumns($table);
 
-        return $data;
-    }
-    /* =========================================================
-   NORMALISASI SPASI GLOBAL
-========================================================= */
-    private function normalizeSpaces(string $value): string
-    {
-        $value = trim($value);
-        return preg_replace('/\s+/u', ' ', $value);
-    }
-    /* =========================================================
-   SANITIZE SINGLE VALUE
-========================================================= */
-    private function sanitizeValue(string $value, ?array $rules = null): string
-    {
-        // 1️⃣ Trim
-        $value = trim($value);
+            $where = [];
+            $params = [];
 
-        // 2️⃣ Hapus control characters
-        $value = preg_replace('/[\x00-\x1F\x7F]/u', '', $value);
+            $role = $this->user['type_user'] ?? 'viewer';
 
-        // 3️⃣ Normalize multi space
-        $value = preg_replace('/\s+/u', ' ', $value);
+            if ($role !== 'super_admin') {
 
-        // 4️⃣ Strip dangerous HTML
-        $value = strip_tags($value);
+                if ($role === 'admin_wilayah' && in_array('kd_wilayah', $columns)) {
+                    $where[] = "`kd_wilayah` = ?";
+                    $params[] = $this->user['kd_wilayah'];
+                }
 
-        // 5️⃣ Case transformation (optional per profile)
-        if (!empty($rules['case'])) {
+                if ($role === 'admin_opd') {
 
-            switch ($rules['case']) {
-
-                case 'upper':
-                    $value = mb_strtoupper($value);
-                    break;
-
-                case 'lower':
-                    $value = mb_strtolower($value);
-                    break;
-
-                case 'title':
-                    $value = mb_convert_case($value, MB_CASE_TITLE);
-                    break;
-            }
-        }
-
-        return $value;
-    }
-    /* =========================================================
-   ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filtered);
-========================================================= */
-    private function applySanitization(string $table, array $data): array
-    {
-        $profile = $this->getProfileByTable($table);
-
-        foreach ($data as $field => $value) {
-
-            if (!is_string($value)) {
-                continue;
+                    foreach (['kd_opd', 'kd_wilayah', 'tahun'] as $field) {
+                        if (in_array($field, $columns)) {
+                            $where[] = "`$field` = ?";
+                            $params[] = $this->user[$field] ?? null;
+                        }
+                    }
+                }
             }
 
-            $rules = $profile['sanitize'][$field] ?? null;
+            if (!empty($modeConfig['scope'])) {
 
-            $data[$field] = $this->sanitizeValue($value, $rules);
+                foreach ($modeConfig['scope'] as $field => $value) {
+
+                    if (!in_array($field, $columns)) continue;
+
+                    $where[] = "`$field` = ?";
+                    $params[] = $value === 'user'
+                        ? $this->user[$field] ?? null
+                        : $value;
+                }
+            }
+
+            return [$where, $params];
         }
+        private function resolveSearch(
+            string $table,
+            array $modeConfig,
+            string $search
+        ): array {
 
-        return $data;
+            if (empty($search) || empty($modeConfig['searchable'])) {
+                return [[], []];
+            }
+
+            $columns = $modeConfig['searchable'] === ['*']
+                ? $this->getTableColumns($table)
+                : $modeConfig['searchable'];
+
+            $where = [];
+            $params = [];
+
+            foreach ($columns as $col) {
+                $where[] = "`$col` LIKE ?";
+                $params[] = "%$search%";
+            }
+
+            return [
+                ["(" . implode(" OR ", $where) . ")"],
+                $params
+            ];
+        }
+        private function resolveAutoFields(string $table, array $data): array
+        {
+            $columns = $this->getTableColumns($table);
+
+            $autoMap = [
+                'kd_wilayah',
+                'kd_opd',
+                'tahun'
+            ];
+
+            foreach ($autoMap as $field) {
+
+                if (in_array($field, $columns) && isset($this->user[$field])) {
+                    $data[$field] = $this->user[$field];
+                }
+            }
+
+            return $data;
+        }
+        private function resolvePeraturan(string $table, array $data): array
+        {
+            $columns = $this->getTableColumns($table);
+
+            if (!in_array('peraturan', $columns)) {
+                return $data;
+            }
+
+            if (!empty($data['peraturan'])) {
+                return $data;
+            }
+
+            $pengaturan = $this->getPengaturanAktif();
+
+            if (!$pengaturan) {
+                throw new Exception("Pengaturan aktif tidak ditemukan.");
+            }
+
+            $map = [
+                'urusan'       => 'aturan_sub_kegiatan',
+                'bidang'       => 'aturan_sub_kegiatan',
+                'program'      => 'aturan_sub_kegiatan',
+                'kegiatan'     => 'aturan_sub_kegiatan',
+                'sub_kegiatan' => 'aturan_sub_kegiatan',
+
+                'ssh_neo'    => 'aturan_ssh',
+                'sbu_neo'    => 'aturan_sbu',
+                'asb_neo'    => 'aturan_asb',
+                'hspk_neo'   => 'aturan_hspk',
+                'akun_neo'   => 'aturan_akun',
+                'satuan_neo' => 'aturan_ssh'
+            ];
+
+            if (!isset($map[$table])) {
+                return $data;
+            }
+
+            $field = $map[$table];
+
+            if (empty($pengaturan[$field])) {
+                throw new Exception("Field {$field} pada pengaturan aktif kosong.");
+            }
+
+            $data['peraturan'] = $pengaturan[$field];
+
+            return $data;
+        }
+        private function resolvePeriode(string $table, array $data): array
+        {
+            $columns = $this->getTableColumns($table);
+
+            if (!in_array('periode_id', $columns)) {
+                return $data;
+            }
+
+            if (!empty($data['periode_id'])) {
+                return $data;
+            }
+
+            $periode = $this->getPeriodeAktif();
+
+            if (!$periode) {
+                throw new Exception("Periode aktif tidak ditemukan.");
+            }
+
+            $data['periode_id'] = $periode['id'];
+
+            return $data;
+        }
     }
-}

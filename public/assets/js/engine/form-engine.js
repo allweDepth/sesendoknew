@@ -31,7 +31,7 @@ class FormEngine {
 		this.bindEvents();
 
 		// 🔥 load semua dropdown yang punya source
-		this.loadDropdownSources();
+		// this.loadDropdownSources();
 	}
 
 	/**

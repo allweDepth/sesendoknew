@@ -57,51 +57,44 @@ class FlyoutController {
 	}
 
 	open($btn) {
+		const jns = $btn.data("jns");
+		const tbl = $btn.data("tbl");
+		const id = $btn.data("id") || null;
+		const container = $btn.data("container") || "flyout";
 
-	const jns = $btn.data("jns");
-	const tbl = $btn.data("tbl");
-	const id = $btn.data("id") || null;
-	const container = $btn.data("container") || "flyout";
+		if (!tbl) return;
 
-	if (!tbl) return;
+		const state = window.app.state;
+		state.setTable(tbl);
+		state.action = jns;
 
-	const state = window.app.state;
-	state.setTable(tbl);
-  state.action = jns;
+		const formSelector = container === "modal" ? "#form_modal" : "#form_flyout";
 
-	const formSelector =
-		container === "modal"
-			? "#form_modal"
-			: "#form_flyout";
+		// 🔥 BUAT INSTANCE DI SINI
+		this.formEngine = new FormEngine({
+			state: state,
+			ajax: window.Ajax,
+			formSelector: formSelector,
+		});
+// 🔥 Render pakai instance/ 🔥 RENDER DULU
+		FormEngine.render(
+			$(formSelector),
+			this.buildConfig(jns, tbl).elements,
+			this.formEngine,
+		);
+		this.formEngine.init();
+		// Show container
+		if (container === "modal") {
+			$("#mainModal").modal("show");
+		} else {
+			$(".sidebarkanan").sidebar("show");
+		}
 
-	// 🔥 BUAT INSTANCE DI SINI
-	this.formEngine = new FormEngine({
-		state: state,
-		ajax: window.Ajax,
-		formSelector: formSelector
-	});
-
-	this.formEngine.init();
-
-	// 🔥 Render pakai instance
-	FormEngine.render(
-		$(formSelector),
-		this.buildConfig(jns, tbl).elements,
-		this.formEngine
-	);
-
-	// Show container
-	if (container === "modal") {
-		$("#mainModal").modal("show");
-	} else {
-		$(".sidebarkanan").sidebar("show");
+		// 🔥 Load edit data
+		if (jns === "edit" && id) {
+			this.formEngine.loadData(id);
+		}
 	}
-
-	// 🔥 Load edit data
-	if (jns === "edit" && id) {
-		this.formEngine.loadData(id);
-	}
-}
 
 	// render(config) {
 	// 	const target = this.getActiveForm();
@@ -137,8 +130,6 @@ class FlyoutController {
 	// 		this.loadDropdowns(target);
 	// 	}
 	// }
-
-
 
 	buildConfig(jenis, tbl) {
 		const module = window.app.state.module;

@@ -322,3 +322,927 @@ app-init.js
         ├── tata_naskah.js
         ├── wallchat.js
         └── profil.js
+
+
+⸻
+
+==========================================================
+
+📘 RELATIONAL DROPDOWN ENGINE & TABLE PROFILE – PETA DEBUG
+
+==========================================================
+
+⸻
+🧩 PETA DEBUG – RELATIONAL DROPDOWN ENGINE
+
++——————————————————+–––––––––––––––––––––––+
+| MAU CEK                                              | BUKA FILE                                     |
++——————————————————+–––––––––––––––––––––––+
+| Dropdown salah parent                               | config/table_profiles.php                     |
+| Dropdown ambil data semua (tidak terfilter)         | DynamicTableService.php → loadDropdown()      |
+| Dropdown tidak selected saat edit                   | FormEngine.js → populateForm()                |
+| Dropdown request 5x ke server                       | FormEngine.js → loadDropdownSources()         |
+| Dropdown tidak refresh                              | FormEngine.js → static render()               |
+| Dropdown tidak kirim parent_value                   | cascade-dropdown.js / event change handler    |
+| Data beda wilayah muncul                            | table_profiles.php → modes.where              |
+| Data beda peraturan muncul                          | table_profiles.php → modes.where              |
+| Child tidak ikut berubah saat parent ganti          | cascade-dropdown.js                           |
+| Dropdown tidak punya option                         | UIConfig.js (cek data-source)                 |
++——————————————————+–––––––––––––––––––––––+
+
+⸻
+
+🏛 PETA DEBUG – TABLE PROFILE CONFIG
+
++——————————————————+–––––––––––––––––––––––+
+| MAU CEK                                              | BUKA FILE                                     |
++——————————————————+–––––––––––––––––––––––+
+| Relasi parent-child salah                           | config/table_profiles.php → relations         |
+| local_key salah                                     | config/table_profiles.php                     |
+| parent_key salah                                    | config/table_profiles.php                     |
+| Dropdown value salah                                | config/table_profiles.php → dropdown.value    |
+| Dropdown label salah                                | config/table_profiles.php → dropdown.label    |
+| Insert tidak isi kd_wilayah                         | config/table_profiles.php → auto_session      |
+| Insert tidak isi peraturan                          | config/table_profiles.php → auto_session      |
+| Query bocor lintas wilayah                          | config/table_profiles.php → modes.where       |
+| Query bocor lintas peraturan                        | config/table_profiles.php → modes.where       |
+| Mode edit tidak tampil semua field                  | config/table_profiles.php → modes.edit        |
+| Field tidak searchable                              | config/table_profiles.php → searchable        |
++——————————————————+–––––––––––––––––––––––+
+
+⸻
+
+🛡 PETA DEBUG – HIERARCHY VALIDATOR
+
++——————————————————+–––––––––––––––––––––––+
+| MAU CEK                                              | BUKA FILE                                     |
++——————————————————+–––––––––––––––––––––––+
+| Sub_kegiatan bisa tanpa kegiatan                    | DynamicTableService.php → validateHierarchy() |
+| Program beda bidang tetap bisa masuk                | validateHierarchy()                           |
+| Import tidak cek parent                             | ImportService.php / validateHierarchy()       |
+| Update bisa ubah parent sembarangan                 | update() → validateHierarchy()                |
+| Insert tidak cek parent                             | insert() → validateHierarchy()                |
++——————————————————+–––––––––––––––––––––––+
+
+⸻
+
+🔄 PETA DEBUG – AUTO CASCADE DROPDOWN JS
+
++——————————————————+–––––––––––––––––––––––+
+| MAU CEK                                              | BUKA FILE                                     |
++——————————————————+–––––––––––––––––––––––+
+| Child tidak reload saat parent berubah              | cascade-dropdown.js                           |
+| parent_value tidak terkirim                         | cascade-dropdown.js                           |
+| Dropdown tidak kosong sebelum reload                | cascade-dropdown.js                           |
+| Dropdown refresh tidak jalan                       | FormEngine.js → dropdown(‘refresh’)           |
+| Value lama tetap ada setelah parent ganti          | cascade-dropdown.js                           |
+| Dropdown child tidak punya data-parent             | UIConfig.js                                   |
++——————————————————+–––––––––––––––––––––––+
+
+⸻
+
+🧪 PETA DEBUG – IMPORT GOVERNANCE
+
++——————————————————+–––––––––––––––––––––––+
+| MAU CEK                                              | BUKA FILE                                     |
++——————————————————+–––––––––––––––––––––––+
+| Import duplicate kode lolos                         | ImportService.php → duplicate check           |
+| Import tidak rollback saat error                    | runTransaction()                              |
+| Import tidak cek hierarchy                          | validateHierarchy()                           |
+| Import tidak isi kd_wilayah                         | resolveAutoFields()                           |
+| Import tidak isi peraturan                          | resolvePeraturan()                            |
+| Import beda regulasi masuk                          | modes.where                                   |
+| Import salah format tanggal                         | normalization section                         |
++——————————————————+–––––––––––––––––––––––+
+
+⸻
+
+🧠 PETA DEBUG – CRUD ENGINE (INSERT & UPDATE)
+
++——————————————————+–––––––––––––––––––––––+
+| MAU CEK                                              | BUKA FILE                                     |
++——————————————————+–––––––––––––––––––––––+
+| Insert gagal tanpa alasan jelas                     | insert() → validate()                         |
+| Update tidak berubah                                | update() → diff checker                       |
+| Audit tidak tercatat                                | logActivity()                                 |
+| Transaction tidak rollback                          | runTransaction()                              |
+| Field tidak tersimpan                               | filter columns section                        |
+| Checkbox tidak jadi 1                               | normalization boolean section                 |
+| Tanggal salah format                                | normalization date section                    |
+| Scope tidak terinject                               | resolveAutoFields()                           |
++——————————————————+–––––––––––––––––––––––+
+
+⸻
+
+📊 PETA DEBUG – STRUKTUR HIERARKI REFERENSI
+
++——————————————————+–––––––––––––––––––––––+
+| LEVEL                                                | CEK RELASI DI FILE                            |
++——————————————————+–––––––––––––––––––––––+
+| URUSAN                                               | table_profiles.php → urusan                   |
+| BIDANG                                               | relations: kode_urusan                        |
+| PROGRAM                                              | relations: kode_bidang                        |
+| KEGIATAN                                             | relations: kode_program                       |
+| SUB_KEGIATAN                                         | relations: kode_kegiatan                      |
++——————————————————+–––––––––––––––––––––––+
+
+⸻
+
+🚦 FLOW DEBUG CEPAT (SAAT ERROR SUB_KEGIATAN)
+
+Jika:
+
+“Sub kegiatan salah kegiatan”
+
+Langkah cek cepat:
+	1.	Buka table_profiles.php
+	2.	Cek relations sub_kegiatan
+	3.	Pastikan:
+local_key = kode_kegiatan
+parent_key = kode
+	4.	Cek loadDropdown()
+	5.	Pastikan parent_value dikirim
+	6.	Cek modes.where (kd_wilayah & peraturan)
+
+⸻
+
+🔐 PETA DEBUG – MULTI WILAYAH & MULTI PERATURAN
+
++——————————————————+–––––––––––––––––––––––+
+| MASALAH                                              | CEK DI FILE                                   |
++——————————————————+–––––––––––––––––––––––+
+| Data wilayah lain muncul                             | modes.where                                   |
+| Data regulasi lama muncul                            | modes.where                                   |
+| Dropdown beda regulasi                               | modes.where + auto_session                    |
+| Insert beda wilayah                                  | resolveAutoFields()                           |
+| Update beda wilayah                                  | validateHierarchy()                           |
++——————————————————+–––––––––––––––––––––––+
+
+⸻
+
+🏗 STATUS ENGINE ANDA SEKARANG
+
+Layer Sistem:
+
+1️⃣ Scope Filter (kd_wilayah & peraturan)
+2️⃣ Relational Filter (relations config)
+3️⃣ Hierarchy Validator
+4️⃣ Import Governance
+5️⃣ Audit Trail
+6️⃣ Transaction Safety
+
+=========================================================
+==========================================================
+
+📘 PETA DEBUG KHUSUS MODULE JS
+
+==========================================================
+
+⸻
+
+🧩 TABLE MANAGER (engine/table-manager.js)
+
++–––––––––––––––––––––––––+———————————————–+
+| MAU CEK                                          | BUKA FILE / METHOD                           |
++–––––––––––––––––––––––––+———————————————–+
+| Table tidak reload                               | loadData()                                   |
+| Pagination tidak jalan                           | renderPagination()                           |
+| Header tabel kosong                              | renderHeader()                               |
+| Body tabel kosong                                | renderBody()                                 |
+| Primary key salah                                | state.primaryKey                             |
+| Search tidak bekerja                             | handleSearch()                               |
+| Sorting tidak jalan                              | handleSort()                                 |
+| Table reload 2x                                  | event binding duplicate                      |
+| Placeholder tidak muncul                         | renderEmptyState()                           |
+| Delete tidak jalan                               | handleDelete()                               |
++–––––––––––––––––––––––––+———————————————–+
+
+⸻
+
+🧩 FORM ENGINE (engine/form-engine.js)
+
++–––––––––––––––––––––––––+———————————————–+
+| MAU CEK                                          | METHOD                                        |
++–––––––––––––––––––––––––+———————————————–+
+| Dropdown tidak load                              | loadDropdownSources()                        |
+| Dropdown request 5x                              | init() + render()                            |
+| Dropdown tidak selected saat edit                | populateForm()                               |
+| Data edit tidak muncul                           | loadData()                                   |
+| Submit tidak jalan                               | bindEvents()                                 |
+| Checkbox tidak jadi 1                            | populateForm()                               |
+| Calendar tidak muncul                            | static render()                              |
+| Dropdown tidak refresh                           | dropdown(‘refresh’)                          |
+| Data lama masih ada                              | render() destroy dropdown                    |
++–––––––––––––––––––––––––+———————————————–+
+
+⸻
+
+🧩 FLYOUT CONTROLLER (engine/flyout-controller.js)
+
++–––––––––––––––––––––––––+———————————————–+
+| MAU CEK                                          | METHOD                                        |
++–––––––––––––––––––––––––+———————————————–+
+| Form tidak terbuka                               | open()                                        |
+| Edit tidak load data                             | open() → loadData()                           |
+| state tidak berubah                              | state.setTable()                              |
+| Action tidak terset                              | state.setAction()                             |
+| Modal tidak muncul                               | modal(“show”)                                 |
+| Sidebar tidak muncul                             | sidebar(“show”)                               |
+| Form submit tidak trigger                        | getActiveForm()                               |
+| FormEngine instance undefined                    | constructor open()                            |
++–––––––––––––––––––––––––+———————————————–+
+
+⸻
+
+🧩 SPA ROUTER (engine/spa-router.js)
+
++–––––––––––––––––––––––––+———————————————–+
+| MAU CEK                                          | METHOD                                        |
++–––––––––––––––––––––––––+———————————————–+
+| Halaman tidak load                               | navigate()                                    |
+| Content tidak masuk #main-content                | render()                                      |
+| URL berubah tapi konten lama                     | history.pushState()                           |
+| Reload pakai AJAX tapi return HTML               | Ajax.request()                                |
+| Back button tidak jalan                          | popstate listener                             |
+| 404 muncul salah                                 | route mapping                                 |
++–––––––––––––––––––––––––+———————————————–+
+
+⸻
+
+==========================================================
+
+📘 PETA DEBUG KHUSUS MODULE PHP
+
+==========================================================
+
+⸻
+
+🧩 ROUTER (app/Core/Router.php)
+
++–––––––––––––––––––––––––+———————————————–+
+| MAU CEK                                          | BAGIAN                                        |
++–––––––––––––––––––––––––+———————————————–+
+| Route tidak ketemu                               | route()                                       |
+| 404 padahal file ada                             | mapping controller                            |
+| Method tidak dipanggil                           | $controller->$method()                        |
+| AJAX return HTML bukan JSON                      | Controller isAjax()                           |
++–––––––––––––––––––––––––+———————————————–+
+
+⸻
+
+🧩 CONTROLLER (app/Controllers)
+
++–––––––––––––––––––––––––+———————————————–+
+| MAU CEK                                          | BAGIAN                                        |
++–––––––––––––––––––––––––+———————————————–+
+| JSON tidak return                                | JsonResponse::success()                       |
+| Edit return 2x                                   | Method dipanggil dua kali                     |
+| Dropdown salah tabel                             | DynamicTableService dipanggil salah           |
+| Module salah                                     | $request[‘module’]                            |
+| action tidak terbaca                             | $request[‘action’]                            |
++–––––––––––––––––––––––––+———————————————–+
+
+⸻
+
+🧩 SERVICE LAYER (DynamicTableService.php)
+
++–––––––––––––––––––––––––+———————————————–+
+| MAU CEK                                          | METHOD                                        |
++–––––––––––––––––––––––––+———————————————–+
+| Insert tidak simetris                            | insert()                                      |
+| Update tidak simetris                            | update()                                      |
+| Dropdown salah kegiatan                          | loadDropdown()                                |
+| Hierarchy tidak dicek                            | validateHierarchy()                           |
+| Scope bocor wilayah                              | applyWhereFromProfile()                       |
+| Peraturan tidak terinject                        | resolvePeraturan()                            |
+| Audit tidak jalan                                | logActivity()                                 |
+| Import tidak rollback                            | runTransaction()                              |
++–––––––––––––––––––––––––+———————————————–+
+
+⸻
+
+🧩 AUTH (app/Core/Auth.php)
+
++–––––––––––––––––––––––––+———————————————–+
+| MAU CEK                                          | METHOD                                        |
++–––––––––––––––––––––––––+———————————————–+
+| Login gagal padahal benar                        | login()                                       |
+| Session hilang setelah refresh                   | session_start()                               |
+| Session timeout terlalu cepat                    | check() timeout logic                         |
+| Role tidak dikenali                              | allowedRoles()                                |
+| Logout tidak bersih                              | logout()                                      |
++–––––––––––––––––––––––––+———————————————–+
+
+⸻
+
+==========================================================
+
+📘 PETA DEBUG FULL STACK – END TO END
+
+==========================================================
+
+⸻
+
+🔄 FLOW: USER KLIK EDIT SUB_KEGIATAN
+
+1️⃣ Klik tombol edit
+→ FlyoutController.open()
+
+2️⃣ state.setTable(‘sub_kegiatan’)
+→ FormEngine.render()
+
+3️⃣ FormEngine.loadData(id)
+→ Ajax POST action=edit
+
+4️⃣ Controller → DynamicTableService.getEdit()
+
+5️⃣ Response JSON dikirim
+
+6️⃣ FormEngine.populateForm()
+
+7️⃣ loadDropdownSources()
+
+8️⃣ Dropdown kirim action=dropdown
+
+9️⃣ DynamicTableService.loadDropdown()
+
+10️⃣ Query dengan relations + scope
+
+11️⃣ Dropdown refresh
+
+12️⃣ populateForm set selected
+
+Selesai.
+
+⸻
+
+🚨 JIKA ADA ERROR “SUB KEGIATAN SALAH KEGIATAN”
+
+Checklist debug:
+	1.	table_profiles.php → relations benar?
+	2.	loadDropdown() pakai parent_value?
+	3.	modes.where ada kd_wilayah & peraturan?
+	4.	cascade dropdown kirim parent_value?
+	5.	populateForm jalan setelah dropdown load?
+
+⸻
+
+🔐 FULL SYSTEM SAFETY LAYER
+
+Layer 1 → SPA Router
+Layer 2 → Controller
+Layer 3 → Service
+Layer 4 → Table Profile
+Layer 5 → Scope Filter
+Layer 6 → Hierarchy Validator
+Layer 7 → Transaction
+Layer 8 → Audit
+
+Semua harus sinkron.
+
+⸻
+
+🏁 STATUS SISTEM ANDA SEKARANG
+
+✔ JS Modular
+✔ PHP Layered
+✔ Relational Aware
+✔ Multi Wilayah Safe
+✔ Multi Regulasi Safe
+✔ Deterministic Dropdown
+✔ Simetris Insert/Update
+✔ Enterprise Governance
+==========================================================
+
+📘 PETA VISUAL TREE – ARSITEKTUR FOLDER SISTEM
+
+==========================================================
+public/
+│
+├── index.php                → Entry point semua request
+│
+├── assets/
+│   ├── engine/
+│   │   ├── table-manager.js
+│   │   ├── form-engine.js
+│   │   ├── flyout-controller.js
+│   │   ├── spa-router.js
+│   │   └── cascade-dropdown.js
+│   │
+│   └── css/
+│
+app/
+│
+├── Core/
+│   ├── Router.php
+│   ├── Controller.php
+│   ├── DB.php
+│   └── Auth.php
+│
+├── Controllers/
+│   ├── ReferensiController.php
+│   ├── DynamicController.php
+│   └── ...
+│
+├── Services/
+│   ├── DynamicTableService.php
+│   ├── ImportService.php
+│   └── JsonResponse.php
+│
+├── Config/
+│   └── table_profiles.php
+│
+└── Views/
+    └── ...
+    ==========================================================
+
+📘 PETA DEPENDENCY ANTAR FILE
+
+==========================================================
+index.php
+   ↓
+Router.php
+   ↓
+Controller
+   ↓
+DynamicTableService
+   ↓
+table_profiles.php
+   ↓
+Database
+Frontend chain:
+Button Click
+   ↓
+FlyoutController
+   ↓
+FormEngine
+   ↓
+Ajax.request
+   ↓
+Controller
+   ↓
+DynamicTableService
+==========================================================
+
+📘 PETA FLOW REQUEST AJAX DETAIL
+
+==========================================================
+🔄 FLOW: LOAD TABLE
+TableManager.loadData()
+    ↓
+Ajax POST
+    action = list
+    tbl = kegiatan
+    ↓
+DynamicController
+    ↓
+DynamicTableService.getList()
+    ↓
+Apply profile mode
+    ↓
+Apply scope filter
+    ↓
+Return JSON
+    ↓
+TableManager.renderBody()
+🔄 FLOW: EDIT DATA
+FlyoutController.open()
+    ↓
+FormEngine.loadData()
+    ↓
+Ajax POST
+    action = edit
+    tbl = sub_kegiatan
+    id_row = 3395
+    ↓
+DynamicTableService.getEdit()
+    ↓
+Apply scope filter
+    ↓
+Return JSON
+    ↓
+FormEngine.populateForm()
+🔄 FLOW: DROPDOWN RELATIONAL
+FormEngine.loadDropdownSources()
+    ↓
+Ajax POST
+    action = dropdown
+    tbl = kegiatan
+    parent_value = kode_program
+    ↓
+DynamicTableService.loadDropdown()
+    ↓
+Baca relations dari table_profiles
+    ↓
+Build WHERE local_key = parent_value
+    ↓
+Apply scope filter
+    ↓
+Return JSON
+    ↓
+Dropdown.refresh()
+==========================================================
+
+📘 CHECKLIST DEBUG PRODUKSI (CRITICAL)
+
+==========================================================
+🔍 SAAT DEPLOY PRODUKSI – WAJIB CEK
+
++––––––––––––––––––––––+
+| CEK                                        |
++––––––––––––––––––––––+
+| Semua table_profiles punya modes.where     |
+| Semua tabel struktur punya relations       |
+| auto_session aktif untuk tabel scoped      |
+| validateHierarchy dipanggil di insert      |
+| validateHierarchy dipanggil di update      |
+| runTransaction dipakai di import           |
+| Audit log aktif                            |
+| Session timeout aktif                      |
+| allowed_roles sesuai kebutuhan             |
++––––––––––––––––––––––+
+
+⸻
+
+==========================================================
+
+📘 ERROR SCENARIO MAP
+
+==========================================================
+
+⸻
+
+❌ ERROR: Dropdown salah kegiatan
+
+Cek:
+	1.	table_profiles → relations
+	2.	loadDropdown() pakai parent_value?
+	3.	modes.where ada?
+	4.	parent_value dikirim JS?
+	5.	Dropdown child kosong sebelum reload?
+
+⸻
+
+❌ ERROR: Data lintas wilayah muncul
+
+Cek:
+	1.	modes.where
+	2.	resolveAutoFields
+	3.	validateHierarchy
+	4.	auto_session
+
+⸻
+
+❌ ERROR: Insert berhasil tapi tidak muncul di list
+
+Cek:
+	1.	modes.default.where
+	2.	Scope filter tahun
+	3.	kd_opd mismatch
+	4.	peraturan mismatch
+
+⸻
+
+==========================================================
+
+📘 PERFORMANCE DEBUG MAP
+
+==========================================================
+
+⸻
+
+⚡ DROPDOWN LAMBAT
+
+Cek:
+	•	Apakah SELECT pakai index?
+	•	Apakah ORDER BY pakai index?
+	•	Apakah dropdown load tanpa parent?
+	•	Apakah dropdown dipanggil 5x?
+
+⸻
+
+⚡ TABLE LAMBAT
+
+Cek:
+	•	SELECT *
+	•	Searchable terlalu banyak field
+	•	Tidak ada limit
+	•	Query tidak pakai index
+
+⸻
+
+==========================================================
+
+📘 SECURITY CHECK MAP
+
+==========================================================
+
+⸻
+
+🔐 WAJIB ADA
+
+✔ session_regenerate_id saat login
+✔ session timeout
+✔ allowed_roles
+✔ Scope filter
+✔ Hierarchy validation
+✔ Import strict mode
+✔ Transaction wrap
+✔ Soft lock enforcement
+
+⸻
+
+==========================================================
+
+📘 FULL SYSTEM LAYER VISUAL (TEXT)
+
+==========================================================
+[ FRONTEND UI ]
+        ↓
+[ SPA ROUTER ]
+        ↓
+[ CONTROLLER ]
+        ↓
+[ SERVICE LAYER ]
+        ↓
+[ PROFILE CONFIG ]
+        ↓
+[ DATABASE ]
+Semua keputusan query HARUS lewat profile.
+
+Tidak boleh ada query liar di controller.
+==========================================================
+
+STATUS SISTEM ANDA SEKARANG
+
+==========================================================
+
+Level arsitektur Anda sekarang:
+
+✔ Modular JS
+✔ Layered PHP
+✔ Relational deterministic
+✔ Multi wilayah aman
+✔ Multi regulasi aman
+✔ Transaction safe
+✔ Audit ready
+✔ Governance ready
+
+==========================================================
+
+📦 1. STANDARD OPERATING PROCEDURE (SOP) DEVELOPER INTERNAL
+
+==========================================================
+
+⸻
+
+🎯 TUJUAN
+
+Menjamin semua developer:
+	•	Tidak membuat query liar
+	•	Tidak merusak relasi hierarki
+	•	Tidak membocorkan data lintas wilayah/peraturan
+	•	Tidak membuat dropdown tidak deterministic
+
+⸻
+
+📌 ATURAN WAJIB
+
+1️⃣ DILARANG
+
+❌ Query langsung di controller
+❌ Hardcode WHERE kd_wilayah
+❌ Hardcode peraturan
+❌ Query tanpa lewat table_profiles
+❌ Insert tanpa validateHierarchy
+❌ Update tanpa transaction
+❌ Dropdown tanpa relations config
+
+⸻
+
+2️⃣ WAJIB
+
+✔ Semua query lewat DynamicTableService
+✔ Semua tabel punya profile di table_profiles.php
+✔ Semua tabel struktur punya relations
+✔ Semua tabel scoped punya auto_session
+✔ Semua CRUD pakai runTransaction()
+✔ Semua insert & update pakai validate()
+
+⸻
+
+📌 PROSEDUR TAMBAH TABEL BARU
+
+Langkah wajib:
+	1.	Tambahkan entry di table_profiles.php
+	2.	Tentukan:
+	•	table
+	•	primary_key
+	•	auto_session (jika scoped)
+	•	dropdown config
+	•	modes.default
+	•	modes.where
+	3.	Jika punya parent:
+	•	Tambahkan relations
+	4.	Tambahkan validation jika perlu
+	5.	Test:
+	•	Insert
+	•	Update
+	•	Dropdown
+	•	Scope filter
+
+⸻
+
+📌 PROSEDUR TAMBAH DROPDOWN RELATIONAL
+	1.	Pastikan tabel child punya relations
+	2.	Pastikan JS kirim parent_value
+	3.	Pastikan loadDropdown() pakai relations
+	4.	Test:
+	•	Parent berubah → child reload
+	•	Edit → selected benar
+
+⸻
+
+📌 PROSEDUR IMPORT DATA
+	1.	Aktifkan import.enabled
+	2.	Gunakan mode strict untuk struktur
+	3.	Jalankan:
+	•	duplicate check
+	•	validateHierarchy
+	•	scope validation
+	4.	Gunakan transaction wrap
+	5.	Log audit import
+
+⸻
+
+==========================================================
+
+🏗 2. BLUEPRINT UNTUK DIPAKAI SEMUA OPD
+
+==========================================================
+
+⸻
+
+🎯 STRUKTUR STANDAR APLIKASI OPD
+
+Semua OPD WAJIB pakai struktur:
+Controller
+   ↓
+Service Layer
+   ↓
+Table Profile
+   ↓
+Database
+Tidak boleh langsung DB di controller.
+
+⸻
+
+🎯 STANDAR RELASI STRUKTUR
+
+Semua OPD wajib pakai:
+URUSAN
+BIDANG
+PROGRAM
+KEGIATAN
+SUB_KEGIATAN
+🎯 STANDAR SCOPE DATA
+
+Semua tabel operasional WAJIB:
+'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd']
+'modes' => [
+   'default' => [
+       'where' => [
+           'kd_wilayah' => 'user',
+           'tahun' => 'user'
+       ]
+   ]
+]
+🎯 STANDAR KEAMANAN
+	•	Session timeout aktif
+	•	allowed_roles di setiap tabel
+	•	Soft lock untuk referensi nasional
+	•	Audit trail wajib
+	•	Transaction wajib
+
+⸻
+
+🎯 STANDAR PERFORMANCE
+	•	Dropdown wajib pakai select minimal field
+	•	Tidak boleh SELECT *
+	•	Semua kode struktur wajib indexed
+	•	Pagination wajib ada limit
+
+⸻
+
+==========================================================
+
+🧠 3. DECISION TREE DEBUG CEPAT
+
+==========================================================
+
+⸻
+
+🚨 CASE: Dropdown Salah Data
+
+Apakah tabel punya relations?
+→ Tidak → Tambahkan relations
+→ Ya → Cek local_key benar?
+
+Apakah parent_value terkirim?
+→ Tidak → Cek cascade JS
+→ Ya → Cek loadDropdown()
+
+Apakah scope filter ada?
+→ Tidak → Tambahkan modes.where
+
+⸻
+
+🚨 CASE: Data Bocor Wilayah
+
+Apakah modes.where ada kd_wilayah?
+→ Tidak → Tambahkan
+
+Apakah auto_session ada?
+→ Tidak → Tambahkan
+
+Apakah validateHierarchy pakai scope?
+→ Tidak → Perbaiki
+
+⸻
+
+🚨 CASE: Insert Tidak Muncul
+
+Apakah modes.default.where filter tahun?
+→ Ya → Pastikan session tahun sama
+
+Apakah peraturan aktif sama?
+→ Cek resolvePeraturan()
+
+⸻
+
+🚨 CASE: Import Gagal
+
+Apakah duplicate check aktif?
+Apakah hierarchy check aktif?
+Apakah mode strict?
+Apakah transaction wrap?
+
+⸻
+
+==========================================================
+
+🔬 4. SYSTEM HARDENING CHECKLIST PRODUKSI
+
+==========================================================
+
+⸻
+
+🔐 SECURITY HARDENING
+
+✔ session_regenerate_id() saat login
+✔ session timeout aktif
+✔ Cookie httponly
+✔ Role-based access
+✔ Soft lock enforcement
+✔ CSRF protection (jika ada form publik)
+
+⸻
+
+🧱 DATA HARDENING
+
+✔ validateHierarchy di insert
+✔ validateHierarchy di update
+✔ Scope filter selalu aktif
+✔ Peraturan auto inject
+✔ Audit trail aktif
+
+⸻
+
+⚡ PERFORMANCE HARDENING
+
+✔ Index pada:
+	•	kode
+	•	kode_parent
+	•	kd_wilayah
+	•	peraturan
+✔ Dropdown limit jika > 1000 data
+✔ Search pakai LIKE indexed field
+✔ Tidak ada SELECT *
+
+⸻
+
+🔄 TRANSACTION HARDENING
+
+✔ Semua insert pakai runTransaction()
+✔ Semua update pakai runTransaction()
+✔ Import pakai strict mode
+✔ Rollback jika error
+
+⸻
+
+📊 MONITORING HARDENING
+
+✔ Log audit per aksi
+✔ Log error query
+✔ Log import error
+✔ Log login gagal

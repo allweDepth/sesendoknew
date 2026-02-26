@@ -928,52 +928,42 @@ return [
 |--------------------------------------------------------------------------
 */
     'urusan' => [
+
         'table' => 'urusan',
-        'primary_key' => 'id', // 🔥 PK konsisten id
+
+        // Primary key internal database
+        'primary_key' => 'id',
+
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
-        'normalize_space' => ['nama'], //untuk menormalkan spasi berlenih
-        // 🔥 Otomatis isi kd_wilayah & peraturan saat INSERT
+
+        // Otomatis isi dari session saat INSERT
         'auto_session' => ['kd_wilayah', 'peraturan'],
 
+        /*
+        |--------------------------------------------------------------------------
+        | DROPDOWN CONFIG
+        |--------------------------------------------------------------------------
+        | value  → value yang dikirim ke form
+        | label  → yang ditampilkan
+        */
+        'dropdown' => [
+            'value' => 'kode',
+            'label' => 'nama'
+        ],
+
         'modes' => [
-            'dropdown' => [
-                'select' => ['kode as id', 'nama as uraian'],
-                'searchable' => ['kode', 'nama'],
-                'order_by' => 'kode ASC',
-                // 🔥 WAJIB agar tidak bocor regulasi
-                'where' => [
-                    'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
-                ]
-            ],
             'default' => [
                 'select' => ['id', 'kode', 'nama'],
                 'searchable' => ['kode', 'nama'],
                 'order_by' => 'kode ASC',
+
+                // WAJIB agar tidak bocor wilayah/peraturan
                 'where' => [
                     'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
-                ]
-            ],
-            'edit' => [
-                'select' => ['*'],
-                'searchable' => ['*'],
-                'order_by' => 'id ASC',
-                'where' => [
-                    'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
+                    'peraturan'  => 'user'
                 ]
             ]
-        ],
-
-        // 🔥 Governance Import
-        'import' => [
-            'enabled' => true,
-            'allowed_roles' => ['super_admin'],
-            'mode' => 'strict',
-            'check_duplicate' => true,
-            'check_hierarchy' => false
         ]
     ],
 
@@ -983,38 +973,45 @@ return [
         |--------------------------------------------------------------------------
         */
     'bidang' => [
+
         'table' => 'bidang',
         'primary_key' => 'id',
+
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
         'auto_session' => ['kd_wilayah', 'peraturan'],
+
+        /*
+        |--------------------------------------------------------------------------
+        | RELATIONS
+        |--------------------------------------------------------------------------
+        | bidang adalah anak dari urusan
+        |
+        | local_key  → kolom di tabel bidang
+        | parent_key → kolom di tabel urusan
+        */
+        'relations' => [
+            'urusan' => [
+                'local_key'  => 'kode_urusan',
+                'parent_key' => 'kode'
+            ]
+        ],
+
+        'dropdown' => [
+            'value' => 'kode',
+            'label' => 'nama'
+        ],
+
         'modes' => [
-            'dropdown' => [
-                'select' => ['kode as id', 'nama as uraian'],
-                'searchable' => ['kode', 'nama'],
-                'order_by' => 'kode ASC',
-                'where' => [
-                    'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
-                ]
-            ],
             'default' => [
                 'select' => ['id', 'kode', 'kode_urusan', 'nama'],
                 'searchable' => ['kode', 'nama'],
                 'order_by' => 'kode ASC',
                 'where' => [
                     'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
+                    'peraturan'  => 'user'
                 ]
             ]
-        ],
-
-        'import' => [
-            'enabled' => true,
-            'allowed_roles' => ['super_admin'],
-            'mode' => 'strict',
-            'check_duplicate' => true,
-            'check_hierarchy' => true
         ]
     ],
 
@@ -1024,40 +1021,42 @@ return [
 |--------------------------------------------------------------------------
 */
     'program' => [
+
         'table' => 'program',
         'primary_key' => 'id',
+
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
-        'normalize_space' => ['nama'],
         'auto_session' => ['kd_wilayah', 'peraturan'],
 
+        /*
+        |--------------------------------------------------------------------------
+        | RELATION
+        |--------------------------------------------------------------------------
+        | program anak dari bidang
+        */
+        'relations' => [
+            'bidang' => [
+                'local_key'  => 'kode_bidang',
+                'parent_key' => 'kode'
+            ]
+        ],
+
+        'dropdown' => [
+            'value' => 'kode',
+            'label' => 'nama'
+        ],
+
         'modes' => [
-            'dropdown' => [
-                'select' => ['kode as id', 'nama as uraian'],
-                'searchable' => ['kode', 'nama'],
-                'order_by' => 'kode ASC',
-                'where' => [
-                    'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
-                ]
-            ],
             'default' => [
                 'select' => ['id', 'kode', 'kode_bidang', 'nama'],
                 'searchable' => ['kode', 'nama'],
                 'order_by' => 'kode ASC',
                 'where' => [
                     'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
+                    'peraturan'  => 'user'
                 ]
             ]
-        ],
-
-        'import' => [
-            'enabled' => true,
-            'allowed_roles' => ['super_admin'],
-            'mode' => 'strict',
-            'check_duplicate' => true,
-            'check_hierarchy' => true
         ]
     ],
 
@@ -1067,57 +1066,42 @@ return [
 |--------------------------------------------------------------------------
 */
     'kegiatan' => [
+
         'table' => 'kegiatan',
         'primary_key' => 'id',
+
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
         'auto_session' => ['kd_wilayah', 'peraturan'],
-        'normalize_space' => ['nama'],
+
+        /*
+        |--------------------------------------------------------------------------
+        | RELATION
+        |--------------------------------------------------------------------------
+        | kegiatan anak dari program
+        */
+        'relations' => [
+            'program' => [
+                'local_key'  => 'kode_program',
+                'parent_key' => 'kode'
+            ]
+        ],
+
+        'dropdown' => [
+            'value' => 'kode',
+            'label' => 'nama'
+        ],
+
         'modes' => [
-            'dropdown' => [
-                'select' => ['kode as id', 'nama as uraian'],
-                'searchable' => ['kode', 'nama'],
-                'order_by' => 'kode ASC',
-                'where' => [
-                    'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
-                ]
-            ],
             'default' => [
                 'select' => ['id', 'kode', 'kode_program', 'nama'],
                 'searchable' => ['kode', 'nama'],
                 'order_by' => 'kode ASC',
                 'where' => [
                     'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
-                ]
-            ],
-            'referensi' => [
-                'select' => ['id', 'kode', 'kode_program', 'nama'],
-                'searchable' => ['kode', 'nama'],
-                'order_by' => 'kode ASC',
-                'where' => [
-                    'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
-                ]
-            ],
-            'edit' => [
-                'select' => ['*'],
-                'searchable' => ['*'],
-                'order_by' => 'id ASC',
-                'where' => [
-                    'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
+                    'peraturan'  => 'user'
                 ]
             ]
-        ],
-
-        'import' => [
-            'enabled' => true,
-            'allowed_roles' => ['super_admin'],
-            'mode' => 'strict',
-            'check_duplicate' => true,
-            'check_hierarchy' => true
         ]
     ],
 
@@ -1127,58 +1111,42 @@ return [
 |--------------------------------------------------------------------------
 */
     'sub_kegiatan' => [
+
         'table' => 'sub_kegiatan',
         'primary_key' => 'id',
+
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
-        'normalize_space' => ['nama'],
         'auto_session' => ['kd_wilayah', 'peraturan'],
 
+        /*
+    |--------------------------------------------------------------------------
+    | RELATION
+    |--------------------------------------------------------------------------
+    | sub_kegiatan anak dari kegiatan
+    */
+        'relations' => [
+            'kegiatan' => [
+                'local_key'  => 'kode_kegiatan',
+                'parent_key' => 'kode'
+            ]
+        ],
+
+        'dropdown' => [
+            'value' => 'kode',
+            'label' => 'nama'
+        ],
+
         'modes' => [
-            'dropdown' => [
-                'select' => ['kode as id', 'nama as uraian'],
-                'searchable' => ['kode', 'nama'],
-                'order_by' => 'kode ASC',
-                'where' => [
-                    'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
-                ]
-            ],
             'default' => [
                 'select' => ['id', 'kode', 'kode_kegiatan', 'nama'],
                 'searchable' => ['kode', 'nama'],
                 'order_by' => 'kode ASC',
                 'where' => [
                     'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
-                ]
-            ],
-            'referensi' => [
-                'select' => ['id', 'kode', 'kode_kegiatan', 'nama'],
-                'searchable' => ['kode', 'nama'],
-                'order_by' => 'kode ASC',
-                'where' => [
-                    'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
-                ]
-            ],
-            'edit' => [
-                'select' => ['*'],
-                'searchable' => ['*'],
-                'order_by' => 'id ASC',
-                'where' => [
-                    'kd_wilayah' => 'user',
-                    'peraturan' => 'user'
+                    'peraturan'  => 'user'
                 ]
             ]
-        ],
-
-        'import' => [
-            'enabled' => true,
-            'allowed_roles' => ['super_admin'],
-            'mode' => 'strict',
-            'check_duplicate' => true,
-            'check_hierarchy' => true
         ]
     ],
 
