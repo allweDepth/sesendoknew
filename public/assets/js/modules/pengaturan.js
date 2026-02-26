@@ -377,7 +377,10 @@ class PengaturanModule {
 				},
 				success: (res) => {
 					if (res.success) {
-						window.app.toast.success("Pengaturan berhasil disimpan");
+						ToastEngine.show({
+							success: true,
+							message: "Pengaturan berhasil disimpan",
+						});
 					}
 				},
 			});
