@@ -11,53 +11,99 @@
 // 	page: "", // untuk antisipasi seperti 1 halaman mempunyai banyak menu
 // };
 $(document).ready(function () {
+	window.app = new App();
+	window.app.init();
 
-    window.app = new App();
-    window.app.init();
+	const $sidebarUtama = $(".sidebarutama");
+	const $context = $("#mainContext");
 
-    const $sidebarUtama = $(".sidebarutama");
-    const $context = $("#mainContext");
+	$sidebarUtama.sidebar({
+		context: $context,
+		transition: "push",
+	});
 
-    $sidebarUtama.sidebar({
-        context: $context,
-        transition: "push"
-    });
+	$("#toggleSidebar").on("click", function () {
+		$sidebarUtama.sidebar("toggle");
+	});
 
-    $("#toggleSidebar").on("click", function () {
-        $sidebarUtama.sidebar("toggle");
-    });
+	$(".ui.accordion").accordion();
+	$(".ui.dropdown").dropdown();
+	$(".ui.sticky").sticky({
+		context: $context,
+	});
+	// ===============================
+	// AUTO INIT MODULE BERDASARKAN URL
+	// ===============================
+	const path = window.location.pathname;
+	$(document).on("click", "#btnLogout", function (e) {
+		e.preventDefault();
 
-    $('.ui.accordion').accordion();
-    $('.ui.dropdown').dropdown();
-    $('.ui.sticky').sticky({
-        context: $context
-    });
-// ===============================
-// AUTO INIT MODULE BERDASARKAN URL
-// ===============================
-const path = window.location.pathname;
-$(document).on("click", "#btnLogout", function (e) {
+		DialogEngine.show({
+			title: "Konfirmasi Logout",
+			message: "Yakin ingin keluar dari sistem?",
+			icon: "sign out alternate red",
+			approveText: "Ya, Logout",
+			cancelText: "Batal",
 
-	e.preventDefault();
+			onApprove: () => {
+				// Return Promise agar loading state bekerja
+				return new Promise((resolve) => {
+					// Jika logout via server route
+					window.location.href = "/logout";
 
-	DialogEngine.show({
-		title: "Konfirmasi Logout",
-		message: "Yakin ingin keluar dari sistem?",
-		icon: "sign out alternate red",
-		approveText: "Ya, Logout",
-		cancelText: "Batal",
+					resolve();
+				});
+			},
+		});
+	});
+	// ======================================================
+	// GLOBAL OPEN FORM
+	// ======================================================
 
-		onApprove: () => {
+	$(document).on("click", "[data-ui='open-form']", function () {
+		const jns = $(this).data("jns");
+		const tbl = $(this).data("tbl");
+		const id = $(this).data("id") || null;
+		const container = $(this).data("container") || "flyout";
 
-			// Return Promise agar loading state bekerja
-			return new Promise((resolve) => {
+		if (!tbl) return;
 
-				// Jika logout via server route
-				window.location.href = "/logout";
+		const state = window.app.state;
+		state.setTable(tbl);
 
-				resolve();
-			});
+		// Tentukan form selector
+		const formSelector = container === "modal" ? "#form_modal" : "#form_flyout";
+
+		// Inisialisasi FormEngine
+		const formEngine = new FormEngine({
+			state: state,
+			ajax: window.app.ajax,
+			formSelector: formSelector,
+		});
+
+		formEngine.init();
+
+		// Jika edit → load data
+		if (jns === "edit" && id) {
+			formEngine.loadData(id);
+		}
+
+		// Tampilkan container
+		if (container === "modal") {
+			$("#mainModal")
+				.modal({
+					closable: false,
+				})
+				.modal("show");
+		} else {
+			$(".sidebarkanan")
+				.sidebar({
+					transition: "overlay",
+					dimPage: false,
+				})
+				.sidebar("show");
 		}
 	});
-});
+     window.Flyout = new FlyoutController();
+
 });

@@ -112,19 +112,22 @@
 
 
     <!-- NAVBAR (DI LUAR PUSHABLE) @note navbar -->
+    <!-- NAVBAR (DI LUAR PUSHABLE) -->
     <?php require __DIR__ . '/../partials/auth_navbar.php'; ?>
 
-    <div id="toastContainer"></div>
-    </div>
-    <!-- MENU UTAMA SIDEBAR -->
+    <!-- SIDEBAR WRAPPER (membuka #mainContext) -->
     <?php require __DIR__ . '/../partials/sidebar.php'; ?>
-    <!-- FLYOUT -->
+
+    <!-- FLYOUT (masih di dalam #mainContext) -->
     <?php require __DIR__ . '/../partials/flyout.php'; ?>
+
     <!-- MAIN MODAL -->
     <?php require __DIR__ . '/../partials/main_modal.php'; ?>
+
     <!-- PUSHER -->
     <div class="pusher">
 
+        <div id="toastContainer"></div>
         <!-- sticky-->
         <div class="ui sticky">
             <div class="ui icon message dashboard" id="dynamicHeader"><i class="home icon" id="dynamicHeaderIcon"></i>
@@ -167,6 +170,7 @@
     <script src="/assets/js/engine/table-manager.js"></script>
     <script src="/assets/js/engine/form-engine.js"></script>
     <script src="/assets/js/engine/form-container-manager.js"></script>
+    <script src="/assets/js/engine/flyout-controller.js"></script>
 
     <!-- ================= MODULES ================= -->
     <script src="/assets/js/modules/base-crud-module.js"></script>

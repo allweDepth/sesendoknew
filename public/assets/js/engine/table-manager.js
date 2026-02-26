@@ -145,41 +145,40 @@ class TableManager {
 	   - Skip prop.table === false
 	===================================================== */
 	getColumnsFromConfig() {
-    if (!window.UIConfig) return [];
+		if (!window.UIConfig) return [];
 
-    const module = this.state.module;
-    const tbl = this.state.tbl;
+		const module = this.state.module;
+		const tbl = this.state.tbl;
 
-    let config =
-    window.UIConfig?.[module]?.[tbl] ||
-    window.UIConfig?.[tbl];
-    if (!config) return [];
+		let config = window.UIConfig?.[module]?.[tbl] || window.UIConfig?.[tbl];
+		if (!config) return [];
 
-    // 🔥 SUPPORT DUA STRUKTUR
-    const columnsSource = Array.isArray(config)
-        ? config
-        : Array.isArray(config.columns)
-            ? config.columns
-            : [];
+		// 🔥 SUPPORT DUA STRUKTUR
+		const columnsSource = Array.isArray(config)
+			? config
+			: Array.isArray(config.columns)
+				? config.columns
+				: [];
 
-    return columnsSource
-        .filter((item) => {
-            if (!item.prop?.name) return false;
+		return columnsSource
+			.filter((item) => {
+				if (!item.prop?.name) return false;
 
-            if (["divider", "header", "fieldHidden", "fieldCustom"].includes(item.tag))
-                return false;
+				if (
+					["divider", "header", "fieldHidden", "fieldCustom"].includes(item.tag)
+				)
+					return false;
 
-            if (item.prop.visible === false)
-                return false;
+				if (item.prop.visible === false) return false;
 
-            return true;
-        })
-        .map((item) => ({
-            key: item.prop.name,
-            label: item.prop.label || item.prop.name,
-            format: item.prop.format || null,
-        }));
-}
+				return true;
+			})
+			.map((item) => ({
+				key: item.prop.name,
+				label: item.prop.label || item.prop.name,
+				format: item.prop.format || null,
+			}));
+	}
 
 	/* =====================================================
 	   RENDER HEADER
@@ -271,8 +270,13 @@ class TableManager {
 			html += `
 				<td class="collapsing">
 					<div class="ui mini basic icon buttons">
-						<button class="ui button" data-action="edit">
-							<i class="edit icon"></i>
+						<button class="ui button"
+								data-ui="open-form"
+								data-container="flyout"
+								data-jns="edit"
+								data-tbl="${this.state.tbl}"
+								data-id="${row.id}">
+								<i class="edit icon"></i>
 						</button>
 						<button class="ui red button" data-action="delete">
 							<i class="trash icon"></i>
@@ -421,17 +425,17 @@ class TableManager {
 			});
 		}
 		// ==========================================
-// SEARCH DARI NAVBAR (#cari_data)
-// ==========================================
-$(document).off("input.tableSearch");
+		// SEARCH DARI NAVBAR (#cari_data)
+		// ==========================================
+		$(document).off("input.tableSearch");
 
-$(document).on("keypress.tableSearch", "#cari_data", (e) => {
-    if (e.which === 13) {
-        this.searchQuery = $(e.currentTarget).val();
-        this.currentPage = 1;
-        this.fetchData();
-    }
-});
+		$(document).on("keypress.tableSearch", "#cari_data", (e) => {
+			if (e.which === 13) {
+				this.searchQuery = $(e.currentTarget).val();
+				this.currentPage = 1;
+				this.fetchData();
+			}
+		});
 	}
 
 	/* =====================================================
@@ -448,10 +452,6 @@ $(document).on("keypress.tableSearch", "#cari_data", (e) => {
 	   HANDLE ACTION
 	===================================================== */
 	handleAction(action, id) {
-		if (action === "edit") {
-			$(document).trigger("table:edit", id);
-		}
-
 		if (action === "delete") {
 			this.deleteRow(id);
 		}

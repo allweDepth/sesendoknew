@@ -103,17 +103,16 @@ class BaseCrudModule {
 	 * ========================================================
 	 */
 	loadTable(tbl) {
+		this.state.setModule(this.moduleName.toLowerCase());
+		this.state.setTable(tbl);
 
-    this.state.setModule(this.moduleName.toLowerCase());
-    this.state.setTable(tbl);
+		if (this.tableManager) {
+			this.tableManager.destroy();
+		}
 
-    if (this.tableManager) {
-        this.tableManager.destroy();
-    }
+		const title = this.formatTitle(tbl);
 
-    const title = tbl.toUpperCase();
-
-    const actionHtml = `
+		const actionHtml = `
         ${this.buildActionButtons(tbl)}
         <div class="ui hidden divider"></div>
         <h3 class="ui dividing header">
@@ -122,7 +121,7 @@ class BaseCrudModule {
         </h3>
     `;
 
-    $("#crud-table-container").html(`
+		$("#crud-table-container").html(`
         ${actionHtml}
 
         <div class="table-wrapper">
@@ -140,59 +139,51 @@ class BaseCrudModule {
         </div>
     `);
 
-    this.tableManager = new TableManager({
-        state: this.state,
-        tbody: "#crud-tbody",
-        pagination: "#crud-pagination",
-    });
+		this.tableManager = new TableManager({
+			state: this.state,
+			tbody: "#crud-tbody",
+			pagination: "#crud-pagination",
+		});
 
-    this.tableManager.init();
-}
+		this.tableManager.init();
+	}
 	buildActionButtons(tbl) {
+		let importType = "import";
+		let importIcon = "upload";
 
-    // 🔥 DEFAULT
-    let importType = "import";
-    let importIcon = "upload";
+		switch (this.moduleName) {
+			case "referensi":
+				const strukturList = [
+					"urusan",
+					"bidang",
+					"program",
+					"kegiatan",
+					"sub_kegiatan",
+				];
 
-    // 🔥 SWITCH KHUSUS MODULE
-    switch (this.moduleName) {
+				if (strukturList.includes(tbl)) {
+					importType = "import_struktur";
+					importIcon = "sitemap";
+				}
+				break;
+		}
 
-        case "referensi":
-
-            // hanya untuk urusan → sub_kegiatan
-            const strukturList = [
-                "urusan",
-                "bidang",
-                "program",
-                "kegiatan",
-                "sub_kegiatan"
-            ];
-
-            if (strukturList.includes(tbl)) {
-                importType = "import_struktur";
-                importIcon = "sitemap";
-            }
-
-            break;
-
-        default:
-            break;
-    }
-
-    return `
+		return `
         <div class="ui right floated basic icon buttons" style="margin-top:10px;">
 
             <button class="ui button"
                 data-ui="open-form"
-                data-jns="add"
-                data-tbl="${tbl}">
+								data-container="flyout"
+								data-jns="add"
+								data-tbl="${tbl}">
                 <i class="plus icon"></i>
             </button>
 
             <button class="ui button"
                 data-ui="open-form"
-                data-jns="${importType}"
-                data-tbl="${tbl}">
+								data-container="flyout"
+								data-jns="${importType}"
+								data-tbl="${tbl}">
                 <i class="${importIcon} icon"></i>
             </button>
 
@@ -204,5 +195,15 @@ class BaseCrudModule {
 
         </div>
     `;
-}
+	}
+
+	/* 🔥 TAMBAHKAN DI SINI */
+	formatTitle(text) {
+		if (!text) return "";
+
+		return text
+			.replace(/_/g, " ")
+			.toLowerCase()
+			.replace(/\b\w/g, (char) => char.toUpperCase());
+	}
 }

@@ -28,21 +28,9 @@ class FormEngine {
 
         this.bindEvents();
 
-        this.listenEditEvent();
     }
 
-    /**
-     * LISTEN EVENT EDIT DARI TABLE
-     */
-    listenEditEvent() {
-
-        $(document).on("table:edit", (e, id) => {
-
-            this.loadData(id);
-
-        });
-
-    }
+    
 
     /**
      * LOAD DATA EDIT
