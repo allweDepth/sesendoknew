@@ -20,7 +20,10 @@ class BaseCrudModule {
         this.initMenu();
     }
 
-    this.loadTable(this.menuItems[0]?.tbl);
+    // 🔥 GUARD WAJIB
+    if (this.menuItems.length > 0) {
+        this.loadTable(this.menuItems[0].tbl);
+    }
 }
 
 	/**
@@ -29,53 +32,39 @@ class BaseCrudModule {
 	 * ========================================================
 	 */
 	renderLayout() {
-		let menuHtml = "";
 
-		this.menuItems.forEach((item, index) => {
-			menuHtml += `
+    let menuHtml = "";
+
+    this.menuItems.forEach((item, index) => {
+        menuHtml += `
             <a class="item ${index === 0 ? "active" : ""}" 
                data-tbl="${item.tbl}">
                ${item.label}
             </a>
         `;
-		});
+    });
 
-		const html = `
+    const html = `
         <div class="ui container">
 
             <h2 class="ui dividing header">
                 Modul ${this.moduleName.toUpperCase()}
             </h2>
 
-            ${
-							this.useMenu
-								? `
-${this.useMenu ? `
-<div class="ui secondary pointing menu" id="crudMenu">
-    ${menuHtml}
-</div>
-` : ``}
-`
-								: ``
-						}
-
-            <!-- 🔥 TABEL WAJIB ADA -->
-            <div id="crud-table-container">
-
-                <table class="ui celled striped table">
-                    <thead></thead>
-                    <tbody></tbody>
-                </table>
-
-                <div class="pagination-wrapper"></div>
-
+            ${this.useMenu ? `
+            <div class="ui secondary pointing menu" id="crudMenu">
+                ${menuHtml}
             </div>
+            ` : ``}
+
+            <!-- TABEL HARUS SELALU ADA -->
+            <div id="crud-table-container"></div>
 
         </div>
     `;
 
-		$(this.container).html(html);
-	}
+    $(this.container).html(html);
+}
 
 	/**
 	 * ========================================================
