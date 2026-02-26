@@ -28,7 +28,7 @@ class TableManager {
 		this.state = config.state;
 
 		// Engine AJAX → semua CRUD ke /dynamic
-		this.ajax = new AjaxEngine(AppConfig.apiUrl + "dynamic");
+		this.ajax = window.Ajax;
 
 		// ==================================================
 		// SELECTOR FALLBACK (ANTI ERROR)
@@ -444,7 +444,7 @@ class TableManager {
 	changePage(page) {
 		if (page < 1 || page > this.totalPages) return;
 
-		this.currentPage = page;
+		this.currentPage = page; 
 		this.fetchData();
 	}
 

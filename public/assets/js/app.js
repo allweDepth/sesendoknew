@@ -1,7 +1,7 @@
 class App {
 	constructor() {
 		this.state = new AppState();
-		this.ajax = new AjaxEngine();
+		this.ajax = window.Ajax;
 		this.toast = ToastEngine;
 		this.dialog = window.DialogEngine || null;
 		this.loader = window.PageLoader || null;

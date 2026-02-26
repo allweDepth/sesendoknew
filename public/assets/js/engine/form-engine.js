@@ -141,6 +141,14 @@ class FormEngine {
 	 * ============================================================
 	 */
 	static render(target, elements = [], instance = null) {
+		   // 🔥 Pastikan target adalah jQuery object
+    const $target = $(target);
+
+    // 🔥 DESTROY DROPDOWN LAMA (WAJIB)
+    $target.find('.ui.dropdown').dropdown('destroy');
+
+    // 🔥 KOSONGKAN FORM
+    $target.empty();
 		const html = this.build(elements);
 
 		target.html(html);
@@ -358,45 +366,7 @@ class FormEngine {
 	 * ============================================================
 	 */
 	/**
-	 * ============================================================
-	 * LOAD DROPDOWN DARI SERVER BERDASARKAN data-source
-	 * ============================================================
-	 */
-	loadDropdownSources() {
-		const self = this;
 
-		$(`${this.formSelector} .ui.dropdown[data-source]`).each(function () {
-			const $dropdown = $(this);
-			const source = $dropdown.data("source");
-
-			if (!source) return;
-
-			self.ajax.request({
-				data: {
-					module: self.state.module,
-					action: "dropdown", // 🔥 sesuai config server kamu
-					tbl: source,
-				},
-
-				success: (res) => {
-					if (!res.success || !res.data) return;
-
-					const $menu = $dropdown.find(".menu");
-					$menu.empty();
-
-					res.data.forEach((item) => {
-						$menu.append(`
-						<div class="item" data-value="${item.id}">
-							${item.uraian}
-						</div>
-					`);
-					});
-
-					$dropdown.dropdown("refresh");
-				},
-			});
-		});
-	}
 	/**
 	 * ============================================================
 	 * LOAD SEMUA DROPDOWN YANG PUNYA data-source

@@ -67,6 +67,7 @@ class FlyoutController {
 
 	const state = window.app.state;
 	state.setTable(tbl);
+  state.action = jns;
 
 	const formSelector =
 		container === "modal"
@@ -102,66 +103,42 @@ class FlyoutController {
 	}
 }
 
-	render(config) {
-		const target = this.getActiveForm();
-		target.empty();
+	// render(config) {
+	// 	const target = this.getActiveForm();
+	// 	target.empty();
 
-		// 🔥 PAKAI state yang benar
-		const action = window.app.state.action;
+	// 	// 🔥 PAKAI state yang benar
+	// 	const action = window.app.state.action;
 
-		// Kalau FormEngine.render memang ada di sistem kamu
-		if (typeof FormEngine.render === "function") {
-			FormEngine.render(target, config.elements, formEngineInstance);
-		} else {
-			// fallback minimal kalau tidak ada
-			config.elements.forEach((el) => {
-				if (!el.prop?.name) return;
+	// 	// Kalau FormEngine.render memang ada di sistem kamu
+	// 	if (typeof FormEngine.render === "function") {
+	// 		FormEngine.render(target, config.elements, formEngineInstance);
+	// 	} else {
+	// 		// fallback minimal kalau tidak ada
+	// 		config.elements.forEach((el) => {
+	// 			if (!el.prop?.name) return;
 
-				target.append(`
-				<div class="field">
-					<label>${el.prop.label || el.prop.name}</label>
-					<input type="text" name="${el.prop.name}">
-				</div>
-			`);
-			});
-		}
+	// 			target.append(`
+	// 			<div class="field">
+	// 				<label>${el.prop.label || el.prop.name}</label>
+	// 				<input type="text" name="${el.prop.name}">
+	// 			</div>
+	// 		`);
+	// 		});
+	// 	}
 
-		// 🔥 PERBAIKI INI
-		if (action === "edit") {
-			target.prepend(`<input type="hidden" name="id">`);
-		}
+	// 	// 🔥 PERBAIKI INI
+	// 	if (action === "edit") {
+	// 		target.prepend(`<input type="hidden" name="id">`);
+	// 	}
 
-		// tetap jalankan dropdown loader kalau ada
-		if (typeof this.loadDropdowns === "function") {
-			this.loadDropdowns(target);
-		}
-	}
+	// 	// tetap jalankan dropdown loader kalau ada
+	// 	if (typeof this.loadDropdowns === "function") {
+	// 		this.loadDropdowns(target);
+	// 	}
+	// }
 
-	loadData(id) {
 
-	this.ajax.request({
-		method: "POST",
-		data: {
-			module: window.app.state.module,
-			action: "edit",
-			tbl: window.app.state.tbl,
-			id_row: id
-		},
-		success: (res) => {
-
-			if (!res.success) return;
-
-			const formSelector =
-				this.activeContainer === "modal"
-					? "#form_modal"
-					: "#form_flyout";
-
-			Object.keys(res.data).forEach((key) => {
-				$(`${formSelector} [name="${key}"]`).val(res.data[key]);
-			});
-		}
-	});
-}
 
 	buildConfig(jenis, tbl) {
 		const module = window.app.state.module;

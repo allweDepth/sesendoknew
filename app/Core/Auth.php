@@ -18,45 +18,81 @@ class Auth
         if (!$user) return false;
         if (!password_verify($passwordInput, $user['password'])) return false;
 
-        // 🔥 PANGGIL DI SINI
         if (!in_array($user['type_user'], self::allowedRoles())) {
             $_SESSION['login_error'] =
                 "Role Anda ({$user['type_user']}) belum dikenali sistem.";
             return false;
         }
 
+        // 🔐 ANTI SESSION FIXATION
+        session_regenerate_id(true);
+
         $_SESSION['user'] = $user;
+        $_SESSION['last_activity'] = time();
 
         return true;
     }
-    //Type User yang di izinka
+
+    // ==========================================
+    // ROLE YANG DIIZINKAN
+    // ==========================================
     public static function allowedRoles(): array
     {
         return [
             'super_admin',
-            // 'admin',
             'admin_wilayah',
             'admin_opd',
             'editor',
             'viewer'
         ];
     }
+
+    // ==========================================
+    // GET USER
+    // ==========================================
     public static function user()
     {
         return $_SESSION['user'] ?? null;
     }
 
+    // ==========================================
+    // CHECK LOGIN + TIMEOUT
+    // ==========================================
     public static function check()
     {
-        return isset($_SESSION['user']);
+        if (!isset($_SESSION['user'])) {
+            return false;
+        }
+
+        $timeout = 1800; // 30 menit
+
+        if (
+            isset($_SESSION['last_activity']) &&
+            (time() - $_SESSION['last_activity']) > $timeout
+        ) {
+            self::logout();
+            return false;
+        }
+
+        // update activity
+        $_SESSION['last_activity'] = time();
+
+        return true;
     }
 
+    // ==========================================
+    // LOGOUT BERSIH TOTAL
+    // ==========================================
     public static function logout()
     {
-        unset($_SESSION['user']);
+        $_SESSION = [];
+        session_unset();
         session_destroy();
     }
 
+    // ==========================================
+    // AMBIL TAHUN
+    // ==========================================
     public static function tahun()
     {
         return $_SESSION['user']['tahun'] ?? null;
