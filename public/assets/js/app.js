@@ -22,6 +22,10 @@ class App {
 				if (typeof RenstraModule === "function") {
 					new RenstraModule().init();
 				}
+			case !!document.getElementById("mappingMenu"):
+				if (typeof MappingModule === "function") {
+					new MappingModule().init();
+				}
 				break;
 
 			case !!document.getElementById("pengaturanPage"):
@@ -35,81 +39,81 @@ class App {
 		}
 	}
 	loadModule(url) {
+		let moduleName = null;
 
-	let moduleName = null;
+		switch (true) {
+			case url.startsWith("/renstra"):
+				moduleName = "renstra";
+				break;
 
-	switch (true) {
-		case url.startsWith("/renstra"):
-			moduleName = "renstra";
-			break;
+			case url.startsWith("/referensi"):
+				moduleName = "referensi";
+				break;
 
-		case url.startsWith("/referensi"):
-			moduleName = "referensi";
-			break;
+			case url.startsWith("/kepegawaian"):
+				moduleName = "kepegawaian";
+				break;
 
-		case url.startsWith("/kepegawaian"):
-			moduleName = "kepegawaian";
-			break;
+			case url.startsWith("/standar_harga"):
+				moduleName = "standar-harga";
+				break;
 
-		case url.startsWith("/standar_harga"):
-			moduleName = "standar-harga";
-			break;
+			case url.startsWith("/pengaturan"):
+				moduleName = "pengaturan";
+				break;
 
-		case url.startsWith("/pengaturan"):
-			moduleName = "pengaturan";
-			break;
+			case url.startsWith("/tata_naskah"):
+				moduleName = "tata_naskah";
+				break;
+			case url.startsWith("/mapping"):
+				moduleName = "mapping";
+				break;
+			default:
+				console.warn("Module tidak dikenali:", url);
+				return;
+		}
 
-		case url.startsWith("/tata_naskah"):
-			moduleName = "tata_naskah";
-			break;
+		this.loadedModules = this.loadedModules || [];
 
-		default:
-			console.warn("Module tidak dikenali:", url);
+		// Kalau sudah pernah load
+		if (this.loadedModules.includes(moduleName)) {
+			this.initModuleInstance(moduleName);
 			return;
-	}
+		}
 
-	this.loadedModules = this.loadedModules || [];
-
-	// Kalau sudah pernah load
-	if (this.loadedModules.includes(moduleName)) {
-		this.initModuleInstance(moduleName);
-		return;
-	}
-
-	/* ====================================================
+		/* ====================================================
 	   🔥 LOAD DEPENDENCY KHUSUS UNTUK TATA NASKAH
 	==================================================== */
-	if (moduleName === "tata_naskah") {
+		if (moduleName === "tata_naskah") {
+			if (!this.loadedModules.includes("document_schema")) {
+				const schemaScript = document.createElement("script");
+				schemaScript.src = "/assets/js/engine/document/document_schema.js";
+				document.body.appendChild(schemaScript);
+				this.loadedModules.push("document_schema");
+			}
 
-		if (!this.loadedModules.includes("document_schema")) {
-			const schemaScript = document.createElement("script");
-			schemaScript.src = "/assets/js/engine/document/document_schema.js";
-			document.body.appendChild(schemaScript);
-			this.loadedModules.push("document_schema");
+			if (!this.loadedModules.includes("document_builder")) {
+				const builderScript = document.createElement("script");
+				builderScript.src = "/assets/js/engine/document/document_builder.js";
+				document.body.appendChild(builderScript);
+				this.loadedModules.push("document_builder");
+			}
 		}
 
-		if (!this.loadedModules.includes("document_builder")) {
-			const builderScript = document.createElement("script");
-			builderScript.src = "/assets/js/engine/document/document_builder.js";
-			document.body.appendChild(builderScript);
-			this.loadedModules.push("document_builder");
-		}
-	}
-
-	/* ====================================================
+		/* ====================================================
 	   🔥 LOAD MODULE UTAMA
 	==================================================== */
-	const script = document.createElement("script");
-	script.src = `/assets/js/modules/${moduleName}.js`;
-	script.defer = true;
+		const script = document.createElement("script");
+		script.src = `/assets/js/modules/${moduleName}.js`;
+		script.defer = true;
 
-	script.onload = () => {
-		this.loadedModules.push(moduleName);
-		this.initModuleInstance(moduleName);
-	};
+		script.onload = () => {
+			this.loadedModules.push(moduleName);
+			this.initModuleInstance(moduleName);
+		};
 
-	document.body.appendChild(script);
-}
+		document.body.appendChild(script);
+	}
 	initModuleInstance(moduleName) {
 		switch (moduleName) {
 			case "renstra":
@@ -138,6 +142,9 @@ class App {
 			case "tata_naskah":
 				if (typeof TataNaskahModule === "function")
 					new TataNaskahModule().init();
+				break;
+			case "mapping":
+				if (typeof MappingModule === "function") new MappingModule().init();
 				break;
 		}
 	}
