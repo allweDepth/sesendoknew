@@ -101,7 +101,6 @@ const UIConfig = {
 				},
 			],
 		},
-		
 	},
 
 	/* ======================================================
@@ -1396,27 +1395,34 @@ window.UIConfig = UIConfig;
 window.UIConfig = window.UIConfig || {};
 
 UIConfig.periode_rpjmd = [
-    {
-        tag: "rangeCalendar",
-        prop: {
-            label: "Periode RPJMD",
-            nameStart: "periode_mulai",
-            nameEnd: "periode_selesai",
-            calendarType: "year"
-        }
-    },
-    {
-        tag: "fieldTextarea",
-        prop: {
-            label: "Keterangan",
-            name: "keterangan"
-        }
-    },
-    {
-        tag: "fieldCheckbox",
-        prop: {
-            label: "Aktif",
-            name: "status_aktif"
-        }
-    }
+	{
+		tag: "rangeCalendar",
+		prop: {
+			label: "Periode RPJMD",
+			calendarType: "year",
+			roles: ["super_admin"],
+		},
+		validation: {
+			periode_mulai: { required: true },
+			periode_selesai: { required: true },
+			keterangan: { minLength: 5 },
+		},
+		layout: {
+			columns: 2,
+		},
+	},
+	{
+		tag: "fieldTextarea",
+		prop: {
+			label: "Keterangan",
+			name: "keterangan",
+		},
+	},
+	{
+		tag: "fieldCheckbox",
+		prop: {
+			label: "Aktif",
+			name: "status_aktif",
+		},
+	},
 ];

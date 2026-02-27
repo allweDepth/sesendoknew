@@ -126,9 +126,22 @@ class FormEngine {
 	submit() {
 		const formData = $(this.formSelector).serialize();
 
+		// 🔥 ambil config tabel aktif
+		const config = UIConfig[this.state.tbl];
+
+		// 🔥 validasi kalau ada schema
+		if (config?.validation) {
+			const isValid = ValidationEngine.validate(
+				this.formSelector,
+				config.validation,
+			);
+
+			if (!isValid) return;
+		}
+
+		// 🔥 kirim ajax
 		this.ajax.request({
 			data: formData,
-
 			success: () => {
 				$(document).trigger("form:success");
 			},
@@ -158,25 +171,36 @@ class FormEngine {
 	 * RENDER FORM KE TARGET
 	 * ============================================================
 	 */
-	static render(target, elements = [], instance = null) {
+	static render(target, elements = [], instance = null, layout = {}) {
+		const columns = layout.columns || 1;
+
+		let html = `<div class="ui form"><div class="ui ${columns} column grid">`;
+
+		elements.forEach((el) => {
+			html += `<div class="column">${this.element(el)}</div>`;
+		});
+
+		html += "</div></div>";
+
 		const $target = $(target);
-
-		$target.find(".ui.dropdown").dropdown("destroy");
-		$target.empty();
-
-		const html = this.build(elements);
 		$target.html(html);
 
-		// Init UI dasar
+		// 🔥 INIT FOMANTIC
 		$target.find(".ui.dropdown").dropdown();
 		$target.find(".ui.checkbox").checkbox();
 
-		// 🔥 INIT RANGE CALENDAR OTOMATIS
+		// 🔥 INIT RANGE CALENDAR
 		const rangeElements = elements.filter((e) => e.tag === "rangeCalendar");
-
 		UIComponents.initRange(rangeElements);
 
-		// Load dropdown server
+		// 🔥 AUTO FORMAT CURRENCY (TARUH DI SINI)
+		elements.forEach((el) => {
+			if (el.prop?.format === "currency") {
+				UIExtensions.currency(`${target} [name="${el.prop.name}"]`);
+			}
+		});
+
+		// 🔥 LOAD DROPDOWN DARI SERVER
 		if (instance && typeof instance.loadDropdownSources === "function") {
 			instance.loadDropdownSources();
 		}
@@ -198,7 +222,9 @@ class FormEngine {
 	 */
 	static element(el) {
 		const { tag, prop = {} } = el;
-
+		if (prop.roles && !PermissionEngine.can(window.USER_ROLE, prop.roles)) {
+			return "";
+		}
 		switch (tag) {
 			case "fieldAction":
 				return this.fieldWrapper(this.inputAction(prop), prop);
@@ -469,5 +495,14 @@ class FormEngine {
 			.map((e) => e.prop.name);
 
 		UIComponents.initRange(rangeNames);
+	}
+	applyReadonly(isReadonly) {
+		if (!isReadonly) return;
+
+		const form = $(this.formSelector);
+
+		form.find("input, textarea").attr("disabled", true);
+		form.find(".ui.dropdown").addClass("disabled");
+		form.find(".ui.checkbox").addClass("disabled");
 	}
 }
