@@ -1174,14 +1174,14 @@ class DynamicTableService
                 }
             }
 
-            if (in_array('peraturan', $columns)) {
+            if (in_array('peraturan_id', $columns)) {
 
-                $uniqueFields['peraturan'] =
-                    $data['peraturan'] ?? null;
+                $uniqueFields['peraturan_id'] =
+                    $data['peraturan_id'] ?? null;
 
-                if (empty($uniqueFields['peraturan'])) {
+                if (empty($uniqueFields['peraturan_id'])) {
                     throw new Exception(
-                        "peraturan tidak boleh kosong untuk validasi duplicate."
+                        "peraturan_id tidak boleh kosong untuk validasi duplicate."
                     );
                 }
             }
@@ -1289,9 +1289,9 @@ class DynamicTableService
                     $params[] = $data['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? null;
                 }
 
-                if (in_array('peraturan', $parentColumns)) {
-                    $where[] = "`peraturan` = ?";
-                    $params[] = $data['peraturan'] ?? null;
+                if (in_array('peraturan_id', $parentColumns)) {
+                    $where[] = "`peraturan_id` = ?";
+                    $params[] = $data['peraturan_id'] ?? null;
                 }
 
                 $exists = $this->db->query(
@@ -1734,11 +1734,34 @@ class DynamicTableService
             $params[] = $this->user['kd_wilayah'];
         }
 
-        if (in_array('peraturan', $columns)) {
-            $pengaturan = $this->getPengaturanAktif();
-            $whereParts[] = "`peraturan` = ?";
-            $params[] = $pengaturan['aturan_sub_kegiatan'];
-        }
+        if (in_array('peraturan_id', $columns)) {
+
+    $pengaturan = $this->getPengaturanAktif();
+
+    if (!$pengaturan) {
+        throw new Exception("Pengaturan aktif belum tersedia.");
+    }
+
+    $fieldMap = [
+        'urusan'       => 'aturan_sub_kegiatan',
+        'bidang'       => 'aturan_sub_kegiatan',
+        'program'      => 'aturan_sub_kegiatan',
+        'kegiatan'     => 'aturan_sub_kegiatan',
+        'sub_kegiatan' => 'aturan_sub_kegiatan',
+        'ssh_neo'      => 'aturan_ssh',
+        'sbu_neo'      => 'aturan_sbu',
+        'asb_neo'      => 'aturan_asb',
+        'hspk_neo'     => 'aturan_hspk',
+    ];
+
+    if (isset($fieldMap[$table])) {
+
+        $field = $fieldMap[$table];
+
+        $whereParts[] = "`peraturan_id` = ?";
+        $params[] = (int)$pengaturan[$field];
+    }
+}
 
         $exists = $this->db->query(
             "SELECT id FROM `$table`
@@ -1792,19 +1815,20 @@ class DynamicTableService
         }
 
         // 🔥 Scope peraturan
-        if (in_array('peraturan', $columns)) {
+        if (in_array('peraturan_id', $columns)) {
 
-            $pengaturan = $this->getPengaturanAktif();
+    $pengaturan = $this->getPengaturanAktif();
 
-            if (!$pengaturan || empty($pengaturan['aturan_sub_kegiatan'])) {
-                throw new Exception("Peraturan aktif belum dikonfigurasi.");
-            }
+    if (!$pengaturan || empty($pengaturan['aturan_sub_kegiatan'])) {
+        throw new Exception("Peraturan aktif belum dikonfigurasi.");
+    }
 
-            $filtered['peraturan'] = $pengaturan['aturan_sub_kegiatan'];
+    $filtered['peraturan_id'] =
+        (int)$pengaturan['aturan_sub_kegiatan'];
 
-            $whereParts[] = "`peraturan` = ?";
-            $params[] = $filtered['peraturan'];
-        }
+    $whereParts[] = "`peraturan_id` = ?";
+    $params[] = $filtered['peraturan_id'];
+}
 
         // 🔥 Cek duplicate
         $exists = $this->db->query(
@@ -2035,11 +2059,12 @@ class DynamicTableService
     {
         $columns = $this->getTableColumns($table);
 
-        if (!in_array('peraturan', $columns)) {
+        // 🔥 Gunakan peraturan_id sekarang
+        if (!in_array('peraturan_id', $columns)) {
             return $data;
         }
 
-        if (!empty($data['peraturan'])) {
+        if (!empty($data['peraturan_id'])) {
             return $data;
         }
 
@@ -2074,7 +2099,8 @@ class DynamicTableService
             throw new Exception("Field {$field} pada pengaturan aktif kosong.");
         }
 
-        $data['peraturan'] = $pengaturan[$field];
+        // 🔥 CAST KE INT
+        $data['peraturan_id'] = (int)$pengaturan[$field];
 
         return $data;
     }
