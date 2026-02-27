@@ -103,7 +103,8 @@ class BaseCrudModule {
 	 * ========================================================
 	 */
 	loadTable(tbl) {
-		this.state.setModule(this.moduleName.toLowerCase());
+		// 🔥 FLAT STRUCTURE
+		this.state.setModule(tbl);
 		this.state.setTable(tbl);
 
 		if (this.tableManager) {

@@ -134,7 +134,7 @@ class UIComponents {
 		$(".ui.dropdown").dropdown();
 		$(".ui.checkbox").checkbox();
 
-		$(".ui.calendar").calendar();
+		// $(".ui.calendar").calendar();
 	}
 
 	static initRange(elements = []) {

@@ -89,7 +89,7 @@ class TableManager {
 		this.ajax.request({
 			method: "POST",
 			data: {
-				module: this.state.module,
+				 module: this.state.tbl,
 				action: "list",
 				tbl: this.state.tbl,
 
@@ -145,40 +145,54 @@ class TableManager {
 	   - Skip prop.table === false
 	===================================================== */
 	getColumnsFromConfig() {
-		if (!window.UIConfig) return [];
 
-		const module = this.state.module;
-		const tbl = this.state.tbl;
+    if (!window.UIConfig) return [];
 
-		let config = window.UIConfig?.[module]?.[tbl] || window.UIConfig?.[tbl];
-		if (!config) return [];
+    const tbl = this.state.tbl;
 
-		// 🔥 SUPPORT DUA STRUKTUR
-		const columnsSource = Array.isArray(config)
-			? config
-			: Array.isArray(config.columns)
-				? config.columns
-				: [];
+    // =====================================================
+    // 🔥 ENTERPRISE FLAT STRUCTURE FIX
+    // =====================================================
+    let config = window.UIConfig?.[tbl];
 
-		return columnsSource
-			.filter((item) => {
-				if (!item.prop?.name) return false;
+// 🔥 FALLBACK STRUCTURE LAMA
+if (!config) {
+    Object.keys(window.UIConfig).forEach(parentKey => {
+        const parent = window.UIConfig[parentKey];
+        if (parent && parent[tbl]) {
+            config = parent[tbl];
+        }
+    });
+}
 
-				if (
-					["divider", "header", "fieldHidden", "fieldCustom"].includes(item.tag)
-				)
-					return false;
+    let elements = [];
 
-				if (item.prop.visible === false) return false;
+    // 🔥 STRUKTUR BARU
+    if (config.form && Array.isArray(config.form.elements)) {
+        elements = config.form.elements;
+    }
 
-				return true;
-			})
-			.map((item) => ({
-				key: item.prop.name,
-				label: item.prop.label || item.prop.name,
-				format: item.prop.format || null,
-			}));
-	}
+    // 🔥 BACKWARD COMPAT
+    else if (Array.isArray(config)) {
+        elements = config;
+    }
+
+    if (!elements.length) {
+        console.warn("Elements kosong untuk:", tbl);
+        return [];
+    }
+
+    return elements
+        .filter(item =>
+            item.prop?.name &&
+            !["divider", "header", "fieldHidden", "fieldCustom"].includes(item.tag)
+        )
+        .map(item => ({
+            key: item.prop.name,
+            label: item.prop.label || item.prop.name,
+            format: item.prop.format || null
+        }));
+}
 
 	/* =====================================================
 	   RENDER HEADER
@@ -444,7 +458,7 @@ class TableManager {
 	changePage(page) {
 		if (page < 1 || page > this.totalPages) return;
 
-		this.currentPage = page; 
+		this.currentPage = page;
 		this.fetchData();
 	}
 

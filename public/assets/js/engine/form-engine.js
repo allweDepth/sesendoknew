@@ -31,7 +31,7 @@ class FormEngine {
 		this.bindEvents();
 
 		// 🔥 load semua dropdown yang punya source
-		// this.loadDropdownSources();
+		this.loadDropdownSources();
 	}
 
 	/**
@@ -177,41 +177,38 @@ submit() {
 	 */
 	static render(target, elements = [], instance = null, layout = {}) {
 
+    const columnMap = {
+        1: "one",
+        2: "two",
+        3: "three",
+        4: "four"
+    };
+
     const columns = layout.columns || 1;
+    const columnClass = columnMap[columns] || "one";
 
     let html = `
-        <div class="ui form">
-            <div class="ui ${columns} column stackable grid">
+        <form class="ui form" id="${instance?.formSelector?.replace('#','') || 'form_flyout'}">
+            <div class="ui ${columnClass} column grid">
     `;
 
     elements.forEach(el => {
-        html += `<div class="column">${this.element(el)}</div>`;
+        html += `
+            <div class="column">
+                ${this.element(el)}
+            </div>
+        `;
     });
 
     html += `
             </div>
-        </div>
+        </form>
     `;
 
-    const $target = $(target);
-    $target.html(html);
+    $(target).html(html);
 
-    $target.find('.ui.dropdown').dropdown();
-    $target.find('.ui.checkbox').checkbox();
-
-    const rangeElements = elements.filter(e => e.tag === "rangeCalendar");
-    UIComponents.initRange(rangeElements);
-
-    // currency init
-    elements.forEach(el => {
-        if (el.prop?.format === "currency") {
-            UIExtensions.currency(`${target} [name="${el.prop.name}"]`);
-        }
-    });
-
-    if (instance?.loadDropdownSources) {
-        instance.loadDropdownSources();
-    }
+    $(target).find('.ui.dropdown').dropdown();
+    $(target).find('.ui.checkbox').checkbox();
 }
 
 	/**
@@ -442,7 +439,7 @@ submit() {
 
 			self.ajax.request({
 				data: {
-					module: self.state.module,
+					module: source,
 					action: "dropdown",
 					tbl: source,
 				},

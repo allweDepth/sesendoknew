@@ -558,3 +558,7 @@ UIConfig.global_print = {
         ]
     }
 };
+
+
+///EKSEKUSI 
+window.UIConfig = UIConfig;

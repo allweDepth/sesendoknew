@@ -65,6 +65,7 @@ class FlyoutController {
 		if (!tbl) return;
 
 		const state = window.app.state;
+		state.setModule(tbl);
 		state.setTable(tbl);
 		state.action = jns;
 
@@ -76,11 +77,14 @@ class FlyoutController {
 			ajax: window.Ajax,
 			formSelector: formSelector,
 		});
-// 🔥 Render pakai instance/ 🔥 RENDER DULU
+		// 🔥 Render pakai instance/ 🔥 RENDER DULU
+		const config = this.buildConfig(jns, tbl);
+
 		FormEngine.render(
 			$(formSelector),
-			this.buildConfig(jns, tbl).elements,
+			config.elements,
 			this.formEngine,
+			config.layout || {},
 		);
 		this.formEngine.init();
 		// Show container
@@ -132,13 +136,40 @@ class FlyoutController {
 	// }
 
 	buildConfig(jenis, tbl) {
-		const module = window.app.state.module;
 
-		let elements =
-			window.UIConfig?.[module]?.[tbl] || window.UIConfig?.[tbl] || [];
+    if (!window.UIConfig) return { elements: [] };
 
-		return {
-			elements: elements,
-		};
-	}
+    let config = window.UIConfig[tbl];
+
+    // 🔥 FALLBACK UNTUK STRUKTUR NESTED LAMA
+    if (!config) {
+        Object.keys(window.UIConfig).forEach(parentKey => {
+            const parent = window.UIConfig[parentKey];
+            if (parent && parent[tbl]) {
+                config = parent[tbl];
+            }
+        });
+    }
+
+    if (!config) {
+        console.warn("Flyout config tidak ditemukan:", tbl);
+        return { elements: [] };
+    }
+
+    // 🔥 STRUCTURE BARU (FLAT)
+    if (config.form && Array.isArray(config.form.elements)) {
+        return {
+            elements: config.form.elements,
+            layout: config.layout || {},
+            validation: config.validation || {},
+        };
+    }
+
+    // 🔥 STRUCTURE LAMA (ARRAY)
+    if (Array.isArray(config)) {
+        return { elements: config };
+    }
+
+    return { elements: [] };
+}
 }
