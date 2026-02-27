@@ -63,47 +63,6 @@ $(document).ready(function () {
 		});
 	});
 
-	// ======================================================
-	// GLOBAL OPEN FORM
-	// ======================================================
-	// $(document).on("click", "[data-ui='open-form']", function () {
-	// 	const jns = $(this).data("jns");
-	// 	const tbl = $(this).data("tbl");
-	// 	const id = $(this).data("id") || null;
-	// 	const container = $(this).data("container") || "flyout";
-
-	// 	if (!tbl) return;
-
-	// 	const state = window.app.state;
-	// 	state.setTable(tbl);
-
-	// 	const formSelector = container === "modal" ? "#form_modal" : "#form_flyout";
-
-	// 	const formEngine = new FormEngine({
-	// 		state: state,
-	// 		ajax: window.app.ajax,
-	// 		formSelector: formSelector,
-	// 	});
-
-	// 	formEngine.init();
-
-	// 	if (jns === "edit" && id) {
-	// 		formEngine.loadData(id);
-	// 	}
-
-	// 	// ===============================
-	// 	// TAMPILKAN CONTAINER
-	// 	// ===============================
-	// 	if (container === "modal") {
-	// 		$("#mainModal")
-	// 			.modal({
-	// 				closable: false,
-	// 			})
-	// 			.modal("show");
-	// 	} else {
-	// 		$(".sidebarkanan").sidebar("show");
-	// 	}
-	// });
 
 	// ===============================
 	// FLYOUT CONTROLLER
