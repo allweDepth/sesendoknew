@@ -147,7 +147,8 @@ class DynamicTableService
             case 'dropdown':
                 return $this->loadDropdown(
                     $request['tbl'] ?? null,
-                    $request['parent_value'] ?? null
+                    $request['parent_value'] ?? null,
+                    $request['kd_akun'] ?? null
                 );
 
             case 'export':
@@ -369,6 +370,8 @@ class DynamicTableService
     ===================================================== */
         $this->validateHierarchy($table, $filtered);
         $this->validateDuplicate($table, $filtered);
+        // 🔥 VALIDASI MAPPING AKUN
+        $this->validateAkunMapping($table, $filtered);
 
         /* =====================================================
        8️⃣ SANITATION & AUDIT
@@ -484,7 +487,8 @@ class DynamicTableService
        5️⃣ BUSINESS VALIDATION
     ===================================================== */
         $this->validateHierarchy($table, $filtered);
-
+        // 🔥 VALIDASI MAPPING AKUN
+        $this->validateAkunMapping($table, $filtered);
         /* =====================================================
        6️⃣ SANITATION & AUDIT
     ===================================================== */
@@ -912,8 +916,16 @@ class DynamicTableService
     /* =========================================================
         DROPDOWN ENGINE (FULL IDENTIK)
         ========================================================= */
-    private function loadDropdown(string $source, $parentValue = null): string
-    {
+    /* =========================================================
+    DROPDOWN ENGINE (PROFILE-DRIVEN + AKUN FILTER)
+    ========================================================= */
+    private function loadDropdown(
+        string $source,
+        $parentValue = null,
+        ?string $kdAkun = null
+    ): string {
+
+        // 🔎 Pastikan profile ada
         if (!isset($this->profiles[$source])) {
             return JsonResponse::error("Source tidak ditemukan");
         }
@@ -921,16 +933,20 @@ class DynamicTableService
         $profile = $this->profiles[$source];
         $table   = $profile['table'];
 
+        // 🔥 Primary key WAJIB didefinisikan di awal
         $primaryKey = $profile['primary_key'] ?? 'id';
+
         $valueField = $profile['dropdown']['value'] ?? $primaryKey;
         $labelField = $profile['dropdown']['label'] ?? 'nama';
 
         $columns = $this->getTableColumns($table);
 
+        /* ======================================================
+        🔥 RELASI PARENT (JIKA ADA)
+    ====================================================== */
         $whereParts = [];
-        $params = [];
+        $params     = [];
 
-        // 🔥 RELATIONAL FILTER
         if ($parentValue !== null && !empty($profile['relations'])) {
 
             foreach ($profile['relations'] as $relation) {
@@ -938,24 +954,74 @@ class DynamicTableService
                 $localKey = $relation['local_key'] ?? null;
 
                 if ($localKey && in_array($localKey, $columns)) {
-                    $whereParts[] = "`$localKey` = ?";
+                    $whereParts[] = "`$table`.`$localKey` = ?";
                     $params[] = $parentValue;
                 }
             }
         }
 
-        $where = !empty($whereParts)
-            ? "WHERE " . implode(" AND ", $whereParts)
-            : "";
+        /* ======================================================
+        🔥 PROFILE-DRIVEN AKUN FILTER
+    ====================================================== */
+        $join       = '';
+        $akunWhere  = '';
+        $akunParams = [];
 
+        $filterByAkun = $profile['dropdown']['filter_by_akun'] ?? false;
+        $pivotConfig  = $profile['pivot'] ?? null;
+
+        if ($filterByAkun && $kdAkun && $pivotConfig) {
+
+            $pivotTable = $pivotConfig['table'];
+            $fkField    = $pivotConfig['foreign_key'];
+
+            $join = "
+            INNER JOIN `$pivotTable` p
+                ON p.`$fkField` = `$table`.`$primaryKey`
+        ";
+
+            $pengaturan = $this->getPengaturanAktif();
+
+            $akunWhere = "
+            AND p.`kd_akun` = ?
+            AND p.`kd_wilayah` = ?
+            AND p.`peraturan_id` = ?
+        ";
+
+            $akunParams = [
+                $kdAkun,
+                $this->user['kd_wilayah'] ?? null,
+                $pengaturan['aturan_sbu'] ?? null
+            ];
+        }
+
+        /* ======================================================
+        🔥 FINAL WHERE BUILD
+    ====================================================== */
+        $where = '';
+
+        if (!empty($whereParts)) {
+            $where = "WHERE " . implode(" AND ", $whereParts);
+        }
+
+        /* ======================================================
+        🔥 FINAL QUERY
+    ====================================================== */
         $query = "
-        SELECT `$valueField` as id, `$labelField` as uraian
+        SELECT 
+            `$table`.`$valueField` as id,
+            `$table`.`$labelField` as uraian
         FROM `$table`
+        $join
         $where
-        ORDER BY `$valueField` ASC
+        $akunWhere
+        ORDER BY `$table`.`$valueField` ASC
     ";
 
-        $rows = $this->db->query($query, $params)->fetchAll();
+        $rows = $this->db->query(
+            $query,
+            array_merge($params, $akunParams)
+        )->fetchAll();
 
         return JsonResponse::success("Dropdown loaded", [], $rows);
     }
@@ -1487,14 +1553,28 @@ class DynamicTableService
                     $decoded = json_decode($response, true);
 
                     if (!is_array($decoded) || empty($decoded['success'])) {
+                        throw new Exception(
+                            "Baris " . ($rowIndex + 1) .
+                                " gagal: " . json_encode($decoded)
+                        );
+                    }
 
-                        $errorRows[] = [
-                            'row' => $excelRow,
-                            'error' => $decoded['message'] ?? 'Insert gagal',
-                            'detail' => $decoded['errors'] ?? null
-                        ];
+                    // ======================================================
+                    // 🔥 AMBIL ID TERAKHIR MASTER
+                    // ======================================================
+                    $masterId = $this->db->lastInsertId();
 
-                        throw new Exception("Insert gagal.");
+                    // ======================================================
+                    // 🔥 JIKA ADA kd_akun DI EXCEL → INSERT KE PIVOT
+                    // ======================================================
+                    if (!empty($data['kd_akun'])) {
+
+                        $this->insertAkunPivot(
+                            $tableKey,
+                            (int)$masterId,
+                            $data['kd_akun'],
+                            $data
+                        );
                     }
 
                     $inserted++;
@@ -1736,32 +1816,32 @@ class DynamicTableService
 
         if (in_array('peraturan_id', $columns)) {
 
-    $pengaturan = $this->getPengaturanAktif();
+            $pengaturan = $this->getPengaturanAktif();
 
-    if (!$pengaturan) {
-        throw new Exception("Pengaturan aktif belum tersedia.");
-    }
+            if (!$pengaturan) {
+                throw new Exception("Pengaturan aktif belum tersedia.");
+            }
 
-    $fieldMap = [
-        'urusan'       => 'aturan_sub_kegiatan',
-        'bidang'       => 'aturan_sub_kegiatan',
-        'program'      => 'aturan_sub_kegiatan',
-        'kegiatan'     => 'aturan_sub_kegiatan',
-        'sub_kegiatan' => 'aturan_sub_kegiatan',
-        'ssh_neo'      => 'aturan_ssh',
-        'sbu_neo'      => 'aturan_sbu',
-        'asb_neo'      => 'aturan_asb',
-        'hspk_neo'     => 'aturan_hspk',
-    ];
+            $fieldMap = [
+                'urusan'       => 'aturan_sub_kegiatan',
+                'bidang'       => 'aturan_sub_kegiatan',
+                'program'      => 'aturan_sub_kegiatan',
+                'kegiatan'     => 'aturan_sub_kegiatan',
+                'sub_kegiatan' => 'aturan_sub_kegiatan',
+                'ssh_neo'      => 'aturan_ssh',
+                'sbu_neo'      => 'aturan_sbu',
+                'asb_neo'      => 'aturan_asb',
+                'hspk_neo'     => 'aturan_hspk',
+            ];
 
-    if (isset($fieldMap[$table])) {
+            if (isset($fieldMap[$table])) {
 
-        $field = $fieldMap[$table];
+                $field = $fieldMap[$table];
 
-        $whereParts[] = "`peraturan_id` = ?";
-        $params[] = (int)$pengaturan[$field];
-    }
-}
+                $whereParts[] = "`peraturan_id` = ?";
+                $params[] = (int)$pengaturan[$field];
+            }
+        }
 
         $exists = $this->db->query(
             "SELECT id FROM `$table`
@@ -1817,18 +1897,18 @@ class DynamicTableService
         // 🔥 Scope peraturan
         if (in_array('peraturan_id', $columns)) {
 
-    $pengaturan = $this->getPengaturanAktif();
+            $pengaturan = $this->getPengaturanAktif();
 
-    if (!$pengaturan || empty($pengaturan['aturan_sub_kegiatan'])) {
-        throw new Exception("Peraturan aktif belum dikonfigurasi.");
-    }
+            if (!$pengaturan || empty($pengaturan['aturan_sub_kegiatan'])) {
+                throw new Exception("Peraturan aktif belum dikonfigurasi.");
+            }
 
-    $filtered['peraturan_id'] =
-        (int)$pengaturan['aturan_sub_kegiatan'];
+            $filtered['peraturan_id'] =
+                (int)$pengaturan['aturan_sub_kegiatan'];
 
-    $whereParts[] = "`peraturan_id` = ?";
-    $params[] = $filtered['peraturan_id'];
-}
+            $whereParts[] = "`peraturan_id` = ?";
+            $params[] = $filtered['peraturan_id'];
+        }
 
         // 🔥 Cek duplicate
         $exists = $this->db->query(
@@ -2431,6 +2511,105 @@ class DynamicTableService
 
             // Hapus field text Excel agar tidak bentrok insert
             unset($data[$excelField]);
+        }
+    }
+    // ======================================================
+    // 🔥 INSERT AKUN PIVOT (GENERIC UNTUK SBU/SSH/ASB/HSPK)
+    // ======================================================
+    private function insertAkunPivot(
+        string $tableKey,
+        int $masterId,
+        string $kdAkunString,
+        array $data
+    ): void {
+
+        // Mapping master → pivot
+        $pivotMap = [
+            'sbu'  => ['table' => 'sbu_akun_map',  'fk' => 'sbu_id'],
+            'ssh'  => ['table' => 'ssh_akun_map',  'fk' => 'ssh_id'],
+            'asb'  => ['table' => 'asb_akun_map',  'fk' => 'asb_id'],
+            'hspk' => ['table' => 'hspk_akun_map', 'fk' => 'hspk_id'],
+        ];
+
+        if (!isset($pivotMap[$tableKey])) {
+            return;
+        }
+
+        $pivotTable = $pivotMap[$tableKey]['table'];
+        $fkField    = $pivotMap[$tableKey]['fk'];
+
+        // 🔥 Split berdasarkan koma
+        $akunList = array_filter(array_map('trim', explode(',', $kdAkunString)));
+
+        foreach ($akunList as $akun) {
+
+            // Insert pivot
+            $this->db->insert($pivotTable, [
+                $fkField        => $masterId,
+                'kd_akun'       => $akun,
+                'kd_wilayah'    => $data['kd_wilayah'],
+                'peraturan_id'  => $data['peraturan_id']
+            ]);
+        }
+    }
+    // ======================================================
+    // 🔥 VALIDATE AKUN MAPPING (GENERIC UNTUK SBU/SSH/ASB/HSPK)
+    // ------------------------------------------------------
+    // Digunakan saat Renja/DPA menggunakan master biaya
+    // Agar akun belanja sesuai mapping pivot
+    // ======================================================
+    private function validateAkunMapping(
+        string $table,
+        array $data
+    ): void {
+
+        // Mapping foreign key → pivot table
+        $map = [
+            'sbu_id'  => ['pivot' => 'sbu_akun_map',  'fk' => 'sbu_id'],
+            'ssh_id'  => ['pivot' => 'ssh_akun_map',  'fk' => 'ssh_id'],
+            'asb_id'  => ['pivot' => 'asb_akun_map',  'fk' => 'asb_id'],
+            'hspk_id' => ['pivot' => 'hspk_akun_map', 'fk' => 'hspk_id'],
+        ];
+
+        foreach ($map as $foreignKey => $config) {
+
+            // Jika tabel ini tidak menggunakan foreign key tersebut → skip
+            if (empty($data[$foreignKey])) {
+                continue;
+            }
+
+            // kd_akun wajib ada untuk validasi
+            if (empty($data['kd_akun'])) {
+                throw new Exception("kd_akun wajib diisi untuk validasi mapping.");
+            }
+
+            $pivotTable = $config['pivot'];
+            $fkField    = $config['fk'];
+
+            // ======================================================
+            // 🔥 CEK EXIST DI PIVOT
+            // ======================================================
+            $exists = $this->db->query(
+                "SELECT id
+             FROM `$pivotTable`
+             WHERE `$fkField` = ?
+             AND `kd_akun` = ?
+             AND `kd_wilayah` = ?
+             AND `peraturan_id` = ?
+             LIMIT 1",
+                [
+                    $data[$foreignKey],
+                    $data['kd_akun'],
+                    $data['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? null,
+                    $data['peraturan_id'] ?? null
+                ]
+            )->fetch();
+
+            if (!$exists) {
+                throw new Exception(
+                    "Mapping akun tidak ditemukan untuk {$foreignKey} dengan kd_akun {$data['kd_akun']}."
+                );
+            }
         }
     }
 }

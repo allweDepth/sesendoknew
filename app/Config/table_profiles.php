@@ -61,6 +61,15 @@ return [
         'primary_key' => 'id',
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'uraian_barang',
+            'filter_by_akun' => true
+        ],
+        'pivot' => [
+        'table' => 'sbu_akun_map',
+        'foreign_key' => 'sbu_id'
+    ],
         'import' => [
             'enabled' => true,
             'allowed_roles' => ['super_admin'],
@@ -105,6 +114,15 @@ return [
         'primary_key' => 'id',
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'uraian_barang',
+            'filter_by_akun' => true
+        ],
+        'pivot' => [
+            'table' => 'ssh_akun_map',
+            'foreign_key' => 'ssh_id'
+        ],
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -134,6 +152,15 @@ return [
         'primary_key' => 'id',
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'uraian_barang',
+            'filter_by_akun' => true
+        ],
+        'pivot' => [
+            'table' => 'asb_akun_map',
+            'foreign_key' => 'asb_id'
+        ],
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -163,6 +190,15 @@ return [
         'primary_key' => 'id',
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'uraian_barang',
+            'filter_by_akun' => true //loadDropdown() otomatis tahu harus join pivot
+        ],
+        'pivot' => [
+            'table' => 'hspk_akun_map',
+            'foreign_key' => 'hspk_id'
+        ],
         'modes' => [
             'default' => [
                 'select' => ['*'],
