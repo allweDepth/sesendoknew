@@ -31,6 +31,14 @@ class DynamicController
      */
     public function index($params = null)
     {
+        $action = $_POST['action'] ?? null;
+
+        // 🔥 ROUTING KHUSUS IMPORT
+        if ($action === 'import') {
+            return $this->import();
+        }
+
+        // 🔥 DEFAULT CRUD
         $service = new DynamicTableService($_POST);
         echo $service->handle($_POST);
     }
@@ -296,11 +304,12 @@ class DynamicController
      */
     public function import()
     {
+        
         try {
 
             $profiles = require __DIR__ . '/../Config/table_profiles.php';
-            $jns = $_POST['jns'] ?? null;
-
+            $action   = $_POST['action'] ?? null;
+$jns = $action; //
             if ($jns === 'import_struktur') {
 
                 $service = new DynamicTableService();
@@ -311,7 +320,7 @@ class DynamicController
 
                 exit;
             }
-            $tableKey = $_POST['tabel'] ?? null;
+            $tableKey = $_POST['tbl'] ?? null;
             $jmlHeader = (int)($_POST['jml_header'] ?? 1);
 
             if (!$tableKey || !isset($profiles[$tableKey])) {

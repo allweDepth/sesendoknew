@@ -135,10 +135,12 @@ class FormEngine {
 			if (!valid) return;
 		}
 
-		// 🔥 Jika ada input file → gunakan FormData
 		const hasFileInput =
 			$(this.formSelector).find('input[type="file"]').length > 0;
 
+		// ==============================
+		// 🔥 IMPORT FILE (FormData)
+		// ==============================
 		if (hasFileInput) {
 			const formElement = document.querySelector(this.formSelector);
 			const formData = new FormData(formElement);
@@ -146,14 +148,21 @@ class FormEngine {
 			formData.append("action", this.state.action);
 			formData.append("tbl", this.state.tbl);
 
-			this.ajax.upload(formData, () => {
-				$(document).trigger("form:success");
+			this.ajax.request({
+				data: formData,
+				processData: false, // WAJIB
+				contentType: false, // WAJIB
+				success: () => {
+					$(document).trigger("form:success");
+				},
 			});
 
 			return;
 		}
 
-		// 🔥 Default (add/edit)
+		// ==============================
+		// 🔥 NORMAL SUBMIT
+		// ==============================
 		const formData = $(this.formSelector).serialize();
 
 		this.ajax.request({
@@ -203,23 +212,22 @@ class FormEngine {
 `;
 
 		elements.forEach((el) => {
+			// 🔥 JANGAN bungkus alert/progress/divider
+			if (["alert", "progress", "divider"].includes(el.tag)) {
+				html += this.element(el);
+				return;
+			}
 
-    // 🔥 JANGAN bungkus alert/progress/divider
-    if (["alert","progress","divider"].includes(el.tag)) {
-        html += this.element(el);
-        return;
-    }
+			const widthClass = el.prop?.width
+				? `${el.prop.width} wide column`
+				: "column";
 
-    const widthClass = el.prop?.width
-        ? `${el.prop.width} wide column`
-        : "column";
-
-    html += `
+			html += `
         <div class="${widthClass}">
             ${this.element(el)}
         </div>
     `;
-});
+		});
 
 		html += `
             </div>
@@ -264,7 +272,7 @@ class FormEngine {
 	 */
 	static element(el) {
 		console.log("PERMISSION ENGINE:", typeof PermissionEngine);
-console.log("USER ROLE:", window.USER_ROLE);
+		console.log("USER ROLE:", window.USER_ROLE);
 		const { tag, prop = {} } = el;
 		console.log("RENDER TAG:", tag);
 		if (prop.roles && !PermissionEngine.allow(window.USER_ROLE, prop.roles)) {

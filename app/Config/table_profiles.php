@@ -302,7 +302,10 @@ return [
         'table' => 'satuan_neo',
         'primary_key' => 'id',
         'import' => [
-            'enabled' => true
+            'enabled' => true,
+            'allowed_roles' => ['super_admin', 'admin_wilayah'],
+            'check_duplicate' => true,
+            'check_hierarchy' => false
         ],
         'dropdown' => [
             'value' => 'id',
@@ -384,9 +387,10 @@ return [
         'allowed_roles' => ['super_admin', 'admin_wilayah'],
         'soft_lock' => true,
 
-        'dropdown' => ['import' => [
-            'enabled' => true
-        ],
+        'dropdown' => [
+            'import' => [
+                'enabled' => true
+            ],
             'value' => 'id',
             'label' => 'judul'
         ],
@@ -458,7 +462,7 @@ return [
         'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
         'soft_lock' => true,
         'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
-        
+
         'modes' => [
             'default' => [
                 'select' => ['*'],

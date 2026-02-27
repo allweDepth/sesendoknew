@@ -214,7 +214,11 @@ class DynamicTableService
             }
 
             // date format
-            if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
+            if (
+                is_string($value)
+                && $value !== ''
+                && preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)
+            ) {
 
                 $parts = explode('/', $value);
 
@@ -397,7 +401,11 @@ class DynamicTableService
                 $filtered[$field] = 1;
             }
 
-            if (preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)) {
+            if (
+                is_string($value)
+                && $value !== ''
+                && preg_match('/^\d{1,2}\/\d{1,2}\/\d{4}$/', $value)
+            ) {
 
                 $parts = explode('/', $value);
 
@@ -478,6 +486,7 @@ class DynamicTableService
         /* =====================================================
        🔟 FINAL TRANSACTION
     ===================================================== */
+
         return $this->runTransaction(function () use ($table, $primaryKey, $id, $diff, $oldData) {
 
             $this->db->update(
@@ -554,7 +563,9 @@ class DynamicTableService
 
         $limit  = max(1, (int)($request['rows'] ?? 10));
         $page   = max(1, (int)($request['halaman'] ?? 1));
-        $search = trim($request['cari'] ?? '');
+        $search = isset($request['cari']) && is_string($request['cari'])
+            ? trim($request['cari'])
+            : '';
         $offset = ($page - 1) * $limit;
 
         // 🔥 1️⃣ Resolve Scope
@@ -1322,13 +1333,14 @@ class DynamicTableService
         $rawHeaders = $rows[$jmlHeader - 1];
 
         $columnMap = $this->buildColumnMap($table);
-
+        // var_dump($columnMap);
+        // die();
         $headers = [];
         $unknownHeaders = [];
-
+        // var_dump($rawHeaders);
         foreach ($rawHeaders as $header) {
 
-            if (empty(trim($header))) {
+            if (empty(trim((string)$header))) {
                 $headers[] = null;
                 continue;
             }
@@ -1342,7 +1354,6 @@ class DynamicTableService
                 $unknownHeaders[] = $header;
             }
         }
-
         return $this->runTransaction(function () use (
             $rows,
             $headers,
@@ -1393,9 +1404,10 @@ class DynamicTableService
 
                 $decoded = json_decode($response, true);
 
-                if (empty($decoded['success'])) {
+                if (!is_array($decoded) || empty($decoded['success'])) {
                     throw new Exception(
-                        "Error pada baris ke " . ($rowIndex + 1)
+                        "Baris " . ($rowIndex + 1) .
+                            " gagal: " . json_encode($decoded)
                     );
                 }
 
@@ -1750,39 +1762,37 @@ class DynamicTableService
     ========================================================= */
     private function normalizeSpaces(string $value): string
     {
-        $value = trim($value);
+        $value = trim((string)$value);
         return preg_replace('/\s+/u', ' ', $value);
     }
     /* =========================================================
     SANITIZE SINGLE VALUE
     ========================================================= */
-    private function sanitizeValue(string $value, ?array $rules = null): string
+    private function sanitizeValue(?string $value, ?array $rules = null): string
     {
-        // 1️⃣ Trim
-        $value = trim($value);
+        if ($value === null) {
+            return '';
+        }
 
-        // 2️⃣ Hapus control characters
+        $value = trim((string)$value);
+
+        // Hapus control characters
         $value = preg_replace('/[\x00-\x1F\x7F]/u', '', $value);
 
-        // 3️⃣ Normalize multi space
+        // Normalize multi space
         $value = preg_replace('/\s+/u', ' ', $value);
 
-        // 4️⃣ Strip dangerous HTML
+        // Strip HTML
         $value = strip_tags($value);
 
-        // 5️⃣ Case transformation (optional per profile)
         if (!empty($rules['case'])) {
-
             switch ($rules['case']) {
-
                 case 'upper':
                     $value = mb_strtoupper($value);
                     break;
-
                 case 'lower':
                     $value = mb_strtolower($value);
                     break;
-
                 case 'title':
                     $value = mb_convert_case($value, MB_CASE_TITLE);
                     break;
@@ -2004,9 +2014,13 @@ class DynamicTableService
 
         return str_contains($columns['Type'], 'date');
     }
-    private function normalizeToMySQLDateTime(string $value): string
+    private function normalizeToMySQLDateTime(?string $value): string
     {
         // 1️⃣ dd/mm/yyyy
+        if (!is_string($value) || $value === '') {
+            return '';
+        }
+
         if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $value, $m)) {
             return sprintf(
                 '%04d-%02d-%02d 00:00:00',
@@ -2038,12 +2052,22 @@ class DynamicTableService
 
         return $value;
     }
+    // ⚠ Currently unused. Reserved for future date-range validation.
     private function validateDateRange(array $data, string $start, string $end): void
     {
-        if (!empty($data[$start]) && !empty($data[$end])) {
-            if (strtotime($data[$start]) >= strtotime($data[$end])) {
-                throw new Exception("$start harus lebih kecil dari $end");
-            }
+        if (empty($data[$start]) || empty($data[$end])) {
+            return;
+        }
+
+        $startTime = strtotime($data[$start]);
+        $endTime   = strtotime($data[$end]);
+
+        if ($startTime === false || $endTime === false) {
+            throw new Exception("Format tanggal tidak valid.");
+        }
+
+        if ($startTime >= $endTime) {
+            throw new Exception("$start harus lebih kecil dari $end");
         }
     }
     private function validateTimeWindow(string $table): void
@@ -2137,11 +2161,15 @@ class DynamicTableService
     // ======================================================
     // NORMALIZE UNTUK PERBANDINGAN HEADER
     // ======================================================
-    private function normalizeForCompare(string $value): string
+    private function normalizeForCompare(?string $value): string
     {
-        return strtolower(
-            preg_replace('/[^a-z0-9]/', '', $value)
-        );
+        if (!is_string($value) || $value === '') {
+            return '';
+        }
+
+        $value = strtolower($value);
+
+        return preg_replace('/[^a-z0-9]/', '', $value);
     }
 
     // ======================================================
