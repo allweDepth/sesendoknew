@@ -63,6 +63,7 @@ console.log("FlyoutController CREATED");
 	}
 
 	open($btn) {
+		console.log("OPEN START FLYCONTRILLER", Date.now());
 		const jns = $btn.data("jns");
 		const tbl = $btn.data("tbl");
 		const id = $btn.data("id") || null;

@@ -411,36 +411,35 @@ UIConfig.aset = {
 ====================================================== */
 
 UIConfig.sbu = {
-    layout: { columns: 2 },
+    layout: { columns: 1 },
     form: {
         elements: [
             { tag: "field", prop: { label: "Kode Aset", name: "kd_aset" }},
             { tag: "field", prop: { label: "Kode Akun", name: "kd_akun" }},
             { tag: "field", prop: { label: "Uraian Barang", name: "uraian_barang" }},
             { tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" }},
-            { tag: "fieldDropdown", prop: { label: "Satuan", name: "satuan" }},
+            { tag: "fieldDropdown", prop: { label: "Satuan", name: "satuan", source: "satuan" }},
             { tag: "field", prop: { label: "Harga Satuan", name: "harga_satuan", format: "currency" }},
-            { tag: "field", prop: { label: "Tahun", name: "tahun" }}
         ]
     }
 };
 
 UIConfig.ssh = {
-    layout: { columns: 2 },
+    layout: { columns: 1 },
     form: { elements: [...UIConfig.sbu.form.elements] }
 };
 
 UIConfig.asb = {
-    layout: { columns: 2 },
+    layout: { columns: 1 },
     form: { elements: [...UIConfig.sbu.form.elements] }
 };
 
 UIConfig.hspk = {
-    layout: { columns: 2 },
+    layout: { columns: 1 },
     form: { elements: [...UIConfig.sbu.form.elements] }
 };
 UIConfig.asn = {
-    layout: { columns: 2 },
+    layout: { columns: 1 },
     form: {
         elements: [
 

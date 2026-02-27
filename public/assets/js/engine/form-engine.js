@@ -26,6 +26,7 @@ class FormEngine {
 	 * - Aktifkan event submit
 	 */
 	init() {
+		console.log("FORM INIT");
 		this.isInitialized = true;
 
 		this.bindEvents();
@@ -42,6 +43,7 @@ class FormEngine {
 	 * - Isi ke form
 	 */
 	loadData(id) {
+		console.log("LOAD DATA", id);
 		this.ajax.request({
 			data: {
 				module: this.state.module,
@@ -428,6 +430,7 @@ class FormEngine {
 	 * ============================================================
 	 */
 	loadDropdownSources() {
+		 console.log("LOAD DROPDOWN START");
 		const self = this;
 
 		$(`${this.formSelector} .ui.dropdown[data-source]`).each(function () {
