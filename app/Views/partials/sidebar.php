@@ -89,7 +89,7 @@
           <i class="brown balance scale icon"></i> Satuan
         </a>
 
-        <a class="item" href="/referensi?tbl=mapping" data-spa="client">
+        <a class="item" href="/mapping" data-spa="client">
           <i class="purple map icon"></i> Mapping
         </a>
 
