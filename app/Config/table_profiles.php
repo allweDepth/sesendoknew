@@ -61,7 +61,18 @@ return [
         'primary_key' => 'id',
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
-
+        'import' => [
+            'enabled' => true,
+            'allowed_roles' => ['super_admin'],
+            'relation_map' => [
+                'satuan' => [
+                    'target_table' => 'satuan_neo',
+                    'target_field' => 'item',
+                    'target_id'    => 'id',
+                    'store_as'     => 'satuan_id'
+                ]
+            ]
+        ],
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -305,7 +316,15 @@ return [
             'enabled' => true,
             'allowed_roles' => ['super_admin', 'admin_wilayah'],
             'check_duplicate' => true,
-            'check_hierarchy' => false
+            'check_hierarchy' => false,
+            'relation_map' => [
+                'satuan' => [
+                    'target_table' => 'satuan_neo',
+                    'target_field' => 'item',
+                    'target_id'    => 'id',
+                    'store_as'     => 'satuan_id'
+                ]
+            ]
         ],
         'dropdown' => [
             'value' => 'id',

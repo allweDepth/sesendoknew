@@ -16,13 +16,55 @@ require_once __DIR__ . '/JsonResponse.php';
  * Semua fitur lama DIPERTAHANKAN 100%
  * ============================================================
  */
-
+/**
+ * ============================================================
+ * DYNAMIC TABLE SERVICE v3.2 — ENTERPRISE SAFE IMPORT READY
+ * ============================================================
+ *
+ * ARSITEKTUR UTAMA:
+ * ------------------------------------------------------------
+ * Class ini adalah CORE BUSINESS ENGINE seluruh sistem.
+ *
+ * Semua operasi CRUD, LISTING, DROPDOWN, EXPORT, IMPORT
+ * melewati service ini.
+ *
+ * DESIGN PRINCIPLE:
+ * ------------------------------------------------------------
+ * 1️⃣ Profile-driven (berbasis table_profiles.php)
+ * 2️⃣ Schema-aware (ambil rules dari DB langsung)
+ * 3️⃣ Role-aware (authorize + scope)
+ * 4️⃣ Soft-lock aware
+ * 5️⃣ Time-window aware
+ * 6️⃣ Hierarchy-aware
+ * 7️⃣ Duplicate-aware
+ * 8️⃣ Audit trail ready
+ * 9️⃣ Transaction safe
+ *
+ * ------------------------------------------------------------
+ * 🔥 IMPORT ENGINE STATUS:
+ * - Strict mode (rollback jika ada error)
+ * - Relation mapping (text → foreign key)
+ * - Multi relation support
+ * - Relation cache (no query per row)
+ * - Duplicate & hierarchy validation
+ * - Auto session injection
+ *
+ * ------------------------------------------------------------
+ * TIDAK ADA LOGIC LAMA YANG DIHAPUS
+ * Hanya enhancement yang ditambahkan secara isolated.
+ * ============================================================
+ */
 class DynamicTableService
 {
     private DB $db;
     private array $profiles;
     private array $user;
-
+    // ======================================================
+    // 🔥 CACHE RELATION IMPORT
+    // Digunakan untuk menyimpan hasil lookup relasi
+    // agar tidak query database per baris Excel
+    // ======================================================
+    private array $relationCache = [];
     /* =========================================================
         INTERNAL CACHE (ANTI DOUBLE QUERY)
         ========================================================= */
@@ -1299,19 +1341,20 @@ class DynamicTableService
         }
     }
     /* =========================================================
-    IMPORT STRICT MODE (NO PARTIAL INSERT)
-    ========================================================= */
-    /* =========================================================
     IMPORT STRICT MODE (ENTERPRISE SAFE)
     ---------------------------------------------------------
-    - Role aware
-    - Config aware
-    - Duplicate aware
-    - Hierarchy aware
-    - Soft lock aware
-    - Auto session aware
-    - Strict fail (1 error stop)
-    ========================================================= */
+    Alur besar import:
+    1️⃣ Validasi profile & role
+    2️⃣ Load Excel
+    3️⃣ Mapping header Excel → kolom DB
+    4️⃣ Loop setiap baris
+    5️⃣ Resolve relation_map (text → FK)
+    6️⃣ Inject auto session
+    7️⃣ Validate duplicate
+    8️⃣ Validate hierarchy
+    9️⃣ Insert via handle('add')
+    🔟 Jika ada 1 error → rollback semua
+   ========================================================= */
     public function importStrict(string $tableKey, string $filePath, int $jmlHeader = 1): string
     {
         if (!isset($this->profiles[$tableKey])) {
@@ -1331,7 +1374,6 @@ class DynamicTableService
         }
 
         $rawHeaders = $rows[$jmlHeader - 1];
-
         $columnMap = $this->buildColumnMap($table);
         // var_dump($columnMap);
         // die();
@@ -1339,7 +1381,6 @@ class DynamicTableService
         $unknownHeaders = [];
         // var_dump($rawHeaders);
         foreach ($rawHeaders as $header) {
-
             if (empty(trim((string)$header))) {
                 $headers[] = null;
                 continue;
@@ -1365,8 +1406,16 @@ class DynamicTableService
         ) {
 
             $inserted = 0;
-
+            // ======================================================
+            // 🔥 PENAMPUNG ERROR RELASI
+            // Jika ada satu saja error → seluruh import dibatalkan
+            // ======================================================
+            $errorRows = [];
+            // 🔥 Hitung total baris data (untuk summary)
+            $totalRows = count(array_slice($rows, $jmlHeader));
             foreach (array_slice($rows, $jmlHeader) as $rowIndex => $row) {
+
+                $excelRow = $rowIndex + $jmlHeader + 1;
 
                 if (empty(array_filter($row))) continue;
 
@@ -1378,42 +1427,110 @@ class DynamicTableService
                     }
                 }
 
-                if (!empty($profile['auto_session'])) {
-                    foreach ($profile['auto_session'] as $field) {
-                        if (!isset($data[$field]) && isset($this->user[$field])) {
-                            $data[$field] = $this->user[$field];
+                try {
+
+                    // ======================================================
+                    // 🔥 RELATION RESOLUTION
+                    // ======================================================
+                    if (!empty($config['relation_map'])) {
+
+                        $this->resolveImportRelations(
+                            $data,
+                            $config['relation_map'],
+                            $rowIndex,
+                            $errorRows
+                        );
+
+                        if (!empty($errorRows)) {
+                            throw new Exception(
+                                "Relasi tidak valid: " . json_encode($errorRows)
+                            );
                         }
                     }
-                }
 
-                if (($config['check_duplicate'] ?? false)) {
-                    $this->validateDuplicate($table, $data);
-                }
+                    // ======================================================
+                    // 🔥 AUTO SESSION
+                    // ======================================================
+                    if (!empty($profile['auto_session'])) {
+                        foreach ($profile['auto_session'] as $field) {
+                            if (!isset($data[$field]) && isset($this->user[$field])) {
+                                $data[$field] = $this->user[$field];
+                            }
+                        }
+                    }
 
-                if (($config['check_hierarchy'] ?? false)) {
-                    $this->validateHierarchy($table, $data);
-                }
+                    // ======================================================
+                    // 🔥 DUPLICATE VALIDATION
+                    // ======================================================
+                    if (($config['check_duplicate'] ?? false)) {
+                        $this->validateDuplicate($table, $data);
+                    }
 
-                $response = $this->handle(array_merge(
-                    $data,
-                    [
-                        'action' => 'add',
-                        'tbl'    => $tableKey
-                    ]
-                ));
+                    // ======================================================
+                    // 🔥 HIERARCHY VALIDATION
+                    // ======================================================
+                    if (($config['check_hierarchy'] ?? false)) {
+                        $this->validateHierarchy($table, $data);
+                    }
 
-                $decoded = json_decode($response, true);
+                    // ======================================================
+                    // 🔥 INSERT VIA HANDLE
+                    // ======================================================
+                    $response = $this->handle(array_merge(
+                        $data,
+                        [
+                            'action' => 'add',
+                            'tbl'    => $tableKey
+                        ]
+                    ));
 
-                if (!is_array($decoded) || empty($decoded['success'])) {
+                    $decoded = json_decode($response, true);
+
+                    if (!is_array($decoded) || empty($decoded['success'])) {
+
+                        $errorRows[] = [
+                            'row' => $excelRow,
+                            'error' => $decoded['message'] ?? 'Insert gagal',
+                            'detail' => $decoded['errors'] ?? null
+                        ];
+
+                        throw new Exception("Insert gagal.");
+                    }
+
+                    $inserted++;
+                } catch (\Throwable $e) {
+
+                    $errorRows[] = [
+                        'row' => $excelRow,
+                        'error' => $e->getMessage()
+                    ];
+
                     throw new Exception(
-                        "Baris " . ($rowIndex + 1) .
-                            " gagal: " . json_encode($decoded)
+                        "Baris Excel {$excelRow} gagal → " . $e->getMessage()
                     );
                 }
-
-                $inserted++;
             }
 
+            // ======================================================
+            // 🔥 JIKA ADA ERROR RELASI → KEMBALIKAN DETAIL ERROR
+            // ======================================================
+            if (!empty($errorRows)) {
+
+                return JsonResponse::error(
+                    "Import gagal. Tidak ada data yang disimpan.",
+                    422,
+                    [
+                        'total_rows' => $totalRows ?? 0,
+                        'inserted'   => 0,
+                        'failed'     => count($errorRows),
+                        'details'    => $errorRows
+                    ]
+                );
+            }
+
+            // ======================================================
+            // 🔥 JIKA SEMUA VALID → SUCCESS
+            // ======================================================
             return JsonResponse::success("Import berhasil.", [
                 'inserted' => $inserted
             ]);
@@ -2200,5 +2317,94 @@ class DynamicTableService
         }
 
         return $map;
+    }
+    // ======================================================
+    // 🔥 RESOLVE IMPORT RELATIONS (STRICT + CACHE + MULTI MAP)
+    // ------------------------------------------------------
+    // - Tidak auto create
+    // - Support multi relation
+    // - Mengisi foreign key berdasarkan text Excel
+    // - Menyimpan error per baris
+    // ======================================================
+    private function resolveImportRelations(
+        array &$data,          // Data baris Excel (by reference)
+        array $relationMap,    // Mapping relasi dari profile
+        int $rowIndex,         // Index baris Excel
+        array &$errorRows      // Array penampung error (by reference)
+    ): void {
+
+        // Loop semua relation_map yang didefinisikan di profile
+        foreach ($relationMap as $excelField => $map) {
+
+            // Jika kolom tidak ada atau kosong → skip
+            if (empty($data[$excelField])) {
+                continue;
+            }
+
+            // Ambil konfigurasi target
+            $targetTable = $map['target_table'];   // contoh: satuan_neo
+            $targetField = $map['target_field'];   // contoh: item
+            $targetId    = $map['target_id'];      // contoh: id
+            $storeAs     = $map['store_as'];       // contoh: satuan_id
+
+            // Normalisasi value untuk lookup (case insensitive)
+            $lookupValue = strtolower(trim((string)$data[$excelField]));
+
+            // Buat cache key unik
+            $cacheKey = "{$targetTable}|{$targetField}|{$lookupValue}";
+
+            // ======================================================
+            // 🔥 1️⃣ CEK CACHE DULU
+            // ======================================================
+            if (isset($this->relationCache[$cacheKey])) {
+
+                // Ambil ID dari cache
+                $data[$storeAs] = $this->relationCache[$cacheKey];
+
+                // Hapus field text asli
+                unset($data[$excelField]);
+
+                continue;
+            }
+
+            // ======================================================
+            // 🔥 2️⃣ QUERY DATABASE
+            // ======================================================
+            $found = $this->db->query(
+                "SELECT `$targetId`
+             FROM `$targetTable`
+             WHERE LOWER(`$targetField`) = ?
+             LIMIT 1",
+                [$lookupValue]
+            )->fetch();
+
+            // ======================================================
+            // 🔥 3️⃣ JIKA TIDAK DITEMUKAN → SIMPAN ERROR
+            // ======================================================
+            if (!$found) {
+
+                $errorRows[] = [
+                    'row'    => $rowIndex + 1,          // nomor baris Excel
+                    'field'  => $excelField,            // nama kolom Excel
+                    'value'  => $data[$excelField],     // nilai yang gagal
+                    'message' => "Tidak ditemukan di tabel {$targetTable}"
+                ];
+
+                continue;
+            }
+
+            // ======================================================
+            // 🔥 4️⃣ SIMPAN KE CACHE
+            // ======================================================
+            $this->relationCache[$cacheKey] = $found[$targetId];
+
+            // ======================================================
+            // 🔥 5️⃣ SIMPAN KE DATA FINAL
+            // ======================================================
+            $data[$storeAs] = $found[$targetId];
+
+            // Hapus field text Excel agar tidak bentrok insert
+            unset($data[$excelField]);
+        }
     }
 }
