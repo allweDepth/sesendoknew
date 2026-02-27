@@ -74,7 +74,7 @@ UIConfig.pengaturan = {
 
 UIConfig.periode_rpjmd = {
 
-    layout: { columns: 2 },
+    layout: { columns: 1 },
 
     validation: {
         periode_mulai: { required: true },

@@ -64,41 +64,38 @@ class FormEngine {
 	 * ============================================================
 	 */
 	populateForm(data) {
+		Object.keys(data).forEach((key) => {
+			const field = $(`${this.formSelector} [name="${key}"]`);
+			if (!field.length) return;
 
-    Object.keys(data).forEach(key => {
+			if (field.attr("type") === "checkbox") {
+				field.prop("checked", data[key] == 1);
+				return;
+			}
 
-        const field = $(`${this.formSelector} [name="${key}"]`);
-        if (!field.length) return;
+			if (field.closest(".ui.dropdown").length) {
+				field.closest(".ui.dropdown").dropdown("set selected", data[key]);
+				return;
+			}
 
-        if (field.attr("type") === "checkbox") {
-            field.prop("checked", data[key] == 1);
-            return;
-        }
+			if (field.closest(".ui.calendar").length) {
+				const calendar = field.closest(".ui.calendar");
+				const type = calendar.calendar("get type");
 
-        if (field.closest(".ui.dropdown").length) {
-            field.closest(".ui.dropdown").dropdown("set selected", data[key]);
-            return;
-        }
+				let value = data[key];
 
-        if (field.closest(".ui.calendar").length) {
+				// AUTO YEAR DETECT
+				if (type === "year" && /^\d{4}$/.test(value)) {
+					value = new Date(value, 0, 1);
+				}
 
-            const calendar = field.closest(".ui.calendar");
-            const type = calendar.calendar('get type');
+				calendar.calendar("set date", value);
+				return;
+			}
 
-            let value = data[key];
-
-            // AUTO YEAR DETECT
-            if (type === "year" && /^\d{4}$/.test(value)) {
-                value = new Date(value, 0, 1);
-            }
-
-            calendar.calendar("set date", value);
-            return;
-        }
-
-        field.val(data[key]);
-    });
-}
+			field.val(data[key]);
+		});
+	}
 
 	/**
 	 * ============================================================
@@ -120,37 +117,34 @@ class FormEngine {
 	 * ============================================================
 	 */
 	/**
- * ============================================================
- * SUBMIT FORM
- * ============================================================
- */
-submit() {
+	 * ============================================================
+	 * SUBMIT FORM
+	 * ============================================================
+	 */
+	submit() {
+		const formData = $(this.formSelector).serialize();
 
-    const formData = $(this.formSelector).serialize();
+		// Ambil config sesuai tabel aktif
+		const config = UIConfig[this.state.tbl];
 
-    // Ambil config sesuai tabel aktif
-    const config = UIConfig[this.state.tbl];
+		// Jalankan validation kalau ada
+		if (config?.validation) {
+			const valid = ValidationEngine.validate(
+				this.formSelector,
+				config.validation,
+			);
 
-    // Jalankan validation kalau ada
-    if (config?.validation) {
+			if (!valid) return; // Stop submit kalau tidak valid
+		}
 
-        const valid = ValidationEngine.validate(
-            this.formSelector,
-            config.validation
-        );
-
-        if (!valid) return; // Stop submit kalau tidak valid
-    }
-
-    // Kirim ke server
-    this.ajax.request({
-        data: formData,
-        success: () => {
-            $(document).trigger("form:success");
-        },
-    });
-
-}
+		// Kirim ke server
+		this.ajax.request({
+			data: formData,
+			success: () => {
+				$(document).trigger("form:success");
+			},
+		});
+	}
 
 	/**
 	 * ============================================================
@@ -176,40 +170,47 @@ submit() {
 	 * ============================================================
 	 */
 	static render(target, elements = [], instance = null, layout = {}) {
+		const columnMap = {
+			1: "one",
+			2: "two",
+			3: "three",
+			4: "four",
+		};
 
-    const columnMap = {
-        1: "one",
-        2: "two",
-        3: "three",
-        4: "four"
-    };
+		const columns = layout.columns || 1;
+		const columnClass = columnMap[columns] || "one";
 
-    const columns = layout.columns || 1;
-    const columnClass = columnMap[columns] || "one";
-
-    let html = `
-        <form class="ui form" id="${instance?.formSelector?.replace('#','') || 'form_flyout'}">
+		let html = `
+        <form class="ui form" id="${instance?.formSelector?.replace("#", "") || "form_flyout"}">
             <div class="ui ${columnClass} column grid">
     `;
 
-    elements.forEach(el => {
-        html += `
-            <div class="column">
-                ${this.element(el)}
-            </div>
-        `;
-    });
+		elements.forEach((el) => {
+			const widthClass = el.prop?.width
+				? `${el.prop.width} wide column`
+				: "column";
 
-    html += `
+			html += `
+        <div class="${widthClass}">
+            ${this.element(el)}
+        </div>
+    `;
+		});
+
+		html += `
             </div>
         </form>
     `;
 
-    $(target).html(html);
+		$(target).html(html);
 
-    $(target).find('.ui.dropdown').dropdown();
-    $(target).find('.ui.checkbox').checkbox();
-}
+		$(target).find(".ui.dropdown").dropdown();
+		$(target).find(".ui.checkbox").checkbox();
+
+		// 🔥 WAJIB INI
+		const rangeElements = elements.filter((e) => e.tag === "rangeCalendar");
+		UIComponents.initRange(rangeElements);
+	}
 
 	/**
 	 * ============================================================
@@ -228,8 +229,8 @@ submit() {
 	static element(el) {
 		const { tag, prop = {} } = el;
 		if (prop.roles && !PermissionEngine.allow(window.USER_ROLE, prop.roles)) {
-    return "";
-}
+			return "";
+		}
 		switch (tag) {
 			case "fieldAction":
 				return this.fieldWrapper(this.inputAction(prop), prop);
@@ -502,23 +503,22 @@ submit() {
 		UIComponents.initRange(rangeNames);
 	}
 	/**
- * ============================================================
- * APPLY READONLY MODE
- * ============================================================
- */
-applyReadonly(isReadonly = false) {
+	 * ============================================================
+	 * APPLY READONLY MODE
+	 * ============================================================
+	 */
+	applyReadonly(isReadonly = false) {
+		if (!isReadonly) return;
 
-    if (!isReadonly) return;
+		const form = $(this.formSelector);
 
-    const form = $(this.formSelector);
+		// Disable semua input & textarea
+		form.find("input, textarea").attr("disabled", true);
 
-    // Disable semua input & textarea
-    form.find('input, textarea').attr('disabled', true);
+		// Disable dropdown fomantic
+		form.find(".ui.dropdown").addClass("disabled");
 
-    // Disable dropdown fomantic
-    form.find('.ui.dropdown').addClass('disabled');
-
-    // Disable checkbox
-    form.find('.ui.checkbox').addClass('disabled');
-}
+		// Disable checkbox
+		form.find(".ui.checkbox").addClass("disabled");
+	}
 }
