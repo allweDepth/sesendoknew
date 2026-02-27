@@ -124,22 +124,38 @@ class FormEngine {
 	 * ============================================================
 	 */
 	submit() {
-		const formData = $(this.formSelector).serialize();
-
-		// Ambil config sesuai tabel aktif
 		const config = UIConfig[this.state.tbl];
 
-		// Jalankan validation kalau ada
+		// Validasi tetap jalan
 		if (config?.validation) {
 			const valid = ValidationEngine.validate(
 				this.formSelector,
 				config.validation,
 			);
-
-			if (!valid) return; // Stop submit kalau tidak valid
+			if (!valid) return;
 		}
 
-		// Kirim ke server
+		// 🔥 Jika ada input file → gunakan FormData
+		const hasFileInput =
+			$(this.formSelector).find('input[type="file"]').length > 0;
+
+		if (hasFileInput) {
+			const formElement = document.querySelector(this.formSelector);
+			const formData = new FormData(formElement);
+
+			formData.append("action", this.state.action);
+			formData.append("tbl", this.state.tbl);
+
+			this.ajax.upload(formData, () => {
+				$(document).trigger("form:success");
+			});
+
+			return;
+		}
+
+		// 🔥 Default (add/edit)
+		const formData = $(this.formSelector).serialize();
+
 		this.ajax.request({
 			data: formData,
 			success: () => {
@@ -187,16 +203,23 @@ class FormEngine {
 `;
 
 		elements.forEach((el) => {
-			const widthClass = el.prop?.width
-				? `${el.prop.width} wide column`
-				: "column";
 
-			html += `
+    // 🔥 JANGAN bungkus alert/progress/divider
+    if (["alert","progress","divider"].includes(el.tag)) {
+        html += this.element(el);
+        return;
+    }
+
+    const widthClass = el.prop?.width
+        ? `${el.prop.width} wide column`
+        : "column";
+
+    html += `
         <div class="${widthClass}">
             ${this.element(el)}
         </div>
     `;
-		});
+});
 
 		html += `
             </div>
@@ -205,6 +228,19 @@ class FormEngine {
 		$(target).html(html);
 
 		$(target).find(".ui.dropdown").dropdown();
+		// 🔥 APPLY DEFAULT VALUE
+		elements.forEach((el) => {
+			if (el.prop?.default) {
+				const field = $(target).find(`[name="${el.prop.name}"]`);
+				if (field.closest(".ui.dropdown").length) {
+					field
+						.closest(".ui.dropdown")
+						.dropdown("set selected", el.prop.default);
+				} else {
+					field.val(el.prop.default);
+				}
+			}
+		});
 		$(target).find(".ui.checkbox").checkbox();
 
 		// 🔥 WAJIB INI
@@ -227,7 +263,10 @@ class FormEngine {
 	 * ============================================================
 	 */
 	static element(el) {
+		console.log("PERMISSION ENGINE:", typeof PermissionEngine);
+console.log("USER ROLE:", window.USER_ROLE);
 		const { tag, prop = {} } = el;
+		console.log("RENDER TAG:", tag);
 		if (prop.roles && !PermissionEngine.allow(window.USER_ROLE, prop.roles)) {
 			return "";
 		}
@@ -303,7 +342,13 @@ class FormEngine {
                         ${prop.label || ""}
                     </h4>
                 `;
+			case "fieldMessage":
+				return UIComponents.message(prop);
+			case "alert":
+				return UIComponents.alert(prop);
 
+			case "progress":
+				return UIComponents.progress(prop);
 			default:
 				return "";
 		}
@@ -430,7 +475,7 @@ class FormEngine {
 	 * ============================================================
 	 */
 	loadDropdownSources() {
-		 console.log("LOAD DROPDOWN START");
+		console.log("LOAD DROPDOWN START");
 		const self = this;
 
 		$(`${this.formSelector} .ui.dropdown[data-source]`).each(function () {

@@ -85,7 +85,73 @@ class UIComponents {
         </div>
         `;
 	}
+	// ==================================================
+	// UI MASSAGE
+	// ==================================================
+static message(prop = {}) {
 
+    const {
+        label = "",
+        header = "",
+        html = "",
+        type = "info",          // info | warning | error | success
+        icon = null,            // ex: "info circle"
+        size = "",              // small | large
+        compact = false,
+        floating = false,
+        shadow = false,
+        list = [],              // array of string
+        dismissible = false,
+        subtle = false,         // soft style
+        className = ""
+    } = prop;
+
+    const iconHtml = icon
+        ? `<i class="${icon} icon"></i>`
+        : "";
+
+    const headerHtml = header
+        ? `<div class="header">${header}</div>`
+        : "";
+
+    const listHtml = list.length
+        ? `<ul class="list">
+            ${list.map(item => `<li>${item}</li>`).join("")}
+           </ul>`
+        : "";
+
+    const subtleClass = subtle ? "basic" : "";
+    const compactClass = compact ? "compact" : "";
+    const floatingClass = floating ? "floating" : "";
+    const shadowStyle = shadow
+        ? "style='box-shadow:0 4px 12px rgba(0,0,0,0.08);'"
+        : "";
+
+    const dismissBtn = dismissible
+        ? `<i class="close icon message-close"></i>`
+        : "";
+
+    return `
+        <div class="field ${className}">
+            ${label ? `<label>${label}</label>` : ""}
+
+            <div class="ui ${size} ${type} ${subtleClass} 
+                        ${compactClass} ${floatingClass} 
+                        message"
+                 ${shadowStyle}>
+
+                ${dismissBtn}
+                ${iconHtml}
+
+                <div class="content">
+                    ${headerHtml}
+                    ${html}
+                    ${listHtml}
+                </div>
+            </div>
+        </div>
+    `;
+}
 	// ==================================================
 	// RANGE CALENDAR
 	// ==================================================
@@ -124,6 +190,7 @@ class UIComponents {
 
     </div>
     `;
+		
 	}
 
 	// ==================================================
@@ -157,9 +224,54 @@ class UIComponents {
 			});
 		});
 	}
+	// ==================================================
+// ENTERPRISE ALERT
+// ==================================================
+static alert(prop = {}) {
+
+    const {
+        variant = "info",
+        title = "",
+        message = "",
+        icon = null
+    } = prop;
+
+    return `
+        <div class="field">
+            <div class="ui ${variant} message">
+                ${icon ? `<i class="${icon} icon"></i>` : ""}
+                <div class="content">
+                    ${title ? `<div class="header">${title}</div>` : ""}
+                    ${message}
+                </div>
+            </div>
+        </div>
+    `;
+}
+// ==================================================
+// ENTERPRISE PROGRESS
+// ==================================================
+static progress(prop = {}) {
+
+    const {
+        percent = 0,
+        label = "Processing...",
+        size = "small",
+        color = "blue"
+    } = prop;
+
+    return `
+        <div class="ui ${size} ${color} progress ds-progress" data-percent="${percent}">
+            <div class="bar" style="width:${percent}%"></div>
+            <div class="label">${label}</div>
+        </div>
+    `;
+}
 }
 // REGISTER ALL COMPONENTS
-
+UIComponentRegistry.register("fieldMessage", (p) =>
+    UIComponents.message(p)
+);
 UIComponentRegistry.register("input", (p) =>
 	UIComponents.input(p.label, p.name, p.type || "text"),
 );
@@ -187,4 +299,15 @@ UIComponentRegistry.register("rangeCalendar", (p) =>
 
 UIComponentRegistry.register("dropdown", (p) =>
 	UIComponents.dropdown(p.label, p.name, p.options || []),
+);
+// ======================================================
+// REGISTER ENTERPRISE COMPONENTS
+// ======================================================
+
+UIComponentRegistry.register("alert", (p) =>
+    UIComponents.alert(p)
+);
+
+UIComponentRegistry.register("progress", (p) =>
+    UIComponents.progress(p)
 );

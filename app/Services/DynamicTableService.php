@@ -1319,7 +1319,29 @@ class DynamicTableService
             return JsonResponse::error("File kosong atau header tidak sesuai.");
         }
 
-        $headers = array_map([$this, 'normalizeHeader'], $rows[$jmlHeader - 1]);
+        $rawHeaders = $rows[$jmlHeader - 1];
+
+        $columnMap = $this->buildColumnMap($table);
+
+        $headers = [];
+        $unknownHeaders = [];
+
+        foreach ($rawHeaders as $header) {
+
+            if (empty(trim($header))) {
+                $headers[] = null;
+                continue;
+            }
+
+            $normalized = $this->normalizeForCompare($header);
+
+            if (isset($columnMap[$normalized])) {
+                $headers[] = $columnMap[$normalized];
+            } else {
+                $headers[] = null;
+                $unknownHeaders[] = $header;
+            }
+        }
 
         return $this->runTransaction(function () use (
             $rows,
@@ -2111,5 +2133,44 @@ class DynamicTableService
                 throw new Exception("Di luar periode input yang diizinkan.");
             }
         }
+    }
+    // ======================================================
+    // NORMALIZE UNTUK PERBANDINGAN HEADER
+    // ======================================================
+    private function normalizeForCompare(string $value): string
+    {
+        return strtolower(
+            preg_replace('/[^a-z0-9]/', '', $value)
+        );
+    }
+
+    // ======================================================
+    // BUILD COLUMN MAP BERDASARKAN KOLOM TABEL
+    // ======================================================
+    private function buildColumnMap(string $table): array
+    {
+        $columns = $this->getTableColumns($table);
+
+        $map = [];
+        $collision = [];
+
+        foreach ($columns as $col) {
+
+            $normalized = $this->normalizeForCompare($col);
+
+            if (isset($map[$normalized])) {
+                $collision[] = $col;
+            } else {
+                $map[$normalized] = $col;
+            }
+        }
+
+        if (!empty($collision)) {
+            throw new Exception(
+                "Collision kolom terdeteksi di tabel {$table}."
+            );
+        }
+
+        return $map;
     }
 }

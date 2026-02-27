@@ -301,6 +301,9 @@ return [
     'satuan' => [
         'table' => 'satuan_neo',
         'primary_key' => 'id',
+        'import' => [
+            'enabled' => true
+        ],
         'dropdown' => [
             'value' => 'id',
             'label' => 'item',  // 🔥 ini yang benar
@@ -336,6 +339,9 @@ return [
         'primary_key' => 'id',
         'allowed_roles' => ['super_admin', 'admin_wilayah'],
         'soft_lock' => true,
+        'import' => [
+            'enabled' => true
+        ],
         'modes' => [
             'default' => [
                 'select' => ['id', 'kode', 'uraian'],
@@ -355,6 +361,9 @@ return [
         'primary_key' => 'id',
         'allowed_roles' => ['super_admin', 'admin_wilayah'],
         'soft_lock' => true,
+        'import' => [
+            'enabled' => true
+        ],
         'modes' => [
             'default' => [
                 'select' => ['id', 'kode', 'uraian', 'status'],
@@ -375,7 +384,9 @@ return [
         'allowed_roles' => ['super_admin', 'admin_wilayah'],
         'soft_lock' => true,
 
-        'dropdown' => [
+        'dropdown' => ['import' => [
+            'enabled' => true
+        ],
             'value' => 'id',
             'label' => 'judul'
         ],
@@ -400,6 +411,9 @@ return [
         'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
         'soft_lock' => true,
         'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
+        'import' => [
+            'enabled' => true
+        ],
         'modes' => [
             'default' => [
                 'select' => ['id', 'nama_perusahaan', 'npwp'],
@@ -423,6 +437,9 @@ return [
         'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
         'soft_lock' => true,
         'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
+        'import' => [
+            'enabled' => true
+        ],
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -441,6 +458,7 @@ return [
         'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
         'soft_lock' => true,
         'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
+        
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -1254,7 +1272,6 @@ return [
                 ]
             ]
         ],
-
         // ==========================
         // IMPORT (tidak dipakai)
         // ==========================

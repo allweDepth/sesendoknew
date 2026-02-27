@@ -12,7 +12,7 @@ class FlyoutController {
 		this.$modal = null;
 		this.activeContainer = "flyout";
 		this.ajax = window.Ajax;
-console.log("FlyoutController CREATED");
+		console.log("FlyoutController CREATED");
 		$(document).ready(() => {
 			this.$flyout = $("#mainContext .sidebarkanan");
 			this.$modal = $("#mainModal");
@@ -66,6 +66,12 @@ console.log("FlyoutController CREATED");
 		console.log("OPEN START FLYCONTRILLER", Date.now());
 		const jns = $btn.data("jns");
 		const tbl = $btn.data("tbl");
+		const configKey =
+    $btn.data("config") ||
+    (window.UIConfig[tbl] && window.UIConfig[tbl][jns]
+        ? `${tbl}.${jns}`
+        : tbl);
+
 		const id = $btn.data("id") || null;
 		const container = $btn.data("container") || "flyout";
 
@@ -85,7 +91,7 @@ console.log("FlyoutController CREATED");
 			formSelector: formSelector,
 		});
 		// 🔥 Render pakai instance/ 🔥 RENDER DULU
-		const config = this.buildConfig(jns, tbl);
+		const config = this.buildConfig(jns, configKey);
 
 		FormEngine.render(
 			$(formSelector),
@@ -142,38 +148,28 @@ console.log("FlyoutController CREATED");
 	// 	}
 	// }
 
-	buildConfig(jenis, tbl) {
+	buildConfig(jenis, configKey) {
 		if (!window.UIConfig) return { elements: [] };
 
-		let config = window.UIConfig[tbl];
+		// Support nested key (ex: satuan.import)
+		const keys = configKey.split(".");
+		let config = window.UIConfig;
 
-		// 🔥 FALLBACK UNTUK STRUKTUR NESTED LAMA
-		if (!config) {
-			Object.keys(window.UIConfig).forEach((parentKey) => {
-				const parent = window.UIConfig[parentKey];
-				if (parent && parent[tbl]) {
-					config = parent[tbl];
-				}
-			});
-		}
+		keys.forEach((k) => {
+			if (config) config = config[k];
+		});
 
 		if (!config) {
-			console.warn("Flyout config tidak ditemukan:", tbl);
+			console.warn("Flyout config tidak ditemukan:", configKey);
 			return { elements: [] };
 		}
 
-		// 🔥 STRUCTURE BARU (FLAT)
 		if (config.form && Array.isArray(config.form.elements)) {
 			return {
 				elements: config.form.elements,
 				layout: config.layout || {},
 				validation: config.validation || {},
 			};
-		}
-
-		// 🔥 STRUCTURE LAMA (ARRAY)
-		if (Array.isArray(config)) {
-			return { elements: config };
 		}
 
 		return { elements: [] };
