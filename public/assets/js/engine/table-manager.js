@@ -284,7 +284,7 @@ if (!config) {
 			html += `
 				<td class="collapsing">
 					<div class="ui mini basic icon buttons">
-						<button class="ui button"
+						<button class="ui button" type="button" 
 								data-ui="open-form"
 								data-container="flyout"
 								data-jns="edit"
@@ -292,7 +292,7 @@ if (!config) {
 								data-id="${row.id}">
 								<i class="edit icon"></i>
 						</button>
-						<button class="ui red button" data-action="delete">
+						<button  type="button" class="ui red button" data-action="delete">
 							<i class="trash icon"></i>
 						</button>
 					</div>

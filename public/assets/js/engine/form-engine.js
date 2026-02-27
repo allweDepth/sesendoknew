@@ -181,9 +181,8 @@ class FormEngine {
 		const columnClass = columnMap[columns] || "one";
 
 		let html = `
-        <form class="ui form" id="${instance?.formSelector?.replace("#", "") || "form_flyout"}">
-            <div class="ui ${columnClass} column grid">
-    `;
+    <div class="ui ${columnClass} column grid">
+`;
 
 		elements.forEach((el) => {
 			const widthClass = el.prop?.width
@@ -199,7 +198,6 @@ class FormEngine {
 
 		html += `
             </div>
-        </form>
     `;
 
 		$(target).html(html);

@@ -12,7 +12,7 @@ class FlyoutController {
 		this.$modal = null;
 		this.activeContainer = "flyout";
 		this.ajax = window.Ajax;
-
+console.log("FlyoutController CREATED");
 		$(document).ready(() => {
 			this.$flyout = $("#mainContext .sidebarkanan");
 			this.$modal = $("#mainModal");
@@ -34,7 +34,13 @@ class FlyoutController {
 		const self = this;
 
 		// GLOBAL OPEN FORM
-		$(document).on("click", '[data-ui="open-form"]', function (e) {
+		// =======================================
+		// OPEN FORM (ANTI DOUBLE BINDING)
+		// =======================================
+
+		$(document).off("click.openForm");
+
+		$(document).on("click.openForm", '[data-ui="open-form"]', function (e) {
 			e.preventDefault();
 			self.open($(this));
 		});
@@ -136,40 +142,39 @@ class FlyoutController {
 	// }
 
 	buildConfig(jenis, tbl) {
+		if (!window.UIConfig) return { elements: [] };
 
-    if (!window.UIConfig) return { elements: [] };
+		let config = window.UIConfig[tbl];
 
-    let config = window.UIConfig[tbl];
+		// 🔥 FALLBACK UNTUK STRUKTUR NESTED LAMA
+		if (!config) {
+			Object.keys(window.UIConfig).forEach((parentKey) => {
+				const parent = window.UIConfig[parentKey];
+				if (parent && parent[tbl]) {
+					config = parent[tbl];
+				}
+			});
+		}
 
-    // 🔥 FALLBACK UNTUK STRUKTUR NESTED LAMA
-    if (!config) {
-        Object.keys(window.UIConfig).forEach(parentKey => {
-            const parent = window.UIConfig[parentKey];
-            if (parent && parent[tbl]) {
-                config = parent[tbl];
-            }
-        });
-    }
+		if (!config) {
+			console.warn("Flyout config tidak ditemukan:", tbl);
+			return { elements: [] };
+		}
 
-    if (!config) {
-        console.warn("Flyout config tidak ditemukan:", tbl);
-        return { elements: [] };
-    }
+		// 🔥 STRUCTURE BARU (FLAT)
+		if (config.form && Array.isArray(config.form.elements)) {
+			return {
+				elements: config.form.elements,
+				layout: config.layout || {},
+				validation: config.validation || {},
+			};
+		}
 
-    // 🔥 STRUCTURE BARU (FLAT)
-    if (config.form && Array.isArray(config.form.elements)) {
-        return {
-            elements: config.form.elements,
-            layout: config.layout || {},
-            validation: config.validation || {},
-        };
-    }
+		// 🔥 STRUCTURE LAMA (ARRAY)
+		if (Array.isArray(config)) {
+			return { elements: config };
+		}
 
-    // 🔥 STRUCTURE LAMA (ARRAY)
-    if (Array.isArray(config)) {
-        return { elements: config };
-    }
-
-    return { elements: [] };
-}
+		return { elements: [] };
+	}
 }
