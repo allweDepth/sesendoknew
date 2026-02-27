@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 26 Feb 2026 pada 18.07
+-- Waktu pembuatan: 27 Feb 2026 pada 16.07
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -73,31 +73,39 @@ CREATE TABLE `anggaran_program_renstra_neo` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `asb_akun_map`
+--
+
+CREATE TABLE `asb_akun_map` (
+  `id` int(11) NOT NULL,
+  `asb_id` int(11) NOT NULL,
+  `kd_akun` varchar(50) NOT NULL,
+  `kd_wilayah` varchar(25) NOT NULL,
+  `peraturan_id` int(11) NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `asb_neo`
 --
 
 CREATE TABLE `asb_neo` (
-  `id` int(8) NOT NULL,
+  `id` int(11) NOT NULL,
   `kd_wilayah` varchar(25) NOT NULL,
   `tahun` year(4) NOT NULL,
-  `kd_aset` varchar(25) NOT NULL,
-  `uraian_barang` varchar(400) NOT NULL,
-  `spesifikasi` text DEFAULT NULL,
-  `satuan` varchar(400) NOT NULL,
-  `harga_satuan` decimal(12,0) NOT NULL,
-  `tkdn` varchar(400) DEFAULT NULL,
-  `merek` varchar(400) DEFAULT NULL,
-  `kd_akun` text NOT NULL,
-  `peraturan` varchar(255) NOT NULL,
-  `disable` tinyint(1) NOT NULL DEFAULT 0,
-  `aksi` varchar(255) DEFAULT NULL,
-  `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `uraian` text NOT NULL,
+  `satuan_id` int(11) NOT NULL,
+  `harga` decimal(18,6) NOT NULL,
+  `peraturan_id` int(11) NOT NULL,
+  `disable` tinyint(1) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) NOT NULL,
+  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
   `username_update` varchar(100) DEFAULT NULL,
-  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `is_deleted` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -557,31 +565,39 @@ CREATE TABLE `dppa_neo` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `hspk_akun_map`
+--
+
+CREATE TABLE `hspk_akun_map` (
+  `id` int(11) NOT NULL,
+  `hspk_id` int(11) NOT NULL,
+  `kd_akun` varchar(50) NOT NULL,
+  `kd_wilayah` varchar(25) NOT NULL,
+  `peraturan_id` int(11) NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `hspk_neo`
 --
 
 CREATE TABLE `hspk_neo` (
-  `id` int(8) NOT NULL,
+  `id` int(11) NOT NULL,
   `kd_wilayah` varchar(25) NOT NULL,
   `tahun` year(4) NOT NULL,
-  `kd_aset` varchar(25) NOT NULL,
-  `uraian_barang` text NOT NULL,
-  `spesifikasi` text DEFAULT NULL,
-  `satuan` varchar(400) NOT NULL,
-  `harga_satuan` decimal(18,6) NOT NULL,
-  `tkdn` varchar(400) DEFAULT NULL,
-  `merek` varchar(400) DEFAULT NULL,
-  `kd_akun` text NOT NULL,
-  `peraturan` varchar(255) NOT NULL,
-  `disable` tinyint(1) NOT NULL DEFAULT 0,
-  `aksi` varchar(255) DEFAULT NULL,
-  `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `uraian` text NOT NULL,
+  `satuan_id` int(11) NOT NULL,
+  `harga` decimal(18,6) NOT NULL,
+  `peraturan_id` int(11) NOT NULL,
+  `disable` tinyint(1) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
   `username_update` varchar(100) DEFAULT NULL,
-  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `is_deleted` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1417,31 +1433,45 @@ CREATE TABLE `satuan_neo` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `sbu_akun_map`
+--
+
+CREATE TABLE `sbu_akun_map` (
+  `id` int(11) NOT NULL,
+  `sbu_id` int(11) NOT NULL,
+  `kd_akun` varchar(50) NOT NULL,
+  `kd_wilayah` varchar(25) NOT NULL,
+  `peraturan_id` int(11) NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `sbu_neo`
 --
 
 CREATE TABLE `sbu_neo` (
-  `id` int(8) NOT NULL,
+  `id` int(11) NOT NULL,
   `kd_wilayah` varchar(25) NOT NULL,
   `tahun` year(4) NOT NULL,
   `kd_aset` varchar(25) NOT NULL,
   `uraian_barang` text NOT NULL,
   `spesifikasi` text DEFAULT NULL,
-  `satuan` varchar(400) NOT NULL,
+  `satuan_id` int(11) NOT NULL,
   `harga_satuan` decimal(18,6) NOT NULL,
   `tkdn` varchar(400) DEFAULT NULL,
   `merek` varchar(400) DEFAULT NULL,
-  `kd_akun` text NOT NULL,
-  `peraturan` varchar(255) NOT NULL,
-  `disable` tinyint(1) NOT NULL DEFAULT 0,
+  `peraturan_id` int(11) NOT NULL,
+  `disable` tinyint(1) DEFAULT 0,
   `aksi` varchar(255) DEFAULT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
   `username_update` varchar(100) DEFAULT NULL,
-  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `is_deleted` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1483,31 +1513,39 @@ CREATE TABLE `sk_asn_neo` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `ssh_akun_map`
+--
+
+CREATE TABLE `ssh_akun_map` (
+  `id` int(11) NOT NULL,
+  `ssh_id` int(11) NOT NULL,
+  `kd_akun` varchar(50) NOT NULL,
+  `kd_wilayah` varchar(25) NOT NULL,
+  `peraturan_id` int(11) NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `ssh_neo`
 --
 
 CREATE TABLE `ssh_neo` (
-  `id` int(8) NOT NULL,
+  `id` int(11) NOT NULL,
   `kd_wilayah` varchar(25) NOT NULL,
   `tahun` year(4) NOT NULL,
-  `kd_aset` varchar(25) NOT NULL,
   `uraian_barang` text NOT NULL,
-  `spesifikasi` text DEFAULT NULL,
-  `satuan` varchar(400) NOT NULL,
+  `satuan_id` int(11) NOT NULL,
   `harga_satuan` decimal(18,6) NOT NULL,
-  `tkdn` varchar(400) DEFAULT NULL,
-  `merek` varchar(400) DEFAULT NULL,
-  `kd_akun` text NOT NULL,
-  `peraturan` varchar(255) NOT NULL,
-  `disable` tinyint(1) NOT NULL DEFAULT 0,
-  `aksi` varchar(255) DEFAULT NULL,
-  `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `peraturan_id` int(11) NOT NULL,
+  `disable` tinyint(1) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
   `username_update` varchar(100) DEFAULT NULL,
-  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `is_deleted` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1977,11 +2015,21 @@ ALTER TABLE `anggaran_program_renstra_neo`
   ADD KEY `program_id` (`program_id`);
 
 --
+-- Indeks untuk tabel `asb_akun_map`
+--
+ALTER TABLE `asb_akun_map`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_mapping` (`asb_id`,`kd_akun`,`kd_wilayah`,`peraturan_id`),
+  ADD KEY `idx_asb` (`asb_id`),
+  ADD KEY `idx_akun` (`kd_akun`),
+  ADD KEY `idx_scope` (`kd_wilayah`,`peraturan_id`);
+
+--
 -- Indeks untuk tabel `asb_neo`
 --
 ALTER TABLE `asb_neo`
-  ADD PRIMARY KEY (`id`);
-ALTER TABLE `asb_neo` ADD FULLTEXT KEY `uraian_barang` (`uraian_barang`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_scope` (`kd_wilayah`,`peraturan_id`);
 
 --
 -- Indeks untuk tabel `aset_neo`
@@ -2047,10 +2095,21 @@ ALTER TABLE `dppa_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `hspk_akun_map`
+--
+ALTER TABLE `hspk_akun_map`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_mapping` (`hspk_id`,`kd_akun`,`kd_wilayah`,`peraturan_id`),
+  ADD KEY `idx_hspk` (`hspk_id`),
+  ADD KEY `idx_akun` (`kd_akun`),
+  ADD KEY `idx_scope` (`kd_wilayah`,`peraturan_id`);
+
+--
 -- Indeks untuk tabel `hspk_neo`
 --
 ALTER TABLE `hspk_neo`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_scope` (`kd_wilayah`,`peraturan_id`);
 
 --
 -- Indeks untuk tabel `import_logs`
@@ -2236,11 +2295,23 @@ ALTER TABLE `satuan_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `sbu_akun_map`
+--
+ALTER TABLE `sbu_akun_map`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_mapping` (`sbu_id`,`kd_akun`,`kd_wilayah`,`peraturan_id`),
+  ADD KEY `idx_sbu` (`sbu_id`),
+  ADD KEY `idx_akun` (`kd_akun`),
+  ADD KEY `idx_scope` (`kd_wilayah`,`peraturan_id`);
+
+--
 -- Indeks untuk tabel `sbu_neo`
 --
 ALTER TABLE `sbu_neo`
-  ADD PRIMARY KEY (`id`);
-ALTER TABLE `sbu_neo` ADD FULLTEXT KEY `uraian_barang` (`uraian_barang`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_scope` (`kd_wilayah`,`peraturan_id`),
+  ADD KEY `idx_tahun` (`tahun`),
+  ADD KEY `idx_satuan` (`satuan_id`);
 
 --
 -- Indeks untuk tabel `sk_asn_neo`
@@ -2249,11 +2320,21 @@ ALTER TABLE `sk_asn_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `ssh_akun_map`
+--
+ALTER TABLE `ssh_akun_map`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_mapping` (`ssh_id`,`kd_akun`,`kd_wilayah`,`peraturan_id`),
+  ADD KEY `idx_ssh` (`ssh_id`),
+  ADD KEY `idx_akun` (`kd_akun`),
+  ADD KEY `idx_scope` (`kd_wilayah`,`peraturan_id`);
+
+--
 -- Indeks untuk tabel `ssh_neo`
 --
 ALTER TABLE `ssh_neo`
-  ADD PRIMARY KEY (`id`);
-ALTER TABLE `ssh_neo` ADD FULLTEXT KEY `uraian_barang` (`uraian_barang`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_scope` (`kd_wilayah`,`peraturan_id`);
 
 --
 -- Indeks untuk tabel `sub_kegiatan`
@@ -2380,10 +2461,16 @@ ALTER TABLE `anggaran_program_renstra_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `asb_akun_map`
+--
+ALTER TABLE `asb_akun_map`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `asb_neo`
 --
 ALTER TABLE `asb_neo`
-  MODIFY `id` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `aset_neo`
@@ -2440,10 +2527,16 @@ ALTER TABLE `dppa_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `hspk_akun_map`
+--
+ALTER TABLE `hspk_akun_map`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `hspk_neo`
 --
 ALTER TABLE `hspk_neo`
-  MODIFY `id` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `import_logs`
@@ -2620,10 +2713,16 @@ ALTER TABLE `satuan_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `sbu_akun_map`
+--
+ALTER TABLE `sbu_akun_map`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `sbu_neo`
 --
 ALTER TABLE `sbu_neo`
-  MODIFY `id` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `sk_asn_neo`
@@ -2632,10 +2731,16 @@ ALTER TABLE `sk_asn_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `ssh_akun_map`
+--
+ALTER TABLE `ssh_akun_map`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `ssh_neo`
 --
 ALTER TABLE `ssh_neo`
-  MODIFY `id` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `sub_kegiatan`
@@ -2736,6 +2841,30 @@ ALTER TABLE `wilayah_neo`
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
+
+--
+-- Ketidakleluasaan untuk tabel `asb_akun_map`
+--
+ALTER TABLE `asb_akun_map`
+  ADD CONSTRAINT `fk_asb_map` FOREIGN KEY (`asb_id`) REFERENCES `asb_neo` (`id`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `hspk_akun_map`
+--
+ALTER TABLE `hspk_akun_map`
+  ADD CONSTRAINT `fk_hspk_map` FOREIGN KEY (`hspk_id`) REFERENCES `hspk_neo` (`id`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `sbu_akun_map`
+--
+ALTER TABLE `sbu_akun_map`
+  ADD CONSTRAINT `fk_sbu_map` FOREIGN KEY (`sbu_id`) REFERENCES `sbu_neo` (`id`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `ssh_akun_map`
+--
+ALTER TABLE `ssh_akun_map`
+  ADD CONSTRAINT `fk_ssh_map` FOREIGN KEY (`ssh_id`) REFERENCES `ssh_neo` (`id`) ON DELETE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `trx_naskah_struktur`
