@@ -92,8 +92,6 @@ class PengaturanModule {
         </div>
     `);
 
-	
-
 		this.initUI();
 		this.bindSubmit();
 
@@ -425,28 +423,25 @@ class PengaturanModule {
 	}
 }
 if (typeof PeriodeRPJMDModule === "undefined") {
+	class PeriodeRPJMDModule extends BaseCrudModule {
+		constructor() {
+			super({
+				moduleName: "periode_rpjmd",
+				container: "#periode-rpjmd-container",
+				useMenu: false,
+			});
+		}
 
-    class PeriodeRPJMDModule extends BaseCrudModule {
+		init() {
+			this.renderLayout();
 
-        constructor() {
-            super({
-                moduleName: "periode_rpjmd",
-                container: "#periode-rpjmd-container",
-                useMenu: false
-            });
-        }
+			this.loadTable("periode_rpjmd");
 
-        init() {
+			// 🔥 apply readonly sesuai role PengaturanModule
+			const canEdit = window.app.user.type_user === "super_admin";
+			this.formEngine?.applyReadonly(!canEdit);
+		}
+	}
 
-            // render wrapper BaseCrud
-            this.renderLayout();
-
-            // 🔥 langsung load table
-            this.loadTable("periode_rpjmd");
-
-        }
-
-    }
-
-    window.PeriodeRPJMDModule = PeriodeRPJMDModule;
+	window.PeriodeRPJMDModule = PeriodeRPJMDModule;
 }

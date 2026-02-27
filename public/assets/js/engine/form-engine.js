@@ -64,45 +64,41 @@ class FormEngine {
 	 * ============================================================
 	 */
 	populateForm(data) {
-		Object.keys(data).forEach((key) => {
-			const field = $(`${this.formSelector} [name="${key}"]`);
 
-			if (!field.length) return;
+    Object.keys(data).forEach(key => {
 
-			// Checkbox
-			if (field.attr("type") === "checkbox") {
-				field.prop("checked", data[key] == 1 || data[key] === true);
-				return;
-			}
+        const field = $(`${this.formSelector} [name="${key}"]`);
+        if (!field.length) return;
 
-			// Dropdown
-			if (field.closest(".ui.dropdown").length) {
-				field.closest(".ui.dropdown").dropdown("set selected", data[key]);
-				return;
-			}
+        if (field.attr("type") === "checkbox") {
+            field.prop("checked", data[key] == 1);
+            return;
+        }
 
-			// 🔥 Calendar
-			if (field.closest(".ui.calendar").length) {
-				const calendar = field.closest(".ui.calendar");
+        if (field.closest(".ui.dropdown").length) {
+            field.closest(".ui.dropdown").dropdown("set selected", data[key]);
+            return;
+        }
 
-				let value = data[key];
+        if (field.closest(".ui.calendar").length) {
 
-				// kalau hanya 4 digit tahun
-				if (/^\d{4}$/.test(value)) {
-					value = new Date(value + "-01-01");
-				} else {
-					value = new Date(value);
-				}
+            const calendar = field.closest(".ui.calendar");
+            const type = calendar.calendar('get type');
 
-				calendar.calendar("set date", value);
+            let value = data[key];
 
-				return;
-			}
+            // AUTO YEAR DETECT
+            if (type === "year" && /^\d{4}$/.test(value)) {
+                value = new Date(value, 0, 1);
+            }
 
-			// Default
-			field.val(data[key]);
-		});
-	}
+            calendar.calendar("set date", value);
+            return;
+        }
+
+        field.val(data[key]);
+    });
+}
 
 	/**
 	 * ============================================================
@@ -123,30 +119,38 @@ class FormEngine {
 	 * SUBMIT FORM
 	 * ============================================================
 	 */
-	submit() {
-		const formData = $(this.formSelector).serialize();
+	/**
+ * ============================================================
+ * SUBMIT FORM
+ * ============================================================
+ */
+submit() {
 
-		// 🔥 ambil config tabel aktif
-		const config = UIConfig[this.state.tbl];
+    const formData = $(this.formSelector).serialize();
 
-		// 🔥 validasi kalau ada schema
-		if (config?.validation) {
-			const isValid = ValidationEngine.validate(
-				this.formSelector,
-				config.validation,
-			);
+    // Ambil config sesuai tabel aktif
+    const config = UIConfig[this.state.tbl];
 
-			if (!isValid) return;
-		}
+    // Jalankan validation kalau ada
+    if (config?.validation) {
 
-		// 🔥 kirim ajax
-		this.ajax.request({
-			data: formData,
-			success: () => {
-				$(document).trigger("form:success");
-			},
-		});
-	}
+        const valid = ValidationEngine.validate(
+            this.formSelector,
+            config.validation
+        );
+
+        if (!valid) return; // Stop submit kalau tidak valid
+    }
+
+    // Kirim ke server
+    this.ajax.request({
+        data: formData,
+        success: () => {
+            $(document).trigger("form:success");
+        },
+    });
+
+}
 
 	/**
 	 * ============================================================
@@ -172,39 +176,43 @@ class FormEngine {
 	 * ============================================================
 	 */
 	static render(target, elements = [], instance = null, layout = {}) {
-		const columns = layout.columns || 1;
 
-		let html = `<div class="ui form"><div class="ui ${columns} column grid">`;
+    const columns = layout.columns || 1;
 
-		elements.forEach((el) => {
-			html += `<div class="column">${this.element(el)}</div>`;
-		});
+    let html = `
+        <div class="ui form">
+            <div class="ui ${columns} column stackable grid">
+    `;
 
-		html += "</div></div>";
+    elements.forEach(el => {
+        html += `<div class="column">${this.element(el)}</div>`;
+    });
 
-		const $target = $(target);
-		$target.html(html);
+    html += `
+            </div>
+        </div>
+    `;
 
-		// 🔥 INIT FOMANTIC
-		$target.find(".ui.dropdown").dropdown();
-		$target.find(".ui.checkbox").checkbox();
+    const $target = $(target);
+    $target.html(html);
 
-		// 🔥 INIT RANGE CALENDAR
-		const rangeElements = elements.filter((e) => e.tag === "rangeCalendar");
-		UIComponents.initRange(rangeElements);
+    $target.find('.ui.dropdown').dropdown();
+    $target.find('.ui.checkbox').checkbox();
 
-		// 🔥 AUTO FORMAT CURRENCY (TARUH DI SINI)
-		elements.forEach((el) => {
-			if (el.prop?.format === "currency") {
-				UIExtensions.currency(`${target} [name="${el.prop.name}"]`);
-			}
-		});
+    const rangeElements = elements.filter(e => e.tag === "rangeCalendar");
+    UIComponents.initRange(rangeElements);
 
-		// 🔥 LOAD DROPDOWN DARI SERVER
-		if (instance && typeof instance.loadDropdownSources === "function") {
-			instance.loadDropdownSources();
-		}
-	}
+    // currency init
+    elements.forEach(el => {
+        if (el.prop?.format === "currency") {
+            UIExtensions.currency(`${target} [name="${el.prop.name}"]`);
+        }
+    });
+
+    if (instance?.loadDropdownSources) {
+        instance.loadDropdownSources();
+    }
+}
 
 	/**
 	 * ============================================================
@@ -222,9 +230,9 @@ class FormEngine {
 	 */
 	static element(el) {
 		const { tag, prop = {} } = el;
-		if (prop.roles && !PermissionEngine.can(window.USER_ROLE, prop.roles)) {
-			return "";
-		}
+		if (prop.roles && !PermissionEngine.allow(window.USER_ROLE, prop.roles)) {
+    return "";
+}
 		switch (tag) {
 			case "fieldAction":
 				return this.fieldWrapper(this.inputAction(prop), prop);
@@ -496,13 +504,24 @@ class FormEngine {
 
 		UIComponents.initRange(rangeNames);
 	}
-	applyReadonly(isReadonly) {
-		if (!isReadonly) return;
+	/**
+ * ============================================================
+ * APPLY READONLY MODE
+ * ============================================================
+ */
+applyReadonly(isReadonly = false) {
 
-		const form = $(this.formSelector);
+    if (!isReadonly) return;
 
-		form.find("input, textarea").attr("disabled", true);
-		form.find(".ui.dropdown").addClass("disabled");
-		form.find(".ui.checkbox").addClass("disabled");
-	}
+    const form = $(this.formSelector);
+
+    // Disable semua input & textarea
+    form.find('input, textarea').attr('disabled', true);
+
+    // Disable dropdown fomantic
+    form.find('.ui.dropdown').addClass('disabled');
+
+    // Disable checkbox
+    form.find('.ui.checkbox').addClass('disabled');
+}
 }

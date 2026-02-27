@@ -1,7 +1,9 @@
 class PermissionEngine {
 
-    static can(role, allowed = []) {
+    static allow(role, allowed = []) {
         return allowed.includes(role);
     }
 
 }
+
+window.PermissionEngine = PermissionEngine;
