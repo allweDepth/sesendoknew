@@ -231,3 +231,330 @@ UIConfig.sub_kegiatan_renstra_neo = {
         ]
     }
 };
+/* ======================================================
+   4️⃣ REFERENSI MODULES (SEMUA FLAT)
+====================================================== */
+
+UIConfig.urusan = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Kode", name: "kode" }},
+            { tag: "field", prop: { label: "Nama", name: "nama" }}
+        ]
+    }
+};
+
+UIConfig.bidang = {
+    form: {
+        elements: [
+            { tag: "fieldDropdown", prop: { label: "Urusan", name: "kode_urusan", source: "urusan" }},
+            { tag: "field", prop: { label: "Kode", name: "kode" }},
+            { tag: "field", prop: { label: "Nama", name: "nama" }}
+        ]
+    }
+};
+
+UIConfig.program = {
+    form: {
+        elements: [
+            { tag: "fieldDropdown", prop: { label: "Bidang", name: "kode_bidang", source: "bidang" }},
+            { tag: "field", prop: { label: "Kode", name: "kode" }},
+            { tag: "field", prop: { label: "Nama", name: "nama" }}
+        ]
+    }
+};
+
+UIConfig.kegiatan = {
+    form: {
+        elements: [
+            { tag: "fieldDropdown", prop: { label: "Program", name: "kode_program", source: "program" }},
+            { tag: "field", prop: { label: "Kode", name: "kode" }},
+            { tag: "field", prop: { label: "Nama", name: "nama" }}
+        ]
+    }
+};
+
+UIConfig.sub_kegiatan = {
+    form: {
+        elements: [
+            { tag: "fieldDropdown", prop: { label: "Kegiatan", name: "kode_kegiatan", source: "kegiatan" }},
+            { tag: "field", prop: { label: "Kode", name: "kode" }},
+            { tag: "field", prop: { label: "Nama", name: "nama" }}
+        ]
+    }
+};
+
+UIConfig.akun = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Kode", name: "kode" }},
+            { tag: "field", prop: { label: "Uraian", name: "uraian" }},
+            { tag: "field", prop: { label: "Keterangan", name: "keterangan" }}
+        ]
+    }
+};
+
+UIConfig.satuan = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Value", name: "value" }},
+            { tag: "field", prop: { label: "Item", name: "item" }},
+            { tag: "field", prop: { label: "Keterangan", name: "keterangan" }}
+        ]
+    }
+};
+
+UIConfig.organisasi = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Kode", name: "kode" }},
+            { tag: "field", prop: { label: "Uraian", name: "uraian" }},
+            { tag: "field", prop: { label: "Alamat", name: "alamat" }},
+            { tag: "field", prop: { label: "Keterangan", name: "keterangan" }}
+        ]
+    }
+};
+
+UIConfig.wilayah = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Kode", name: "kode" }},
+            { tag: "field", prop: { label: "Uraian", name: "uraian" }},
+            { tag: "field", prop: { label: "Status", name: "status" }}
+        ]
+    }
+};
+
+UIConfig.peraturan = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Nomor", name: "nomor" }},
+            { tag: "field", prop: { label: "Judul", name: "judul" }},
+            { tag: "field", prop: { label: "Status", name: "status" }}
+        ]
+    }
+};
+UIConfig.rekanan = {
+    layout: { columns: 2 },
+    form: {
+        elements: [
+
+            // ================= DATA PERUSAHAAN =================
+            { tag: "divider", prop: { label: "Data Perusahaan" }},
+
+            { tag: "field", prop: { label: "Nama Perusahaan", name: "nama_perusahaan" }},
+            { tag: "field", prop: { label: "NPWP", name: "npwp" }},
+            { tag: "field", prop: { label: "Email", name: "email" }},
+            { tag: "fieldTextarea", prop: { label: "Alamat Perusahaan", name: "alamat", atribut: `rows="2"` }},
+
+            // ================= DATA REKENING =================
+            { tag: "divider", prop: { label: "Data Rekening" }},
+            { tag: "field", prop: { label: "Nomor Rekening", name: "no_rekening" }},
+            { tag: "field", prop: { label: "Bank", name: "bank_rekening" }},
+            { tag: "field", prop: { label: "Atas Nama Rekening", name: "atas_nama_rekening" }},
+
+            // ================= DATA DIREKTUR =================
+            { tag: "divider", prop: { label: "Data Direktur" }},
+            { tag: "field", prop: { label: "Nama Direktur", name: "direktur" }},
+            { tag: "field", prop: { label: "Jabatan", name: "jabatan" }},
+            { tag: "field", prop: { label: "No KTP", name: "no_ktp" }},
+            { tag: "fieldTextarea", prop: { label: "Alamat Direktur", name: "alamat_dir", atribut: `rows="2"` }},
+
+            // ================= AKTA =================
+            { tag: "divider", prop: { label: "Akta Pendirian" }},
+            { tag: "field", prop: { label: "No Akta Pendirian", name: "no_akta_pendirian" }},
+            { tag: "fieldCalendar", prop: { label: "Tanggal Akta Pendirian", name: "tgl_akta_pendirian", calendarType: "date" }},
+
+            { tag: "divider", prop: { label: "Akta Perubahan" }},
+            { tag: "field", prop: { label: "No Akta Perubahan", name: "no_akta_perubahan" }},
+            { tag: "fieldCalendar", prop: { label: "Tanggal Akta Perubahan", name: "tgl_akta_perubahan", calendarType: "date" }},
+
+            // ================= TAMBAHAN =================
+            { tag: "fieldTextarea", prop: { label: "Data Lain", name: "data_lain", atribut: `rows="2"` }},
+            { tag: "fieldFile", prop: { label: "Upload Dokumen", name: "file" }},
+            { tag: "fieldTextarea", prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` }},
+            { tag: "fieldCheckbox", prop: { label: "Non Aktif", name: "disable" }}
+        ]
+    }
+};
+UIConfig.sumber_dana = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Kode", name: "kode" }},
+            { tag: "field", prop: { label: "Uraian", name: "uraian" }},
+            { tag: "field", prop: { label: "Keterangan", name: "keterangan" }}
+        ]
+    }
+};
+
+UIConfig.mapping = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Kode Aset", name: "kd_aset" }},
+            { tag: "field", prop: { label: "Uraian Aset", name: "uraian_aset" }},
+            { tag: "field", prop: { label: "Kode Akun", name: "kd_akun" }},
+            { tag: "field", prop: { label: "Uraian Akun", name: "uraian_akun" }}
+        ]
+    }
+};
+
+UIConfig.aset = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Kode", name: "kode" }},
+            { tag: "field", prop: { label: "Uraian", name: "uraian" }}
+        ]
+    }
+};
+/* ======================================================
+   STANDAR HARGA
+====================================================== */
+
+UIConfig.sbu = {
+    layout: { columns: 2 },
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Kode Aset", name: "kd_aset" }},
+            { tag: "field", prop: { label: "Kode Akun", name: "kd_akun" }},
+            { tag: "field", prop: { label: "Uraian Barang", name: "uraian_barang" }},
+            { tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" }},
+            { tag: "fieldDropdown", prop: { label: "Satuan", name: "satuan" }},
+            { tag: "field", prop: { label: "Harga Satuan", name: "harga_satuan", format: "currency" }},
+            { tag: "field", prop: { label: "Tahun", name: "tahun" }}
+        ]
+    }
+};
+
+UIConfig.ssh = {
+    layout: { columns: 2 },
+    form: { elements: [...UIConfig.sbu.form.elements] }
+};
+
+UIConfig.asb = {
+    layout: { columns: 2 },
+    form: { elements: [...UIConfig.sbu.form.elements] }
+};
+
+UIConfig.hspk = {
+    layout: { columns: 2 },
+    form: { elements: [...UIConfig.sbu.form.elements] }
+};
+UIConfig.asn = {
+    layout: { columns: 2 },
+    form: {
+        elements: [
+
+            { tag: "field", prop: { label: "Nama Lengkap", name: "nama" }},
+            { tag: "fieldAction", prop: { label: "NIP", name: "nip" }},
+            { tag: "field", prop: { label: "Gelar", name: "gelar" }},
+            { tag: "field", prop: { label: "Gelar Depan", name: "gelar_depan" }},
+
+            { tag: "fieldDropdown", prop: {
+                label: "Kelompok Jabatan",
+                name: "kelompok",
+                options: [
+                    { value: "1", text: "Kepala OPD" },
+                    { value: "2", text: "Sekretaris" },
+                    { value: "3", text: "Kepala Bidang" },
+                    { value: "4", text: "ASN" },
+                    { value: "5", text: "non ASN" }
+                ]
+            }},
+
+            { tag: "field", prop: { label: "Jabatan", name: "jabatan" }},
+            { tag: "field", prop: { label: "Tempat Lahir", name: "t4_lahir" }},
+            { tag: "fieldCalendar", prop: { label: "Tanggal Lahir", name: "tgl_lahir", calendarType: "date" }},
+
+            { tag: "field", prop: { label: "No KTP", name: "no_ktp" }},
+            { tag: "field", prop: { label: "NPWP", name: "npwp" }},
+            { tag: "field", prop: { label: "Alamat", name: "alamat" }},
+            { tag: "field", prop: { label: "Kontak Person", name: "kontak_person" }},
+            { tag: "field", prop: { label: "Email", name: "email" }},
+
+            { tag: "fieldTextarea", prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` }},
+            { tag: "fieldCheckbox", prop: { label: "Non Aktif", name: "disable" }}
+
+        ]
+    }
+};
+UIConfig.trx_naskah_dinas = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Nomor", name: "nomor" }},
+            { tag: "field", prop: { label: "Status", name: "workflow_status" }},
+            { tag: "field", prop: { label: "OPD", name: "kd_opd" }},
+            { tag: "field", prop: { label: "Tahun", name: "tahun" }},
+            { tag: "field", prop: { label: "Tanggal Dibuat", name: "tgl_insert" }}
+        ]
+    }
+};
+
+UIConfig.sk = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Nomor Surat", name: "nomor" }},
+            { tag: "fieldCalendar", prop: { label: "Tanggal Surat", name: "tgl_surat_dibuat", calendarType: "date" }},
+            { tag: "fieldTextarea", prop: { label: "Tentang", name: "tentang", atribut: `rows="2"` }},
+            { tag: "fieldDropdown", prop: { label: "Pemberi Tugas", name: "pemberi_tgs", source: "asn" }},
+            { tag: "fieldTextarea", prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` }}
+        ]
+    }
+};
+
+UIConfig.surat_internal = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Nomor", name: "nomor" }},
+            { tag: "fieldCalendar", prop: { label: "Tanggal", name: "tanggal", calendarType: "date" }},
+            { tag: "field", prop: { label: "Kepada", name: "kepada" }},
+            { tag: "fieldTextarea", prop: { label: "Perihal", name: "perihal", atribut: `rows="2"` }},
+            { tag: "fieldTextarea", prop: { label: "Isi Surat", name: "isi", atribut: `rows="6"` }}
+        ]
+    }
+};
+
+UIConfig.surat_bebas = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Nomor", name: "nomor" }},
+            { tag: "fieldCalendar", prop: { label: "Tanggal", name: "tanggal", calendarType: "date" }},
+            { tag: "fieldTextarea", prop: { label: "Isi Surat", name: "isi", atribut: `rows="8"` }}
+        ]
+    }
+};
+
+UIConfig.telaah_staf = {
+    form: {
+        elements: [
+            { tag: "field", prop: { label: "Nomor", name: "nomor" }},
+            { tag: "fieldCalendar", prop: { label: "Tanggal", name: "tanggal", calendarType: "date" }},
+            { tag: "fieldTextarea", prop: { label: "Permasalahan", name: "permasalahan", atribut: `rows="3"` }},
+            { tag: "fieldTextarea", prop: { label: "Analisis", name: "analisis", atribut: `rows="5"` }},
+            { tag: "fieldTextarea", prop: { label: "Rekomendasi", name: "rekomendasi", atribut: `rows="3"` }}
+        ]
+    }
+};
+UIConfig.global_print = {
+    layout: { columns: 2 },
+    form: {
+        elements: [
+
+            { tag: "fieldHidden", prop: { name: "id_row" }},
+
+            { tag: "fieldDropdown", prop: {
+                label: "Ukuran Kertas",
+                name: "ukuran_kertas",
+                options: [
+                    { value: "A4", text: "A4" },
+                    { value: "F4", text: "F4" },
+                    { value: "Legal", text: "Legal" }
+                ]
+            }},
+
+            { tag: "field", prop: { label: "Ukuran Huruf (%)", name: "ukuran_huruf" }},
+            { tag: "fieldCheckbox", prop: { label: "Aktifkan Header", name: "header" }},
+            { tag: "fieldCheckbox", prop: { label: "Aktifkan Footer", name: "footer" }}
+
+        ]
+    }
+};
