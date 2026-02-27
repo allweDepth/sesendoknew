@@ -1400,7 +1400,8 @@ UIConfig.periode_rpjmd = [
         tag: "rangeCalendar",
         prop: {
             label: "Periode RPJMD",
-            name: "periode",
+            nameStart: "periode_mulai",
+            nameEnd: "periode_selesai",
             calendarType: "year"
         }
     },

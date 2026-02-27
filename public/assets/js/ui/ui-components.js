@@ -90,9 +90,11 @@ class UIComponents {
 	// RANGE CALENDAR
 	// ==================================================
 
-	static rangeCalendar(name, label, type = "datetime") {
+	static rangeCalendar(nameStart, nameEnd, label, calendarType = "datetime") {
 		return `
-    <div class="eight wide computer eight wide tablet sixteen wide mobile column">
+    <div data-calendar-type="${calendarType}"
+         data-range-start="${nameStart}"
+         data-range-end="${nameEnd}">
 
         <div class="field">
             <label>${label}</label>
@@ -100,19 +102,19 @@ class UIComponents {
             <div class="two fields">
 
                 <div class="field">
-                    <div class="ui calendar start_${name}" data-calendar-type="${type}">
+                    <div class="ui calendar start_${nameStart}">
                         <div class="ui input left icon">
                             <i class="calendar icon"></i>
-                            <input type="text" name="awal_${name}">
+                            <input type="text" name="${nameStart}">
                         </div>
                     </div>
                 </div>
 
                 <div class="field">
-                    <div class="ui calendar end_${name}" data-calendar-type="${type}">
+                    <div class="ui calendar end_${nameEnd}">
                         <div class="ui input left icon">
                             <i class="calendar icon"></i>
-                            <input type="text" name="akhir_${name}">
+                            <input type="text" name="${nameEnd}">
                         </div>
                     </div>
                 </div>
@@ -132,31 +134,29 @@ class UIComponents {
 		$(".ui.dropdown").dropdown();
 		$(".ui.checkbox").checkbox();
 
-		$(".ui.calendar").calendar({
-			type: "datetime",
-		});
+		$(".ui.calendar").calendar();
 	}
 
-	static initRange(names = []) {
+	static initRange(elements = []) {
+		elements.forEach((e) => {
+			const nameStart = e.prop.nameStart;
+			const nameEnd = e.prop.nameEnd;
+			const type = e.prop.calendarType || "datetime";
 
-    names.forEach(name => {
+			const start = $(`.start_${nameStart}`);
+			const end = $(`.end_${nameEnd}`);
 
-        const start = $(`.start_${name}`);
-        const end   = $(`.end_${name}`);
+			start.calendar({
+				type: type,
+				endCalendar: end,
+			});
 
-        const calendarType = start.data("calendar-type") || "datetime";
-
-        start.calendar({
-            type: calendarType,
-            endCalendar: end
-        });
-
-        end.calendar({
-            type: calendarType,
-            startCalendar: start
-        });
-    });
-}
+			end.calendar({
+				type: type,
+				startCalendar: start,
+			});
+		});
+	}
 }
 // REGISTER ALL COMPONENTS
 
@@ -177,7 +177,12 @@ UIComponentRegistry.register("calendar", (p) =>
 );
 
 UIComponentRegistry.register("rangeCalendar", (p) =>
-	UIComponents.rangeCalendar(p.name, p.label, p.calendarType || "datetime"),
+	UIComponents.rangeCalendar(
+		p.nameStart,
+		p.nameEnd,
+		p.label,
+		p.calendarType || "datetime",
+	),
 );
 
 UIComponentRegistry.register("dropdown", (p) =>

@@ -75,9 +75,27 @@ class FormEngine {
 				return;
 			}
 
-			// Dropdown Fomantic
+			// Dropdown
 			if (field.closest(".ui.dropdown").length) {
 				field.closest(".ui.dropdown").dropdown("set selected", data[key]);
+				return;
+			}
+
+			// 🔥 Calendar
+			if (field.closest(".ui.calendar").length) {
+				const calendar = field.closest(".ui.calendar");
+
+				let value = data[key];
+
+				// kalau hanya 4 digit tahun
+				if (/^\d{4}$/.test(value)) {
+					value = new Date(value + "-01-01");
+				} else {
+					value = new Date(value);
+				}
+
+				calendar.calendar("set date", value);
+
 				return;
 			}
 
@@ -141,23 +159,24 @@ class FormEngine {
 	 * ============================================================
 	 */
 	static render(target, elements = [], instance = null) {
-		// 🔥 Pastikan target adalah jQuery object
 		const $target = $(target);
 
-		// 🔥 DESTROY DROPDOWN LAMA (WAJIB)
 		$target.find(".ui.dropdown").dropdown("destroy");
-
-		// 🔥 KOSONGKAN FORM
 		$target.empty();
+
 		const html = this.build(elements);
+		$target.html(html);
 
-		target.html(html);
+		// Init UI dasar
+		$target.find(".ui.dropdown").dropdown();
+		$target.find(".ui.checkbox").checkbox();
 
-		target.find(".ui.dropdown").dropdown();
-		target.find(".ui.checkbox").checkbox();
-		target.find(".ui.calendar").calendar();
+		// 🔥 INIT RANGE CALENDAR OTOMATIS
+		const rangeElements = elements.filter((e) => e.tag === "rangeCalendar");
 
-		// 🔥 Auto load dropdown dari server
+		UIComponents.initRange(rangeElements);
+
+		// Load dropdown server
 		if (instance && typeof instance.loadDropdownSources === "function") {
 			instance.loadDropdownSources();
 		}
@@ -239,7 +258,13 @@ class FormEngine {
                         ${this.build(prop.children || [])}
                     </div>
                 `;
-
+			case "rangeCalendar":
+				return UIComponents.rangeCalendar(
+					prop.nameStart,
+					prop.nameEnd,
+					prop.label,
+					prop.calendarType || "datetime",
+				);
 			case "divider":
 				return `
                     <h4 class="ui dividing header">
