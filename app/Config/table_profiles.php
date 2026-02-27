@@ -301,6 +301,13 @@ return [
     'satuan' => [
         'table' => 'satuan_neo',
         'primary_key' => 'id',
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'item',  // 🔥 ini yang benar
+            'searchable' => ['item', 'value'],
+            'order_by' => 'item ASC'
+        ],
+
         'allowed_roles' => ['super_admin', 'admin_wilayah'],
         'soft_lock' => true,
         'modes' => [
