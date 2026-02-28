@@ -714,14 +714,133 @@ UIConfig.asn = {
 };
 UIConfig.trx_naskah_dinas = {
 	form: {
+		className: "inverted",
 		elements: [
-			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
-			{ tag: "field", prop: { label: "Status", name: "workflow_status" } },
-			{ tag: "field", prop: { label: "OPD", name: "kd_opd" } },
-			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
-			{ tag: "field", prop: { label: "Tanggal Dibuat", name: "tgl_insert" } },
-		],
-	},
+
+			// ==================================================
+			// ALERT PERHATIAN
+			// ==================================================
+			{
+				tag: "alert",
+				prop: {
+					variant: "positive",
+					icon: "exclamation",
+					title: "Perhatian",
+					message: `
+						<ul class="list">
+							<li>Jika mengedit dan merubah Nomor Surat maka akan dianggap data baru.</li>
+							<li>Simpan terlebih dahulu sebelum cetak dokumen.</li>
+						</ul>
+					`
+				}
+			},
+
+			// ==================================================
+			// NOMOR + TANGGAL + FILE
+			// ==================================================
+			{
+				tag: "group",
+				prop: { className: "three fields" },
+				children: [
+					{ tag: "input", prop: { label: "Nomor Surat", name: "nomor", required: true } },
+					{ tag: "calendar", prop: { label: "Tanggal Surat", name: "tgl_surat_dibuat" } },
+					{ tag: "fileInput", prop: { label: "Pilih File Dokumen", name: "file" } }
+				]
+			},
+
+			// ==================================================
+			// TENTANG
+			// ==================================================
+			{ tag: "textarea", prop: { label: "Tentang", name: "tentang", required: true } },
+
+			// ==================================================
+			// PEMBERI TUGAS
+			// ==================================================
+			{
+				tag: "group",
+				prop: { className: "three fields" },
+				children: [
+					{
+						tag: "dropdownAjax",
+						prop: {
+							label: "Pemberi Tugas",
+							name: "pemberi_tgs",
+							source: "asn",
+							required: true
+						}
+					},
+					{ tag: "input", prop: { label: "Jabatan Pemberi Tugas", name: "jbt_pemberi_tgs" } },
+					{ tag: "input", prop: { label: "Pangkat Pemberi Tugas", name: "pangkat_pemberi_tgs" } }
+				]
+			},
+
+			// ==================================================
+			// MENIMBANG
+			// ==================================================
+			{ tag: "divider", prop: { icon: "feather alternate", text: "MENIMBANG" } },
+			{ tag: "documentTable", prop: { name: "menimbang" } },
+
+			// ==================================================
+			// MENGINGAT
+			// ==================================================
+			{ tag: "divider", prop: { icon: "feather alternate", text: "MENGINGAT" } },
+			{ tag: "documentTable", prop: { name: "mengingat" } },
+
+			// ==================================================
+			// MENETAPKAN
+			// ==================================================
+			{ tag: "divider", prop: { icon: "feather alternate", text: "MENETAPKAN" } },
+			{ tag: "documentTable", prop: { name: "menetapkan_1", title: "KESATU" } },
+			{ tag: "documentTable", prop: { name: "menetapkan_2", title: "KEDUA" } },
+			{ tag: "documentTable", prop: { name: "menetapkan_3", title: "KETIGA" } },
+			{ tag: "documentTable", prop: { name: "menetapkan_4", title: "KEEMPAT" } },
+
+			// ==================================================
+			// ASN YANG DITUGASKAN
+			// ==================================================
+			{ tag: "divider", prop: { icon: "users", text: "ASN YANG DITUGASKAN" } },
+
+			{
+				tag: "dropdownAjax",
+				prop: {
+					label: "Nama ASN ditugaskan",
+					name: "asn",
+					source: "asn",
+					appendTable: "nama_ditugaskan"
+				}
+			},
+
+			{
+				tag: "documentTable",
+				prop: {
+					name: "nama_ditugaskan",
+					columns: [
+						"NAMA",
+						"PANGKAT/GOLONGAN",
+						"NIP",
+						"JABATAN",
+						"JABATAN SK"
+					]
+				}
+			},
+
+			{ tag: "toggle", prop: { label: "Lampiran SK bentuk Tabel", name: "bentuk_lampiran" } },
+
+			// ==================================================
+			// TEMBUSAN
+			// ==================================================
+			{ tag: "divider", prop: { icon: "feather alternate", text: "TEMBUSAN" } },
+			{ tag: "documentTable", prop: { name: "tembusan" } },
+
+			// ==================================================
+			// KETERANGAN
+			// ==================================================
+			{ tag: "textarea", prop: { label: "Keterangan", name: "keterangan" } },
+
+			{ tag: "toggle", prop: { label: "Non Aktif", name: "disable" } }
+
+		]
+	}
 };
 
 UIConfig.sk = {

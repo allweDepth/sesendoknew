@@ -101,6 +101,10 @@ class App {
 		document.body.appendChild(script);
 	}
 	initModuleInstance(moduleName) {
+		// 🔥 Destroy module lama dulu
+		if (this.activeModule && typeof this.activeModule.destroy === "function") {
+			this.activeModule.destroy();
+		}
 		switch (moduleName) {
 			case "renstra":
 				if (typeof RenstraModule === "function") new RenstraModule().init();
@@ -126,8 +130,10 @@ class App {
 				break;
 
 			case "tata_naskah":
-				if (typeof TataNaskahModule === "function")
-					new TataNaskahModule().init();
+				if (typeof TataNaskahModule === "function") {
+					this.activeModule = new TataNaskahModule();
+					this.activeModule.init();
+				}
 				break;
 			case "mapping":
 				if (typeof MappingModule === "function") new MappingModule().init();
