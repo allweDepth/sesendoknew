@@ -403,7 +403,7 @@ class TataNaskahController extends Controller
       }
     }
     /* ===============================
-   CACHING SCHEMA (AMAN FINAL)
+   CACHING SCHEMA (AMAN FINAL)l
 =============================== */
 
     $schema = [];
@@ -511,4 +511,17 @@ class TataNaskahController extends Controller
       'totalCol' => 5
     ]);
   }
+  public function get_kelompok()
+{
+    $db = DB::getInstance();
+
+    $data = $db->select(
+        'ref_kelompok_naskah',
+        'id, nama',
+        'ORDER BY id ASC'
+    );
+
+    echo JsonResponse::success("Data ditemukan", null, $data);
+    return;
+}
 }

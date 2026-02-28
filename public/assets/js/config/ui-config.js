@@ -924,5 +924,59 @@ UIConfig.sbu.import = UIConfig.__importFactory("sbu_neo", "17. sbu 2024.xlsx");
 UIConfig.ssh.import = UIConfig.__importFactory("ssh_neo", "12. ssh 2024.xlsx");
 UIConfig.aset.import = UIConfig.__importFactory("aset_neo", null); //DEFAULT GLOBAL TANPA TEMPLATE
 
+// ======================================================
+// 🔥 GENERIC AKUN MAP CONFIG FACTORY
+// ======================================================
+
+UIConfig.__akunMapFactory = function(entityName) {
+
+    return {
+        layout: { columns: 1 },
+
+        form: {
+            elements: [
+
+                {
+                    tag: "fieldDropdown",
+                    prop: {
+                        label: entityName.toUpperCase(),
+                        name: entityName + "_id"
+                    }
+                },
+
+                {
+                    tag: "field",
+                    prop: {
+                        label: "Kode Akun",
+                        name: "kd_akun"
+                    }
+                },
+
+                {
+                    tag: "field",
+                    prop: {
+                        label: "Wilayah",
+                        name: "kd_wilayah"
+                    }
+                },
+
+                {
+                    tag: "field",
+                    prop: {
+                        label: "Peraturan",
+                        name: "peraturan_id"
+                    }
+                }
+
+            ]
+        }
+    };
+
+};
+UIConfig.sbu_akun_map  = UIConfig.__akunMapFactory("sbu");
+UIConfig.ssh_akun_map  = UIConfig.__akunMapFactory("ssh");
+UIConfig.asb_akun_map  = UIConfig.__akunMapFactory("asb");
+UIConfig.hspk_akun_map = UIConfig.__akunMapFactory("hspk");
+
 ///EKSEKUSI
 window.UIConfig = UIConfig;

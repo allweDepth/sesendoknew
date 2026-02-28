@@ -9,15 +9,16 @@ class SpaRouter {
 	// Tentukan mode berdasarkan URL
 	// ================================
 	resolveMode(url) {
-		// Client modules
-		const clientRoutes = ["/renstra", "/referensi", "/kepegawaian", "/pengaturan"];
 
-		if (clientRoutes.some((route) => url.startsWith(route))) {
-			return "client";
-		}
+    const firstSegment = "/" + url.split("/")[1];
 
-		return "server";
-	}
+    // Jika ada module JS untuk segment ini → client
+    if (window.appModuleMap && window.appModuleMap[firstSegment]) {
+        return "client";
+    }
+
+    return "server";
+}
 
 	// ================================
 	// INITIAL LOAD (REFRESH)

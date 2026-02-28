@@ -67,9 +67,9 @@ return [
             'filter_by_akun' => true
         ],
         'pivot' => [
-        'table' => 'sbu_akun_map',
-        'foreign_key' => 'sbu_id'
-    ],
+            'table' => 'sbu_akun_map',
+            'foreign_key' => 'sbu_id'
+        ],
         'import' => [
             'enabled' => true,
             'allowed_roles' => ['super_admin'],
@@ -1363,4 +1363,192 @@ return [
             'viewer'        => ['view']
         ],
     ],
+    'sbu_akun_map' => [
+        'table' => 'sbu_akun_map',
+        'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah'],
+        'soft_lock' => true,
+
+        'modes' => [
+
+            'default' => [
+                'select' => [
+                    'id',
+                    'sbu_id',
+                    'kd_akun',
+                    'kd_wilayah',
+                    'peraturan_id',
+                    'created_at'
+                ],
+                'searchable' => [
+                    'kd_akun'
+                ],
+                'order_by' => 'id DESC'
+            ],
+
+            'aktif' => [
+                'select' => [
+                    'id',
+                    'sbu_id',
+                    'kd_akun'
+                ],
+                'searchable' => [
+                    'kd_akun'
+                ],
+                'order_by' => 'id DESC'
+            ],
+
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id DESC'
+            ]
+        ],
+
+        'validation' => [
+            'sbu_id' => ['required', 'numeric'],
+            'kd_akun' => ['required']
+        ]
+    ],
+    'ssh_akun_map' => [
+        'table' => 'ssh_akun_map',
+        'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah'],
+        'soft_lock' => true,
+
+        'modes' => [
+
+            'default' => [
+                'select' => [
+                    'id',
+                    'ssh_id',
+                    'kd_akun',
+                    'kd_wilayah',
+                    'peraturan_id',
+                    'created_at'
+                ],
+                'searchable' => [
+                    'kd_akun'
+                ],
+                'order_by' => 'id DESC'
+            ],
+
+            'aktif' => [
+                'select' => [
+                    'id',
+                    'ssh_id',
+                    'kd_akun'
+                ],
+                'searchable' => [
+                    'kd_akun'
+                ],
+                'order_by' => 'id DESC'
+            ],
+
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id DESC'
+            ]
+        ],
+
+        'validation' => [
+            'ssh_id' => ['required', 'numeric'],
+            'kd_akun' => ['required']
+        ]
+    ],
+    'asb_akun_map' => [
+        'table' => 'asb_akun_map',
+        'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah'],
+        'soft_lock' => true,
+
+        'modes' => [
+
+            'default' => [
+                'select' => [
+                    'id',
+                    'asb_id',
+                    'kd_akun',
+                    'kd_wilayah',
+                    'peraturan_id',
+                    'created_at'
+                ],
+                'searchable' => [
+                    'kd_akun'
+                ],
+                'order_by' => 'id DESC'
+            ],
+
+            'aktif' => [
+                'select' => [
+                    'id',
+                    'asb_id',
+                    'kd_akun'
+                ],
+                'searchable' => [
+                    'kd_akun'
+                ],
+                'order_by' => 'id DESC'
+            ],
+
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id DESC'
+            ]
+        ],
+
+        'validation' => [
+            'asb_id' => ['required', 'numeric'],
+            'kd_akun' => ['required']
+        ]
+    ],
+    'hspk_akun_map' => [
+    'table' => 'hspk_akun_map',
+    'primary_key' => 'id',
+    'allowed_roles' => ['super_admin', 'admin_wilayah'],
+    'soft_lock' => true,
+
+    'modes' => [
+
+        'default' => [
+            'select' => [
+                'id',
+                'hspk_id',
+                'kd_akun',
+                'kd_wilayah',
+                'peraturan_id',
+                'created_at'
+            ],
+            'searchable' => [
+                'kd_akun'
+            ],
+            'order_by' => 'id DESC'
+        ],
+
+        'aktif' => [
+            'select' => [
+                'id',
+                'hspk_id',
+                'kd_akun'
+            ],
+            'searchable' => [
+                'kd_akun'
+            ],
+            'order_by' => 'id DESC'
+        ],
+
+        'edit' => [
+            'select' => ['*'],
+            'searchable' => ['*'],
+            'order_by' => 'id DESC'
+        ]
+    ],
+
+    'validation' => [
+        'hspk_id' => ['required', 'numeric'],
+        'kd_akun' => ['required']
+    ]
+],
 ];

@@ -100,6 +100,7 @@ return [
 '/tata_naskah/generateNomor' => ['TataNaskahController', 'generateNomor'],
 '/tata_naskah/simpan' => ['TataNaskahController', 'simpan'],
 '/tata_naskah/daftar' => ['TataNaskahController', 'daftar'],
+'/tata_naskah/get_kelompok' => ['TataNaskahController', 'get_kelompok'],
 // ==============================
 // R E S E T  T A B E L
 // ==============================
@@ -109,4 +110,8 @@ return [
 '/reset_tabel/update' => ['ResetTabelController', 'update'],
 '/reset_tabel/delete' => ['ResetTabelController', 'delete'],
 '/reset_tabel/reset' => ['ResetTabelController', 'reset'],
+// ==============================
+// MAPPING AKUN 
+// ==============================
+'/mapping' => ['MappingController', 'index'],
 ];

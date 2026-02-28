@@ -183,7 +183,7 @@
         <i class="dropdown icon"></i> Tata Naskah
       </div>
       <div class="content">
-        <a class="item" href="/tata_naskah/dashboard" data-spa="server">
+        <a class="item" href="/tata_naskah/dashboard" data-spa="client">
           <i class="blue chart pie icon"></i> Dashboard
         </a>
 

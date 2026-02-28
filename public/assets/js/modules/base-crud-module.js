@@ -104,9 +104,19 @@ class BaseCrudModule {
 	 */
 	loadTable(tbl) {
 		// 🔥 FLAT STRUCTURE
-		this.state.setModule(tbl);
-		this.state.setTable(tbl);
+		// module tetap nama module utama (mapping / renstra / referensi)
+this.state.setModule(this.moduleName);
 
+// tbl adalah tabel aktif
+this.state.setTable(tbl);
+		// ====================================================
+		// 🔥 SYNC URL AGAR REFRESH AMAN
+		// ====================================================
+		// ====================================================
+		// 🔥 SYNC URL AGAR REFRESH AMAN (GENERIC)
+		// ====================================================
+		const basePath = window.location.pathname;
+		window.history.replaceState(null, "", `${basePath}?tbl=${tbl}`);
 		if (this.tableManager) {
 			this.tableManager.destroy();
 		}

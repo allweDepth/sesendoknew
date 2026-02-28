@@ -67,6 +67,12 @@ class TableManager {
 	init() {
 		this.bindEvents();
 		this.fetchData();
+		// 🔥 Reload otomatis setelah form sukses
+		$(document).off("form:success.tableReload");
+
+		$(document).on("form:success.tableReload", () => {
+			this.fetchData();
+		});
 	}
 
 	/* =====================================================
@@ -89,7 +95,7 @@ class TableManager {
 		this.ajax.request({
 			method: "POST",
 			data: {
-				 module: this.state.tbl,
+				module: this.state.tbl,
 				action: "list",
 				tbl: this.state.tbl,
 
@@ -145,54 +151,56 @@ class TableManager {
 	   - Skip prop.table === false
 	===================================================== */
 	getColumnsFromConfig() {
+		if (!window.UIConfig) return [];
 
-    if (!window.UIConfig) return [];
+		const tbl = this.state.tbl;
 
-    const tbl = this.state.tbl;
+		// =====================================================
+		// 🔥 ENTERPRISE FLAT STRUCTURE FIX
+		// =====================================================
+		let config = window.UIConfig?.[tbl];
 
-    // =====================================================
-    // 🔥 ENTERPRISE FLAT STRUCTURE FIX
-    // =====================================================
-    let config = window.UIConfig?.[tbl];
+		// 🔥 FALLBACK STRUCTURE LAMA
+		if (!config) {
+			Object.keys(window.UIConfig).forEach((parentKey) => {
+				const parent = window.UIConfig[parentKey];
+				if (parent && parent[tbl]) {
+					config = parent[tbl];
+				}
+			});
+		}
 
-// 🔥 FALLBACK STRUCTURE LAMA
-if (!config) {
-    Object.keys(window.UIConfig).forEach(parentKey => {
-        const parent = window.UIConfig[parentKey];
-        if (parent && parent[tbl]) {
-            config = parent[tbl];
-        }
-    });
-}
+		let elements = [];
 
-    let elements = [];
+		// 🔥 STRUKTUR BARU
+		if (config.form && Array.isArray(config.form.elements)) {
+			elements = config.form.elements;
+		}
 
-    // 🔥 STRUKTUR BARU
-    if (config.form && Array.isArray(config.form.elements)) {
-        elements = config.form.elements;
-    }
+		// 🔥 BACKWARD COMPAT
+		else if (Array.isArray(config)) {
+			elements = config;
+		}
 
-    // 🔥 BACKWARD COMPAT
-    else if (Array.isArray(config)) {
-        elements = config;
-    }
+		if (!elements.length) {
+			console.warn("Elements kosong untuk:", tbl);
+			return [];
+		}
 
-    if (!elements.length) {
-        console.warn("Elements kosong untuk:", tbl);
-        return [];
-    }
-
-    return elements
-        .filter(item =>
-            item.prop?.name &&
-            !["divider", "header", "fieldHidden", "fieldCustom"].includes(item.tag)
-        )
-        .map(item => ({
-            key: item.prop.name,
-            label: item.prop.label || item.prop.name,
-            format: item.prop.format || null
-        }));
-}
+		return elements
+			.filter(
+				(item) =>
+					item.prop?.name &&
+					!["divider", "header", "fieldHidden", "fieldCustom"].includes(
+						item.tag,
+					),
+			)
+			.map((item) => ({
+				key: item.prop.name,
+				label: item.prop.label || item.prop.name,
+				format: item.prop.format || null,
+			}));
+	}
 
 	/* =====================================================
 	   RENDER HEADER
