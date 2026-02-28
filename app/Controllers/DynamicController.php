@@ -31,14 +31,50 @@ class DynamicController
      */
     public function index($params = null)
     {
+        $module = $_POST['module'] ?? null;
         $action = $_POST['action'] ?? null;
 
+        // ======================================================
+        // 🔥 CUSTOM MODULE ROUTING (EXTENSIBLE)
+        // ======================================================
+        switch ($module) {
+
+            case 'tata_naskah':
+
+                require_once __DIR__ . '/TataNaskahController.php';
+
+                $controller = new TataNaskahController();
+
+                if ($action && method_exists($controller, $action)) {
+                    return $controller->$action();
+                }
+
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Action tidak ditemukan di TataNaskahController'
+                ]);
+                return;
+
+                // --------------------------------------------------
+                // Future custom modules bisa ditambahkan di sini
+                // --------------------------------------------------
+
+                // case 'workflow':
+                // case 'arsip':
+                //     ...
+                //     break;
+        }
+
+        // ======================================================
         // 🔥 ROUTING KHUSUS IMPORT
+        // ======================================================
         if ($action === 'import') {
             return $this->import();
         }
 
-        // 🔥 DEFAULT CRUD
+        // ======================================================
+        // 🔥 DEFAULT CRUD ENGINE
+        // ======================================================
         $service = new DynamicTableService($_POST);
         echo $service->handle($_POST);
     }
@@ -304,12 +340,12 @@ class DynamicController
      */
     public function import()
     {
-        
+
         try {
 
             $profiles = require __DIR__ . '/../Config/table_profiles.php';
             $action   = $_POST['action'] ?? null;
-$jns = $action; //
+            $jns = $action; //
             if ($jns === 'import_struktur') {
 
                 $service = new DynamicTableService();
