@@ -3,6 +3,15 @@ require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../Models/BeritaModel.php';
 class HomeController extends Controller
 {
+  public function spa()
+{
+    if (!isset($_SESSION['user'])) {
+        header('Location: /login');
+        exit;
+    }
+
+    require '../app/Views/layouts/app.php';
+}
   public function index()
   {
     $this->view('home/home', ['active' => 'berita'], 'public');

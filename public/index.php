@@ -33,6 +33,7 @@ $publicRoutes = [
     '/logout',
     '/register',
     '/register/proses',
+    '/api',   
 ];
 
 // Jika bukan route public → wajib login

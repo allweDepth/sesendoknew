@@ -86,8 +86,8 @@ return [
   '/renstra/import' => ['RenstraController', 'importExcel'],
   '/renstra/export_word' => ['RenstraController', 'exportWord'],
   //untuk login register
-  '/wilayah/load' => ['AuthController', 'getWilayah'],
-  '/organisasi/load' => ['AuthController', 'getOrganisasi'],
+  // '/wilayah/load' => ['AuthController', 'getWilayah'],
+  // '/organisasi/load' => ['AuthController', 'getOrganisasi'],
 // ==============================
 // T A T A  N A S K A H
 // ==============================
@@ -114,4 +114,10 @@ return [
 // MAPPING AKUN 
 // ==============================
 '/mapping' => ['MappingController', 'index'],
+
+// ==============================
+// FULL SPA 
+// ==============================
+'/spa' => ['HomeController', 'spa'],
+'/api' => ['ApiController', 'handle'],
 ];
