@@ -725,6 +725,16 @@ class DynamicTableService
         $primaryKey = $this->getPrimaryKey($table);
         $orderBy = $modeConfig['order_by'] ?? "`$primaryKey` DESC";
 
+        // 🔥 VALIDASI KOLOM ORDER BY
+        $columns = $this->getTableColumns($table);
+
+        preg_match('/`?([a-zA-Z0-9_]+)`?/i', $orderBy, $match);
+        $orderColumn = $match[1] ?? $primaryKey;
+
+        if (!in_array($orderColumn, $columns)) {
+            $orderBy = "`$primaryKey` DESC";
+        }
+
         $total = $this->db->query(
             "SELECT COUNT(*) as total FROM `$table` $where",
             $params
