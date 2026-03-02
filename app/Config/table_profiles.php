@@ -754,7 +754,12 @@ return [
                 'select' => ['*'],
                 'searchable' => ['*'],
                 'order_by' => 'id ASC'
-            ]
+            ],
+            'dropdown' => [
+                'select' => ['id', 'nama_misi'],
+                'searchable' => ['nama_misi'],
+                'order_by' => 'nama_misi ASC'
+            ],
         ]
     ],
 
@@ -778,7 +783,12 @@ return [
                 'select' => ['*'],
                 'searchable' => ['*'],
                 'order_by' => 'id ASC'
-            ]
+            ],
+            'dropdown' => [
+                'select' => ['id', 'nama_tujuan'],
+                'searchable' => ['nama_tujuan'],
+                'order_by' => 'nama_tujuan ASC'
+            ],
         ]
     ],
 
@@ -802,7 +812,12 @@ return [
                 'select' => ['*'],
                 'searchable' => ['*'],
                 'order_by' => 'id ASC'
-            ]
+            ],
+            'dropdown' => [
+                'select' => ['id', 'nama_sasaran'],
+                'searchable' => ['nama_sasaran'],
+                'order_by' => 'nama_sasaran ASC'
+            ],
         ]
     ],
 
@@ -859,7 +874,12 @@ return [
                 'select' => ['*'],
                 'searchable' => ['*'],
                 'order_by' => 'id ASC'
-            ]
+            ],
+            'dropdown' => [
+                'select' => ['id', 'nama_program'],
+                'searchable' => ['nama_program'],
+                'order_by' => 'nama_program ASC'
+            ],
         ]
     ],
 
@@ -887,6 +907,11 @@ return [
                 ],
                 'searchable' => ['nama_indikator', 'satuan'],
                 'order_by' => 'id DESC',
+            ],
+            'dropdown' => [
+                'select' => ['id', 'nama_kegiatan'],
+                'searchable' => ['nama_kegiatan'],
+                'order_by' => 'nama_kegiatan ASC'
             ],
             'edit' => [
                 'select' => ['*'],
@@ -982,6 +1007,11 @@ return [
                     'disable',
                     'keterangan'
                 ],
+                'searchable' => ['visi'],
+                'order_by' => 'id DESC'
+            ],
+            'dropdown' => [
+                'select' => ['id', 'visi'],
                 'searchable' => ['visi'],
                 'order_by' => 'id DESC'
             ],
@@ -1505,50 +1535,50 @@ return [
         ]
     ],
     'hspk_akun_map' => [
-    'table' => 'hspk_akun_map',
-    'primary_key' => 'id',
-    'allowed_roles' => ['super_admin', 'admin_wilayah'],
-    'soft_lock' => true,
+        'table' => 'hspk_akun_map',
+        'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah'],
+        'soft_lock' => true,
 
-    'modes' => [
+        'modes' => [
 
-        'default' => [
-            'select' => [
-                'id',
-                'hspk_id',
-                'kd_akun',
-                'kd_wilayah',
-                'peraturan_id',
-                'created_at'
+            'default' => [
+                'select' => [
+                    'id',
+                    'hspk_id',
+                    'kd_akun',
+                    'kd_wilayah',
+                    'peraturan_id',
+                    'created_at'
+                ],
+                'searchable' => [
+                    'kd_akun'
+                ],
+                'order_by' => 'id DESC'
             ],
-            'searchable' => [
-                'kd_akun'
+
+            'aktif' => [
+                'select' => [
+                    'id',
+                    'hspk_id',
+                    'kd_akun'
+                ],
+                'searchable' => [
+                    'kd_akun'
+                ],
+                'order_by' => 'id DESC'
             ],
-            'order_by' => 'id DESC'
+
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id DESC'
+            ]
         ],
 
-        'aktif' => [
-            'select' => [
-                'id',
-                'hspk_id',
-                'kd_akun'
-            ],
-            'searchable' => [
-                'kd_akun'
-            ],
-            'order_by' => 'id DESC'
-        ],
-
-        'edit' => [
-            'select' => ['*'],
-            'searchable' => ['*'],
-            'order_by' => 'id DESC'
+        'validation' => [
+            'hspk_id' => ['required', 'numeric'],
+            'kd_akun' => ['required']
         ]
     ],
-
-    'validation' => [
-        'hspk_id' => ['required', 'numeric'],
-        'kd_akun' => ['required']
-    ]
-],
 ];
