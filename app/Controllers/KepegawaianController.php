@@ -1,3 +1,5 @@
+/* This PHP class named KepegawaianController extends Controller and has a method index that sets the
+'tbl' parameter based on the 'tbl' query parameter or defaults to 'asn'. */
 <?php
 require_once __DIR__ . '/../Core/Auth.php';
 
@@ -12,20 +14,11 @@ class KepegawaianController extends Controller
 
     public function index()
     {
-        if (!Auth::check()) {
-            header("Location: /");
-            exit;
-        }
-
         $tbl = $_GET['tbl'] ?? 'asn';
 
-        if (!in_array($tbl, $this->allowedTables)) {
-            http_response_code(403);
-            die("Tabel tidak diizinkan");
-        }
-
-        $this->view('kepegawaian/index', [
-            'tbl' => $tbl
-        ], 'app');
+        return $this->view('kepegawaian/index', [
+    'module' => 'kepegawaian',
+    'tbl'    => $tbl
+]);
     }
 }
