@@ -12,7 +12,6 @@
 ========================================================= */
 
 class AjaxEngine {
-
 	/**
 	 * Constructor
 	 * @param {string} url - URL default (opsional)
@@ -23,7 +22,7 @@ class AjaxEngine {
 
 	/**
 	 * Method utama untuk melakukan AJAX request
-	 * 
+	 *
 	 * Parameter berbentuk object agar fleksibel dan scalable.
 	 * Tidak ada perubahan logika dari versi asli.
 	 */
@@ -38,18 +37,20 @@ class AjaxEngine {
 		processData = true, // Apakah data diproses otomatis oleh jQuery
 		contentType = "application/x-www-form-urlencoded; charset=UTF-8", // Tipe konten default
 	}) {
-
 		/**
 		 * Menggunakan jQuery $.ajax
 		 * Tidak diubah ke fetch agar tetap kompatibel
 		 * dengan seluruh sistem yang sudah ada.
 		 */
 		return $.ajax({
+			headers: {
+				"X-CSRF-TOKEN": window.CSRF_TOKEN,
+			},
 
-			type: method,      // GET / POST / PUT / DELETE
-			url: url,          // Endpoint tujuan
-			data: data,        // Data payload
-			dataType: "json",  // Sistem mengharapkan response JSON
+			type: method, // GET / POST / PUT / DELETE
+			url: url, // Endpoint tujuan
+			data: data, // Data payload
+			dataType: "json", // Sistem mengharapkan response JSON
 			processData: processData,
 			contentType: contentType,
 
@@ -64,7 +65,6 @@ class AjaxEngine {
 			 * Jika request berhasil (HTTP 200)
 			 */
 			success: function (res) {
-
 				/**
 				 * 🔥 AUTO TOAST GLOBAL
 				 * Jika backend mengirimkan properti "success",
@@ -91,12 +91,10 @@ class AjaxEngine {
 			 * Jika terjadi error (HTTP 4xx / 5xx)
 			 */
 			error: function (xhr) {
-
 				let response = xhr.responseJSON;
 
 				// Jika server mengirim JSON error
 				if (response) {
-
 					ToastEngine.show({
 						success: false,
 						message: response.message || "Terjadi kesalahan",
@@ -104,9 +102,7 @@ class AjaxEngine {
 
 					// Jalankan callback error tambahan
 					if (error) error(response);
-
 				} else {
-
 					// Jika server tidak mengirim JSON (error murni)
 					ToastEngine.show({
 						success: false,

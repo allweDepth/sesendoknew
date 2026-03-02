@@ -193,7 +193,9 @@
     <!-- ================= ENTRY POINT ================= -->
     <script src="/assets/js/app-init.js"></script>
 
-
+    <script>
+        window.CSRF_TOKEN = "<?= $_SESSION['csrf_token'] ?? '' ?>";
+    </script>
 </body>
 
 </html>

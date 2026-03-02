@@ -16,7 +16,7 @@ class AuthController extends Controller
             header("Location: /");
             exit;
         }
-
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         // LOGIN BERHASIL
         header("Location: /dashboard");
         exit;
