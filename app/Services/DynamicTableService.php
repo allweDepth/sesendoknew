@@ -80,14 +80,45 @@ class DynamicTableService
     }
 
     /* =========================================================
-        MAIN HANDLER (ENTRY POINT)
-        ========================================================= */
+    MAIN HANDLER (ENTRY POINT) — HARDENED VERSION
+    ---------------------------------------------------------
+    PERUBAHAN:
+    - Wajib action eksplisit
+    - Tidak ada fallback implicit
+    - Validasi action lebih awal
+    - Tetap kompatibel dengan arsitektur lama
+   ========================================================= */
     public function handle(array $request): string
     {
         try {
 
-            $action = $request['action'] ?? 'default';
-            $tbl    = $request['tbl'] ?? null;
+            /* =====================================================
+           1️⃣ VALIDASI ACTION
+        ===================================================== */
+            if (empty($request['action'])) {
+                return JsonResponse::error("Action wajib dikirim");
+            }
+
+            $action = $request['action'];
+
+            // 🔥 Daftar action yang diizinkan sistem
+            $allowedActions = [
+                'add',
+                'edit',
+                'delete',
+                'dropdown',
+                'export',
+                'list'
+            ];
+
+            if (!in_array($action, $allowedActions)) {
+                return JsonResponse::error("Action tidak valid");
+            }
+
+            /* =====================================================
+           2️⃣ VALIDASI TABEL
+        ===================================================== */
+            $tbl = $request['tbl'] ?? null;
 
             if (!$tbl) {
                 return JsonResponse::error("Tabel tidak dikirim");
@@ -100,6 +131,9 @@ class DynamicTableService
             $profile = $this->profiles[$tbl];
             $table   = $profile['table'];
 
+            /* =====================================================
+           3️⃣ EKSEKUSI ACTION
+        ===================================================== */
             return $this->executeAction(
                 $action,
                 $tbl,
@@ -108,10 +142,19 @@ class DynamicTableService
                 $request
             );
         } catch (\Throwable $e) {
+
             return JsonResponse::error($e->getMessage());
         }
     }
 
+    /* =========================================================
+   EXECUTE ACTION (NO IMPLICIT FALLBACK)
+   ---------------------------------------------------------
+   PERUBAHAN:
+   - Listing hanya via action = 'list'
+   - Tidak ada default auto listing
+   - Lebih eksplisit & SPA konsisten
+   ========================================================= */
     private function executeAction(
         string $action,
         string $tbl,
@@ -122,17 +165,28 @@ class DynamicTableService
 
         switch ($action) {
 
+            /* =====================================================
+           ➕ ADD
+        ===================================================== */
             case 'add':
                 $this->authorize('add', $table);
                 return $this->insert($table, $request);
 
+
+                /* =====================================================
+           ✏ EDIT
+           - Jika hanya id_row → ambil data
+           - Jika ada id → update
+        ===================================================== */
             case 'edit':
 
+                // 🔍 GET SINGLE ROW
                 if (!empty($request['id_row']) && count($request) <= 4) {
                     $this->authorize('view', $table);
                     return $this->getById($table, $request['id_row']);
                 }
 
+                // 🔄 UPDATE
                 if (!empty($request['id'])) {
                     $this->authorize('edit', $table);
                     return $this->update($table, $request);
@@ -140,10 +194,22 @@ class DynamicTableService
 
                 return JsonResponse::error("ID tidak ditemukan");
 
+
+                /* =====================================================
+           🗑 DELETE
+        ===================================================== */
             case 'delete':
                 $this->authorize('delete', $table);
-                return $this->delete($table, $profile, $request['id_row'] ?? null);
+                return $this->delete(
+                    $table,
+                    $profile,
+                    $request['id_row'] ?? null
+                );
 
+
+                /* =====================================================
+           📥 DROPDOWN
+        ===================================================== */
             case 'dropdown':
                 return $this->loadDropdown(
                     $request['tbl'] ?? null,
@@ -151,13 +217,38 @@ class DynamicTableService
                     $request['kd_akun'] ?? null
                 );
 
+
+                /* =====================================================
+           📤 EXPORT
+        ===================================================== */
             case 'export':
                 $this->authorize('view', $table);
-                return $this->export($table, $profile, $request, 'default');
+                return $this->export(
+                    $table,
+                    $profile,
+                    $request,
+                    'default'
+                );
 
-            default:
+
+                /* =====================================================
+           📋 LISTING (WAJIB action = list)
+        ===================================================== */
+            case 'list':
                 $this->authorize('view', $table);
-                return $this->listing($table, $profile, $request, $action);
+                return $this->listing(
+                    $table,
+                    $profile,
+                    $request,
+                    'default'
+                );
+
+
+                /* =====================================================
+           ❌ NO FALLBACK
+        ===================================================== */
+            default:
+                return JsonResponse::error("Action tidak dikenali");
         }
     }
     /* =========================================================
@@ -176,7 +267,7 @@ class DynamicTableService
             [$id]
         )->fetch();
 
-        return JsonResponse::success("Data ditemukan", null, $row);
+        return JsonResponse::success("Data ditemukan", [], $row ?? []);
     }
 
     /* =========================================================

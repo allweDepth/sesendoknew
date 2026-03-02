@@ -1,105 +1,86 @@
 /* =========================================================
-   TABLE MANAGER (HYBRID STABLE VERSION)
-   ---------------------------------------------------------
-   Engine utama untuk:
-   ✔ Load data dari backend
-   ✔ Render header & body tabel
-   ✔ Render pagination (smart)
-   ✔ Konfirmasi delete
-   ✔ Format value (currency, status badge)
-
-   Versi ini:
-   - Stabil seperti versi lama (berbasis state)
-   - Modular seperti versi baru
-   - Tidak bergantung pada selector rapuh
-========================================================= */
+		TABLE MANAGER — FINAL STRICT SPA VERSION
+		---------------------------------------------------------
+		✔ Fully compliant with DynamicTableService v3.2
+		✔ Strict success validation
+		✔ Uses backend primary_key dynamically
+		✔ No legacy fallback
+		✔ Clean event binding
+	========================================================= */
 
 class TableManager {
 	/* =====================================================
-	   CONSTRUCTOR
-	   -----------------------------------------------------
-	   Inisialisasi:
-	   - State module & tabel aktif
-	   - AJAX engine
-	   - Selector fallback otomatis
-	===================================================== */
+			CONSTRUCTOR
+			-----------------------------------------------------
+			Inisialisasi:
+			- State module & tabel aktif
+			- AJAX engine
+			- Selector fallback otomatis
+		===================================================== */
 	constructor(config = {}) {
-		// State global aktif (wajib ada)
 		this.state = config.state;
-
-		// Engine AJAX → semua CRUD ke /dynamic
 		this.ajax = window.Ajax;
 
-		// ==================================================
-		// SELECTOR FALLBACK (ANTI ERROR)
-		// Jika tidak dikirim dari luar, gunakan pola lama
-		// ==================================================
 		this.tbody = config.tbody || `tbody[name="tabel_${this.state.tbl}"]`;
 
 		this.pagination =
-			config.pagination || `div[name="pagination_${this.state.module}"]`;
+			config.pagination || `div[name="pagination_${this.state.tbl}"]`;
 
-		// ==================================================
-		// STATE PAGINATION
-		// ==================================================
 		this.currentPage = 1;
 		this.limit = config.limit || 10;
 		this.totalRows = 0;
 		this.totalPages = 0;
 
-		// Sorting
 		this.sortBy = null;
 		this.sortDir = "asc";
 
-		// Search
 		this.searchQuery = "";
-
-		// Data hasil response
 		this.data = [];
+
+		// 🔥 dynamic primary key from backend
+		this.primaryKey = "id";
 	}
 
 	/* =====================================================
-	   INIT TABLE
-	   -----------------------------------------------------
-	   - Bind event
-	   - Ambil data pertama kali
-	===================================================== */
+			INIT TABLE
+			-----------------------------------------------------
+			- Bind event
+			- Ambil data pertama kali
+		===================================================== */
+	/* ===================================================== */
 	init() {
 		this.bindEvents();
 		this.fetchData();
-		// 🔥 Reload otomatis setelah form sukses
-		$(document).off("form:success.tableReload");
 
+		$(document).off("form:success.tableReload");
 		$(document).on("form:success.tableReload", () => {
 			this.fetchData();
 		});
 	}
 
 	/* =====================================================
-	   FETCH DATA
-	   -----------------------------------------------------
-	   Mengambil data dari backend
-	   Parameter:
-	   - module
-	   - action
-	   - tbl
-	   - page
-	   - limit
-	===================================================== */
+			FETCH DATA
+			-----------------------------------------------------
+			Mengambil data dari backend
+			Parameter:
+			- module
+			- action
+			- tbl
+			- page
+			- limit
+		===================================================== */
+	/* ===================================================== */
 	fetchData() {
-		// 🔥 Sinkronisasi limit dari navbar
 		this.syncLimitFromNavbar();
-
 		this.renderLoader();
 
 		this.ajax.request({
 			method: "POST",
 			data: {
-				module: this.state.tbl,
 				action: "list",
 				tbl: this.state.tbl,
+				module: this.state.tbl,
 
-				// 🔥 FIX SESUAI BACKEND
 				halaman: this.currentPage,
 				rows: this.limit,
 				cari: this.searchQuery,
@@ -108,7 +89,13 @@ class TableManager {
 				sort_dir: this.sortDir,
 			},
 			success: (res) => {
-				this.data = res.data || [];
+				if (!res || !res.success) {
+					Toast.error(res?.message || "Gagal memuat data");
+					return;
+				}
+
+				this.primaryKey = res.meta?.primary_key || "id";
+				this.data = Array.isArray(res.data) ? res.data : [];
 
 				this.handlePagination(res.meta || {});
 
@@ -116,23 +103,25 @@ class TableManager {
 				this.renderBody();
 				this.renderPagination();
 			},
+			error: () => {
+				Toast.error("Terjadi kesalahan sistem");
+			},
 		});
 	}
 
 	/* =====================================================
-	   HANDLE META PAGINATION
-	===================================================== */
+			HANDLE META PAGINATION
+		===================================================== */
 	handlePagination(meta) {
 		this.totalRows = meta.total || 0;
 		this.currentPage = meta.page || 1;
 		this.limit = meta.limit || this.limit;
-
 		this.totalPages = Math.ceil(this.totalRows / this.limit);
 	}
 
 	/* =====================================================
-	   RENDER LOADER
-	===================================================== */
+			RENDER LOADER
+		===================================================== */
 	renderLoader() {
 		$(this.tbody).html(`
 			<tr>
@@ -143,51 +132,21 @@ class TableManager {
 		`);
 	}
 
+
 	/* =====================================================
-	   AMBIL KOLOM DARI UI CONFIG
-	   -----------------------------------------------------
-	   - Ambil dari UIConfig[module][tbl]
-	   - Auto hide id
-	   - Skip prop.table === false
-	===================================================== */
+			AMBIL KOLOM DARI UI CONFIG
+			-----------------------------------------------------
+			- Ambil dari UIConfig[module][tbl]
+			- Auto hide id
+			- Skip prop.table === false
+		===================================================== */
 	getColumnsFromConfig() {
 		if (!window.UIConfig) return [];
 
-		const tbl = this.state.tbl;
+		const config = window.UIConfig?.[this.state.tbl];
+		if (!config || !config.form?.elements) return [];
 
-		// =====================================================
-		// 🔥 ENTERPRISE FLAT STRUCTURE FIX
-		// =====================================================
-		let config = window.UIConfig?.[tbl];
-
-		// 🔥 FALLBACK STRUCTURE LAMA
-		if (!config) {
-			Object.keys(window.UIConfig).forEach((parentKey) => {
-				const parent = window.UIConfig[parentKey];
-				if (parent && parent[tbl]) {
-					config = parent[tbl];
-				}
-			});
-		}
-
-		let elements = [];
-
-		// 🔥 STRUKTUR BARU
-		if (config.form && Array.isArray(config.form.elements)) {
-			elements = config.form.elements;
-		}
-
-		// 🔥 BACKWARD COMPAT
-		else if (Array.isArray(config)) {
-			elements = config;
-		}
-
-		if (!elements.length) {
-			console.warn("Elements kosong untuk:", tbl);
-			return [];
-		}
-
-		return elements
+		return config.form.elements
 			.filter(
 				(item) =>
 					item.prop?.name &&
@@ -203,11 +162,11 @@ class TableManager {
 	}
 
 	/* =====================================================
-	   RENDER HEADER
-	===================================================== */
+			RENDER HEADER
+		===================================================== */
 	renderHeader() {
 		const columns = this.getColumnsFromConfig();
-		if (!columns) return;
+		if (!columns.length) return;
 
 		let html = "<tr>";
 
@@ -221,16 +180,15 @@ class TableManager {
 	}
 
 	/* =====================================================
-	   FORMAT VALUE
-	   -----------------------------------------------------
-	   Support:
-	   - currency
-	   - status badge
-	===================================================== */
+			FORMAT VALUE
+			-----------------------------------------------------
+			Support:
+			- currency
+			- status badge
+		===================================================== */
 	formatValue(value, format) {
 		if (value == null) return "";
 
-		// Currency
 		if (format === "currency") {
 			return new Intl.NumberFormat("id-ID", {
 				style: "currency",
@@ -239,39 +197,30 @@ class TableManager {
 			}).format(value);
 		}
 
-		// Status badge
 		if (format === "status") {
 			if (value == 1 || value === "aktif")
 				return `<div class="ui green basic label">Aktif</div>`;
-
 			if (value == 0 || value === "nonaktif")
 				return `<div class="ui red basic label">Non Aktif</div>`;
-
-			return `<div class="ui grey basic label">${value}</div>`;
 		}
 
 		return value;
 	}
 
 	/* =====================================================
-	   RENDER BODY
-	===================================================== */
+			RENDER BODY
+		===================================================== */
 	renderBody() {
 		if (!this.data.length) {
 			$(this.tbody).html(`
 				<tr>
 					<td colspan="100%" class="center aligned">
-						<div class="ui info icon message">
-							<i class="info circle icon"></i>
-							<div class="content">
-								<div class="header">Tidak Ada Data</div>
-								<p>Belum terdapat data pada modul ini.</p>
-							</div>
+						<div class="ui info message">
+							Tidak ada data
 						</div>
 					</td>
 				</tr>
 			`);
-
 			return;
 		}
 
@@ -279,28 +228,28 @@ class TableManager {
 		let html = "";
 
 		this.data.forEach((row) => {
-			html += `<tr data-id="${row.id}">`;
+			const id = row[this.primaryKey];
+
+			html += `<tr data-id="${id}">`;
 
 			columns.forEach((col) => {
-				let value = row.hasOwnProperty(col.key) ? row[col.key] : "";
+				let value = row[col.key] ?? "";
 				value = this.formatValue(value, col.format);
-
-				html += `<td>${value ?? ""}</td>`;
+				html += `<td>${value}</td>`;
 			});
 
-			// Tombol aksi
 			html += `
 				<td class="collapsing">
 					<div class="ui mini basic icon buttons">
-						<button class="ui button" type="button" 
-								data-ui="open-form"
-								data-container="flyout"
-								data-jns="edit"
-								data-tbl="${this.state.tbl}"
-								data-id="${row.id}">
-								<i class="edit icon"></i>
+						<button class="ui button"
+							data-ui="open-form"
+							data-jns="edit"
+							data-tbl="${this.state.tbl}"
+							data-id="${id}">
+							<i class="edit icon"></i>
 						</button>
-						<button  type="button" class="ui red button" data-action="delete">
+						<button class="ui red button"
+							data-action="delete">
 							<i class="trash icon"></i>
 						</button>
 					</div>
@@ -314,12 +263,12 @@ class TableManager {
 	}
 
 	/* =====================================================
-	   RENDER PAGINATION (SMART)
-	   -----------------------------------------------------
-	   - Prev
-	   - Smart range
-	   - Next
-	===================================================== */
+			RENDER PAGINATION (SMART)
+			-----------------------------------------------------
+			- Prev
+			- Smart range
+			- Next
+		===================================================== */
 	renderPagination() {
 		if (this.totalPages <= 1) {
 			$(this.pagination).html("");
@@ -334,18 +283,18 @@ class TableManager {
 
 		// PREV
 		html += `
-			<a class="icon item ${current === 1 ? "disabled" : ""}"
-			   data-page="${current - 1}">
-				<i class="angle left icon"></i>
-			</a>
-		`;
+				<a class="icon item ${current === 1 ? "disabled" : ""}"
+					data-page="${current - 1}">
+					<i class="angle left icon"></i>
+				</a>
+			`;
 
 		const createItem = (page, active = false) => `
-			<a class="item ${active ? "active" : ""}"
-			   data-page="${page}">
-			   ${page}
-			</a>
-		`;
+				<a class="item ${active ? "active" : ""}"
+					data-page="${page}">
+					${page}
+				</a>
+			`;
 
 		// First page
 		html += createItem(1, current === 1);
@@ -371,11 +320,11 @@ class TableManager {
 
 		// NEXT
 		html += `
-			<a class="icon item ${current === total ? "disabled" : ""}"
-			   data-page="${current + 1}">
-				<i class="angle right icon"></i>
-			</a>
-		`;
+				<a class="icon item ${current === total ? "disabled" : ""}"
+					data-page="${current + 1}">
+					<i class="angle right icon"></i>
+				</a>
+			`;
 
 		html += `</div>`;
 
@@ -383,74 +332,32 @@ class TableManager {
 	}
 
 	/* =====================================================
-	   EVENT BINDING
-	===================================================== */
+			EVENT BINDING
+		===================================================== */
 	bindEvents() {
-		// ==========================================
-		// PAGINATION CLICK
-		// ==========================================
 		$(document).off("click.tablePagination");
-
 		$(document).on(
 			"click.tablePagination",
 			`${this.pagination} [data-page]`,
 			(e) => {
-				e.preventDefault();
-
-				const $item = $(e.currentTarget);
-
-				if ($item.hasClass("disabled")) return;
-
-				const page = parseInt($item.data("page"));
-
+				const page = parseInt($(e.currentTarget).data("page"));
 				if (!page || page === this.currentPage) return;
-
 				this.changePage(page);
 			},
 		);
 
-		// ==========================================
-		// EDIT / DELETE
-		// ==========================================
 		$(document).off("click.tableAction");
+		$(document).on(
+			"click.tableAction",
+			`${this.tbody} [data-action]`,
+			(e) => {
+				const action = $(e.currentTarget).data("action");
+				const id = $(e.currentTarget).closest("tr").data("id");
+				this.handleAction(action, id);
+			},
+		);
 
-		$(document).on("click.tableAction", `${this.tbody} [data-action]`, (e) => {
-			const action = $(e.currentTarget).data("action");
-			const id = $(e.currentTarget).closest("tr").data("id");
-
-			this.handleAction(action, id);
-		});
-
-		// ==========================================
-		// SYNC DROPDOWN JUMLAH ROW (#countRow)
-		// ==========================================
-		if ($("#countRow").length) {
-			// Pastikan tidak double binding
-			$(document).off("change.countRow");
-
-			$(document).on("change.countRow", "#countRow input", () => {
-				// Ambil value dari dropdown Fomantic
-				let value = $("#countRow").dropdown("get value");
-
-				// Reset halaman ke 1
-				this.currentPage = 1;
-
-				// Jika ALL → ambil semua
-				if (value === "all") {
-					this.limit = 200;
-				} else {
-					this.limit = parseInt(value) || 5;
-				}
-
-				// Reload data
-				this.fetchData();
-			});
-		}
-		// ==========================================
-		// SEARCH DARI NAVBAR (#cari_data)
-		// ==========================================
-		$(document).off("input.tableSearch");
-
+		$(document).off("keypress.tableSearch");
 		$(document).on("keypress.tableSearch", "#cari_data", (e) => {
 			if (e.which === 13) {
 				this.searchQuery = $(e.currentTarget).val();
@@ -461,18 +368,17 @@ class TableManager {
 	}
 
 	/* =====================================================
-	   CHANGE PAGE
-	===================================================== */
+			CHANGE PAGE
+		===================================================== */
 	changePage(page) {
 		if (page < 1 || page > this.totalPages) return;
-
 		this.currentPage = page;
 		this.fetchData();
 	}
 
 	/* =====================================================
-	   HANDLE ACTION
-	===================================================== */
+			HANDLE ACTION
+		===================================================== */
 	handleAction(action, id) {
 		if (action === "delete") {
 			this.deleteRow(id);
@@ -480,8 +386,8 @@ class TableManager {
 	}
 
 	/* =====================================================
-	   DELETE ROW (WITH CONFIRMATION)
-	===================================================== */
+			DELETE ROW (WITH CONFIRMATION)
+		===================================================== */
 	deleteRow(id) {
 		const rowData = this.data.find((r) => r.id == id);
 		const label = rowData?.nama || "data ini";
@@ -497,9 +403,9 @@ class TableManager {
 					this.ajax.request({
 						method: "POST",
 						data: {
-							module: this.state.module,
 							action: "delete",
 							tbl: this.state.tbl,
+							module: this.state.tbl,
 							id_row: id,
 						},
 						success: () => {
@@ -514,10 +420,10 @@ class TableManager {
 	}
 
 	/* =====================================================
-	   DESTROY
-	   -----------------------------------------------------
-	   Membersihkan event dan DOM
-	===================================================== */
+			DESTROY
+			-----------------------------------------------------
+			Membersihkan event dan DOM
+		===================================================== */
 	destroy() {
 		$(document).off("click", `[data-page]`);
 		$(document).off("click", `${this.tbody} [data-action]`);
@@ -526,16 +432,15 @@ class TableManager {
 		$(this.pagination).empty();
 	}
 	/* =====================================================
-   SYNC LIMIT DARI NAVBAR DROPDOWN
-   -----------------------------------------------------
-   Ambil value dari #countRow jika ada
-===================================================== */
+		SYNC LIMIT DARI NAVBAR DROPDOWN
+		-----------------------------------------------------
+		Ambil value dari #countRow jika ada
+	===================================================== */
 	syncLimitFromNavbar() {
 		if ($("#countRow").length) {
 			let value = $("#countRow").dropdown("get value");
-
 			if (value === "all") {
-				this.limit = 999999; // atau angka besar
+				this.limit = 999999;
 			} else {
 				this.limit = parseInt(value) || this.limit;
 			}

@@ -1,39 +1,15 @@
 <?php
+require_once __DIR__ . '/../Core/Auth.php';
 
 class PengaturanController extends Controller
 {
     public function index()
     {
         if (!Auth::check()) {
-            header("Location: /login");
+            header("Location: /");
             exit;
         }
 
-        $this->view('pengaturan/index');
-    }
-
-    public function load_single()
-    {
-        $kd_wilayah = $_SESSION['user']['kd_wilayah'];
-
-        $db = DB::getInstance();
-
-        $data = $db->query(
-            "SELECT * FROM pengaturan_neo WHERE kd_wilayah = ? LIMIT 1",
-            [$kd_wilayah]
-        )->fetch();
-
-        if (!$data) {
-            $db->insert('pengaturan_neo', [
-                'kd_wilayah' => $kd_wilayah
-            ]);
-
-            $data = $db->query(
-                "SELECT * FROM pengaturan_neo WHERE kd_wilayah = ? LIMIT 1",
-                [$kd_wilayah]
-            )->fetch();
-        }
-
-        echo JsonResponse::success("OK", $data);
+        $this->view('pengaturan/index', [], 'app');
     }
 }

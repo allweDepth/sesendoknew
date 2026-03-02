@@ -2,14 +2,14 @@
 
 class JsonResponse
 {
+    /* =========================================================
+       SUCCESS RESPONSE
+       ========================================================= */
     public static function success(
-        string $message = '',
-        ?array $meta = null,
-        mixed $data = null,
-        int $code = 200
+        string $message = "OK",
+        array $meta = [],
+        $data = []
     ): string {
-
-        http_response_code($code);
 
         return json_encode([
             'success' => true,
@@ -19,10 +19,13 @@ class JsonResponse
         ], JSON_UNESCAPED_UNICODE);
     }
 
+    /* =========================================================
+       ERROR RESPONSE
+       ========================================================= */
     public static function error(
-        string $message = '',
+        string $message = "Terjadi kesalahan",
         int $code = 400,
-        ?array $errors = null
+        array $errors = []
     ): string {
 
         http_response_code($code);
@@ -30,8 +33,8 @@ class JsonResponse
         return json_encode([
             'success' => false,
             'message' => $message,
-            'meta'    => null,
-            'data'    => null,
+            'meta'    => [],
+            'data'    => [],
             'errors'  => $errors
         ], JSON_UNESCAPED_UNICODE);
     }

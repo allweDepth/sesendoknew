@@ -1,22 +1,29 @@
 <?php
-require_once __DIR__.'/../Core/Controller.php';
+require_once __DIR__ . '/../Core/Auth.php';
+
 class ResetTabelController extends Controller
 {
-  public function index()
-  {
-    return $this->view('reset_tabel/index');
-  }
-  public function execute()
-  {
-    // 🔥 lakukan reset tabel di sini
-    $db = DB::getInstance();
-    $db->query("SET FOREIGN_KEY_CHECKS=0");
-    $db->query("TRUNCATE TABLE nama_tabel");
-    $db->query("SET FOREIGN_KEY_CHECKS=1");
+    public function index()
+    {
+        if (!Auth::check()) {
+            header("Location: /");
+            exit;
+        }
 
-    return json_encode([
-      'success' => true,
-      'message' => 'Tabel berhasil direset'
-    ]);
-  }
+        $this->view('reset_tabel/index', [], 'app');
+    }
+
+    public function reset()
+    {
+        if (!Auth::check()) {
+            http_response_code(401);
+            echo json_encode([
+                'success' => false,
+                'expired' => true
+            ]);
+            return;
+        }
+
+        // Logic reset tetap di sini atau pindahkan ke Service
+    }
 }
