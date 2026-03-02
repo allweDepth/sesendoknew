@@ -1,7 +1,6 @@
-/* This PHP class named KepegawaianController extends Controller and has a method index that sets the
-'tbl' parameter based on the 'tbl' query parameter or defaults to 'asn'. */
 <?php
 require_once __DIR__ . '/../Core/Auth.php';
+require_once __DIR__ . '/../Core/DB.php';
 
 class KepegawaianController extends Controller
 {
@@ -14,11 +13,19 @@ class KepegawaianController extends Controller
 
     public function index()
     {
+        if (!Auth::check()) {
+            header("Location: /");
+            exit;
+        }
+
         $tbl = $_GET['tbl'] ?? 'asn';
 
-        return $this->view('kepegawaian/index', [
-    'module' => 'kepegawaian',
-    'tbl'    => $tbl
-]);
+        if (!in_array($tbl, $this->allowedTables)) {
+            $tbl = 'asn';
+        }
+
+        $this->view('referensi/index', [
+            'tbl' => $tbl
+        ], 'app');
     }
 }

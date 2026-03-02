@@ -1,5 +1,7 @@
 class KepegawaianModule extends BaseCrudModule {
-    constructor(config) {
-        super(config);
+    constructor() {
+        super({
+          moduleName: "kepegawaian"
+        });
     }
 }

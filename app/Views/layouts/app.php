@@ -110,7 +110,10 @@
 
 <body>
 
-
+<?php if (!isset($_SESSION['user'])) {
+    header("Location: /");
+    exit;
+} ?>
     <!-- NAVBAR (DI LUAR PUSHABLE) @note navbar -->
     <!-- NAVBAR (DI LUAR PUSHABLE) -->
     <?php require __DIR__ . '/../partials/auth_navbar.php'; ?>
