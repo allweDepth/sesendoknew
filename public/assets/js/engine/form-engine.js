@@ -163,7 +163,10 @@ class FormEngine {
 		// ==============================
 		// 🔥 NORMAL SUBMIT
 		// ==============================
-		const formData = $(this.formSelector).serialize();
+		let formData = $(this.formSelector).serialize();
+
+		formData += `&action=${this.state.action}`;
+		formData += `&tbl=${this.state.tbl}`;
 
 		this.ajax.request({
 			data: formData,

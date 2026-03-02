@@ -165,11 +165,12 @@
     <!-- ================= CORE ================= -->
     <script src="/assets/js/core/config.js"></script>
     <script src="/assets/js/core/state.js"></script>
+        <script src="/assets/js/core/toast.js"></script>
     <script src="/assets/js/core/ajax.js"></script> <!-- HARUS SEBELUM app.js -->
     <script src="/assets/js/config/ui-config.js"></script>
     <script src="/assets/js/core/spa-router.js"></script>
     <script src="/assets/js/core/page-loader.js"></script>
-    <script src="/assets/js/core/toast.js"></script>
+
     <script src="/assets/js/core/dialog.js"></script>
     <!-- UI REGISTRY -->
     <script src="/assets/js/ui/ui-registry.js"></script>

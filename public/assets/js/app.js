@@ -2,7 +2,7 @@ class App {
 	constructor() {
 		this.state = new AppState();
 		this.ajax = window.Ajax;
-		this.toast = ToastEngine;
+		this.toast = Toast;
 		this.dialog = window.DialogEngine || null;
 		this.loader = window.PageLoader || null;
 		this.router = new SpaRouter(); // 🔥 INI WAJIB

@@ -1,10 +1,16 @@
-class ToastEngine {
+class Toast {
+	static success(message) {
+		this.show({ success: true, message });
+	}
+
+	static error(message) {
+		this.show({ success: false, message });
+	}
+
 	static show({ success = true, message = "" }) {
 		if (!message) return;
 
 		let maxToast = 5;
-
-		// 🔥 batasi maksimal 3 toast
 		let existing = $("#toastContainer .ui.toast");
 
 		if (existing.length >= maxToast) {
@@ -22,4 +28,4 @@ class ToastEngine {
 	}
 }
 
-window.ToastEngine = ToastEngine;
+window.Toast = Toast;

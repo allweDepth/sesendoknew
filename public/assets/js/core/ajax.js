@@ -77,7 +77,7 @@ class AjaxEngine {
 				 * }
 				 */
 				if (res && typeof res.success !== "undefined") {
-					ToastEngine.show({
+					Toast.show({
 						success: res.success,
 						message: res.message || "",
 					});
@@ -95,7 +95,7 @@ class AjaxEngine {
 
 				// Jika server mengirim JSON error
 				if (response) {
-					ToastEngine.show({
+					Toast.show({
 						success: false,
 						message: response.message || "Terjadi kesalahan",
 					});
