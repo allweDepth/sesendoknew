@@ -4,6 +4,7 @@ class RenstraModule extends BaseCrudModule {
         super({
             moduleName: "renstra",
             menuItems: [
+                { label: "Visi", tbl: "renstra_neo" },
                 { label: "Misi", tbl: "misi_renstra_neo" },
                 { label: "Tujuan", tbl: "tujuan_renstra_neo" },
                 { label: "Sasaran", tbl: "sasaran_renstra_neo" },
