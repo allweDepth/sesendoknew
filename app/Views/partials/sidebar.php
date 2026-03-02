@@ -151,27 +151,27 @@
         Kepegawaian
       </div>
       <div class="content">
-        <a class="item" href="/kepegawaian/asn" data-spa="client">
+        <a class="item" href="/kepegawaian?tbl=asn" data-spa="client">
           <i class="blue id badge icon"></i> Data ASN
         </a>
 
-        <a class="item" href="/kepegawaian/pppk" data-spa="client">
+        <a class="item" href="/kepegawaian?tbl=pppk" data-spa="client">
           <i class="teal user tie icon"></i> PPPK
         </a>
 
-        <a class="item" href="/kepegawaian/riwayat_jabatan" data-spa="client">
+        <a class="item" href="/kepegawaian?tbl=riwayat_jabatan" data-spa="client">
           <i class="orange briefcase icon"></i> Riwayat Jabatan
         </a>
 
-        <a class="item" href="/kepegawaian/riwayat_pangkat" data-spa="client">
+        <a class="item" href="/kepegawaian?tbl=riwayat_pangkat" data-spa="client">
           <i class="purple medal icon"></i> Riwayat Pangkat
         </a>
 
-        <a class="item" href="/kepegawaian/cuti" data-spa="client">
+        <a class="item" href="/kepegawaian?tbl=cuti" data-spa="client">
           <i class="yellow calendar alternate icon"></i> Cuti & Izin
         </a>
 
-        <a class="item" href="/kepegawaian/sk_pegawai" data-spa="client">
+        <a class="item" href="/kepegawaian?tbl=sk_pegawai" data-spa="client">
           <i class="green file signature icon"></i> SK Pegawai
         </a>
       </div>

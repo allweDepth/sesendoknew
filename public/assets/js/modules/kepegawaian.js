@@ -1,7 +1,9 @@
 class KepegawaianModule extends BaseCrudModule {
     constructor() {
         super({
-          moduleName: "kepegawaian"
+            moduleName: "kepegawaian",
+            menuItems: [],
+            useMenu: false
         });
     }
 }
