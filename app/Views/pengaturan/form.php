@@ -1,327 +1,208 @@
 <?php
-
-/**
- * =========================================================
- * FORM PENGATURAN SISTEM (ENTERPRISE STRUCTURE)
- * =========================================================
- * Role Matrix:
- *
- * super_admin   → Mengatur ATURAN REFERENSI
- * admin_wilayah → Mengatur PERIODE & KONTROL SISTEM
- * admin_opd     → Read Only
- * viewer        → Read Only
- *
- * Basis data: kd_wilayah
- * =========================================================
- */
-
-require_once __DIR__ . '/../../Core/DB.php';
-$db = DB::getInstance();
-
-/* =========================================================
-   SESSION
-========================================================= */
-$type        = $_SESSION['user']['type_user'] ?? 'viewer';
-$kd_wilayah  = $_SESSION['user']['kd_wilayah'] ?? '';
-$kd_opd      = $_SESSION['user']['kd_opd'] ?? '';
-$tahunUser   = $_SESSION['user']['tahun'] ?? date('Y');
-
-/* =========================================================
-   LOAD DATA
-========================================================= */
-$pengaturan = $db->query(
-    "SELECT * FROM pengaturan_neo WHERE kd_wilayah = ? LIMIT 1",
-    [$kd_wilayah]
-)->fetch();
-
-$peraturan = $db->query(
-    "SELECT id, judul FROM peraturan_neo ORDER BY judul ASC"
-)->fetchAll();
-
-/* =========================================================
-   ROLE PERMISSION
-========================================================= */
-$canEditAturan  = ($type === 'super_admin');
-$canEditPeriode = ($type === 'admin_wilayah');
-$canEditKontrol = ($type === 'admin_wilayah');
-
-$disAturan  = $canEditAturan  ? '' : 'disabled';
-$disPeriode = $canEditPeriode ? '' : 'disabled';
-$disKontrol = $canEditKontrol ? '' : 'disabled';
-?>
-<?php
-/* ==========================================
-   ROLE MESSAGE CONFIGURATION
-========================================== */
-$roleInfo = [
-    'super_admin'   => ['color' => 'red', 'icon' => 'shield alternate', 'title' => 'Super Admin', 'desc' => 'Mengatur aturan referensi sistem'],
-    'admin_wilayah' => ['color' => 'orange', 'icon' => 'globe', 'title' => 'Admin Wilayah', 'desc' => 'Mengatur periode dan kontrol sistem'],
-    'admin_opd'     => ['color' => 'blue', 'icon' => 'building', 'title' => 'Admin OPD', 'desc' => 'Mengikuti pengaturan wilayah'],
-    'viewer'        => ['color' => 'grey', 'icon' => 'eye', 'title' => 'Viewer', 'desc' => 'Hanya dapat melihat pengaturan']
-];
-
-$currentRole = $roleInfo[$type] ?? $roleInfo['viewer'];
+$user = $_SESSION['user'] ?? [];
+$type = strtolower(str_replace(' ', '_', $user['type_user'] ?? ''));
+$canEdit = in_array($type, ['super_admin', 'admin_wilayah']);
+$disabled = $canEdit ? '' : 'disabled';
+$tahunLabel = $user['tahun'] ?? '-';
 ?>
 
-<!-- ======================================================
-     ROLE MESSAGE (FOMANTIC)
-====================================================== -->
-<div class="ui <?= $currentRole['color']; ?> icon message">
-    <i class="<?= $currentRole['icon']; ?> icon"></i>
-    <div class="content">
-        <div class="header">
-            Role Anda: <?= strtoupper($currentRole['title']); ?>
+<div class="ui container form-wrapper">
+
+    <!-- HEADER -->
+    <div class="ui top attached segment page-header">
+        <div class="ui grid">
+            <div class="twelve wide column">
+                <h2 class="ui header">
+                    <i class="settings icon"></i>
+                    <div class="content">
+                        Pengaturan Sistem
+                        <div class="sub header">
+                            Konfigurasi wilayah, periode & kontrol sistem
+                        </div>
+                    </div>
+                </h2>
+            </div>
+            <div class="four wide right aligned column">
+                <div class="ui tiny grey label">
+                    Tahun Aktif: <?= $tahunLabel ?>
+                </div>
+            </div>
         </div>
-        <p><?= $currentRole['desc']; ?></p>
-        <p>
-            Wilayah: <strong><?= $kd_wilayah ?></strong> |
-            OPD: <strong><?= $kd_opd ?></strong>
-        </p>
     </div>
-</div>
 
-<?php if ($type === 'super_admin'): ?>
-    <div class="ui segment">
-        <button class="ui primary button"
-            data-ui="open-form"
-            data-container="flyout"
-            data-jns="add"
-            data-tbl="periode_rpjmd">
-            <i class="plus icon"></i>
-            Tambah Periode RPJMD
-        </button>
-
+    <!-- TAB MENU -->
+    <div class="ui top attached tabular menu" id="pengaturan-tabs">
+        <a class="active item" data-tab="pengaturan">Pengaturan Wilayah</a>
+        <a class="item" data-tab="periode">Periode RPJMD</a>
     </div>
-<?php endif; ?>
 
-<table class="ui celled striped table">
-    <thead></thead>
-    <tbody name="tabel_periode_rpjmd"></tbody>
-    <tfoot>
-        <tr>
-            <td colspan="100%" class="right aligned">
-                <div name="pagination_periode_rpjmd"></div>
-            </td>
-        </tr>
-    </tfoot>
-</table>
-<form class="ui form">
+    <!-- TAB 1 -->
+    <div class="ui bottom attached tab segment active" data-tab="pengaturan">
 
+        <form class="ui form" id="form-pengaturan">
 
-    <?php if ($type === 'super_admin'): ?>
+            <!-- ================= IDENTITAS ================= -->
+            <h4 class="ui dividing header">Identitas Wilayah</h4>
 
-        <div class="ui raised segment">
-            <h4 class="ui dividing header">Periode RPJMD</h4>
+            <div class="two fields">
+                <div class="field">
+                    <label>Tahun Anggaran</label>
+                    <input type="number" name="tahun" <?= $disabled ?>>
+                </div>
+                <div class="field">
+                    <label>Tahun Renstra</label>
+                    <input type="number" name="tahun_renstra" <?= $disabled ?>>
+                </div>
+            </div>
 
-            <div class="ui three column grid">
+            <!-- ================= ATURAN REFERENSI ================= -->
+            <h4 class="ui dividing header">Aturan Referensi</h4>
 
-                <div class="column">
-                    <div class="field">
-                        <label>Periode Mulai</label>
-                        <div class="ui calendar" id="rpjmd_mulai_calendar">
-                            <div class="ui input left icon">
-                                <i class="calendar icon"></i>
-                                <input type="text"
-                                    name="rpjmd_mulai"
-                                    placeholder="Pilih Tahun"
-                                    autocomplete="off">
+            <div class="ui stackable two column grid">
+
+                <?php
+                $dropdowns = [
+                    "aturan_anggaran" => "Anggaran",
+                    "aturan_organisasi" => "Organisasi",
+                    "aturan_pengadaan" => "Pengadaan",
+                    "aturan_akun" => "Akun",
+                    "aturan_asb" => "ASB",
+                    "aturan_sbu" => "SBU",
+                    "aturan_ssh" => "SSH",
+                    "aturan_hspk" => "HSPK",
+                    "aturan_sumber_dana" => "Sumber Dana",
+                    "aturan_sub_kegiatan" => "Sub Kegiatan"
+                ];
+
+                foreach ($dropdowns as $name => $label): ?>
+                    <div class="eight wide column">
+                        <div class="field">
+                            <label><?= $label ?></label>
+                            <div class="ui fluid search selection dropdown peraturan-dropdown <?= $disabled ?>" data-name="<?= $name ?>">
+                                <input type="hidden" name="<?= $name ?>">
+                                <i class="dropdown icon"></i>
+                                <div class="default text">Pilih <?= $label ?></div>
+                                <div class="menu"></div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="column">
-                    <div class="field">
-                        <label>Periode Selesai</label>
-                        <div class="ui calendar" id="rpjmd_selesai_calendar">
-                            <div class="ui input left icon">
-                                <i class="calendar icon"></i>
-                                <input type="text"
-                                    name="rpjmd_selesai"
-                                    placeholder="Pilih Tahun"
-                                    autocomplete="off">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="column">
-                    <div class="field">
-                        <label>Keterangan</label>
-                        <input type="text" name="rpjmd_keterangan">
-                    </div>
-                </div>
+                <?php endforeach; ?>
 
             </div>
 
-        </div>
+            <!-- ================= PERIODE DOKUMEN ================= -->
+            <h4 class="ui dividing header">Periode Dokumen</h4>
 
-    <?php endif; ?>
-    <!-- ======================================================
-     ATURAN REFERENSI (SUPER ADMIN)
-====================================================== -->
-    <div class="ui raised segment">
-        <h4 class="ui dividing header">Aturan Referensi</h4>
+            <div class="ui stackable two column grid">
 
-        <?php
-        $aturanFields = [
-            'aturan_anggaran',
-            'aturan_organisasi',
-            'aturan_pengadaan',
-            'aturan_akun',
-            'aturan_asb',
-            'aturan_sbu',
-            'aturan_ssh',
-            'aturan_hspk',
-            'aturan_sumber_dana',
-            'aturan_sub_kegiatan'
-        ];
+                <?php
+                $ranges = [
+                    "renja" => "Renja",
+                    "dpa" => "DPA",
+                    "rkpd" => "RKPD",
+                    "rka" => "RKA",
+                    "renja_p" => "Renja Perubahan",
+                    "dppa" => "DPPA",
+                    "kua_ppas" => "KUA PPAS",
+                    "rapbd" => "RAPBD",
+                    "rak" => "RAK",
+                    "rkpd_perubahan" => "RKPD Perubahan",
+                    "kua_ppas_perubahan" => "KUA PPAS Perubahan",
+                    "apbd_perubahan" => "APBD Perubahan",
+                    "renstra" => "Renstra"
+                ];
 
-        foreach ($aturanFields as $field):
-        ?>
+                foreach ($ranges as $name => $label): ?>
+                    <div class="eight wide column">
+                        <div class="field">
+                            <label><?= $label ?></label>
+                            <div class="two fields">
+                                <div class="field">
+                                    <div class="ui calendar start_<?= $name ?>">
+                                        <div class="ui input left icon">
+                                            <i class="calendar icon"></i>
+                                            <input type="text" name="awal_<?= $name ?>" <?= $disabled ?>>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui calendar end_<?= $name ?>">
+                                        <div class="ui input left icon">
+                                            <i class="calendar icon"></i>
+                                            <input type="text" name="akhir_<?= $name ?>" <?= $disabled ?>>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+
+            </div>
+
+            <!-- ================= KONTROL SISTEM ================= -->
+            <h4 class="ui dividing header">Kontrol Sistem</h4>
+
+            <div class="ui four stackable cards">
+
+                <?php
+                $controls = [
+                    "Global" => ["kunci", "setujui"],
+                    "Renstra" => ["kunci_renstra", "setujui_renstra"],
+                    "Renja" => ["kunci_renja", "setujui_renja"],
+                    "DPA" => ["kunci_dpa", "setujui_dpa"],
+                    "Renja P" => ["kunci_renja_p", "setujui_renja_p"],
+                    "DPPA" => ["kunci_dppa", "setujui_dppa"],
+                    "Paket" => ["kunci_paket", "setujui_paket"],
+                    "Realisasi" => ["kunci_realisasi", "setujui_realisasi"],
+                ];
+
+                foreach ($controls as $title => $fields): ?>
+                    <div class="card">
+                        <div class="content">
+                            <div class="header"><?= $title ?></div>
+                        </div>
+                        <div class="content">
+                            <div class="ui toggle checkbox">
+                                <input type="checkbox" name="<?= $fields[0] ?>" <?= $disabled ?>>
+                                <label>Kunci</label>
+                            </div><br>
+                            <div class="ui toggle checkbox">
+                                <input type="checkbox" name="<?= $fields[1] ?>" <?= $disabled ?>>
+                                <label>Setujui</label>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+
+            </div>
+
+            <!-- ================= KETERANGAN ================= -->
+            <h4 class="ui dividing header">Keterangan</h4>
+
             <div class="field">
-                <label><?= ucwords(str_replace('_', ' ', $field)); ?></label>
-                <div class="ui fluid selection dropdown <?= $disAturan ?>">
-                    <input type="hidden"
-                        name="<?= $field ?>"
-                        value="<?= $pengaturan[$field] ?? '' ?>">
-                    <i class="dropdown icon"></i>
-                    <div class="default text">Pilih</div>
-                    <div class="menu">
-                        <?php foreach ($peraturan as $row): ?>
-                            <div class="item"
-                                data-value="<?= $row['id']; ?>">
-                                <?= htmlspecialchars($row['judul']); ?>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
+                <textarea name="keterangan" rows="3" <?= $disabled ?>></textarea>
             </div>
-        <?php endforeach; ?>
+
+            <div class="ui divider"></div>
+
+            <?php if ($canEdit): ?>
+                <div class="right aligned field">
+                    <button class="ui primary button">
+                        <i class="save icon"></i> Simpan Perubahan
+                    </button>
+                </div>
+            <?php else: ?>
+                <div class="ui grey disabled button">Read Only</div>
+            <?php endif; ?>
+
+        </form>
 
     </div>
 
-    <!-- ======================================================
-     PERIODE DOKUMEN (ADMIN WILAYAH)
-====================================================== -->
-    <div class="ui raised segment">
-        <h4 class="ui dividing header">Periode Dokumen</h4>
-
-        <div class="ui four column stackable grid">
-            <?php foreach (['awal_renja', 'akhir_renja', 'awal_dpa', 'akhir_dpa'] as $f): ?>
-                <div class="column">
-                    <div class="field">
-                        <label><?= ucwords(str_replace('_', ' ', $f)); ?></label>
-                        <input type="date"
-                            name="<?= $f ?>"
-                            value="<?= $pengaturan[$f] ?? '' ?>"
-                            <?= $disPeriode ?>>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-
-        <div class="ui four column stackable grid">
-            <?php foreach (['awal_renja_p', 'akhir_renja_p', 'awal_dppa', 'akhir_dppa'] as $f): ?>
-                <div class="column">
-                    <div class="field">
-                        <label><?= ucwords(str_replace('_', ' ', $f)); ?></label>
-                        <input type="date"
-                            name="<?= $f ?>"
-                            value="<?= $pengaturan[$f] ?? '' ?>"
-                            <?= $disPeriode ?>>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-
-        <div class="ui two column stackable grid">
-            <?php foreach (['awal_renstra', 'akhir_renstra'] as $f): ?>
-                <div class="column">
-                    <div class="field">
-                        <label><?= ucwords(str_replace('_', ' ', $f)); ?></label>
-                        <input type="date"
-                            name="<?= $f ?>"
-                            value="<?= $pengaturan[$f] ?? '' ?>"
-                            <?= $disPeriode ?>>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-
+    <!-- TAB 2 -->
+    <div class="ui bottom attached tab segment" data-tab="periode">
+        <div id="periode-rpjmd-container"></div>
     </div>
 
-    <!-- ======================================================
-     KONTROL SISTEM (ADMIN WILAYAH)
-====================================================== -->
-    <div class="ui raised segment">
-        <h4 class="ui dividing header">Kontrol Sistem</h4>
-
-        <div class="ui stackable four column grid">
-
-            <?php
-            function kontrolCard($title, $kunci, $setujui, $pengaturan, $disabled)
-            {
-            ?>
-                <div class="column">
-                    <div class="ui segment">
-                        <h5 class="ui header"><?= $title ?></h5>
-
-                        <div class="ui form">
-                            <div class="field">
-                                <div class="ui toggle checkbox">
-                                    <input type="checkbox"
-                                        name="<?= $kunci ?>"
-                                        <?= !empty($pengaturan[$kunci]) ? 'checked' : '' ?>
-                                        <?= $disabled ?>>
-                                    <label>Kunci</label>
-                                </div>
-                            </div>
-
-                            <div class="field">
-                                <div class="ui toggle checkbox">
-                                    <input type="checkbox"
-                                        name="<?= $setujui ?>"
-                                        <?= !empty($pengaturan[$setujui]) ? 'checked' : '' ?>
-                                        <?= $disabled ?>>
-                                    <label>Setujui</label>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            <?php } ?>
-
-            <?php
-            kontrolCard('Global', 'kunci', 'setujui', $pengaturan, $disKontrol);
-            kontrolCard('Renstra', 'kunci_renstra', 'setujui_renstra', $pengaturan, $disKontrol);
-            kontrolCard('Renja', 'kunci_renja', 'setujui_renja', $pengaturan, $disKontrol);
-            kontrolCard('DPA', 'kunci_dpa', 'setujui_dpa', $pengaturan, $disKontrol);
-            kontrolCard('Renja P', 'kunci_renja_p', 'setujui_renja_p', $pengaturan, $disKontrol);
-            kontrolCard('DPPA', 'kunci_dppa', 'setujui_dppa', $pengaturan, $disKontrol);
-            kontrolCard('Paket', 'kunci_paket', 'setujui_paket', $pengaturan, $disKontrol);
-            kontrolCard('Realisasi', 'kunci_realisasi', 'setujui_realisasi', $pengaturan, $disKontrol);
-            ?>
-
-        </div>
-    </div>
-
-    <!-- ======================================================
-     SUBMIT
-====================================================== -->
-    <div class="ui right aligned segment">
-
-        <?php if ($canEditAturan || $canEditPeriode || $canEditKontrol): ?>
-            <button type="submit" class="ui primary button">
-                <i class="save icon"></i> Simpan
-            </button>
-        <?php else: ?>
-            <div class="ui grey disabled button">
-                Tidak memiliki hak perubahan
-            </div>
-        <?php endif; ?>
-
-    </div>
-
-</form>
+</div>

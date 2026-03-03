@@ -105,7 +105,7 @@ return [
     |--------------------------------------------------------------------------
     */
     '/pengaturan'        => ['PengaturanController', 'index'],
-
+'/pengaturan/fragment' => ['PengaturanController', 'fragment'],
     /*
     |--------------------------------------------------------------------------
     | 💬 WALLCHAT

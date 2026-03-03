@@ -39,181 +39,128 @@ class PengaturanModule {
 	// LAYOUT
 	// ==================================================
 	renderLayout() {
-		const tahunLabel = this.user.tahun || "-";
+		$(this.container).html(`<div id="pengaturan-html"></div>`);
 
-		$(this.container).html(`
-        <div class="ui container form-wrapper">
+		$("#pengaturan-html").load("/pengaturan/fragment", () => {
+			let periodeModule = null;
 
-            <!-- HEADER -->
-            <div class="ui top attached segment page-header">
-                <div class="ui grid">
-                    <div class="twelve wide column">
-                        <h2 class="ui header">
-                            <i class="settings icon"></i>
-                            <div class="content">
-                                Pengaturan Sistem
-                                <div class="sub header">
-                                    Konfigurasi wilayah, periode & kontrol sistem
-                                </div>
-                            </div>
-                        </h2>
-                    </div>
-
-                    <div class="four wide right aligned column">
-                        <div class="ui tiny grey label">
-                            Tahun Aktif: ${tahunLabel}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB MENU -->
-            <div class="ui top attached tabular menu" id="pengaturan-tabs">
-                <a class="active item" data-tab="pengaturan">
-                    Pengaturan Wilayah
-                </a>
-                <a class="item" data-tab="periode">
-                    Periode RPJMD
-                </a>
-            </div>
-
-            <!-- TAB 1 -->
-            <div class="ui bottom attached tab segment active" data-tab="pengaturan">
-                <form class="ui form" id="form-pengaturan">
-                    ${this.renderForm()}
-                </form>
-            </div>
-
-            <!-- TAB 2 -->
-            <div class="ui bottom attached tab segment" data-tab="periode">
-                <div id="periode-rpjmd-container"></div>
-            </div>
-
-        </div>
-    `);
-
-		this.initUI();
-		this.bindSubmit();
-
-		// lazy load periode module
-		let periodeModule = null;
-
-		$("#pengaturan-tabs .item").tab({
-			onVisible: function (tabPath) {
-				if (tabPath === "periode") {
-					if (!periodeModule) {
-						periodeModule = new PeriodeRPJMDModule();
-						periodeModule.init();
+			$("#pengaturan-tabs .item").tab({
+				onVisible: (tabPath) => {
+					if (tabPath === "periode") {
+						if (!periodeModule) {
+							periodeModule = new PeriodeRPJMDModule();
+							periodeModule.init();
+						}
 					}
-				}
-			},
+				},
+			});
+
+			this.bindSubmit();
+			this.initUI();
 		});
 	}
 
 	// ==================================================
 	// FORM
 	// ==================================================
-	renderForm() {
-		const disabled = this.canEdit() ? "" : "disabled";
+	// renderForm() {
+	// 	const disabled = this.canEdit() ? "" : "disabled";
 
-		return `
+	// 	return `
 
-        <h4 class="ui dividing header section-header">
-            Identitas Wilayah
-        </h4>
+	//       <h4 class="ui dividing header section-header">
+	//           Identitas Wilayah
+	//       </h4>
 
-        <div class="two fields">
-            <div class="field">
-                <label>Tahun Anggaran</label>
-                <input type="number" name="tahun" ${disabled}>
-            </div>
-            <div class="field">
-                <label>Tahun Renstra</label>
-                <input type="number" name="tahun_renstra" ${disabled}>
-            </div>
-        </div>
+	//       <div class="two fields">
+	//           <div class="field">
+	//               <label>Tahun Anggaran</label>
+	//               <input type="number" name="tahun" ${disabled}>
+	//           </div>
+	//           <div class="field">
+	//               <label>Tahun Renstra</label>
+	//               <input type="number" name="tahun_renstra" ${disabled}>
+	//           </div>
+	//       </div>
 
+	//       <h4 class="ui dividing header section-header">
+	//           Aturan Referensi
+	//       </h4>
 
-        <h4 class="ui dividing header section-header">
-            Aturan Referensi
-        </h4>
+	//       <div class="ui stackable two column grid">
 
-        <div class="ui stackable two column grid">
+	//           ${this.peraturanDropdown("aturan_anggaran", "Anggaran", disabled)}
+	//           ${this.peraturanDropdown("aturan_organisasi", "Organisasi", disabled)}
+	//           ${this.peraturanDropdown("aturan_pengadaan", "Pengadaan", disabled)}
+	//           ${this.peraturanDropdown("aturan_akun", "Akun", disabled)}
+	//           ${this.peraturanDropdown("aturan_asb", "ASB", disabled)}
+	//           ${this.peraturanDropdown("aturan_sbu", "SBU", disabled)}
+	//           ${this.peraturanDropdown("aturan_ssh", "SSH", disabled)}
+	//           ${this.peraturanDropdown("aturan_hspk", "HSPK", disabled)}
+	//           ${this.peraturanDropdown("aturan_sumber_dana", "Sumber Dana", disabled)}
+	//           ${this.peraturanDropdown("aturan_sub_kegiatan", "Sub Kegiatan", disabled)}
 
-            ${this.peraturanDropdown("aturan_anggaran", "Anggaran", disabled)}
-            ${this.peraturanDropdown("aturan_organisasi", "Organisasi", disabled)}
-            ${this.peraturanDropdown("aturan_pengadaan", "Pengadaan", disabled)}
-            ${this.peraturanDropdown("aturan_akun", "Akun", disabled)}
-            ${this.peraturanDropdown("aturan_asb", "ASB", disabled)}
-            ${this.peraturanDropdown("aturan_sbu", "SBU", disabled)}
-            ${this.peraturanDropdown("aturan_ssh", "SSH", disabled)}
-            ${this.peraturanDropdown("aturan_hspk", "HSPK", disabled)}
-            ${this.peraturanDropdown("aturan_sumber_dana", "Sumber Dana", disabled)}
-            ${this.peraturanDropdown("aturan_sub_kegiatan", "Sub Kegiatan", disabled)}
+	//       </div>
 
-        </div>
+	//       <h4 class="ui dividing header section-header">
+	//           Periode Dokumen
+	//       </h4>
 
+	//       <div class="ui stackable two column grid">
 
-        <h4 class="ui dividing header section-header">
-            Periode Dokumen
-        </h4>
+	//           ${this.rangeField("renja", "Renja", disabled)}
+	//           ${this.rangeField("dpa", "DPA", disabled)}
+	//           ${this.rangeField("rkpd", "RKPD", disabled)}
+	//           ${this.rangeField("rka", "RKA", disabled)}
+	//           ${this.rangeField("renja_p", "Renja Perubahan", disabled)}
+	//           ${this.rangeField("dppa", "DPPA", disabled)}
+	//           ${this.rangeField("kua_ppas", "KUA PPAS", disabled)}
+	//           ${this.rangeField("rapbd", "RAPBD", disabled)}
+	//           ${this.rangeField("rak", "RAK", disabled)}
+	//           ${this.rangeField("rkpd_perubahan", "RKPD Perubahan", disabled)}
+	//           ${this.rangeField("kua_ppas_perubahan", "KUA PPAS Perubahan", disabled)}
+	//           ${this.rangeField("apbd_perubahan", "APBD Perubahan", disabled)}
+	//           ${this.rangeField("renstra", "Renstra", disabled)}
 
-        <div class="ui stackable two column grid">
+	//       </div>
 
-            ${this.rangeField("renja", "Renja", disabled)}
-            ${this.rangeField("dpa", "DPA", disabled)}
-            ${this.rangeField("rkpd", "RKPD", disabled)}
-            ${this.rangeField("rka", "RKA", disabled)}
-            ${this.rangeField("renja_p", "Renja Perubahan", disabled)}
-            ${this.rangeField("dppa", "DPPA", disabled)}
-            ${this.rangeField("kua_ppas", "KUA PPAS", disabled)}
-            ${this.rangeField("rapbd", "RAPBD", disabled)}
-            ${this.rangeField("rak", "RAK", disabled)}
-            ${this.rangeField("rkpd_perubahan", "RKPD Perubahan", disabled)}
-            ${this.rangeField("kua_ppas_perubahan", "KUA PPAS Perubahan", disabled)}
-            ${this.rangeField("apbd_perubahan", "APBD Perubahan", disabled)}
-            ${this.rangeField("renstra", "Renstra", disabled)}
+	//       <h4 class="ui dividing header section-header">
+	//           Kontrol Sistem
+	//       </h4>
 
-        </div>
+	//       <div class="ui four stackable cards">
 
+	//           ${this.controlCard("Global", "kunci", "setujui", disabled)}
+	//           ${this.controlCard("Renstra", "kunci_renstra", "setujui_renstra", disabled)}
+	//           ${this.controlCard("Renja", "kunci_renja", "setujui_renja", disabled)}
+	//           ${this.controlCard("DPA", "kunci_dpa", "setujui_dpa", disabled)}
+	//           ${this.controlCard("Renja P", "kunci_renja_p", "setujui_renja_p", disabled)}
+	//           ${this.controlCard("DPPA", "kunci_dppa", "setujui_dppa", disabled)}
+	//           ${this.controlCard("Paket", "kunci_paket", "setujui_paket", disabled)}
+	//           ${this.controlCard("Realisasi", "kunci_realisasi", "setujui_realisasi", disabled)}
 
-        <h4 class="ui dividing header section-header">
-            Kontrol Sistem
-        </h4>
+	//       </div>
 
-        <div class="ui four stackable cards">
+	//       <h4 class="ui dividing header section-header">
+	//           Keterangan
+	//       </h4>
 
-            ${this.controlCard("Global", "kunci", "setujui", disabled)}
-            ${this.controlCard("Renstra", "kunci_renstra", "setujui_renstra", disabled)}
-            ${this.controlCard("Renja", "kunci_renja", "setujui_renja", disabled)}
-            ${this.controlCard("DPA", "kunci_dpa", "setujui_dpa", disabled)}
-            ${this.controlCard("Renja P", "kunci_renja_p", "setujui_renja_p", disabled)}
-            ${this.controlCard("DPPA", "kunci_dppa", "setujui_dppa", disabled)}
-            ${this.controlCard("Paket", "kunci_paket", "setujui_paket", disabled)}
-            ${this.controlCard("Realisasi", "kunci_realisasi", "setujui_realisasi", disabled)}
+	//       <div class="field">
+	//           <textarea name="keterangan" rows="3" ${disabled}></textarea>
+	//       </div>
 
-        </div>
+	//       <div class="ui divider"></div>
 
-        <h4 class="ui dividing header section-header">
-            Keterangan
-        </h4>
-
-        <div class="field">
-            <textarea name="keterangan" rows="3" ${disabled}></textarea>
-        </div>
-
-        <div class="ui divider"></div>
-
-        ${
-					this.canEdit()
-						? `<div class="right aligned field">
-                    <button class="ui primary button">
-                        <i class="save icon"></i> Simpan Perubahan
-               </button></div>`
-						: `<div class="ui grey disabled button">Read Only</div>`
-				}
-        `;
-	}
+	//       ${
+	// 				this.canEdit()
+	// 					? `<div class="right aligned field">
+	//                   <button class="ui primary button">
+	//                       <i class="save icon"></i> Simpan Perubahan
+	//              </button></div>`
+	// 					: `<div class="ui grey disabled button">Read Only</div>`
+	// 			}
+	//       `;
+	// }
 
 	// ==================================================
 	// DROPDOWN PERATURAN
@@ -350,20 +297,20 @@ class PengaturanModule {
 	// LOAD DATA (SINGLE ROW)
 	// ==================================================
 	loadData(callback) {
-	this.ajax.request({
-		data: {
-			action: "edit",
-			tbl: "pengaturan",
-			id_row: 1
-		},
-		success: (res) => {
-			if (res.success && res.data) {
-				this.data = res.data;
-			}
-			if (callback) callback();
-		},
-	});
-}
+		this.ajax.request({
+			data: {
+				action: "edit",
+				tbl: "pengaturan",
+				id_row: 1,
+			},
+			success: (res) => {
+				if (res.success && res.data) {
+					this.data = res.data;
+				}
+				if (callback) callback();
+			},
+		});
+	}
 
 	populate() {
 		if (!this.data) return;
@@ -408,7 +355,7 @@ class PengaturanModule {
 				},
 				success: (res) => {
 					if (res.success) {
-						ToastEngine.show({
+						Toast.show({
 							success: true,
 							message: "Pengaturan berhasil disimpan",
 						});
@@ -434,10 +381,8 @@ if (typeof PeriodeRPJMDModule === "undefined") {
 
 		init() {
 			this.renderLayout();
-
 			this.loadTable("periode_rpjmd");
 
-			// 🔥 apply readonly sesuai role PengaturanModule
 			const canEdit = window.app.user.type_user === "super_admin";
 			this.formEngine?.applyReadonly(!canEdit);
 		}

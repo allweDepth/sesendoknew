@@ -12,4 +12,8 @@ class PengaturanController extends Controller
 
         $this->view('pengaturan/index', [], 'app');
     }
+    public function fragment()
+    {
+        $this->view('pengaturan/form');
+    }
 }
