@@ -350,20 +350,20 @@ class PengaturanModule {
 	// LOAD DATA (SINGLE ROW)
 	// ==================================================
 	loadData(callback) {
-		this.ajax.request({
-			data: { action: "default", tbl: "pengaturan" },
-			success: (res) => {
-				if (!res.success || !res.data || !res.data.length) {
-					if (callback) callback();
-					return;
-				}
-
-				this.data = res.data[0];
-
-				if (callback) callback();
-			},
-		});
-	}
+	this.ajax.request({
+		data: {
+			action: "edit",
+			tbl: "pengaturan",
+			id_row: 1
+		},
+		success: (res) => {
+			if (res.success && res.data) {
+				this.data = res.data;
+			}
+			if (callback) callback();
+		},
+	});
+}
 
 	populate() {
 		if (!this.data) return;
