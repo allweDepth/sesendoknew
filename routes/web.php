@@ -141,8 +141,10 @@ return [
     | 🗑 RESET TABEL
     |--------------------------------------------------------------------------
     */
-    '/reset_tabel'        => ['ResetTabelController', 'index'],
-    '/reset_tabel/reset'  => ['ResetTabelController', 'reset'],
+    '/reset_tabel'          => ['ResetTabelController', 'index'],
+'/reset_tabel/reset'    => ['ResetTabelController', 'reset'],
+'/reset_tabel/backup'   => ['ResetTabelController', 'backup'],
+'/reset_tabel/restore'  => ['ResetTabelController', 'restore'],
 
     /*
     |--------------------------------------------------------------------------
