@@ -21,7 +21,7 @@ class ResetTabelController extends Controller
 
         $this->view('reset_tabel/index', [
             'tables' => $tables,
-            'role'   => $_SESSION['role']
+            'role'   => $_SESSION['type_user'] ?? null
         ], 'app');
     }
 
@@ -33,7 +33,7 @@ class ResetTabelController extends Controller
         if (!$table) exit;
 
         $db = DB::getInstance();
-        $role = $_SESSION['role'];
+        $role = $_SESSION['type_user'] ?? null;
         $kd_wilayah = $_SESSION['kd_wilayah'] ?? null;
 
         if ($role === 'super_admin') {
@@ -64,7 +64,7 @@ class ResetTabelController extends Controller
     {
         $this->checkAuth();
 
-        if ($_SESSION['role'] !== 'super_admin') exit;
+        if ($_SESSION['type_user'] ?? null !== 'super_admin') exit;
 
         $db = DB::getInstance();
         $tables = $db->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
