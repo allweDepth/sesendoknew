@@ -151,7 +151,7 @@ class AjaxEngine {
 					if (error) error(response);
 				} else {
 					// Jika server tidak mengirim JSON (error murni)
-					ToastEngine.show({
+					Toast.show({
 						success: false,
 						message: "Server error",
 					});
