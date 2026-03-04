@@ -108,7 +108,8 @@ class DynamicTableService
                 'delete',
                 'dropdown',
                 'export',
-                'list'
+                'list',
+                'import'
             ];
 
             if (!in_array($action, $allowedActions)) {
@@ -242,7 +243,21 @@ class DynamicTableService
                     $request,
                     'default'
                 );
+            case 'import':
 
+                $this->authorize('add', $table);
+
+                if (empty($_FILES['file']['tmp_name'])) {
+                    return JsonResponse::error("File tidak ditemukan");
+                }
+
+                $jmlHeader = $request['jml_header'] ?? 1;
+
+                return $this->importStrict(
+                    $tbl,
+                    $_FILES['file']['tmp_name'],
+                    (int)$jmlHeader
+                );
 
                 /* =====================================================
                 ❌ NO FALLBACK
@@ -1371,8 +1386,10 @@ class DynamicTableService
             $params[]     = $value;
         }
 
+        $primaryKey = $this->getPrimaryKey($table);
+
         $exists = $this->db->query(
-            "SELECT id FROM `$table`
+            "SELECT `$primaryKey` FROM `$table`
                     WHERE " . implode(" AND ", $whereParts) . "
                     LIMIT 1",
             $params
@@ -1383,25 +1400,38 @@ class DynamicTableService
         }
     }
     /* =========================================================
-            VALIDASI HIERARKI & DEPENDENSI LINTAS TABEL
-            ========================================================= */
+        VALIDASI HIERARKI & DEPENDENSI LINTAS TABEL
+        -----------------------------------------------------
+        Tujuan:
+        - Memastikan parent record benar-benar ada
+        - Mencegah orphan record
+        - Memastikan scope wilayah + peraturan konsisten
+        ========================================================= */
     private function validateHierarchy(string $table, array $data): void
     {
+        /* ======================================================
+        1️⃣ DEFINISI RULE HIERARKI
+        ------------------------------------------------------
+        menentukan parent table dan cara validasi relasinya
+        ====================================================== */
         $rules = [
 
-            // Struktur kode
+            // Struktur SIPD nasional
             'bidang' => [
                 'parent_table' => 'urusan',
                 'match' => ['urusan_id' => 'id']
             ],
+
             'program' => [
                 'parent_table' => 'bidang',
                 'match' => ['bidang_id' => 'id']
             ],
+
             'kegiatan' => [
                 'parent_table' => 'program',
                 'match' => ['program_id' => 'id']
             ],
+
             'sub_kegiatan' => [
                 'parent_table' => 'kegiatan',
                 'match' => ['kegiatan_id' => 'id']
@@ -1418,6 +1448,7 @@ class DynamicTableService
                 'parent_table' => 'renstra_neo',
                 'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
             ],
+
             'renja_p_neo' => [
                 'parent_table' => 'renja_neo',
                 'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
@@ -1428,58 +1459,93 @@ class DynamicTableService
                 'parent_table' => 'renja_neo',
                 'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
             ],
+
             'dpppa_neo' => [
                 'parent_table' => 'dpa_neo',
                 'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
             ],
         ];
 
-        if (!isset($rules[$table])) return;
+        /* ======================================================
+        2️⃣ JIKA TABEL TIDAK PUNYA RULE → SKIP
+        ====================================================== */
+        if (!isset($rules[$table])) {
+            return;
+        }
 
-        $rule = $rules[$table];
+        $rule   = $rules[$table];
         $parent = $rule['parent_table'];
 
-        // Foreign key match
+        /* ======================================================
+        3️⃣ VALIDASI FOREIGN KEY MATCH
+        ------------------------------------------------------
+        contoh:
+        program.bidang_id harus ada di tabel bidang
+        ====================================================== */
         if (isset($rule['match'])) {
+
             foreach ($rule['match'] as $childField => $parentField) {
 
+                // field child wajib ada
                 if (empty($data[$childField])) {
                     throw new Exception("Field $childField wajib diisi.");
                 }
 
+                // ambil kolom parent table
                 $parentColumns = $this->getTableColumns($parent);
 
-                $where = ["`$parentField` = ?"];
+                // base query
+                $where  = ["`$parentField` = ?"];
                 $params = [$data[$childField]];
 
-                // 🔥 Tambah scope jika ada
+                /* ==================================================
+                🔥 Scope wilayah
+                ================================================== */
                 if (in_array('kd_wilayah', $parentColumns)) {
-                    $where[] = "`kd_wilayah` = ?";
-                    $params[] = $data['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? null;
+
+                    $where[]  = "`kd_wilayah` = ?";
+                    $params[] = $data['kd_wilayah']
+                        ?? $this->user['kd_wilayah']
+                        ?? null;
                 }
 
+                /* ==================================================
+                🔥 Scope peraturan (VERSI BARU)
+                ================================================== */
                 if (in_array('peraturan_id', $parentColumns)) {
-                    $where[] = "`peraturan_id` = ?";
+
+                    $where[]  = "`peraturan_id` = ?";
                     $params[] = $data['peraturan_id'] ?? null;
                 }
 
+                /* ==================================================
+                4️⃣ CEK PARENT ADA ATAU TIDAK
+                ================================================== */
                 $exists = $this->db->query(
                     "SELECT id FROM `$parent`
-                                WHERE " . implode(" AND ", $where) . "
-                                LIMIT 1",
+                WHERE " . implode(" AND ", $where) . "
+                LIMIT 1",
                     $params
                 )->fetch();
 
                 if (!$exists) {
-                    throw new Exception("Parent di $parent belum tersedia.");
+                    throw new Exception(
+                        "Parent di tabel $parent belum tersedia."
+                    );
                 }
             }
         }
 
-        // Scope match
+        /* ======================================================
+        5️⃣ VALIDASI SCOPE MATCH
+        ------------------------------------------------------
+        digunakan pada relasi non-FK
+        contoh:
+        renja harus sesuai tahun + opd + wilayah
+        ====================================================== */
         if (isset($rule['match_scope'])) {
 
-            $where = [];
+            $where  = [];
             $params = [];
 
             foreach ($rule['match_scope'] as $field) {
@@ -1488,24 +1554,39 @@ class DynamicTableService
                     throw new Exception("Field $field wajib ada.");
                 }
 
-                $where[] = "`$field` = ?";
+                $where[]  = "`$field` = ?";
                 $params[] = $data[$field];
             }
+
+            // ambil kolom parent
             $parentColumns = $this->getTableColumns($parent);
 
-            if (in_array('peraturan', $parentColumns) && isset($data['peraturan'])) {
-                $where[] = "`peraturan` = ?";
-                $params[] = $data['peraturan'];
+            /* ==================================================
+            🔥 Scope peraturan versi baru
+            ================================================== */
+            if (
+                in_array('peraturan_id', $parentColumns)
+                && isset($data['peraturan_id'])
+            ) {
+
+                $where[]  = "`peraturan_id` = ?";
+                $params[] = $data['peraturan_id'];
             }
+
+            /* ==================================================
+            CEK EXIST
+            ================================================== */
             $exists = $this->db->query(
                 "SELECT id FROM `$parent`
-                        WHERE " . implode(" AND ", $where) . "
-                        LIMIT 1",
+            WHERE " . implode(" AND ", $where) . "
+            LIMIT 1",
                 $params
             )->fetch();
 
             if (!$exists) {
-                throw new Exception("Parent scope di $parent belum tersedia.");
+                throw new Exception(
+                    "Parent scope di $parent belum tersedia."
+                );
             }
         }
     }
@@ -1532,311 +1613,429 @@ class DynamicTableService
     public function importStrict($tbl, $file, $jmlHeader = 1)
     {
 
-        /* =====================================================
-        1️⃣ VALIDASI PROFILE TABEL
-        -----------------------------------------------------
-        Pastikan tabel ada di konfigurasi table_profiles.php
-        ===================================================== */
+        /* ======================================================
+       1️⃣ VALIDASI PROFILE TABEL
+       ------------------------------------------------------
+       memastikan tabel yang diminta ada di table_profiles
+    ====================================================== */
 
         if (!isset($this->profiles[$tbl])) {
             throw new Exception("Profile tabel tidak ditemukan.");
         }
 
+        // ambil konfigurasi profile
         $profile = $this->profiles[$tbl];
-        $table   = $profile['table'];
+
+        // nama tabel fisik database
+        $table = $profile['table'];
 
 
-        /* =====================================================
-        2️⃣ AMBIL SESSION CONTEXT
-        -----------------------------------------------------
-        Sistem ini selalu scope-aware
-        ===================================================== */
+        /* ======================================================
+       2️⃣ AMBIL KOLOM TABEL
+       ------------------------------------------------------
+       digunakan untuk memastikan hanya kolom valid
+       yang akan dimasukkan ke database
+    ====================================================== */
 
-        $tahun = $this->user['tahun'] ?? date('Y');
+        $columns = $this->getTableColumns($table);
 
+
+        /* ======================================================
+       3️⃣ SESSION USER SCOPE
+       ------------------------------------------------------
+       sistem ini multi wilayah dan multi tahun
+       sehingga data harus mengikuti session user
+    ====================================================== */
+
+        $tahun      = $this->user['tahun'] ?? date('Y');
         $kd_wilayah = $this->user['kd_wilayah'] ?? null;
 
         if (!$kd_wilayah) {
             throw new Exception("kd_wilayah tidak ditemukan pada session.");
         }
 
-        /* =====================================================
-        AMBIL PERATURAN AKTIF
-        ===================================================== */
 
-        $pengaturan = $this->getPengaturanAktif();
+        /* ======================================================
+       4️⃣ RESOLVE PERATURAN
+       ------------------------------------------------------
+       jika tabel memiliki kolom peraturan_id maka
+       sistem akan mengambil ID peraturan dari tabel
+       pengaturan_neo sesuai mapping tabel
+    ====================================================== */
 
-        if (!$pengaturan) {
-            throw new Exception("Pengaturan aktif belum tersedia.");
+        $peraturan_id = null;
+
+        if (in_array('peraturan_id', $columns)) {
+
+            // ambil pengaturan aktif
+            $pengaturan = $this->getPengaturanAktif();
+
+            if (!$pengaturan) {
+                throw new Exception("Pengaturan aktif belum tersedia.");
+            }
+
+            // mapping tabel ke field pengaturan
+            $mapPeraturan = [
+
+                'urusan'       => 'aturan_sub_kegiatan',
+                'bidang'       => 'aturan_sub_kegiatan',
+                'program'      => 'aturan_sub_kegiatan',
+                'kegiatan'     => 'aturan_sub_kegiatan',
+                'sub_kegiatan' => 'aturan_sub_kegiatan',
+
+                'satuan'     => 'aturan_ssh',
+                'satuan_neo' => 'aturan_ssh',
+
+                'ssh'        => 'aturan_ssh',
+                'ssh_neo'    => 'aturan_ssh',
+
+                'sbu'        => 'aturan_sbu',
+                'sbu_neo'    => 'aturan_sbu',
+
+                'asb'        => 'aturan_asb',
+                'asb_neo'    => 'aturan_asb',
+
+                'hspk'       => 'aturan_hspk',
+                'hspk_neo'   => 'aturan_hspk',
+
+                'akun'       => 'aturan_akun',
+                'akun_neo'   => 'aturan_akun'
+            ];
+
+            if (isset($mapPeraturan[$tbl])) {
+                $peraturan_id = $pengaturan[$mapPeraturan[$tbl]] ?? null;
+            }
         }
 
-        $mapPeraturan = [
-            'sbu'  => 'aturan_sbu',
-            'ssh'  => 'aturan_ssh',
-            'asb'  => 'aturan_asb',
-            'hspk' => 'aturan_hspk'
-        ];
 
-        if (!isset($mapPeraturan[$tbl])) {
-            throw new Exception("Mapping peraturan tidak ditemukan.");
-        }
-
-        $peraturan_id = $pengaturan[$mapPeraturan[$tbl]] ?? null;
-
-        if (!$peraturan_id) {
-            throw new Exception("Peraturan aktif tidak ditemukan.");
-        }
-
-
-        /* =====================================================
-        3️⃣ LOAD FILE EXCEL
-        -----------------------------------------------------
-        Menggunakan PhpSpreadsheet
-        ===================================================== */
+        /* ======================================================
+       5️⃣ LOAD FILE EXCEL
+       ------------------------------------------------------
+       menggunakan RowIterator agar tidak memakan memory
+       saat membaca file besar
+    ====================================================== */
 
         $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file);
 
+        // hanya baca data tanpa style
         $reader->setReadDataOnly(true);
 
+        // load spreadsheet
         $spreadsheet = $reader->load($file);
 
-        $rows = $spreadsheet->getActiveSheet()->toArray();
+        // ambil sheet aktif
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // iterator baris
+        $rowIterator = $sheet->getRowIterator();
 
 
-        /* =====================================================
-        4️⃣ NORMALISASI HEADER EXCEL
-        -----------------------------------------------------
-        Header Excel → Kolom DB
-        ===================================================== */
+        /* ======================================================
+       6️⃣ BUILD COLUMN MAP
+       ------------------------------------------------------
+       fungsi ini membuat mapping antara
+       header excel → kolom database
+    ====================================================== */
 
-        $headerRow = $rows[0];
+        $columnMap = $this->buildColumnMap($table);
 
-        $alias = [
-            'kodekelompokbarang' => 'kd_aset',
-            'uraianbarang'       => 'uraian_barang',
-            'spesifikasi'        => 'spesifikasi',
-            'satuan'             => 'satuan',
-            'hargasatuan'        => 'harga_satuan',
-            'koderekening'       => 'kd_rekening'
-        ];
-
+        // array header excel
         $headers = [];
 
-        foreach ($headerRow as $h) {
 
-            $key = $this->normalizeForCompare($h);
+        /* ======================================================
+       7️⃣ VARIABEL REPORT IMPORT
+       ------------------------------------------------------
+       digunakan untuk laporan hasil import
+    ====================================================== */
 
-            $headers[] = $alias[$key] ?? null;
-        }
+        $totalRows   = 0;
+        $successRows = 0;
+        $failedRows  = 0;
 
-
-        /* =====================================================
-        5️⃣ CACHE SATUAN
-        -----------------------------------------------------
-        Agar tidak query satuan setiap baris
-        ===================================================== */
-
-        $satuanCache = [];
-
-        $satuanRows = $this->db
-            ->query("SELECT id,item FROM satuan_neo")
-            ->fetchAll();
-
-        foreach ($satuanRows as $s) {
-
-            $satuanCache[strtolower(trim($s['item']))] = $s['id'];
-        }
+        $errorRows = [];
 
 
-        /* =====================================================
-        6️⃣ CACHE AKUN
-        -----------------------------------------------------
-        Digunakan untuk validasi kd_rekening
-        ===================================================== */
-
-        $akunCache = [];
-
-        $akunRows = $this->db
-            ->query("SELECT kode FROM akun_neo")
-            ->fetchAll();
-
-        foreach ($akunRows as $a) {
-
-            $akunCache[$a['kode']] = $a['kode'];
-        }
-
-
-        /* =====================================================
-        7️⃣ CACHE MAPPING REKENING → ASET
-        ===================================================== */
-
-        $mapCache = [];
-
-        $mapRows = $this->db
-            ->query("SELECT kd_rekening,kd_aset FROM mapping_rekening_aset")
-            ->fetchAll();
-
-        foreach ($mapRows as $m) {
-
-            $mapCache[$m['kd_rekening']] = $m['kd_aset'];
-        }
-
-
-        /* =====================================================
-        8️⃣ TRANSACTION IMPORT
-        -----------------------------------------------------
-        Jika 1 baris gagal → rollback semua
-        ===================================================== */
+        /* ======================================================
+       8️⃣ TRANSACTION IMPORT
+       ------------------------------------------------------
+       semua proses import berjalan dalam transaction
+    ====================================================== */
 
         return $this->runTransaction(function () use (
 
-            $rows,
-            $headers,
+            $rowIterator,
             $jmlHeader,
+            $columnMap,
+            $columns,
             $table,
-            $tbl,
             $kd_wilayah,
             $tahun,
             $peraturan_id,
-            $satuanCache,
-            $akunCache,
-            $mapCache
+            $profile,
+            &$headers,
+            &$totalRows,
+            &$successRows,
+            &$failedRows,
+            &$errorRows
 
         ) {
 
-            foreach ($rows as $i => $row) {
+            $rowNumber = 0;
 
-                /* =============================================
-                SKIP HEADER
-                ============================================= */
+            foreach ($rowIterator as $row) {
 
-                if ($i < $jmlHeader) continue;
+                $rowNumber++;
+
+                /* ===============================================
+               AMBIL SEMUA NILAI CELL DALAM BARIS
+            =============================================== */
+
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
+
+                $values = [];
+
+                foreach ($cellIterator as $cell) {
+                    $values[] = trim((string)$cell->getValue());
+                }
+
+
+                /* ===============================================
+               HEADER PROCESS
+            =============================================== */
+
+                if ($rowNumber <= $jmlHeader) {
+
+                    if ($rowNumber === $jmlHeader) {
+
+                        foreach ($values as $h) {
+
+                            $normalized = $this->normalizeForCompare($h);
+
+                            $headers[] = $columnMap[$normalized] ?? null;
+                        }
+
+                        if (empty(array_filter($headers))) {
+                            throw new Exception("Header Excel tidak cocok dengan kolom tabel.");
+                        }
+                    }
+
+                    continue;
+                }
+
+
+                $totalRows++;
+
+
+                /* ===============================================
+               BUILD DATA ARRAY
+            =============================================== */
 
                 $data = [];
 
+                foreach ($values as $k => $v) {
 
-                /* =============================================
-                MAP KOLOM EXCEL
-                ============================================= */
-
-                foreach ($row as $k => $v) {
-
-                    if (!$headers[$k]) continue;
-
-                    $data[$headers[$k]] = trim($v);
-                }
-
-                if (empty($data['uraian_barang'])) continue;
-
-
-                /* =============================================
-                INJECT SCOPE
-                ============================================= */
-
-                $data['kd_wilayah']   = $kd_wilayah;
-                $data['tahun']        = $tahun;
-                $data['peraturan_id'] = $peraturan_id;
-
-
-                /* =============================================
-                RESOLVE SATUAN TEXT → ID
-                ============================================= */
-
-                if (!empty($data['satuan'])) {
-
-                    $key = strtolower(trim($data['satuan']));
-
-                    if (isset($satuanCache[$key])) {
-
-                        $data['satuan_id'] = $satuanCache[$key];
+                    if (!isset($headers[$k]) || !$headers[$k]) {
+                        continue;
                     }
 
-                    unset($data['satuan']);
+                    $data[$headers[$k]] = $v;
+                }
+
+                if (empty($data)) {
+                    continue;
                 }
 
 
-                /* =============================================
-                CEK DUPLICATE MASTER
-                ============================================= */
+                try {
 
-                $exists = $this->db->query(
-                    "SELECT id FROM `$table`
-                    WHERE kd_wilayah = ?
-                    AND tahun = ?
-                    AND uraian_barang = ?
-                    AND harga_satuan = ?
-                    LIMIT 1",
-                    [
-                        $kd_wilayah,
-                        $tahun,
-                        $data['uraian_barang'],
-                        $data['harga_satuan']
-                    ]
-                )->fetch();
+                    /* ===========================================
+                   INJECT SCOPE
+                =========================================== */
 
+                    if (in_array('kd_wilayah', $columns)) {
+                        $data['kd_wilayah'] = $kd_wilayah;
+                    }
 
-                if ($exists) {
+                    if (in_array('tahun', $columns)) {
+                        $data['tahun'] = $tahun;
+                    }
 
-                    $itemId = $exists['id'];
-                } else {
-
-                    $this->db->insert($table, $data);
-
-                    $itemId = $this->db->lastInsertId();
-                }
+                    if ($peraturan_id && in_array('peraturan_id', $columns)) {
+                        $data['peraturan_id'] = $peraturan_id;
+                    }
 
 
-                /* =============================================
-                SPLIT KODE REKENING
-                ============================================= */
+                    /* ===========================================
+                   FILTER KOLOM VALID
+                =========================================== */
 
-                if (!empty($data['kd_rekening'])) {
+                    $filtered = [];
 
-                    $codes = preg_split('/[,;\n]+/', $data['kd_rekening']);
-
-                    foreach ($codes as $code) {
-
-                        $code = trim($code);
-
-                        if (!$code) continue;
-
-                        if (!isset($akunCache[$code])) continue;
-
-
-                        /* =========================================
-                        INSERT PIVOT AKUN (GENERIC)
-                        ========================================= */
-
-                        $this->insertAkunPivot(
-                            $tbl,
-                            $itemId,
-                            $code,
-                            [
-                                'kd_wilayah'   => $kd_wilayah,
-                                'peraturan_id' => $peraturan_id
-                            ]
-                        );
-
-
-                        /* =========================================
-                        AUTO MAP ASET
-                        ========================================= */
-
-                        if (isset($mapCache[$code])) {
-
-                            $this->db->update(
-                                $table,
-                                ['kd_aset' => $mapCache[$code]],
-                                "WHERE id = ?",
-                                [$itemId]
-                            );
+                    foreach ($data as $k => $v) {
+                        if (in_array($k, $columns)) {
+                            $filtered[$k] = $v;
                         }
                     }
+
+                    if (empty($filtered)) {
+                        continue;
+                    }
+
+
+                    /* ===========================================
+                   RESOLVE RELATION
+                   (contoh: satuan → satuan_id)
+                =========================================== */
+
+                    $relationMap = $profile['import']['relations'] ?? [];
+
+                    if (!empty($relationMap)) {
+
+                        $this->resolveImportRelations(
+                            $filtered,
+                            $relationMap,
+                            $rowNumber,
+                            $errorRows
+                        );
+                    }
+
+
+                    /* ===========================================
+                   DEFAULT FIELD
+                =========================================== */
+
+                    if (in_array('disable', $columns) && !isset($filtered['disable'])) {
+                        $filtered['disable'] = 0;
+                    }
+
+                    if (in_array('is_deleted', $columns) && !isset($filtered['is_deleted'])) {
+                        $filtered['is_deleted'] = 0;
+                    }
+
+
+                    /* ===========================================
+                   SANITASI DATA
+                =========================================== */
+
+                    $filtered = $this->applySanitization($table, $filtered);
+
+
+                    /* ===========================================
+                   AUDIT TRAIL
+                =========================================== */
+
+                    $filtered = $this->injectAudit($filtered, 'insert');
+
+
+                    /* ===========================================
+                   VALIDASI DUPLICATE
+                =========================================== */
+
+                    $this->validateDuplicate($table, $filtered);
+
+
+                    /* ===========================================
+                   INSERT DATABASE
+                =========================================== */
+
+                    $this->db->insert($table, $filtered);
+
+                    $successRows++;
+                } catch (\Throwable $e) {
+
+                    $failedRows++;
+
+                    $errorRows[] = [
+                        'row'     => $rowNumber,
+                        'message' => $e->getMessage()
+                    ];
                 }
             }
 
-            return JsonResponse::success("Import selesai.");
+
+            /* ==================================================
+           RETURN REPORT
+        ================================================== */
+
+            $groupedErrors = $this->groupImportErrors($errorRows);
+
+            return JsonResponse::success(
+                "Import selesai",
+                [
+                    'total'    => $totalRows,
+                    'berhasil' => $successRows,
+                    'gagal'    => $failedRows
+                ],
+                $groupedErrors
+            );
         });
+    }
+    private function compressRowRanges(array $rows): array
+    {
+        sort($rows);
+
+        $ranges = [];
+        $start = null;
+        $prev  = null;
+
+        foreach ($rows as $row) {
+
+            if ($start === null) {
+                $start = $row;
+                $prev  = $row;
+                continue;
+            }
+
+            if ($row == $prev + 1) {
+                $prev = $row;
+                continue;
+            }
+
+            if ($start == $prev) {
+                $ranges[] = (string)$start;
+            } else {
+                $ranges[] = $start . '-' . $prev;
+            }
+
+            $start = $row;
+            $prev  = $row;
+        }
+
+        if ($start !== null) {
+            if ($start == $prev) {
+                $ranges[] = (string)$start;
+            } else {
+                $ranges[] = $start . '-' . $prev;
+            }
+        }
+
+        return $ranges;
+    }
+    private function groupImportErrors(array $errors): array
+    {
+        $grouped = [];
+
+        foreach ($errors as $err) {
+
+            $msg = $err['message'];
+
+            if (!isset($grouped[$msg])) {
+                $grouped[$msg] = [
+                    'message' => $msg,
+                    'rows' => []
+                ];
+            }
+
+            $grouped[$msg]['rows'][] = $err['row'];
+        }
+
+        foreach ($grouped as &$g) {
+            $g['rows'] = $this->compressRowRanges($g['rows']);
+        }
+
+        return array_values($grouped);
     }
     /* =========================================================
             IMPORT STRUKTUR NASIONAL (GLOBAL HIRARKI)
@@ -2065,8 +2264,10 @@ class DynamicTableService
             }
         }
 
+        $primaryKey = $this->getPrimaryKey($table);
+
         $exists = $this->db->query(
-            "SELECT id FROM `$table`
+            "SELECT `$primaryKey` FROM `$table`
                     WHERE " . implode(" AND ", $whereParts) . "
                     LIMIT 1",
             $params
@@ -2367,11 +2568,6 @@ class DynamicTableService
         if (in_array('peraturan_id', $columns)) {
             $colPeraturan = 'peraturan_id';
         }
-
-        if (in_array('peraturan', $columns)) {
-            $colPeraturan = 'peraturan';
-        }
-
         if (!$colPeraturan) {
             return $data;
         }
@@ -2380,9 +2576,7 @@ class DynamicTableService
             return $data;
         }
 
-        if (!empty($data['peraturan_id'])) {
-            return $data;
-        }
+
 
         $pengaturan = $this->getPengaturanAktif();
 
