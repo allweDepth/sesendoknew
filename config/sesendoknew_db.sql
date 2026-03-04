@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 04 Mar 2026 pada 16.24
+-- Waktu pembuatan: 04 Mar 2026 pada 18.46
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -4382,43 +4382,6 @@ CREATE TABLE `anggaran_program_renstra_neo` (
   `username_insert` varchar(100) NOT NULL,
   `username_update` varchar(100) DEFAULT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `asb_akun_map`
---
-
-CREATE TABLE `asb_akun_map` (
-  `id` int(11) NOT NULL,
-  `asb_id` int(11) NOT NULL,
-  `kd_akun` varchar(50) NOT NULL,
-  `kd_wilayah` varchar(25) NOT NULL,
-  `peraturan_id` int(11) NOT NULL,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `asb_neo`
---
-
-CREATE TABLE `asb_neo` (
-  `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(25) NOT NULL,
-  `tahun` year(4) NOT NULL,
-  `uraian_barang` text NOT NULL,
-  `satuan_id` int(11) DEFAULT NULL,
-  `harga_satuan` decimal(18,6) DEFAULT NULL,
-  `peraturan_id` int(11) NOT NULL,
-  `disable` tinyint(4) DEFAULT 0,
-  `tgl_insert` datetime DEFAULT current_timestamp(),
-  `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `username_update` varchar(100) DEFAULT NULL,
-  `is_deleted` tinyint(4) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -9265,45 +9228,6 @@ CREATE TABLE `dppa_neo` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `hspk_akun_map`
---
-
-CREATE TABLE `hspk_akun_map` (
-  `id` int(11) NOT NULL,
-  `hspk_id` int(11) NOT NULL,
-  `kd_akun` varchar(50) NOT NULL,
-  `kd_wilayah` varchar(25) NOT NULL,
-  `peraturan_id` int(11) NOT NULL,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `hspk_neo`
---
-
-CREATE TABLE `hspk_neo` (
-  `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(25) NOT NULL,
-  `tahun` year(4) NOT NULL,
-  `kd_aset` varchar(25) DEFAULT NULL,
-  `uraian_barang` text NOT NULL,
-  `spesifikasi` text DEFAULT NULL,
-  `satuan_id` int(11) NOT NULL,
-  `harga_satuan` decimal(18,6) NOT NULL,
-  `peraturan_id` int(11) NOT NULL,
-  `disable` tinyint(4) DEFAULT 0,
-  `tgl_insert` datetime DEFAULT current_timestamp(),
-  `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `username_update` varchar(100) DEFAULT NULL,
-  `is_deleted` tinyint(4) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Struktur dari tabel `import_logs`
 --
 
@@ -12006,7 +11930,8 @@ INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data
 (1826, 'satuan_neo', 450, 'insert', NULL, '{\"value\":\"yard2\",\"item\":\"yard2\",\"keterangan\":null,\"sebutan_lain\":null,\"disable\":0,\"is_deleted\":0,\"peraturan\":4,\"tgl_insert\":\"2026-03-04 10:58:52\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-04 10:58:52'),
 (1827, 'satuan_neo', 451, 'insert', NULL, '{\"value\":\"yard3\",\"item\":\"yard3\",\"keterangan\":null,\"sebutan_lain\":null,\"disable\":0,\"is_deleted\":0,\"peraturan\":4,\"tgl_insert\":\"2026-03-04 10:58:52\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-04 10:58:52'),
 (1828, 'satuan_neo', 452, 'insert', NULL, '{\"value\":\"zak\",\"item\":\"zak\",\"keterangan\":null,\"sebutan_lain\":null,\"disable\":0,\"is_deleted\":0,\"peraturan\":4,\"tgl_insert\":\"2026-03-04 10:58:52\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-04 10:58:52'),
-(1829, 'satuan_neo', 453, 'insert', NULL, '{\"value\":\"Zak\",\"item\":\"Zak\",\"keterangan\":null,\"sebutan_lain\":null,\"disable\":0,\"is_deleted\":0,\"peraturan\":4,\"tgl_insert\":\"2026-03-04 10:58:52\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-04 10:58:52');
+(1829, 'satuan_neo', 453, 'insert', NULL, '{\"value\":\"Zak\",\"item\":\"Zak\",\"keterangan\":null,\"sebutan_lain\":null,\"disable\":0,\"is_deleted\":0,\"peraturan\":4,\"tgl_insert\":\"2026-03-04 10:58:52\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-04 10:58:52'),
+(1830, 'satuan_neo', 111, 'delete', '{\"id\":111,\"value\":\"\",\"item\":\"\",\"sebutan_lain\":\"\",\"disable\":0,\"aksi\":null,\"keterangan\":\"\",\"peraturan_id\":4,\"tgl_insert\":\"2026-03-04 16:43:30\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-05 00:43:30\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-04 18:04:24');
 
 -- --------------------------------------------------------
 
@@ -14950,6 +14875,55 @@ INSERT INTO `mapping_aset_akun` (`id`, `kd_aset`, `uraian_aset`, `kd_akun`, `ura
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `master_biaya`
+--
+
+CREATE TABLE `master_biaya` (
+  `id` bigint(20) NOT NULL,
+  `tipe` enum('ssh','sbu','asb','hspk') DEFAULT NULL,
+  `kode` varchar(100) DEFAULT NULL,
+  `kode_aset` varchar(100) DEFAULT NULL,
+  `kelompok_barang` varchar(255) DEFAULT NULL,
+  `nama` varchar(255) DEFAULT NULL,
+  `spesifikasi` text DEFAULT NULL,
+  `satuan_id` bigint(20) DEFAULT NULL,
+  `harga` decimal(18,2) DEFAULT NULL,
+  `tkdn` decimal(5,2) DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `tahun` int(11) DEFAULT NULL,
+  `peraturan_id` bigint(20) DEFAULT NULL,
+  `disable` tinyint(4) DEFAULT 0,
+  `is_deleted` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_insert` varchar(50) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `master_biaya_akun`
+--
+
+CREATE TABLE `master_biaya_akun` (
+  `id` bigint(20) NOT NULL,
+  `master_biaya_id` bigint(20) DEFAULT NULL,
+  `kd_akun` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `peraturan_id` bigint(20) DEFAULT NULL,
+  `disable` tinyint(4) DEFAULT 0,
+  `is_deleted` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_insert` varchar(50) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `misi_renstra_neo`
 --
 
@@ -16304,48 +16278,465 @@ CREATE TABLE `satuan_neo` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Struktur dari tabel `sbu_akun_map`
+-- Dumping data untuk tabel `satuan_neo`
 --
 
-CREATE TABLE `sbu_akun_map` (
-  `id` int(11) NOT NULL,
-  `sbu_id` int(11) NOT NULL,
-  `kd_akun` varchar(50) NOT NULL,
-  `kd_wilayah` varchar(25) NOT NULL,
-  `peraturan_id` int(11) NOT NULL,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `sbu_neo`
---
-
-CREATE TABLE `sbu_neo` (
-  `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(25) NOT NULL,
-  `tahun` year(4) NOT NULL,
-  `kd_aset` varchar(25) DEFAULT NULL,
-  `uraian_barang` text NOT NULL,
-  `spesifikasi` text DEFAULT NULL,
-  `satuan_id` int(11) NOT NULL,
-  `harga_satuan` decimal(18,6) NOT NULL,
-  `tkdn` varchar(400) DEFAULT NULL,
-  `merek` varchar(400) DEFAULT NULL,
-  `peraturan_id` int(11) NOT NULL,
-  `disable` tinyint(4) DEFAULT 0,
-  `aksi` varchar(255) DEFAULT NULL,
-  `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime DEFAULT current_timestamp(),
-  `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `username_update` varchar(100) DEFAULT NULL,
-  `is_deleted` tinyint(4) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `satuan_neo` (`id`, `value`, `item`, `sebutan_lain`, `disable`, `aksi`, `keterangan`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, '%', '%', 'persen', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(2, '1 Kg', '1 Kg', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(3, '1 Liter', '1 Liter', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(4, '20 Gr / bks', '20 Gr / bks', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(5, '250 Ml', '250 Ml', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(6, '40 PK', '40 PK', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(7, '40 Wat', '40 Wat', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(8, '500 Gr / klg', '500 Gr / klg', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(9, 'Alat', 'Alat', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(10, 'ampere', 'Ampere (A)', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(11, 'Ampul', 'Ampul', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(12, 'Anakan', 'Anakan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(13, 'Arsip', 'Arsip', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(14, 'Asosiasi dan Serikat Pekerja', 'Asosiasi dan Serikat Pekerja', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(15, 'Badan Usaha', 'Badan Usaha', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(16, 'Baduta', 'Baduta', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(17, 'Bahasa', 'Bahasa', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(18, 'Balita', 'Balita', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(19, 'Baru', 'Baru', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(20, 'batang', 'Btg', 'btg,batang', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(21, 'Batang', 'Batang', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(22, 'Batang Pohon', 'Batang Pohon', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(23, 'Beasiswa', 'Beasiswa', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(24, 'Bendung', 'Bendung', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(25, 'Bendungan', 'Bendungan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(26, 'Berita Acara', 'Berita Acara', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(27, 'Berkas', 'Berkas', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(28, 'Bh', 'Bh', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(29, 'Biaya', 'Biaya', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(30, 'Bidang', 'Bidang', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(31, 'Biji', 'Biji', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(32, 'bit', 'bit', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(33, 'Bks', 'Bks', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(34, 'Boks', 'Boks', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(35, 'botol', 'Botol', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(36, 'Botol / 100', 'Botol / 100', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(37, 'Botol / 1000', 'Botol / 1000', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(38, 'Botol / 7 Caps', 'Botol / 7 Caps', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(39, 'botol 10 ml', 'botol 10 ml', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(40, 'BOTOL 10 TEST', 'BOTOL 10 TEST', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(41, 'BOTOL 25 TEST', 'BOTOL 25 TEST', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(42, 'botol 250 ml', 'botol 250 ml', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(43, 'botol 500 ml', 'botol 500 ml', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(44, 'botol 60 ml', 'botol 60 ml', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(45, 'Box', 'Box', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(46, 'Box / 100', 'Box / 100', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(47, 'Box / 20', 'Box / 20', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(48, 'Box / 30', 'Box / 30', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(49, 'BPSK', 'BPSK', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(50, 'btl 100 tab', 'btl 100 tab', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(51, 'btl 1000 tab', 'btl 1000 tab', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(52, 'btl 15 ml', 'btl 15 ml', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(53, 'btl 250 tab', 'btl 250 tab', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(54, 'btl 60 ml', 'btl 60 ml', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(55, 'Btp', 'Btp', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(56, 'buah', 'buah', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(57, 'buah_hari', 'Buah hari', 'b/h', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(58, 'Buku', 'Buku', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(59, 'bulan', 'Bulan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(60, 'Butir', 'Butir', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(61, 'byte', 'Byte', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(62, 'cd', 'Kandela', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(63, 'celcius', 'Celcius', 'derajat celcius, dc', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(64, 'cm', 'cm', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(65, 'cm2', 'cm2', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(66, 'cm3', 'cm3', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(67, 'Daftar', 'Daftar', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(68, 'derajat', 'Derajat', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(69, 'Desa', 'Desa', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(70, 'detik', 'Detik', 'second', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(71, 'DI', 'DI', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(72, 'Dokumen', 'Dokumen', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(73, 'Dokumen Ketetapan', 'Dokumen Ketetapan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(74, 'Dokumen SSPD', 'Dokumen SSPD', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(75, 'Dokumen Surat Persetujuan/Penolakan', 'Dokumen Surat Persetujuan/Penolakan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(76, 'Domain', 'Domain', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(77, 'Dos', 'Dos', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(78, 'Dos / 10 Vial', 'Dos / 10 Vial', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(79, 'Dos / 100 Tablet', 'Dos / 100 Tablet', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(80, 'Dos / 5', 'Dos / 5', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(81, 'Dos / 50', 'Dos / 50', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(82, 'Dosis', 'Dosis', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(83, 'doz', 'doz', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(84, 'Drum', 'Drum', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(85, 'Dsn', 'Dsn', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(86, 'Dus', 'Dus', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(87, 'Ekor', 'Ekor', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(88, 'Ekpl', 'Ekpl', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(89, 'Eksemplar', 'Eksemplar', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(90, 'Eksemplar / Buku', 'Eksemplar / Buku', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(91, 'Entitas', 'Entitas', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(92, 'Entry', 'Entry', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(93, 'examplar', 'Examplar', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(94, 'feet', 'feet(kaki)', 'kaki, foot', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(95, 'feet2', 'feet2', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(96, 'feet3', 'feet3', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(97, 'Flacon', 'Flacon', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(98, 'Fls', 'Fls', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(99, 'Fokus', 'Fokus', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(100, 'galloon', 'Galloon', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(101, 'Galon', 'Galon', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(102, 'Gampong', 'Gampong', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(103, 'Gelas', 'Gelas', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(104, 'gr', 'gram', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(105, 'Gross', 'Gross', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(106, 'Group', 'Group', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(107, 'GULUNG', 'GULUNG', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(108, 'ha', 'Hektar', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(109, 'Ha', 'Ha', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(110, 'hari', 'Hari', 'day', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(112, 'Hari / M2', 'Hari / M2', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(113, 'Hektar', 'Hektar', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(114, 'Helicopter', 'Helicopter', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(115, 'horsepower', 'HP', 'hp, tenaga kuda', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(116, 'hz', 'Herz', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(117, 'Ijin', 'Ijin', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(118, 'Ikat', 'Ikat', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(119, 'inch', 'inch', 'inci', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(120, 'Inch', 'Inch', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(121, 'inch2', 'inch2', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(122, 'inch3', 'inch3', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(123, 'Institusi', 'Institusi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(124, 'jam', 'Jam', 'hour', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(125, 'Jam', 'Jam', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(126, 'Jenis', 'Jenis', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(127, 'Jerigen', 'Jerigen', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(128, 'joule', 'Joule', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(129, 'Kab/Kota', 'Kab/Kota', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(130, 'Kabupaten/Kota', 'Kabupaten/Kota', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(131, 'Kaleng', 'Kaleng', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(132, 'kaleng 1000', 'kaleng 1000', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(133, 'kaleng 250', 'kaleng 250', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(134, 'Kaleng/1000 Tablet', 'Kaleng/1000 Tablet', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(135, 'Kali', 'Kali', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(136, 'Kampung', 'Kampung', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(137, 'Kamus', 'Kamus', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(138, 'Kaplet', 'Kaplet', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(139, 'Kapsul', 'Kapsul', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(140, 'Kapsul/Tablet/Kaplet', 'Kapsul/Tablet/Kaplet', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(141, 'karton', 'karton', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(142, 'Kartu', 'Kartu', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(143, 'Kasus', 'Kasus', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(144, 'Kawasan', 'Kawasan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(145, 'Kawasan Transmigrasi', 'Kawasan Transmigrasi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(146, 'Kecamatan', 'Kecamatan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(147, 'kegiatan', 'Kegiatan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(148, 'Kegiatan', 'Kegiatan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(149, 'Kegiatan usaha', 'Kegiatan usaha', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(150, 'Kelompok', 'Kelompok', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(151, 'Kelompok Masyarakat', 'Kelompok Masyarakat', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(152, 'Keluarga', 'Keluarga', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(153, 'Kelurahan', 'Kelurahan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(154, 'kelvin', 'Kelvin (K)', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(155, 'Kendaraan', 'Kendaraan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(156, 'Kepala Keluarga', 'Kepala Keluarga', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(157, 'keping', 'Keping', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(158, 'Keping', 'Keping', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(159, 'Keranjang', 'Keranjang', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(160, 'Kerja Sama', 'Kerja Sama', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(161, 'Kesepakatan', 'Kesepakatan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(162, 'kg', 'kg', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(163, 'Kg', 'Kg', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(164, 'Kg / Powder', 'Kg / Powder', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(165, 'kg2', 'kg', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(166, 'Kit', 'Kit', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(167, 'KK', 'KK', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(168, 'km', 'kilometer', 'km', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(169, 'Km', 'Km', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(170, 'km2', 'km2', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(171, 'km3', 'km3', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(172, 'Komoditi', 'Komoditi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(173, 'Konten Digital', 'Konten Digital', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(174, 'Kotak', 'Kotak', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(175, 'KOTAK 100', 'KOTAK 100', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(176, 'KOTAK 101', 'KOTAK 101', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(177, 'KOTAK 24 PCS', 'KOTAK 24 PCS', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(178, 'KOTAK 36 PCS', 'KOTAK 36 PCS', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(179, 'KOTAK 50', 'KOTAK 50', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(180, 'KOTAK 50 PASANG', 'KOTAK 50 PASANG', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(181, 'Kpg', 'Kpg', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(182, 'Krt', 'Krt', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(183, 'Ktg', 'Ktg', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(184, 'ktk 10 amp', 'ktk 10 amp', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(185, 'ktk 10 vial', 'ktk 10 vial', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(186, 'ktk 10 x 10 tab', 'ktk 10 x 10 tab', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(187, 'ktk 100 ampul', 'ktk 100 ampul', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(188, 'ktk 2 x 10 supp', 'ktk 2 x 10 supp', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(189, 'ktk 20 amp', 'ktk 20 amp', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(190, 'ktk 24', 'ktk 24', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(191, 'ktk 24 pot', 'ktk 24 pot', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(192, 'ktk 25 tube', 'ktk 25 tube', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(193, 'ktk 30 amp', 'ktk 30 amp', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(194, 'ktk 30 ampul', 'ktk 30 ampul', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(195, 'ktk 30 tab', 'ktk 30 tab', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(196, 'ktk 480 tab', 'ktk 480 tab', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(197, 'ktk 5 x 10 tab', 'ktk 5 x 10 tab', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(198, 'ktk 50 tablet', 'ktk 50 tablet', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(199, 'ktk25 tube', 'ktk25 tube', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(200, 'Kwh', 'Kwh', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(201, 'Laporan', 'Laporan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(202, 'Lembaga', 'Lembaga', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(203, 'Lembaga Kemasyarakatan', 'Lembaga Kemasyarakatan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(204, 'Lembaga Masyarakat', 'Lembaga Masyarakat', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(205, 'lembar', 'Lbr', 'lembar', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(206, 'Lembar', 'Lembar', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(207, 'liter', 'Liter', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(208, 'Liter', 'Liter', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(209, 'Liter/Detik', 'Liter/Detik', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(210, 'Log', 'Log', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(211, 'Lokasi', 'Lokasi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(212, 'Lokus', 'Lokus', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(213, 'Lot', 'Lot', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(214, 'LPK', 'LPK', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(215, 'LPKSM', 'LPKSM', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(216, 'Ls', 'Ls', 'lusin', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(217, 'Ltr', 'Ltr', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(218, 'Luas / M2', 'Luas / M2', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(219, 'Lusin', 'Lusin', 'ls', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(220, 'M', 'M', 'meter', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(221, 'M / Lari', 'M / Lari', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(222, 'm/s', 'meter/Detik', 'm/s', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(223, 'M1', 'M1', 'meter lari', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(224, 'm2', 'm2', 'meter persegi', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(225, 'M2 Kedalaman S.D 1 M', 'M2 Kedalaman S.D 1 M', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(226, 'M2 Per Bulan', 'M2 Per Bulan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(227, 'M2 Per Hari', 'M2 Per Hari', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(228, 'M2/Tahun', 'M2/Tahun', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(229, 'm3', 'm3', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(230, 'M3', 'M3', 'meter kubik', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(231, 'M³/Hari', 'M³/Hari', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(232, 'm3/m', 'm3/m', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(233, 'Macam', 'Macam', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(234, 'Makam', 'Makam', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(235, 'Materi', 'Materi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(236, 'Media', 'Media', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(237, 'Menit', 'Menit', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(238, 'meter', 'meter', 'm', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(239, 'mile', 'Mil', 'mil, mill', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(240, 'Minggu', 'Minggu', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(241, 'Ml', 'Ml', 'mili liter', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(242, 'mm', 'mm', 'milimeter', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(243, 'mm2', 'mm2', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(244, 'mm3', 'mm3', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(245, 'MMKolom', 'MMKolom', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(246, 'Mobil', 'Mobil', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(247, 'mol', 'mol (jumlah zat)', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(248, 'mpa', 'Mpa', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(249, 'Naskah', 'Naskah', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(250, 'Naskah / Pelajaran', 'Naskah / Pelajaran', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(251, 'ob', 'OB', '', 0, NULL, 'Orang Bulan', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(252, 'OB', 'OB', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(253, 'Objek', 'Objek', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(254, 'Obyek Pajak', 'Obyek Pajak', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(255, 'oh', 'OH', 'orang hari, orang_hari,orang/hari,oranghari', 0, NULL, 'Orang Hari', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(256, 'OH', 'OH', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(257, 'OJ', 'OJ', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(258, 'OK', 'OK', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(259, 'Ons', 'Ons', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(260, 'OP', 'OP', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(261, 'Operasi', 'Operasi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(262, 'Orang', 'Orang', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(263, 'Orang / Acara', 'Orang / Acara', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(264, 'Orang / Alamat', 'Orang / Alamat', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(265, 'Orang / Bulan', 'Orang / Bulan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(266, 'Orang / Bulan / Kegiatan', 'Orang / Bulan / Kegiatan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(267, 'Orang / Flight', 'Orang / Flight', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(268, 'Orang / Hari', 'Orang / Hari', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(269, 'Orang / Jam', 'Orang / Jam', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(270, 'Orang / Jam / Pelajaran', 'Orang / Jam / Pelajaran', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(271, 'Orang / Jam Pelajaran', 'Orang / Jam Pelajaran', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(272, 'Orang / Kali', 'Orang / Kali', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(273, 'Orang / Kamar', 'Orang / Kamar', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(274, 'Orang / Kedatangan', 'Orang / Kedatangan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(275, 'Orang / Keg. / Bln', 'Orang / Keg. / Bln', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(276, 'Orang / Kegiatan', 'Orang / Kegiatan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(277, 'Orang / Materi', 'Orang / Materi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(278, 'Orang / Paket', 'Orang / Paket', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(279, 'Orang / Paket / Pekerjaan', 'Orang / Paket / Pekerjaan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(280, 'Orang / Perjalanan', 'Orang / Perjalanan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(281, 'Orang / PP', 'Orang / PP', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(282, 'Orang / Responden', 'Orang / Responden', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(283, 'Orang / Semester', 'Orang / Semester', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(284, 'Orang / Sessi', 'Orang / Sessi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(285, 'Orang / Session', 'Orang / Session', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(286, 'Orang / Tahun', 'Orang / Tahun', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(287, 'Orang / Terbitan', 'Orang / Terbitan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(288, 'Orang / Titik', 'Orang / Titik', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(289, 'Orang / Triwulan', 'Orang / Triwulan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(290, 'Orang Kegiatan', 'Orang Kegiatan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(291, 'Orang/Kali', 'Orang/Kali', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(292, 'Orang/Paket', 'Orang/Paket', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(293, 'Organisasi', 'Organisasi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(294, 'Orter', 'Orter', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(295, 'OT', 'OT', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(296, 'pa', 'Pascal', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(297, 'Pack', 'Pack', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(298, 'Pail', 'Pail', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(299, 'Pak', 'Pak', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(300, 'Paket', 'Paket', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(301, 'Paku', 'Paku', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(302, 'Parpol', 'Parpol', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(303, 'Pasang', 'Pasang', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(304, 'Pc', 'Pc', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(305, 'Pcs', 'Pcs', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(306, 'Pekerjaan', 'Pekerjaan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(307, 'Pelabuhan Perikanan', 'Pelabuhan Perikanan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(308, 'Pelaku Ekonomi', 'Pelaku Ekonomi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(309, 'Pelaku Usaha', 'Pelaku Usaha', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(310, 'Pelatda', 'Pelatda', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(311, 'Pelepah', 'Pelepah', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(312, 'Pendampingan', 'Pendampingan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(313, 'Penerbit', 'Penerbit', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(314, 'Pengaduan', 'Pengaduan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(315, 'Pengelola', 'Pengelola', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(316, 'Pengguna', 'Pengguna', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(317, 'Penyelenggara SPAM', 'Penyelenggara SPAM', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(318, 'Per 100 Lembar', 'Per 100 Lembar', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(319, 'Per Balok', 'Per Balok', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(320, 'Per Batang', 'Per Batang', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(321, 'Per Batang Pohon', 'Per Batang Pohon', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(322, 'Per Buku', 'Per Buku', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(323, 'Per Bulan', 'Per Bulan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(324, 'Per Bungkus', 'Per Bungkus', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(325, 'Per Butir Soal', 'Per Butir Soal', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(326, 'Per Detik', 'Per Detik', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(327, 'Per Halaman', 'Per Halaman', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(328, 'Per Hari', 'Per Hari', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(329, 'Per Karung', 'Per Karung', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(330, 'Per Keping', 'Per Keping', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(331, 'Per Kotak', 'Per Kotak', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(332, 'Per Liputan', 'Per Liputan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(333, 'Per Modul', 'Per Modul', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(334, 'Per Orang', 'Per Orang', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(335, 'Per Rim', 'Per Rim', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(336, 'Per Ruang', 'Per Ruang', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(337, 'Per Sampel', 'Per Sampel', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(338, 'Per Sisir', 'Per Sisir', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(339, 'Per Tayang', 'Per Tayang', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(340, 'Per Titik', 'Per Titik', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(341, 'Per Tumpuk', 'Per Tumpuk', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(342, 'Perangkat Daerah', 'Perangkat Daerah', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(343, 'Perizinan', 'Perizinan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(344, 'Perkara', 'Perkara', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(345, 'perm2', 'Per m2', '/m2', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(346, 'Perm3', 'Per m3', '/m3', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(347, 'permeter', 'Per m\'', '/m', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(348, 'Permohonan', 'Permohonan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(349, 'Perpustakaan', 'Perpustakaan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(350, 'Persen', 'Persen', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(351, 'Pert 100 Buah', 'Pert 100 Buah', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(352, 'Perusahaan', 'Perusahaan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(353, 'Peserta didik', 'Peserta didik', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(354, 'Peserta Didik', 'Peserta Didik', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(355, 'Pick Up', 'Pick Up', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(356, 'pkt', 'Paket', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(357, 'Pokmas / Ormas', 'Pokmas / Ormas', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(358, 'Pols', 'Pols', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(359, 'Porsi', 'Porsi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(360, 'Posyandu', 'Posyandu', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(361, 'Pot', 'Pot', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(362, 'pound', 'Pound', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(363, 'pp', 'pp', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(364, 'ppn', 'ppn', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(365, 'Produk', 'Produk', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(366, 'Produk Hukum', 'Produk Hukum', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(367, 'Publikasi', 'Publikasi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(368, 'Pulsa', 'Pulsa', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(369, 'Rean', 'Rean', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(370, 'Regu', 'Regu', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(371, 'Rekomendasi', 'Rekomendasi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(372, 'Rim', 'Rim', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(373, 'rol', 'Rol', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(374, 'ROL', 'ROL', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(375, 'Roll', 'Roll', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(376, 'Roll Besar', 'Roll Besar', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(377, 'rt', 'rt', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(378, 'rtng', 'rtng', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(379, 'Ruang', 'Ruang', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(380, 'Rumah Tangga', 'Rumah Tangga', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(381, 'Rupiah', 'Rupiah', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(382, 'RW', 'RW', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(383, 'Sachet', 'Sachet', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(384, 'SAK', 'SAK', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(385, 'Sampel', 'Sampel', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(386, 'Sarana', 'Sarana', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(387, 'Sarana dan Prasarana', 'Sarana dan Prasarana', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(388, 'Satuan Pendidikan', 'Satuan Pendidikan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(389, 'Satuan Pendidikan Tinggi', 'Satuan Pendidikan Tinggi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(390, 'Satuan Permukiman', 'Satuan Permukiman', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(391, 'Sekolah', 'Sekolah', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(392, 'Semester', 'Semester', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(393, 'Sertifikat', 'Sertifikat', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(394, 'Sesi', 'Sesi', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(395, 'set', 'set', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(396, 'Set', 'Set', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(397, 'Shift', 'Shift', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(398, 'Siklus', 'Siklus', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(399, 'Sistem Jaringan', 'Sistem Jaringan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(400, 'Siswa', 'Siswa', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(401, 'Siswa / Mata Ujian', 'Siswa / Mata Ujian', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(402, 'SOP', 'SOP', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(403, 'SR', 'SR', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(404, 'Stek', 'Stek', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(405, 'Stel', 'Stel', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(406, 'Strip', 'Strip', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(407, 'Supp', 'Supp', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(408, 'Surat', 'Surat', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(409, 'Surat Keputusan', 'Surat Keputusan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(410, 'Tablet', 'Tablet', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(411, 'Tabung', 'Tabung', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(412, 'tahun', 'Tahun', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(413, 'Tahun', 'Tahun', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(414, 'Tangki (4000 Liter)', 'Tangki (4000 Liter)', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(415, 'Tatanan', 'Tatanan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(416, 'Tayang / Spot', 'Tayang / Spot', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(417, 'Tayang / Spot Durasi 30 Detik', 'Tayang / Spot Durasi 30 Detik', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(418, 'Tempat', 'Tempat', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(419, 'tes', 'tes', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(420, 'TEST', 'TEST', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(421, 'Titik', 'Titik', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(422, 'Titik Lampu', 'Titik Lampu', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(423, 'ton', 'ton', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(424, 'Ton', 'Ton', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(425, 'Triwulan', 'Triwulan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(426, 'tube', 'Tube', 'tub', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(427, 'Tube', 'Tube', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(428, 'TUMPUK', 'TUMPUK', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(429, 'UMKM', 'UMKM', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(430, 'unit', 'unit', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(431, 'Unit', 'Unit', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(432, 'Unit / Bulan', 'Unit / Bulan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(433, 'Unit / Pompa', 'Unit / Pompa', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(434, 'Unit / Tahun', 'Unit / Tahun', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(435, 'Unit Kerja', 'Unit Kerja', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(436, 'Unit Managemen', 'Unit Managemen', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0);
+INSERT INTO `satuan_neo` (`id`, `value`, `item`, `sebutan_lain`, `disable`, `aksi`, `keterangan`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(437, 'Unit Rumah', 'Unit Rumah', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(438, 'Unit Usaha', 'Unit Usaha', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(439, 'unit_hari', 'Unit Hari', 'u/h, unit hari', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(440, 'unit/item', 'Unit/Item', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(441, 'Unit/Tahun', 'Unit/Tahun', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(442, 'USK', 'USK', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(443, 'Usulan', 'Usulan', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(444, 'VA', 'VA', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(445, 'Varietas', 'Varietas', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(446, 'Varietas Unggul Baru (VUB)', 'Varietas Unggul Baru (VUB)', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(447, 'Vial', 'Vial', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(448, 'VUB', 'VUB', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(449, 'Watt', 'Watt', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(450, 'yard', 'yard(3 kaki)', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(451, 'yard2', 'yard2', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(452, 'yard3', 'yard3', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(453, 'zak', 'zak', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0),
+(454, 'Zak', 'Zak', '', 0, NULL, '', 4, '2026-03-04 16:43:30', 'inayah', '2026-03-05 00:43:30', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -16529,44 +16920,6 @@ INSERT INTO `sk_asn_neo` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `nomor`, `tgl_s
 (130, '2026', '76.01', '1.03.0.00.0.00.01.0000', '01 TAHUN 2026', '2026-01-05', 'Pengangkatan Pejabat Pembuat Komitmen (PPK)  Dinas Pekerjaan Umum Dan Penataan Ruang Kabupaten Pasangkayu Tahun 2026', '197503102009031001', 'Kepala', 'Pembina, IV/a', 'SYAMSUNAR, SP.,M.M', '[{\"nama\":\"I Nyoman Sumerta, ST\",\"pangkat\":\"Penata tingkat I, III\\/d<br>\",\"nip\":\"198301012010011020\",\"jabatan\":\"Kepala sumber daya air\",\"jabatan_sk\":\"Pejabat Pembuat Komitmen (PPK) Bidang Sumber Daya Air\"},{\"nama\":\"Felix Datuan, ST\",\"pangkat\":\"Penata tingkat I, III\\/d<br>\",\"nip\":\"198407252009031001\",\"jabatan\":\"Kasubag keuangan\",\"jabatan_sk\":\"Pejabat Pembuat Komitmen (PPK) Bidang Sekretariat, UPTD Pengelolaan Limbah Domestik, UPTD Pengelolaan Air Limbah Domestik\"}]', 1, '[{\"isi\":\"Bahwa untuk pelaksanaan proses kerja pengadaan barang \\/ jasa pemerintah yang efektif, efisien dan akuntabel pada Dinas Pekerjaan Umum dan Penataan Ruang Pemerintah Daerah Kabupaten Pasangkayu, maka dipandang perlu mengangkat Pejabat Pembuat Komitmen (PPK) pada Dinas Pekerjaan Umum Kabupaten Pasangkayu\",\"p_l\":\"L\"},{\"isi\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas\",\"p_l\":\"L\"},{\"isi\":\"bahwa pengangkatan sebagaimana dimaksud pada point a perlu ditetapkan dalam Keputusan Kepala Dinas\",\"p_l\":\"L\"}]', '{\"0\":{\"isi\":\"Undang-Undang Nomor 28 Tahun 1999 tentang Penyelenggaraan Pemerintahan yang bersih dan bebas Korupsi, Kolusi dan Nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Republik Indonesia Nomor 3581);\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Undang-Undang Nomor 28 tahun 2000 tentang usaha dan peran masyarakat Jasa Konstruksi (Lembaran Negara Republik Indonesia tahun 2000 Nomor 63);\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Republik Indonesia Nomor 4286);\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Republik Indonesia Nomor 4355);\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Undang-Undang Nomor 32 Tahun 2004 tentang Pemerintahan Daerah (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 125, Tambahan Lembaran Negara Republik Indonesia Nomor 4437) sebagaimana telah diubah dengan Undang-Undang Nomor 8 Tahun 2005 tentang Penetapan Peraturan Pemerintah Pengganti Undang-Undang Nomor 3 Tahun 2005 tentang Perubahan Undang-Undang Nomor 32 Tahun 2004 tentang Pemerintahan Daerah menjadi Undang-Undang (Lembaran Negara Republik Indonesia Tahun 2005 Nomor 108, Tambahan Lembaran Negara Republik Indonesia Nomor 4548);\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Undang-Undang Nomor 2 Tahun 2017 tentang Jasa Konstruksi;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"Peraturan Presiden Republik Indonesia Nomor 12 Tahun 2021 tentang Pengadaan Barang\\/Jasa Pemerintah;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"10\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 14 Tahun 2025 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;<br>\",\"p_l\":\"L\"},\"11\":{\"isi\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 9 Tahun 2025 tanggal 31 Desember 2025 tentang Anggaran pendapatan dan Belanja Daerah Tahun Anggaran 2026;<br>\",\"p_l\":\"L\"},\"12\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 26 Tahun 2025 tanggal 31 Desember 2025 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kebupaten Pasangkayu Tahun Anggaran 2026;<br>\",\"p_l\":\"L\"},\"13\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"p_l\":\"L\"}}', '{\"0\":{\"isi\":\"Tugas Pejabat sebagaimana dimaksud pada diktum Kesatu adalah :\",\"p_l\":\"P\"},\"1\":{\"isi\":\"menyusun perencanaan pengadaan;\",\"p_l\":\"L\"},\"2\":{\"isi\":\"menetapkan spesifikasi teknis\\/Kerangka Acuan Kerja (KAK);\",\"p_l\":\"L\"},\"3\":{\"isi\":\"menetapkan rancangan kontrak;\",\"p_l\":\"L\"},\"4\":{\"isi\":\"menetapkan HPS;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"menetapkan besaran uang muka yang akan dibayarkan kepada Penyedia;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"mengusulkan perubahan jadwal kegiatan;\",\"p_l\":\"L\"},\"7\":{\"isi\":\"menetapkan tim pendukung;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"menetapkan tim atau tenaga ahli;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"melaksanakan E-purchasing untuk nilai paling sedikit di atas Rp200.000.000,00 (dua ratus juta rupiah);\",\"p_l\":\"L\"},\"10\":{\"isi\":\"mengendalikan Kontrak;\",\"p_l\":\"L\"},\"11\":{\"isi\":\"melaporkan pelaksanaan dan penyelesaian kegiatan kepada PA\\/KPA;\",\"p_l\":\"L\"},\"12\":{\"isi\":\"menyerahkan hasil pekerjaan pelaksanaan kegiatan kepada PA\\/KPA dengan berita acara penyerahan;\",\"p_l\":\"L\"},\"13\":{\"isi\":\"menyimpan dan menjaga keutuhan seluruh dokumen pelaksanaan kegiatan;\",\"p_l\":\"L\"},\"14\":{\"isi\":\"menilai kinerja Penyedia;\",\"p_l\":\"L\"},\"15\":{\"isi\":\"menetapkan Surat Penunjukan Penyedia Barang\\/Jasa.\",\"p_l\":\"L\"}}', '{\"0\":{\"isi\":\"Selain tugas pokok dan kewenangan sebagaimana dimaksud, dalam hal diperlukan, PPK,dapat\",\"p_l\":\"P\"},\"1\":{\"isi\":\"Melaporkan kemajuan pekerjaan termasuk penyerapan anggaran dan hambatan pelaksanaan pekerjaan kepada PA\\/KPA setiap triwulan\",\"p_l\":\"L\"}}', '{\"0\":{\"isi\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada APBD Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2026.\",\"p_l\":\"P\"}}', '{\"0\":{\"isi\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya.\",\"p_l\":\"P\"}}', '{\"0\":{\"isi\":\"Bupati Pasangkayu, di Pasangkayu\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Masing-masing yang bersangkutan\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Pertinggal\",\"p_l\":\"L\"}}', '', '', '0000-00-00 00:00:00', '', '2026-01-28 03:27:28', 'nabiila', 0, 0),
 (131, '2026', '76.01', '1.03.0.00.0.00.01.0000', '03 TAHUN 2026', '2026-01-05', 'pengangkatan pejabat penatausahaan keuangan  dinas pekerjaan umum dan penataan ruang kabupaten pasangkayu tahun 2026', '197503102009031001', 'Kepala', 'Pembina, IV/a', 'SYAMSUNAR, SP.,M.M', '[{\"nama\":\"SRI IRDA AYU, SP.,M.Si\",\"pangkat\":\"Pembina, IV\\/a\",\"nip\":\"198306252005022003\",\"jabatan\":\"Sekretaris\",\"jabatan_sk\":\"Pejabat Penatausahaan Keuangan\"}]', 0, '[{\"isi\":\"bahwa untuk menyediakan pengelolaan keuangan Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu, maka dipandang perlu mengangkat Pejabat Penatausahaan Keuangan pada Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu;\",\"p_l\":\"L\"},{\"isi\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas;\",\"p_l\":\"L\"},{\"isi\":\"bahwa sebagaimana dimaksud pada point a perlu ditetapkan dalam keputusan Kepala Dinas Pekerjaan Umum dan Penataan Ruang.\",\"p_l\":\"L\"}]', '{\"0\":{\"isi\":\"Undang-Undang Nomor 28 Tahun 1999 tentang penyelenggaraan Negara yang bersih dan bebas dari korupsi dan nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Nomor 3851);\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Nomor 4286);\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Nomor 4355);\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Peraturan Pemerintah Nomor 12 Tahun 2019 tentang Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 14 Tahun 2025 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 9 Tahun 2025 tanggal 31 Desember 2025 tentang Anggaran pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 26 Tahun 2025 tanggal 31 Desember 2025 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kebupaten Pasangkayu Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"10\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"p_l\":\"L\"}}', '{\"0\":{\"isi\":\"PPK SKPD mempunyai tugas dan wewenang:\",\"p_l\":\"P\"},\"1\":{\"isi\":\"melakukan verifikasi SPP-UP, SPP-GU, SPP-TU, dan SPP-LS beserta bukti kelengkapannya yang diajukan oleh Bendahara Pengeluaran;\",\"p_l\":\"L\"},\"2\":{\"isi\":\"menyiapkan SPM;\",\"p_l\":\"L\"},\"3\":{\"isi\":\"melakukan verifikasi laporan pertanggungjawaban Bendahara Penerimaan dan Bendahara Pengeluaran;\",\"p_l\":\"L\"},\"4\":{\"isi\":\"melaksanakan fungsi akuntansi pada SKPD; dan\",\"p_l\":\"L\"},\"5\":{\"isi\":\"menyusun laporan keuangan SKPD.\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Verifikasi oleh PPK SKPD dilakukan dengan tujuan untuk meneliti kelengkapan dan keabsahan.\",\"p_l\":\"P\"}}', '{\"0\":{\"isi\":\"Selain melaksanakan tugas dan wewenang pada angka 5, PPK SKPD melaksanakan tugas dan wewenang lainnya yaitu:\",\"p_l\":\"P\"},\"1\":{\"isi\":\"melakukan verifikasi SPP-UP, SPP-GU, SPP-TU, dan SPP-LS beserta bukti kelengkapannya yang diajukan oleh Bendahara lainnya;\",\"p_l\":\"L\"},\"2\":{\"isi\":\"melakukan verifikasi surat permintaan pembayaran atas pengembalian kelebihan pendapatan daerah dari bendahara penerimaan; dan\",\"p_l\":\"L\"},\"3\":{\"isi\":\"menerbitkan surat pernyataan verifikasi kelengkapan dan keabsahan SPP-UP, SPP-GU, SPP-TU dan SPP-LS beserta bukti kelengkapannya sebagai dasar penyiapan SPM.\",\"p_l\":\"L\"}}', '{\"0\":{\"isi\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada APBD Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2026.\",\"p_l\":\"P\"}}', '{\"0\":{\"isi\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya.\",\"p_l\":\"P\"}}', '{\"0\":{\"isi\":\"Bupati Pasangkayu, di Pasangkayu;\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu;\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu;\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu;\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Masing-masing yang bersangkutan;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Pertinggal.\",\"p_l\":\"L\"}}', '', '', '0000-00-00 00:00:00', '', '2026-01-28 03:41:02', 'nabiila', 0, 0),
 (132, '2026', '76.01', '1.03.0.00.0.00.01.0000', '25 TAHUN 2026', '2026-01-05', 'pengangkatan pelaksana tugas kepala Peralatan Alat Berat dinas pekerjaan umum dan penataan ruang kabupaten pasangkayu tahun 2026', '197503102009031001', 'Kepala', 'Pembina, IV/a', 'SYAMSUNAR, SP.,M.M', '[{\"nama\":\"Boby S. Pakaya\",\"pangkat\":\"Pengatur, II\\/c\",\"nip\":\"197706132014091002\",\"jabatan\":\"<div>Pengadministrasi Perkantoran<\\/div>\",\"jabatan_sk\":\"Plt. Kepala Peralatan Alat Berat\"}]', 1, '[{\"isi\":\"bahwa untuk menyediakan pengelolaan Peralatan Alat Berat Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu, maka dipandang perlu mengangkat Kepala&nbsp;Peralatan Alat Berat pada Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu;\",\"p_l\":\"L\"},{\"isi\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas;\",\"p_l\":\"L\"},{\"isi\":\"bahwa sebagaimana dimaksud pada point a perlu ditetapkan dalam keputusan Kepala Dinas Pekerjaan Umum dan Penataan Ruang.\",\"p_l\":\"L\"}]', '{\"0\":{\"isi\":\"Undang-Undang Nomor 28 Tahun 1999 tentang penyelenggaraan Negara yang bersih dan bebas dari korupsi dan nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Nomor 3851);\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Nomor 4286);\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Nomor 4355);\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Peraturan Pemerintah Nomor 12 Tahun 2019 tentang Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 14 Tahun 2025 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 9 Tahun 2025 tanggal 31 Desember 2025 tentang Anggaran pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 26 Tahun 2025 tanggal 31 Desember 2025 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kebupaten Pasangkayu Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"10\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"p_l\":\"L\"}}', '{\"0\":{\"isi\":\"Kepala Peralatan Alat Berat mempunyai tugas dan wewenang:\",\"p_l\":\"P\"},\"1\":{\"isi\":\"<div>Penyusunan program jangka pendek, jangka menengah, dan jangka panjang;<\\/div>\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Pengelolaan alat berat;\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Koordinasi penggunaan peralatan dengan instansi terkait;\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Pemberian pertimbangan teknis pengelolaan alat berat;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Pelaksanaan pembinaan terhadap operator alat berat dan mekanik;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Penyiapan bahan dan perlengkapan perbengkelan;\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Pelaksanaan pemeriksaaan dan perbaikan alat;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"Penyusunan data riwayat peralatan;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"Penyusunan laporan kegiatan atau perjanjian pelayanan peralatan dan pemeliharaan peralatan;\",\"p_l\":\"L\"},\"10\":{\"isi\":\"<div>Pemberian saran-saran atau pertimbangan kepada atasan tentang langkah-<span style=\\\"text-align: inherit; font-size: 1em;\\\">langkah dan tindakan yang perlu diambil di bidang tugasnya;<\\/span><\\/div>\",\"p_l\":\"L\"}}', '{\"0\":{\"isi\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada APBD Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2026.\",\"p_l\":\"P\"}}', '{\"0\":{\"isi\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya.\",\"p_l\":\"P\"}}', '{}', '{\"0\":{\"isi\":\"Bupati Pasangkayu, di Pasangkayu;\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu;\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu;\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu;\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Masing-masing yang bersangkutan;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Pertinggal.\",\"p_l\":\"L\"}}', '', '', '0000-00-00 00:00:00', '', '2026-02-15 06:45:17', 'nabiila', 0, 0);
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `ssh_akun_map`
---
-
-CREATE TABLE `ssh_akun_map` (
-  `id` int(11) NOT NULL,
-  `ssh_id` int(11) NOT NULL,
-  `kd_akun` varchar(50) NOT NULL,
-  `kd_wilayah` varchar(25) NOT NULL,
-  `peraturan_id` int(11) NOT NULL,
-  `created_at` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `ssh_neo`
---
-
-CREATE TABLE `ssh_neo` (
-  `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(25) NOT NULL,
-  `tahun` year(4) NOT NULL,
-  `uraian_barang` text NOT NULL,
-  `spesifikasi` text DEFAULT NULL,
-  `satuan_id` int(11) NOT NULL,
-  `harga_satuan` decimal(18,6) NOT NULL,
-  `peraturan_id` int(11) NOT NULL,
-  `disable` tinyint(4) DEFAULT 0,
-  `tgl_insert` datetime DEFAULT current_timestamp(),
-  `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-  `username_update` varchar(100) DEFAULT NULL,
-  `is_deleted` tinyint(4) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -21130,24 +21483,6 @@ ALTER TABLE `anggaran_program_renstra_neo`
   ADD KEY `program_id` (`program_id`);
 
 --
--- Indeks untuk tabel `asb_akun_map`
---
-ALTER TABLE `asb_akun_map`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_asb_akun_scope` (`asb_id`,`kd_akun`,`kd_wilayah`,`peraturan_id`),
-  ADD KEY `idx_asb` (`asb_id`),
-  ADD KEY `idx_akun` (`kd_akun`);
-
---
--- Indeks untuk tabel `asb_neo`
---
-ALTER TABLE `asb_neo`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_asb_scope` (`kd_wilayah`,`tahun`,`uraian_barang`) USING HASH,
-  ADD KEY `idx_scope` (`kd_wilayah`,`peraturan_id`),
-  ADD KEY `idx_tahun` (`tahun`);
-
---
 -- Indeks untuk tabel `aset_neo`
 --
 ALTER TABLE `aset_neo`
@@ -21211,25 +21546,6 @@ ALTER TABLE `dppa_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `hspk_akun_map`
---
-ALTER TABLE `hspk_akun_map`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_hspk_akun_scope` (`hspk_id`,`kd_akun`,`kd_wilayah`,`peraturan_id`),
-  ADD KEY `idx_hspk` (`hspk_id`),
-  ADD KEY `idx_akun` (`kd_akun`);
-
---
--- Indeks untuk tabel `hspk_neo`
---
-ALTER TABLE `hspk_neo`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_hspk_scope` (`kd_wilayah`,`tahun`,`uraian_barang`,`harga_satuan`) USING HASH,
-  ADD KEY `idx_scope` (`kd_wilayah`,`peraturan_id`),
-  ADD KEY `idx_tahun` (`tahun`),
-  ADD KEY `idx_satuan` (`satuan_id`);
-
---
 -- Indeks untuk tabel `import_logs`
 --
 ALTER TABLE `import_logs`
@@ -21283,6 +21599,19 @@ ALTER TABLE `log_activity`
 --
 ALTER TABLE `mapping_aset_akun`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `master_biaya`
+--
+ALTER TABLE `master_biaya`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `master_biaya_akun`
+--
+ALTER TABLE `master_biaya_akun`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_master_biaya` (`master_biaya_id`);
 
 --
 -- Indeks untuk tabel `misi_renstra_neo`
@@ -21413,48 +21742,10 @@ ALTER TABLE `satuan_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `sbu_akun_map`
---
-ALTER TABLE `sbu_akun_map`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_sbu_akun_scope` (`sbu_id`,`kd_akun`,`kd_wilayah`,`peraturan_id`),
-  ADD KEY `idx_sbu` (`sbu_id`),
-  ADD KEY `idx_akun` (`kd_akun`);
-
---
--- Indeks untuk tabel `sbu_neo`
---
-ALTER TABLE `sbu_neo`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_sbu_scope` (`kd_wilayah`,`tahun`,`uraian_barang`,`harga_satuan`) USING HASH,
-  ADD KEY `idx_scope` (`kd_wilayah`,`peraturan_id`),
-  ADD KEY `idx_tahun` (`tahun`),
-  ADD KEY `idx_satuan` (`satuan_id`);
-
---
 -- Indeks untuk tabel `sk_asn_neo`
 --
 ALTER TABLE `sk_asn_neo`
   ADD PRIMARY KEY (`id`);
-
---
--- Indeks untuk tabel `ssh_akun_map`
---
-ALTER TABLE `ssh_akun_map`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_ssh_akun_scope` (`ssh_id`,`kd_akun`,`kd_wilayah`,`peraturan_id`),
-  ADD KEY `idx_ssh` (`ssh_id`),
-  ADD KEY `idx_akun` (`kd_akun`);
-
---
--- Indeks untuk tabel `ssh_neo`
---
-ALTER TABLE `ssh_neo`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_ssh_scope` (`kd_wilayah`,`tahun`,`uraian_barang`,`harga_satuan`) USING HASH,
-  ADD KEY `idx_scope` (`kd_wilayah`,`peraturan_id`),
-  ADD KEY `idx_tahun` (`tahun`),
-  ADD KEY `idx_satuan` (`satuan_id`);
 
 --
 -- Indeks untuk tabel `sub_kegiatan`
@@ -21574,18 +21865,6 @@ ALTER TABLE `anggaran_program_renstra_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `asb_akun_map`
---
-ALTER TABLE `asb_akun_map`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `asb_neo`
---
-ALTER TABLE `asb_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT untuk tabel `aset_neo`
 --
 ALTER TABLE `aset_neo`
@@ -21640,18 +21919,6 @@ ALTER TABLE `dppa_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `hspk_akun_map`
---
-ALTER TABLE `hspk_akun_map`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `hspk_neo`
---
-ALTER TABLE `hspk_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT untuk tabel `import_logs`
 --
 ALTER TABLE `import_logs`
@@ -21691,13 +21958,25 @@ ALTER TABLE `kegiatan_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `log_activity`
 --
 ALTER TABLE `log_activity`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1830;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1831;
 
 --
 -- AUTO_INCREMENT untuk tabel `mapping_aset_akun`
 --
 ALTER TABLE `mapping_aset_akun`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2896;
+
+--
+-- AUTO_INCREMENT untuk tabel `master_biaya`
+--
+ALTER TABLE `master_biaya`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `master_biaya_akun`
+--
+ALTER TABLE `master_biaya_akun`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `misi_renstra_neo`
@@ -21823,37 +22102,13 @@ ALTER TABLE `sasaran_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `satuan_neo`
 --
 ALTER TABLE `satuan_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `sbu_akun_map`
---
-ALTER TABLE `sbu_akun_map`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `sbu_neo`
---
-ALTER TABLE `sbu_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=455;
 
 --
 -- AUTO_INCREMENT untuk tabel `sk_asn_neo`
 --
 ALTER TABLE `sk_asn_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
-
---
--- AUTO_INCREMENT untuk tabel `ssh_akun_map`
---
-ALTER TABLE `ssh_akun_map`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `ssh_neo`
---
-ALTER TABLE `ssh_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `sub_kegiatan`
@@ -21948,6 +22203,12 @@ ALTER TABLE `wilayah_neo`
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
+
+--
+-- Ketidakleluasaan untuk tabel `master_biaya_akun`
+--
+ALTER TABLE `master_biaya_akun`
+  ADD CONSTRAINT `fk_master_biaya` FOREIGN KEY (`master_biaya_id`) REFERENCES `master_biaya` (`id`);
 
 --
 -- Ketidakleluasaan untuk tabel `trx_naskah_struktur`

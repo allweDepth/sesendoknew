@@ -1593,75 +1593,76 @@ class DynamicTableService
     }
     /**
      * ============================================================
-     * IMPORT STRICT ENGINE (STABLE VERSION)
-     * ============================================================
-     *
+     * IMPORT STRICT ENGINE
+     * ------------------------------------------------------------
      * Fungsi:
-     * - Mengimport data Excel ke tabel master biaya
-     * - Mendukung relation resolver
-     * - Mendukung satuan → satuan_id
-     * - Scope wilayah + peraturan + tahun
+     * Mengimport data Excel ke tabel sistem secara aman.
+     *
+     * Fitur utama:
+     * - Header validation
+     * - Relation resolver
+     * - Scope injection (wilayah, tahun, peraturan)
+     * - Sanitasi data
+     * - Duplicate validation
      * - Transaction safe
      * - Error report per baris
      *
-     * Tabel yang biasa memakai ini:
+     * Tabel yang menggunakan metode ini:
      * SSH
      * SBU
      * ASB
      * HSPK
-     *
      * ============================================================
      */
     public function importStrict($tbl, $file, $jmlHeader = 1)
     {
 
-        /* =====================================================
-    1️⃣ VALIDASI PROFILE TABEL
-    ===================================================== */
+        // ======================================================
+        // 1️⃣ VALIDASI PROFILE TABEL
+        // ======================================================
 
         if (!isset($this->profiles[$tbl])) {
             throw new Exception("Profile tabel tidak ditemukan.");
         }
 
-        // ambil konfigurasi tabel dari table_profiles.php
+        // ambil konfigurasi tabel dari profile
         $profile = $this->profiles[$tbl];
 
-        // nama tabel database
+        // ambil nama tabel database
         $table = $profile['table'];
 
 
-        /* =====================================================
-    2️⃣ AMBIL KOLOM DATABASE
-    ===================================================== */
+        // ======================================================
+        // 2️⃣ AMBIL KOLOM TABEL DATABASE
+        // ======================================================
 
-        // digunakan untuk memastikan hanya kolom valid yang dimasukkan
         $columns = $this->getTableColumns($table);
 
 
-        /* =====================================================
-    3️⃣ AMBIL SCOPE USER
-    ===================================================== */
+        // ======================================================
+        // 3️⃣ AMBIL SCOPE USER
+        // ======================================================
 
-        // wilayah user login
+        // wilayah user
         $kd_wilayah = $this->user['kd_wilayah'] ?? null;
 
-        // tahun aktif user
+        // tahun user
         $tahun = $this->user['tahun'] ?? date('Y');
 
         if (!$kd_wilayah) {
-            throw new Exception("kd_wilayah tidak ditemukan pada session.");
+            throw new Exception("kd_wilayah tidak ditemukan.");
         }
 
 
-        /* =====================================================
-    4️⃣ RESOLVE PERATURAN AKTIF
-    ===================================================== */
+        // ======================================================
+        // 4️⃣ RESOLVE PERATURAN
+        // ======================================================
 
         $peraturan_id = null;
 
+        // jika tabel memiliki kolom peraturan
         if (in_array('peraturan_id', $columns)) {
 
-            // ambil pengaturan aktif wilayah
             $pengaturan = $this->getPengaturanAktif();
 
             if (!$pengaturan) {
@@ -1669,33 +1670,27 @@ class DynamicTableService
             }
 
             // mapping tabel → field pengaturan
-            $mapPeraturan = [
-
+            $map = [
                 'ssh'  => 'aturan_ssh',
                 'sbu'  => 'aturan_sbu',
                 'asb'  => 'aturan_asb',
-                'hspk' => 'aturan_hspk',
-
-                'ssh_neo'  => 'aturan_ssh',
-                'sbu_neo'  => 'aturan_sbu',
-                'asb_neo'  => 'aturan_asb',
-                'hspk_neo' => 'aturan_hspk'
+                'hspk' => 'aturan_hspk'
             ];
 
-            if (isset($mapPeraturan[$tbl])) {
-                $peraturan_id = (int)$pengaturan[$mapPeraturan[$tbl]];
+            if (isset($map[$tbl])) {
+                $peraturan_id = (int)$pengaturan[$map[$tbl]];
             }
         }
 
 
-        /* =====================================================
-    5️⃣ LOAD FILE EXCEL
-    ===================================================== */
+        // ======================================================
+        // 5️⃣ LOAD FILE EXCEL
+        // ======================================================
 
-        // buat reader otomatis berdasarkan tipe file
+        // buat reader otomatis
         $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file);
 
-        // hanya membaca data tanpa style
+        // baca hanya data (lebih cepat)
         $reader->setReadDataOnly(true);
 
         // load spreadsheet
@@ -1704,24 +1699,23 @@ class DynamicTableService
         // ambil sheet aktif
         $sheet = $spreadsheet->getActiveSheet();
 
-        // iterator baris
+        // iterator baris Excel
         $rowIterator = $sheet->getRowIterator();
 
 
-        /* =====================================================
-    6️⃣ BUILD COLUMN MAP
-    ===================================================== */
+        // ======================================================
+        // 6️⃣ BUILD COLUMN MAP
+        // ======================================================
 
-        // mapping header excel → kolom tabel
+        // mapping header Excel → kolom SQL
         $columnMap = $this->buildColumnMap($table);
 
-        // array header excel
+
+        // ======================================================
+        // 7️⃣ VARIABLE STATISTIK IMPORT
+        // ======================================================
+
         $headers = [];
-
-
-        /* =====================================================
-    7️⃣ VARIABEL REPORT
-    ===================================================== */
 
         $totalRows = 0;
         $successRows = 0;
@@ -1730,9 +1724,9 @@ class DynamicTableService
         $errorRows = [];
 
 
-        /* =====================================================
-    8️⃣ TRANSACTION IMPORT
-    ===================================================== */
+        // ======================================================
+        // 8️⃣ IMPORT DALAM TRANSACTION
+        // ======================================================
 
         return $this->runTransaction(function () use (
 
@@ -1744,7 +1738,6 @@ class DynamicTableService
             $kd_wilayah,
             $tahun,
             $peraturan_id,
-            $profile,
             &$headers,
             &$totalRows,
             &$successRows,
@@ -1755,17 +1748,18 @@ class DynamicTableService
 
             $rowNumber = 0;
 
+            // ==================================================
+            // LOOP SEMUA BARIS EXCEL
+            // ==================================================
+
             foreach ($rowIterator as $row) {
 
                 $rowNumber++;
 
-                /* =================================================
-            AMBIL SEMUA CELL DALAM BARIS
-            ================================================= */
-
+                // iterator cell
                 $cellIterator = $row->getCellIterator();
 
-                // memastikan cell kosong tetap terbaca
+                // baca semua cell
                 $cellIterator->setIterateOnlyExistingCells(false);
 
                 $values = [];
@@ -1775,12 +1769,13 @@ class DynamicTableService
                 }
 
 
-                /* =================================================
-            PROSES HEADER EXCEL
-            ================================================= */
+                /* ===============================================
+            HEADER PROCESSING
+            =============================================== */
 
                 if ($rowNumber <= $jmlHeader) {
 
+                    // header terakhir
                     if ($rowNumber === $jmlHeader) {
 
                         foreach ($values as $h) {
@@ -1788,16 +1783,16 @@ class DynamicTableService
                             // normalisasi header
                             $normalized = $this->normalizeForCompare($h);
 
-                            // mapping header → kolom tabel
-                            if ($normalized === 'satuan') {
-    $headers[] = 'satuan_id';
-} else {
-    $headers[] = $columnMap[$normalized] ?? null;
-}
-                        }
+                            // cek apakah cocok dengan kolom tabel
+                            if (!isset($columnMap[$normalized])) {
 
-                        if (empty(array_filter($headers))) {
-                            throw new Exception("Header Excel tidak cocok.");
+                                throw new Exception(
+                                    "Header Excel '{$h}' tidak cocok dengan kolom tabel."
+                                );
+                            }
+
+                            // simpan mapping header
+                            $headers[] = $columnMap[$normalized];
                         }
                     }
 
@@ -1805,46 +1800,29 @@ class DynamicTableService
                 }
 
 
+                // ==================================================
+                // BARIS DATA
+                // ==================================================
+
                 $totalRows++;
-
-
-                /* =================================================
-            BUILD DATA ARRAY
-            ================================================= */
 
                 $data = [];
 
                 foreach ($values as $k => $v) {
 
-                    if (!isset($headers[$k]) || !$headers[$k]) {
+                    if (!isset($headers[$k])) {
                         continue;
                     }
 
-                    $field = $headers[$k];
-
-                    /**
-                     * Jika header Excel berisi "Satuan"
-                     * tetapi tabel memakai satuan_id
-                     * kita simpan sementara sebagai satuan
-                     */
-
-                    if ($field === 'satuan_id') {
-                        $data['satuan'] = $v;
-                    } else {
-                        $data[$field] = $v;
-                    }
-                }
-
-                if (empty($data)) {
-                    continue;
+                    $data[$headers[$k]] = $v;
                 }
 
 
                 try {
 
-                    /* =============================================
-                INJECT SCOPE
-                ============================================= */
+                    // ==================================================
+                    // INJECT SCOPE
+                    // ==================================================
 
                     if (in_array('kd_wilayah', $columns)) {
                         $data['kd_wilayah'] = $kd_wilayah;
@@ -1859,86 +1837,50 @@ class DynamicTableService
                     }
 
 
-                    /* =============================================
-                RESOLVE RELATIONS DARI PROFILE
-                ============================================= */
+                    // ==================================================
+                    // RESOLVE RELATIONS
+                    // ==================================================
 
-                    $relationMap = $profile['import']['relations'] ?? [];
+                    $profile = $this->profiles[$table] ?? [];
 
-                    if (!empty($relationMap)) {
+                    $relations = $profile['import_relations'] ?? [];
+
+                    if (!empty($relations)) {
 
                         $data = $this->resolveImportRelations(
                             $data,
-                            $relationMap,
+                            $relations,
                             $rowNumber
                         );
                     }
 
 
-                    /* =============================================
-                RESOLVE SATUAN
-                ============================================= */
+                    // ==================================================
+                    // SANITASI DATA
+                    // ==================================================
 
-                    $data = $this->resolveSatuanId($data, $rowNumber);
-
-
-                    /* =============================================
-                FILTER KOLOM VALID
-                ============================================= */
-
-                    $filtered = [];
-
-                    foreach ($data as $k => $v) {
-
-                        if (in_array($k, $columns)) {
-                            $filtered[$k] = $v;
-                        }
-                    }
-
-                    if (empty($filtered)) {
-                        continue;
-                    }
+                    $data = $this->applySanitization($table, $data);
 
 
-                    /* =============================================
-                DEFAULT FIELD
-                ============================================= */
+                    // ==================================================
+                    // AUDIT TRAIL
+                    // ==================================================
 
-                    if (in_array('disable', $columns) && !isset($filtered['disable'])) {
-                        $filtered['disable'] = 0;
-                    }
-
-                    if (in_array('is_deleted', $columns) && !isset($filtered['is_deleted'])) {
-                        $filtered['is_deleted'] = 0;
-                    }
+                    $data = $this->injectAudit($data, 'insert');
 
 
-                    /* =============================================
-                SANITASI DATA
-                ============================================= */
+                    // ==================================================
+                    // VALIDASI DUPLICATE
+                    // ==================================================
 
-                    $filtered = $this->applySanitization($table, $filtered);
-
-
-                    /* =============================================
-                AUDIT TRAIL
-                ============================================= */
-
-                    $filtered = $this->injectAudit($filtered, 'insert');
+                    $this->validateDuplicate($table, $data);
 
 
-                    /* =============================================
-                VALIDASI DUPLICATE
-                ============================================= */
+                    // ==================================================
+                    // INSERT DATABASE
+                    // ==================================================
 
-                    $this->validateDuplicate($table, $filtered);
-
-
-                    /* =============================================
-                INSERT DATABASE
-                ============================================= */
-
-                    $this->db->insert($table, $filtered);
+                    $this->db->insert($table, $data);
 
                     $successRows++;
                 } catch (\Throwable $e) {
@@ -1953,12 +1895,16 @@ class DynamicTableService
             }
 
 
-            /* =================================================
-        GROUP ERROR REPORT
-        ================================================= */
+            // ==================================================
+            // GROUP ERROR
+            // ==================================================
 
             $groupedErrors = $this->groupImportErrors($errorRows);
 
+
+            // ==================================================
+            // RETURN RESULT
+            // ==================================================
 
             return JsonResponse::success(
                 "Import selesai",
@@ -2037,8 +1983,8 @@ class DynamicTableService
         return array_values($grouped);
     }
     /* =========================================================
-                                                    IMPORT STRUKTUR NASIONAL (GLOBAL HIRARKI)
-                                                    ========================================================= */
+                                                                IMPORT STRUKTUR NASIONAL (GLOBAL HIRARKI)
+                                                                ========================================================= */
     public function importStruktur(string $filePath, int $jmlHeader = 1): string
     {
         return $this->runTransaction(function () use ($filePath, $jmlHeader) {
@@ -2267,8 +2213,8 @@ class DynamicTableService
 
         $exists = $this->db->query(
             "SELECT `$primaryKey` FROM `$table`
-                                                            WHERE " . implode(" AND ", $whereParts) . "
-                                                            LIMIT 1",
+                                                                        WHERE " . implode(" AND ", $whereParts) . "
+                                                                        LIMIT 1",
             $params
         )->fetch();
 
@@ -2335,8 +2281,8 @@ class DynamicTableService
         // 🔥 Cek duplicate
         $exists = $this->db->query(
             "SELECT id FROM `$table`
-                                                            WHERE " . implode(" AND ", $whereParts) . "
-                                                            LIMIT 1",
+                                                                        WHERE " . implode(" AND ", $whereParts) . "
+                                                                        LIMIT 1",
             $params
         )->fetch();
 
@@ -2344,8 +2290,8 @@ class DynamicTableService
             return $exists['id'];
         }
         /* =====================================================
-                                                    ENTERPRISE SANITATION
-                                                    ===================================================== */
+                                                                ENTERPRISE SANITATION
+                                                                ===================================================== */
         $filtered = $this->applySanitization($table, $filtered);
         $filtered = $this->injectAudit($filtered, 'insert');
 
@@ -2354,8 +2300,8 @@ class DynamicTableService
         return $this->db->lastInsertId();
     }
     /* =========================================================
-                                                        VALIDASI IMPORT CONFIG DARI PROFILE
-                                                        ========================================================= */
+                                                                    VALIDASI IMPORT CONFIG DARI PROFILE
+                                                                    ========================================================= */
     private function validateImportConfig(string $tableKey): array
     {
         if (!isset($this->profiles[$tableKey]['import'])) {
@@ -2377,13 +2323,13 @@ class DynamicTableService
         return $config;
     }
     /* =========================================================
-                                                    APPLY NORMALISASI BERDASARKAN PROFILE app/Config/table_profiles.php'
-                                                    program' => [
-                                                        'table' => 'program',
-                                                        'primary_key' => 'id',
-                                                        'normalize_space' => ['nama']
-                                                    ],
-                                                    ========================================================= */
+                                                                APPLY NORMALISASI BERDASARKAN PROFILE app/Config/table_profiles.php'
+                                                                program' => [
+                                                                    'table' => 'program',
+                                                                    'primary_key' => 'id',
+                                                                    'normalize_space' => ['nama']
+                                                                ],
+                                                                ========================================================= */
     private function applyNormalization(string $table, array $data): array
     {
         $profile = $this->getProfileByTable($table);
@@ -2401,16 +2347,16 @@ class DynamicTableService
         return $data;
     }
     /* =========================================================
-                                                    NORMALISASI SPASI GLOBAL
-                                                    ========================================================= */
+                                                                NORMALISASI SPASI GLOBAL
+                                                                ========================================================= */
     private function normalizeSpaces(string $value): string
     {
         $value = trim((string)$value);
         return preg_replace('/\s+/u', ' ', $value);
     }
     /* =========================================================
-                                                    SANITIZE SINGLE VALUE
-                                                    ========================================================= */
+                                                                SANITIZE SINGLE VALUE
+                                                                ========================================================= */
     private function sanitizeValue(?string $value, ?array $rules = null): string
     {
         if ($value === null) {
@@ -2821,120 +2767,175 @@ class DynamicTableService
             }
         }
     }
-    // ======================================================
-    // NORMALIZE UNTUK PERBANDINGAN HEADER
-    // ======================================================
+    /**
+     * ============================================================
+     * NORMALIZE STRING UNTUK PERBANDINGAN
+     * ------------------------------------------------------------
+     * Tujuan:
+     * Menyamakan format teks Excel dengan nama kolom database.
+     *
+     * Semua karakter selain huruf dan angka dihapus.
+     *
+     * Contoh:
+     *
+     * "Sumber Dana"     → sumberdana
+     * "SUMBER_DANA"     → sumberdana
+     * "sumber-dana"     → sumberdana
+     * "SumberDana"      → sumberdana
+     *
+     * ============================================================
+     */
     private function normalizeForCompare(?string $value): string
     {
+        // jika bukan string atau kosong
         if (!is_string($value) || $value === '') {
             return '';
         }
 
+        // ubah semua huruf menjadi huruf kecil
         $value = strtolower($value);
 
+        // hapus semua karakter selain huruf dan angka
+        // spasi, underscore, titik, dll akan dihapus
         return preg_replace('/[^a-z0-9]/', '', $value);
     }
+    /**
+     * ============================================================
+     * VALIDASI HEADER EXCEL
+     * ------------------------------------------------------------
+     * Memastikan setiap header Excel cocok dengan kolom tabel.
+     *
+     * Jika tidak cocok → import dihentikan.
+     * ============================================================
+     */
+    private function validateImportHeader(array $headers, array $columnMap): void
+    {
+        // loop semua header Excel
+        foreach ($headers as $header) {
 
+            // normalisasi header
+            $normalized = $this->normalizeForCompare($header);
+
+            // jika tidak ada mapping di database
+            if (!isset($columnMap[$normalized])) {
+
+                // hentikan import
+                throw new Exception(
+                    "Header Excel '{$header}' tidak cocok dengan kolom tabel."
+                );
+            }
+        }
+    }
     // ======================================================
     // BUILD COLUMN MAP BERDASARKAN KOLOM TABEL
     // ======================================================
     private function buildColumnMap(string $table): array
     {
+        // ambil semua kolom tabel dari database
         $columns = $this->getTableColumns($table);
 
+        // array mapping hasil
         $map = [];
-        $collision = [];
 
         foreach ($columns as $col) {
 
+            // normalisasi kolom tabel
+            // contoh:
+            // sumber_dana → sumberdana
             $normalized = $this->normalizeForCompare($col);
 
-            if (isset($map[$normalized])) {
-                $collision[] = $col;
-            } else {
-                $map[$normalized] = $col;
-            }
+            // mapping normalisasi → nama kolom asli
+            $map[$normalized] = $col;
         }
 
-        if (!empty($collision)) {
-            throw new Exception(
-                "Collision kolom terdeteksi di tabel {$table}."
-            );
-        }
-
+        // return mapping
         return $map;
     }
     /**
      * ============================================================
      * RESOLVE IMPORT RELATIONS
      * ------------------------------------------------------------
-     * Fungsi ini mengubah nilai teks dari Excel menjadi ID
+     * Fungsi:
+     * Mengubah nilai teks dari Excel menjadi foreign key id
      * berdasarkan konfigurasi relasi di table_profiles.
      *
      * Contoh:
+     *
      * Excel:
-     *      satuan = Kg
+     * satuan = Kg
      *
      * Database:
-     *      satuan_neo.item = Kg
+     * satuan_id = 5
      *
-     * Hasil:
-     *      satuan_id = 5
-     *
-     * Fungsi ini menggunakan cache agar lookup hanya dilakukan
-     * sekali selama proses import.
+     * Metode ini juga menggunakan cache agar tidak query
+     * database setiap baris Excel.
      * ============================================================
      */
-    /* =========================================================
-                                RESOLVE IMPORT RELATIONS
-                                -----------------------------------------------------------
-                                Mengubah nilai teks Excel menjadi foreign key id
-
-                                contoh:
-
-                                Excel:
-                                satuan = Kg
-
-                                Database:
-                                satuan_id = 5
-                                ========================================================= */
     private function resolveImportRelations(
         array $data,
         array $relations,
         int $rowNumber
     ): array {
 
+        // ======================================================
+        // LOOP SEMUA RELASI YANG DIKONFIGURASI DI PROFILE
+        // ======================================================
+
         foreach ($relations as $excelField => $cfg) {
 
-            // cek apakah field ada
+            // ==================================================
+            // 1️⃣ CEK APAKAH FIELD ADA DI DATA EXCEL
+            // ==================================================
+
             if (!isset($data[$excelField])) {
                 continue;
             }
 
+            // ambil nilai dari Excel
             $excelValue = trim($data[$excelField]);
 
+            // jika kosong skip
             if ($excelValue === '') {
                 continue;
             }
 
-            $lookupTable = $cfg['table'];
-            $lookupField = $cfg['lookup'];
-            $idField     = $cfg['id'];
-            $storeField  = $cfg['store'];
+            // ==================================================
+            // 2️⃣ AMBIL KONFIGURASI RELASI
+            // ==================================================
+
+            $lookupTable = $cfg['table'];   // tabel referensi
+            $lookupField = $cfg['lookup'];  // kolom lookup
+            $idField     = $cfg['id'];      // kolom id
+            $storeField  = $cfg['store'];   // kolom tujuan
             $scope       = $cfg['scope'] ?? [];
 
+            // ==================================================
+            // 3️⃣ NORMALISASI KEY CACHE
+            // ==================================================
+
+            // contoh:
+            // Kg → kg
             $cacheKey = strtolower($excelValue);
 
 
-            /* ==========================================
-                                        LOAD CACHE RELATION
-                                        ========================================== */
+            /* ==================================================
+        4️⃣ LOAD CACHE RELASI (HANYA SEKALI)
+        ================================================== */
 
             if (!isset($this->relationCache[$lookupTable])) {
 
-                $sql = "SELECT $idField,$lookupField FROM $lookupTable WHERE is_deleted = 0";
+                // query semua data lookup
+                $sql = "
+                SELECT $idField, $lookupField
+                FROM $lookupTable
+                WHERE is_deleted = 0
+            ";
 
                 $params = [];
+
+                // ==================================================
+                // APPLY SCOPE (contoh: peraturan_id)
+                // ==================================================
 
                 foreach ($scope as $s) {
 
@@ -2943,12 +2944,15 @@ class DynamicTableService
                     $params[$s] = $data[$s] ?? null;
                 }
 
+                // jalankan query
                 $stmt = $this->db->query($sql, $params);
 
                 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+                // siapkan cache
                 $this->relationCache[$lookupTable] = [];
 
+                // simpan semua hasil ke cache
                 foreach ($rows as $r) {
 
                     $key = strtolower(trim($r[$lookupField]));
@@ -2958,25 +2962,34 @@ class DynamicTableService
             }
 
 
-            /* ==========================================
-                                        CARI DI CACHE
-                                        ========================================== */
+            /* ==================================================
+        5️⃣ CARI NILAI DI CACHE
+        ================================================== */
 
             if (!isset($this->relationCache[$lookupTable][$cacheKey])) {
 
+                // jika tidak ditemukan
                 throw new Exception(
                     "Baris {$rowNumber}: {$excelField} '{$excelValue}' tidak ditemukan."
                 );
             }
 
 
-            /* ==========================================
-                                        SET FOREIGN KEY
-                                        ========================================== */
+            /* ==================================================
+        6️⃣ SET FOREIGN KEY
+        ================================================== */
 
+            // contoh:
+            // satuan_id = 5
             $data[$storeField] =
                 $this->relationCache[$lookupTable][$cacheKey];
 
+
+            /* ==================================================
+        7️⃣ HAPUS FIELD TEXT EXCEL
+        ================================================== */
+
+            // hapus field asli
             unset($data[$excelField]);
         }
 
@@ -3081,48 +3094,137 @@ class DynamicTableService
             }
         }
     }
+    /**
+     * ============================================================
+     * RESOLVE SATUAN TEXT → SATUAN_ID
+     * ------------------------------------------------------------
+     * Fungsi:
+     * Mengubah nilai satuan dari Excel menjadi id dari tabel satuan.
+     *
+     * Contoh:
+     *
+     * Excel:
+     * satuan = Kg
+     *
+     * Database:
+     * satuan_neo
+     * id | item
+     * 5  | Kg
+     *
+     * Hasil:
+     * satuan_id = 5
+     *
+     * Sistem juga menggunakan cache agar query database
+     * tidak dilakukan setiap baris Excel.
+     * ============================================================
+     */
     private function resolveSatuanId(array $data, int $rowNumber): array
     {
-        if (!isset($data['satuan']) || trim($data['satuan']) === '') {
+        // ======================================================
+        // 1️⃣ CEK APAKAH FIELD "satuan" ADA DI DATA EXCEL
+        // ======================================================
+
+        // jika Excel tidak memiliki kolom satuan
+        // maka tidak perlu diproses
+        if (!isset($data['satuan'])) {
             return $data;
         }
 
+        // ======================================================
+        // 2️⃣ AMBIL NILAI SATUAN DARI EXCEL
+        // ======================================================
+
+        // ambil nilai satuan
         $excelSatuan = trim($data['satuan']);
+
+        // jika kosong maka tidak perlu diproses
+        if ($excelSatuan === '') {
+            return $data;
+        }
+
+        // ======================================================
+        // 3️⃣ BUAT KEY UNTUK CACHE
+        // ======================================================
+
+        // contoh:
+        // Kg → kg
+        // M2 → m2
         $cacheKey = strtolower($excelSatuan);
 
+
+        /* ======================================================
+    4️⃣ LOAD CACHE SATUAN (HANYA SEKALI)
+    ====================================================== */
+
+        // jika cache satuan masih kosong
+        // berarti ini baris pertama import
         if (empty($this->cacheSatuan)) {
 
+            // query semua satuan sesuai peraturan
             $sql = "
-                                                    SELECT id,item
-                                                    FROM satuan_neo
-                                                    WHERE peraturan_id = :peraturan_id
-                                                    AND is_deleted = 0
-                                                ";
+            SELECT id, item
+            FROM satuan_neo
+            WHERE peraturan_id = :peraturan_id
+            AND is_deleted = 0
+        ";
 
+            // jalankan query
             $stmt = $this->db->query($sql, [
+
+                // gunakan peraturan dari data import
                 'peraturan_id' => $data['peraturan_id']
             ]);
 
+            // ambil semua hasil
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+            // loop semua satuan
             foreach ($rows as $r) {
 
+                // normalisasi nama satuan
+                // contoh:
+                // "Kg" → "kg"
                 $key = strtolower(trim($r['item']));
+
+                // simpan ke cache
+                // contoh:
+                // cacheSatuan["kg"] = 5
                 $this->cacheSatuan[$key] = $r['id'];
             }
         }
 
+
+        /* ======================================================
+    5️⃣ CARI SATUAN DI CACHE
+    ====================================================== */
+
+        // jika satuan Excel tidak ditemukan
         if (!isset($this->cacheSatuan[$cacheKey])) {
 
+            // lempar error dengan nomor baris Excel
             throw new Exception(
                 "Baris {$rowNumber}: satuan '{$excelSatuan}' tidak ditemukan."
             );
         }
 
+
+        /* ======================================================
+    6️⃣ SET FIELD satuan_id
+    ====================================================== */
+
+        // ambil id satuan dari cache
         $data['satuan_id'] = $this->cacheSatuan[$cacheKey];
 
+
+        /* ======================================================
+    7️⃣ HAPUS FIELD TEXT SATUAN
+    ====================================================== */
+
+        // hapus field satuan karena database memakai satuan_id
         unset($data['satuan']);
 
+
+        // kembalikan data yang sudah diperbaiki
         return $data;
     }
 }
