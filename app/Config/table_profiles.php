@@ -56,53 +56,214 @@ return [
     | MASTER SBU
     |--------------------------------------------------------------------------
     */
+    /*
+|--------------------------------------------------------------------------
+| MASTER SBU
+|--------------------------------------------------------------------------
+| SBU = Standar Biaya Umum
+|
+| Tabel ini digunakan sebagai referensi harga standar barang/jasa
+| yang nantinya dapat dipetakan ke akun belanja.
+|
+| Struktur ini mendukung:
+| - Multi wilayah
+| - Multi peraturan
+| - Import Excel
+|
+*/
+
     'sbu' => [
+
+        // Nama tabel fisik di database
         'table' => 'sbu_neo',
+
+        // Primary key tabel
         'primary_key' => 'id',
+
+        // Role yang boleh mengakses
         'allowed_roles' => ['super_admin'],
+
+        // Jika aktif maka data tidak boleh dihapus langsung
         'soft_lock' => true,
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | DROPDOWN CONFIG
+    |--------------------------------------------------------------------------
+    | Digunakan ketika tabel ini dipanggil sebagai dropdown
+    |
+    | value = nilai yang dikirim ke form
+    | label = teks yang ditampilkan
+    */
         'dropdown' => [
             'value' => 'id',
             'label' => 'uraian_barang',
+
+            // filter berdasarkan akun jika dropdown dipanggil
             'filter_by_akun' => true
         ],
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | PIVOT TABLE
+    |--------------------------------------------------------------------------
+    | Digunakan untuk mapping SBU ke akun
+    |
+    | contoh:
+    | SBU → akun belanja
+    */
         'pivot' => [
+
+            // tabel pivot
             'table' => 'sbu_akun_map',
+
+            // foreign key di pivot
             'foreign_key' => 'sbu_id'
         ],
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | IMPORT CONFIG
+    |--------------------------------------------------------------------------
+    |
+    | Mengatur bagaimana data Excel diimport
+    |
+    */
         'import' => [
+
+            // apakah import diizinkan
             'enabled' => true,
+
+            // siapa yang boleh import
             'allowed_roles' => ['super_admin'],
-            'relation_map' => [
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | RELATIONS
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan untuk resolve foreign key dari Excel
+        |
+        | contoh:
+        | Excel → satuan = Kg
+        | Database → satuan_id = 5
+        |
+        */
+            'relations' => [
+
                 'satuan' => [
-                    'target_table' => 'satuan_neo',
-                    'target_field' => 'item',
-                    'target_id'    => 'id',
-                    'store_as'     => 'satuan_id'
+
+                    // tabel target
+                    'table' => 'satuan_neo',
+
+                    // kolom yang dicari
+                    'lookup' => 'item',
+
+                    // primary key yang diambil
+                    'id' => 'id',
+
+                    // kolom yang akan disimpan di tabel SBU
+                    'store' => 'satuan_id',
+
+                    // scope pencarian
+                    'scope' => [
+                        'peraturan_id'
+                    ]
                 ]
+
             ]
         ],
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | MODE QUERY
+    |--------------------------------------------------------------------------
+    |
+    | Setiap mode menentukan:
+    | - select field
+    | - kolom yang bisa dicari
+    | - sorting
+    | - filter otomatis
+    |
+    */
         'modes' => [
+
             'default' => [
+
                 'select' => ['*'],
-                'searchable' => ['kd_aset', 'uraian_barang'],
+
+                'searchable' => [
+                    'kd_aset',
+                    'uraian_barang'
+                ],
+
                 'order_by' => 'uraian_barang ASC',
-                'where' => [
-                    'tahun' => 'user' // 🔥 Ambil tahun dari session login
-                ]
-            ],
-            'standar_harga' => [
-                'select' => ['id', 'kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
-                'searchable' => ['kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
-                'order_by' => 'kd_aset ASC',
+
+                // filter otomatis berdasarkan tahun session
                 'where' => [
                     'tahun' => 'user'
                 ]
             ],
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | MODE STANDAR HARGA
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan pada modul standar harga
+        |
+        */
+            'standar_harga' => [
+
+                'select' => [
+                    'id',
+                    'kd_aset',
+                    'kd_akun',
+                    'uraian_barang',
+                    'spesifikasi',
+                    'satuan',
+                    'harga_satuan'
+                ],
+
+                'searchable' => [
+                    'kd_aset',
+                    'kd_akun',
+                    'uraian_barang',
+                    'spesifikasi',
+                    'satuan',
+                    'harga_satuan'
+                ],
+
+                'order_by' => 'kd_aset ASC',
+
+                'where' => [
+                    'tahun' => 'user'
+                ]
+            ],
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | MODE EDIT
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan ketika membuka form edit
+        |
+        */
             'edit' => [
+
                 'select' => ['*'],
+
                 'searchable' => ['*'],
+
                 'order_by' => 'id ASC',
+
                 'where' => [
                     'tahun' => 'user'
                 ]
@@ -437,15 +598,31 @@ return [
     ],
 
     'peraturan' => [
+
         'table' => 'peraturan_neo',
+
         'primary_key' => 'id',
+
         'allowed_roles' => ['super_admin', 'admin_wilayah'],
+
         'soft_lock' => true,
 
+        /*
+    |--------------------------------------------------------------------------
+    | IMPORT CONFIG
+    |--------------------------------------------------------------------------
+    | Mengaktifkan fitur import Excel
+    */
+        'import' => [
+            'enabled' => true
+        ],
+
+        /*
+    |--------------------------------------------------------------------------
+    | DROPDOWN CONFIG
+    |--------------------------------------------------------------------------
+    */
         'dropdown' => [
-            'import' => [
-                'enabled' => true
-            ],
             'value' => 'id',
             'label' => 'judul'
         ],
@@ -559,11 +736,11 @@ return [
             'tujuan' => [
                 'select' => ['id', 'text'],
                 'searchable' => ['text'],
-                'where' => "kelompok = 'tujuan'",
-                'order_by' => 'text ASC',
                 'where' => [
-                    'tahun' => 'user'
-                ] // ambil dari user login
+                    'tahun' => 'user',
+                    'kelompok' => 'tujuan'
+                ],
+                'order_by' => 'text ASC',
             ],
 
             'sasaran' => [
