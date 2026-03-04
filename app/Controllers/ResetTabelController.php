@@ -13,17 +13,23 @@ class ResetTabelController extends Controller
     }
 
     public function index()
-    {
-        $this->checkAuth();
+{
+    $sql = "
+        SELECT TABLE_NAME, TABLE_ROWS
+        FROM INFORMATION_SCHEMA.TABLES
+        WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_TYPE='BASE TABLE'
+        ORDER BY TABLE_NAME
+    ";
 
-        $db = DB::getInstance();
-        $tables = $db->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
+    $tables = DB::getInstance()
+        ->query($sql)
+        ->fetchAll();
 
-        $this->view('reset_tabel/index', [
-            'tables' => $tables,
-            'role'   => $_SESSION['type_user'] ?? null
-        ], 'app');
-    }
+    $this->view('reset_tabel/index', [
+        'tables' => $tables
+    ], 'app');
+}
 
     public function reset()
     {
@@ -41,7 +47,6 @@ class ResetTabelController extends Controller
             $db->query("SET FOREIGN_KEY_CHECKS=0");
             $db->query("TRUNCATE TABLE `$table`");
             $db->query("SET FOREIGN_KEY_CHECKS=1");
-
         } elseif ($role === 'admin_wilayah') {
 
             $colCheck = $db->query("
@@ -79,7 +84,7 @@ class ResetTabelController extends Controller
             $rows = $db->query("SELECT * FROM `$table`")->fetchAll();
 
             foreach ($rows as $row) {
-                $values = array_map(function($v){
+                $values = array_map(function ($v) {
                     if ($v === null) return "NULL";
                     return "'" . addslashes($v) . "'";
                 }, array_values($row));
@@ -91,7 +96,7 @@ class ResetTabelController extends Controller
         }
 
         header('Content-Type: application/sql');
-        header('Content-Disposition: attachment; filename=backup_'.date('Ymd_His').'.sql');
+        header('Content-Disposition: attachment; filename=backup_' . date('Ymd_His') . '.sql');
         echo $sql;
         exit;
     }
@@ -112,5 +117,33 @@ class ResetTabelController extends Controller
         $db->query("SET FOREIGN_KEY_CHECKS=1");
 
         echo json_encode(['success' => true]);
+    }
+    public function count()
+    {
+        $this->checkAuth();
+
+        $table = $_POST['table'] ?? null;
+        if (!$table) exit;
+
+        $db = DB::getInstance();
+
+        $role = $_SESSION['role'];
+        $kd_wilayah = $_SESSION['kd_wilayah'] ?? null;
+
+        if ($role === 'super_admin') {
+
+            $row = $db->query("SELECT COUNT(*) as jml FROM `$table`")->fetch();
+        } else {
+
+            $row = $db->query(
+                "SELECT COUNT(*) as jml FROM `$table` WHERE kd_wilayah=?",
+                [$kd_wilayah]
+            )->fetch();
+        }
+
+        echo json_encode([
+            'success' => true,
+            'count' => $row['jml']
+        ]);
     }
 }

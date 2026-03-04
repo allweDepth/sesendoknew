@@ -1,55 +1,77 @@
 class ResetTabelModule {
 
-    constructor(container){
-        this.container = container;
-        this.bindActions();
-    }
+	constructor(container) {
 
-    bindActions(){
-        this.container.querySelectorAll('[data-action]').forEach(btn => {
+		this.container =
+			container || document.querySelector('[data-module="reset_tabel"]');
 
-            btn.addEventListener('click', e => {
+	}
 
-                const action = btn.dataset.action;
-                const table  = btn.dataset.table ?? null;
+	init(){
 
-                if(action.startsWith('backup')){
-                    if(!confirm('Backup sekarang?')) return;
-                    window.location = '/reset_tabel/backup?action=' + action;
-                    return;
-                }
+		if(!this.container) return;
 
-                if(action.startsWith('restore')){
-                    if(!confirm('Restore database? Data akan tertimpa!')) return;
-                    window.location = '/reset_tabel/restore?action=' + action;
-                    return;
-                }
+		this.bind();
 
-                if(!table) return;
+	}
 
-                if(!confirm(`Aksi ${action} pada tabel "${table}" ?`)) return;
+	bind(){
 
-                fetch('/reset_tabel/reset',{
-                    method:'POST',
-                    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-                    body:'action='+action+'&table='+table
-                })
-                .then(r=>r.json())
-                .then(()=> location.reload());
+		this.container.querySelectorAll('[data-action]').forEach(btn=>{
 
-            });
+			btn.onclick = (e)=>{
 
-        });
-    }
+				e.preventDefault();
+
+				const action = btn.dataset.action;
+				const table  = btn.dataset.table;
+
+				if(action.startsWith('backup')){
+					window.location='/reset_tabel/backup?action='+action;
+					return;
+				}
+
+				if(action.startsWith('restore')){
+					window.location='/reset_tabel/restore?action='+action;
+					return;
+				}
+
+				$('#dialogTitle').html(
+					'<i class="trash red icon"></i> Konfirmasi Reset'
+				);
+
+				$('#dialogMessage').html(
+					`Yakin menjalankan <b>${action}</b> pada tabel <b>${table}</b>?`
+				);
+
+				$('#globalDialog')
+				.modal({
+					closable:false,
+					onApprove:()=>{
+
+						fetch('/reset_tabel/reset',{
+							method:'POST',
+							headers:{
+								'Content-Type':'application/x-www-form-urlencoded'
+							},
+							body:`action=${action}&table=${table}`
+						})
+						.then(r=>r.json())
+						.then(res=>{
+							Toast.success(res.message || 'Berhasil');
+						});
+
+					}
+				})
+				.modal('show');
+
+			};
+
+		});
+
+	}
 
 }
 
-// REGISTER
 window.Modules = window.Modules || {};
 window.Modules.reset_tabel = ResetTabelModule;
-
-// AUTO INIT (INI YANG PENTING)
-document.addEventListener('DOMContentLoaded', function(){
-    document.querySelectorAll('[data-module="reset_tabel"]')
-        .forEach(el => new ResetTabelModule(el));
-});

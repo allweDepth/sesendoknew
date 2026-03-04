@@ -136,6 +136,10 @@ class App {
 			case "mapping":
 				if (typeof MappingModule === "function") new MappingModule().init();
 				break;
+			case "reset_tabel":
+				if (typeof ResetTabelModule === "function")
+					new ResetTabelModule().init();
+				break;
 		}
 	}
 }
