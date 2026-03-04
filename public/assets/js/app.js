@@ -39,6 +39,10 @@ class App {
 					new TataNaskahModule().init();
 				}
 				break;
+			case "reset_tabel":
+				if (typeof ResetTabelModule === "function")
+					new ResetTabelModule().init();
+				break;
 			default:
 				break;
 		}
@@ -143,6 +147,7 @@ window.appModuleMap = {
 	"/pengaturan": "pengaturan",
 	"/tata_naskah": "tata_naskah", // 🔥 WAJIB ADA
 	"/mapping": "mapping",
+	"/reset_tabel": "reset_tabel",
 };
 // ======================================================
 // GLOBAL SINGLETON (WAJIB ADA SATU SAJA)
