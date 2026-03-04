@@ -1234,18 +1234,20 @@ class DynamicTableService
         }
 
         $kd_wilayah = $this->user['kd_wilayah'] ?? null;
+        $tahun      = $this->user['tahun'] ?? null;
 
-        if (!$kd_wilayah) {
+        if (!$kd_wilayah || !$tahun) {
             return null;
         }
 
         $result = $this->db->query("
-            SELECT *
-            FROM pengaturan_neo
-            WHERE kd_wilayah = ?
-            AND disable = 0
-            LIMIT 1
-        ", [$kd_wilayah])->fetch();
+        SELECT *
+        FROM pengaturan_neo
+        WHERE kd_wilayah = ?
+        AND tahun = ?
+        AND disable = 0
+        LIMIT 1
+    ", [$kd_wilayah, $tahun])->fetch();
 
         $this->pengaturanAktifCache = $result ?: null;
 
@@ -2241,7 +2243,21 @@ class DynamicTableService
         $columns = $this->getTableColumns($table);
 
         // 🔥 Gunakan peraturan_id sekarang
-        if (!in_array('peraturan_id', $columns)) {
+        $colPeraturan = null;
+
+        if (in_array('peraturan_id', $columns)) {
+            $colPeraturan = 'peraturan_id';
+        }
+
+        if (in_array('peraturan', $columns)) {
+            $colPeraturan = 'peraturan';
+        }
+
+        if (!$colPeraturan) {
+            return $data;
+        }
+
+        if (!empty($data[$colPeraturan])) {
             return $data;
         }
 
@@ -2262,12 +2278,23 @@ class DynamicTableService
             'kegiatan'     => 'aturan_sub_kegiatan',
             'sub_kegiatan' => 'aturan_sub_kegiatan',
 
+            'satuan'     => 'aturan_ssh',
+            'satuan_neo' => 'aturan_ssh',
+
+            'ssh'        => 'aturan_ssh',
             'ssh_neo'    => 'aturan_ssh',
+
+            'sbu'        => 'aturan_sbu',
             'sbu_neo'    => 'aturan_sbu',
+
+            'asb'        => 'aturan_asb',
             'asb_neo'    => 'aturan_asb',
+
+            'hspk'       => 'aturan_hspk',
             'hspk_neo'   => 'aturan_hspk',
-            'akun_neo'   => 'aturan_akun',
-            'satuan_neo' => 'aturan_ssh'
+
+            'akun'       => 'aturan_akun',
+            'akun_neo'   => 'aturan_akun'
         ];
 
         if (!isset($map[$table])) {
@@ -2281,7 +2308,7 @@ class DynamicTableService
         }
 
         // 🔥 CAST KE INT
-        $data['peraturan_id'] = (int)$pengaturan[$field];
+        $data[$colPeraturan] = (int)$pengaturan[$field];
 
         return $data;
     }

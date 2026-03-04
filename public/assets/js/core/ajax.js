@@ -66,7 +66,46 @@ class AjaxEngine {
 			 */
 			success: function (res) {
 				/**
+				 * =====================================================
+				 * SESSION EXPIRED HANDLER
+				 * -----------------------------------------------------
+				 * Jika backend mengirimkan response:
+				 * {
+				 *   success: false,
+				 *   expired: true,
+				 *   message: "Session habis. Silakan login ulang."
+				 * }
+				 *
+				 * Maka sistem akan:
+				 * 1. Menampilkan pesan toast
+				 * 2. Mengarahkan user kembali ke halaman utama
+				 *
+				 * Ini penting untuk arsitektur SPA karena:
+				 * - Redirect dari PHP tidak bekerja pada AJAX request
+				 * - Browser tidak akan berpindah halaman tanpa JS
+				 *
+				 * Handler ini dibuat global agar:
+				 * - Tidak perlu ditangani di setiap module
+				 * - Semua request AJAX otomatis aman
+				 * =====================================================
+				 */
+				if (res && res.expired === true) {
+					Toast.show({
+						success: false,
+						message: res.message || "Session habis. Silakan login ulang.",
+					});
+
+					// Beri sedikit delay agar toast terlihat oleh user
+					setTimeout(function () {
+						window.location.href = "/";
+					}, 800);
+
+					return; // hentikan proses success berikutnya
+				}
+
+				/**
 				 * 🔥 AUTO TOAST GLOBAL
+				 * -----------------------------------------------------
 				 * Jika backend mengirimkan properti "success",
 				 * maka otomatis tampilkan notifikasi.
 				 *
@@ -75,6 +114,9 @@ class AjaxEngine {
 				 *   success: true/false,
 				 *   message: "Pesan"
 				 * }
+				 *
+				 * Ini menjaga konsistensi UI di seluruh sistem
+				 * tanpa perlu menulis Toast di setiap module.
 				 */
 				if (res && typeof res.success !== "undefined") {
 					Toast.show({
@@ -83,7 +125,12 @@ class AjaxEngine {
 					});
 				}
 
-				// Jalankan callback success tambahan (jika ada)
+				/**
+				 * Callback success tambahan
+				 * -----------------------------------------------------
+				 * Jika request memerlukan handler khusus,
+				 * maka callback dari module akan dijalankan di sini.
+				 */
 				if (success) success(res);
 			},
 
