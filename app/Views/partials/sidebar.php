@@ -201,7 +201,7 @@
       <a class="item" href="/halaman_berita" data-spa="server">
         <i class="newspaper icon"></i> Halaman Berita
       </a>
-      <a class="item" href="/reset_tabel" data-spa="server">
+      <a class="item" href="/reset_tabel" data-spa="client">
         <i class="erase icon"></i> Reset Tabel
       </a>
       <a class="item" href="/pengaturan" data-spa="client">
