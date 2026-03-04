@@ -49,6 +49,357 @@ return [
             ]
         ]
     ],
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | MASTER SBU
+    |--------------------------------------------------------------------------
+    */
+    /*
+|--------------------------------------------------------------------------
+| MASTER SBU
+|--------------------------------------------------------------------------
+| SBU = Standar Biaya Umum
+|
+| Tabel ini digunakan sebagai referensi harga standar barang/jasa
+| yang nantinya dapat dipetakan ke akun belanja.
+|
+| Struktur ini mendukung:
+| - Multi wilayah
+| - Multi peraturan
+| - Import Excel
+|
+*/
+
+    'sbu' => [
+
+        // Nama tabel fisik di database
+        'table' => 'master_biaya',
+
+        'where' => [
+            'tipe' => 'sbu'
+        ],
+
+        // Primary key tabel
+        'primary_key' => 'id',
+
+        // Role yang boleh mengakses
+        'allowed_roles' => ['super_admin'],
+
+        // Jika aktif maka data tidak boleh dihapus langsung
+        'soft_lock' => true,
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | DROPDOWN CONFIG
+    |--------------------------------------------------------------------------
+    | Digunakan ketika tabel ini dipanggil sebagai dropdown
+    |
+    | value = nilai yang dikirim ke form
+    | label = teks yang ditampilkan
+    */
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'uraian_barang',
+
+            // filter berdasarkan akun jika dropdown dipanggil
+            'filter_by_akun' => true
+        ],
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | PIVOT TABLE
+    |--------------------------------------------------------------------------
+    | Digunakan untuk mapping SBU ke akun
+    |
+    | contoh:
+    | SBU → akun belanja
+    */
+        'pivot' => [
+
+            // tabel pivot
+            'table' => 'sbu_akun_map',
+
+            // foreign key di pivot
+            'foreign_key' => 'sbu_id'
+        ],
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | IMPORT CONFIG
+    |--------------------------------------------------------------------------
+    |
+    | Mengatur bagaimana data Excel diimport
+    |
+    */
+        'import' => [
+
+            // apakah import diizinkan
+            'enabled' => true,
+
+            // siapa yang boleh import
+            'allowed_roles' => ['super_admin'],
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | RELATIONS
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan untuk resolve foreign key dari Excel
+        |
+        | contoh:
+        | Excel → satuan = Kg
+        | Database → satuan_id = 5
+        |
+        */
+            'relations' => [
+
+                'satuan' => [
+
+                    // tabel target
+                    'table' => 'satuan_neo',
+
+                    // kolom yang dicari
+                    'lookup' => 'item',
+
+                    // primary key yang diambil
+                    'id' => 'id',
+
+                    // kolom yang akan disimpan di tabel SBU
+                    'store' => 'satuan_id',
+
+                    // scope pencarian
+                    'scope' => [
+                        'peraturan_id'
+                    ]
+                ]
+
+            ]
+        ],
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | MODE QUERY
+    |--------------------------------------------------------------------------
+    |
+    | Setiap mode menentukan:
+    | - select field
+    | - kolom yang bisa dicari
+    | - sorting
+    | - filter otomatis
+    |
+    */
+        'modes' => [
+
+            'default' => [
+
+                'select' => ['*'],
+
+                'searchable' => [
+                    'kd_aset',
+                    'uraian_barang'
+                ],
+
+                'order_by' => 'uraian_barang ASC',
+
+                // filter otomatis berdasarkan tahun session
+                'where' => [
+                    'tahun' => 'user'
+                ]
+            ],
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | MODE STANDAR HARGA
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan pada modul standar harga
+        |
+        */
+            'standar_harga' => [
+
+                'select' => [
+                    'id',
+                    'kd_aset',
+                    'kd_akun',
+                    'uraian_barang',
+                    'spesifikasi',
+                    'satuan',
+                    'harga_satuan'
+                ],
+
+                'searchable' => [
+                    'kd_aset',
+                    'kd_akun',
+                    'uraian_barang',
+                    'spesifikasi',
+                    'satuan',
+                    'harga_satuan'
+                ],
+
+                'order_by' => 'kd_aset ASC',
+
+                'where' => [
+                    'tahun' => 'user'
+                ]
+            ],
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | MODE EDIT
+        |--------------------------------------------------------------------------
+        |
+        | Digunakan ketika membuka form edit
+        |
+        */
+            'edit' => [
+
+                'select' => ['*'],
+
+                'searchable' => ['*'],
+
+                'order_by' => 'id ASC',
+
+                'where' => [
+                    'tahun' => 'user'
+                ]
+            ]
+        ]
+    ],
+    'ssh' => [
+        'table' => 'master_biaya',
+
+        'where' => [
+            'tipe' => 'ssh'
+        ],
+        'primary_key' => 'id',
+        'allowed_roles' => ['super_admin'],
+        'soft_lock' => true,
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'uraian_barang',
+            'filter_by_akun' => true
+        ],
+        'pivot' => [
+            'table' => 'ssh_akun_map',
+            'foreign_key' => 'ssh_id'
+        ],
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kd_aset', 'uraian_barang'],
+                'order_by' => 'uraian_barang ASC'
+            ],
+            'standar_harga' => [
+                'select' => ['id', 'kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
+                'order_by' => 'kd_aset ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ]
+            ]
+        ]
+    ],
+    'asb' => [
+        'table' => 'master_biaya',
+
+        'where' => [
+            'tipe' => 'asb'
+        ],
+        'primary_key' => 'id',
+        'allowed_roles' => ['super_admin'],
+        'soft_lock' => true,
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'uraian_barang',
+            'filter_by_akun' => true
+        ],
+        'pivot' => [
+            'table' => 'asb_akun_map',
+            'foreign_key' => 'asb_id'
+        ],
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kd_aset', 'uraian_barang'],
+                'order_by' => 'uraian_barang ASC'
+            ],
+            'standar_harga' => [
+                'select' => ['id', 'kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
+                'order_by' => 'kd_aset ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ]
+            ]
+        ]
+    ],
+    'hspk' => [
+        'table' => 'master_biaya',
+
+        'where' => [
+            'tipe' => 'hspk'
+        ],
+        'primary_key' => 'id',
+        'allowed_roles' => ['super_admin'],
+        'soft_lock' => true,
+        'dropdown' => [
+            'value' => 'id',
+            'label' => 'uraian_barang',
+            'filter_by_akun' => true //loadDropdown() otomatis tahu harus join pivot
+        ],
+        'pivot' => [
+            'table' => 'hspk_akun_map',
+            'foreign_key' => 'hspk_id'
+        ],
+        'modes' => [
+            'default' => [
+                'select' => ['*'],
+                'searchable' => ['kd_aset', 'uraian_barang'],
+                'order_by' => 'uraian_barang ASC'
+            ],
+            'standar_harga' => [
+                'select' => ['id', 'kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
+                'searchable' => ['kd_aset', 'kd_akun', 'uraian_barang', 'spesifikasi', 'satuan', 'harga_satuan'],
+                'order_by' => 'kd_aset ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ] // ambil dari user login
+            ],
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id ASC',
+                'where' => [
+                    'tahun' => 'user'
+                ]
+            ]
+        ]
+    ],
     'mapping' => [
         'table' => 'mapping_aset_akun',
         'primary_key' => 'id',
@@ -1235,4 +1586,52 @@ return [
             'viewer'        => ['view']
         ],
     ],
+    'sbu_akun_map' => [
+        'table' => 'sbu_akun_map',
+        'primary_key' => 'id',
+        'allowed_roles' => ['super_admin', 'admin_wilayah'],
+        'soft_lock' => true,
+
+        'modes' => [
+
+            'default' => [
+                'select' => [
+                    'id',
+                    'sbu_id',
+                    'kd_akun',
+                    'kd_wilayah',
+                    'peraturan_id',
+                    'created_at'
+                ],
+                'searchable' => [
+                    'kd_akun'
+                ],
+                'order_by' => 'id DESC'
+            ],
+
+            'aktif' => [
+                'select' => [
+                    'id',
+                    'sbu_id',
+                    'kd_akun'
+                ],
+                'searchable' => [
+                    'kd_akun'
+                ],
+                'order_by' => 'id DESC'
+            ],
+
+            'edit' => [
+                'select' => ['*'],
+                'searchable' => ['*'],
+                'order_by' => 'id DESC'
+            ]
+        ],
+
+        'validation' => [
+            'sbu_id' => ['required', 'numeric'],
+            'kd_akun' => ['required']
+        ]
+    ],
+
 ];
