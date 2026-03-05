@@ -1674,7 +1674,13 @@ class DynamicTableService
                 'ssh'  => 'aturan_ssh',
                 'sbu'  => 'aturan_sbu',
                 'asb'  => 'aturan_asb',
-                'hspk' => 'aturan_hspk'
+                'hspk' => 'aturan_hspk',
+                'satuan'  => 'aturan_ssh',
+                'sub_kegiatan'  => 'aturan_sub_kegiatan',
+                'urusan'  => 'aturan_sub_kegiatan',
+                'bidang'  => 'aturan_sub_kegiatan',
+                'program'  => 'aturan_sub_kegiatan',
+                'kegiatan'  => 'aturan_sub_kegiatan'
             ];
 
             if (isset($map[$tbl])) {

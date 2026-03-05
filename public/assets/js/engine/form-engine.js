@@ -78,8 +78,23 @@ class FormEngine {
 				return;
 			}
 
+			// ======================================================
+			// FIX: pastikan dropdown sudah memiliki item sebelum set selected
+			// ======================================================
 			if (field.closest(".ui.dropdown").length) {
-				field.closest(".ui.dropdown").dropdown("set selected", data[key]);
+				const dropdown = field.closest(".ui.dropdown");
+
+				// jika dropdown belum memiliki item menu
+				if (dropdown.find(".menu .item").length === 0) {
+					// tunggu sebentar sampai dropdown selesai load dari AJAX
+					setTimeout(() => {
+						dropdown.dropdown("set selected", data[key]);
+					}, 100);
+				} else {
+					// normal jika item sudah ada
+					dropdown.dropdown("set selected", data[key]);
+				}
+
 				return;
 			}
 
@@ -314,9 +329,21 @@ class FormEngine {
 
 			const field = $(target).find(`[name="${el.prop.name}"]`);
 
-			// jika dropdown
+			// ======================================================
+			// FIX: pastikan dropdown memiliki item sebelum set default
+			// ======================================================
 			if (field.closest(".ui.dropdown").length) {
-				field.closest(".ui.dropdown").dropdown("set selected", el.prop.default);
+				const dropdown = field.closest(".ui.dropdown");
+
+				// jika dropdown belum memiliki item
+				if (dropdown.find(".menu .item").length === 0) {
+					// tunggu dropdown diisi oleh loadDropdownSources()
+					setTimeout(() => {
+						dropdown.dropdown("set selected", el.prop.default);
+					}, 100);
+				} else {
+					dropdown.dropdown("set selected", el.prop.default);
+				}
 			} else {
 				field.val(el.prop.default);
 			}
@@ -606,8 +633,13 @@ class FormEngine {
 		$(`${this.formSelector} .ui.dropdown[data-source]`).each(function () {
 			const $dropdown = $(this);
 
-			// jika dropdown sudah pernah di-load
-			if ($dropdown.data("loaded")) {
+			// ======================================================
+			// FIX: hanya skip jika menu sudah ada item
+			// ======================================================
+			if (
+				$dropdown.data("loaded") &&
+				$dropdown.find(".menu .item").length > 0
+			) {
 				return;
 			}
 
@@ -630,11 +662,14 @@ class FormEngine {
 					$menu.empty();
 
 					res.data.forEach((item) => {
+						// ======================================================
+						// FIX: dukung berbagai struktur label dari backend
+						// ======================================================
 						$menu.append(`
-					<div class="item" data-value="${item.id}">
-						${item.uraian}
-					</div>
-					`);
+							<div class="item" data-value="${item.id}">
+								${item.uraian || item.item || item.nama || ""}
+							</div>
+							`);
 					});
 
 					// refresh dropdown UI

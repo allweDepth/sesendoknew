@@ -164,42 +164,6 @@ class FlyoutController {
 			this.formEngine.loadData(id);
 		}
 	}
-
-	// render(config) {
-	// 	const target = this.getActiveForm();
-	// 	target.empty();
-
-	// 	// 🔥 PAKAI state yang benar
-	// 	const action = window.app.state.action;
-
-	// 	// Kalau FormEngine.render memang ada di sistem kamu
-	// 	if (typeof FormEngine.render === "function") {
-	// 		FormEngine.render(target, config.elements, formEngineInstance);
-	// 	} else {
-	// 		// fallback minimal kalau tidak ada
-	// 		config.elements.forEach((el) => {
-	// 			if (!el.prop?.name) return;
-
-	// 			target.append(`
-	// 			<div class="field">
-	// 				<label>${el.prop.label || el.prop.name}</label>
-	// 				<input type="text" name="${el.prop.name}">
-	// 			</div>
-	// 		`);
-	// 		});
-	// 	}
-
-	// 	// 🔥 PERBAIKI INI
-	// 	if (action === "edit") {
-	// 		target.prepend(`<input type="hidden" name="id">`);
-	// 	}
-
-	// 	// tetap jalankan dropdown loader kalau ada
-	// 	if (typeof this.loadDropdowns === "function") {
-	// 		this.loadDropdowns(target);
-	// 	}
-	// }
-
 	buildConfig(jenis, configKey) {
 		if (!window.UIConfig) return { elements: [] };
 
