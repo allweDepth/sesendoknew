@@ -138,43 +138,59 @@ class FormEngine {
 	 * ============================================================
 	 */
 	submit() {
-		const config = UIConfig[this.state.tbl];
-
-		// Validasi tetap jalan
+		// ambil elemen form dari selector yang disimpan engine
 		const form = $(this.formSelector);
 
+		// jalankan validasi Fomantic UI
 		form.form("validate form");
 
+		// jika form tidak valid → hentikan proses submit
 		if (!form.form("is valid")) {
 			return;
 		}
+
 		// normalisasi calendar kosong → null
 		form.find(".ui.calendar input").each(function () {
+			// jika input kosong
 			if ($(this).val() === "") {
-				// disable supaya tidak ikut serialize
+				// disable agar tidak ikut serialize
 				$(this).prop("disabled", true);
 			}
 		});
-		const hasFileInput =
-			$(this.formSelector).find('input[type="file"]').length > 0;
 
-		// ==============================
-		// 🔥 IMPORT FILE (FormData)
-		// ==============================
+		// cek apakah form memiliki input file
+		const hasFileInput = form.find('input[type="file"]').length > 0;
+
+		// ==================================================
+		// MODE IMPORT FILE (FormData)
+		// ==================================================
+
 		if (hasFileInput) {
+			// ambil element form native
 			const formElement = document.querySelector(this.formSelector);
+
+			// buat FormData
 			const formData = new FormData(formElement);
 
+			// tambahkan action
 			formData.append("action", this.state.action);
+
+			// tambahkan nama tabel
 			formData.append("tbl", this.state.tbl);
 
+			// kirim request ajax
 			this.ajax.request({
 				data: formData,
-				processData: false, // WAJIB
-				contentType: false, // WAJIB
+
+				processData: false, // wajib untuk FormData
+
+				contentType: false, // wajib untuk FormData
+
 				success: () => {
+					// tentukan tabel yang harus reload
 					const reloadTable = this.state.reloadTable || this.state.tbl;
 
+					// trigger event reload table
 					$(document).trigger(`form:success.${reloadTable}`);
 				},
 			});
@@ -182,19 +198,28 @@ class FormEngine {
 			return;
 		}
 
-		// ==============================
-		// 🔥 NORMAL SUBMIT
-		// ==============================
-		let formData = $(this.formSelector).serialize();
+		// ==================================================
+		// MODE NORMAL SUBMIT
+		// ==================================================
 
+		// serialize form menjadi query string
+		let formData = form.serialize();
+
+		// tambahkan action
 		formData += `&action=${this.state.action}`;
+
+		// tambahkan nama tabel
 		formData += `&tbl=${this.state.tbl}`;
 
+		// kirim request ajax
 		this.ajax.request({
 			data: formData,
+
 			success: () => {
+				// tentukan tabel yang harus reload
 				const reloadTable = this.state.reloadTable || this.state.tbl;
 
+				// trigger reload table
 				$(document).trigger(`form:success.${reloadTable}`);
 			},
 		});
@@ -243,9 +268,7 @@ class FormEngine {
 		const columnClass = columnMap[columns] || "one";
 
 		// html awal grid
-		let html = `
-	<div class="ui ${columnClass} column grid">
-	`;
+		let html = `<div class="ui form"><div class="ui ${columnClass} column grid">`;
 
 		// loop setiap element UIConfig
 		elements.forEach((el) => {
@@ -273,10 +296,7 @@ class FormEngine {
 		});
 
 		// tutup grid + error message fomantic
-		html += `
-	</div>
-	<div class="ui error message"></div>
-	`;
+		html += `</div><div class="ui error message"></div></div>`;
 
 		// render ke DOM
 		$(target).html(html);

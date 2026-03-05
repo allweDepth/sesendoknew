@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>SIPD</title>
+    <title>seSendok</title>
 
     <link rel="stylesheet" href="/assets/css/fomantic.min.css">
     <link rel="stylesheet" href="/assets/css/dark.css">
