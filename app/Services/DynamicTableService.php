@@ -94,8 +94,8 @@ class DynamicTableService
         try {
 
             /* =====================================================
-                                                        1️⃣ VALIDASI ACTION
-                                                        ===================================================== */
+            1️⃣ VALIDASI ACTION
+             ===================================================== */
             if (empty($request['action'])) {
                 return JsonResponse::error("Action wajib dikirim");
             }
@@ -118,8 +118,8 @@ class DynamicTableService
             }
 
             /* =====================================================
-                                                        2️⃣ VALIDASI TABEL
-                                                        ===================================================== */
+            2️⃣ VALIDASI TABEL
+            ===================================================== */
             $tbl = $request['tbl'] ?? null;
 
             if (!$tbl) {
@@ -134,8 +134,8 @@ class DynamicTableService
             $table   = $profile['table'];
 
             /* =====================================================
-                                                        3️⃣ EKSEKUSI ACTION
-                                                        ===================================================== */
+            3️⃣ EKSEKUSI ACTION
+            ===================================================== */
             return $this->executeAction(
                 $action,
                 $tbl,
@@ -188,8 +188,8 @@ class DynamicTableService
                     return $this->getById($table, $request['id_row']);
                 }
 
-                // 🔄 UPDATE
-                if (!empty($request['id'])) {
+                // UPDATE DATA
+                if (!empty($request['id_row'])) {
                     $this->authorize('edit', $table);
                     return $this->update($table, $request);
                 }
@@ -518,7 +518,7 @@ class DynamicTableService
         $columns    = $this->getTableColumns($table);
         $primaryKey = $this->getPrimaryKey($table);
 
-        $id = $request['id'] ?? null;
+        $id = $request['id_row'] ?? null;
 
         if (!$id) {
             return JsonResponse::error("ID tidak ditemukan");
