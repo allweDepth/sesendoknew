@@ -116,13 +116,43 @@ class FlyoutController {
 
 		FormEngine.render(
 			$(formSelector),
-
 			config.elements,
-
 			this.formEngine,
-
 			config.layout || {},
 		);
+
+		/* =========================================================
+   AUTO PRIMARY KEY FIELD (ID_ROW)
+   ---------------------------------------------------------
+   Jika tombol memiliki:
+   data-jns="edit"
+   data-id="xx"
+
+   maka otomatis dibuat:
+
+   <input type="hidden" name="id_row">
+
+   agar submit edit memiliki primary key
+========================================================= */
+
+		if (jns === "edit" && id) {
+			const $form = $(formSelector);
+
+			// cek apakah field id_row sudah ada
+			const hasField = $form.find('[name="id_row"]').length;
+
+			// jika belum ada maka buat
+			if (!hasField) {
+				$form.prepend(`
+			<input type="hidden"
+			       name="id_row"
+			       value="${id}">
+		`);
+			} else {
+				// jika sudah ada → update value
+				$form.find('[name="id_row"]').val(id);
+			}
+		}
 
 		if (container === "modal") {
 			$("#mainModal").modal("show");
