@@ -19,35 +19,39 @@ class TableManager {
 		===================================================== */
 	static instances = {};
 	constructor(config = {}) {
-		const tbl = config.state?.tbl;
-
-		if (TableManager.instances[tbl]) {
-			return TableManager.instances[tbl];
-		}
-
-		TableManager.instances[tbl] = this;
-
+		// simpan state modul
 		this.state = config.state;
+
+		// ajax engine
 		this.ajax = window.Ajax;
 
+		// flag agar init tidak double
 		this.initialized = false;
 
+		// selector tbody tabel
 		this.tbody = config.tbody || `tbody[name="tabel_${this.state.tbl}"]`;
 
+		// selector pagination
 		this.pagination =
 			config.pagination || `div[name="pagination_${this.state.tbl}"]`;
 
+		// pagination state
 		this.currentPage = 1;
 		this.limit = config.limit || 10;
 		this.totalRows = 0;
 		this.totalPages = 0;
 
+		// sorting state
 		this.sortBy = null;
 		this.sortDir = "asc";
 
+		// search state
 		this.searchQuery = "";
+
+		// data hasil fetch
 		this.data = [];
 
+		// primary key default
 		this.primaryKey = "id";
 	}
 
@@ -66,7 +70,7 @@ class TableManager {
 		this.bindEvents();
 		this.fetchData();
 
-		const reloadEvent = `form:success.${this.state.tbl}`;
+		const reloadEvent = `form:success.${this.state.tbl}.table`;
 
 		$(document).off(reloadEvent);
 

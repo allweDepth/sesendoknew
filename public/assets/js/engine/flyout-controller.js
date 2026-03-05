@@ -89,8 +89,10 @@ class FlyoutController {
 
 		if (!tbl) return;
 
+		const state = window.app.state;
+
 		state.setTable(tbl);
-state.action = jns;
+		state.action = jns;
 
 		const formSelector = container === "modal" ? "#form_modal" : "#form_flyout";
 
