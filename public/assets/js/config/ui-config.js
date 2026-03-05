@@ -456,22 +456,24 @@ UIConfig.akun = {
 ====================================================== */
 
 UIConfig.satuan = {
-    layout: { columns: 1 },
+	layout: { columns: 1 },
 
-    form: {
-        elements: [
+	form: {
+		elements: [
+			{ tag: "field", prop: { label: "Value", name: "value" } },
 
-            { tag: "field", prop: { label: "Value", name: "value" }},
+			{ tag: "field", prop: { label: "Item", name: "item" } },
 
-            { tag: "field", prop: { label: "Item", name: "item" }},
-
-            { tag: "fieldTextarea", prop: {
-                label: "Keterangan",
-                name: "keterangan",
-                atribut: `rows="2"`
-            }}
-        ]
-    }
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Keterangan",
+					name: "keterangan",
+					atribut: `rows="2"`,
+				},
+			},
+		],
+	},
 };
 
 UIConfig.organisasi = {
@@ -505,7 +507,6 @@ UIConfig.peraturan = {
 	},
 };
 UIConfig.rekanan = {
-	layout: { columns: 2 },
 	form: {
 		elements: [
 			// ================= DATA PERUSAHAAN =================
@@ -513,10 +514,12 @@ UIConfig.rekanan = {
 
 			{
 				tag: "field",
-				prop: { label: "Nama Perusahaan", name: "nama_perusahaan" },
+				prop: { label: "Nama Perusahaan", name: "nama_perusahaan", width: 16 },
 			},
+
 			{ tag: "field", prop: { label: "NPWP", name: "npwp" } },
 			{ tag: "field", prop: { label: "Email", name: "email" } },
+
 			{
 				tag: "fieldTextarea",
 				prop: {
@@ -528,18 +531,27 @@ UIConfig.rekanan = {
 
 			// ================= DATA REKENING =================
 			{ tag: "divider", prop: { label: "Data Rekening" } },
+
 			{ tag: "field", prop: { label: "Nomor Rekening", name: "no_rekening" } },
 			{ tag: "field", prop: { label: "Bank", name: "bank_rekening" } },
+
 			{
 				tag: "field",
-				prop: { label: "Atas Nama Rekening", name: "atas_nama_rekening" },
+				prop: {
+					label: "Atas Nama Rekening",
+					name: "atas_nama_rekening",
+					width: 16,
+				},
 			},
 
 			// ================= DATA DIREKTUR =================
 			{ tag: "divider", prop: { label: "Data Direktur" } },
+
 			{ tag: "field", prop: { label: "Nama Direktur", name: "direktur" } },
 			{ tag: "field", prop: { label: "Jabatan", name: "jabatan" } },
+
 			{ tag: "field", prop: { label: "No KTP", name: "no_ktp" } },
+
 			{
 				tag: "fieldTextarea",
 				prop: {
@@ -549,12 +561,24 @@ UIConfig.rekanan = {
 				},
 			},
 
-			// ================= AKTA =================
+			// ================= AKTA PENDIRIAN =================
 			{ tag: "divider", prop: { label: "Akta Pendirian" } },
+
 			{
 				tag: "field",
 				prop: { label: "No Akta Pendirian", name: "no_akta_pendirian" },
 			},
+			{ tag: "field", prop: { label: "Notaris", name: "nama_akta_pendirian" } },
+
+			{
+				tag: "field",
+				prop: {
+					label: "Alamat Notaris",
+					name: "lokasi_notaris_pendirian",
+					width: 16,
+				},
+			},
+
 			{
 				tag: "fieldCalendar",
 				prop: {
@@ -564,11 +588,14 @@ UIConfig.rekanan = {
 				},
 			},
 
+			// ================= AKTA PERUBAHAN =================
 			{ tag: "divider", prop: { label: "Akta Perubahan" } },
+
 			{
 				tag: "field",
 				prop: { label: "No Akta Perubahan", name: "no_akta_perubahan" },
 			},
+
 			{
 				tag: "fieldCalendar",
 				prop: {
@@ -578,16 +605,30 @@ UIConfig.rekanan = {
 				},
 			},
 
+			{ tag: "field", prop: { label: "Notaris", name: "nama_akta_perubahan" } },
+
+			{
+				tag: "field",
+				prop: {
+					label: "Alamat Notaris",
+					name: "lokasi_notaris_perubahan",
+					width: 16,
+				},
+			},
+
 			// ================= TAMBAHAN =================
 			{
 				tag: "fieldTextarea",
 				prop: { label: "Data Lain", name: "data_lain", atribut: `rows="2"` },
 			},
+
 			{ tag: "fieldFile", prop: { label: "Upload Dokumen", name: "file" } },
+
 			{
 				tag: "fieldTextarea",
 				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
 			},
+
 			{ tag: "fieldCheckbox", prop: { label: "Non Aktif", name: "disable" } },
 		],
 	},
@@ -855,25 +896,23 @@ UIConfig.global_print = {
 	},
 };
 UIConfig.__importFactory = function (tbl, templateFile) {
-
-    const templateHtml = templateFile
-        ? `<a href="/assets/template_import/${templateFile}" target="_blank">
+	const templateHtml = templateFile
+		? `<a href="/assets/template_import/${templateFile}" target="_blank">
                 Download Template ${tbl}
            </a>`
-        : `<span class="red">Template tidak tersedia</span>`;
+		: `<span class="red">Template tidak tersedia</span>`;
 
-    return {
-        layout: { columns: 1 },
-        form: {
-            elements: [
-
-                {
-                    tag: "alert",
-                    prop: {
-                        variant: "info",
-                        icon: "info circle",
-                        title: "Petunjuk Import Data",
-                        message: `
+	return {
+		layout: { columns: 1 },
+		form: {
+			elements: [
+				{
+					tag: "alert",
+					prop: {
+						variant: "info",
+						icon: "info circle",
+						title: "Petunjuk Import Data",
+						message: `
                             Gunakan template resmi berikut:<br>
                             ${templateHtml}<br><br>
                             Pastikan:
@@ -883,36 +922,35 @@ UIConfig.__importFactory = function (tbl, templateFile) {
                                 <li>Format file adalah .xlsx</li>
                             </ul>
                         `,
-                        dismissible: true,
-                        elevated: true
-                    }
-                },
+						dismissible: true,
+						elevated: true,
+					},
+				},
 
-                {
-                    tag: "fieldFile",
-                    prop: {
-                        label: "File Excel (.xlsx)",
-                        name: "file",
-                        accept: ".xlsx"
-                    }
-                },
+				{
+					tag: "fieldFile",
+					prop: {
+						label: "File Excel (.xlsx)",
+						name: "file",
+						accept: ".xlsx",
+					},
+				},
 
-                {
-                    tag: "fieldDropdown",
-                    prop: {
-                        label: "Jumlah Header",
-                        name: "jml_header",
-                        default: "1",
-                        options: Array.from({ length: 8 }, (_, i) => ({
-                            value: String(i),
-                            text: String(i),
-                        })),
-                    }
-                }
-
-            ]
-        }
-    };
+				{
+					tag: "fieldDropdown",
+					prop: {
+						label: "Jumlah Header",
+						name: "jml_header",
+						default: "1",
+						options: Array.from({ length: 8 }, (_, i) => ({
+							value: String(i),
+							text: String(i),
+						})),
+					},
+				},
+			],
+		},
+	};
 };
 UIConfig.satuan.import = UIConfig.__importFactory(
 	"satuan",
@@ -928,54 +966,50 @@ UIConfig.aset.import = UIConfig.__importFactory("aset_neo", null); //DEFAULT GLO
 // 🔥 GENERIC AKUN MAP CONFIG FACTORY
 // ======================================================
 
-UIConfig.__akunMapFactory = function(entityName) {
+UIConfig.__akunMapFactory = function (entityName) {
+	return {
+		layout: { columns: 1 },
 
-    return {
-        layout: { columns: 1 },
+		form: {
+			elements: [
+				{
+					tag: "fieldDropdown",
+					prop: {
+						label: entityName.toUpperCase(),
+						name: entityName + "_id",
+					},
+				},
 
-        form: {
-            elements: [
+				{
+					tag: "field",
+					prop: {
+						label: "Kode Akun",
+						name: "kd_akun",
+					},
+				},
 
-                {
-                    tag: "fieldDropdown",
-                    prop: {
-                        label: entityName.toUpperCase(),
-                        name: entityName + "_id"
-                    }
-                },
+				{
+					tag: "field",
+					prop: {
+						label: "Wilayah",
+						name: "kd_wilayah",
+					},
+				},
 
-                {
-                    tag: "field",
-                    prop: {
-                        label: "Kode Akun",
-                        name: "kd_akun"
-                    }
-                },
-
-                {
-                    tag: "field",
-                    prop: {
-                        label: "Wilayah",
-                        name: "kd_wilayah"
-                    }
-                },
-
-                {
-                    tag: "field",
-                    prop: {
-                        label: "Peraturan",
-                        name: "peraturan_id"
-                    }
-                }
-
-            ]
-        }
-    };
-
+				{
+					tag: "field",
+					prop: {
+						label: "Peraturan",
+						name: "peraturan_id",
+					},
+				},
+			],
+		},
+	};
 };
-UIConfig.sbu_akun_map  = UIConfig.__akunMapFactory("sbu");
-UIConfig.ssh_akun_map  = UIConfig.__akunMapFactory("ssh");
-UIConfig.asb_akun_map  = UIConfig.__akunMapFactory("asb");
+UIConfig.sbu_akun_map = UIConfig.__akunMapFactory("sbu");
+UIConfig.ssh_akun_map = UIConfig.__akunMapFactory("ssh");
+UIConfig.asb_akun_map = UIConfig.__akunMapFactory("asb");
 UIConfig.hspk_akun_map = UIConfig.__akunMapFactory("hspk");
 
 ///EKSEKUSI

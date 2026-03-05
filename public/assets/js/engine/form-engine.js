@@ -217,7 +217,11 @@ class FormEngine {
 		elements.forEach((el) => {
 			// 🔥 JANGAN bungkus alert/progress/divider
 			if (["alert", "progress", "divider"].includes(el.tag)) {
-				html += this.element(el);
+				html += `
+        <div class="16 wide column">
+            ${this.element(el)}
+        </div>
+    `;
 				return;
 			}
 
@@ -372,11 +376,11 @@ class FormEngine {
 	 */
 	static fieldWrapper(inner, prop) {
 		return `
-            <div class="field ${prop.classField || ""} ${prop.width || ""}">
-                ${prop.label ? `<label>${prop.label}</label>` : ""}
-                ${inner}
-            </div>
-        `;
+        <div class="field ${prop.classField || ""}">
+            ${prop.label ? `<label>${prop.label}</label>` : ""}
+            ${inner}
+        </div>
+    `;
 	}
 
 	/**
