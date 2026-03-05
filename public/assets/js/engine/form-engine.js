@@ -135,7 +135,13 @@ class FormEngine {
 		if (!form.form("is valid")) {
 			return;
 		}
-
+		// normalisasi calendar kosong → null
+		form.find(".ui.calendar input").each(function () {
+			if ($(this).val() === "") {
+				// disable supaya tidak ikut serialize
+				$(this).prop("disabled", true);
+			}
+		});
 		const hasFileInput =
 			$(this.formSelector).find('input[type="file"]').length > 0;
 
@@ -261,6 +267,10 @@ class FormEngine {
 		});
 		$(target).find(".ui.checkbox").checkbox();
 
+		// init calendar per form
+		if (instance) {
+			instance.initCalendars(target);
+		}
 		// 🔥 WAJIB INI
 		const rangeElements = elements.filter((e) => e.tag === "rangeCalendar");
 		UIComponents.initRange(rangeElements);
@@ -432,20 +442,32 @@ class FormEngine {
 
 	/**
 	 * ============================================================
-	 * CALENDAR
+	 * CALENDAR FIELD
 	 * ============================================================
+	 * - Membuat komponen calendar Fomantic
+	 * - Menyimpan type calendar di attribute data
+	 * - Agar formatter JS tahu format yang harus digunakan
+	 *
+	 * supported type:
+	 * date | datetime | year | time
 	 */
 	static calendar(prop) {
 		return `
-            <div class="ui calendar">
-                <div class="ui input left icon">
-                    <i class="calendar icon"></i>
-                    <input type="text"
-                           name="${prop.name}"
-                           placeholder="${prop.placeholder || "Pilih Tanggal"}">
-                </div>
+        <div class="ui calendar"
+             data-calendar-type="${prop.calendarType || "date"}">
+
+            <div class="ui input left icon">
+
+                <i class="calendar icon"></i>
+
+                <input type="text"
+                       name="${prop.name}"
+                       placeholder="${prop.placeholder || "Pilih Tanggal"}">
+
             </div>
-        `;
+
+        </div>
+    `;
 	}
 
 	/**
@@ -590,60 +612,80 @@ class FormEngine {
 	 * BUILD FOMANTIC RULES DARI UICONFIG
 	 * ============================================================
 	 */
+	/**
+	 * ============================================================
+	 * BUILD RULE VALIDATION FOMANTIC
+	 * ============================================================
+	 * - membaca schema dari UIConfig
+	 * - membuat rule Fomantic
+	 * - label diambil dari <label> jika ada
+	 * - fallback dari name jika label tidak ada
+	 */
 	buildFomanticRules(schema = {}) {
+		const fields = {};
 
-	const fields = {};
+		Object.keys(schema).forEach((name) => {
+			const cfg = schema[name] || {};
+			const rules = [];
 
-	Object.keys(schema).forEach((name) => {
+			// cari field di DOM
+			const field = $(`${this.formSelector} [name="${name}"]`);
 
-		const cfg = schema[name] || {};
-		const rules = [];
+			// cari label jika ada
+			const labelElement = field.closest(".field").find("label");
 
-		// 🔎 cari label dari DOM
-		const field = $(`${this.formSelector} [name="${name}"]`);
-		const labelElement = field.closest(".field").find("label");
+			let label;
 
-		let label;
+			if (labelElement.length) {
+				label = labelElement.text().trim();
+			} else {
+				// fallback dari name field
+				label = name
+					.replace(/_/g, " ")
+					.replace(/\b\w/g, (c) => c.toUpperCase());
+			}
 
-		if (labelElement.length) {
-			label = labelElement.text().trim();
-		} else {
-			// fallback dari name
-			label = name
-				.replace(/_/g, " ")
-				.replace(/\b\w/g, (c) => c.toUpperCase());
-		}
+			// required rule
+			if (cfg.required) {
+				rules.push({
+					type: "empty",
+					prompt: `${label} wajib diisi`,
+				});
+			}
 
-		if (cfg.required) {
-			rules.push({
-				type: "empty",
-				prompt: `${label} wajib diisi`,
-			});
-		}
+			// email rule
+			if (cfg.email) {
+				rules.push({
+					type: "email",
+					prompt: `${label} tidak valid`,
+				});
+			}
 
-		if (cfg.email) {
-			rules.push({
-				type: "email",
-				prompt: `${label} tidak valid`,
-			});
-		}
+			// number rule
+			if (cfg.number) {
+				rules.push({
+					type: "number",
+					prompt: `${label} harus berupa angka`,
+				});
+			}
 
-		if (cfg.number) {
-			rules.push({
-				type: "number",
-				prompt: `${label} harus berupa angka`,
-			});
-		}
+			fields[name] = {
+				identifier: name,
+				rules: rules,
+			};
+		});
 
-		fields[name] = {
-			identifier: name,
-			rules: rules,
-		};
-
-	});
-
-	return fields;
-}
+		return fields;
+	}
+	/**
+	 * ============================================================
+	 * INIT FOMANTIC FORM VALIDATION
+	 * ============================================================
+	 * - membaca schema dari UIConfig
+	 * - menampilkan inline error
+	 * - mengisi error summary
+	 * - scroll ke field error pertama
+	 */
 	initFomanticValidation() {
 		const config = UIConfig[this.state.tbl];
 
@@ -656,25 +698,100 @@ class FormEngine {
 			on: "blur",
 			fields: fields,
 
+			/**
+			 * ========================================================
+			 * VALIDATION FAILED
+			 * ========================================================
+			 */
 			onFailure: function (errors) {
-				const errorBox = $(this).find(".ui.error.message");
+				const form = $(this);
 
-				if (!errorBox.length) return;
+				const errorBox = form.find(".ui.error.message");
 
-				let html = '<ul class="list">';
+				if (errorBox.length) {
+					let html = '<ul class="list">';
 
-				errors.forEach((err) => {
-					html += `<li>${err}</li>`;
-				});
+					errors.forEach((err) => {
+						html += `<li>${err}</li>`;
+					});
 
-				html += "</ul>";
+					html += "</ul>";
 
-				errorBox.html(html).show();
+					errorBox.html(html).show();
+				}
+
+				// scroll ke field error pertama
+				const firstError = form.find(".field.error").first();
+
+				if (firstError.length) {
+					$("html, body").animate(
+						{
+							scrollTop: firstError.offset().top - 120,
+						},
+						300,
+					);
+				}
 			},
 
+			/**
+			 * ========================================================
+			 * VALIDATION SUCCESS
+			 * ========================================================
+			 */
 			onSuccess: function () {
 				$(this).find(".ui.error.message").hide().empty();
 			},
 		});
+	}
+	/**
+	 * ============================================================
+	 * INIT CALENDAR PER FORM
+	 * ============================================================
+	 * - Tidak menggunakan selector global
+	 * - Membaca data-calendar-type
+	 * - Formatter otomatis sesuai tipe
+	 */
+	initCalendars(container) {
+		const pad = (n) => String(n).padStart(2, "0");
+
+		$(container)
+			.find(".ui.calendar")
+			.each(function () {
+				const cal = $(this);
+
+				const type = cal.data("calendar-type") || "date";
+
+				cal.calendar({
+					type: type,
+
+					formatter: {
+						date: function (date) {
+							if (!date) return "";
+
+							const year = date.getFullYear();
+							const month = pad(date.getMonth() + 1);
+							const day = pad(date.getDate());
+
+							const hour = pad(date.getHours());
+							const minute = pad(date.getMinutes());
+							const second = pad(date.getSeconds());
+
+							switch (type) {
+								case "year":
+									return `${year}`;
+
+								case "datetime":
+									return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+
+								case "time":
+									return `${hour}:${minute}:${second}`;
+
+								default:
+									return `${year}-${month}-${day}`;
+							}
+						},
+					},
+				});
+			});
 	}
 }

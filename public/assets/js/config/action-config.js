@@ -16,7 +16,17 @@ const ActionConfig = {
 			viewer: [],
 		},
 	},
-
+	rekanan: {
+		rekanan_neo: {
+			roles: {
+				super_admin: ["edit", "delete", "akta"],
+				admin_wilayah: ["edit", "akta"],
+				admin_opd: ["akta"],
+				editor: ["akta"],
+				viewer: [],
+			},
+		},
+	},
 	// ===============================
 	// REFERENSI
 	// ===============================
