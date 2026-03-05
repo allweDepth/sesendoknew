@@ -524,6 +524,7 @@ return [
 
     'satuan' => [
         'table' => 'satuan_neo',
+        'not_duplicate' => ['item','peraturan_id'],
         'primary_key' => 'id',
         'import' => [
             'enabled' => true,

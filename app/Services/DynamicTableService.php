@@ -1329,75 +1329,75 @@ class DynamicTableService
             throw new Exception("Admin OPD tidak diperbolehkan import tabel master.");
         }
     }
-    /* =========================================================
-                                                    VALIDASI DUPLICATE GLOBAL (SCOPE-AWARE PATCH)
-                                                    ---------------------------------------------------------
-                                                    - Composite aware
-                                                    - Scope aware (kd_wilayah + peraturan)
-                                                    - Tidak merusak arsitektur lama
-                                                    ========================================================= */
+    // ======================================================
+    // VALIDASI DUPLICATE BERDASARKAN RULE PROFILE
+    // - 'not_duplicate' => ['kode','kd_wilayah','peraturan_id']
+    // ======================================================
     private function validateDuplicate(string $table, array $data): void
     {
-        $columns = $this->getTableColumns($table);
+        // ambil konfigurasi profile tabel
+        $profile = $this->getProfileByTable($table);
 
-        $uniqueFields = [];
+        // jika tabel tidak memiliki rule duplicate
+        if (empty($profile['not_duplicate'])) {
 
-        // 🔥 Composite utama untuk struktur
-        if (in_array('kode', $columns) && isset($data['kode'])) {
-
-            $uniqueFields['kode'] = $data['kode'];
-
-            if (in_array('kd_wilayah', $columns)) {
-
-                $uniqueFields['kd_wilayah'] =
-                    $data['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? null;
-
-                if (empty($uniqueFields['kd_wilayah'])) {
-                    throw new Exception(
-                        "kd_wilayah tidak boleh kosong untuk validasi duplicate."
-                    );
-                }
-            }
-
-            if (in_array('peraturan_id', $columns)) {
-
-                $uniqueFields['peraturan_id'] =
-                    $data['peraturan_id'] ?? null;
-
-                if (empty($uniqueFields['peraturan_id'])) {
-                    throw new Exception(
-                        "peraturan_id tidak boleh kosong untuk validasi duplicate."
-                    );
-                }
-            }
+            // maka tidak dilakukan validasi
+            return;
         }
 
-        // 🔥 Tambahan rekening jika ada
-        if (in_array('rekening', $columns) && isset($data['rekening'])) {
-            $uniqueFields['rekening'] = $data['rekening'];
-        }
+        // ambil daftar field yang tidak boleh duplicate
+        $fields = $profile['not_duplicate'];
 
-        if (empty($uniqueFields)) return;
-
+        // array untuk menyimpan kondisi WHERE
         $whereParts = [];
-        $params     = [];
 
-        foreach ($uniqueFields as $field => $value) {
+        // parameter query
+        $params = [];
+
+        // loop semua field rule duplicate
+        foreach ($fields as $field) {
+
+            // jika field tidak ada pada data
+            if (!isset($data[$field])) {
+
+                // lempar error
+                throw new Exception(
+                    "Field {$field} wajib ada untuk validasi duplicate."
+                );
+            }
+
+            // tambahkan kondisi where
             $whereParts[] = "`$field` = ?";
-            $params[]     = $value;
+
+            // tambahkan parameter
+            $params[] = $data[$field];
         }
 
+        // ambil primary key tabel
         $primaryKey = $this->getPrimaryKey($table);
 
+        // jalankan query cek duplicate
         $exists = $this->db->query(
-            "SELECT `$primaryKey` FROM `$table`
-                                                            WHERE " . implode(" AND ", $whereParts) . "
-                                                            LIMIT 1",
+
+            // query cek data
+            "SELECT `$primaryKey`
+         FROM `$table`
+         WHERE " . implode(" AND ", $whereParts) . "
+         LIMIT 1",
+
+            // parameter query
             $params
+
         )->fetch();
 
+        // jika data ditemukan
         if ($exists) {
-            throw new Exception("Duplicate data terdeteksi (composite scope).");
+
+            // lempar error duplicate
+            throw new Exception(
+                "Duplicate data terdeteksi pada kombinasi: "
+                    . implode(', ', $fields)
+            );
         }
     }
     /* =========================================================
@@ -1883,10 +1883,42 @@ class DynamicTableService
 
                     $data = $this->injectAudit($data, 'insert');
 
+                    // ======================================================
+                    // CEK DUPLICATE DALAM FILE EXCEL
+                    // ======================================================
 
-                    // ==================================================
-                    // VALIDASI DUPLICATE
-                    // ==================================================
+                    // ambil rule duplicate dari profile
+                    $profile = $this->getProfileByTable($table);
+
+                    // jika ada rule duplicate
+                    if (!empty($profile['not_duplicate'])) {
+
+                        // buat key duplicate
+                        $keyParts = [];
+
+                        foreach ($profile['not_duplicate'] as $field) {
+
+                            $keyParts[] = $data[$field] ?? '';
+                        }
+
+                        // gabungkan menjadi key unik
+                        $duplicateKey = implode('|', $keyParts);
+
+                        // jika key sudah ada
+                        if (isset($duplicateMemory[$duplicateKey])) {
+
+                            throw new Exception(
+                                "Duplicate antar baris Excel terdeteksi."
+                            );
+                        }
+
+                        // simpan key ke memory
+                        $duplicateMemory[$duplicateKey] = true;
+                    }
+
+                    // ======================================================
+                    // VALIDASI DUPLICATE DATABASE
+                    // ======================================================
 
                     $this->validateDuplicate($table, $data);
 
