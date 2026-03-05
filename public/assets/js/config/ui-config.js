@@ -437,6 +437,18 @@ UIConfig.sub_kegiatan = {
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Nama", name: "nama" } },
+			{
+				tag: "fieldDropdown",
+				prop: { label: "Satuan", name: "satuan", source: "satuan" },
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Kinerja", name: "kinerja", atribut: `rows="2"` },
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Indikator", name: "indikator", atribut: `rows="2"` },
+			},
 		],
 	},
 };
@@ -507,29 +519,33 @@ UIConfig.peraturan = {
 	},
 };
 UIConfig.rekanan = {
-
 	validation: {
 		nama_perusahaan: { required: true },
 		npwp: { required: true },
 		alamat: { required: true },
-		direktur: { required: true }
+		direktur: { required: true },
 	},
 
 	form: {
-
 		elements: [
-
 			// DATA PERUSAHAAN
 			{ tag: "divider", prop: { label: "Data Perusahaan" } },
 
-			{ tag: "field", prop: { label: "Nama Perusahaan", name: "nama_perusahaan", width: 16 } },
+			{
+				tag: "field",
+				prop: { label: "Nama Perusahaan", name: "nama_perusahaan", width: 16 },
+			},
 
 			{ tag: "field", prop: { label: "NPWP", name: "npwp" } },
 			{ tag: "field", prop: { label: "Email", name: "email" } },
 
 			{
 				tag: "fieldTextarea",
-				prop: { label: "Alamat Perusahaan", name: "alamat", atribut: `rows="2"` }
+				prop: {
+					label: "Alamat Perusahaan",
+					name: "alamat",
+					atribut: `rows="2"`,
+				},
 			},
 
 			// DATA REKENING
@@ -538,7 +554,14 @@ UIConfig.rekanan = {
 			{ tag: "field", prop: { label: "Nomor Rekening", name: "no_rekening" } },
 			{ tag: "field", prop: { label: "Bank", name: "bank_rekening" } },
 
-			{ tag: "field", prop: { label: "Atas Nama Rekening", name: "atas_nama_rekening", width: 16 } },
+			{
+				tag: "field",
+				prop: {
+					label: "Atas Nama Rekening",
+					name: "atas_nama_rekening",
+					width: 16,
+				},
+			},
 
 			// DATA DIREKTUR
 			{ tag: "divider", prop: { label: "Data Direktur" } },
@@ -549,23 +572,33 @@ UIConfig.rekanan = {
 
 			{
 				tag: "fieldTextarea",
-				prop: { label: "Alamat Direktur", name: "alamat_dir", atribut: `rows="2"` }
+				prop: {
+					label: "Alamat Direktur",
+					name: "alamat_dir",
+					atribut: `rows="2"`,
+				},
 			},
 
 			// AKTA PENDIRIAN
 			{ tag: "divider", prop: { label: "Akta Pendirian" } },
 
-			{ tag: "field", prop: { label: "No Akta Pendirian", name: "no_akta_pendirian" } },
+			{
+				tag: "field",
+				prop: { label: "No Akta Pendirian", name: "no_akta_pendirian" },
+			},
 
-			{ tag: "field", prop: { label: "Notaris", name: "nama_notaris_pendirian" } },
+			{
+				tag: "field",
+				prop: { label: "Notaris", name: "nama_notaris_pendirian" },
+			},
 
 			{
 				tag: "field",
 				prop: {
 					label: "Alamat Notaris",
 					name: "lokasi_notaris_pendirian",
-					width: 16
-				}
+					width: 16,
+				},
 			},
 
 			{
@@ -573,49 +606,43 @@ UIConfig.rekanan = {
 				prop: {
 					label: "Tanggal Akta Pendirian",
 					name: "tgl_akta_pendirian",
-					calendarType: "date"
-				}
+					calendarType: "date",
+				},
 			},
 
 			// TAMBAHAN
 			{
 				tag: "fieldTextarea",
-				prop: { label: "Data Lain", name: "data_lain", atribut: `rows="2"` }
+				prop: { label: "Data Lain", name: "data_lain", atribut: `rows="2"` },
 			},
 
 			{ tag: "fieldFile", prop: { label: "Upload Dokumen", name: "file" } },
 
 			{
 				tag: "fieldTextarea",
-				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` }
+				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
 			},
 
-			{ tag: "fieldCheckbox", prop: { label: "Non Aktif", name: "disable" } }
-
-		]
-
-	}
-
+			{ tag: "fieldCheckbox", prop: { label: "Non Aktif", name: "disable" } },
+		],
+	},
 };
 UIConfig.rekanan_akta = {
-
 	layout: { columns: 2 },
 
 	validation: {
 		no_akta: { required: true },
-		tgl_akta: { required: true }
+		tgl_akta: { required: true },
 	},
 
 	form: {
-
 		elements: [
-
 			{
 				tag: "field",
 				prop: {
 					name: "rekanan_id",
-					atribut: 'type="hidden"'
-				}
+					atribut: 'type="hidden"',
+				},
 			},
 
 			{
@@ -625,14 +652,14 @@ UIConfig.rekanan_akta = {
 					name: "jenis_akta",
 					options: [
 						{ value: "pendirian", text: "Pendirian" },
-						{ value: "perubahan", text: "Perubahan" }
-					]
-				}
+						{ value: "perubahan", text: "Perubahan" },
+					],
+				},
 			},
 
 			{
 				tag: "field",
-				prop: { label: "Nomor Akta", name: "no_akta" }
+				prop: { label: "Nomor Akta", name: "no_akta" },
 			},
 
 			{
@@ -640,24 +667,21 @@ UIConfig.rekanan_akta = {
 				prop: {
 					label: "Tanggal Akta",
 					name: "tgl_akta",
-					calendarType: "date"
-				}
+					calendarType: "date",
+				},
 			},
 
 			{
 				tag: "field",
-				prop: { label: "Nama Notaris", name: "nama_notaris" }
+				prop: { label: "Nama Notaris", name: "nama_notaris" },
 			},
 
 			{
 				tag: "field",
-				prop: { label: "Lokasi Notaris", name: "lokasi_notaris" }
-			}
-
-		]
-
-	}
-
+				prop: { label: "Lokasi Notaris", name: "lokasi_notaris" },
+			},
+		],
+	},
 };
 UIConfig.sumber_dana = {
 	form: {
