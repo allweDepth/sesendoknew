@@ -67,16 +67,21 @@ class TableManager {
 
 		this.initialized = true;
 
+		// bind event table
 		this.bindEvents();
+
+		// load data pertama
 		this.fetchData();
 
+		// event reload dari form
 		const reloadEvent = `form:success.${this.state.tbl}.table`;
 
-		$(document).off(reloadEvent);
-
-		$(document).on(reloadEvent, () => {
-			this.fetchData();
-		});
+		// hapus event lama
+		$(document)
+			.off(reloadEvent)
+			.on(reloadEvent, () => {
+				this.fetchData();
+			});
 	}
 
 	/* =====================================================
@@ -545,14 +550,17 @@ class TableManager {
 	static get(config = {}) {
 		const tbl = config.state?.tbl;
 
-		if (!TableManager.instances[tbl]) {
-			const instance = new TableManager(config);
-
-			TableManager.instances[tbl] = instance;
-
-			instance.init();
+		// jika instance sudah ada → destroy dulu
+		if (TableManager.instances[tbl]) {
+			TableManager.instances[tbl].destroy();
 		}
 
-		return TableManager.instances[tbl];
+		const instance = new TableManager(config);
+
+		TableManager.instances[tbl] = instance;
+
+		instance.init();
+
+		return instance;
 	}
 }

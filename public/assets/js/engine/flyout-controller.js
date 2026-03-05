@@ -64,6 +64,7 @@ class FlyoutController {
 
 	open($btn) {
 		console.log("OPEN START FLYCONTRILLER", Date.now());
+
 		// ============================================
 		// GUARD DOUBLE OPEN
 		// ============================================
@@ -78,6 +79,7 @@ class FlyoutController {
 
 		const jns = $btn.data("jns");
 		const tbl = $btn.data("tbl");
+
 		const configKey =
 			$btn.data("config") ||
 			(window.UIConfig[tbl] && window.UIConfig[tbl][jns]
@@ -85,6 +87,7 @@ class FlyoutController {
 				: tbl);
 
 		const id = $btn.data("id") || null;
+
 		const container = $btn.data("container") || "flyout";
 
 		if (!tbl) return;
@@ -92,33 +95,41 @@ class FlyoutController {
 		const state = window.app.state;
 
 		state.setTable(tbl);
+
 		state.action = jns;
 
 		const formSelector = container === "modal" ? "#form_modal" : "#form_flyout";
 
-		// 🔥 BUAT INSTANCE DI SINI
+		// ==============================
+		// DISINI INSTANCE FORM DIBUAT
+		// ==============================
+
 		this.formEngine = new FormEngine({
 			state: state,
+
 			ajax: window.Ajax,
+
 			formSelector: formSelector,
 		});
-		// 🔥 Render pakai instance/ 🔥 RENDER DULU
+
 		const config = this.buildConfig(jns, configKey);
 
 		FormEngine.render(
 			$(formSelector),
+
 			config.elements,
+
 			this.formEngine,
+
 			config.layout || {},
 		);
-		// Show container
+
 		if (container === "modal") {
 			$("#mainModal").modal("show");
 		} else {
 			$(".sidebarkanan").sidebar("show");
 		}
 
-		// 🔥 Load edit data
 		if (jns === "edit" && id) {
 			this.formEngine.loadData(id);
 		}

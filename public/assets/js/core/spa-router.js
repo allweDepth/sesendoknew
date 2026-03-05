@@ -9,32 +9,31 @@ class SpaRouter {
 	// Tentukan mode berdasarkan URL
 	// ================================
 	resolveMode(url) {
+		const firstSegment = "/" + url.split("/")[1];
 
-    const firstSegment = "/" + url.split("/")[1];
+		// Jika ada module JS untuk segment ini → client
+		if (window.appModuleMap && window.appModuleMap[firstSegment]) {
+			return "client";
+		}
 
-    // Jika ada module JS untuk segment ini → client
-    if (window.appModuleMap && window.appModuleMap[firstSegment]) {
-        return "client";
-    }
-
-    return "server";
-}
+		return "server";
+	}
 
 	// ================================
 	// INITIAL LOAD (REFRESH)
 	// ================================
 	handleInitialLoad() {
-    const url = window.location.pathname;
-    const mode = this.resolveMode(url);
+		const url = window.location.pathname;
+		const mode = this.resolveMode(url);
 
-    if (mode === "client") {
-        this.loadClientModule(url);
-    } else {
-        if (window.app?.initPage) {
-            window.app.initPage();
-        }
-    }
-}
+		if (mode === "client") {
+			this.loadClientModule(url);
+		} else {
+			if (window.app?.initPage) {
+				window.app.initPage();
+			}
+		}
+	}
 
 	// ================================
 	// CLICK HANDLER
@@ -72,6 +71,18 @@ class SpaRouter {
 		})
 			.then((res) => res.text())
 			.then((html) => {
+				// destroy table lama
+				if (window.TableManager && TableManager.instances) {
+					Object.values(TableManager.instances).forEach((tbl) => {
+						if (typeof tbl.destroy === "function") {
+							tbl.destroy();
+						}
+					});
+
+					TableManager.instances = {};
+				}
+
+				// render module baru
 				$("#main-content").html(html);
 
 				if (window.app?.loadModule) {

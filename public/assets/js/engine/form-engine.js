@@ -112,17 +112,14 @@ class FormEngine {
 	 * - mencegah double binding
 	 */
 	bindEvents() {
-		// ============================================
-		// HAPUS EVENT LAMA DENGAN NAMESPACE
-		// ============================================
-		// penting agar event lama di SPA dibersihkan
-		$(document).off("submit.formEngine");
+		const eventName = `submit.formEngine.${this.state.tbl}`;
 
-		// ============================================
-		// PASANG EVENT BARU
-		// ============================================
-		$(document).on("submit.formEngine", this.formSelector, (e) => {
-			// cegah submit HTML default
+		// hapus hanya event form ini
+		$(document).off(eventName);
+
+		// bind event submit form
+		$(document).on(eventName, this.formSelector, (e) => {
+			// cegah submit default browser
 			e.preventDefault();
 
 			// jalankan submit engine
