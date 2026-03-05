@@ -1669,18 +1669,23 @@ class DynamicTableService
                 throw new Exception("Pengaturan aktif belum tersedia.");
             }
 
-            // mapping tabel → field pengaturan
+            // ======================================================
+            // MAP PERATURAN BERDASARKAN TABEL
+            // ======================================================
+
             $map = [
-                'ssh'  => 'aturan_ssh',
-                'sbu'  => 'aturan_sbu',
-                'asb'  => 'aturan_asb',
-                'hspk' => 'aturan_hspk',
-                'satuan'  => 'aturan_ssh',
+                'ssh'           => 'aturan_ssh',
+                'sbu'           => 'aturan_sbu',
+                'asb'           => 'aturan_asb',
+                'hspk'          => 'aturan_hspk',
+
+                'satuan'        => 'aturan_ssh',
+
                 'sub_kegiatan'  => 'aturan_sub_kegiatan',
-                'urusan'  => 'aturan_sub_kegiatan',
-                'bidang'  => 'aturan_sub_kegiatan',
-                'program'  => 'aturan_sub_kegiatan',
-                'kegiatan'  => 'aturan_sub_kegiatan'
+                'urusan'        => 'aturan_sub_kegiatan',
+                'bidang'        => 'aturan_sub_kegiatan',
+                'program'       => 'aturan_sub_kegiatan',
+                'kegiatan'      => 'aturan_sub_kegiatan'
             ];
 
             if (isset($map[$tbl])) {
@@ -1838,7 +1843,11 @@ class DynamicTableService
                         $data['tahun'] = $tahun;
                     }
 
-                    if ($peraturan_id && in_array('peraturan_id', $columns)) {
+                    // ======================================================
+                    // tambahkan peraturan_id otomatis jika ada mapping
+                    // ======================================================
+
+                    if (in_array('peraturan_id', $columns)) {
                         $data['peraturan_id'] = $peraturan_id;
                     }
 
@@ -2287,8 +2296,8 @@ class DynamicTableService
         // 🔥 Cek duplicate
         $exists = $this->db->query(
             "SELECT id FROM `$table`
-                                                                        WHERE " . implode(" AND ", $whereParts) . "
-                                                                        LIMIT 1",
+                WHERE " . implode(" AND ", $whereParts) . "
+                LIMIT 1",
             $params
         )->fetch();
 

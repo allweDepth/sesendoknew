@@ -95,10 +95,10 @@
 
         #toastContainer {
             position: absolute;
-            top: 60px;
+            top: 5px;
             right: 20px;
             width: 350px;
-            z-index: 5;
+            z-index: 9999;
         }
 
         /* untuk tabel */
