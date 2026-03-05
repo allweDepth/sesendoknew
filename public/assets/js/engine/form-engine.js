@@ -31,7 +31,8 @@ class FormEngine {
 
 		this.bindEvents();
 
-		// 🔥 load semua dropdown yang punya source
+		this.initFomanticValidation();
+
 		this.loadDropdownSources();
 	}
 
@@ -127,12 +128,12 @@ class FormEngine {
 		const config = UIConfig[this.state.tbl];
 
 		// Validasi tetap jalan
-		if (config?.validation) {
-			const valid = ValidationEngine.validate(
-				this.formSelector,
-				config.validation,
-			);
-			if (!valid) return;
+		const form = $(this.formSelector);
+
+		form.form("validate form");
+
+		if (!form.form("is valid")) {
+			return;
 		}
 
 		const hasFileInput =
@@ -237,8 +238,10 @@ class FormEngine {
 		});
 
 		html += `
-            </div>
-    `;
+</div>
+
+<div class="ui error message"></div>
+`;
 
 		$(target).html(html);
 
@@ -581,5 +584,65 @@ class FormEngine {
 
 		// Disable checkbox
 		form.find(".ui.checkbox").addClass("disabled");
+	}
+	/**
+	 * ============================================================
+	 * BUILD FOMANTIC RULES DARI UICONFIG
+	 * ============================================================
+	 */
+	buildFomanticRules(schema = {}) {
+		const fields = {};
+
+		Object.keys(schema).forEach((name) => {
+			const rules = [];
+			const cfg = schema[name];
+
+			if (cfg.required) {
+				rules.push({
+					type: "empty",
+					prompt: `${name} wajib diisi`,
+				});
+			}
+
+			if (cfg.email) {
+				rules.push({
+					type: "email",
+					prompt: "Format email tidak valid",
+				});
+			}
+
+			if (cfg.number) {
+				rules.push({
+					type: "number",
+					prompt: "Harus berupa angka",
+				});
+			}
+
+			if (cfg.minLength) {
+				rules.push({
+					type: `minLength[${cfg.minLength}]`,
+					prompt: `Minimal ${cfg.minLength} karakter`,
+				});
+			}
+
+			fields[name] = {
+				identifier: name,
+				rules: rules,
+			};
+		});
+
+		return fields;
+	}
+	initFomanticValidation() {
+		const config = UIConfig[this.state.tbl];
+		if (!config?.validation) return;
+
+		const fields = this.buildFomanticRules(config.validation);
+
+		$(this.formSelector).form({
+			inline: true,
+			on: "blur",
+			fields: fields,
+		});
 	}
 }
