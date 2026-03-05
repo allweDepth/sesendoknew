@@ -34,6 +34,8 @@ class FormEngine {
 		this.initFomanticValidation();
 
 		this.loadDropdownSources();
+		// GLOBAL HEADER FLYOUT
+		this.setFlyoutHeader(this.state.tbl);
 	}
 
 	/**
@@ -243,11 +245,7 @@ class FormEngine {
     `;
 		});
 
-		html += `
-</div>
-
-<div class="ui error message"></div>
-`;
+		html += `</div><div class="ui error message"></div>`;
 
 		$(target).html(html);
 
@@ -793,5 +791,17 @@ class FormEngine {
 					},
 				});
 			});
+	}
+	setFlyoutHeader(tbl) {
+		const config = UIConfig?.[tbl];
+
+		if (!config) return;
+
+		const title = config.title || "Form Data";
+		const icon = config.icon || "folder";
+
+		$("#content_flyout").text(title);
+
+		$("#icon_flyout").attr("class", "").addClass(`${icon} icon`);
 	}
 }

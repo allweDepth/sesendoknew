@@ -21,11 +21,12 @@ class TableManager {
 		this.state = config.state;
 		this.ajax = window.Ajax;
 
+		this.initialized = false;
+
 		this.tbody = config.tbody || `tbody[name="tabel_${this.state.tbl}"]`;
 
 		this.pagination =
 			config.pagination || `div[name="pagination_${this.state.tbl}"]`;
-
 		this.currentPage = 1;
 		this.limit = config.limit || 10;
 		this.totalRows = 0;
@@ -49,11 +50,15 @@ class TableManager {
 		===================================================== */
 	/* ===================================================== */
 	init() {
+		if (this.initialized) return;
+
+		this.initialized = true;
+
 		this.bindEvents();
 		this.fetchData();
 
-		$(document).off("form:success.tableReload");
-		$(document).on("form:success.tableReload", () => {
+		$(document).off(`form:success.tableReload.${this.state.tbl}`);
+		$(document).on(`form:success.tableReload.${this.state.tbl}`, () => {
 			this.fetchData();
 		});
 	}
@@ -132,7 +137,6 @@ class TableManager {
 		`);
 	}
 
-
 	/* =====================================================
 			AMBIL KOLOM DARI UI CONFIG
 			-----------------------------------------------------
@@ -150,6 +154,7 @@ class TableManager {
 			.filter(
 				(item) =>
 					item.prop?.name &&
+					item.prop?.table !== false &&
 					!["divider", "header", "fieldHidden", "fieldCustom"].includes(
 						item.tag,
 					),
@@ -232,6 +237,23 @@ class TableManager {
 
 			html += `<tr data-id="${id}">`;
 
+			let btnExtra = "";
+
+			switch (this.state.tbl) {
+				case "rekanan":
+				case "rekanan_neo":
+					btnExtra = `
+						<button class="ui teal button"
+							data-action="akta">
+							<i class="file alternate outline icon"></i>
+						</button>
+					`;
+					break;
+
+				default:
+					break;
+			}
+
 			columns.forEach((col) => {
 				let value = row[col.key] ?? "";
 				value = this.formatValue(value, col.format);
@@ -239,22 +261,26 @@ class TableManager {
 			});
 
 			html += `
-				<td class="collapsing">
-					<div class="ui mini basic icon buttons">
-						<button class="ui button"
-							data-ui="open-form"
-							data-jns="edit"
-							data-tbl="${this.state.tbl}"
-							data-id="${id}">
-							<i class="edit icon"></i>
-						</button>
-						<button class="ui red button"
-							data-action="delete">
-							<i class="trash icon"></i>
-						</button>
-					</div>
-				</td>
-			`;
+					<td class="collapsing">
+						<div class="ui mini basic icon buttons">
+							<button class="ui button"
+								data-ui="open-form"
+								data-jns="edit"
+								data-tbl="${this.state.tbl}"
+								data-id="${id}">
+								<i class="edit icon"></i>
+							</button>
+
+							${btnExtra}
+
+							<button class="ui red button"
+								data-action="delete">
+								<i class="trash icon"></i>
+							</button>
+
+						</div>
+					</td>
+				`;
 
 			html += "</tr>";
 		});
@@ -347,15 +373,11 @@ class TableManager {
 		);
 
 		$(document).off("click.tableAction");
-		$(document).on(
-			"click.tableAction",
-			`${this.tbody} [data-action]`,
-			(e) => {
-				const action = $(e.currentTarget).data("action");
-				const id = $(e.currentTarget).closest("tr").data("id");
-				this.handleAction(action, id);
-			},
-		);
+		$(document).on("click.tableAction", `${this.tbody} [data-action]`, (e) => {
+			const action = $(e.currentTarget).data("action");
+			const id = $(e.currentTarget).closest("tr").data("id");
+			this.handleAction(action, id);
+		});
 
 		$(document).off("keypress.tableSearch");
 		$(document).on("keypress.tableSearch", "#cari_data", (e) => {
@@ -380,17 +402,47 @@ class TableManager {
 			HANDLE ACTION
 		===================================================== */
 	handleAction(action, id) {
-		if (action === "delete") {
-			this.deleteRow(id);
+		switch (action) {
+			case "delete":
+				this.deleteRow(id);
+				break;
+
+			case "akta":
+				this.openAkta(id);
+				break;
 		}
 	}
+	openAkta(id) {
+		const form = new FormEngine({
+			formSelector: "#form_flyout",
+			state: {
+				tbl: "rekanan_akta",
+				action: "insert",
+			},
+			ajax: this.ajax,
+		});
 
+		$("#form_flyout").empty();
+		FormEngine.render(
+			"#form_flyout",
+			UIConfig.rekanan_akta.form.elements,
+			form,
+			UIConfig.rekanan_akta.layout,
+		);
+
+		$("#form_flyout [name=rekanan_id]").val(id);
+
+		form.init();
+		// buka sidebar kanan
+		$(".sidebarkanan").sidebar("show");
+	}
+	
 	/* =====================================================
 			DELETE ROW (WITH CONFIRMATION)
 		===================================================== */
 	deleteRow(id) {
-		const rowData = this.data.find((r) => r.id == id);
-		const label = rowData?.nama || "data ini";
+		const rowData = this.data.find((r) => r[this.primaryKey] == id);
+		const label = rowData ? Object.values(rowData)[1] : "data ini";
 
 		DialogEngine.show({
 			title: "Konfirmasi Hapus",
@@ -425,8 +477,9 @@ class TableManager {
 			Membersihkan event dan DOM
 		===================================================== */
 	destroy() {
-		$(document).off("click", `[data-page]`);
-		$(document).off("click", `${this.tbody} [data-action]`);
+		$(document).off("click.tablePagination");
+		$(document).off("click.tableAction");
+		$(document).off("keypress.tableSearch");
 
 		$(this.tbody).empty();
 		$(this.pagination).empty();
