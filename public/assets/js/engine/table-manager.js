@@ -388,15 +388,15 @@ class TableManager {
 
 		const paginationEvent = `click.tablePagination.${this.state.tbl}`;
 
-		$(document).off(paginationEvent);
+		$(this.pagination)
+			.off("click.tablePagination")
+			.on("click.tablePagination", "[data-page]", (e) => {
+				const page = parseInt($(e.currentTarget).data("page"));
 
-		$(document).on(paginationEvent, `${this.pagination} [data-page]`, (e) => {
-			const page = parseInt($(e.currentTarget).data("page"));
+				if (!page || page === this.currentPage) return;
 
-			if (!page || page === this.currentPage) return;
-
-			this.changePage(page);
-		});
+				this.changePage(page);
+			});
 
 		// =====================================================
 		// TABLE ACTION EVENT
