@@ -507,6 +507,12 @@ UIConfig.peraturan = {
 	},
 };
 UIConfig.rekanan = {
+	validation: {
+		nama_perusahaan: { required: true },
+		npwp: { required: true },
+		alamat: { required: true },
+		direktur: { required: true },
+	},
 	form: {
 		elements: [
 			// ================= DATA PERUSAHAAN =================

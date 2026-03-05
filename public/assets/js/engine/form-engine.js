@@ -591,50 +591,62 @@ class FormEngine {
 	 * ============================================================
 	 */
 	buildFomanticRules(schema = {}) {
-		const fields = {};
 
-		Object.keys(schema).forEach((name) => {
-			const rules = [];
-			const cfg = schema[name];
+	const fields = {};
 
-			if (cfg.required) {
-				rules.push({
-					type: "empty",
-					prompt: `${name} wajib diisi`,
-				});
-			}
+	Object.keys(schema).forEach((name) => {
 
-			if (cfg.email) {
-				rules.push({
-					type: "email",
-					prompt: "Format email tidak valid",
-				});
-			}
+		const cfg = schema[name] || {};
+		const rules = [];
 
-			if (cfg.number) {
-				rules.push({
-					type: "number",
-					prompt: "Harus berupa angka",
-				});
-			}
+		// 🔎 cari label dari DOM
+		const field = $(`${this.formSelector} [name="${name}"]`);
+		const labelElement = field.closest(".field").find("label");
 
-			if (cfg.minLength) {
-				rules.push({
-					type: `minLength[${cfg.minLength}]`,
-					prompt: `Minimal ${cfg.minLength} karakter`,
-				});
-			}
+		let label;
 
-			fields[name] = {
-				identifier: name,
-				rules: rules,
-			};
-		});
+		if (labelElement.length) {
+			label = labelElement.text().trim();
+		} else {
+			// fallback dari name
+			label = name
+				.replace(/_/g, " ")
+				.replace(/\b\w/g, (c) => c.toUpperCase());
+		}
 
-		return fields;
-	}
+		if (cfg.required) {
+			rules.push({
+				type: "empty",
+				prompt: `${label} wajib diisi`,
+			});
+		}
+
+		if (cfg.email) {
+			rules.push({
+				type: "email",
+				prompt: `${label} tidak valid`,
+			});
+		}
+
+		if (cfg.number) {
+			rules.push({
+				type: "number",
+				prompt: `${label} harus berupa angka`,
+			});
+		}
+
+		fields[name] = {
+			identifier: name,
+			rules: rules,
+		};
+
+	});
+
+	return fields;
+}
 	initFomanticValidation() {
 		const config = UIConfig[this.state.tbl];
+
 		if (!config?.validation) return;
 
 		const fields = this.buildFomanticRules(config.validation);
@@ -643,6 +655,26 @@ class FormEngine {
 			inline: true,
 			on: "blur",
 			fields: fields,
+
+			onFailure: function (errors) {
+				const errorBox = $(this).find(".ui.error.message");
+
+				if (!errorBox.length) return;
+
+				let html = '<ul class="list">';
+
+				errors.forEach((err) => {
+					html += `<li>${err}</li>`;
+				});
+
+				html += "</ul>";
+
+				errorBox.html(html).show();
+			},
+
+			onSuccess: function () {
+				$(this).find(".ui.error.message").hide().empty();
+			},
 		});
 	}
 }
