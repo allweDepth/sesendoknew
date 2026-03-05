@@ -176,7 +176,9 @@ class FormEngine {
 				processData: false, // WAJIB
 				contentType: false, // WAJIB
 				success: () => {
-					$(document).trigger("form:success");
+					const reloadTable = this.state.reloadTable || this.state.tbl;
+
+					$(document).trigger(`form:success.${reloadTable}`);
 				},
 			});
 
@@ -194,7 +196,9 @@ class FormEngine {
 		this.ajax.request({
 			data: formData,
 			success: () => {
-				$(document).trigger("form:success");
+				const reloadTable = this.state.reloadTable || this.state.tbl;
+
+				$(document).trigger(`form:success.${reloadTable}`);
 			},
 		});
 	}

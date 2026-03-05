@@ -17,7 +17,16 @@ class TableManager {
 			- AJAX engine
 			- Selector fallback otomatis
 		===================================================== */
+	static instances = {};
 	constructor(config = {}) {
+		const tbl = config.state?.tbl;
+
+		if (TableManager.instances[tbl]) {
+			return TableManager.instances[tbl];
+		}
+
+		TableManager.instances[tbl] = this;
+
 		this.state = config.state;
 		this.ajax = window.Ajax;
 
@@ -27,6 +36,7 @@ class TableManager {
 
 		this.pagination =
 			config.pagination || `div[name="pagination_${this.state.tbl}"]`;
+
 		this.currentPage = 1;
 		this.limit = config.limit || 10;
 		this.totalRows = 0;
@@ -38,7 +48,6 @@ class TableManager {
 		this.searchQuery = "";
 		this.data = [];
 
-		// 🔥 dynamic primary key from backend
 		this.primaryKey = "id";
 	}
 
@@ -57,8 +66,11 @@ class TableManager {
 		this.bindEvents();
 		this.fetchData();
 
-		$(document).off(`form:success.tableReload.${this.state.tbl}`);
-		$(document).on(`form:success.tableReload.${this.state.tbl}`, () => {
+		const reloadEvent = `form:success.${this.state.tbl}`;
+
+		$(document).off(reloadEvent);
+
+		$(document).on(reloadEvent, () => {
 			this.fetchData();
 		});
 	}
@@ -441,11 +453,13 @@ class TableManager {
 			state: {
 				tbl: "rekanan_akta",
 				action: "insert",
+				reloadTable: "rekanan",
 			},
 			ajax: this.ajax,
 		});
 
 		$("#form_flyout").empty();
+
 		FormEngine.render(
 			"#form_flyout",
 			UIConfig.rekanan_akta.form.elements,
@@ -455,8 +469,6 @@ class TableManager {
 
 		$("#form_flyout [name=rekanan_id]").val(id);
 
-		form.init();
-		// buka sidebar kanan
 		$(".sidebarkanan").sidebar("show");
 	}
 
@@ -500,6 +512,7 @@ class TableManager {
 			Membersihkan event dan DOM
 		===================================================== */
 	destroy() {
+		delete TableManager.instances[this.state.tbl];
 		$(document).off(`click.tablePagination.${this.state.tbl}`);
 
 		$(document).off(`click.tableAction.${this.state.tbl}`);
@@ -524,5 +537,18 @@ class TableManager {
 				this.limit = parseInt(value) || this.limit;
 			}
 		}
+	}
+	static get(config = {}) {
+		const tbl = config.state?.tbl;
+
+		if (!TableManager.instances[tbl]) {
+			const instance = new TableManager(config);
+
+			TableManager.instances[tbl] = instance;
+
+			instance.init();
+		}
+
+		return TableManager.instances[tbl];
 	}
 }
