@@ -64,13 +64,25 @@ class FlyoutController {
 
 	open($btn) {
 		console.log("OPEN START FLYCONTRILLER", Date.now());
+		// ============================================
+		// GUARD DOUBLE OPEN
+		// ============================================
+
+		if (this.isOpening) return;
+
+		this.isOpening = true;
+
+		setTimeout(() => {
+			this.isOpening = false;
+		}, 300);
+
 		const jns = $btn.data("jns");
 		const tbl = $btn.data("tbl");
 		const configKey =
-    $btn.data("config") ||
-    (window.UIConfig[tbl] && window.UIConfig[tbl][jns]
-        ? `${tbl}.${jns}`
-        : tbl);
+			$btn.data("config") ||
+			(window.UIConfig[tbl] && window.UIConfig[tbl][jns]
+				? `${tbl}.${jns}`
+				: tbl);
 
 		const id = $btn.data("id") || null;
 		const container = $btn.data("container") || "flyout";
@@ -99,7 +111,6 @@ class FlyoutController {
 			this.formEngine,
 			config.layout || {},
 		);
-		this.formEngine.init();
 		// Show container
 		if (container === "modal") {
 			$("#mainModal").modal("show");

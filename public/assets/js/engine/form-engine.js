@@ -49,7 +49,7 @@ class FormEngine {
 		console.log("LOAD DATA", id);
 		this.ajax.request({
 			data: {
-				module: this.state.module,
+				module: this.state.module || this.state.tbl,
 				action: "edit",
 				tbl: this.state.tbl,
 				id_row: id,
@@ -104,14 +104,28 @@ class FormEngine {
 
 	/**
 	 * ============================================================
-	 * BIND SUBMIT
+	 * BIND SUBMIT EVENT
 	 * ============================================================
+	 * Fungsi:
+	 * - mengikat submit form
+	 * - menggunakan event namespace agar aman di SPA
+	 * - mencegah double binding
 	 */
 	bindEvents() {
-		$(document).off("submit", this.formSelector);
-		$(document).on("submit", this.formSelector, (e) => {
+		// ============================================
+		// HAPUS EVENT LAMA DENGAN NAMESPACE
+		// ============================================
+		// penting agar event lama di SPA dibersihkan
+		$(document).off("submit.formEngine");
+
+		// ============================================
+		// PASANG EVENT BARU
+		// ============================================
+		$(document).on("submit.formEngine", this.formSelector, (e) => {
+			// cegah submit HTML default
 			e.preventDefault();
 
+			// jalankan submit engine
 			this.submit();
 		});
 	}
@@ -207,8 +221,13 @@ class FormEngine {
 	 * ============================================================
 	 * RENDER FORM KE TARGET
 	 * ============================================================
+	 * Fungsi:
+	 * - membuat HTML form dari UIConfig
+	 * - menginisialisasi komponen UI
+	 * - memanggil init() otomatis jika instance tersedia
 	 */
 	static render(target, elements = [], instance = null, layout = {}) {
+		// mapping jumlah kolom grid
 		const columnMap = {
 			1: "one",
 			2: "two",
@@ -216,62 +235,103 @@ class FormEngine {
 			4: "four",
 		};
 
+		// ambil jumlah kolom dari layout
 		const columns = layout.columns || 1;
+
+		// tentukan class grid
 		const columnClass = columnMap[columns] || "one";
 
+		// html awal grid
 		let html = `
-    <div class="ui ${columnClass} column grid">
-`;
+	<div class="ui ${columnClass} column grid">
+	`;
 
+		// loop setiap element UIConfig
 		elements.forEach((el) => {
-			// 🔥 JANGAN bungkus alert/progress/divider
+			// element khusus tidak dibungkus kolom
 			if (["alert", "progress", "divider"].includes(el.tag)) {
 				html += `
-        <div class="16 wide column">
-            ${this.element(el)}
-        </div>
-    `;
+			<div class="16 wide column">
+				${this.element(el)}
+			</div>
+			`;
+
 				return;
 			}
 
+			// jika element punya width
 			const widthClass = el.prop?.width
 				? `${el.prop.width} wide column`
 				: "column";
 
 			html += `
-        <div class="${widthClass}">
-            ${this.element(el)}
-        </div>
-    `;
+		<div class="${widthClass}">
+			${this.element(el)}
+		</div>
+		`;
 		});
 
-		html += `</div><div class="ui error message"></div>`;
+		// tutup grid + error message fomantic
+		html += `
+	</div>
+	<div class="ui error message"></div>
+	`;
 
+		// render ke DOM
 		$(target).html(html);
 
+		// init dropdown fomantic
 		$(target).find(".ui.dropdown").dropdown();
-		// 🔥 APPLY DEFAULT VALUE
+
+		/**
+		 * =====================================================
+		 * APPLY DEFAULT VALUE
+		 * =====================================================
+		 */
 		elements.forEach((el) => {
-			if (el.prop?.default) {
-				const field = $(target).find(`[name="${el.prop.name}"]`);
-				if (field.closest(".ui.dropdown").length) {
-					field
-						.closest(".ui.dropdown")
-						.dropdown("set selected", el.prop.default);
-				} else {
-					field.val(el.prop.default);
-				}
+			if (!el.prop?.default) return;
+
+			const field = $(target).find(`[name="${el.prop.name}"]`);
+
+			// jika dropdown
+			if (field.closest(".ui.dropdown").length) {
+				field.closest(".ui.dropdown").dropdown("set selected", el.prop.default);
+			} else {
+				field.val(el.prop.default);
 			}
 		});
+
+		// init checkbox fomantic
 		$(target).find(".ui.checkbox").checkbox();
 
-		// init calendar per form
+		/**
+		 * =====================================================
+		 * INIT CALENDAR
+		 * =====================================================
+		 */
 		if (instance) {
 			instance.initCalendars(target);
 		}
-		// 🔥 WAJIB INI
+
+		/**
+		 * =====================================================
+		 * RANGE CALENDAR
+		 * =====================================================
+		 */
 		const rangeElements = elements.filter((e) => e.tag === "rangeCalendar");
+
 		UIComponents.initRange(rangeElements);
+
+		/**
+		 * =====================================================
+		 * GLOBAL INIT FORM ENGINE
+		 * =====================================================
+		 * Guard penting agar init tidak dipanggil dua kali
+		 * karena flyout-controller juga bisa memanggil init()
+		 */
+		if (instance && !instance.isInitialized) {
+			instance.init();
+		}
 	}
 
 	/**
@@ -508,16 +568,28 @@ class FormEngine {
 	/**
 
 	/**
-	 * ============================================================
-	 * LOAD SEMUA DROPDOWN YANG PUNYA data-source
-	 * ============================================================
-	 */
+ * ============================================================
+ * LOAD SEMUA DROPDOWN YANG PUNYA data-source
+ * ============================================================
+ * Fungsi:
+ * - mengambil data dropdown dari server
+ * - hanya dijalankan sekali per dropdown
+ * - mencegah AJAX dipanggil berulang di SPA
+ */
 	loadDropdownSources() {
 		console.log("LOAD DROPDOWN START");
+
 		const self = this;
 
+		// cari semua dropdown dengan data-source
 		$(`${this.formSelector} .ui.dropdown[data-source]`).each(function () {
 			const $dropdown = $(this);
+
+			// jika dropdown sudah pernah di-load
+			if ($dropdown.data("loaded")) {
+				return;
+			}
+
 			const source = $dropdown.data("source");
 
 			if (!source) return;
@@ -533,17 +605,22 @@ class FormEngine {
 					if (!res.success || !res.data) return;
 
 					const $menu = $dropdown.find(".menu");
+
 					$menu.empty();
 
 					res.data.forEach((item) => {
 						$menu.append(`
-						<div class="item" data-value="${item.id}">
-							${item.uraian}
-						</div>
+					<div class="item" data-value="${item.id}">
+						${item.uraian}
+					</div>
 					`);
 					});
 
+					// refresh dropdown UI
 					$dropdown.dropdown("refresh");
+
+					// tandai sudah load
+					$dropdown.data("loaded", true);
 				},
 			});
 		});

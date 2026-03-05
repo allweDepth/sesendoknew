@@ -361,29 +361,52 @@ class TableManager {
 			EVENT BINDING
 		===================================================== */
 	bindEvents() {
-		$(document).off("click.tablePagination");
-		$(document).on(
-			"click.tablePagination",
-			`${this.pagination} [data-page]`,
-			(e) => {
-				const page = parseInt($(e.currentTarget).data("page"));
-				if (!page || page === this.currentPage) return;
-				this.changePage(page);
-			},
-		);
+		// =====================================================
+		// PAGINATION EVENT
+		// =====================================================
 
-		$(document).off("click.tableAction");
-		$(document).on("click.tableAction", `${this.tbody} [data-action]`, (e) => {
+		const paginationEvent = `click.tablePagination.${this.state.tbl}`;
+
+		$(document).off(paginationEvent);
+
+		$(document).on(paginationEvent, `${this.pagination} [data-page]`, (e) => {
+			const page = parseInt($(e.currentTarget).data("page"));
+
+			if (!page || page === this.currentPage) return;
+
+			this.changePage(page);
+		});
+
+		// =====================================================
+		// TABLE ACTION EVENT
+		// =====================================================
+
+		const actionEvent = `click.tableAction.${this.state.tbl}`;
+
+		$(document).off(actionEvent);
+
+		$(document).on(actionEvent, `${this.tbody} [data-action]`, (e) => {
 			const action = $(e.currentTarget).data("action");
+
 			const id = $(e.currentTarget).closest("tr").data("id");
+
 			this.handleAction(action, id);
 		});
 
-		$(document).off("keypress.tableSearch");
-		$(document).on("keypress.tableSearch", "#cari_data", (e) => {
+		// =====================================================
+		// SEARCH EVENT
+		// =====================================================
+
+		const searchEvent = `keypress.tableSearch.${this.state.tbl}`;
+
+		$(document).off(searchEvent);
+
+		$(document).on(searchEvent, "#cari_data", (e) => {
 			if (e.which === 13) {
 				this.searchQuery = $(e.currentTarget).val();
+
 				this.currentPage = 1;
+
 				this.fetchData();
 			}
 		});
@@ -436,7 +459,7 @@ class TableManager {
 		// buka sidebar kanan
 		$(".sidebarkanan").sidebar("show");
 	}
-	
+
 	/* =====================================================
 			DELETE ROW (WITH CONFIRMATION)
 		===================================================== */
@@ -477,11 +500,14 @@ class TableManager {
 			Membersihkan event dan DOM
 		===================================================== */
 	destroy() {
-		$(document).off("click.tablePagination");
-		$(document).off("click.tableAction");
-		$(document).off("keypress.tableSearch");
+		$(document).off(`click.tablePagination.${this.state.tbl}`);
+
+		$(document).off(`click.tableAction.${this.state.tbl}`);
+
+		$(document).off(`keypress.tableSearch.${this.state.tbl}`);
 
 		$(this.tbody).empty();
+
 		$(this.pagination).empty();
 	}
 	/* =====================================================
