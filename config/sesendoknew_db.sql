@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 05 Mar 2026 pada 22.37
+-- Waktu pembuatan: 06 Mar 2026 pada 00.34
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -4367,6 +4367,81 @@ INSERT INTO `akun_neo` (`id`, `akun`, `kelompok`, `jenis_akun`, `objek`, `rincia
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `anggaran_copy_log`
+--
+
+CREATE TABLE `anggaran_copy_log` (
+  `id` bigint(20) NOT NULL,
+  `from_tahap` varchar(20) DEFAULT NULL,
+  `to_tahap` varchar(20) DEFAULT NULL,
+  `tahun` year(4) DEFAULT NULL,
+  `jumlah_data` int(11) DEFAULT NULL,
+  `username` varchar(100) DEFAULT NULL,
+  `tgl_copy` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `anggaran_perubahan_template`
+--
+
+CREATE TABLE `anggaran_perubahan_template` (
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `tahun` year(4) DEFAULT NULL,
+  `kd_sub_keg` varchar(50) DEFAULT NULL,
+  `kd_akun` varchar(50) DEFAULT NULL,
+  `kel_rek` varchar(50) DEFAULT NULL,
+  `objek_belanja` varchar(100) DEFAULT NULL,
+  `uraian` text DEFAULT NULL,
+  `jenis_kelompok` varchar(50) DEFAULT NULL,
+  `kelompok` varchar(100) DEFAULT NULL,
+  `jenis_standar_harga_awal` varchar(20) DEFAULT NULL,
+  `id_standar_harga_awal` bigint(20) DEFAULT NULL,
+  `komponen_awal` text DEFAULT NULL,
+  `spesifikasi_awal` text DEFAULT NULL,
+  `tkdn_awal` decimal(10,2) DEFAULT NULL,
+  `pajak_awal` decimal(10,2) DEFAULT NULL,
+  `harga_satuan_awal` decimal(20,4) DEFAULT NULL,
+  `volume_awal` decimal(20,4) DEFAULT NULL,
+  `jumlah_awal` decimal(20,4) DEFAULT NULL,
+  `jenis_standar_harga` varchar(20) DEFAULT NULL,
+  `id_standar_harga` bigint(20) DEFAULT NULL,
+  `komponen` text DEFAULT NULL,
+  `spesifikasi` text DEFAULT NULL,
+  `tkdn` decimal(10,2) DEFAULT NULL,
+  `pajak` decimal(10,2) DEFAULT NULL,
+  `harga_satuan` decimal(20,4) DEFAULT NULL,
+  `vol_1` decimal(20,4) DEFAULT NULL,
+  `vol_2` decimal(20,4) DEFAULT NULL,
+  `vol_3` decimal(20,4) DEFAULT NULL,
+  `vol_4` decimal(20,4) DEFAULT NULL,
+  `vol_5` decimal(20,4) DEFAULT NULL,
+  `sat_1` varchar(20) DEFAULT NULL,
+  `sat_2` varchar(20) DEFAULT NULL,
+  `sat_3` varchar(20) DEFAULT NULL,
+  `sat_4` varchar(20) DEFAULT NULL,
+  `sat_5` varchar(20) DEFAULT NULL,
+  `volume` decimal(20,4) DEFAULT NULL,
+  `jumlah` decimal(20,4) DEFAULT NULL,
+  `sumber_dana_id` int(11) DEFAULT NULL,
+  `status_perubahan` enum('awal','ubah','tambah','hapus') DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `disable` tinyint(4) DEFAULT 0,
+  `kunci` tinyint(4) DEFAULT 0,
+  `setujui` tinyint(4) DEFAULT 0,
+  `is_deleted` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `anggaran_program_renstra_neo`
 --
 
@@ -4382,6 +4457,55 @@ CREATE TABLE `anggaran_program_renstra_neo` (
   `username_insert` varchar(100) NOT NULL,
   `username_update` varchar(100) DEFAULT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `anggaran_template`
+--
+
+CREATE TABLE `anggaran_template` (
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `tahun` year(4) DEFAULT NULL,
+  `kd_sub_keg` varchar(50) DEFAULT NULL,
+  `kd_akun` varchar(50) DEFAULT NULL,
+  `kel_rek` varchar(50) DEFAULT NULL,
+  `objek_belanja` varchar(100) DEFAULT NULL,
+  `uraian` text DEFAULT NULL,
+  `jenis_kelompok` varchar(50) DEFAULT NULL,
+  `kelompok` varchar(100) DEFAULT NULL,
+  `jenis_standar_harga` varchar(20) DEFAULT NULL,
+  `id_standar_harga` bigint(20) DEFAULT NULL,
+  `komponen` text DEFAULT NULL,
+  `spesifikasi` text DEFAULT NULL,
+  `tkdn` decimal(10,2) DEFAULT NULL,
+  `pajak` decimal(10,2) DEFAULT NULL,
+  `harga_satuan` decimal(20,4) DEFAULT NULL,
+  `vol_1` decimal(20,4) DEFAULT NULL,
+  `vol_2` decimal(20,4) DEFAULT NULL,
+  `vol_3` decimal(20,4) DEFAULT NULL,
+  `vol_4` decimal(20,4) DEFAULT NULL,
+  `vol_5` decimal(20,4) DEFAULT NULL,
+  `sat_1` varchar(20) DEFAULT NULL,
+  `sat_2` varchar(20) DEFAULT NULL,
+  `sat_3` varchar(20) DEFAULT NULL,
+  `sat_4` varchar(20) DEFAULT NULL,
+  `sat_5` varchar(20) DEFAULT NULL,
+  `volume` decimal(20,4) DEFAULT NULL,
+  `jumlah` decimal(20,4) DEFAULT NULL,
+  `sumber_dana_id` int(11) DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `disable` tinyint(4) DEFAULT 0,
+  `kunci` tinyint(4) DEFAULT 0,
+  `setujui` tinyint(4) DEFAULT 0,
+  `is_deleted` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -8965,201 +9089,47 @@ INSERT INTO `db_asn_pemda_neo` (`id`, `kd_wilayah`, `kd_opd`, `nama`, `gelar_dep
 --
 
 CREATE TABLE `dpa_neo` (
-  `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
-  `tahun` year(4) NOT NULL,
-  `kd_sub_keg` varchar(50) NOT NULL,
-  `kd_akun` varchar(50) NOT NULL,
-  `kel_rek` varchar(50) NOT NULL,
-  `objek_belanja` varchar(255) NOT NULL,
-  `uraian` text NOT NULL,
-  `jenis_kelompok` varchar(255) NOT NULL,
-  `kelompok` varchar(255) NOT NULL,
-  `jenis_standar_harga` varchar(6) NOT NULL,
-  `id_standar_harga` int(11) DEFAULT NULL,
-  `komponen` varchar(400) DEFAULT NULL,
-  `spesifikasi` varchar(400) DEFAULT NULL,
-  `tkdn` decimal(36,12) DEFAULT NULL,
-  `pajak` tinyint(1) DEFAULT NULL,
-  `harga_satuan` decimal(36,12) NOT NULL,
-  `vol_1` decimal(36,12) NOT NULL,
-  `vol_2` decimal(36,12) DEFAULT NULL,
-  `vol_3` decimal(36,12) DEFAULT NULL,
-  `vol_4` decimal(36,12) DEFAULT NULL,
-  `vol_5` decimal(36,12) DEFAULT NULL,
-  `sat_1` varchar(50) NOT NULL,
-  `sat_2` varchar(50) DEFAULT NULL,
-  `sat_3` varchar(50) DEFAULT NULL,
-  `sat_4` varchar(50) DEFAULT NULL,
-  `sat_5` varchar(50) DEFAULT NULL,
-  `volume` decimal(36,12) DEFAULT NULL,
-  `jumlah` decimal(36,12) NOT NULL,
-  `sumber_dana` varchar(255) DEFAULT NULL,
-  `keterangan` varchar(400) DEFAULT NULL,
-  `disable` tinyint(1) NOT NULL,
-  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
-  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `username_insert` varchar(100) NOT NULL,
-  `username_update` varchar(100) DEFAULT NULL,
-  `kunci` tinyint(1) DEFAULT 0,
-  `setujui` tinyint(1) DEFAULT 0,
-  `id_renja` int(11) DEFAULT NULL,
-  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
-
---
--- Dumping data untuk tabel `dpa_neo`
---
-
-INSERT INTO `dpa_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana`, `keterangan`, `disable`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`, `kunci`, `setujui`, `id_renja`, `is_deleted`) VALUES
-(1, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2024-04-11 15:41:05', '2024-04-11 15:41:05', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(2, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:05', '2024-04-11 15:41:05', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(3, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4182000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(4, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4182000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(5, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(6, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(7, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(8, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '', 'sub_keg', 'barang_jasa_modal', 'Normalisasi/Restorasi Sungai', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(9, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01', '', 'keg', 'barang_jasa_modal', 'Pengelolaan SDA dan Bangunan Pengaman Pantai pada Wilayah Sungai (WS) dalam 1 (Satu) Daerah Kabupaten/Kota', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(10, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02', '', 'prog', 'barang_jasa_modal', 'PROGRAM PENGELOLAAN SUMBER DAYA AIR (SDA)', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(11, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3', '', 'bidang', 'barang_jasa_modal', 'URUSAN PEMERINTAHAN BIDANG PEKERJAAN UMUMDAN PENATAAN RUANG', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(12, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1', '', 'urusan', 'barang_jasa_modal', 'URUSAN PEMERINTAHAN WAJIB YANG BERKAITAN DENGAN PELAYANAN DASAR', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(13, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2024-04-11 15:41:05', '2024-04-11 15:41:05', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(14, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2024-04-11 15:41:05', '2024-04-11 15:41:05', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(15, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2024-04-11 15:41:05', '2024-04-11 15:41:05', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(16, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2024-04-11 15:41:05', '2024-04-11 15:41:05', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(17, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2024-04-11 15:41:05', '2024-04-11 15:41:05', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(18, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:05', '2024-04-11 15:41:05', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(19, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0026', 'uraian', 'barang_jasa_modal', 'Jilid', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2419, 'Jilid Spiral Biasa', 'Tebal', 0.000000000000, 0, 11100.000000000000, 10.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', '', '', '', NULL, 10.000000000000, 111000.000000000000, '1.2.1.01.02', '', 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(20, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0026', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Bahan Cetak', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 111000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(21, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(22, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(23, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(24, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(25, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(26, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(27, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(28, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2024-04-11 15:41:06', '2024-04-11 15:41:06', 'nabiila', 'nabiila', 0, 0, NULL, 0),
-(29, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 79, 0),
-(30, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 80, 0),
-(31, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 81, 0),
-(32, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 82, 0),
-(33, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 83, 0),
-(34, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 84, 0),
-(35, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 85, 0),
-(36, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '', 'sub_keg', 'barang_jasa_modal', 'Normalisasi/Restorasi Sungai', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 86, 0),
-(37, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01', '', 'keg', 'barang_jasa_modal', 'Pengelolaan SDA dan Bangunan Pengaman Pantai pada Wilayah Sungai (WS) dalam 1 (Satu) Daerah Kabupaten/Kota', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 14613000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 87, 0),
-(38, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02', '', 'prog', 'barang_jasa_modal', 'PROGRAM PENGELOLAAN SUMBER DAYA AIR (SDA)', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 14613000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 88, 0),
-(39, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3', '', 'bidang', 'barang_jasa_modal', 'URUSAN PEMERINTAHAN BIDANG PEKERJAAN UMUMDAN PENATAAN RUANG', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 24355000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 89, 0),
-(40, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1', '', 'urusan', 'barang_jasa_modal', 'URUSAN PEMERINTAHAN WAJIB YANG BERKAITAN DENGAN PELAYANAN DASAR', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 24355000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 90, 0),
-(41, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 91, 0),
-(42, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 92, 0),
-(43, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 93, 0),
-(44, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 94, 0),
-(45, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 95, 0),
-(46, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 96, 0),
-(47, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 97, 0),
-(48, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 98, 0),
-(49, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 99, 0),
-(50, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 100, 0),
-(51, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 101, 0),
-(52, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 102, 0),
-(53, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 103, 0),
-(54, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 104, 0),
-(55, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 105, 0),
-(56, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 106, 0),
-(57, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 107, 0),
-(58, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 108, 0),
-(59, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 109, 0),
-(60, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 110, 0),
-(61, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 111, 0),
-(62, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '', 'sub_keg', 'barang_jasa_modal', 'Pembangunan Bangunan Perkuatan Tebing', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 112, 0),
-(63, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 113, 0),
-(64, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 114, 0),
-(65, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 115, 0),
-(66, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 116, 0),
-(67, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 117, 0),
-(68, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 118, 0),
-(69, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 119, 0),
-(70, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 120, 0),
-(71, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 121, 0),
-(72, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 122, 0),
-(73, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 123, 0),
-(74, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 124, 0),
-(75, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 125, 0),
-(76, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 126, 0),
-(77, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 127, 0),
-(78, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 128, 0),
-(79, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 129, 0),
-(80, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 130, 0),
-(81, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 131, 0),
-(82, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 132, 0),
-(83, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 133, 0),
-(84, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '', 'sub_keg', 'barang_jasa_modal', 'Pembangunan Seawall dan Bangunan Pengaman Pantai Lainnya', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 134, 0),
-(85, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 135, 0),
-(86, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 136, 0),
-(87, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 137, 0),
-(88, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 138, 0),
-(89, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 139, 0),
-(90, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 140, 0),
-(91, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 141, 0),
-(92, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 142, 0),
-(93, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 143, 0),
-(94, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 144, 0),
-(95, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 145, 0),
-(96, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 146, 0),
-(97, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 147, 0),
-(98, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 148, 0),
-(99, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 149, 0),
-(100, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 150, 0),
-(101, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 151, 0),
-(102, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 152, 0),
-(103, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 153, 0),
-(104, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 154, 0),
-(105, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 155, 0),
-(106, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '', 'sub_keg', 'barang_jasa_modal', 'Pembangunan Jalan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 156, 0),
-(107, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01', '', 'keg', 'barang_jasa_modal', 'Penyelenggaraan Jalan Kabupaten/Kota', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 157, 0);
-INSERT INTO `dpa_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana`, `keterangan`, `disable`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`, `kunci`, `setujui`, `id_renja`, `is_deleted`) VALUES
-(108, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10', '', 'prog', 'barang_jasa_modal', 'PROGRAM PENYELENGGARAAN JALAN', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 158, 0),
-(109, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 159, 0),
-(110, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 160, 0),
-(111, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 161, 0),
-(112, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 162, 0),
-(113, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 163, 0),
-(114, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 164, 0),
-(115, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 165, 0),
-(116, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 166, 0),
-(117, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 167, 0),
-(118, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 168, 0),
-(119, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 169, 0),
-(120, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 170, 0),
-(121, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 171, 0),
-(122, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 172, 0),
-(123, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 173, 0),
-(124, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 174, 0),
-(125, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 175, 0),
-(126, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 176, 0),
-(127, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 177, 0),
-(128, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 178, 0),
-(129, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 179, 0),
-(130, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '', 'sub_keg', 'barang_jasa_modal', 'Operasi dan Pemeliharaan Sistem Penyediaan Air Minum (SPAM)', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 180, 0),
-(131, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01', '', 'keg', 'barang_jasa_modal', 'Pengelolaan dan Pengembangan Sistem Penyediaan Air Minum (SPAM) di Daerah Kabupaten/Kota', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 181, 0),
-(132, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03', '', 'prog', 'barang_jasa_modal', 'PROGRAM PENGELOLAAN DAN PENGEMBANGAN SISTEM PENYEDIAAN AIR MINUM', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 182, 0),
-(133, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 183, 0),
-(134, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 184, 0),
-(135, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 185, 0),
-(136, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 186, 0),
-(137, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 187, 0),
-(138, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 188, 0),
-(139, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 189, 0),
-(140, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 190, 0),
-(141, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 191, 0),
-(142, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 192, 0),
-(143, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 193, 0),
-(144, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 194, 0),
-(145, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 195, 0),
-(146, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 196, 0);
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `tahun` year(4) DEFAULT NULL,
+  `kd_sub_keg` varchar(50) DEFAULT NULL,
+  `kd_akun` varchar(50) DEFAULT NULL,
+  `kel_rek` varchar(50) DEFAULT NULL,
+  `objek_belanja` varchar(100) DEFAULT NULL,
+  `uraian` text DEFAULT NULL,
+  `jenis_kelompok` varchar(50) DEFAULT NULL,
+  `kelompok` varchar(100) DEFAULT NULL,
+  `jenis_standar_harga` varchar(20) DEFAULT NULL,
+  `id_standar_harga` bigint(20) DEFAULT NULL,
+  `komponen` text DEFAULT NULL,
+  `spesifikasi` text DEFAULT NULL,
+  `tkdn` decimal(10,2) DEFAULT NULL,
+  `pajak` decimal(10,2) DEFAULT NULL,
+  `harga_satuan` decimal(20,4) DEFAULT NULL,
+  `vol_1` decimal(20,4) DEFAULT NULL,
+  `vol_2` decimal(20,4) DEFAULT NULL,
+  `vol_3` decimal(20,4) DEFAULT NULL,
+  `vol_4` decimal(20,4) DEFAULT NULL,
+  `vol_5` decimal(20,4) DEFAULT NULL,
+  `sat_1` varchar(20) DEFAULT NULL,
+  `sat_2` varchar(20) DEFAULT NULL,
+  `sat_3` varchar(20) DEFAULT NULL,
+  `sat_4` varchar(20) DEFAULT NULL,
+  `sat_5` varchar(20) DEFAULT NULL,
+  `volume` decimal(20,4) DEFAULT NULL,
+  `jumlah` decimal(20,4) DEFAULT NULL,
+  `sumber_dana_id` int(11) DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `disable` tinyint(4) DEFAULT 0,
+  `kunci` tinyint(4) DEFAULT 0,
+  `setujui` tinyint(4) DEFAULT 0,
+  `is_deleted` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -9168,62 +9138,99 @@ INSERT INTO `dpa_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_
 --
 
 CREATE TABLE `dppa_neo` (
-  `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
-  `tahun` year(4) NOT NULL,
-  `kd_sub_keg` varchar(50) NOT NULL,
-  `kd_akun` varchar(50) NOT NULL,
-  `kel_rek` varchar(50) NOT NULL,
-  `objek_belanja` varchar(255) NOT NULL,
-  `uraian` text NOT NULL,
-  `jenis_kelompok` varchar(255) NOT NULL,
-  `kelompok` varchar(255) NOT NULL,
-  `jenis_standar_harga` varchar(6) NOT NULL,
-  `id_standar_harga` int(11) DEFAULT NULL,
-  `komponen` varchar(400) DEFAULT NULL,
-  `spesifikasi` varchar(400) DEFAULT NULL,
-  `tkdn` decimal(36,12) DEFAULT NULL,
-  `pajak` tinyint(1) DEFAULT NULL,
-  `harga_satuan` decimal(36,12) NOT NULL,
-  `vol_1` decimal(36,12) NOT NULL,
-  `vol_2` decimal(36,12) DEFAULT NULL,
-  `vol_3` decimal(36,12) DEFAULT NULL,
-  `vol_4` decimal(36,12) DEFAULT NULL,
-  `vol_5` decimal(36,12) DEFAULT NULL,
-  `sat_1` varchar(50) NOT NULL,
-  `sat_2` varchar(50) DEFAULT NULL,
-  `sat_3` varchar(50) DEFAULT NULL,
-  `sat_4` varchar(50) DEFAULT NULL,
-  `sat_5` varchar(50) DEFAULT NULL,
-  `volume` decimal(36,12) DEFAULT NULL,
-  `jumlah` decimal(36,12) NOT NULL,
-  `sumber_dana` varchar(255) DEFAULT NULL,
-  `vol_1_p` decimal(36,12) DEFAULT NULL,
-  `vol_2_p` decimal(36,12) DEFAULT NULL,
-  `vol_3_p` decimal(36,12) DEFAULT NULL,
-  `vol_4_p` decimal(36,12) DEFAULT NULL,
-  `vol_5_p` decimal(36,12) DEFAULT NULL,
-  `sat_1_p` varchar(50) DEFAULT NULL,
-  `sat_2_p` varchar(50) DEFAULT NULL,
-  `sat_3_p` varchar(50) DEFAULT NULL,
-  `sat_4_p` varchar(50) DEFAULT NULL,
-  `sat_5_p` varchar(50) DEFAULT NULL,
-  `volume_p` decimal(36,12) DEFAULT NULL,
-  `jumlah_p` decimal(36,12) DEFAULT NULL,
-  `sumber_dana_p` varchar(255) DEFAULT NULL,
-  `keterangan` varchar(400) DEFAULT NULL,
-  `disable` tinyint(1) NOT NULL,
-  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
-  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `username_insert` varchar(100) NOT NULL,
-  `username_update` varchar(100) DEFAULT NULL,
-  `kunci` tinyint(1) DEFAULT 0,
-  `setujui` tinyint(1) DEFAULT 0,
-  `id_dpa` int(11) DEFAULT NULL,
-  `id_renja_p` int(11) DEFAULT NULL,
-  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `tahun` year(4) DEFAULT NULL,
+  `kd_sub_keg` varchar(50) DEFAULT NULL,
+  `kd_akun` varchar(50) DEFAULT NULL,
+  `kel_rek` varchar(50) DEFAULT NULL,
+  `objek_belanja` varchar(100) DEFAULT NULL,
+  `uraian` text DEFAULT NULL,
+  `jenis_kelompok` varchar(50) DEFAULT NULL,
+  `kelompok` varchar(100) DEFAULT NULL,
+  `jenis_standar_harga_awal` varchar(20) DEFAULT NULL,
+  `id_standar_harga_awal` bigint(20) DEFAULT NULL,
+  `komponen_awal` text DEFAULT NULL,
+  `spesifikasi_awal` text DEFAULT NULL,
+  `tkdn_awal` decimal(10,2) DEFAULT NULL,
+  `pajak_awal` decimal(10,2) DEFAULT NULL,
+  `harga_satuan_awal` decimal(20,4) DEFAULT NULL,
+  `volume_awal` decimal(20,4) DEFAULT NULL,
+  `jumlah_awal` decimal(20,4) DEFAULT NULL,
+  `jenis_standar_harga` varchar(20) DEFAULT NULL,
+  `id_standar_harga` bigint(20) DEFAULT NULL,
+  `komponen` text DEFAULT NULL,
+  `spesifikasi` text DEFAULT NULL,
+  `tkdn` decimal(10,2) DEFAULT NULL,
+  `pajak` decimal(10,2) DEFAULT NULL,
+  `harga_satuan` decimal(20,4) DEFAULT NULL,
+  `vol_1` decimal(20,4) DEFAULT NULL,
+  `vol_2` decimal(20,4) DEFAULT NULL,
+  `vol_3` decimal(20,4) DEFAULT NULL,
+  `vol_4` decimal(20,4) DEFAULT NULL,
+  `vol_5` decimal(20,4) DEFAULT NULL,
+  `sat_1` varchar(20) DEFAULT NULL,
+  `sat_2` varchar(20) DEFAULT NULL,
+  `sat_3` varchar(20) DEFAULT NULL,
+  `sat_4` varchar(20) DEFAULT NULL,
+  `sat_5` varchar(20) DEFAULT NULL,
+  `volume` decimal(20,4) DEFAULT NULL,
+  `jumlah` decimal(20,4) DEFAULT NULL,
+  `sumber_dana_id` int(11) DEFAULT NULL,
+  `status_perubahan` enum('awal','ubah','tambah','hapus') DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `disable` tinyint(4) DEFAULT 0,
+  `kunci` tinyint(4) DEFAULT 0,
+  `setujui` tinyint(4) DEFAULT 0,
+  `is_deleted` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `group_rekap_akun`
+--
+
+CREATE TABLE `group_rekap_akun` (
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `tahun` year(4) DEFAULT NULL,
+  `kd_sub_keg` varchar(50) DEFAULT NULL,
+  `kd_akun` varchar(50) DEFAULT NULL,
+  `total_anggaran` decimal(20,2) DEFAULT NULL,
+  `tahap` enum('renja','rka','dpa','renja_p','rka_p','dppa') DEFAULT NULL,
+  `disable` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `group_sub_kegiatan`
+--
+
+CREATE TABLE `group_sub_kegiatan` (
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `tahun` year(4) DEFAULT NULL,
+  `kd_sub_keg` varchar(50) DEFAULT NULL,
+  `nama_sub_keg` text DEFAULT NULL,
+  `tahap` enum('renja','renja_p','rka','rka_p','dpa','dppa') DEFAULT NULL,
+  `total_anggaran` decimal(20,2) DEFAULT NULL,
+  `disable` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -15918,250 +15925,47 @@ INSERT INTO `rekanan_neo` (`id`, `kd_wilayah`, `nama_perusahaan`, `alamat`, `ema
 --
 
 CREATE TABLE `renja_neo` (
-  `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
-  `tahun` year(4) NOT NULL,
-  `kd_sub_keg` varchar(50) NOT NULL,
-  `kd_akun` varchar(50) NOT NULL,
-  `kel_rek` varchar(50) NOT NULL,
-  `objek_belanja` varchar(255) NOT NULL,
-  `uraian` text NOT NULL,
-  `jenis_kelompok` varchar(255) NOT NULL,
-  `kelompok` varchar(255) NOT NULL,
-  `jenis_standar_harga` varchar(6) NOT NULL,
-  `id_standar_harga` int(11) DEFAULT NULL,
-  `komponen` varchar(400) DEFAULT NULL,
-  `spesifikasi` varchar(400) DEFAULT NULL,
-  `tkdn` decimal(36,12) DEFAULT NULL,
-  `pajak` tinyint(1) DEFAULT NULL,
-  `harga_satuan` decimal(36,12) NOT NULL,
-  `vol_1` decimal(36,12) NOT NULL,
-  `vol_2` decimal(36,12) DEFAULT NULL,
-  `vol_3` decimal(36,12) DEFAULT NULL,
-  `vol_4` decimal(36,12) DEFAULT NULL,
-  `vol_5` decimal(36,12) DEFAULT NULL,
-  `sat_1` varchar(50) NOT NULL,
-  `sat_2` varchar(50) DEFAULT NULL,
-  `sat_3` varchar(50) DEFAULT NULL,
-  `sat_4` varchar(50) DEFAULT NULL,
-  `sat_5` varchar(50) DEFAULT NULL,
-  `volume` decimal(36,12) DEFAULT NULL,
-  `jumlah` decimal(36,12) NOT NULL,
-  `sumber_dana` varchar(255) DEFAULT NULL,
-  `keterangan` varchar(400) DEFAULT NULL,
-  `disable` tinyint(1) NOT NULL,
-  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
-  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `username_insert` varchar(100) NOT NULL,
-  `username_update` varchar(100) DEFAULT NULL,
-  `kunci` tinyint(1) DEFAULT 0,
-  `setujui` tinyint(1) DEFAULT 0,
-  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
-
---
--- Dumping data untuk tabel `renja_neo`
---
-
-INSERT INTO `renja_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana`, `keterangan`, `disable`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`, `kunci`, `setujui`, `is_deleted`) VALUES
-(1, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(2, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '', 'sub_keg', 'barang_jasa_modal', 'Normalisasi/Restorasi Sungai', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(3, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01', '', 'keg', 'barang_jasa_modal', 'Pengelolaan SDA dan Bangunan Pengaman Pantai pada Wilayah Sungai (WS) dalam 1 (Satu) Daerah Kabupaten/Kota', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 9964000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(4, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02', '', 'prog', 'barang_jasa_modal', 'PROGRAM PENGELOLAAN SUMBER DAYA AIR (SDA)', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 9964000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(5, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3', '', 'bidang', 'barang_jasa_modal', 'URUSAN PEMERINTAHAN BIDANG PEKERJAAN UMUMDAN PENATAAN RUANG', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 9964000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(6, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1', '', 'urusan', 'barang_jasa_modal', 'URUSAN PEMERINTAHAN WAJIB YANG BERKAITAN DENGAN PELAYANAN DASAR', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 9964000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(7, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(8, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(9, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(10, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(11, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(12, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0026', 'uraian', 'barang_jasa_modal', 'Jilid', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2419, 'Jilid Spiral Biasa', 'Tebal', 0.000000000000, 0, 11100.000000000000, 10.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', '', '', '', NULL, 10.000000000000, 111000.000000000000, '1.2.1.01.02', '', 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(13, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(14, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(15, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(16, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(17, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(18, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4182000.000000000000, NULL, NULL, 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(19, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4182000.000000000000, NULL, NULL, 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(20, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(21, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(22, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(23, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(24, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0026', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Bahan Cetak', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 111000.000000000000, NULL, NULL, 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(25, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(26, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(27, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(28, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0093', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2024-04-06 17:34:34', '2024-04-06 17:34:34', 'nabiila', 'nabiila', 0, 0, 0),
-(29, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(30, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(31, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4182000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(32, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4182000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(33, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(34, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(35, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(36, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '', 'sub_keg', 'barang_jasa_modal', 'Pembangunan Bangunan Perkuatan Tebing', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4982000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(37, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(38, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(39, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(40, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(41, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(42, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(43, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01.0026', 'uraian', 'barang_jasa_modal', 'Jilid', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2419, 'Jilid Spiral Biasa', 'Tebal', 0.000000000000, 0, 11100.000000000000, 10.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', '', '', '', NULL, 10.000000000000, 111000.000000000000, '1.2.1.01.02', '', 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(44, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01.0026', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Bahan Cetak', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 111000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(45, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(46, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(47, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(48, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(49, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(50, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(51, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(52, '76.01', '1.03.0.00.0.00.01.0000', '2024', '1.3.02.2.01.0109', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2024-04-25 16:26:27', '2024-04-25 16:26:27', 'nabiila', 'nabiila', 0, 0, 0),
-(53, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(54, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(55, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(56, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(57, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(58, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(59, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(60, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '', 'sub_keg', 'barang_jasa_modal', 'Normalisasi/Restorasi Sungai', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(61, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01', '', 'keg', 'barang_jasa_modal', 'Pengelolaan SDA dan Bangunan Pengaman Pantai pada Wilayah Sungai (WS) dalam 1 (Satu) Daerah Kabupaten/Kota', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(62, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02', '', 'prog', 'barang_jasa_modal', 'PROGRAM PENGELOLAAN SUMBER DAYA AIR (SDA)', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(63, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3', '', 'bidang', 'barang_jasa_modal', 'URUSAN PEMERINTAHAN BIDANG PEKERJAAN UMUMDAN PENATAAN RUANG', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(64, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1', '', 'urusan', 'barang_jasa_modal', 'URUSAN PEMERINTAHAN WAJIB YANG BERKAITAN DENGAN PELAYANAN DASAR', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(65, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(66, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(67, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(68, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(69, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(70, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(71, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(72, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(73, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(74, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(75, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(76, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(77, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(78, '76.01', '1.03.0.00.0.00.01.0000', '2025', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2025-10-20 09:09:48', '2025-10-20 09:09:48', 'nabiila', 'nabiila', 0, 0, 0),
-(79, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(80, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(81, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(82, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(83, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(84, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(85, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(86, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '', 'sub_keg', 'barang_jasa_modal', 'Normalisasi/Restorasi Sungai', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(87, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01', '', 'keg', 'barang_jasa_modal', 'Pengelolaan SDA dan Bangunan Pengaman Pantai pada Wilayah Sungai (WS) dalam 1 (Satu) Daerah Kabupaten/Kota', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 14613000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(88, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02', '', 'prog', 'barang_jasa_modal', 'PROGRAM PENGELOLAAN SUMBER DAYA AIR (SDA)', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 14613000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(89, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3', '', 'bidang', 'barang_jasa_modal', 'URUSAN PEMERINTAHAN BIDANG PEKERJAAN UMUMDAN PENATAAN RUANG', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 24355000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(90, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1', '', 'urusan', 'barang_jasa_modal', 'URUSAN PEMERINTAHAN WAJIB YANG BERKAITAN DENGAN PELAYANAN DASAR', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 24355000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(91, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(92, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(93, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(94, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(95, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(96, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(97, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(98, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(99, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(100, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(101, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(102, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(103, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(104, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0093', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:30:32', '2026-01-26 04:30:32', 'nabiila', 'nabiila', 0, 0, 0),
-(105, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(106, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(107, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(108, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0);
-INSERT INTO `renja_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana`, `keterangan`, `disable`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`, `kunci`, `setujui`, `is_deleted`) VALUES
-(109, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(110, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(111, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(112, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '', 'sub_keg', 'barang_jasa_modal', 'Pembangunan Bangunan Perkuatan Tebing', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(113, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(114, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(115, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(116, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(117, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(118, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(119, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(120, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(121, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(122, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(123, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(124, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(125, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(126, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0109', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:37:51', '2026-01-26 04:37:51', 'nabiila', 'nabiila', 0, 0, 0),
-(127, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(128, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(129, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(130, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(131, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(132, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(133, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(134, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '', 'sub_keg', 'barang_jasa_modal', 'Pembangunan Seawall dan Bangunan Pengaman Pantai Lainnya', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(135, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(136, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(137, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(138, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(139, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(140, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(141, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(142, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(143, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(144, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(145, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(146, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(147, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(148, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.02.2.01.0117', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:38:13', '2026-01-26 04:38:13', 'nabiila', 'nabiila', 0, 0, 0),
-(149, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(150, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(151, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(152, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(153, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(154, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(155, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(156, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '', 'sub_keg', 'barang_jasa_modal', 'Pembangunan Jalan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(157, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01', '', 'keg', 'barang_jasa_modal', 'Penyelenggaraan Jalan Kabupaten/Kota', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(158, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10', '', 'prog', 'barang_jasa_modal', 'PROGRAM PENYELENGGARAAN JALAN', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(159, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(160, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(161, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(162, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(163, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(164, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(165, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(166, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(167, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(168, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(169, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(170, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(171, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(172, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.0032', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:39:10', '2026-01-26 04:39:10', 'nabiila', 'nabiila', 0, 0, 0),
-(173, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1930, 'BALLPOINT', 'Ballpoint', 0.000000000000, 0, 5600.000000000000, 12.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 12.000000000000, 67200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(174, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0024', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor-Alat Tulis Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 1351000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(175, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Barang Pakai Habis', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(176, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01', 'objek', 'barang_jasa_modal', 'Belanja Barang', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4071000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(177, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02', 'jenis', 'barang_jasa_modal', 'Belanja Barang dan Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(178, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1', 'kelompok', 'barang_jasa_modal', 'BELANJA OPERASI', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(179, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5', 'akun', 'barang_jasa_modal', 'BELANJA DAERAH', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(180, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '', 'sub_keg', 'barang_jasa_modal', 'Operasi dan Pemeliharaan Sistem Penyediaan Air Minum (SPAM)', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(181, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01', '', 'keg', 'barang_jasa_modal', 'Pengelolaan dan Pengembangan Sistem Penyediaan Air Minum (SPAM) di Daerah Kabupaten/Kota', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(182, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03', '', 'prog', 'barang_jasa_modal', 'PROGRAM PENGELOLAAN DAN PENGEMBANGAN SISTEM PENYEDIAAN AIR MINUM', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 4871000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(183, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 2253, 'BINDER KLIPS', 'Binder Klips No. 260', 0.000000000000, 0, 27800.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Dos', '', '', '', NULL, 2.000000000000, 55600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(184, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1829, 'Kertas HVS', 'F4 75 GSM', 0.000000000000, 0, 72200.000000000000, 6.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Rim', '', '', '', NULL, 6.000000000000, 433200.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(185, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1967, 'MAP ORDNER / BINDER FILE', 'MAP ORDNER / BINDER FILE ORDNER', 0.000000000000, 0, 46700.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 2.000000000000, 93400.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(186, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0024', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Alat Tulis Kantor', 'ssh', 1900, 'TINTA PRINTER ORIGINAL', 'TINTA PRINTER ORIGINAL 663 Colour', 0.000000000000, 0, 175400.000000000000, 4.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Buah', '', '', '', NULL, 4.000000000000, 701600.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(187, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0025', 'uraian', 'barang_jasa_modal', 'Alat Tulis Kantor (ATK)', 'kelompok', 'Jilid dan Penggandaan', 'ssh', 2318, 'FOTO COPY HITAM PUTIH', 'Kertas HVS A4/F4 75 GSM', 0.000000000000, 0, 300.000000000000, 200.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'lembar', 'bulan', '', '', NULL, 400.000000000000, 120000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(188, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0025', 'sub_rincian', 'barang_jasa_modal', 'Belanja Alat/Bahan untuk Kegiatan Kantor- Kertas dan Cover', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 120000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(189, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 276, 'Nasi Kotak', 'Nasi Kotak', 0.000000000000, 0, 35000.000000000000, 40.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'Kotak', '', '', '', NULL, 40.000000000000, 1400000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(190, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0052', 'sub_rincian', 'barang_jasa_modal', 'Belanja Makanan dan Minuman Rapat', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 2600000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(191, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.01.01.0052', 'uraian', 'barang_jasa_modal', 'Penyusunan LK Akhir Tahun', 'kelompok', 'Makan Minum Kegiatan', 'sbu', 277, 'Snack', 'Snack', 0.000000000000, 0, 15000.000000000000, 40.000000000000, 2.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', 'Kotak', '', '', NULL, 80.000000000000, 1200000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(192, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 381, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Anggota / Administrator Non PNS', 0.000000000000, 0, 300000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 300000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(193, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.02.01.0004', 'sub_rincian', 'barang_jasa_modal', 'Honorarium Tim Pelaksana Kegiatan dan Sekretariat Tim Pelaksana Kegiatan', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(194, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.02.01', 'rincian_objek', 'barang_jasa_modal', 'Belanja Jasa Kantor', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(195, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.02', 'objek', 'barang_jasa_modal', 'Belanja Jasa', '', '', '', 0, NULL, NULL, NULL, NULL, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, '', NULL, NULL, NULL, NULL, NULL, 800000.000000000000, NULL, NULL, 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0),
-(196, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.03.2.01.0029', '5.1.02.02.01.0004', 'uraian', 'barang_jasa_modal', 'Honorarium', 'kelompok', 'Honorarium', 'sbu', 380, 'PENYUSUNAN DOKUMEN PERENCANAAN DAERAH', 'Operator', 0.000000000000, 0, 500000.000000000000, 1.000000000000, 0.000000000000, 0.000000000000, 0.000000000000, NULL, 'orang', '', '', '', NULL, 1.000000000000, 500000.000000000000, '1.2.1.01.02', '', 0, '2026-01-26 04:41:40', '2026-01-26 04:41:40', 'nabiila', 'nabiila', 0, 0, 0);
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `tahun` year(4) DEFAULT NULL,
+  `kd_sub_keg` varchar(50) DEFAULT NULL,
+  `kd_akun` varchar(50) DEFAULT NULL,
+  `kel_rek` varchar(50) DEFAULT NULL,
+  `objek_belanja` varchar(100) DEFAULT NULL,
+  `uraian` text DEFAULT NULL,
+  `jenis_kelompok` varchar(50) DEFAULT NULL,
+  `kelompok` varchar(100) DEFAULT NULL,
+  `jenis_standar_harga` varchar(20) DEFAULT NULL,
+  `id_standar_harga` bigint(20) DEFAULT NULL,
+  `komponen` text DEFAULT NULL,
+  `spesifikasi` text DEFAULT NULL,
+  `tkdn` decimal(10,2) DEFAULT NULL,
+  `pajak` decimal(10,2) DEFAULT NULL,
+  `harga_satuan` decimal(20,4) DEFAULT NULL,
+  `vol_1` decimal(20,4) DEFAULT NULL,
+  `vol_2` decimal(20,4) DEFAULT NULL,
+  `vol_3` decimal(20,4) DEFAULT NULL,
+  `vol_4` decimal(20,4) DEFAULT NULL,
+  `vol_5` decimal(20,4) DEFAULT NULL,
+  `sat_1` varchar(20) DEFAULT NULL,
+  `sat_2` varchar(20) DEFAULT NULL,
+  `sat_3` varchar(20) DEFAULT NULL,
+  `sat_4` varchar(20) DEFAULT NULL,
+  `sat_5` varchar(20) DEFAULT NULL,
+  `volume` decimal(20,4) DEFAULT NULL,
+  `jumlah` decimal(20,4) DEFAULT NULL,
+  `sumber_dana_id` int(11) DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `disable` tinyint(4) DEFAULT 0,
+  `kunci` tinyint(4) DEFAULT 0,
+  `setujui` tinyint(4) DEFAULT 0,
+  `is_deleted` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -16170,61 +15974,57 @@ INSERT INTO `renja_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `k
 --
 
 CREATE TABLE `renja_p_neo` (
-  `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
-  `tahun` year(4) NOT NULL,
-  `kd_sub_keg` varchar(50) NOT NULL,
-  `kd_akun` varchar(50) NOT NULL,
-  `kel_rek` varchar(50) NOT NULL,
-  `objek_belanja` varchar(255) NOT NULL,
-  `uraian` text NOT NULL,
-  `jenis_kelompok` varchar(255) NOT NULL,
-  `kelompok` varchar(255) NOT NULL,
-  `jenis_standar_harga` varchar(6) NOT NULL,
-  `id_standar_harga` int(11) DEFAULT NULL,
-  `komponen` varchar(400) DEFAULT NULL,
-  `spesifikasi` varchar(400) DEFAULT NULL,
-  `tkdn` decimal(36,12) DEFAULT NULL,
-  `pajak` tinyint(1) DEFAULT NULL,
-  `harga_satuan` decimal(36,12) NOT NULL,
-  `vol_1` decimal(36,12) NOT NULL,
-  `vol_2` decimal(36,12) DEFAULT NULL,
-  `vol_3` decimal(36,12) DEFAULT NULL,
-  `vol_4` decimal(36,12) DEFAULT NULL,
-  `vol_5` decimal(36,12) DEFAULT NULL,
-  `sat_1` varchar(50) NOT NULL,
-  `sat_2` varchar(50) DEFAULT NULL,
-  `sat_3` varchar(50) DEFAULT NULL,
-  `sat_4` varchar(50) DEFAULT NULL,
-  `sat_5` varchar(50) DEFAULT NULL,
-  `volume` decimal(36,12) DEFAULT NULL,
-  `jumlah` decimal(36,12) NOT NULL,
-  `sumber_dana` varchar(255) DEFAULT NULL,
-  `vol_1_p` decimal(36,12) DEFAULT NULL,
-  `vol_2_p` decimal(36,12) DEFAULT NULL,
-  `vol_3_p` decimal(36,12) DEFAULT NULL,
-  `vol_4_p` decimal(36,12) DEFAULT NULL,
-  `vol_5_p` decimal(36,12) DEFAULT NULL,
-  `sat_1_p` varchar(50) DEFAULT NULL,
-  `sat_2_p` varchar(50) DEFAULT NULL,
-  `sat_3_p` varchar(50) DEFAULT NULL,
-  `sat_4_p` varchar(50) DEFAULT NULL,
-  `sat_5_p` varchar(50) DEFAULT NULL,
-  `volume_p` decimal(36,12) DEFAULT NULL,
-  `jumlah_p` decimal(36,12) DEFAULT NULL,
-  `sumber_dana_p` varchar(255) DEFAULT NULL,
-  `keterangan` varchar(400) DEFAULT NULL,
-  `disable` tinyint(1) NOT NULL,
-  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
-  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `username_insert` varchar(100) NOT NULL,
-  `username_update` varchar(100) DEFAULT NULL,
-  `kunci` tinyint(1) DEFAULT 0,
-  `setujui` tinyint(1) DEFAULT 0,
-  `id_dpa` int(11) DEFAULT NULL,
-  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `tahun` year(4) DEFAULT NULL,
+  `kd_sub_keg` varchar(50) DEFAULT NULL,
+  `kd_akun` varchar(50) DEFAULT NULL,
+  `kel_rek` varchar(50) DEFAULT NULL,
+  `objek_belanja` varchar(100) DEFAULT NULL,
+  `uraian` text DEFAULT NULL,
+  `jenis_kelompok` varchar(50) DEFAULT NULL,
+  `kelompok` varchar(100) DEFAULT NULL,
+  `jenis_standar_harga_awal` varchar(20) DEFAULT NULL,
+  `id_standar_harga_awal` bigint(20) DEFAULT NULL,
+  `komponen_awal` text DEFAULT NULL,
+  `spesifikasi_awal` text DEFAULT NULL,
+  `tkdn_awal` decimal(10,2) DEFAULT NULL,
+  `pajak_awal` decimal(10,2) DEFAULT NULL,
+  `harga_satuan_awal` decimal(20,4) DEFAULT NULL,
+  `volume_awal` decimal(20,4) DEFAULT NULL,
+  `jumlah_awal` decimal(20,4) DEFAULT NULL,
+  `jenis_standar_harga` varchar(20) DEFAULT NULL,
+  `id_standar_harga` bigint(20) DEFAULT NULL,
+  `komponen` text DEFAULT NULL,
+  `spesifikasi` text DEFAULT NULL,
+  `tkdn` decimal(10,2) DEFAULT NULL,
+  `pajak` decimal(10,2) DEFAULT NULL,
+  `harga_satuan` decimal(20,4) DEFAULT NULL,
+  `vol_1` decimal(20,4) DEFAULT NULL,
+  `vol_2` decimal(20,4) DEFAULT NULL,
+  `vol_3` decimal(20,4) DEFAULT NULL,
+  `vol_4` decimal(20,4) DEFAULT NULL,
+  `vol_5` decimal(20,4) DEFAULT NULL,
+  `sat_1` varchar(20) DEFAULT NULL,
+  `sat_2` varchar(20) DEFAULT NULL,
+  `sat_3` varchar(20) DEFAULT NULL,
+  `sat_4` varchar(20) DEFAULT NULL,
+  `sat_5` varchar(20) DEFAULT NULL,
+  `volume` decimal(20,4) DEFAULT NULL,
+  `jumlah` decimal(20,4) DEFAULT NULL,
+  `sumber_dana_id` int(11) DEFAULT NULL,
+  `status_perubahan` enum('awal','ubah','tambah','hapus') DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `disable` tinyint(4) DEFAULT 0,
+  `kunci` tinyint(4) DEFAULT 0,
+  `setujui` tinyint(4) DEFAULT 0,
+  `is_deleted` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -16256,6 +16056,114 @@ CREATE TABLE `renstra_neo` (
 
 INSERT INTO `renstra_neo` (`id`, `kd_wilayah`, `kd_opd`, `periode_id`, `visi`, `status`, `kunci`, `setujui`, `disable`, `keterangan`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`, `is_deleted`) VALUES
 (1, '76.01', '1.03.0.00.0.00.01.0000', 1, 'visiku', '1', 1, 1, 0, 'okedeh renstra', '2026-02-20 16:12:23', NULL, 'nabiila', NULL, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `rka_neo`
+--
+
+CREATE TABLE `rka_neo` (
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `tahun` year(4) DEFAULT NULL,
+  `kd_sub_keg` varchar(50) DEFAULT NULL,
+  `kd_akun` varchar(50) DEFAULT NULL,
+  `kel_rek` varchar(50) DEFAULT NULL,
+  `objek_belanja` varchar(100) DEFAULT NULL,
+  `uraian` text DEFAULT NULL,
+  `jenis_kelompok` varchar(50) DEFAULT NULL,
+  `kelompok` varchar(100) DEFAULT NULL,
+  `jenis_standar_harga` varchar(20) DEFAULT NULL,
+  `id_standar_harga` bigint(20) DEFAULT NULL,
+  `komponen` text DEFAULT NULL,
+  `spesifikasi` text DEFAULT NULL,
+  `tkdn` decimal(10,2) DEFAULT NULL,
+  `pajak` decimal(10,2) DEFAULT NULL,
+  `harga_satuan` decimal(20,4) DEFAULT NULL,
+  `vol_1` decimal(20,4) DEFAULT NULL,
+  `vol_2` decimal(20,4) DEFAULT NULL,
+  `vol_3` decimal(20,4) DEFAULT NULL,
+  `vol_4` decimal(20,4) DEFAULT NULL,
+  `vol_5` decimal(20,4) DEFAULT NULL,
+  `sat_1` varchar(20) DEFAULT NULL,
+  `sat_2` varchar(20) DEFAULT NULL,
+  `sat_3` varchar(20) DEFAULT NULL,
+  `sat_4` varchar(20) DEFAULT NULL,
+  `sat_5` varchar(20) DEFAULT NULL,
+  `volume` decimal(20,4) DEFAULT NULL,
+  `jumlah` decimal(20,4) DEFAULT NULL,
+  `sumber_dana_id` int(11) DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `disable` tinyint(4) DEFAULT 0,
+  `kunci` tinyint(4) DEFAULT 0,
+  `setujui` tinyint(4) DEFAULT 0,
+  `is_deleted` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `rka_p_neo`
+--
+
+CREATE TABLE `rka_p_neo` (
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_opd` varchar(20) DEFAULT NULL,
+  `tahun` year(4) DEFAULT NULL,
+  `kd_sub_keg` varchar(50) DEFAULT NULL,
+  `kd_akun` varchar(50) DEFAULT NULL,
+  `kel_rek` varchar(50) DEFAULT NULL,
+  `objek_belanja` varchar(100) DEFAULT NULL,
+  `uraian` text DEFAULT NULL,
+  `jenis_kelompok` varchar(50) DEFAULT NULL,
+  `kelompok` varchar(100) DEFAULT NULL,
+  `jenis_standar_harga_awal` varchar(20) DEFAULT NULL,
+  `id_standar_harga_awal` bigint(20) DEFAULT NULL,
+  `komponen_awal` text DEFAULT NULL,
+  `spesifikasi_awal` text DEFAULT NULL,
+  `tkdn_awal` decimal(10,2) DEFAULT NULL,
+  `pajak_awal` decimal(10,2) DEFAULT NULL,
+  `harga_satuan_awal` decimal(20,4) DEFAULT NULL,
+  `volume_awal` decimal(20,4) DEFAULT NULL,
+  `jumlah_awal` decimal(20,4) DEFAULT NULL,
+  `jenis_standar_harga` varchar(20) DEFAULT NULL,
+  `id_standar_harga` bigint(20) DEFAULT NULL,
+  `komponen` text DEFAULT NULL,
+  `spesifikasi` text DEFAULT NULL,
+  `tkdn` decimal(10,2) DEFAULT NULL,
+  `pajak` decimal(10,2) DEFAULT NULL,
+  `harga_satuan` decimal(20,4) DEFAULT NULL,
+  `vol_1` decimal(20,4) DEFAULT NULL,
+  `vol_2` decimal(20,4) DEFAULT NULL,
+  `vol_3` decimal(20,4) DEFAULT NULL,
+  `vol_4` decimal(20,4) DEFAULT NULL,
+  `vol_5` decimal(20,4) DEFAULT NULL,
+  `sat_1` varchar(20) DEFAULT NULL,
+  `sat_2` varchar(20) DEFAULT NULL,
+  `sat_3` varchar(20) DEFAULT NULL,
+  `sat_4` varchar(20) DEFAULT NULL,
+  `sat_5` varchar(20) DEFAULT NULL,
+  `volume` decimal(20,4) DEFAULT NULL,
+  `jumlah` decimal(20,4) DEFAULT NULL,
+  `sumber_dana_id` int(11) DEFAULT NULL,
+  `status_perubahan` enum('awal','ubah','tambah','hapus') DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `disable` tinyint(4) DEFAULT 0,
+  `kunci` tinyint(4) DEFAULT 0,
+  `setujui` tinyint(4) DEFAULT 0,
+  `is_deleted` tinyint(4) DEFAULT 0,
+  `tgl_insert` datetime DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -21037,11 +20945,29 @@ ALTER TABLE `akun_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `anggaran_copy_log`
+--
+ALTER TABLE `anggaran_copy_log`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `anggaran_perubahan_template`
+--
+ALTER TABLE `anggaran_perubahan_template`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indeks untuk tabel `anggaran_program_renstra_neo`
 --
 ALTER TABLE `anggaran_program_renstra_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `program_id` (`program_id`);
+
+--
+-- Indeks untuk tabel `anggaran_template`
+--
+ALTER TABLE `anggaran_template`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indeks untuk tabel `aset_neo`
@@ -21104,6 +21030,18 @@ ALTER TABLE `dpa_neo`
 -- Indeks untuk tabel `dppa_neo`
 --
 ALTER TABLE `dppa_neo`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `group_rekap_akun`
+--
+ALTER TABLE `group_rekap_akun`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `group_sub_kegiatan`
+--
+ALTER TABLE `group_sub_kegiatan`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -21298,6 +21236,18 @@ ALTER TABLE `renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `rka_neo`
+--
+ALTER TABLE `rka_neo`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `rka_p_neo`
+--
+ALTER TABLE `rka_p_neo`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indeks untuk tabel `sasaran_renstra_neo`
 --
 ALTER TABLE `sasaran_renstra_neo`
@@ -21427,9 +21377,27 @@ ALTER TABLE `akun_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4277;
 
 --
+-- AUTO_INCREMENT untuk tabel `anggaran_copy_log`
+--
+ALTER TABLE `anggaran_copy_log`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `anggaran_perubahan_template`
+--
+ALTER TABLE `anggaran_perubahan_template`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `anggaran_program_renstra_neo`
 --
 ALTER TABLE `anggaran_program_renstra_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `anggaran_template`
+--
+ALTER TABLE `anggaran_template`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
@@ -21478,13 +21446,25 @@ ALTER TABLE `db_asn_pemda_neo`
 -- AUTO_INCREMENT untuk tabel `dpa_neo`
 --
 ALTER TABLE `dpa_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=147;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `dppa_neo`
 --
 ALTER TABLE `dppa_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `group_rekap_akun`
+--
+ALTER TABLE `group_rekap_akun`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `group_sub_kegiatan`
+--
+ALTER TABLE `group_sub_kegiatan`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `import_logs`
@@ -21652,19 +21632,31 @@ ALTER TABLE `rekanan_neo`
 -- AUTO_INCREMENT untuk tabel `renja_neo`
 --
 ALTER TABLE `renja_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=197;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `renja_p_neo`
 --
 ALTER TABLE `renja_p_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `renstra_neo`
 --
 ALTER TABLE `renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT untuk tabel `rka_neo`
+--
+ALTER TABLE `rka_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `rka_p_neo`
+--
+ALTER TABLE `rka_p_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `sasaran_renstra_neo`

@@ -68,7 +68,7 @@ return [
     '/renstra/store_misi'     => ['RenstraController', 'storeMisi'],
     '/renstra/store_tujuan'   => ['RenstraController', 'storeTujuan'],
     '/renstra/store_sasaran'  => ['RenstraController', 'storeSasaran'],
-    '/renstra/store_indikator'=> ['RenstraController', 'storeIndikator'],
+    '/renstra/store_indikator' => ['RenstraController', 'storeIndikator'],
     '/renstra/store_program'  => ['RenstraController', 'storeProgram'],
     '/renstra/store_anggaran' => ['RenstraController', 'storeAnggaran'],
     '/renstra/update'         => ['RenstraController', 'update'],
@@ -105,7 +105,7 @@ return [
     |--------------------------------------------------------------------------
     */
     '/pengaturan'        => ['PengaturanController', 'index'],
-'/pengaturan/fragment' => ['PengaturanController', 'fragment'],
+    '/pengaturan/fragment' => ['PengaturanController', 'fragment'],
     /*
     |--------------------------------------------------------------------------
     | 💬 WALLCHAT
@@ -142,9 +142,9 @@ return [
     |--------------------------------------------------------------------------
     */
     '/reset_tabel'          => ['ResetTabelController', 'index'],
-'/reset_tabel/reset'    => ['ResetTabelController', 'reset'],
-'/reset_tabel/backup'   => ['ResetTabelController', 'backup'],
-'/reset_tabel/restore'  => ['ResetTabelController', 'restore'],
+    '/reset_tabel/reset'    => ['ResetTabelController', 'reset'],
+    '/reset_tabel/backup'   => ['ResetTabelController', 'backup'],
+    '/reset_tabel/restore'  => ['ResetTabelController', 'restore'],
 
     /*
     |--------------------------------------------------------------------------
@@ -159,4 +159,16 @@ return [
     |--------------------------------------------------------------------------
     */
     '/api' => ['ApiController', 'handle'],
+    /*
+    |--------------------------------------------------------------------------
+    | 🗂 RENJA (SPA MODULE)
+    |--------------------------------------------------------------------------
+    | Halaman utama RENJA
+    | Semua CRUD dilakukan oleh /dynamic
+    */
+    '/renja/sub_kegiatan' => ['RenjaController', 'subKegiatan'], // daftar sub kegiatan
+    '/renja/rincian'      => ['RenjaController', 'rincian'],     // rincian belanja
+    '/anggaran/renja' => ['AnggaranController', 'renja'],
+    '/anggaran/rka' => ['AnggaranController', 'rka'],
+    '/anggaran/dpa' => ['AnggaranController', 'dpa'],
 ];
