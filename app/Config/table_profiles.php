@@ -524,7 +524,7 @@ return [
 
     'satuan' => [
         'table' => 'satuan_neo',
-        'not_duplicate' => ['item','peraturan_id'],
+        'not_duplicate' => ['item', 'peraturan_id'],
         'primary_key' => 'id',
         'import' => [
             'enabled' => true,
@@ -1253,7 +1253,7 @@ return [
         'soft_lock' => true,
 
         // Otomatis isi dari session saat INSERT
-        'auto_session' => ['kd_wilayah', 'peraturan'],
+        'auto_session' => ['kd_wilayah', 'peraturan_id'],
 
         /*
         |--------------------------------------------------------------------------
@@ -1276,7 +1276,7 @@ return [
                 // WAJIB agar tidak bocor wilayah/peraturan
                 'where' => [
                     'kd_wilayah' => 'user',
-                    'peraturan'  => 'user'
+                    'peraturan_id'  => 'user'
                 ]
             ]
         ]
@@ -1294,7 +1294,7 @@ return [
 
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
-        'auto_session' => ['kd_wilayah', 'peraturan'],
+        'auto_session' => ['kd_wilayah', 'peraturan_id'],
 
         /*
         |--------------------------------------------------------------------------
@@ -1324,7 +1324,7 @@ return [
                 'order_by' => 'kode ASC',
                 'where' => [
                     'kd_wilayah' => 'user',
-                    'peraturan'  => 'user'
+                    'peraturan_id'  => 'user'
                 ]
             ]
         ]
@@ -1342,7 +1342,7 @@ return [
 
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
-        'auto_session' => ['kd_wilayah', 'peraturan'],
+        'auto_session' => ['kd_wilayah', 'peraturan_id'],
 
         /*
         |--------------------------------------------------------------------------
@@ -1369,7 +1369,7 @@ return [
                 'order_by' => 'kode ASC',
                 'where' => [
                     'kd_wilayah' => 'user',
-                    'peraturan'  => 'user'
+                    'peraturan_id'  => 'user'
                 ]
             ]
         ]
@@ -1387,7 +1387,7 @@ return [
 
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
-        'auto_session' => ['kd_wilayah', 'peraturan'],
+        'auto_session' => ['kd_wilayah', 'peraturan_id'],
 
         /*
         |--------------------------------------------------------------------------
@@ -1414,7 +1414,7 @@ return [
                 'order_by' => 'kode ASC',
                 'where' => [
                     'kd_wilayah' => 'user',
-                    'peraturan'  => 'user'
+                    'peraturan_id'  => 'user'
                 ]
             ]
         ]
@@ -1432,16 +1432,20 @@ return [
 
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
-        'auto_session' => ['kd_wilayah', 'peraturan'],
+
+        'auto_session' => [
+            'kd_wilayah',
+            'peraturan_id'
+        ],
 
         /*
-        |--------------------------------------------------------------------------
-        | RELATION
-        |--------------------------------------------------------------------------
-        | sub_kegiatan anak dari kegiatan
-        */
+    |--------------------------------------------------------------------------
+    | RELATION
+    |--------------------------------------------------------------------------
+    */
         'relations' => [
             'kegiatan' => [
+                'table'      => 'kegiatan',
                 'local_key'  => 'kode_kegiatan',
                 'parent_key' => 'kode'
             ]
@@ -1454,12 +1458,24 @@ return [
 
         'modes' => [
             'default' => [
-                'select' => ['id', 'kode', 'kode_kegiatan', 'nama'],
-                'searchable' => ['kode', 'nama'],
+
+                'select' => [
+                    'id',
+                    'kode',
+                    'kode_kegiatan',
+                    'nama'
+                ],
+
+                'searchable' => [
+                    'kode',
+                    'nama'
+                ],
+
                 'order_by' => 'kode ASC',
+
                 'where' => [
-                    'kd_wilayah' => 'user',
-                    'peraturan'  => 'user'
+                    'kd_wilayah'   => 'user',
+                    'peraturan_id' => 'user'
                 ]
             ]
         ]

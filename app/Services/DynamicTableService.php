@@ -210,12 +210,17 @@ class DynamicTableService
 
 
                 /* =====================================================
-                                                        📥 DROPDOWN
-                                                        ===================================================== */
+    📥 DROPDOWN
+    ===================================================== */
             case 'dropdown':
+
+                $parentValue = $request['parent_value']
+                    ?? $request['value']
+                    ?? null;
+
                 return $this->loadDropdown(
                     $request['tbl'] ?? null,
-                    $request['parent_value'] ?? null,
+                    $parentValue,
                     $request['kd_akun'] ?? null
                 );
 
@@ -729,8 +734,29 @@ class DynamicTableService
         list($searchWhere, $searchParams) =
             $this->resolveSearch($table, $modeConfig, $search);
 
-        $whereParts = array_merge($scopeWhere, $searchWhere);
-        $params     = array_merge($scopeParams, $searchParams);
+        /* =====================================================
+🔥 APPLY PROFILE WHERE
+===================================================== */
+
+if (!empty($modeConfig['where'])) {
+
+    $columns = $this->getTableColumns($table);
+
+    foreach ($modeConfig['where'] as $field => $value) {
+
+        if (!in_array($field, $columns)) {
+            continue;
+        }
+
+        $whereParts[] = "`$field` = ?";
+
+        if ($value === 'user') {
+            $params[] = $this->user[$field] ?? null;
+        } else {
+            $params[] = $value;
+        }
+    }
+}
 
         $where = !empty($whereParts)
             ? "WHERE " . implode(" AND ", $whereParts)
@@ -1064,17 +1090,17 @@ class DynamicTableService
         $whereParts = [];
         $params     = [];
 
-        if ($parentValue !== null && !empty($profile['relations'])) {
+        /* ======================================================
+   🔥 FILTER PARENT DROPDOWN
+   ====================================================== */
 
-            foreach ($profile['relations'] as $relation) {
+        $parentField = $_POST['parent_field'] ?? null;
 
-                $localKey = $relation['local_key'] ?? null;
+        if ($parentValue !== null && $parentField && in_array($parentField, $columns)) {
 
-                if ($localKey && in_array($localKey, $columns)) {
-                    $whereParts[] = "`$table`.`$localKey` = ?";
-                    $params[] = $parentValue;
-                }
-            }
+            $whereParts[] = "`$table`.`$parentField` = ?";
+
+            $params[] = $parentValue;
         }
 
         /* ======================================================
