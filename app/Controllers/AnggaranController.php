@@ -3,14 +3,15 @@
 class AnggaranController extends Controller
 {
 
-    public function index()
+     public function index()
     {
 
-        $table = $_GET['table'] ?? 'renja_neo';
+        $table = 'renja_neo';
 
-        $tahap = $_GET['tahap'] ?? 'renja';
+        $tahap = 'renja';
 
-        require APPPATH.'/Views/anggaran/index.php';
+        // load view
+        require __DIR__.'/../Views/anggaran/index.php';
 
     }
 

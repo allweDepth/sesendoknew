@@ -171,4 +171,11 @@ return [
     '/anggaran/rekap_akun' => ['AnggaranController', 'rekapAkun'],
 
     '/anggaran/rincian' => ['AnggaranController', 'rincian'],
+    /*
+|--------------------------------------------------------------------------
+| RENJA
+|--------------------------------------------------------------------------
+*/
+
+    '/renja' => ['AnggaranController', 'index'],
 ];
