@@ -85,7 +85,7 @@
           <i class="olive clipboard list icon"></i> Kegiatan
         </a>
 
-        <a class="item" href="/referensi?tbl=sub_kegiatan" data-spa="client">
+        <a class="item" href="/referensi?tbl=sub_kegiatan_ref" data-spa="client">
           <i class="grey list alternate icon"></i> Sub Kegiatan
         </a>
 

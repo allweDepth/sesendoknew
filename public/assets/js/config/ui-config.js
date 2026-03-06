@@ -428,7 +428,7 @@ UIConfig.kegiatan = {
 	},
 };
 
-UIConfig.sub_kegiatan = {
+UIConfig.sub_kegiatan_ref = {
 	form: {
 		elements: [
 			{
@@ -1085,7 +1085,7 @@ UIConfig.sub_kegiatan = {
 				tag: "fieldDropdown",
 				prop: {
 					label: "Kegiatan",
-					name: "kd_keg",
+					name: "kd_kegiatan",
 					source: "kegiatan",
 					parent: "kd_program",
 					parent_field: "kode_program",

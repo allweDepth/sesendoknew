@@ -67,8 +67,8 @@ class DynamicTableService
     // ======================================================
     private array $relationCache = [];
     /* =========================================================
-                                                        INTERNAL CACHE (ANTI DOUBLE QUERY)
-                                                        ========================================================= */
+INTERNAL CACHE (ANTI DOUBLE QUERY)
+========================================================= */
     private static array $columnCache = [];
     private static array $schemaCache = [];
     private ?array $pengaturanAktifCache = null;
@@ -81,21 +81,21 @@ class DynamicTableService
     }
 
     /* =========================================================
-                                                    MAIN HANDLER (ENTRY POINT) — HARDENED VERSION
-                                                    ---------------------------------------------------------
-                                                    PERUBAHAN:
-                                                    - Wajib action eksplisit
-                                                    - Tidak ada fallback implicit
-                                                    - Validasi action lebih awal
-                                                    - Tetap kompatibel dengan arsitektur lama
-                                                ========================================================= */
+MAIN HANDLER (ENTRY POINT) — HARDENED VERSION
+---------------------------------------------------------
+PERUBAHAN:
+- Wajib action eksplisit
+- Tidak ada fallback implicit
+- Validasi action lebih awal
+- Tetap kompatibel dengan arsitektur lama
+========================================================= */
     public function handle(array $request): string
     {
         try {
 
             /* =====================================================
-            1️⃣ VALIDASI ACTION
-             ===================================================== */
+1️⃣ VALIDASI ACTION
+===================================================== */
             if (empty($request['action'])) {
                 return JsonResponse::error("Action wajib dikirim");
             }
@@ -118,8 +118,8 @@ class DynamicTableService
             }
 
             /* =====================================================
-            2️⃣ VALIDASI TABEL
-            ===================================================== */
+2️⃣ VALIDASI TABEL
+===================================================== */
             $tbl = $request['tbl'] ?? null;
 
             if (!$tbl) {
@@ -134,8 +134,8 @@ class DynamicTableService
             $table   = $profile['table'];
 
             /* =====================================================
-            3️⃣ EKSEKUSI ACTION
-            ===================================================== */
+3️⃣ EKSEKUSI ACTION
+===================================================== */
             return $this->executeAction(
                 $action,
                 $tbl,
@@ -150,13 +150,13 @@ class DynamicTableService
     }
 
     /* =========================================================
-                                                EXECUTE ACTION (NO IMPLICIT FALLBACK)
-                                                ---------------------------------------------------------
-                                                PERUBAHAN:
-                                                - Listing hanya via action = 'list'
-                                                - Tidak ada default auto listing
-                                                - Lebih eksplisit & SPA konsisten
-                                                ========================================================= */
+EXECUTE ACTION (NO IMPLICIT FALLBACK)
+---------------------------------------------------------
+PERUBAHAN:
+- Listing hanya via action = 'list'
+- Tidak ada default auto listing
+- Lebih eksplisit & SPA konsisten
+========================================================= */
     private function executeAction(
         string $action,
         string $tbl,
@@ -168,18 +168,18 @@ class DynamicTableService
         switch ($action) {
 
             /* =====================================================
-                                                        ➕ ADD
-                                                        ===================================================== */
+➕ ADD
+===================================================== */
             case 'add':
                 $this->authorize('add', $table);
                 return $this->insert($table, $request);
 
 
                 /* =====================================================
-                                                        ✏ EDIT
-                                                        - Jika hanya id_row → ambil data
-                                                        - Jika ada id → update
-                                                        ===================================================== */
+✏ EDIT
+- Jika hanya id_row → ambil data
+- Jika ada id → update
+===================================================== */
             case 'edit':
 
                 // 🔍 GET SINGLE ROW
@@ -198,8 +198,8 @@ class DynamicTableService
 
 
                 /* =====================================================
-                                                        🗑 DELETE
-                                                        ===================================================== */
+🗑 DELETE
+===================================================== */
             case 'delete':
                 $this->authorize('delete', $table);
                 return $this->delete(
@@ -210,8 +210,8 @@ class DynamicTableService
 
 
                 /* =====================================================
-    📥 DROPDOWN
-    ===================================================== */
+📥 DROPDOWN
+===================================================== */
             case 'dropdown':
 
                 $parentValue = $request['parent_value']
@@ -226,8 +226,8 @@ class DynamicTableService
 
 
                 /* =====================================================
-                                                        📤 EXPORT
-                                                        ===================================================== */
+📤 EXPORT
+===================================================== */
             case 'export':
                 $this->authorize('view', $table);
                 return $this->export(
@@ -239,8 +239,8 @@ class DynamicTableService
 
 
                 /* =====================================================
-                                                        📋 LISTING (WAJIB action = list)
-                                                        ===================================================== */
+📋 LISTING (WAJIB action = list)
+===================================================== */
             case 'list':
                 $this->authorize('view', $table);
                 return $this->listing(
@@ -266,15 +266,15 @@ class DynamicTableService
                 );
 
                 /* =====================================================
-                                                        ❌ NO FALLBACK
-                                                        ===================================================== */
+❌ NO FALLBACK
+===================================================== */
             default:
                 return JsonResponse::error("Action tidak dikenali");
         }
     }
     /* =========================================================
-                                                        GET SINGLE ROW
-                                                        ========================================================= */
+GET SINGLE ROW
+========================================================= */
     private function getById(string $table, int|string $id): string
     {
         $primaryKey = $this->getPrimaryKey($table);
@@ -292,8 +292,8 @@ class DynamicTableService
     }
 
     /* =========================================================
-                                                        ROLE AUTHORIZATION (TIDAK DIUBAH)
-                                                        ========================================================= */
+ROLE AUTHORIZATION (TIDAK DIUBAH)
+========================================================= */
     private function authorize(string $action, string $table): void
     {
         $role = $this->user['type_user'] ?? 'viewer';
@@ -312,8 +312,8 @@ class DynamicTableService
     }
 
     /* =========================================================
-                                                        AUDIT TRAIL (TIDAK DIUBAH)
-                                                        ========================================================= */
+AUDIT TRAIL (TIDAK DIUBAH)
+========================================================= */
     private function injectAudit(array $data, string $mode): array
     {
         $now  = date('Y-m-d H:i:s');
@@ -332,19 +332,19 @@ class DynamicTableService
         return $data;
     }
     /* =========================================================
-                                                        INSERT (FULL IDENTIK LOGIC ASLI)
-                                                        ========================================================= */
+INSERT (FULL IDENTIK LOGIC ASLI)
+========================================================= */
     /* =========================================================
-                                                        INSERT (FIXED STABLE VERSION v3.1)
-                                                        ========================================================= */
+INSERT (FIXED STABLE VERSION v3.1)
+========================================================= */
     private function insert(string $table, array $request): string
     {
         $columns  = $this->getTableColumns($table);
         $filtered = [];
 
         /* =====================================================
-                                                            1️⃣ FILTER FIELD SESUAI KOLOM TABEL
-                                                            ===================================================== */
+    1️⃣ FILTER FIELD SESUAI KOLOM TABEL
+    ===================================================== */
         foreach ($request as $key => $value) {
 
             if (in_array($key, ['action', 'module', 'tbl'])) continue;
@@ -359,8 +359,8 @@ class DynamicTableService
         }
 
         /* =====================================================
-                                                    2️⃣ NORMALISASI BOOLEAN & DATE
-                                                    ===================================================== */
+2️⃣ NORMALISASI BOOLEAN & DATE
+===================================================== */
         foreach ($filtered as $field => $value) {
 
             // checkbox
@@ -387,14 +387,14 @@ class DynamicTableService
         }
 
         /* =====================================================
-                                                    3️⃣ AUTO FIELD RESOLUTION (SCOPE)
-                                                    ===================================================== */
+3️⃣ AUTO FIELD RESOLUTION (SCOPE)
+===================================================== */
         $filtered = $this->resolveAutoFields($table, $filtered);
         //date time
         $filtered = $this->normalizeDateTimeFields($table, $filtered);
         /* =====================================================
-                                                    4️⃣ SPECIAL TABLE RULES
-                                                    ===================================================== */
+4️⃣ SPECIAL TABLE RULES
+===================================================== */
 
         // 🔥 Periode RPJMD
         if ($table === 'periode_rpjmd') {
@@ -412,14 +412,14 @@ class DynamicTableService
             }
 
             $cek = $this->db->query("
-                                                            SELECT id FROM periode_rpjmd
-                                                            WHERE kd_wilayah = ?
-                                                            AND (
-                                                                (? BETWEEN periode_mulai AND periode_selesai)
-                                                                OR
-                                                                (? BETWEEN periode_mulai AND periode_selesai)
-                                                            )
-                                                        ", [$kd_wilayah, $mulai, $selesai])->fetch();
+    SELECT id FROM periode_rpjmd
+    WHERE kd_wilayah = ?
+    AND (
+        (? BETWEEN periode_mulai AND periode_selesai)
+        OR
+        (? BETWEEN periode_mulai AND periode_selesai)
+    )
+", [$kd_wilayah, $mulai, $selesai])->fetch();
 
             if ($cek) {
                 return JsonResponse::error("Periode tumpang tindih");
@@ -428,10 +428,10 @@ class DynamicTableService
             if (!empty($filtered['status_aktif'])) {
 
                 $this->db->query("
-                                                                UPDATE periode_rpjmd
-                                                                SET status_aktif = 0
-                                                                WHERE kd_wilayah = ?
-                                                            ", [$kd_wilayah]);
+        UPDATE periode_rpjmd
+        SET status_aktif = 0
+        WHERE kd_wilayah = ?
+    ", [$kd_wilayah]);
 
                 $filtered['status_aktif'] = 1;
             } else {
@@ -453,17 +453,17 @@ class DynamicTableService
             }
 
             $lastKode = $this->db->query("
-                                                            SELECT MAX(CAST(kode AS UNSIGNED)) as max_kode
-                                                            FROM misi_renstra_neo
-                                                            WHERE renstra_id = ?
-                                                        ", [$renstraId])->fetch()['max_kode'] ?? 0;
+    SELECT MAX(CAST(kode AS UNSIGNED)) as max_kode
+    FROM misi_renstra_neo
+    WHERE renstra_id = ?
+", [$renstraId])->fetch()['max_kode'] ?? 0;
 
             $filtered['kode'] = $lastKode + 1;
         }
 
         /* =====================================================
-                                                    5️⃣ SYSTEM DEFAULT FIELD
-                                                    ===================================================== */
+5️⃣ SYSTEM DEFAULT FIELD
+===================================================== */
         if (in_array('disable', $columns) && !isset($filtered['disable'])) {
             $filtered['disable'] = 0;
         }
@@ -473,27 +473,27 @@ class DynamicTableService
         }
 
         /* =====================================================
-                                                    6️⃣ PERATURAN RESOLUTION (GLOBAL CLEAN)
-                                                    ===================================================== */
+6️⃣ PERATURAN RESOLUTION (GLOBAL CLEAN)
+===================================================== */
         $filtered = $this->resolvePeraturan($table, $filtered);
 
         /* =====================================================
-                                                    7️⃣ BUSINESS VALIDATION LAYER
-                                                    ===================================================== */
+7️⃣ BUSINESS VALIDATION LAYER
+===================================================== */
         $this->validateHierarchy($table, $filtered);
         $this->validateDuplicate($table, $filtered);
         // 🔥 VALIDASI MAPPING AKUN
         $this->validateAkunMapping($table, $filtered);
 
         /* =====================================================
-                                                    8️⃣ SANITATION & AUDIT
-                                                    ===================================================== */
+8️⃣ SANITATION & AUDIT
+===================================================== */
         $filtered = $this->applySanitization($table, $filtered);
         $filtered = $this->injectAudit($filtered, 'insert');
 
         /* =====================================================
-                                                    9️⃣ HYBRID VALIDATION (SCHEMA + PROFILE)
-                                                    ===================================================== */
+9️⃣ HYBRID VALIDATION (SCHEMA + PROFILE)
+===================================================== */
         $profile = $this->getProfileByTable($table);
         $errors  = $this->validate($filtered, $table, $profile);
 
@@ -502,8 +502,8 @@ class DynamicTableService
         }
 
         /* =====================================================
-                                                    🔟 FINAL TRANSACTION
-                                                    ===================================================== */
+🔟 FINAL TRANSACTION
+===================================================== */
         return $this->runTransaction(function () use ($table, $filtered) {
 
             $this->db->insert($table, $filtered);
@@ -516,8 +516,8 @@ class DynamicTableService
         });
     }
     /* =========================================================
-                                                        UPDATE (FIXED STABLE VERSION v3.1)
-                                                        ========================================================= */
+UPDATE (FIXED STABLE VERSION v3.1)
+========================================================= */
     private function update(string $table, array $request): string
     {
         $columns    = $this->getTableColumns($table);
@@ -532,8 +532,8 @@ class DynamicTableService
         unset($request['id']);
 
         /* =====================================================
-                                                    1️⃣ FILTER FIELD SESUAI KOLOM
-                                                    ===================================================== */
+1️⃣ FILTER FIELD SESUAI KOLOM
+===================================================== */
         $filtered = [];
 
         foreach ($request as $key => $value) {
@@ -550,8 +550,8 @@ class DynamicTableService
         }
 
         /* =====================================================
-                                                    2️⃣ NORMALISASI BOOLEAN & DATE
-                                                    ===================================================== */
+2️⃣ NORMALISASI BOOLEAN & DATE
+===================================================== */
         foreach ($filtered as $field => $value) {
 
             if ($value === 'on') {
@@ -576,8 +576,8 @@ class DynamicTableService
         }
 
         /* =====================================================
-                                                    3️⃣ LOAD OLD DATA
-                                                    ===================================================== */
+3️⃣ LOAD OLD DATA
+===================================================== */
         $oldData = $this->db->query(
             "SELECT * FROM `$table` WHERE `$primaryKey` = ?",
             [$id]
@@ -588,28 +588,28 @@ class DynamicTableService
         }
 
         /* =====================================================
-                                                    4️⃣ AUTO FIELD RESOLUTION
-                                                    ===================================================== */
+4️⃣ AUTO FIELD RESOLUTION
+===================================================== */
         $filtered = $this->resolveAutoFields($table, $filtered);
         $filtered = $this->normalizeDateTimeFields($table, $filtered);
         $filtered = $this->resolvePeraturan($table, $filtered);
         $filtered = $this->resolvePeriode($table, $filtered);
 
         /* =====================================================
-                                                    5️⃣ BUSINESS VALIDATION
-                                                    ===================================================== */
+5️⃣ BUSINESS VALIDATION
+===================================================== */
         $this->validateHierarchy($table, $filtered);
         // 🔥 VALIDASI MAPPING AKUN
         $this->validateAkunMapping($table, $filtered);
         /* =====================================================
-                                                    6️⃣ SANITATION & AUDIT
-                                                    ===================================================== */
+6️⃣ SANITATION & AUDIT
+===================================================== */
         $filtered = $this->applySanitization($table, $filtered);
         $filtered = $this->injectAudit($filtered, 'update');
 
         /* =====================================================
-                                                    7️⃣ PRESERVE REQUIRED FIELDS
-                                                    ===================================================== */
+7️⃣ PRESERVE REQUIRED FIELDS
+===================================================== */
         foreach ($oldData as $field => $value) {
             if (!isset($filtered[$field])) {
                 $filtered[$field] = $value;
@@ -617,8 +617,8 @@ class DynamicTableService
         }
 
         /* =====================================================
-                                                    8️⃣ VALIDATION HYBRID
-                                                    ===================================================== */
+8️⃣ VALIDATION HYBRID
+===================================================== */
         $profile = $this->getProfileByTable($table);
         $errors  = $this->validate($filtered, $table, $profile, $id);
 
@@ -627,8 +627,8 @@ class DynamicTableService
         }
 
         /* =====================================================
-                                                    9️⃣ DIFF CHECK
-                                                    ===================================================== */
+9️⃣ DIFF CHECK
+===================================================== */
         $diff = [];
 
         foreach ($filtered as $key => $value) {
@@ -642,8 +642,8 @@ class DynamicTableService
         }
 
         /* =====================================================
-                                                    🔟 FINAL TRANSACTION
-                                                    ===================================================== */
+🔟 FINAL TRANSACTION
+===================================================== */
 
         return $this->runTransaction(function () use ($table, $primaryKey, $id, $diff, $oldData) {
 
@@ -660,8 +660,8 @@ class DynamicTableService
         });
     }
     /* =========================================================
-                                                        DELETE (FULL IDENTIK LOGIC ASLI)
-                                                        ========================================================= */
+DELETE (FULL IDENTIK LOGIC ASLI)
+========================================================= */
     private function delete(string $table, array $profile, int|string $id): string
     {
         $primaryKey = $this->getPrimaryKey($table);
@@ -706,104 +706,228 @@ class DynamicTableService
     }
 
     /* =========================================================
-                                                            BUILD QUERY (LISTING + SEARCH + SCOPE FULL IDENTIK)
-                                                            ========================================================= */
+    BUILD QUERY (LISTING + SEARCH + SCOPE FULL IDENTIK)
+    ========================================================= */
     private function listing(
-        string $table,
-        array $profile,
-        array $request,
-        string $mode
+        string $table,      // nama tabel database
+        array $profile,     // konfigurasi tabel dari table_profiles.php
+        array $request,     // request dari frontend
+        string $mode        // mode listing (default / custom)
     ): string {
 
+        // ======================================================
+        // 1️⃣ AMBIL KONFIGURASI MODE
+        // ======================================================
+
+        // ambil konfigurasi mode jika ada
+        // jika tidak ada gunakan default
         $modeConfig = $profile['modes'][$mode]
             ?? $profile['modes']['default']
             ?? [];
 
-        $limit  = max(1, (int)($request['rows'] ?? 10));
-        $page   = max(1, (int)($request['halaman'] ?? 1));
+        // ======================================================
+        // 2️⃣ PAGINATION CONFIG
+        // ======================================================
+
+        // jumlah baris per halaman
+        $limit = max(1, (int)($request['rows'] ?? 10));
+
+        // halaman aktif
+        $page = max(1, (int)($request['halaman'] ?? 1));
+
+        // keyword pencarian
         $search = isset($request['cari']) && is_string($request['cari'])
             ? trim($request['cari'])
             : '';
+
+        // offset SQL
         $offset = ($page - 1) * $limit;
 
-        // 🔥 1️⃣ Resolve Scope
+        // ======================================================
+        // 3️⃣ RESOLVE USER SCOPE
+        // ======================================================
+
+        // scope = filter berdasarkan role user
+        // contoh:
+        // admin_wilayah → kd_wilayah
+        // admin_opd → kd_opd, kd_wilayah, tahun
         list($scopeWhere, $scopeParams) =
             $this->resolveScope($table, $profile, $mode);
 
-        // 🔥 2️⃣ Resolve Search
+        // ======================================================
+        // 4️⃣ RESOLVE SEARCH
+        // ======================================================
+
+        // membangun query pencarian
+        // contoh:
+        // nama LIKE %keyword%
         list($searchWhere, $searchParams) =
             $this->resolveSearch($table, $modeConfig, $search);
 
-        /* =====================================================
-🔥 APPLY PROFILE WHERE
-===================================================== */
+        // ======================================================
+        // 5️⃣ INISIALISASI ARRAY WHERE
+        // ======================================================
 
-if (!empty($modeConfig['where'])) {
+        // array kondisi WHERE
+        $whereParts = [];
 
-    $columns = $this->getTableColumns($table);
+        // array parameter query
+        $params = [];
 
-    foreach ($modeConfig['where'] as $field => $value) {
+        // ======================================================
+        // 6️⃣ APPLY PROFILE WHERE
+        // ======================================================
 
-        if (!in_array($field, $columns)) {
-            continue;
+        // contoh dari profile:
+        // 'where' => [
+        //     'kd_wilayah' => 'user',
+        //     'peraturan_id' => 'user'
+        // ]
+
+        if (!empty($modeConfig['where'])) {
+
+            // ambil semua kolom tabel
+            $columns = $this->getTableColumns($table);
+
+            foreach ($modeConfig['where'] as $field => $value) {
+
+                // skip jika field tidak ada di tabel
+                if (!in_array($field, $columns)) {
+                    continue;
+                }
+
+                // tambahkan kondisi WHERE
+                $whereParts[] = "`$field` = ?";
+
+                // jika value = user
+                // ambil dari session user
+                if ($value === 'user') {
+
+                    $params[] = $this->user[$field] ?? null;
+                } else {
+
+                    // jika value statis
+                    $params[] = $value;
+                }
+            }
         }
 
-        $whereParts[] = "`$field` = ?";
+        // ======================================================
+        // 7️⃣ GABUNGKAN SEMUA WHERE
+        // ======================================================
 
-        if ($value === 'user') {
-            $params[] = $this->user[$field] ?? null;
-        } else {
-            $params[] = $value;
-        }
-    }
-}
+        // gabungkan scope + search + profile where
+        $whereParts = array_merge(
+            $scopeWhere,
+            $searchWhere,
+            $whereParts
+        );
 
+        // gabungkan parameter
+        $params = array_merge(
+            $scopeParams,
+            $searchParams,
+            $params
+        );
+
+        // build string WHERE SQL
         $where = !empty($whereParts)
             ? "WHERE " . implode(" AND ", $whereParts)
             : "";
 
+        // ======================================================
+        // 8️⃣ BUILD SELECT COLUMN
+        // ======================================================
+
+        // ambil field select dari profile
+        // jika kosong gunakan *
         $select = implode(',', $modeConfig['select'] ?? ['*']);
 
+        // ======================================================
+        // 9️⃣ RESOLVE PRIMARY KEY
+        // ======================================================
+
+        // ambil primary key tabel
         $primaryKey = $this->getPrimaryKey($table);
+
+        // ======================================================
+        // 🔟 RESOLVE ORDER BY
+        // ======================================================
+
+        // ambil order dari profile
         $orderBy = $modeConfig['order_by'] ?? "`$primaryKey` DESC";
 
-        // 🔥 VALIDASI KOLOM ORDER BY
+        // ambil kolom tabel
         $columns = $this->getTableColumns($table);
 
+        // extract nama kolom order
         preg_match('/`?([a-zA-Z0-9_]+)`?/i', $orderBy, $match);
+
         $orderColumn = $match[1] ?? $primaryKey;
 
+        // jika kolom tidak ada di tabel
         if (!in_array($orderColumn, $columns)) {
+
+            // fallback ke primary key
             $orderBy = "`$primaryKey` DESC";
         }
 
+        // ======================================================
+        // 1️⃣1️⃣ HITUNG TOTAL DATA
+        // ======================================================
+
+        // query total data
         $total = $this->db->query(
-            "SELECT COUNT(*) as total FROM `$table` $where",
+
+            "SELECT COUNT(*) as total
+FROM `$table`
+$where",
+
             $params
+
         )->fetch()['total'] ?? 0;
 
+        // ======================================================
+        // 1️⃣2️⃣ AMBIL DATA LISTING
+        // ======================================================
+
+        // query data utama
         $rows = $this->db->query(
-            "SELECT $select FROM `$table`
-                                                        $where
-                                                        ORDER BY $orderBy
-                                                        LIMIT $offset, $limit",
+
+            "SELECT $select
+FROM `$table`
+$where
+ORDER BY $orderBy
+LIMIT $offset, $limit",
+
             $params
+
         )->fetchAll();
 
+        // ======================================================
+        // 1️⃣3️⃣ RETURN RESPONSE JSON
+        // ======================================================
+
         return JsonResponse::success(
+
+            // pesan response
             "Data berhasil ditampilkan",
+
+            // metadata
             [
                 'total' => (int)$total,
                 'page' => $page,
                 'limit' => $limit,
                 'primary_key' => $primaryKey
             ],
+
+            // data rows
             $rows
         );
     }
     /* =========================================================
-                                                        GET ALL RAW DATA (UNTUK EXPORT / REPORT)
-                                                        ========================================================= */
+GET ALL RAW DATA (UNTUK EXPORT / REPORT)
+========================================================= */
     private function getAllRaw(
         string $table,
         array $profile,
@@ -827,18 +951,18 @@ if (!empty($modeConfig['where'])) {
         $primaryKey = $this->getPrimaryKey($table);
 
         $query = "
-                                                                SELECT $selectClause
-                                                                FROM `$table`
-                                                                $where
-                                                                ORDER BY `$primaryKey` DESC
-                                                            ";
+        SELECT $selectClause
+        FROM `$table`
+        $where
+        ORDER BY `$primaryKey` DESC
+    ";
 
         return $this->db->query($query, $userParams)->fetchAll();
     }
 
     /* =========================================================
-                                                        EXPORT ENGINE
-                                                        ========================================================= */
+EXPORT ENGINE
+========================================================= */
     private function export(
         string $table,
         array $profile,
@@ -871,12 +995,12 @@ if (!empty($modeConfig['where'])) {
     }
 
     /* =========================================================
-                                                        APPLY USER SCOPE (ROLE AWARE FULL IDENTIK)
-                                                        ========================================================= */
+APPLY USER SCOPE (ROLE AWARE FULL IDENTIK)
+========================================================= */
     /* =========================================================
-                                                        APPLY USER SCOPE (LOGIC TIDAK DIUBAH)
-                                                        HANYA PERIODE AKTIF DI-CACHE
-                                                        ========================================================= */
+APPLY USER SCOPE (LOGIC TIDAK DIUBAH)
+HANYA PERIODE AKTIF DI-CACHE
+========================================================= */
     private function applyUserScope(string $table): array
     {
         $role = $this->user['type_user'] ?? 'viewer';
@@ -930,8 +1054,8 @@ if (!empty($modeConfig['where'])) {
     }
 
     /* =========================================================
-                                                        CACHE OPTIMIZATION SECTION
-                                                        ========================================================= */
+CACHE OPTIMIZATION SECTION
+========================================================= */
 
     private function getTableColumns(string $table): array
     {
@@ -946,8 +1070,8 @@ if (!empty($modeConfig['where'])) {
     }
 
     /* =========================================================
-                                                        HYBRID VALIDATION ENGINE (FULL IDENTIK)
-                                                        ========================================================= */
+HYBRID VALIDATION ENGINE (FULL IDENTIK)
+========================================================= */
     private function validate(array $data, string $table, array $profile, $currentId = null): array
     {
         $errors = [];
@@ -982,16 +1106,16 @@ if (!empty($modeConfig['where'])) {
                     if ($currentId) {
                         $exists = $this->db->query(
                             "SELECT $primaryKey FROM `$table` 
-                                                                                WHERE `$field` = ? 
-                                                                                AND `$primaryKey` != ? 
-                                                                                LIMIT 1",
+                        WHERE `$field` = ? 
+                        AND `$primaryKey` != ? 
+                        LIMIT 1",
                             [$value, $currentId]
                         )->fetch();
                     } else {
                         $exists = $this->db->query(
                             "SELECT $primaryKey FROM `$table` 
-                                                                                WHERE `$field` = ? 
-                                                                                LIMIT 1",
+                        WHERE `$field` = ? 
+                        LIMIT 1",
                             [$value]
                         )->fetch();
                     }
@@ -1015,8 +1139,8 @@ if (!empty($modeConfig['where'])) {
     }
 
     /* =========================================================
-                                                        BUILD RULE DARI SCHEMA DATABASE
-                                                        ========================================================= */
+BUILD RULE DARI SCHEMA DATABASE
+========================================================= */
     private function buildRulesFromSchema(string $table): array
     {
         if (isset(self::$schemaCache[$table])) {
@@ -1057,11 +1181,11 @@ if (!empty($modeConfig['where'])) {
     }
 
     /* =========================================================
-                                                        DROPDOWN ENGINE (FULL IDENTIK)
-                                                        ========================================================= */
+DROPDOWN ENGINE (FULL IDENTIK)
+========================================================= */
     /* =========================================================
-                                                    DROPDOWN ENGINE (PROFILE-DRIVEN + AKUN FILTER)
-                                                    ========================================================= */
+DROPDOWN ENGINE (PROFILE-DRIVEN + AKUN FILTER)
+========================================================= */
     private function loadDropdown(
         string $source,
         $parentValue = null,
@@ -1085,14 +1209,14 @@ if (!empty($modeConfig['where'])) {
         $columns = $this->getTableColumns($table);
 
         /* ======================================================
-                                                        🔥 RELASI PARENT (JIKA ADA)
-                                                    ====================================================== */
+🔥 RELASI PARENT (JIKA ADA)
+====================================================== */
         $whereParts = [];
         $params     = [];
 
         /* ======================================================
-   🔥 FILTER PARENT DROPDOWN
-   ====================================================== */
+🔥 FILTER PARENT DROPDOWN
+====================================================== */
 
         $parentField = $_POST['parent_field'] ?? null;
 
@@ -1104,8 +1228,8 @@ if (!empty($modeConfig['where'])) {
         }
 
         /* ======================================================
-                                                        🔥 PROFILE-DRIVEN AKUN FILTER
-                                                    ====================================================== */
+🔥 PROFILE-DRIVEN AKUN FILTER
+====================================================== */
         $join       = '';
         $akunWhere  = '';
         $akunParams = [];
@@ -1119,17 +1243,17 @@ if (!empty($modeConfig['where'])) {
             $fkField    = $pivotConfig['foreign_key'];
 
             $join = "
-                                                            INNER JOIN `$pivotTable` p
-                                                                ON p.`$fkField` = `$table`.`$primaryKey`
-                                                        ";
+    INNER JOIN `$pivotTable` p
+        ON p.`$fkField` = `$table`.`$primaryKey`
+";
 
             $pengaturan = $this->getPengaturanAktif();
 
             $akunWhere = "
-                                                            AND p.`kd_akun` = ?
-                                                            AND p.`kd_wilayah` = ?
-                                                            AND p.`peraturan_id` = ?
-                                                        ";
+    AND p.`kd_akun` = ?
+    AND p.`kd_wilayah` = ?
+    AND p.`peraturan_id` = ?
+";
 
             $akunParams = [
                 $kdAkun,
@@ -1139,8 +1263,8 @@ if (!empty($modeConfig['where'])) {
         }
 
         /* ======================================================
-                                                        🔥 FINAL WHERE BUILD
-                                                    ====================================================== */
+🔥 FINAL WHERE BUILD
+====================================================== */
         $where = '';
 
         if (!empty($whereParts)) {
@@ -1148,18 +1272,18 @@ if (!empty($modeConfig['where'])) {
         }
 
         /* ======================================================
-                                                        🔥 FINAL QUERY
-                                                    ====================================================== */
+🔥 FINAL QUERY
+====================================================== */
         $query = "
-                                                        SELECT 
-                                                            `$table`.`$valueField` as id,
-                                                            `$table`.`$labelField` as uraian
-                                                        FROM `$table`
-                                                        $join
-                                                        $where
-                                                        $akunWhere
-                                                        ORDER BY `$table`.`$valueField` ASC
-                                                    ";
+SELECT 
+    `$table`.`$valueField` as id,
+    `$table`.`$labelField` as uraian
+FROM `$table`
+$join
+$where
+$akunWhere
+ORDER BY `$table`.`$valueField` ASC
+";
 
         $rows = $this->db->query(
             $query,
@@ -1170,8 +1294,8 @@ if (!empty($modeConfig['where'])) {
     }
 
     /* =========================================================
-                                                        UTIL: GET PROFILE BY TABLE
-                                                        ========================================================= */
+UTIL: GET PROFILE BY TABLE
+========================================================= */
     private function getProfileByTable(string $table): array
     {
         foreach ($this->profiles as $profile) {
@@ -1183,8 +1307,8 @@ if (!empty($modeConfig['where'])) {
     }
 
     /* =========================================================
-                                                        UTIL: GET PRIMARY KEY
-                                                        ========================================================= */
+UTIL: GET PRIMARY KEY
+========================================================= */
     private function getPrimaryKey(string $table): string
     {
         $profile = $this->getProfileByTable($table);
@@ -1192,8 +1316,8 @@ if (!empty($modeConfig['where'])) {
     }
 
     /* =========================================================
-                                                        UTIL: CHECK ACCESS WITH SCOPE
-                                                        ========================================================= */
+UTIL: CHECK ACCESS WITH SCOPE
+========================================================= */
     private function checkAccess(string $table, $id): bool
     {
         $primaryKey = $this->getPrimaryKey($table);
@@ -1242,8 +1366,8 @@ if (!empty($modeConfig['where'])) {
         }
     }
     /* =========================================================
-                                                    UTIL: CEK APAKAH TABEL ADA
-                                                    ========================================================= */
+UTIL: CEK APAKAH TABEL ADA
+========================================================= */
     private function tableExists(string $table): bool
     {
         $result = $this->db->query(
@@ -1283,13 +1407,13 @@ if (!empty($modeConfig['where'])) {
         }
 
         $result = $this->db->query("
-                                                        SELECT *
-                                                        FROM pengaturan_neo
-                                                        WHERE kd_wilayah = ?
-                                                        AND tahun = ?
-                                                        AND disable = 0
-                                                        LIMIT 1
-                                                    ", [$kd_wilayah, $tahun])->fetch();
+SELECT *
+FROM pengaturan_neo
+WHERE kd_wilayah = ?
+AND tahun = ?
+AND disable = 0
+LIMIT 1
+", [$kd_wilayah, $tahun])->fetch();
 
         $this->pengaturanAktifCache = $result ?: null;
 
@@ -1308,18 +1432,18 @@ if (!empty($modeConfig['where'])) {
         }
 
         $this->periodeAktifCache = $this->db->query("
-                                                                SELECT id
-                                                                FROM periode_rpjmd
-                                                                WHERE kd_wilayah = ?
-                                                                AND status_aktif = 1
-                                                                LIMIT 1
-                                                            ", [$kd_wilayah])->fetch();
+        SELECT id
+        FROM periode_rpjmd
+        WHERE kd_wilayah = ?
+        AND status_aktif = 1
+        LIMIT 1
+    ", [$kd_wilayah])->fetch();
 
         return $this->periodeAktifCache;
     }
     /* =========================================================
-                                                    NORMALIZE HEADER XLSX → snake_case
-                                                    ========================================================= */
+NORMALIZE HEADER XLSX → snake_case
+========================================================= */
     private function normalizeHeader(?string $header): string
     {
         if ($header === null) {
@@ -1337,8 +1461,8 @@ if (!empty($modeConfig['where'])) {
         );
     }
     /* =========================================================
-                                                    VALIDASI IMPORT PERMISSION
-                                                    ========================================================= */
+VALIDASI IMPORT PERMISSION
+========================================================= */
     private function validateImportPermission(string $table): void
     {
         $role = $this->user['type_user'] ?? 'viewer';
@@ -1407,9 +1531,9 @@ if (!empty($modeConfig['where'])) {
 
             // query cek data
             "SELECT `$primaryKey`
-         FROM `$table`
-         WHERE " . implode(" AND ", $whereParts) . "
-         LIMIT 1",
+FROM `$table`
+WHERE " . implode(" AND ", $whereParts) . "
+LIMIT 1",
 
             // parameter query
             $params
@@ -1427,20 +1551,20 @@ if (!empty($modeConfig['where'])) {
         }
     }
     /* =========================================================
-                                                VALIDASI HIERARKI & DEPENDENSI LINTAS TABEL
-                                                -----------------------------------------------------
-                                                Tujuan:
-                                                - Memastikan parent record benar-benar ada
-                                                - Mencegah orphan record
-                                                - Memastikan scope wilayah + peraturan konsisten
-                                                ========================================================= */
+VALIDASI HIERARKI & DEPENDENSI LINTAS TABEL
+-----------------------------------------------------
+Tujuan:
+- Memastikan parent record benar-benar ada
+- Mencegah orphan record
+- Memastikan scope wilayah + peraturan konsisten
+========================================================= */
     private function validateHierarchy(string $table, array $data): void
     {
         /* ======================================================
-                                                1️⃣ DEFINISI RULE HIERARKI
-                                                ------------------------------------------------------
-                                                menentukan parent table dan cara validasi relasinya
-                                                ====================================================== */
+1️⃣ DEFINISI RULE HIERARKI
+------------------------------------------------------
+menentukan parent table dan cara validasi relasinya
+====================================================== */
         $rules = [
 
             // Struktur SIPD nasional
@@ -1494,8 +1618,8 @@ if (!empty($modeConfig['where'])) {
         ];
 
         /* ======================================================
-                                                2️⃣ JIKA TABEL TIDAK PUNYA RULE → SKIP
-                                                ====================================================== */
+2️⃣ JIKA TABEL TIDAK PUNYA RULE → SKIP
+====================================================== */
         if (!isset($rules[$table])) {
             return;
         }
@@ -1504,11 +1628,11 @@ if (!empty($modeConfig['where'])) {
         $parent = $rule['parent_table'];
 
         /* ======================================================
-                                                3️⃣ VALIDASI FOREIGN KEY MATCH
-                                                ------------------------------------------------------
-                                                contoh:
-                                                program.bidang_id harus ada di tabel bidang
-                                                ====================================================== */
+3️⃣ VALIDASI FOREIGN KEY MATCH
+------------------------------------------------------
+contoh:
+program.bidang_id harus ada di tabel bidang
+====================================================== */
         if (isset($rule['match'])) {
 
             foreach ($rule['match'] as $childField => $parentField) {
@@ -1526,8 +1650,8 @@ if (!empty($modeConfig['where'])) {
                 $params = [$data[$childField]];
 
                 /* ==================================================
-                                                        🔥 Scope wilayah
-                                                        ================================================== */
+🔥 Scope wilayah
+================================================== */
                 if (in_array('kd_wilayah', $parentColumns)) {
 
                     $where[]  = "`kd_wilayah` = ?";
@@ -1537,8 +1661,8 @@ if (!empty($modeConfig['where'])) {
                 }
 
                 /* ==================================================
-                                                        🔥 Scope peraturan (VERSI BARU)
-                                                        ================================================== */
+🔥 Scope peraturan (VERSI BARU)
+================================================== */
                 if (in_array('peraturan_id', $parentColumns)) {
 
                     $where[]  = "`peraturan_id` = ?";
@@ -1546,12 +1670,12 @@ if (!empty($modeConfig['where'])) {
                 }
 
                 /* ==================================================
-                                                        4️⃣ CEK PARENT ADA ATAU TIDAK
-                                                        ================================================== */
+4️⃣ CEK PARENT ADA ATAU TIDAK
+================================================== */
                 $exists = $this->db->query(
                     "SELECT id FROM `$parent`
-                                                        WHERE " . implode(" AND ", $where) . "
-                                                        LIMIT 1",
+WHERE " . implode(" AND ", $where) . "
+LIMIT 1",
                     $params
                 )->fetch();
 
@@ -1564,12 +1688,12 @@ if (!empty($modeConfig['where'])) {
         }
 
         /* ======================================================
-                                                5️⃣ VALIDASI SCOPE MATCH
-                                                ------------------------------------------------------
-                                                digunakan pada relasi non-FK
-                                                contoh:
-                                                renja harus sesuai tahun + opd + wilayah
-                                                ====================================================== */
+5️⃣ VALIDASI SCOPE MATCH
+------------------------------------------------------
+digunakan pada relasi non-FK
+contoh:
+renja harus sesuai tahun + opd + wilayah
+====================================================== */
         if (isset($rule['match_scope'])) {
 
             $where  = [];
@@ -1589,8 +1713,8 @@ if (!empty($modeConfig['where'])) {
             $parentColumns = $this->getTableColumns($parent);
 
             /* ==================================================
-                                                    🔥 Scope peraturan versi baru
-                                                    ================================================== */
+🔥 Scope peraturan versi baru
+================================================== */
             if (
                 in_array('peraturan_id', $parentColumns)
                 && isset($data['peraturan_id'])
@@ -1601,12 +1725,12 @@ if (!empty($modeConfig['where'])) {
             }
 
             /* ==================================================
-                                                    CEK EXIST
-                                                    ================================================== */
+CEK EXIST
+================================================== */
             $exists = $this->db->query(
                 "SELECT id FROM `$parent`
-                                                    WHERE " . implode(" AND ", $where) . "
-                                                    LIMIT 1",
+WHERE " . implode(" AND ", $where) . "
+LIMIT 1",
                 $params
             )->fetch();
 
@@ -1807,8 +1931,8 @@ if (!empty($modeConfig['where'])) {
 
 
                 /* ===============================================
-            HEADER PROCESSING
-            =============================================== */
+HEADER PROCESSING
+=============================================== */
 
                 if ($rowNumber <= $jmlHeader) {
 
@@ -2056,8 +2180,8 @@ if (!empty($modeConfig['where'])) {
         return array_values($grouped);
     }
     /* =========================================================
-                                                                IMPORT STRUKTUR NASIONAL (GLOBAL HIRARKI)
-                                                                ========================================================= */
+        IMPORT STRUKTUR NASIONAL (GLOBAL HIRARKI)
+        ========================================================= */
     public function importStruktur(string $filePath, int $jmlHeader = 1): string
     {
         return $this->runTransaction(function () use ($filePath, $jmlHeader) {
@@ -2286,8 +2410,8 @@ if (!empty($modeConfig['where'])) {
 
         $exists = $this->db->query(
             "SELECT `$primaryKey` FROM `$table`
-                                                                        WHERE " . implode(" AND ", $whereParts) . "
-                                                                        LIMIT 1",
+                WHERE " . implode(" AND ", $whereParts) . "
+                LIMIT 1",
             $params
         )->fetch();
 
@@ -2354,8 +2478,8 @@ if (!empty($modeConfig['where'])) {
         // 🔥 Cek duplicate
         $exists = $this->db->query(
             "SELECT id FROM `$table`
-                WHERE " . implode(" AND ", $whereParts) . "
-                LIMIT 1",
+WHERE " . implode(" AND ", $whereParts) . "
+LIMIT 1",
             $params
         )->fetch();
 
@@ -2363,8 +2487,8 @@ if (!empty($modeConfig['where'])) {
             return $exists['id'];
         }
         /* =====================================================
-                                                                ENTERPRISE SANITATION
-                                                                ===================================================== */
+        ENTERPRISE SANITATION
+        ===================================================== */
         $filtered = $this->applySanitization($table, $filtered);
         $filtered = $this->injectAudit($filtered, 'insert');
 
@@ -2373,8 +2497,8 @@ if (!empty($modeConfig['where'])) {
         return $this->db->lastInsertId();
     }
     /* =========================================================
-                                                                    VALIDASI IMPORT CONFIG DARI PROFILE
-                                                                    ========================================================= */
+            VALIDASI IMPORT CONFIG DARI PROFILE
+            ========================================================= */
     private function validateImportConfig(string $tableKey): array
     {
         if (!isset($this->profiles[$tableKey]['import'])) {
@@ -2396,13 +2520,13 @@ if (!empty($modeConfig['where'])) {
         return $config;
     }
     /* =========================================================
-                                                                APPLY NORMALISASI BERDASARKAN PROFILE app/Config/table_profiles.php'
-                                                                program' => [
-                                                                    'table' => 'program',
-                                                                    'primary_key' => 'id',
-                                                                    'normalize_space' => ['nama']
-                                                                ],
-                                                                ========================================================= */
+        APPLY NORMALISASI BERDASARKAN PROFILE app/Config/table_profiles.php'
+        program' => [
+            'table' => 'program',
+            'primary_key' => 'id',
+            'normalize_space' => ['nama']
+        ],
+        ========================================================= */
     private function applyNormalization(string $table, array $data): array
     {
         $profile = $this->getProfileByTable($table);
@@ -2420,16 +2544,16 @@ if (!empty($modeConfig['where'])) {
         return $data;
     }
     /* =========================================================
-                                                                NORMALISASI SPASI GLOBAL
-                                                                ========================================================= */
+        NORMALISASI SPASI GLOBAL
+        ========================================================= */
     private function normalizeSpaces(string $value): string
     {
         $value = trim((string)$value);
         return preg_replace('/\s+/u', ' ', $value);
     }
     /* =========================================================
-                                                                SANITIZE SINGLE VALUE
-                                                                ========================================================= */
+        SANITIZE SINGLE VALUE
+        ========================================================= */
     private function sanitizeValue(?string $value, ?array $rules = null): string
     {
         if ($value === null) {
@@ -2464,8 +2588,8 @@ if (!empty($modeConfig['where'])) {
         return $value;
     }
     /* =========================================================
-                                                    ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filtered);
-                                                    ========================================================= */
+ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filtered);
+========================================================= */
     private function applySanitization(string $table, array $data): array
     {
         $profile = $this->getProfileByTable($table);
@@ -2507,9 +2631,15 @@ if (!empty($modeConfig['where'])) {
             if ($role === 'admin_opd') {
 
                 foreach (['kd_opd', 'kd_wilayah', 'tahun'] as $field) {
-                    if (in_array($field, $columns)) {
+
+                    if (
+                        in_array($field, $columns)
+                        && isset($this->user[$field])
+                        && $this->user[$field] !== null
+                    ) {
+
                         $where[] = "`$field` = ?";
-                        $params[] = $this->user[$field] ?? null;
+                        $params[] = $this->user[$field];
                     }
                 }
             }
@@ -2992,17 +3122,17 @@ if (!empty($modeConfig['where'])) {
 
 
             /* ==================================================
-        4️⃣ LOAD CACHE RELASI (HANYA SEKALI)
-        ================================================== */
+4️⃣ LOAD CACHE RELASI (HANYA SEKALI)
+================================================== */
 
             if (!isset($this->relationCache[$lookupTable])) {
 
                 // query semua data lookup
                 $sql = "
-                SELECT $idField, $lookupField
-                FROM $lookupTable
-                WHERE is_deleted = 0
-            ";
+SELECT $idField, $lookupField
+FROM $lookupTable
+WHERE is_deleted = 0
+";
 
                 $params = [];
 
@@ -3036,8 +3166,8 @@ if (!empty($modeConfig['where'])) {
 
 
             /* ==================================================
-        5️⃣ CARI NILAI DI CACHE
-        ================================================== */
+5️⃣ CARI NILAI DI CACHE
+================================================== */
 
             if (!isset($this->relationCache[$lookupTable][$cacheKey])) {
 
@@ -3049,8 +3179,8 @@ if (!empty($modeConfig['where'])) {
 
 
             /* ==================================================
-        6️⃣ SET FOREIGN KEY
-        ================================================== */
+6️⃣ SET FOREIGN KEY
+================================================== */
 
             // contoh:
             // satuan_id = 5
@@ -3059,8 +3189,8 @@ if (!empty($modeConfig['where'])) {
 
 
             /* ==================================================
-        7️⃣ HAPUS FIELD TEXT EXCEL
-        ================================================== */
+7️⃣ HAPUS FIELD TEXT EXCEL
+================================================== */
 
             // hapus field asli
             unset($data[$excelField]);
@@ -3146,12 +3276,12 @@ if (!empty($modeConfig['where'])) {
             // ======================================================
             $exists = $this->db->query(
                 "SELECT id
-                                                            FROM `$pivotTable`
-                                                            WHERE `$fkField` = ?
-                                                            AND `kd_akun` = ?
-                                                            AND `kd_wilayah` = ?
-                                                            AND `peraturan_id` = ?
-                                                            LIMIT 1",
+    FROM `$pivotTable`
+    WHERE `$fkField` = ?
+    AND `kd_akun` = ?
+    AND `kd_wilayah` = ?
+    AND `peraturan_id` = ?
+    LIMIT 1",
                 [
                     $data[$foreignKey],
                     $data['kd_akun'],
@@ -3226,8 +3356,8 @@ if (!empty($modeConfig['where'])) {
 
 
         /* ======================================================
-    4️⃣ LOAD CACHE SATUAN (HANYA SEKALI)
-    ====================================================== */
+4️⃣ LOAD CACHE SATUAN (HANYA SEKALI)
+====================================================== */
 
         // jika cache satuan masih kosong
         // berarti ini baris pertama import
@@ -3235,11 +3365,11 @@ if (!empty($modeConfig['where'])) {
 
             // query semua satuan sesuai peraturan
             $sql = "
-            SELECT id, item
-            FROM satuan_neo
-            WHERE peraturan_id = :peraturan_id
-            AND is_deleted = 0
-        ";
+SELECT id, item
+FROM satuan_neo
+WHERE peraturan_id = :peraturan_id
+AND is_deleted = 0
+";
 
             // jalankan query
             $stmt = $this->db->query($sql, [
@@ -3268,8 +3398,8 @@ if (!empty($modeConfig['where'])) {
 
 
         /* ======================================================
-    5️⃣ CARI SATUAN DI CACHE
-    ====================================================== */
+5️⃣ CARI SATUAN DI CACHE
+====================================================== */
 
         // jika satuan Excel tidak ditemukan
         if (!isset($this->cacheSatuan[$cacheKey])) {
@@ -3282,16 +3412,16 @@ if (!empty($modeConfig['where'])) {
 
 
         /* ======================================================
-    6️⃣ SET FIELD satuan_id
-    ====================================================== */
+6️⃣ SET FIELD satuan_id
+====================================================== */
 
         // ambil id satuan dari cache
         $data['satuan_id'] = $this->cacheSatuan[$cacheKey];
 
 
         /* ======================================================
-    7️⃣ HAPUS FIELD TEXT SATUAN
-    ====================================================== */
+7️⃣ HAPUS FIELD TEXT SATUAN
+====================================================== */
 
         // hapus field satuan karena database memakai satuan_id
         unset($data['satuan']);
@@ -3302,10 +3432,10 @@ if (!empty($modeConfig['where'])) {
     }
 
     /*
-    |--------------------------------------------------------------------------
-    | APPLY WHERE RELASI DI DROPDOWN
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| APPLY WHERE RELASI DI DROPDOWN
+|--------------------------------------------------------------------------
+*/
 
     public function getReference($module)
     {
@@ -3328,10 +3458,10 @@ if (!empty($modeConfig['where'])) {
         $where = [];
 
         /*
-    |--------------------------------------------------------------------------
-    | PRIORITAS 1 : RELATION
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| PRIORITAS 1 : RELATION
+|--------------------------------------------------------------------------
+*/
         if ($value && !empty($profile['relations'])) {
 
             foreach ($profile['relations'] as $relation) {
@@ -3345,30 +3475,30 @@ if (!empty($modeConfig['where'])) {
             }
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | PRIORITAS 2 : parent_field fallback
-    |--------------------------------------------------------------------------
-    */ elseif ($value && $parentField) {
+            /*
+            |--------------------------------------------------------------------------
+            | PRIORITAS 2 : parent_field fallback
+            |--------------------------------------------------------------------------*/ 
+    elseif ($value && $parentField) {
 
             $where[] = "{$parentField} = :parent";
             $params['parent'] = $value;
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | APPLY WHERE
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| APPLY WHERE
+|--------------------------------------------------------------------------
+*/
         if (!empty($where)) {
             $sql .= " WHERE " . implode(" AND ", $where);
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | ORDER
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| ORDER
+|--------------------------------------------------------------------------
+*/
         $sql .= " ORDER BY kode";
 
         $data = $this->db->select($sql, $params);
