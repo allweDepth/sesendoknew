@@ -1,93 +1,85 @@
-<?php
-/*
-VIEW GLOBAL ANGGRAN
-Digunakan untuk:
-renja
-rka
-dpa
-renja_p
-rka_p
-dppa
-*/
-?>
+<div class="ui segment">
 
-<div class="ui container"
-     data-module="anggaran"
-     data-table="<?= $table ?>"
-     data-tahap="<?= $tahap ?>">
+<div class="ui grid">
 
-    <!-- HEADER -->
+<div class="eight wide column">
 
-    <h3 class="ui dividing header">
-        Sub Kegiatan Belanja
-    </h3>
+<div class="ui icon input">
 
-    <!-- INFO OPD -->
+<input type="text"
+       placeholder="Pencarian"
+       id="searchSubKegiatan">
 
-    <div class="ui segment">
-
-        <b>
-        DINAS PEKERJAAN UMUM DAN PENATAAN RUANG
-        </b>
-
-    </div>
-
-    <!-- TABEL SUB KEGIATAN -->
-
-    <div class="ui segment">
-
-        <table class="ui celled selectable table"
-               id="tableSubKegiatan">
-
-            <thead>
-
-                <tr>
-                    <th>Kode Sub Kegiatan</th>
-                    <th>Nama Sub Kegiatan</th>
-                    <th>Total Anggaran</th>
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                <!-- diisi JS -->
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-
-    <!-- PANEL RINCIAN (hidden dulu) -->
-
-    <div class="ui segment" id="panelRincian" style="display:none">
-
-        <h4 class="ui header">
-            Rincian Belanja
-        </h4>
-
-        <table class="ui celled table"
-               id="tableRincian">
-
-            <thead>
-
-                <tr>
-
-                    <th>Uraian</th>
-                    <th>Volume</th>
-                    <th>Harga</th>
-                    <th>Jumlah</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody></tbody>
-
-        </table>
-
-    </div>
+<i class="search icon"></i>
 
 </div>
+
+</div>
+
+<div class="eight wide column right aligned">
+
+<button class="ui small green button">
+
+<i class="print icon"></i>
+Cetak Laporan
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<table class="ui celled selectable compact table"
+       id="tableSubKegiatan">
+
+<thead>
+
+<tr>
+
+<th style="width:70px">
+Aksi
+</th>
+
+<th>
+Sub Kegiatan
+</th>
+
+<th style="width:120px">
+Status
+</th>
+
+<th style="width:140px">
+Status Rincian
+</th>
+
+<th style="width:140px">
+Sebelum Perubahan
+</th>
+
+<th style="width:140px">
+Pagu Validasi
+</th>
+
+<th style="width:160px">
+Total Rincian
+</th>
+
+<th style="width:120px">
+Realisasi %
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<!-- DATA AJAX -->
+
+</tbody>
+
+</table>

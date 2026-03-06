@@ -1,38 +1,20 @@
 <div class="ui segment">
 
-<h4 class="ui header">
+<h4 class="ui dividing header">
 
 Rincian Belanja
 
 </h4>
 
-<table class="ui celled compact table"
-       id="tableRincian">
+<button class="ui mini button"
+        id="btnBackRekap">
 
-<thead>
+<i class="arrow left icon"></i>
+Kembali
 
-<tr>
-
-<th>Uraian</th>
-
-<th style="width:120px">
-Volume
-</th>
-
-<th style="width:150px">
-Harga
-</th>
-
-<th style="width:160px">
-Jumlah
-</th>
-
-</tr>
-
-</thead>
-
-<tbody></tbody>
-
-</table>
+</button>
 
 </div>
+
+
+<?php require __DIR__.'/rincian.php'; ?>

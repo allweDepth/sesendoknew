@@ -1,99 +1,36 @@
 class AnggaranModule {
+	constructor(container) {
+		this.container = container;
+		this.table = container.dataset.table;
 
-constructor(config)
-{
-    this.table = config.table;
-    this.tahap = config.tahap;
-}
+		this.init();
+	}
 
-async loadSubKegiatan()
-{
-    let res = await $.post('/dynamic',{
-        table:'group_sub_kegiatan',
-        action:'list',
-        where:{ tahap:this.tahap }
-    });
+	init() {
+		this.loadSub();
+	}
 
-    this.renderSub(res.data);
-}
+	async loadSub() {
+		let res = await $.post("/anggaran/sub_kegiatan", {
+			table: this.table,
+			tahun: 2026,
+			opd: "1.03",
+		});
 
-renderSub(rows)
-{
-    let html='';
+		let tbody = $("#tableSubKegiatan tbody");
 
-    rows.forEach(r=>{
+		tbody.empty();
 
-        html+=`
-        <tr data-sub="${r.kd_sub_keg}">
-            <td>${r.kd_sub_keg}</td>
-            <td>${r.nama_sub_keg}</td>
-            <td>${r.total_anggaran}</td>
-        </tr>
-        `;
-    });
-
-    $('#tableSubKegiatan tbody').html(html);
-}
-
-async loadRekap(sub)
-{
-    let res = await $.post('/dynamic',{
-        table:'group_rekap_akun',
-        action:'list',
-        where:{ kd_sub_keg:sub }
-    });
-
-    this.renderRekap(res.data);
-}
-
-renderRekap(rows)
-{
-    let html='';
-
-    rows.forEach(r=>{
-
-        html+=`
-        <tr data-akun="${r.kd_akun}">
-            <td>${r.kd_akun}</td>
-            <td>${r.total_anggaran}</td>
-        </tr>
-        `;
-    });
-
-    $('#tableRekapAkun tbody').html(html);
-}
-
-async loadRincian(sub,akun)
-{
-    let res = await $.post('/dynamic',{
-        table:this.table,
-        action:'list',
-        where:{
-            kd_sub_keg:sub,
-            kd_akun:akun
-        }
-    });
-
-    this.renderRincian(res.data);
-}
-
-renderRincian(rows)
-{
-    let html='';
-
-    rows.forEach(r=>{
-
-        html+=`
-        <tr>
-            <td>${r.uraian}</td>
-            <td>${r.volume}</td>
-            <td>${r.harga_satuan}</td>
-            <td>${r.jumlah}</td>
-        </tr>
-        `;
-    });
-
-    $('#tableRincian tbody').html(html);
-}
-
+		res.data.forEach((r) => {
+			tbody.append(`
+<tr data-sub="${r.kd_sub_keg}">
+<td>
+<button class="ui mini button btnSub">Detail</button>
+</td>
+<td>${r.kd_sub_keg}</td>
+<td>${r.total}</td>
+</tr>
+`);
+		});
+	}
 }

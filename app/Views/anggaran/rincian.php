@@ -1,28 +1,40 @@
-<div class="ui container">
-
-<h3 class="ui dividing header">
-
-Rincian Belanja
-
-</h3>
-
-<table class="ui celled table" id="tableRincian">
+<table class="ui celled compact selectable table"
+       id="tableRincianBelanja">
 
 <thead>
 
 <tr>
 
-<th>Uraian</th>
-<th>Volume</th>
-<th>Harga</th>
-<th>Jumlah</th>
+<th style="width:60px"></th>
+
+<th>
+Komponen
+</th>
+
+<th style="width:120px">
+Volume
+</th>
+
+<th style="width:120px">
+Satuan
+</th>
+
+<th style="width:150px">
+Harga Satuan
+</th>
+
+<th style="width:180px">
+Jumlah
+</th>
 
 </tr>
 
 </thead>
 
-<tbody></tbody>
+<tbody>
+
+<!-- DATA AJAX -->
+
+</tbody>
 
 </table>
-
-</div>

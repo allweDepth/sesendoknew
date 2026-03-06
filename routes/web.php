@@ -164,7 +164,11 @@ return [
 | ANGGARAN
 |--------------------------------------------------------------------------
 */
-    '/renja' => ['AnggaranController', 'subKegiatan'],
-    '/renja/detail' => ['AnggaranController', 'detailSubKegiatan'],
-    '/renja/rincian' => ['AnggaranController', 'rincianBelanja'],
+    '/anggaran' => ['AnggaranController', 'index'],
+
+    '/anggaran/sub_kegiatan' => ['AnggaranController', 'subKegiatan'],
+
+    '/anggaran/rekap_akun' => ['AnggaranController', 'rekapAkun'],
+
+    '/anggaran/rincian' => ['AnggaranController', 'rincian'],
 ];

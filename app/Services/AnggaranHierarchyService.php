@@ -1,80 +1,76 @@
 <?php
 
-require_once __DIR__ . '/../Core/DB.php';
-
-/**
- * ============================================================
- * ANGARAN HIERARCHY SERVICE
- * ============================================================
- *
- * Tugas:
- * ------------------------------------------------------------
- * - Menghitung total berdasarkan prefix
- * - Digunakan untuk recalculation parent
- *
- * Service ini hanya melakukan SUM.
- * Tidak melakukan CRUD.
- *
- * ============================================================
- */
-
 class AnggaranHierarchyService
 {
-  private DB $db;
-  private string $table;
-  private string $amountColumn;
 
-  private int $tahun;
-  private string $kd_wilayah;
-  private string $kd_opd;
+    public static function getSubKegiatan($table,$tahun,$opd)
+    {
 
-  /**
-   * Constructor
-   */
-  public function __construct(string $table, string $amountColumn = 'jumlah')
-  {
-    if (
-      !isset($_SESSION['tahun']) ||
-      !isset($_SESSION['kd_wilayah']) ||
-      !isset($_SESSION['kd_opd'])
-    ) {
-      throw new Exception("Session anggaran tidak lengkap.");
-    }
+        $db = DB::getInstance();
 
-    $this->db = DB::getInstance();
-    $this->table = $table;
-    $this->amountColumn = $amountColumn;
-
-    $this->tahun      = $_SESSION['tahun'];
-    $this->kd_wilayah = $_SESSION['kd_wilayah'];
-    $this->kd_opd     = $_SESSION['kd_opd'];
-  }
-
-  /**
-   * Hitung total berdasarkan prefix field tertentu
-   *
-   * @param string $field (kd_sub_keg atau kd_akun)
-   * @param string $prefix
-   * @return float
-   */
-  public function sumByFieldPrefix(string $field, string $prefix): float
-  {
-    $sql = "
-            SELECT SUM({$this->amountColumn}) as total
-            FROM {$this->table}
-            WHERE tahun=? 
-            AND kd_wilayah=? 
-            AND kd_opd=? 
-            AND {$field} LIKE ?
+        $sql = "
+        SELECT
+            kd_sub_keg,
+            SUM(jumlah) total
+        FROM {$table}
+        WHERE tahun=?
+        AND kd_opd=?
+        AND is_deleted=0
+        GROUP BY kd_sub_keg
+        ORDER BY kd_sub_keg
         ";
 
-    $result = $this->db->query($sql, [
-      $this->tahun,
-      $this->kd_wilayah,
-      $this->kd_opd,
-      $prefix . '%'
-    ])->fetch();
+        return $db->query($sql,[$tahun,$opd])->fetchAll();
 
-    return (float) ($result['total'] ?? 0);
-  }
+    }
+
+
+
+    public static function getRekapAkun($table,$kd_sub_keg)
+    {
+
+        $db = DB::getInstance();
+
+        $sql = "
+        SELECT
+            kd_akun,
+            uraian,
+            SUM(jumlah) total
+        FROM {$table}
+        WHERE kd_sub_keg=?
+        AND is_deleted=0
+        GROUP BY kd_akun
+        ORDER BY kd_akun
+        ";
+
+        return $db->query($sql,[$kd_sub_keg])->fetchAll();
+
+    }
+
+
+
+    public static function getRincian($table,$kd_sub_keg,$kd_akun)
+    {
+
+        $db = DB::getInstance();
+
+        $sql = "
+        SELECT
+            id,
+            komponen,
+            volume,
+            sat_1,
+            harga_satuan,
+            jumlah
+        FROM {$table}
+        WHERE kd_sub_keg=?
+        AND kd_akun=?
+        AND is_deleted=0
+        ORDER BY id
+        ";
+
+        return $db->query($sql,[$kd_sub_keg,$kd_akun])->fetchAll();
+
+    }
+
 }

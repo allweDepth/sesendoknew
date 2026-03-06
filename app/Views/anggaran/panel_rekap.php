@@ -1,32 +1,20 @@
 <div class="ui segment">
 
-<h4 class="ui header">
+<h4 class="ui dividing header">
 
-Rekap Akun
+Rekap Akun Belanja
 
 </h4>
 
-<table class="ui celled selectable compact table"
-       id="tableRekapAkun">
+<button class="ui mini button"
+        id="btnBackSub">
 
-<thead>
+<i class="arrow left icon"></i>
+Kembali
 
-<tr>
-
-<th style="width:180px">
-Kode Akun
-</th>
-
-<th>
-Total
-</th>
-
-</tr>
-
-</thead>
-
-<tbody></tbody>
-
-</table>
+</button>
 
 </div>
+
+
+<?php require __DIR__.'/rekap_akun.php'; ?>

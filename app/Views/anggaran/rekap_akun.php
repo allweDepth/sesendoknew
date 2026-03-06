@@ -1,26 +1,30 @@
-<div class="ui container">
-
-<h3 class="ui dividing header">
-
-Rekap Akun
-
-</h3>
-
-<table class="ui celled table" id="tableRekapAkun">
+<table class="ui celled compact selectable table"
+       id="tableRekapAkun">
 
 <thead>
 
 <tr>
 
-<th>Akun</th>
-<th>Total</th>
+<th style="width:150px">
+Kode Rekening
+</th>
+
+<th>
+Uraian
+</th>
+
+<th style="width:180px">
+Total Anggaran
+</th>
 
 </tr>
 
 </thead>
 
-<tbody></tbody>
+<tbody>
+
+<!-- DATA AJAX -->
+
+</tbody>
 
 </table>
-
-</div>
