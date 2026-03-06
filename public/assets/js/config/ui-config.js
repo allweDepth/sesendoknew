@@ -1011,7 +1011,235 @@ UIConfig.sbu.import = UIConfig.__importFactory("sbu_neo", "17. sbu 2024.xlsx");
 
 UIConfig.ssh.import = UIConfig.__importFactory("ssh_neo", "12. ssh 2024.xlsx");
 UIConfig.aset.import = UIConfig.__importFactory("aset_neo", null); //DEFAULT GLOBAL TANPA TEMPLATE
+/*
+|--------------------------------------------------------------------------
+| SUB KEGIATAN - ADD
+|--------------------------------------------------------------------------
+| Digunakan oleh:
+| RENJA
+| RENJA PERUBAHAN
+| RKA
+| RKA PERUBAHAN
+| DPA
+| DPPA
+|--------------------------------------------------------------------------
+*/
 
+/*
+|--------------------------------------------------------------------------
+| SUB KEGIATAN
+|--------------------------------------------------------------------------
+| Digunakan untuk:
+| add
+| edit
+|
+| Dipanggil oleh:
+| data-ui="open-form"
+| data-jns="add"
+| data-jns="edit"
+|--------------------------------------------------------------------------
+*/
+
+UIConfig.sub_kegiatan = {
+	title: "Sub Kegiatan",
+
+	table: "sub_kegiatan",
+
+	fields: [
+		{
+			name: "kd_urusan",
+			label: "Urusan",
+			type: "dropdown_search",
+			source: "urusan",
+			value: "kd_urusan",
+			text: "nama_urusan",
+		},
+
+		{
+			name: "kd_bidang",
+			label: "Bidang Urusan",
+			type: "dropdown_search",
+			source: "bidang_urusan",
+			value: "kd_bidang",
+			text: "nama_bidang",
+		},
+
+		{
+			name: "kd_program",
+			label: "Program",
+			type: "dropdown_search",
+			source: "program",
+			value: "kd_program",
+			text: "nama_program",
+		},
+		{
+			name: "kd_keg",
+			label: "Kode Kegiatan",
+			type: "dropdown_search",
+			source: "kegiatan",
+			value: "kd_kegiatan",
+			required: true,
+		},
+
+		{
+			name: "kd_sub_keg",
+			label: "Kode Sub Kegiatan",
+			type: "dropdown_search",
+			source: "sub_kegiatan",
+			value: "kd_sub_kegiatan",
+			required: true,
+		},
+	],
+};
+/*
+|--------------------------------------------------------------------------
+| ANGGARAN - RINCIAN BELANJA
+|--------------------------------------------------------------------------
+| Digunakan oleh:
+| renja_neo
+| renja_perubahan_neo
+| rka_neo
+| rka_perubahan_neo
+| dpa_neo
+| dppa_neo
+|--------------------------------------------------------------------------
+*/
+
+UIConfig.anggaran = {
+	title: "Rincian Belanja",
+
+	fields: [
+		/*
+        |--------------------------------------------------------------------------
+        | JENIS STANDAR HARGA
+        |--------------------------------------------------------------------------
+        */
+
+		{
+			name: "jenis_standar_harga",
+			label: "Jenis Standar Harga",
+			type: "dropdown",
+			options: [
+				{ value: "ssh", text: "SSH" },
+				{ value: "sbu", text: "SBU" },
+				{ value: "hspk", text: "HSPK" },
+				{ value: "asb", text: "ASB" },
+			],
+		},
+
+		/*
+        |--------------------------------------------------------------------------
+        | STANDAR HARGA
+        |--------------------------------------------------------------------------
+        */
+
+		{
+			name: "id_standar_harga",
+			label: "Standar Harga",
+			type: "dropdown_search",
+			source: "standar_harga",
+			value: "id",
+			text: "komponen",
+		},
+
+		/*
+        |--------------------------------------------------------------------------
+        | KOMPONEN
+        |--------------------------------------------------------------------------
+        */
+
+		{
+			name: "komponen",
+			label: "Komponen",
+			type: "text",
+		},
+
+		/*
+        |--------------------------------------------------------------------------
+        | SPESIFIKASI
+        |--------------------------------------------------------------------------
+        */
+
+		{
+			name: "spesifikasi",
+			label: "Spesifikasi",
+			type: "text",
+		},
+
+		/*
+        |--------------------------------------------------------------------------
+        | TKDN
+        |--------------------------------------------------------------------------
+        */
+
+		{
+			name: "tkdn",
+			label: "TKDN",
+			type: "number",
+		},
+
+		/*
+        |--------------------------------------------------------------------------
+        | PAJAK
+        |--------------------------------------------------------------------------
+        */
+
+		{
+			name: "pajak",
+			label: "Pajak",
+			type: "number",
+		},
+
+		/*
+        |--------------------------------------------------------------------------
+        | HARGA SATUAN
+        |--------------------------------------------------------------------------
+        */
+
+		{
+			name: "harga_satuan",
+			label: "Harga Satuan",
+			type: "number",
+		},
+
+		/*
+        |--------------------------------------------------------------------------
+        | VOLUME
+        |--------------------------------------------------------------------------
+        */
+
+		{
+			name: "volume",
+			label: "Volume",
+			type: "number",
+		},
+
+		/*
+        |--------------------------------------------------------------------------
+        | SATUAN
+        |--------------------------------------------------------------------------
+        */
+
+		{
+			name: "sat_1",
+			label: "Satuan",
+			type: "text",
+		},
+
+		/*
+        |--------------------------------------------------------------------------
+        | JUMLAH
+        |--------------------------------------------------------------------------
+        */
+
+		{
+			name: "jumlah",
+			label: "Jumlah",
+			type: "number",
+			readonly: true,
+		},
+	],
+};
 // ======================================================
 // 🔥 GENERIC AKUN MAP CONFIG FACTORY
 // ======================================================
