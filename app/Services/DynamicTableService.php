@@ -630,13 +630,22 @@ UPDATE (FIXED STABLE VERSION v3.1)
 9️⃣ DIFF CHECK
 ===================================================== */
         $diff = [];
+        // var_dump($filtered);
+        // var_dump($oldData);
 
         foreach ($filtered as $key => $value) {
-            if (isset($oldData[$key]) && $oldData[$key] != $value) {
-                $diff[$key] = $value;
+
+            // cek apakah field ada di data lama
+            if (array_key_exists($key, $oldData)) {
+
+                // bandingkan nilai lama dan nilai baru
+                if ($oldData[$key] != $value) {
+                    $diff[$key] = $value;
+                }
             }
         }
-
+        // var_dump($diff);
+        // exit;
         if (empty($diff)) {
             return JsonResponse::success("Tidak ada perubahan");
         }
@@ -1652,7 +1661,7 @@ menentukan parent table dan cara validasi relasinya
 
             'sub_kegiatan' => [
                 'parent_table' => 'kegiatan',
-                'match' => ['kegiatan_id' => 'id']
+                'match' => ['kode_kegiatan' => 'kode']
             ],
 
             // Renstra

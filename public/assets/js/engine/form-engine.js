@@ -130,12 +130,16 @@ class FormEngine {
 	bindEvents() {
 		const eventName = `submit.formEngine.${this.state.tbl}`;
 
-		// hapus hanya event form ini
-		$(document).off(eventName);
+		// =====================================================
+		// HAPUS EVENT LAMA DENGAN SELECTOR
+		// =====================================================
+		$(document).off(eventName, this.formSelector);
 
-		// bind event submit form
+		// =====================================================
+		// BIND EVENT BARU
+		// =====================================================
 		$(document).on(eventName, this.formSelector, (e) => {
-			// cegah submit default browser
+			// cegah submit browser
 			e.preventDefault();
 
 			// jalankan submit engine
@@ -1034,135 +1038,124 @@ class FormEngine {
 		$("#icon_flyout").attr("class", "").addClass(`${icon} icon`);
 	}
 	/**
- * ======================================================
- * CASCADE DROPDOWN HANDLER
- * ======================================================
- * Fungsi:
- * - memonitor perubahan dropdown parent
- * - load dropdown child berdasarkan parent
- * - mencegah duplicate request
- * - aman untuk SPA (flyout berkali-kali)
- */
-initCascadeDropdown() {
-
-	const self = this;
-
-	/**
 	 * ======================================================
-	 * HAPUS EVENT SEBELUMNYA
+	 * CASCADE DROPDOWN HANDLER
 	 * ======================================================
-	 * penting agar event tidak menumpuk
-	 * saat flyout dibuka berkali-kali
+	 * Fungsi:
+	 * - memonitor perubahan dropdown parent
+	 * - load dropdown child berdasarkan parent
+	 * - mencegah duplicate request
+	 * - aman untuk SPA (flyout berkali-kali)
 	 */
-	$(document).off("change.formCascade");
+	initCascadeDropdown() {
+		const self = this;
 
-	/**
-	 * ======================================================
-	 * EVENT PERUBAHAN DROPDOWN
-	 * ======================================================
-	 */
-	$(document).on(
-		"change.formCascade",
-		`${this.formSelector} .ui.dropdown[data-source]`,
-		function () {
+		/**
+		 * ======================================================
+		 * HAPUS EVENT SEBELUMNYA
+		 * ======================================================
+		 * penting agar event tidak menumpuk
+		 * saat flyout dibuka berkali-kali
+		 */
+		$(document).off("change.formCascade");
 
-			const $parentDropdown = $(this);
-
-			/**
-			 * ======================================================
-			 * SKIP JIKA EVENT DIPICU OLEH populateForm()
-			 * ======================================================
-			 */
-			if ($parentDropdown.data("skip-cascade")) return;
-
-			const parentName = $parentDropdown
-				.find("input[type=hidden]")
-				.attr("name");
-
-			const parentValue = $parentDropdown
-				.find("input[type=hidden]")
-				.val();
-
-			if (!parentName) return;
-
-			/**
-			 * ======================================================
-			 * CARI SEMUA CHILD DROPDOWN
-			 * ======================================================
-			 */
-			$(`${self.formSelector} .ui.dropdown[data-parent="${parentName}"]`)
-			.each(function () {
-
-				const $child = $(this);
-
-				const source = $child.data("source");
-
-				if (!source) return;
+		/**
+		 * ======================================================
+		 * EVENT PERUBAHAN DROPDOWN
+		 * ======================================================
+		 */
+		$(document).on(
+			"change.formCascade",
+			`${this.formSelector} .ui.dropdown[data-source]`,
+			function () {
+				const $parentDropdown = $(this);
 
 				/**
 				 * ======================================================
-				 * RESET CHILD
+				 * SKIP JIKA EVENT DIPICU OLEH populateForm()
 				 * ======================================================
 				 */
-				$child.dropdown("clear");
+				if ($parentDropdown.data("skip-cascade")) return;
 
-				const $menu = $child.find(".menu");
+				const parentName = $parentDropdown
+					.find("input[type=hidden]")
+					.attr("name");
 
-				$menu.empty();
+				const parentValue = $parentDropdown.find("input[type=hidden]").val();
+
+				if (!parentName) return;
 
 				/**
 				 * ======================================================
-				 * JIKA PARENT KOSONG
+				 * CARI SEMUA CHILD DROPDOWN
 				 * ======================================================
 				 */
-				if (!parentValue) return;
+				$(
+					`${self.formSelector} .ui.dropdown[data-parent="${parentName}"]`,
+				).each(function () {
+					const $child = $(this);
 
-				/**
-				 * ======================================================
-				 * REQUEST DROPDOWN CHILD
-				 * ======================================================
-				 */
-				self.ajax.request({
+					const source = $child.data("source");
 
-					data: {
+					if (!source) return;
 
-						module: source,
+					/**
+					 * ======================================================
+					 * RESET CHILD
+					 * ======================================================
+					 */
+					$child.dropdown("clear");
 
-						action: "dropdown",
+					const $menu = $child.find(".menu");
 
-						tbl: source,
+					$menu.empty();
 
-						parent: parentName,
+					/**
+					 * ======================================================
+					 * JIKA PARENT KOSONG
+					 * ======================================================
+					 */
+					if (!parentValue) return;
 
-						parent_field: $child.data("parent-field"),
+					/**
+					 * ======================================================
+					 * REQUEST DROPDOWN CHILD
+					 * ======================================================
+					 */
+					self.ajax.request({
+						data: {
+							module: source,
 
-						value: parentValue
-					},
+							action: "dropdown",
 
-					success: (res) => {
+							tbl: source,
 
-						if (!res.success || !res.data) return;
+							parent: parentName,
 
-						res.data.forEach((item) => {
+							parent_field: $child.data("parent-field"),
 
-							$menu.append(`
+							value: parentValue,
+						},
+
+						success: (res) => {
+							if (!res.success || !res.data) return;
+
+							res.data.forEach((item) => {
+								$menu.append(`
 								<div class="item" data-value="${item.id}">
 									${item.uraian || item.item || item.nama || ""}
 								</div>
 							`);
+							});
 
-						});
-
-						/**
-						 * refresh dropdown
-						 */
-						$child.dropdown("refresh");
-
-					}
+							/**
+							 * refresh dropdown
+							 */
+							$child.dropdown("refresh");
+						},
+					});
 				});
-
-			});
-		}
-	);
-}
+			},
+		);
+	}
 }

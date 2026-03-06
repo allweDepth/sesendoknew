@@ -215,7 +215,7 @@ UIConfig.indikator_sasaran_renstra_neo = {
 				prop: {
 					label: "Sasaran",
 					name: "sasaran_id",
-					source: "sasaran_renstra_neo",
+					source: "sasaran_renstra_neo",search: true,
 				},
 			},
 			{
@@ -246,7 +246,7 @@ UIConfig.program_renstra_neo = {
 				prop: {
 					label: "Sasaran",
 					name: "sasaran_id",
-					source: "sasaran_renstra_neo",
+					source: "sasaran_renstra_neo",search: true,
 				},
 			},
 			{
@@ -270,7 +270,7 @@ UIConfig.indikator_program_renstra_neo = {
 				prop: {
 					label: "Program",
 					name: "program_id",
-					source: "program_renstra_neo",
+					source: "program_renstra_neo",search: true,
 				},
 			},
 			{
@@ -301,7 +301,7 @@ UIConfig.kegiatan_renstra_neo = {
 				prop: {
 					label: "Program",
 					name: "program_id",
-					source: "program_renstra_neo",
+					source: "program_renstra_neo",search: true,
 				},
 			},
 			{ tag: "field", prop: { label: "Kode Kegiatan", name: "kode_kegiatan" } },
@@ -330,7 +330,7 @@ UIConfig.sub_kegiatan_renstra_neo = {
 				prop: {
 					label: "Kegiatan",
 					name: "kegiatan_renstra_id",
-					source: "kegiatan_renstra_neo",
+					source: "kegiatan_renstra_neo",search: true,
 				},
 			},
 			{
@@ -394,7 +394,7 @@ UIConfig.bidang = {
 		elements: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Urusan", name: "kode_urusan", source: "urusan" },
+				prop: { label: "Urusan", name: "kode_urusan", source: "urusan",search: true },
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Nama", name: "nama" } },
@@ -407,7 +407,7 @@ UIConfig.program = {
 		elements: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Bidang", name: "kode_bidang", source: "bidang" },
+				prop: { label: "Bidang", name: "kode_bidang", source: "bidang",search: true },
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Nama", name: "nama" } },
@@ -420,7 +420,7 @@ UIConfig.kegiatan = {
 		elements: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Program", name: "kode_program", source: "program" },
+				prop: { label: "Program", name: "kode_program", source: "program",search: true },
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Nama", name: "nama" } },
