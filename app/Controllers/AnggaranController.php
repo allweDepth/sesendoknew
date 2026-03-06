@@ -1,67 +1,202 @@
 <?php
 
-class AnggaranController extends Controller
-{
+/*
+|--------------------------------------------------------------------------
+| ANGGARAN CONTROLLER
+|--------------------------------------------------------------------------
+| Digunakan oleh:
+| renja
+| renja_perubahan
+| rka
+| rka_perubahan
+| dpa
+| dppa
+|--------------------------------------------------------------------------
+*/
 
-     public function index()
+class AnggaranController
+{
+    /*
+|--------------------------------------------------------------------------
+| DEFAULT METHOD
+|--------------------------------------------------------------------------
+| Dipanggil oleh router jika method tidak ditentukan
+| Dialihkan ke RENJA
+|--------------------------------------------------------------------------
+*/
+
+    public function index()
     {
 
         $table = 'renja_neo';
 
         $tahap = 'renja';
 
-        // load view
-        require __DIR__.'/../Views/anggaran/index.php';
+        require __DIR__ . '/../Views/anggaran/index.php';
+    }
+    /*
+    |--------------------------------------------------------------------------
+    | RENJA
+    |--------------------------------------------------------------------------
+    */
 
+    public function renja()
+    {
+
+        $table = 'renja_neo';
+
+        $tahap = 'renja';
+
+        require __DIR__ . '/../Views/anggaran/index.php';
     }
 
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | RENJA PERUBAHAN
+    |--------------------------------------------------------------------------
+    */
+
+    public function renjaPerubahan()
+    {
+
+        $table = 'renja_perubahan_neo';
+
+        $tahap = 'renja_p';
+
+        require __DIR__ . '/../Views/anggaran/index.php';
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RKA
+    |--------------------------------------------------------------------------
+    */
+
+    public function rka()
+    {
+
+        $table = 'rka_neo';
+
+        $tahap = 'rka';
+
+        require __DIR__ . '/../Views/anggaran/index.php';
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RKA PERUBAHAN
+    |--------------------------------------------------------------------------
+    */
+
+    public function rkaPerubahan()
+    {
+
+        $table = 'rka_perubahan_neo';
+
+        $tahap = 'rka_p';
+
+        require __DIR__ . '/../Views/anggaran/index.php';
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DPA
+    |--------------------------------------------------------------------------
+    */
+
+    public function dpa()
+    {
+
+        $table = 'dpa_neo';
+
+        $tahap = 'dpa';
+
+        require __DIR__ . '/../Views/anggaran/index.php';
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DPPA
+    |--------------------------------------------------------------------------
+    */
+
+    public function dppa()
+    {
+
+        $table = 'dppa_neo';
+
+        $tahap = 'dppa';
+
+        require __DIR__ . '/../Views/anggaran/index.php';
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AJAX SUB KEGIATAN
+    |--------------------------------------------------------------------------
+    */
 
     public function subKegiatan()
     {
 
         $table = $_POST['table'];
 
-        $tahun = $_POST['tahun'];
+        $data = AnggaranHierarchyService::subKegiatan($table);
 
-        $opd = $_POST['opd'];
-
-        $data = AnggaranHierarchyService::getSubKegiatan($table,$tahun,$opd);
-
-        JsonResponse::success($data);
-
+        echo json_encode($data);
     }
 
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | AJAX REKAP AKUN
+    |--------------------------------------------------------------------------
+    */
 
     public function rekapAkun()
     {
 
         $table = $_POST['table'];
 
-        $kd_sub_keg = $_POST['kd_sub_keg'];
+        $sub   = $_POST['sub'];
 
-        $data = AnggaranHierarchyService::getRekapAkun($table,$kd_sub_keg);
+        $data = AnggaranHierarchyService::rekapAkun($table, $sub);
 
-        JsonResponse::success($data);
-
+        echo json_encode($data);
     }
 
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | AJAX RINCIAN
+    |--------------------------------------------------------------------------
+    */
 
     public function rincian()
     {
 
         $table = $_POST['table'];
 
-        $kd_sub_keg = $_POST['kd_sub_keg'];
+        $sub   = $_POST['sub'];
 
-        $kd_akun = $_POST['kd_akun'];
+        $akun  = $_POST['akun'];
 
-        $data = AnggaranHierarchyService::getRincian($table,$kd_sub_keg,$kd_akun);
+        $data = AnggaranHierarchyService::rincian($table, $sub, $akun);
 
-        JsonResponse::success($data);
-
+        echo json_encode($data);
     }
-
 }

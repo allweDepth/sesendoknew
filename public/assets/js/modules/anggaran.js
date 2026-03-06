@@ -1,36 +1,60 @@
+/*
+|--------------------------------------------------------------------------
+| MODULE ANGGARAN
+|--------------------------------------------------------------------------
+| Mengendalikan tampilan:
+|
+| sub kegiatan
+| rekap akun
+| rincian
+|--------------------------------------------------------------------------
+*/
+
 class AnggaranModule {
-	constructor(container) {
-		this.container = container;
-		this.table = container.dataset.table;
 
-		this.init();
-	}
+constructor(container){
 
-	init() {
-		this.loadSub();
-	}
+this.container = container
+this.table = container.dataset.table
 
-	async loadSub() {
-		let res = await $.post("/anggaran/sub_kegiatan", {
-			table: this.table,
-			tahun: 2026,
-			opd: "1.03",
-		});
+this.init()
 
-		let tbody = $("#tableSubKegiatan tbody");
+}
 
-		tbody.empty();
+init(){
 
-		res.data.forEach((r) => {
-			tbody.append(`
+this.loadSubKegiatan()
+
+}
+
+
+
+async loadSubKegiatan(){
+
+let res = await $.post('/anggaran/sub_kegiatan',{
+table:this.table
+})
+
+let tbody = $("#tableSubKegiatan tbody")
+
+tbody.empty()
+
+res.forEach(r=>{
+
+tbody.append(`
 <tr data-sub="${r.kd_sub_keg}">
 <td>
-<button class="ui mini button btnSub">Detail</button>
+<button class="ui mini button btn-sub">Detail</button>
 </td>
 <td>${r.kd_sub_keg}</td>
 <td>${r.total}</td>
 </tr>
-`);
-		});
-	}
+`)
+
+})
+
+}
+
+
+
 }

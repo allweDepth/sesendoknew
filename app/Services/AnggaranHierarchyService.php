@@ -1,75 +1,84 @@
 <?php
 
+/*
+|--------------------------------------------------------------------------
+| HIERARCHY SERVICE
+|--------------------------------------------------------------------------
+| Struktur SIPD
+|
+| Sub Kegiatan
+|   ↓
+| Rekap Akun
+|   ↓
+| Rincian Komponen
+|--------------------------------------------------------------------------
+*/
+
 class AnggaranHierarchyService
 {
 
-    public static function getSubKegiatan($table,$tahun,$opd)
+    public static function subKegiatan($table)
     {
 
         $db = DB::getInstance();
 
         $sql = "
         SELECT
-            kd_sub_keg,
-            SUM(jumlah) total
+        kd_sub_keg,
+        SUM(jumlah) total
         FROM {$table}
-        WHERE tahun=?
-        AND kd_opd=?
-        AND is_deleted=0
+        WHERE is_deleted=0
         GROUP BY kd_sub_keg
         ORDER BY kd_sub_keg
         ";
 
-        return $db->query($sql,[$tahun,$opd])->fetchAll();
+        return $db->query($sql)->fetchAll();
 
     }
 
 
 
-    public static function getRekapAkun($table,$kd_sub_keg)
+    public static function rekapAkun($table,$sub)
     {
 
         $db = DB::getInstance();
 
         $sql = "
         SELECT
-            kd_akun,
-            uraian,
-            SUM(jumlah) total
+        kd_akun,
+        uraian,
+        SUM(jumlah) total
         FROM {$table}
         WHERE kd_sub_keg=?
-        AND is_deleted=0
         GROUP BY kd_akun
-        ORDER BY kd_akun
         ";
 
-        return $db->query($sql,[$kd_sub_keg])->fetchAll();
+        return $db->query($sql,[$sub])->fetchAll();
 
     }
 
 
 
-    public static function getRincian($table,$kd_sub_keg,$kd_akun)
+    public static function rincian($table,$sub,$akun)
     {
 
         $db = DB::getInstance();
 
         $sql = "
         SELECT
-            id,
-            komponen,
-            volume,
-            sat_1,
-            harga_satuan,
-            jumlah
+        id,
+        komponen,
+        volume,
+        sat_1,
+        harga_satuan,
+        jumlah
         FROM {$table}
         WHERE kd_sub_keg=?
         AND kd_akun=?
-        AND is_deleted=0
         ORDER BY id
         ";
 
-        return $db->query($sql,[$kd_sub_keg,$kd_akun])->fetchAll();
+        return $db->query($sql,[$sub,$akun])->fetchAll();
 
     }
 
