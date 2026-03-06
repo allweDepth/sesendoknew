@@ -3274,4 +3274,79 @@ class DynamicTableService
         // kembalikan data yang sudah diperbaiki
         return $data;
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | APPLY WHERE RELASI DI DROPDOWN
+    |--------------------------------------------------------------------------
+    */
+
+    public function getReference($module)
+    {
+        $profiles = require __DIR__ . '/../Config/table_profiles.php';
+
+        if (!isset($profiles[$module])) {
+            return JsonResponse::error("Module {$module} tidak ditemukan");
+        }
+
+        $profile = $profiles[$module];
+
+        $table = $profile['table'] ?? $module;
+
+        $parent      = $_POST['parent'] ?? null;
+        $parentField = $_POST['parent_field'] ?? null;
+        $value       = $_POST['value'] ?? null;
+
+        $sql = "SELECT * FROM {$table}";
+        $params = [];
+        $where = [];
+
+        /*
+    |--------------------------------------------------------------------------
+    | PRIORITAS 1 : RELATION
+    |--------------------------------------------------------------------------
+    */
+        if ($value && !empty($profile['relations'])) {
+
+            foreach ($profile['relations'] as $relation) {
+
+                $localKey = $relation['local_key'];
+
+                $where[] = "{$localKey} = :parent";
+                $params['parent'] = $value;
+
+                break;
+            }
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | PRIORITAS 2 : parent_field fallback
+    |--------------------------------------------------------------------------
+    */ elseif ($value && $parentField) {
+
+            $where[] = "{$parentField} = :parent";
+            $params['parent'] = $value;
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | APPLY WHERE
+    |--------------------------------------------------------------------------
+    */
+        if (!empty($where)) {
+            $sql .= " WHERE " . implode(" AND ", $where);
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | ORDER
+    |--------------------------------------------------------------------------
+    */
+        $sql .= " ORDER BY kode";
+
+        $data = $this->db->select($sql, $params);
+
+        return JsonResponse::success($data);
+    }
 }

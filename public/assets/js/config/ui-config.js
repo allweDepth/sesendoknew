@@ -1045,51 +1045,67 @@ UIConfig.sub_kegiatan = {
 
 	table: "sub_kegiatan",
 
-	fields: [
-		{
-			name: "kd_urusan",
-			label: "Urusan",
-			type: "dropdown_search",
-			source: "urusan",
-			value: "kd_urusan",
-			text: "nama_urusan",
-		},
+	form: {
+		elements: [
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Urusan",
+					name: "kd_urusan",
+					source: "urusan",
+					search: true,
+				},
+			},
 
-		{
-			name: "kd_bidang",
-			label: "Bidang Urusan",
-			type: "dropdown_search",
-			source: "bidang_urusan",
-			value: "kd_bidang",
-			text: "nama_bidang",
-		},
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Bidang",
+					name: "kd_bidang",
+					source: "bidang",
+					parent: "kd_urusan",
+					parent_field: "kode_urusan",
+					search: true,
+				},
+			},
 
-		{
-			name: "kd_program",
-			label: "Program",
-			type: "dropdown_search",
-			source: "program",
-			value: "kd_program",
-			text: "nama_program",
-		},
-		{
-			name: "kd_keg",
-			label: "Kode Kegiatan",
-			type: "dropdown_search",
-			source: "kegiatan",
-			value: "kd_kegiatan",
-			required: true,
-		},
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Program",
+					name: "kd_program",
+					source: "program",
+					parent: "kd_bidang",
+					parent_field: "kode_bidang",
+					search: true,
+				},
+			},
 
-		{
-			name: "kd_sub_keg",
-			label: "Kode Sub Kegiatan",
-			type: "dropdown_search",
-			source: "sub_kegiatan",
-			value: "kd_sub_kegiatan",
-			required: true,
-		},
-	],
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Kegiatan",
+					name: "kd_keg",
+					source: "kegiatan",
+					parent: "kd_program",
+					parent_field: "kode_program",
+					search: true,
+				},
+			},
+
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Sub Kegiatan",
+					name: "kd_sub_keg",
+					source: "sub_kegiatan",
+					parent: "kd_keg",
+					parent_field: "kode_kegiatan",
+					search: true,
+				},
+			},
+		],
+	},
 };
 /*
 |--------------------------------------------------------------------------
