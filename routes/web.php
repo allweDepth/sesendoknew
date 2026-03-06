@@ -164,12 +164,7 @@ return [
 | ANGGARAN
 |--------------------------------------------------------------------------
 */
-    '/anggaran/copy' => ['AnggaranCopyController', 'copy'],
-    '/renja' => ['AnggaranController', 'renja'],
-    '/rka'   => ['AnggaranController', 'rka'],
-    '/dpa'   => ['AnggaranController', 'dpa'],
-
-    '/renja_p' => ['AnggaranController', 'renja_p'],
-    '/rka_p'   => ['AnggaranController', 'rka_p'],
-    '/dppa'    => ['AnggaranController', 'dppa'],
+    '/renja' => ['AnggaranController', 'subKegiatan'],
+    '/renja/detail' => ['AnggaranController', 'detailSubKegiatan'],
+    '/renja/rincian' => ['AnggaranController', 'rincianBelanja'],
 ];
