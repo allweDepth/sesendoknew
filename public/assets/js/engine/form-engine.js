@@ -66,54 +66,116 @@ class FormEngine {
 
 	/**
 	 * ============================================================
-	 * ISI FORM DENGAN DATA
+	 * ISI FORM DENGAN DATA EDIT
 	 * ============================================================
+	 * Fungsi:
+	 * - mengisi field form berdasarkan data dari server
+	 * - mendukung checkbox
+	 * - mendukung dropdown fomantic
+	 * - mendukung calendar
+	 * - mencegah cascade dropdown terpanggil saat populate
 	 */
 	populateForm(data) {
+		// loop semua field dari data server
 		Object.keys(data).forEach((key) => {
+			// cari field berdasarkan name
 			const field = $(`${this.formSelector} [name="${key}"]`);
+
+			// jika field tidak ada di form → skip
 			if (!field.length) return;
 
+			/**
+			 * ======================================================
+			 * HANDLE CHECKBOX
+			 * ======================================================
+			 */
 			if (field.attr("type") === "checkbox") {
+				// jika nilai 1 → checked
 				field.prop("checked", data[key] == 1);
+
 				return;
 			}
 
-			// ======================================================
-			// FIX: pastikan dropdown sudah memiliki item sebelum set selected
-			// ======================================================
+			/**
+			 * ======================================================
+			 * HANDLE DROPDOWN FOMANTIC
+			 * ======================================================
+			 */
 			if (field.closest(".ui.dropdown").length) {
+				// ambil container dropdown
 				const dropdown = field.closest(".ui.dropdown");
 
-				// jika dropdown belum memiliki item menu
+				/**
+				 * ==================================================
+				 * SET FLAG AGAR CASCADE TIDAK TERPICU
+				 * ==================================================
+				 * karena set selected akan memicu event change
+				 */
+				dropdown.data("skip-cascade", true);
+
+				/**
+				 * ==================================================
+				 * CEK APAKAH ITEM DROPDOWN SUDAH ADA
+				 * ==================================================
+				 */
 				if (dropdown.find(".menu .item").length === 0) {
-					// tunggu sebentar sampai dropdown selesai load dari AJAX
+					// jika dropdown belum load item dari ajax
 					setTimeout(() => {
+						// set selected value
 						dropdown.dropdown("set selected", data[key]);
 					}, 100);
 				} else {
-					// normal jika item sudah ada
+					// jika item sudah ada
 					dropdown.dropdown("set selected", data[key]);
 				}
+
+				/**
+				 * ==================================================
+				 * RESET FLAG CASCADE
+				 * ==================================================
+				 * agar dropdown kembali normal
+				 */
+				setTimeout(() => {
+					dropdown.removeData("skip-cascade");
+				}, 50);
 
 				return;
 			}
 
+			/**
+			 * ======================================================
+			 * HANDLE CALENDAR FOMANTIC
+			 * ======================================================
+			 */
 			if (field.closest(".ui.calendar").length) {
+				// ambil container calendar
 				const calendar = field.closest(".ui.calendar");
+
+				// ambil tipe calendar
 				const type = calendar.calendar("get type");
 
 				let value = data[key];
 
-				// AUTO YEAR DETECT
+				/**
+				 * ==================================================
+				 * AUTO KONVERSI YEAR
+				 * ==================================================
+				 */
 				if (type === "year" && /^\d{4}$/.test(value)) {
 					value = new Date(value, 0, 1);
 				}
 
+				// set date ke calendar
 				calendar.calendar("set date", value);
+
 				return;
 			}
 
+			/**
+			 * ======================================================
+			 * DEFAULT INPUT
+			 * ======================================================
+			 */
 			field.val(data[key]);
 		});
 	}
@@ -672,6 +734,15 @@ class FormEngine {
  * - hanya dijalankan sekali per dropdown
  * - mencegah AJAX dipanggil berulang di SPA
  */
+	/**
+	 * ============================================================
+	 * LOAD DROPDOWN DARI SERVER BERDASARKAN data-source
+	 * ============================================================
+	 * Fungsi:
+	 * - load dropdown root (tanpa parent)
+	 * - mencegah duplicate AJAX
+	 * - aman untuk SPA
+	 */
 	loadDropdownSources() {
 		console.log("LOAD DROPDOWN START");
 
@@ -681,20 +752,16 @@ class FormEngine {
 		 * ======================================================
 		 * LOOP SEMUA DROPDOWN YANG MEMILIKI data-source
 		 * ======================================================
-		 * Dropdown ini biasanya dibuat oleh UIConfig melalui
-		 * FormEngine.dropdown()
 		 */
 		$(`${this.formSelector} .ui.dropdown[data-source]`).each(function () {
 			const $dropdown = $(this);
 
 			/**
-			 * ======================================================
-			 * CEK APAKAH DROPDOWN MEMILIKI PARENT
-			 * ======================================================
-			 * Jika memiliki parent berarti dropdown ini bagian
-			 * dari CASCADE (urusan → bidang → program → kegiatan)
-			 *
-			 * Maka dropdown ini TIDAK BOLEH load saat init
+			 * ==================================================
+			 * CEK APAKAH DROPDOWN PUNYA PARENT
+			 * ==================================================
+			 * jika punya parent maka ini dropdown cascade
+			 * sehingga tidak boleh load saat init
 			 */
 			const parent = $dropdown.data("parent");
 
@@ -703,11 +770,9 @@ class FormEngine {
 			}
 
 			/**
-			 * ======================================================
-			 * CEK APAKAH DROPDOWN SUDAH PERNAH LOAD
-			 * ======================================================
-			 * Digunakan agar AJAX tidak dipanggil berulang
-			 * dalam SPA
+			 * ==================================================
+			 * CEK APAKAH SUDAH PERNAH LOAD
+			 * ==================================================
 			 */
 			if (
 				$dropdown.data("loaded") &&
@@ -717,23 +782,25 @@ class FormEngine {
 			}
 
 			/**
-			 * ======================================================
-			 * AMBIL SOURCE DATA
-			 * ======================================================
+			 * ==================================================
+			 * AMBIL MODULE SOURCE
+			 * ==================================================
 			 */
 			const source = $dropdown.data("source");
 
 			if (!source) return;
 
 			/**
-			 * ======================================================
-			 * REQUEST DATA DROPDOWN KE SERVER
-			 * ======================================================
+			 * ==================================================
+			 * REQUEST DROPDOWN KE SERVER
+			 * ==================================================
 			 */
 			self.ajax.request({
 				data: {
 					module: source,
+
 					action: "dropdown",
+
 					tbl: source,
 				},
 
@@ -743,18 +810,16 @@ class FormEngine {
 					const $menu = $dropdown.find(".menu");
 
 					/**
-					 * ======================================================
-					 * KOSONGKAN MENU DROPDOWN
-					 * ======================================================
+					 * ==================================================
+					 * KOSONGKAN MENU
+					 * ==================================================
 					 */
 					$menu.empty();
 
 					/**
-					 * ======================================================
+					 * ==================================================
 					 * MASUKKAN ITEM DROPDOWN
-					 * ======================================================
-					 * Sistem backend bisa memiliki struktur berbeda
-					 * sehingga label dipilih dari beberapa kemungkinan
+					 * ==================================================
 					 */
 					res.data.forEach((item) => {
 						$menu.append(`
@@ -765,16 +830,16 @@ class FormEngine {
 					});
 
 					/**
-					 * ======================================================
-					 * REFRESH DROPDOWN FOMANTIC
-					 * ======================================================
+					 * ==================================================
+					 * REFRESH FOMANTIC DROPDOWN
+					 * ==================================================
 					 */
 					$dropdown.dropdown("refresh");
 
 					/**
-					 * ======================================================
+					 * ==================================================
 					 * TANDAI DROPDOWN SUDAH LOAD
-					 * ======================================================
+					 * ==================================================
 					 */
 					$dropdown.data("loaded", true);
 				},
@@ -1045,7 +1110,7 @@ class FormEngine {
 	 * - memonitor perubahan dropdown parent
 	 * - load dropdown child berdasarkan parent
 	 * - mencegah duplicate request
-	 * - aman untuk SPA (flyout berkali-kali)
+	 * - aman untuk SPA
 	 */
 	initCascadeDropdown() {
 		const self = this;
@@ -1055,54 +1120,73 @@ class FormEngine {
 		 * HAPUS EVENT SEBELUMNYA
 		 * ======================================================
 		 * penting agar event tidak menumpuk
-		 * saat flyout dibuka berkali-kali
+		 * ketika flyout dibuka berkali-kali
 		 */
 		$(document).off("change.formCascade");
 
 		/**
 		 * ======================================================
-		 * EVENT PERUBAHAN DROPDOWN
+		 * BIND EVENT PERUBAHAN DROPDOWN
 		 * ======================================================
 		 */
 		$(document).on(
 			"change.formCascade",
 			`${this.formSelector} .ui.dropdown[data-source]`,
 			function () {
+				// dropdown parent
 				const $parentDropdown = $(this);
 
 				/**
-				 * ======================================================
-				 * SKIP JIKA EVENT DIPICU OLEH populateForm()
-				 * ======================================================
+				 * ==================================================
+				 * SKIP JIKA DIPICU populateForm()
+				 * ==================================================
 				 */
 				if ($parentDropdown.data("skip-cascade")) return;
 
+				/**
+				 * ==================================================
+				 * AMBIL FIELD NAME PARENT
+				 * ==================================================
+				 */
 				const parentName = $parentDropdown
 					.find("input[type=hidden]")
 					.attr("name");
 
-				const parentValue = $parentDropdown.find("input[type=hidden]").val();
-
 				if (!parentName) return;
 
 				/**
-				 * ======================================================
+				 * ==================================================
+				 * AMBIL VALUE PARENT
+				 * ==================================================
+				 */
+				const parentValue = $parentDropdown.find("input[type=hidden]").val();
+
+				/**
+				 * ==================================================
+				 * JIKA VALUE KOSONG → STOP
+				 * ==================================================
+				 */
+				if (!parentValue || parentValue === "") return;
+
+				/**
+				 * ==================================================
 				 * CARI SEMUA CHILD DROPDOWN
-				 * ======================================================
+				 * ==================================================
 				 */
 				$(
 					`${self.formSelector} .ui.dropdown[data-parent="${parentName}"]`,
 				).each(function () {
 					const $child = $(this);
 
+					// module sumber dropdown
 					const source = $child.data("source");
 
 					if (!source) return;
 
 					/**
-					 * ======================================================
-					 * RESET CHILD
-					 * ======================================================
+					 * ==================================================
+					 * RESET CHILD DROPDOWN
+					 * ==================================================
 					 */
 					$child.dropdown("clear");
 
@@ -1111,16 +1195,9 @@ class FormEngine {
 					$menu.empty();
 
 					/**
-					 * ======================================================
-					 * JIKA PARENT KOSONG
-					 * ======================================================
-					 */
-					if (!parentValue) return;
-
-					/**
-					 * ======================================================
-					 * REQUEST DROPDOWN CHILD
-					 * ======================================================
+					 * ==================================================
+					 * REQUEST DATA CHILD
+					 * ==================================================
 					 */
 					self.ajax.request({
 						data: {
@@ -1140,6 +1217,11 @@ class FormEngine {
 						success: (res) => {
 							if (!res.success || !res.data) return;
 
+							/**
+							 * ==============================================
+							 * LOOP DATA DROPDOWN
+							 * ==============================================
+							 */
 							res.data.forEach((item) => {
 								$menu.append(`
 								<div class="item" data-value="${item.id}">
@@ -1149,7 +1231,7 @@ class FormEngine {
 							});
 
 							/**
-							 * refresh dropdown
+							 * refresh dropdown fomantic
 							 */
 							$child.dropdown("refresh");
 						},
