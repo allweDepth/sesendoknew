@@ -1,30 +1,50 @@
-<table class="ui celled compact selectable table"
-       id="tableRekapAkun">
+<?php $tbl = isset($table) ? $table : ''; ?>
 
-<thead>
+<div id="crud-table-container">
 
-<tr>
+       <!-- BUTTON BACK -->
+       <button class="ui basic button" id="btnBackSub">
+              <i class="arrow left icon"></i>
+              Kembali
+       </button>
 
-<th style="width:150px">
-Kode Rekening
-</th>
+       <div class="ui hidden divider"></div>
 
-<th>
-Uraian
-</th>
+       <h3 class="ui dividing header">
+              Rekap Akun Belanja
+       </h3>
 
-<th style="width:180px">
-Total Anggaran
-</th>
+       <div class="table-wrapper">
 
-</tr>
+              <table class="ui very compact celled striped selectable table"
+                     id="tableRekapAkun"
 
-</thead>
+                     data-table="<?= $tbl ?>"
+                     data-group="kd_akun"
+                     data-key="kd_akun">
 
-<tbody>
+                     <thead>
+                            <tr>
+                                   <th style="width:60px">Aksi</th>
+                                   <th>Akun Belanja</th>
+                                   <th>Total</th>
+                            </tr>
+                     </thead>
 
-<!-- DATA AJAX -->
+                     <tbody>
 
-</tbody>
+                            <tr>
+                                   <td colspan="3" class="center aligned">
+                                          <div class="ui info message">
+                                                 Tidak ada data
+                                          </div>
+                                   </td>
+                            </tr>
 
-</table>
+                     </tbody>
+
+              </table>
+
+       </div>
+
+</div>

@@ -32,7 +32,19 @@ class AnggaranController
 
         $tahap = 'renja';
 
-        require __DIR__ . '/../Views/anggaran/index.php';
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+
+            // browser refresh
+            ob_start();
+            require __DIR__ . '/../Views/anggaran/index.php';
+            $content = ob_get_clean();
+
+            require __DIR__ . '/../Views/layouts/app.php';
+        } else {
+
+            // SPA router
+            require __DIR__ . '/../Views/anggaran/index.php';
+        }
     }
     /*
     |--------------------------------------------------------------------------
@@ -48,13 +60,13 @@ class AnggaranController
 
         if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
 
-            // browser refresh
-            $content = __DIR__ . '/../Views/anggaran/index.php';
+            ob_start();
+            require __DIR__ . '/../Views/anggaran/index.php';
+            $content = ob_get_clean();
 
             require __DIR__ . '/../Views/layouts/app.php';
         } else {
 
-            // SPA router
             require __DIR__ . '/../Views/anggaran/index.php';
         }
     }
@@ -76,13 +88,13 @@ class AnggaranController
 
         if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
 
-            // browser refresh
-            $content = __DIR__ . '/../Views/anggaran/index.php';
+            ob_start();
+            require __DIR__ . '/../Views/anggaran/index.php';
+            $content = ob_get_clean();
 
             require __DIR__ . '/../Views/layouts/app.php';
         } else {
 
-            // SPA router
             require __DIR__ . '/../Views/anggaran/index.php';
         }
     }
@@ -104,13 +116,13 @@ class AnggaranController
 
         if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
 
-            // browser refresh
-            $content = __DIR__ . '/../Views/anggaran/index.php';
+            ob_start();
+            require __DIR__ . '/../Views/anggaran/index.php';
+            $content = ob_get_clean();
 
             require __DIR__ . '/../Views/layouts/app.php';
         } else {
 
-            // SPA router
             require __DIR__ . '/../Views/anggaran/index.php';
         }
     }
@@ -132,13 +144,13 @@ class AnggaranController
 
         if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
 
-            // browser refresh
-            $content = __DIR__ . '/../Views/anggaran/index.php';
+            ob_start();
+            require __DIR__ . '/../Views/anggaran/index.php';
+            $content = ob_get_clean();
 
             require __DIR__ . '/../Views/layouts/app.php';
         } else {
 
-            // SPA router
             require __DIR__ . '/../Views/anggaran/index.php';
         }
     }
@@ -160,13 +172,13 @@ class AnggaranController
 
         if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
 
-            // browser refresh
-            $content = __DIR__ . '/../Views/anggaran/index.php';
+            ob_start();
+            require __DIR__ . '/../Views/anggaran/index.php';
+            $content = ob_get_clean();
 
             require __DIR__ . '/../Views/layouts/app.php';
         } else {
 
-            // SPA router
             require __DIR__ . '/../Views/anggaran/index.php';
         }
     }
@@ -188,13 +200,13 @@ class AnggaranController
 
         if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
 
-            // browser refresh
-            $content = __DIR__ . '/../Views/anggaran/index.php';
+            ob_start();
+            require __DIR__ . '/../Views/anggaran/index.php';
+            $content = ob_get_clean();
 
             require __DIR__ . '/../Views/layouts/app.php';
         } else {
 
-            // SPA router
             require __DIR__ . '/../Views/anggaran/index.php';
         }
     }

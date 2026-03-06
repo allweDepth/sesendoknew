@@ -18,118 +18,87 @@ $tbl = isset($table) ? $table : '';
 
 ?>
 
-<div class="ui segment">
+<div id="crud-table-container">
 
-       <div class="ui grid">
+       <!-- TOOLBAR -->
+       <div class="ui right floated basic icon buttons" style="margin-top:10px;">
 
-              <div class="eight wide column">
+              <!-- ADD SUB KEGIATAN -->
+              <button class="ui button"
+                     data-ui="open-form"
+                     data-container="flyout"
+                     data-jns="add"
+                     data-config="sub_kegiatan"
+                     data-tbl="<?= $tbl ?>">
 
-                     <div class="ui small basic label">
-                            <i class="search icon"></i>
-                            Gunakan kolom pencarian di navbar
-                     </div>
+                     <i class="plus icon"></i>
+              </button>
 
-              </div>
+              <!-- IMPORT -->
+              <button class="ui button"
+                     data-ui="open-form"
+                     data-container="flyout"
+                     data-jns="import"
+                     data-tbl="<?= $tbl ?>">
 
-              <div class="eight wide column right aligned">
+                     <i class="upload icon"></i>
+              </button>
 
-                     <div class="ui right floated basic icon buttons">
+              <!-- EXPORT -->
+              <button class="ui icon button"
+                     data-action="export"
+                     data-tbl="<?= $tbl ?>">
 
-                            <!-- ADD SUB KEGIATAN -->
+                     <i class="alternate download icon"></i>
+              </button>
 
-                            <button class="ui button"
-                                   data-ui="open-form"
-                                   data-container="flyout"
-                                   data-jns="add"
-                                   data-tbl="<?= $tbl ?>">
+       </div>
 
-                                   <i class="plus icon"></i>
+       <div class="ui hidden divider"></div>
 
-                            </button>
+       <!-- HEADER TABEL -->
+       <h3 class="ui dividing header">
+              <i class="left align icon"></i>
+              Tabel Sub Kegiatan
+       </h3>
 
+       <!-- TABLE WRAPPER -->
+       <div class="table-wrapper">
 
-                            <!-- IMPORT STRUKTUR -->
+              <table class="ui very compact celled striped selectable table"
+                     id="tableSubKegiatan"
 
-                            <button class="ui button"
-                                   data-ui="open-form"
-                                   data-container="flyout"
-                                   data-jns="import"
-                                   data-tbl="<?= $tbl ?>">
+                     data-table="<?= $tbl ?>"
+                     data-group="kd_sub_keg"
+                     data-key="kd_sub_keg">
 
-                                   <i class="import icon"></i>
+                     <thead>
+                            <tr>
+                                   <th style="width:70px">Aksi</th>
+                                   <th>Sub Kegiatan</th>
+                                   <th style="width:120px">Status</th>
+                                   <th style="width:140px">Status Rincian</th>
+                                   <th style="width:140px">Sebelum Perubahan</th>
+                                   <th style="width:140px">Pagu Validasi</th>
+                                   <th style="width:160px">Total Rincian</th>
+                                   <th style="width:120px">Realisasi %</th>
+                            </tr>
+                     </thead>
 
-                            </button>
+                     <tbody>
 
+                            <tr>
+                                   <td colspan="8" class="center aligned">
+                                          <div class="ui info message">
+                                                 Tidak ada data
+                                          </div>
+                                   </td>
+                            </tr>
 
-                            <!-- EXPORT -->
+                     </tbody>
 
-                            <button class="ui icon button"
-                                   data-action="export"
-                                   data-tbl="<?= $tbl ?>">
-
-                                   <i class="alternate download icon"></i>
-
-                            </button>
-
-                     </div>
-
-              </div>
+              </table>
 
        </div>
 
 </div>
-
-
-
-<table class="ui celled selectable compact table"
-       id="tableSubKegiatan"
-
-       data-table="<?= $tbl ?>"
-       data-group="kd_sub_keg"
-       data-key="kd_sub_keg">
-
-       <thead>
-
-              <tr>
-
-                     <th style="width:70px">Aksi</th>
-
-                     <th>Sub Kegiatan</th>
-
-                     <th style="width:120px">Status</th>
-
-                     <th style="width:140px">Status Rincian</th>
-
-                     <th style="width:140px">Sebelum Perubahan</th>
-
-                     <th style="width:140px">Pagu Validasi</th>
-
-                     <th style="width:160px">Total Rincian</th>
-
-                     <th style="width:120px">Realisasi %</th>
-
-              </tr>
-
-       </thead>
-
-       <tbody>
-
-              <tr class="empty-row">
-
-                     <td colspan="8">
-
-                            <div class="ui warning message">
-
-                                   <i class="info circle icon"></i>
-
-                                   Belum ada data sub kegiatan.
-
-                            </div>
-
-                     </td>
-
-              </tr>
-
-       </tbody>
-
-</table>
