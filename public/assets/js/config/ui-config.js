@@ -1099,7 +1099,7 @@ UIConfig.sub_kegiatan = {
 					label: "Sub Kegiatan",
 					name: "kd_sub_keg",
 					source: "sub_kegiatan",
-					parent: "kd_keg",
+					parent: "kd_kegiatan",
 					parent_field: "kode_kegiatan",
 					search: true,
 				},

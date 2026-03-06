@@ -709,27 +709,29 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     BUILD QUERY (LISTING + SEARCH + SCOPE FULL IDENTIK)
     ========================================================= */
     private function listing(
-        string $table,      // nama tabel database
-        array $profile,     // konfigurasi tabel dari table_profiles.php
-        array $request,     // request dari frontend
+        string $table,      // nama tabel database yang akan dilisting
+        array $profile,     // konfigurasi tabel dari file table_profiles.php
+        array $request,     // data request dari frontend (pagination, search dll)
         string $mode        // mode listing (default / custom)
     ): string {
 
-        // ======================================================
-        // 1️⃣ AMBIL KONFIGURASI MODE
-        // ======================================================
+        /* ======================================================
+    1️⃣ AMBIL KONFIGURASI MODE
+    ====================================================== */
 
-        // ambil konfigurasi mode jika ada
-        // jika tidak ada gunakan default
+        // Ambil konfigurasi mode dari profile
+        // Jika mode tidak ada gunakan 'default'
         $modeConfig = $profile['modes'][$mode]
             ?? $profile['modes']['default']
             ?? [];
 
-        // ======================================================
-        // 2️⃣ PAGINATION CONFIG
-        // ======================================================
 
-        // jumlah baris per halaman
+
+        /* ======================================================
+    2️⃣ PAGINATION
+    ====================================================== */
+
+        // jumlah data per halaman
         $limit = max(1, (int)($request['rows'] ?? 10));
 
         // halaman aktif
@@ -743,42 +745,47 @@ DELETE (FULL IDENTIK LOGIC ASLI)
         // offset SQL
         $offset = ($page - 1) * $limit;
 
-        // ======================================================
-        // 3️⃣ RESOLVE USER SCOPE
-        // ======================================================
 
-        // scope = filter berdasarkan role user
-        // contoh:
-        // admin_wilayah → kd_wilayah
-        // admin_opd → kd_opd, kd_wilayah, tahun
+
+        /* ======================================================
+    3️⃣ RESOLVE USER SCOPE
+    ====================================================== */
+
+        // resolveScope() akan menambahkan filter otomatis
+        // berdasarkan role user (admin_opd, admin_wilayah dll)
         list($scopeWhere, $scopeParams) =
             $this->resolveScope($table, $profile, $mode);
 
-        // ======================================================
-        // 4️⃣ RESOLVE SEARCH
-        // ======================================================
 
-        // membangun query pencarian
-        // contoh:
-        // nama LIKE %keyword%
+
+        /* ======================================================
+    4️⃣ RESOLVE SEARCH
+    ====================================================== */
+
+        // resolveSearch() membangun query LIKE
+        // berdasarkan kolom searchable
         list($searchWhere, $searchParams) =
             $this->resolveSearch($table, $modeConfig, $search);
 
-        // ======================================================
-        // 5️⃣ INISIALISASI ARRAY WHERE
-        // ======================================================
+
+
+        /* ======================================================
+    5️⃣ INISIALISASI ARRAY WHERE
+    ====================================================== */
 
         // array kondisi WHERE
         $whereParts = [];
 
-        // array parameter query
+        // parameter query
         $params = [];
 
-        // ======================================================
-        // 6️⃣ APPLY PROFILE WHERE
-        // ======================================================
 
-        // contoh dari profile:
+
+        /* ======================================================
+    6️⃣ APPLY PROFILE WHERE
+    ====================================================== */
+
+        // contoh profile:
         // 'where' => [
         //     'kd_wilayah' => 'user',
         //     'peraturan_id' => 'user'
@@ -786,12 +793,13 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
         if (!empty($modeConfig['where'])) {
 
-            // ambil semua kolom tabel
+            // ambil semua kolom tabel dari database
             $columns = $this->getTableColumns($table);
 
+            // loop semua kondisi where dari profile
             foreach ($modeConfig['where'] as $field => $value) {
 
-                // skip jika field tidak ada di tabel
+                // jika field tidak ada di tabel maka skip
                 if (!in_array($field, $columns)) {
                     continue;
                 }
@@ -799,11 +807,60 @@ DELETE (FULL IDENTIK LOGIC ASLI)
                 // tambahkan kondisi WHERE
                 $whereParts[] = "`$field` = ?";
 
-                // jika value = user
-                // ambil dari session user
+                /* ==================================================
+            VALUE RESOLUTION
+            ================================================== */
+
                 if ($value === 'user') {
 
-                    $params[] = $this->user[$field] ?? null;
+                    // jika field ada di session user
+                    if (isset($this->user[$field])) {
+
+                        $params[] = $this->user[$field];
+                    }
+
+                    // jika field adalah peraturan_id
+                    elseif ($field === 'peraturan_id') {
+
+                        // ambil pengaturan aktif
+                        $pengaturan = $this->getPengaturanAktif();
+
+                        if (!$pengaturan) {
+                            throw new Exception("Pengaturan aktif tidak ditemukan.");
+                        }
+
+                        /* ==========================================
+                    MAP PERATURAN BERDASARKAN TABEL
+                    ========================================== */
+
+                        $map = [
+                            'urusan'       => 'aturan_sub_kegiatan',
+                            'bidang'       => 'aturan_sub_kegiatan',
+                            'program'      => 'aturan_sub_kegiatan',
+                            'kegiatan'     => 'aturan_sub_kegiatan',
+                            'sub_kegiatan' => 'aturan_sub_kegiatan',
+
+                            'ssh'          => 'aturan_ssh',
+                            'sbu'          => 'aturan_sbu',
+                            'asb'          => 'aturan_asb',
+                            'hspk'         => 'aturan_hspk'
+                        ];
+
+                        // ambil field peraturan dari pengaturan
+                        if (isset($map[$table])) {
+
+                            $fieldPeraturan = $map[$table];
+
+                            $params[] = (int)($pengaturan[$fieldPeraturan] ?? 0);
+                        } else {
+
+                            $params[] = null;
+                        }
+                    } else {
+
+                        // fallback jika tidak ditemukan
+                        $params[] = null;
+                    }
                 } else {
 
                     // jika value statis
@@ -812,9 +869,11 @@ DELETE (FULL IDENTIK LOGIC ASLI)
             }
         }
 
-        // ======================================================
-        // 7️⃣ GABUNGKAN SEMUA WHERE
-        // ======================================================
+
+
+        /* ======================================================
+    7️⃣ GABUNGKAN SEMUA WHERE
+    ====================================================== */
 
         // gabungkan scope + search + profile where
         $whereParts = array_merge(
@@ -823,97 +882,106 @@ DELETE (FULL IDENTIK LOGIC ASLI)
             $whereParts
         );
 
-        // gabungkan parameter
+        // gabungkan semua parameter query
         $params = array_merge(
             $scopeParams,
             $searchParams,
             $params
         );
 
-        // build string WHERE SQL
+        // bangun string WHERE SQL
         $where = !empty($whereParts)
             ? "WHERE " . implode(" AND ", $whereParts)
             : "";
 
-        // ======================================================
-        // 8️⃣ BUILD SELECT COLUMN
-        // ======================================================
 
-        // ambil field select dari profile
+
+        /* ======================================================
+    8️⃣ SELECT FIELD
+    ====================================================== */
+
+        // ambil kolom select dari profile
         // jika kosong gunakan *
         $select = implode(',', $modeConfig['select'] ?? ['*']);
 
-        // ======================================================
-        // 9️⃣ RESOLVE PRIMARY KEY
-        // ======================================================
+
+
+        /* ======================================================
+    9️⃣ PRIMARY KEY
+    ====================================================== */
 
         // ambil primary key tabel
         $primaryKey = $this->getPrimaryKey($table);
 
-        // ======================================================
-        // 🔟 RESOLVE ORDER BY
-        // ======================================================
 
-        // ambil order dari profile
+
+        /* ======================================================
+    🔟 ORDER BY
+    ====================================================== */
+
+        // ambil konfigurasi order_by dari profile
         $orderBy = $modeConfig['order_by'] ?? "`$primaryKey` DESC";
 
-        // ambil kolom tabel
+        // ambil semua kolom tabel
         $columns = $this->getTableColumns($table);
 
-        // extract nama kolom order
+        // extract nama kolom dari order_by
         preg_match('/`?([a-zA-Z0-9_]+)`?/i', $orderBy, $match);
 
         $orderColumn = $match[1] ?? $primaryKey;
 
-        // jika kolom tidak ada di tabel
+        // jika kolom tidak ada di tabel maka fallback
         if (!in_array($orderColumn, $columns)) {
 
-            // fallback ke primary key
             $orderBy = "`$primaryKey` DESC";
         }
 
-        // ======================================================
-        // 1️⃣1️⃣ HITUNG TOTAL DATA
-        // ======================================================
 
-        // query total data
+
+        /* ======================================================
+    1️⃣1️⃣ TOTAL DATA
+    ====================================================== */
+
+        // hitung total data untuk pagination
         $total = $this->db->query(
 
             "SELECT COUNT(*) as total
-FROM `$table`
-$where",
+        FROM `$table`
+        $where",
 
             $params
 
         )->fetch()['total'] ?? 0;
 
-        // ======================================================
-        // 1️⃣2️⃣ AMBIL DATA LISTING
-        // ======================================================
+
+
+        /* ======================================================
+    1️⃣2️⃣ AMBIL DATA
+    ====================================================== */
 
         // query data utama
         $rows = $this->db->query(
 
             "SELECT $select
-FROM `$table`
-$where
-ORDER BY $orderBy
-LIMIT $offset, $limit",
+        FROM `$table`
+        $where
+        ORDER BY $orderBy
+        LIMIT $offset, $limit",
 
             $params
 
         )->fetchAll();
 
-        // ======================================================
-        // 1️⃣3️⃣ RETURN RESPONSE JSON
-        // ======================================================
+
+
+        /* ======================================================
+    1️⃣3️⃣ RESPONSE JSON
+    ====================================================== */
 
         return JsonResponse::success(
 
-            // pesan response
             "Data berhasil ditampilkan",
 
-            // metadata
             [
                 'total' => (int)$total,
                 'page' => $page,
@@ -921,7 +989,6 @@ LIMIT $offset, $limit",
                 'primary_key' => $primaryKey
             ],
 
-            // data rows
             $rows
         );
     }
@@ -3475,11 +3542,10 @@ AND is_deleted = 0
             }
         }
 
-            /*
+        /*
             |--------------------------------------------------------------------------
             | PRIORITAS 2 : parent_field fallback
-            |--------------------------------------------------------------------------*/ 
-    elseif ($value && $parentField) {
+            |--------------------------------------------------------------------------*/ elseif ($value && $parentField) {
 
             $where[] = "{$parentField} = :parent";
             $params['parent'] = $value;
