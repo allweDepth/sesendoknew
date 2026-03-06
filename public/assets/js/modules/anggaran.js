@@ -100,28 +100,17 @@ class AnggaranModule {
     */
 
 	initTable() {
-		/* cari tabel sub kegiatan di container */
 		const table = this.container.querySelector("#tableSubKegiatan");
 
-		/* jika tidak ada tabel maka keluar */
 		if (!table) return;
 
-		/*
-        |--------------------------------------------------------------------------
-        | aktifkan table manager
-        |--------------------------------------------------------------------------
-        | table-manager akan otomatis:
-        |
-        | load data
-        | paging
-        | sorting
-        | filter
-        |
-        */
+		const manager = new TableManager({
+			state: {
+				tbl: this.table,
+			},
+		});
 
-		if (typeof TableManager !== "undefined") {
-			new TableManager(table);
-		}
+		manager.init();
 	}
 
 	/*
