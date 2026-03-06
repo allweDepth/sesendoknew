@@ -160,22 +160,39 @@ return [
     */
     '/api' => ['ApiController', 'handle'],
     /*
+/*
 |--------------------------------------------------------------------------
-| ANGGARAN
+| ANGGARAN MODULE (RENJA → DPPA)
+|--------------------------------------------------------------------------
+| Semua dokumen memakai engine yang sama
+| Controller menentukan tabel yang digunakan
+|
+| renja          → renja_neo
+| renja_perubahan→ renja_perubahan_neo
+| rka            → rka_neo
+| rka_perubahan  → rka_perubahan_neo
+| dpa            → dpa_neo
+| dppa           → dppa_neo
 |--------------------------------------------------------------------------
 */
-    '/anggaran' => ['AnggaranController', 'index'],
+
+    '/renja'            => ['AnggaranController', 'renja'],
+    '/renja_perubahan'  => ['AnggaranController', 'renjaPerubahan'],
+    '/rka'              => ['AnggaranController', 'rka'],
+    '/rka_perubahan'    => ['AnggaranController', 'rkaPerubahan'],
+    '/dpa'              => ['AnggaranController', 'dpa'],
+    '/dppa'             => ['AnggaranController', 'dppa'],
+
+
+    /*
+|--------------------------------------------------------------------------
+| AJAX DATA
+|--------------------------------------------------------------------------
+*/
 
     '/anggaran/sub_kegiatan' => ['AnggaranController', 'subKegiatan'],
 
-    '/anggaran/rekap_akun' => ['AnggaranController', 'rekapAkun'],
+    '/anggaran/rekap_akun'   => ['AnggaranController', 'rekapAkun'],
 
-    '/anggaran/rincian' => ['AnggaranController', 'rincian'],
-    /*
-|--------------------------------------------------------------------------
-| RENJA
-|--------------------------------------------------------------------------
-*/
-
-    '/renja' => ['AnggaranController', 'index'],
+    '/anggaran/rincian'      => ['AnggaranController', 'rincian'],
 ];

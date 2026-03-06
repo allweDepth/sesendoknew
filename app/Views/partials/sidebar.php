@@ -36,7 +36,7 @@
           <i class="violet tasks icon"></i> RENJA
         </a>
 
-        <a class="item" href="/renja_p" data-spa="client">
+        <a class="item" href="/renja_perubahan" data-spa="server">
           <i class="orange sync alternate icon"></i> RENJA Perubahan
         </a>
 
@@ -44,15 +44,15 @@
           <i class="violet tasks icon"></i> RKA
         </a>
 
-        <a class="item" href="/rka_p" data-spa="client">
+        <a class="item" href="/rka_perubahan" data-spa="server">
           <i class="orange sync alternate icon"></i> RKA Perubahan
         </a>
 
-        <a class="item" href="/dpa" data-spa="client">
+        <a class="item" href="/dpa" data-spa="server">
           <i class="yellow file alternate icon"></i> DPA
         </a>
 
-        <a class="item" href="/dppa" data-spa="client">
+        <a class="item" href="/dppa" data-spa="server">
           <i class="brown folder open icon"></i> DPPA
         </a>
       </div>
