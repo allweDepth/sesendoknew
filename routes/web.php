@@ -160,15 +160,16 @@ return [
     */
     '/api' => ['ApiController', 'handle'],
     /*
-    |--------------------------------------------------------------------------
-    | 🗂 RENJA (SPA MODULE)
-    |--------------------------------------------------------------------------
-    | Halaman utama RENJA
-    | Semua CRUD dilakukan oleh /dynamic
-    */
-    '/renja/sub_kegiatan' => ['RenjaController', 'subKegiatan'], // daftar sub kegiatan
-    '/renja/rincian'      => ['RenjaController', 'rincian'],     // rincian belanja
-    '/anggaran/renja' => ['AnggaranController', 'renja'],
-    '/anggaran/rka' => ['AnggaranController', 'rka'],
-    '/anggaran/dpa' => ['AnggaranController', 'dpa'],
+|--------------------------------------------------------------------------
+| ANGGARAN
+|--------------------------------------------------------------------------
+*/
+    '/anggaran/copy' => ['AnggaranCopyController', 'copy'],
+    '/renja' => ['AnggaranController', 'renja'],
+    '/rka'   => ['AnggaranController', 'rka'],
+    '/dpa'   => ['AnggaranController', 'dpa'],
+
+    '/renja_p' => ['AnggaranController', 'renja_p'],
+    '/rka_p'   => ['AnggaranController', 'rka_p'],
+    '/dppa'    => ['AnggaranController', 'dppa'],
 ];

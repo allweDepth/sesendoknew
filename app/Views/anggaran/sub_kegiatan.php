@@ -1,26 +1,93 @@
-<div class="ui container">
+<?php
+/*
+VIEW GLOBAL ANGGRAN
+Digunakan untuk:
+renja
+rka
+dpa
+renja_p
+rka_p
+dppa
+*/
+?>
 
-<h3 class="ui dividing header">
+<div class="ui container"
+     data-module="anggaran"
+     data-table="<?= $table ?>"
+     data-tahap="<?= $tahap ?>">
 
-Sub Kegiatan RENJA
+    <!-- HEADER -->
 
-</h3>
+    <h3 class="ui dividing header">
+        Sub Kegiatan Belanja
+    </h3>
 
-<table class="ui celled table" id="tableSubKegiatan">
+    <!-- INFO OPD -->
 
-<thead>
+    <div class="ui segment">
 
-<tr>
+        <b>
+        DINAS PEKERJAAN UMUM DAN PENATAAN RUANG
+        </b>
 
-<th>Kode</th>
-<th>Total Anggaran</th>
+    </div>
 
-</tr>
+    <!-- TABEL SUB KEGIATAN -->
 
-</thead>
+    <div class="ui segment">
 
-<tbody></tbody>
+        <table class="ui celled selectable table"
+               id="tableSubKegiatan">
 
-</table>
+            <thead>
+
+                <tr>
+                    <th>Kode Sub Kegiatan</th>
+                    <th>Nama Sub Kegiatan</th>
+                    <th>Total Anggaran</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <!-- diisi JS -->
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- PANEL RINCIAN (hidden dulu) -->
+
+    <div class="ui segment" id="panelRincian" style="display:none">
+
+        <h4 class="ui header">
+            Rincian Belanja
+        </h4>
+
+        <table class="ui celled table"
+               id="tableRincian">
+
+            <thead>
+
+                <tr>
+
+                    <th>Uraian</th>
+                    <th>Volume</th>
+                    <th>Harga</th>
+                    <th>Jumlah</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody></tbody>
+
+        </table>
+
+    </div>
 
 </div>

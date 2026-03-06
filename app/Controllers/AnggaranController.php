@@ -3,45 +3,28 @@
 class AnggaranController
 {
 
-    /*
-    |--------------------------------------------------------------------------
-    | RENJA
-    |--------------------------------------------------------------------------
-    */
-
     public function renja()
     {
+        $table='renja_neo';
+        $tahap='renja';
 
-        require __DIR__ . '/../Views/anggaran/renja/sub_kegiatan.php';
-
+        require __DIR__.'/../Views/anggaran/index.php';
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | RKA
-    |--------------------------------------------------------------------------
-    */
 
     public function rka()
     {
+        $table='rka_neo';
+        $tahap='rka';
 
-        require __DIR__ . '/../Views/anggaran/rka/sub_kegiatan.php';
-
+        require __DIR__.'/../Views/anggaran/index.php';
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | DPA
-    |--------------------------------------------------------------------------
-    */
 
     public function dpa()
     {
+        $table='dpa_neo';
+        $tahap='dpa';
 
-        require __DIR__ . '/../Views/anggaran/dpa/sub_kegiatan.php';
-
+        require __DIR__.'/../Views/anggaran/index.php';
     }
 
 }
