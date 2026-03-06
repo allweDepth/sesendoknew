@@ -433,13 +433,13 @@ UIConfig.sub_kegiatan_ref = {
 		elements: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Kegiatan", name: "kode_kegiatan", source: "kegiatan" },
+				prop: { label: "Kegiatan", name: "kode_kegiatan", source: "kegiatan",search: true },
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Nama", name: "nama" } },
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Satuan", name: "satuan", source: "satuan" },
+				prop: { label: "Satuan", name: "satuan", source: "satuan",search: true },
 			},
 			{
 				tag: "fieldTextarea",
