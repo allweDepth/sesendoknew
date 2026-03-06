@@ -44,10 +44,19 @@ class AnggaranController
     {
 
         $table = 'renja_neo';
-
         $tahap = 'renja';
 
-        require __DIR__ . '/../Views/anggaran/index.php';
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+
+            // browser refresh
+            $content = __DIR__ . '/../Views/anggaran/index.php';
+
+            require __DIR__ . '/../Views/layouts/app.php';
+        } else {
+
+            // SPA router
+            require __DIR__ . '/../Views/anggaran/index.php';
+        }
     }
 
 
@@ -65,7 +74,17 @@ class AnggaranController
 
         $tahap = 'renja_p';
 
-        require __DIR__ . '/../Views/anggaran/index.php';
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+
+            // browser refresh
+            $content = __DIR__ . '/../Views/anggaran/index.php';
+
+            require __DIR__ . '/../Views/layouts/app.php';
+        } else {
+
+            // SPA router
+            require __DIR__ . '/../Views/anggaran/index.php';
+        }
     }
 
 
@@ -83,7 +102,17 @@ class AnggaranController
 
         $tahap = 'rka';
 
-        require __DIR__ . '/../Views/anggaran/index.php';
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+
+            // browser refresh
+            $content = __DIR__ . '/../Views/anggaran/index.php';
+
+            require __DIR__ . '/../Views/layouts/app.php';
+        } else {
+
+            // SPA router
+            require __DIR__ . '/../Views/anggaran/index.php';
+        }
     }
 
 
@@ -101,7 +130,17 @@ class AnggaranController
 
         $tahap = 'rka_p';
 
-        require __DIR__ . '/../Views/anggaran/index.php';
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+
+            // browser refresh
+            $content = __DIR__ . '/../Views/anggaran/index.php';
+
+            require __DIR__ . '/../Views/layouts/app.php';
+        } else {
+
+            // SPA router
+            require __DIR__ . '/../Views/anggaran/index.php';
+        }
     }
 
 
@@ -119,7 +158,17 @@ class AnggaranController
 
         $tahap = 'dpa';
 
-        require __DIR__ . '/../Views/anggaran/index.php';
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+
+            // browser refresh
+            $content = __DIR__ . '/../Views/anggaran/index.php';
+
+            require __DIR__ . '/../Views/layouts/app.php';
+        } else {
+
+            // SPA router
+            require __DIR__ . '/../Views/anggaran/index.php';
+        }
     }
 
 
@@ -137,7 +186,17 @@ class AnggaranController
 
         $tahap = 'dppa';
 
-        require __DIR__ . '/../Views/anggaran/index.php';
+        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+
+            // browser refresh
+            $content = __DIR__ . '/../Views/anggaran/index.php';
+
+            require __DIR__ . '/../Views/layouts/app.php';
+        } else {
+
+            // SPA router
+            require __DIR__ . '/../Views/anggaran/index.php';
+        }
     }
 
 
