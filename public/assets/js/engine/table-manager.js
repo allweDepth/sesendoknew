@@ -295,7 +295,8 @@ class TableManager {
 							${btnExtra}
 
 							<button class="ui red button"
-								data-action="delete">
+								data-action="delete"
+								data-req="${this.state.req || ''}">
 								<i class="trash icon"></i>
 							</button>
 
@@ -496,12 +497,20 @@ class TableManager {
 			cancelText: "Batal",
 			onApprove: () => {
 				return new Promise((resolve, reject) => {
+					const btn = $(
+						`${this.tbody} tr[data-id="${id}"] [data-action="delete"]`,
+					);
+
+					let req = btn.data("req") || null;
+
 					this.ajax.request({
 						method: "POST",
 						data: {
 							action: "delete",
-							tbl: this.state.tbl,
-							module: this.state.tbl,
+							// jika ada data-req gunakan itu
+							tbl: req || this.state.tbl,
+
+							module: req || this.state.tbl,
 							id_row: id,
 						},
 						success: () => {
