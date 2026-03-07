@@ -360,7 +360,13 @@ INSERT (FIXED STABLE VERSION v3.1)
     ===================================================== */
         foreach ($request as $key => $value) {
 
-            if (in_array($key, ['action', 'module', 'tbl'])) continue;
+            /* =========================================
+IGNORE SYSTEM FIELD
+========================================= */
+
+            if (in_array($key, ['action', 'module', 'tbl', 'req'])) {
+                continue;
+            }
 
             if (in_array($key, $columns)) {
                 $filtered[$key] = $value;
@@ -405,6 +411,25 @@ INSERT (FIXED STABLE VERSION v3.1)
         $filtered = $this->resolveAutoFields($table, $filtered);
         //date time
         $filtered = $this->normalizeDateTimeFields($table, $filtered);
+        /* =====================================================
+🔥 AUTO TAHAP BERDASARKAN TBL UNTUK INPUT KEGIATAN RENJA-DPPA di group_sub_kegiatan
+===================================================== */
+
+        $tbl = $request['tbl'] ?? null;   // tbl berasal dari request frontend
+
+        // jika tbl ada dan field tahap belum diisi
+        if ($tbl && isset($filtered['tahap']) === false) {
+
+            // 🔥 panggil resolver tahap otomatis
+            $tahap = $this->resolveTahap($tbl);
+
+            // jika resolver menghasilkan tahap valid
+            if ($tahap !== null) {
+
+                // set nilai tahap ke data yang akan disimpan
+                $filtered['tahap'] = $tahap;
+            }
+        }
         /* =====================================================
 4️⃣ SPECIAL TABLE RULES
 ===================================================== */
@@ -551,7 +576,13 @@ UPDATE (FIXED STABLE VERSION v3.1)
 
         foreach ($request as $key => $value) {
 
-            if (in_array($key, ['action', 'module', 'tbl'])) continue;
+            /* =========================================
+IGNORE SYSTEM FIELD
+========================================= */
+
+            if (in_array($key, ['action', 'module', 'tbl', 'req'])) {
+                continue;
+            }
 
             if (in_array($key, $columns)) {
                 $filtered[$key] = $value;
@@ -2172,7 +2203,7 @@ HEADER PROCESSING
 
                         // gabungkan menjadi key unik
                         $duplicateKey = implode('|', $keyParts);
-
+                        $duplicateMemory = [];
                         // jika key sudah ada
                         if (isset($duplicateMemory[$duplicateKey])) {
 
@@ -3622,5 +3653,61 @@ AND is_deleted = 0
         $data = $this->db->select($sql, $params);
 
         return JsonResponse::success($data);
+    }
+    private function resolveTahap(string $tbl): ?string
+    {
+        // normalisasi huruf kecil
+        $tbl = strtolower($tbl);
+
+        // hapus suffix modul
+        $tbl = preg_replace('/(_neo|_perubahan)$/', '', $tbl);
+
+        // daftar tahap yang valid
+        $validTahap = [
+            'renja',
+            'renja_p',
+            'rka',
+            'rka_p',
+            'dpa',
+            'dppa'
+        ];
+
+        return in_array($tbl, $validTahap) ? $tbl : null;
+    }
+    private function applyLookup(array &$data, array $profile)
+    {
+        if (empty($profile['lookup'])) return;
+
+        foreach ($profile['lookup'] as $target => $cfg) {
+
+            $table = $cfg['table'];
+
+            $valueField = $cfg['value_field'];
+
+            $match = $cfg['match'];
+
+            $where = [];
+
+            foreach ($match as $master => $local) {
+
+                if (!isset($data[$local])) continue;
+
+                $where[$master] = $data[$local];
+            }
+
+            if (!$where) continue;
+
+            $row = $this->db
+                ->table($table)
+                ->select($valueField)
+                ->where($where)
+                ->get()
+                ->getRowArray();
+
+            if ($row) {
+
+                $data[$target] = $row[$valueField];
+            }
+        }
     }
 }

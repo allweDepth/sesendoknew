@@ -18,7 +18,7 @@
 |
 */
 
- $profiles = [
+$profiles = [
 
     /*
     |--------------------------------------------------------------------------
@@ -1650,7 +1650,131 @@
             'kd_akun' => ['required']
         ]
     ],
+    /* =========================================================
+   GROUP SUB KEGIATAN
+   ---------------------------------------------------------
+   Tabel agregasi sub kegiatan
+   Digunakan oleh modul:
+   - RENJA
+   - RENJA_P
+   - RKA
+   - RKA_P
+   - DPA
+   - DPPA
+========================================================= */
 
+    'group_sub_kegiatan' => [
+
+        /* =====================================================
+       TABLE NAME
+    ===================================================== */
+        'table' => 'group_sub_kegiatan',
+
+        /* =====================================================
+       PRIMARY KEY
+    ===================================================== */
+        'primary_key' => 'id',
+
+        /* =====================================================
+       DEFAULT SORT
+    ===================================================== */
+        'default_sort' => [
+            'column' => 'kd_sub_keg',
+            'dir'    => 'asc'
+        ],
+
+        /* =====================================================
+       FIELD SEARCHABLE
+    ===================================================== */
+        'searchable' => [
+            'kd_sub_keg',
+            'nama_sub_keg'
+        ],
+
+        /* =====================================================
+       FIELD YANG TIDAK BOLEH DUPLIKAT
+       (kombinasi unik logical key)
+    ===================================================== */
+        'not_duplicate' => [
+            'kd_wilayah',
+            'kd_opd',
+            'tahun',
+            'kd_sub_keg',
+            'tahap'
+        ],
+
+        /* =====================================================
+       FIELD YANG TIDAK BOLEH DIUPDATE
+    ===================================================== */
+        'readonly' => [
+            'id',
+            'tgl_insert',
+            'username_insert'
+        ],
+
+        /* =====================================================
+       FIELD YANG DIISI OTOMATIS OLEH ENGINE
+    ===================================================== */
+        'auto_fill' => [
+
+            'session' => [
+                'kd_wilayah',
+                'kd_opd',
+                'tahun'
+            ],
+
+            'insert' => [
+                'tgl_insert',
+                'username_insert'
+            ],
+
+            'update' => [
+                'tgl_update',
+                'username_update'
+            ]
+
+        ],
+
+        /* =====================================================
+       FIELD SOFT DELETE
+    ===================================================== */
+        'soft_delete' => [
+            'field' => 'disable',
+            'value_active' => 0,
+            'value_deleted' => 1
+        ],
+
+        /*
+    --------------------------------------------------------
+    AUTO LOOKUP FIELD
+    --------------------------------------------------------
+    Mengisi nama_sub_keg dari tabel master
+    */
+
+        'lookup' => [
+
+            'nama_sub_keg' => [
+
+                'table' => 'sub_kegiatan',
+
+                'value_field' => 'nama',
+
+                'match' => [
+
+                    'kode' => 'kd_sub_keg',
+
+                    'kd_wilayah' => 'kd_wilayah',
+
+                    'peraturan_id' => 'tahun'
+
+                ]
+
+            ]
+
+        ]
+
+
+    ],
 ];
 $profiles['sub_kegiatan_ref'] = $profiles['sub_kegiatan'];
 $profiles['sub_kegiatan_ref']['module_alias'] = 'sub_kegiatan_ref';

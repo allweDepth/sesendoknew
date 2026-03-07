@@ -79,6 +79,11 @@ class FlyoutController {
 
 		const jns = $btn.data("jns");
 		const tbl = $btn.data("tbl");
+		/* =========================================
+			TRACE MODE
+			ambil data-req dari tombol
+		========================================= */
+		const req = $btn.data("req") || null;
 
 		const configKey =
 			$btn.data("config") ||
@@ -97,6 +102,18 @@ class FlyoutController {
 		state.setTable(tbl);
 
 		state.action = jns;
+
+		/* =========================================
+   OVERRIDE TABLE CRUD
+========================================= */
+
+		state.req = req;
+
+		/* =========================================
+   TRACE: ambil data-req dari tombol
+   ========================================= */
+
+		state.req = req;
 
 		const formSelector = container === "modal" ? "#form_modal" : "#form_flyout";
 

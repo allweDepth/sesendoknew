@@ -285,10 +285,11 @@ class TableManager {
 					<td class="collapsing">
 						<div class="ui mini basic icon buttons">
 							<button class="ui button"
-								data-ui="open-form"
-								data-jns="edit"
-								data-tbl="${this.state.tbl}"
-								data-id="${id}">
+							data-ui="open-form"
+							data-jns="edit"
+							data-tbl="${this.state.tbl}"
+							data-req="${this.state.req || ""}"
+							data-id="${id}">
 								<i class="edit icon"></i>
 							</button>
 
@@ -296,7 +297,7 @@ class TableManager {
 
 							<button class="ui red button"
 								data-action="delete"
-								data-req="${this.state.req || ''}">
+								data-req="${this.state.req || ""}">
 								<i class="trash icon"></i>
 							</button>
 

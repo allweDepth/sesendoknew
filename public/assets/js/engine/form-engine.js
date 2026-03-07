@@ -304,24 +304,27 @@ class FormEngine {
 
 		// tambahkan nama tabel
 		formData += `&tbl=${this.state.tbl}`;
+
 		/* =========================================
-   CEK BUTTON YANG MENJALANKAN SUBMIT
-   ========================================= */
+			PRIORITAS TABLE CRUD
+		========================================= */
 
-		// ambil tombol yang aktif saat submit
-		const activeButton = document.activeElement;
-
-		/*
-		jika tombol memiliki data-req
-		maka tambahkan parameter req
-		*/
-		if (activeButton && activeButton.dataset.req) {
-			// module request dari button
-			const req = activeButton.dataset.req;
-
-			// tambahkan ke request
-			formData += `&req=${req}`;
+		if (this.state.req) {
+			formData += `&req=${this.state.req}`;
 		}
+
+		// prioritas 2 : tombol submit
+		else {
+			const btn = $(this.formSelector).find("button[type=submit]");
+
+			if (btn.length && btn.data("req")) {
+				formData += `&req=${btn.data("req")}`;
+			}
+		}
+		/* ======================================
+   CEK BUTTON YANG MEMICU SUBMIT
+====================================== */
+
 		// kirim request ajax
 		this.ajax.request({
 			data: formData,
