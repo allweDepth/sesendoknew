@@ -12,11 +12,13 @@
 
 class FormEngine {
 	constructor(config = {}) {
-		this.state = config.state;
-		this.ajax = config.ajax;
+		this.state = config.state; // state table
+		this.ajax = config.ajax; // ajax helper
 		this.formSelector = config.formSelector;
 
 		this.isInitialized = false;
+
+		this.isPopulating = false; // flag global untuk populate mode
 	}
 
 	/**
@@ -66,118 +68,123 @@ class FormEngine {
 
 	/**
 	 * ============================================================
-	 * ISI FORM DENGAN DATA EDIT
+	 * POPULATE FORM DARI DATA EDIT
 	 * ============================================================
 	 * Fungsi:
-	 * - mengisi field form berdasarkan data dari server
+	 * - mengisi field form berdasarkan response server
 	 * - mendukung checkbox
 	 * - mendukung dropdown fomantic
 	 * - mendukung calendar
-	 * - mencegah cascade dropdown terpanggil saat populate
+	 * - mencegah cascade dropdown saat populate
 	 */
 	populateForm(data) {
-		// loop semua field dari data server
+		// =========================================================
+		// AKTIFKAN MODE POPULATE
+		// =========================================================
+		// selama populate berlangsung cascade dropdown dimatikan
+		this.isPopulating = true;
+
+		// =========================================================
+		// LOOP SEMUA FIELD DATA
+		// =========================================================
 		Object.keys(data).forEach((key) => {
 			// cari field berdasarkan name
 			const field = $(`${this.formSelector} [name="${key}"]`);
 
-			// jika field tidak ada di form → skip
+			// jika field tidak ada di form maka skip
 			if (!field.length) return;
 
 			/**
-			 * ======================================================
+			 * =====================================================
 			 * HANDLE CHECKBOX
-			 * ======================================================
+			 * =====================================================
 			 */
 			if (field.attr("type") === "checkbox") {
-				// jika nilai 1 → checked
+				// jika nilai 1 maka checkbox checked
 				field.prop("checked", data[key] == 1);
 
 				return;
 			}
 
 			/**
-			 * ======================================================
-			 * HANDLE DROPDOWN FOMANTIC
-			 * ======================================================
+			 * =====================================================
+			 * HANDLE DROPDOWN FOMANTIC UI
+			 * =====================================================
 			 */
 			if (field.closest(".ui.dropdown").length) {
 				// ambil container dropdown
 				const dropdown = field.closest(".ui.dropdown");
 
-				/**
-				 * ==================================================
-				 * SET FLAG AGAR CASCADE TIDAK TERPICU
-				 * ==================================================
-				 * karena set selected akan memicu event change
-				 */
+				// ==================================================
+				// AKTIFKAN FLAG SKIP CASCADE
+				// ==================================================
 				dropdown.data("skip-cascade", true);
 
-				/**
-				 * ==================================================
-				 * CEK APAKAH ITEM DROPDOWN SUDAH ADA
-				 * ==================================================
-				 */
+				// ==================================================
+				// SET VALUE DROPDOWN
+				// ==================================================
+				const value = data[key];
+
+				// cek apakah menu dropdown sudah ada
 				if (dropdown.find(".menu .item").length === 0) {
-					// jika dropdown belum load item dari ajax
+					// jika dropdown ajax belum load item
 					setTimeout(() => {
-						// set selected value
-						dropdown.dropdown("set selected", data[key]);
+						dropdown.dropdown("set selected", value);
 					}, 100);
 				} else {
-					// jika item sudah ada
-					dropdown.dropdown("set selected", data[key]);
+					// jika item sudah tersedia
+					dropdown.dropdown("set selected", value);
 				}
 
-				/**
-				 * ==================================================
-				 * RESET FLAG CASCADE
-				 * ==================================================
-				 * agar dropdown kembali normal
-				 */
+				// ==================================================
+				// HAPUS FLAG SKIP CASCADE
+				// ==================================================
 				setTimeout(() => {
 					dropdown.removeData("skip-cascade");
-				}, 50);
+				}, 100);
 
 				return;
 			}
 
 			/**
-			 * ======================================================
-			 * HANDLE CALENDAR FOMANTIC
-			 * ======================================================
+			 * =====================================================
+			 * HANDLE CALENDAR FOMANTIC UI
+			 * =====================================================
 			 */
 			if (field.closest(".ui.calendar").length) {
-				// ambil container calendar
 				const calendar = field.closest(".ui.calendar");
 
-				// ambil tipe calendar
 				const type = calendar.calendar("get type");
 
 				let value = data[key];
 
-				/**
-				 * ==================================================
-				 * AUTO KONVERSI YEAR
-				 * ==================================================
-				 */
+				// ==================================================
+				// KONVERSI YEAR KE DATE
+				// ==================================================
 				if (type === "year" && /^\d{4}$/.test(value)) {
 					value = new Date(value, 0, 1);
 				}
 
-				// set date ke calendar
 				calendar.calendar("set date", value);
 
 				return;
 			}
 
 			/**
-			 * ======================================================
+			 * =====================================================
 			 * DEFAULT INPUT
-			 * ======================================================
+			 * =====================================================
 			 */
 			field.val(data[key]);
 		});
+
+		// =========================================================
+		// MATIKAN MODE POPULATE
+		// =========================================================
+		// setelah populate selesai cascade dropdown boleh aktif lagi
+		setTimeout(() => {
+			this.isPopulating = false;
+		}, 200);
 	}
 
 	/**
@@ -821,13 +828,24 @@ class FormEngine {
 					 * MASUKKAN ITEM DROPDOWN
 					 * ==================================================
 					 */
+					/* ======================================================
+RENDER DROPDOWN ITEM
+====================================================== */
+
 					res.data.forEach((item) => {
 						$menu.append(`
-						<div class="item" data-value="${item.id}">
-							${item.uraian || item.item || item.nama || ""}
-						</div>
+							<div class="item" data-value="${item.value}">
+									${item.text}
+							</div>
 					`);
 					});
+					// res.data.forEach((item) => {
+					// 	$menu.append(`
+					// 	<div class="item" data-value="${item.id}">
+					// 		${item.uraian || item.item || item.nama || ""}
+					// 	</div>
+					// `);
+					// });
 
 					/**
 					 * ==================================================
@@ -1112,128 +1130,97 @@ class FormEngine {
 	 * - mencegah duplicate request
 	 * - aman untuk SPA
 	 */
+	/* ======================================================
+CASCADE DROPDOWN HANDLER
+====================================================== */
+
 	initCascadeDropdown() {
 		const self = this;
 
-		/**
-		 * ======================================================
-		 * HAPUS EVENT SEBELUMNYA
-		 * ======================================================
-		 * penting agar event tidak menumpuk
-		 * ketika flyout dibuka berkali-kali
-		 */
-		$(document).off("change.formCascade");
+		/* ======================================================
+    HAPUS EVENT LAMA KHUSUS FORM INI
+    ====================================================== */
 
-		/**
-		 * ======================================================
-		 * BIND EVENT PERUBAHAN DROPDOWN
-		 * ======================================================
-		 */
+		$(document).off(
+			"change.formCascade",
+			`${this.formSelector} .ui.dropdown[data-source]`,
+		);
+		// hanya menghapus event dropdown dalam form ini
+		// tidak mengganggu dropdown di halaman lain
+
+		/* ======================================================
+    BIND EVENT CASCADE BARU
+    ====================================================== */
+
 		$(document).on(
 			"change.formCascade",
 			`${this.formSelector} .ui.dropdown[data-source]`,
 			function () {
-				// dropdown parent
 				const $parentDropdown = $(this);
+				// dropdown parent yang berubah
 
-				/**
-				 * ==================================================
-				 * SKIP JIKA DIPICU populateForm()
-				 * ==================================================
-				 */
-				if ($parentDropdown.data("skip-cascade")) return;
-
-				/**
-				 * ==================================================
-				 * AMBIL FIELD NAME PARENT
-				 * ==================================================
-				 */
 				const parentName = $parentDropdown
 					.find("input[type=hidden]")
 					.attr("name");
+				// ambil nama field parent
 
 				if (!parentName) return;
 
-				/**
-				 * ==================================================
-				 * AMBIL VALUE PARENT
-				 * ==================================================
-				 */
 				const parentValue = $parentDropdown.find("input[type=hidden]").val();
+				// ambil value parent dropdown
 
-				/**
-				 * ==================================================
-				 * JIKA VALUE KOSONG → STOP
-				 * ==================================================
-				 */
-				if (!parentValue || parentValue === "") return;
+				if (!parentValue) return;
+				// jika kosong stop cascade
 
-				/**
-				 * ==================================================
-				 * CARI SEMUA CHILD DROPDOWN
-				 * ==================================================
-				 */
+				/* ======================================================
+            CARI DROPDOWN CHILD
+            ====================================================== */
+
 				$(
 					`${self.formSelector} .ui.dropdown[data-parent="${parentName}"]`,
 				).each(function () {
 					const $child = $(this);
+					// dropdown child
 
-					// module sumber dropdown
 					const source = $child.data("source");
+					// module sumber dropdown
 
 					if (!source) return;
-
-					/**
-					 * ==================================================
-					 * RESET CHILD DROPDOWN
-					 * ==================================================
-					 */
-					$child.dropdown("clear");
 
 					const $menu = $child.find(".menu");
 
 					$menu.empty();
+					// kosongkan menu lama
 
-					/**
-					 * ==================================================
-					 * REQUEST DATA CHILD
-					 * ==================================================
-					 */
+					/* ======================================================
+                REQUEST DATA CHILD
+                ====================================================== */
+
 					self.ajax.request({
 						data: {
 							module: source,
-
 							action: "dropdown",
-
 							tbl: source,
 
 							parent: parentName,
-
 							parent_field: $child.data("parent-field"),
-
 							value: parentValue,
 						},
 
 						success: (res) => {
-							if (!res.success || !res.data) return;
+							if (!res.success) return;
 
-							/**
-							 * ==============================================
-							 * LOOP DATA DROPDOWN
-							 * ==============================================
-							 */
 							res.data.forEach((item) => {
 								$menu.append(`
-								<div class="item" data-value="${item.id}">
-									${item.uraian || item.item || item.nama || ""}
-								</div>
-							`);
+                                <div class="item" data-value="${item.value}">
+                                    ${item.text}
+                                </div>
+                            `);
+								// render dropdown item
 							});
 
-							/**
-							 * refresh dropdown fomantic
-							 */
 							$child.dropdown("refresh");
+							// refresh fomantic dropdown
 						},
 					});
 				});

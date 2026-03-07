@@ -1285,14 +1285,14 @@ DROPDOWN ENGINE (PROFILE-DRIVEN + AKUN FILTER)
         $columns = $this->getTableColumns($table);
 
         /* ======================================================
-🔥 RELASI PARENT (JIKA ADA)
-====================================================== */
+        🔥 RELASI PARENT (JIKA ADA)
+        ====================================================== */
         $whereParts = [];
         $params     = [];
 
         /* ======================================================
-🔥 FILTER PARENT DROPDOWN
-====================================================== */
+        🔥 FILTER PARENT DROPDOWN
+        ====================================================== */
 
         $parentField = $_POST['parent_field'] ?? null;
 
@@ -1304,8 +1304,8 @@ DROPDOWN ENGINE (PROFILE-DRIVEN + AKUN FILTER)
         }
 
         /* ======================================================
-🔥 PROFILE-DRIVEN AKUN FILTER
-====================================================== */
+        🔥 PROFILE-DRIVEN AKUN FILTER
+        ====================================================== */
         $join       = '';
         $akunWhere  = '';
         $akunParams = [];
@@ -1319,17 +1319,17 @@ DROPDOWN ENGINE (PROFILE-DRIVEN + AKUN FILTER)
             $fkField    = $pivotConfig['foreign_key'];
 
             $join = "
-    INNER JOIN `$pivotTable` p
-        ON p.`$fkField` = `$table`.`$primaryKey`
-";
+                INNER JOIN `$pivotTable` p
+                    ON p.`$fkField` = `$table`.`$primaryKey`
+            ";
 
             $pengaturan = $this->getPengaturanAktif();
 
             $akunWhere = "
-    AND p.`kd_akun` = ?
-    AND p.`kd_wilayah` = ?
-    AND p.`peraturan_id` = ?
-";
+                AND p.`kd_akun` = ?
+                AND p.`kd_wilayah` = ?
+                AND p.`peraturan_id` = ?
+            ";
 
             $akunParams = [
                 $kdAkun,
@@ -1339,8 +1339,8 @@ DROPDOWN ENGINE (PROFILE-DRIVEN + AKUN FILTER)
         }
 
         /* ======================================================
-🔥 FINAL WHERE BUILD
-====================================================== */
+        🔥 FINAL WHERE BUILD
+        ====================================================== */
         $where = '';
 
         if (!empty($whereParts)) {
@@ -1348,25 +1348,55 @@ DROPDOWN ENGINE (PROFILE-DRIVEN + AKUN FILTER)
         }
 
         /* ======================================================
-🔥 FINAL QUERY
-====================================================== */
+        🔥 FINAL QUERY
+        ====================================================== */
+        /* ======================================================
+        🔥 FINAL QUERY DROPDOWN (SERVER MENENTUKAN VALUE & TEXT)
+        ====================================================== */
+
         $query = "
-SELECT 
-    `$table`.`$valueField` as id,
-    `$table`.`$labelField` as uraian
-FROM `$table`
-$join
-$where
-$akunWhere
-ORDER BY `$table`.`$valueField` ASC
-";
+            SELECT 
+                `$table`.`$valueField` AS value,     -- kolom yang akan menjadi VALUE dropdown (primary key / kode)
+                `$table`.`$labelField` AS text       -- kolom yang akan menjadi TEXT dropdown (nama / uraian)
+            FROM `$table`                            -- tabel sumber dropdown
+            $join                                    -- join pivot jika ada filter akun
+            $where                                   -- kondisi parent dropdown (cascade)
+            $akunWhere                               -- filter akun jika profile mengaktifkan filter_by_akun
+            ORDER BY `$table`.`$labelField` ASC      -- urutkan berdasarkan label agar lebih user friendly
+            ";
+
+        /* ======================================================
+        🔥 EXECUTE QUERY
+        ====================================================== */
 
         $rows = $this->db->query(
-            $query,
-            array_merge($params, $akunParams)
-        )->fetchAll();
+            $query,                               // query dropdown yang sudah dibangun
+            array_merge($params, $akunParams)     // parameter untuk prepared statement
+        )->fetchAll();                            // ambil semua hasil query
 
-        return JsonResponse::success("Dropdown loaded", [], $rows);
+        /* ======================================================
+        🔥 NORMALISASI RESPONSE DROPDOWN
+        ====================================================== */
+
+        $dropdown = array_map(function ($row) {
+
+            return [
+
+                'value' => $row['value'],          // value dropdown yang dikirim ke frontend
+                'text'  => $row['text']            // text dropdown yang ditampilkan di UI
+
+            ];
+        }, $rows);
+
+        /* ======================================================
+        🔥 RESPONSE KE FRONTEND
+        ====================================================== */
+
+        return JsonResponse::success(
+            "Dropdown loaded",                    // pesan response
+            [],                                   // meta kosong
+            $dropdown                             // data dropdown dalam format standar
+        );
     }
 
     /* =========================================================
