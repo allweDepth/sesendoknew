@@ -516,6 +516,15 @@ IGNORE SYSTEM FIELD
         $filtered = $this->resolvePeraturan($table, $filtered);
 
         /* =====================================================
+🔥 LOOKUP RESOLUTION
+Digunakan untuk mengisi field turunan otomatis
+contoh:
+kd_sub_keg → nama_sub_keg
+===================================================== */
+        $profile = $this->getProfileByTable($table);
+        $this->applyLookup($filtered, $profile);
+
+        /* =====================================================
 7️⃣ BUSINESS VALIDATION LAYER
 ===================================================== */
         $this->validateHierarchy($table, $filtered);
@@ -638,6 +647,14 @@ IGNORE SYSTEM FIELD
         $filtered = $this->normalizeDateTimeFields($table, $filtered);
         $filtered = $this->resolvePeraturan($table, $filtered);
         $filtered = $this->resolvePeriode($table, $filtered);
+
+        /* =====================================================
+        🔥 LOOKUP RESOLUTION
+        Update juga harus resolve lookup
+        agar field turunan ikut berubah
+        ===================================================== */
+        $profile = $this->getProfileByTable($table);
+        $this->applyLookup($filtered, $profile);
 
         /* =====================================================
 5️⃣ BUSINESS VALIDATION
