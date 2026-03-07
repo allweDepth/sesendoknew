@@ -259,15 +259,12 @@ class AnggaranController
 
     public function rincian()
     {
+        /* ambil parameter dari GET karena dipanggil $.get */
+        $table = $_GET['table'] ?? null;      // tabel aktif
+        $sub   = $_GET['sub'] ?? null;        // kode sub kegiatan
+        $akun  = $_GET['akun'] ?? null;       // akun (opsional)
 
-        $table = $_POST['table'];
-
-        $sub   = $_POST['sub'];
-
-        $akun  = $_POST['akun'];
-
-        $data = AnggaranHierarchyService::rincian($table, $sub, $akun);
-
-        echo json_encode($data);
+        /* load view rincian */
+        require __DIR__ . '/../Views/anggaran/rincian.php';
     }
 }

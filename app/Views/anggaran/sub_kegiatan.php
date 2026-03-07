@@ -30,7 +30,7 @@ $tbl = isset($table) ? $table : '';
                      data-jns="add"
                      data-config="sub_kegiatan"
                      data-tbl="<?= $tbl ?>" data-req="group_sub_kegiatan">
-                     
+
                      <i class="plus icon"></i>
               </button>
 
@@ -67,8 +67,8 @@ $tbl = isset($table) ? $table : '';
 
               <table class="ui very compact celled striped selectable table"
                      id="tableSubKegiatan"
-
                      data-table="<?= $tbl ?>"
+                     data-req="group_sub_kegiatan"
                      data-group="kd_sub_keg"
                      data-key="kd_sub_keg">
 
