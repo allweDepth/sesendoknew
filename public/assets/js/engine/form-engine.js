@@ -751,63 +751,41 @@ class FormEngine {
 	 * - aman untuk SPA
 	 */
 	loadDropdownSources() {
-		console.log("LOAD DROPDOWN START");
-
 		const self = this;
 
-		/**
-		 * ======================================================
-		 * LOOP SEMUA DROPDOWN YANG MEMILIKI data-source
-		 * ======================================================
-		 */
 		$(`${this.formSelector} .ui.dropdown[data-source]`).each(function () {
 			const $dropdown = $(this);
 
-			/**
-			 * ==================================================
-			 * CEK APAKAH DROPDOWN PUNYA PARENT
-			 * ==================================================
-			 * jika punya parent maka ini dropdown cascade
-			 * sehingga tidak boleh load saat init
-			 */
 			const parent = $dropdown.data("parent");
 
-			if (parent) {
-				return; // skip dropdown child
-			}
+			if (parent) return;
 
 			/**
-			 * ==================================================
-			 * CEK APAKAH SUDAH PERNAH LOAD
-			 * ==================================================
+			 * ===============================================
+			 * GUARD LOADED
+			 * ===============================================
 			 */
-			if (
-				$dropdown.data("loaded") &&
-				$dropdown.find(".menu .item").length > 0
-			) {
-				return;
-			}
+
+			if ($dropdown.data("loaded")) return;
 
 			/**
-			 * ==================================================
-			 * AMBIL MODULE SOURCE
-			 * ==================================================
+			 * ===============================================
+			 * GUARD LOADING
+			 * ===============================================
 			 */
+
+			if ($dropdown.data("loading")) return;
+
+			$dropdown.data("loading", true);
+
 			const source = $dropdown.data("source");
 
 			if (!source) return;
 
-			/**
-			 * ==================================================
-			 * REQUEST DROPDOWN KE SERVER
-			 * ==================================================
-			 */
 			self.ajax.request({
 				data: {
 					module: source,
-
 					action: "dropdown",
-
 					tbl: source,
 				},
 
@@ -816,50 +794,26 @@ class FormEngine {
 
 					const $menu = $dropdown.find(".menu");
 
-					/**
-					 * ==================================================
-					 * KOSONGKAN MENU
-					 * ==================================================
-					 */
 					$menu.empty();
-
-					/**
-					 * ==================================================
-					 * MASUKKAN ITEM DROPDOWN
-					 * ==================================================
-					 */
-					/* ======================================================
-RENDER DROPDOWN ITEM
-====================================================== */
 
 					res.data.forEach((item) => {
 						$menu.append(`
-							<div class="item" data-value="${item.value}">
-									${item.text}
-							</div>
-					`);
+                        <div class="item" data-value="${item.value}">
+                            ${item.text}
+                        </div>
+                    `);
 					});
-					// res.data.forEach((item) => {
-					// 	$menu.append(`
-					// 	<div class="item" data-value="${item.id}">
-					// 		${item.uraian || item.item || item.nama || ""}
-					// 	</div>
-					// `);
-					// });
 
-					/**
-					 * ==================================================
-					 * REFRESH FOMANTIC DROPDOWN
-					 * ==================================================
-					 */
 					$dropdown.dropdown("refresh");
 
 					/**
-					 * ==================================================
-					 * TANDAI DROPDOWN SUDAH LOAD
-					 * ==================================================
+					 * ===============================================
+					 * SET STATUS LOADED
+					 * ===============================================
 					 */
+
 					$dropdown.data("loaded", true);
+					$dropdown.data("loading", false);
 				},
 			});
 		});
@@ -1130,71 +1084,104 @@ RENDER DROPDOWN ITEM
 	 * - mencegah duplicate request
 	 * - aman untuk SPA
 	 */
-	/* ======================================================
-CASCADE DROPDOWN HANDLER
-====================================================== */
 
 	initCascadeDropdown() {
 		const self = this;
 
-		/* ======================================================
-    HAPUS EVENT LAMA KHUSUS FORM INI
-    ====================================================== */
+		/**
+		 * ======================================================
+		 * HAPUS EVENT LAMA
+		 * ======================================================
+		 */
 
 		$(document).off(
 			"change.formCascade",
 			`${this.formSelector} .ui.dropdown[data-source]`,
 		);
-		// hanya menghapus event dropdown dalam form ini
-		// tidak mengganggu dropdown di halaman lain
 
-		/* ======================================================
-    BIND EVENT CASCADE BARU
-    ====================================================== */
+		/**
+		 * ======================================================
+		 * BIND EVENT CASCADE BARU
+		 * ======================================================
+		 */
 
 		$(document).on(
 			"change.formCascade",
 			`${this.formSelector} .ui.dropdown[data-source]`,
 			function () {
+				/**
+				 * ==================================================
+				 * GUARD POPULATE MODE
+				 * ==================================================
+				 * mencegah cascade saat populateForm()
+				 */
+
+				if (self.isPopulating) return;
+
 				const $parentDropdown = $(this);
-				// dropdown parent yang berubah
+
+				/**
+				 * ==================================================
+				 * CEK SKIP CASCADE FLAG
+				 * ==================================================
+				 */
+
+				if ($parentDropdown.data("skip-cascade")) return;
+
+				/**
+				 * ==================================================
+				 * AMBIL FIELD NAME
+				 * ==================================================
+				 */
 
 				const parentName = $parentDropdown
 					.find("input[type=hidden]")
 					.attr("name");
-				// ambil nama field parent
 
 				if (!parentName) return;
 
+				/**
+				 * ==================================================
+				 * AMBIL VALUE PARENT
+				 * ==================================================
+				 */
+
 				const parentValue = $parentDropdown.find("input[type=hidden]").val();
-				// ambil value parent dropdown
 
 				if (!parentValue) return;
-				// jika kosong stop cascade
 
-				/* ======================================================
-            CARI DROPDOWN CHILD
-            ====================================================== */
+				/**
+				 * ==================================================
+				 * CARI DROPDOWN CHILD
+				 * ==================================================
+				 */
 
 				$(
 					`${self.formSelector} .ui.dropdown[data-parent="${parentName}"]`,
 				).each(function () {
 					const $child = $(this);
-					// dropdown child
 
 					const source = $child.data("source");
-					// module sumber dropdown
 
 					if (!source) return;
 
 					const $menu = $child.find(".menu");
 
-					$menu.empty();
-					// kosongkan menu lama
+					/**
+					 * ==================================================
+					 * RESET CHILD
+					 * ==================================================
+					 */
 
-					/* ======================================================
-                REQUEST DATA CHILD
-                ====================================================== */
+					$menu.empty();
+
+					$child.dropdown("clear");
+
+					/**
+					 * ==================================================
+					 * REQUEST DATA CHILD
+					 * ==================================================
+					 */
 
 					self.ajax.request({
 						data: {
@@ -1208,7 +1195,7 @@ CASCADE DROPDOWN HANDLER
 						},
 
 						success: (res) => {
-							if (!res.success) return;
+							if (!res.success || !res.data) return;
 
 							res.data.forEach((item) => {
 								$menu.append(`
@@ -1216,11 +1203,15 @@ CASCADE DROPDOWN HANDLER
                                     ${item.text}
                                 </div>
                             `);
-								// render dropdown item
 							});
 
+							/**
+							 * ==================================================
+							 * REFRESH DROPDOWN
+							 * ==================================================
+							 */
+
 							$child.dropdown("refresh");
-							// refresh fomantic dropdown
 						},
 					});
 				});
