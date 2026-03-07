@@ -21,7 +21,13 @@ class TableManager {
 	constructor(config = {}) {
 		// simpan state modul
 		this.state = config.state;
+		/* =====================================================
+   OPTIONAL REQUEST OVERRIDE
+   -----------------------------------------------------
+   dipakai oleh tabel khusus
+===================================================== */
 
+		this.state.req = config.state?.req || null;
 		// ajax engine
 		this.ajax = window.Ajax;
 
@@ -100,20 +106,49 @@ class TableManager {
 		this.syncLimitFromNavbar();
 		this.renderLoader();
 
+		/* =====================================================
+   BUILD PAYLOAD REQUEST
+===================================================== */
+
+		let payload = {
+			/* action backend */
+			action: "list",
+
+			/* tabel utama */
+			tbl: this.state.tbl,
+
+			/* module context */
+			module: this.state.tbl,
+
+			/* pagination */
+			halaman: this.currentPage,
+			rows: this.limit,
+
+			/* search */
+			cari: this.searchQuery,
+
+			/* sorting */
+			sort_by: this.sortBy,
+			sort_dir: this.sortDir,
+		};
+
+		/* =====================================================
+   OPTIONAL PROFILE OVERRIDE
+   -----------------------------------------------------
+   hanya kirim jika state.req ada
+===================================================== */
+
+		if (this.state.req) {
+			payload.req = this.state.req;
+		}
+
+		/* =====================================================
+   AJAX REQUEST
+===================================================== */
+
 		this.ajax.request({
 			method: "POST",
-			data: {
-				action: "list",
-				tbl: this.state.tbl,
-				module: this.state.tbl,
-
-				halaman: this.currentPage,
-				rows: this.limit,
-				cari: this.searchQuery,
-
-				sort_by: this.sortBy,
-				sort_dir: this.sortDir,
-			},
+			data: payload,
 			success: (res) => {
 				if (!res || !res.success) {
 					Toast.error(res?.message || "Gagal memuat data");
