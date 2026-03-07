@@ -279,8 +279,13 @@ class FormEngine {
 					// tentukan tabel yang harus reload
 					const reloadTable = this.state.reloadTable || this.state.tbl;
 
-					// trigger event reload table
-					$(document).trigger(`form:success.${reloadTable}`);
+					/**
+					 * ======================================================
+					 * RELOAD TABLE ENGINE
+					 * ======================================================
+					 * hanya satu event agar tidak double request
+					 */
+					$(document).trigger(`table:reload.${reloadTable}`);
 				},
 			});
 
