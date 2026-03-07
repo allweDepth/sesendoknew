@@ -304,7 +304,24 @@ class FormEngine {
 
 		// tambahkan nama tabel
 		formData += `&tbl=${this.state.tbl}`;
+		/* =========================================
+   CEK BUTTON YANG MENJALANKAN SUBMIT
+   ========================================= */
 
+		// ambil tombol yang aktif saat submit
+		const activeButton = document.activeElement;
+
+		/*
+		jika tombol memiliki data-req
+		maka tambahkan parameter req
+		*/
+		if (activeButton && activeButton.dataset.req) {
+			// module request dari button
+			const req = activeButton.dataset.req;
+
+			// tambahkan ke request
+			formData += `&req=${req}`;
+		}
 		// kirim request ajax
 		this.ajax.request({
 			data: formData,

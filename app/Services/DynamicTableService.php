@@ -118,20 +118,33 @@ PERUBAHAN:
             }
 
             /* =====================================================
-2️⃣ VALIDASI TABEL
-===================================================== */
+            2️⃣ VALIDASI TABEL
+            ===================================================== */
             $tbl = $request['tbl'] ?? null;
+            $req = $request['req'] ?? null;
 
-            if (!$tbl) {
-                return JsonResponse::error("Tabel tidak dikirim");
+            /* =====================================
+            PRIORITAS data-req
+            ===================================== */
+
+            switch (true) {
+
+                case ($req && isset($this->profiles[$req])):
+
+                    $profile = $this->profiles[$req];
+                    break;
+
+                case ($tbl && isset($this->profiles[$tbl])):
+
+                    $profile = $this->profiles[$tbl];
+                    break;
+
+                default:
+
+                    return JsonResponse::error("Tabel tidak terdaftar");
             }
 
-            if (!isset($this->profiles[$tbl])) {
-                return JsonResponse::error("Tabel tidak terdaftar");
-            }
-
-            $profile = $this->profiles[$tbl];
-            $table   = $profile['table'];
+            $table = $profile['table'];
 
             /* =====================================================
 3️⃣ EKSEKUSI ACTION

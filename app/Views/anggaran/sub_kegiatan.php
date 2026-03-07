@@ -29,8 +29,8 @@ $tbl = isset($table) ? $table : '';
                      data-container="flyout"
                      data-jns="add"
                      data-config="sub_kegiatan"
-                     data-tbl="<?= $tbl ?>">
-
+                     data-tbl="<?= $tbl ?>" data-req="group_sub_kegiatan">
+                     
                      <i class="plus icon"></i>
               </button>
 
@@ -39,7 +39,7 @@ $tbl = isset($table) ? $table : '';
                      data-ui="open-form"
                      data-container="flyout"
                      data-jns="import"
-                     data-tbl="<?= $tbl ?>">
+                     data-tbl="<?= $tbl ?>" data-req="group_sub_kegiatan">
 
                      <i class="upload icon"></i>
               </button>
@@ -47,7 +47,7 @@ $tbl = isset($table) ? $table : '';
               <!-- EXPORT -->
               <button class="ui icon button"
                      data-action="export"
-                     data-tbl="<?= $tbl ?>">
+                     data-tbl="<?= $tbl ?>" data-req="group_sub_kegiatan">
 
                      <i class="alternate download icon"></i>
               </button>
