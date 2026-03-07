@@ -106,7 +106,11 @@ class AnggaranModule {
 
 		const manager = new TableManager({
 			state: {
+				/* tabel transaksi aktif */
 				tbl: this.table,
+
+				/* profile override dari HTML */
+				req: table.dataset.req || null,
 			},
 		});
 

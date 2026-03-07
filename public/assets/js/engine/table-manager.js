@@ -291,7 +291,15 @@ class TableManager {
 		this.data.forEach((row) => {
 			const id = row[this.primaryKey];
 
-			html += `<tr data-id="${id}">`;
+			const groupKey = $(this.tbody).closest("table").data("group");
+
+			let extra = "";
+
+			if (groupKey && row[groupKey]) {
+				extra = ` data-${groupKey}="${row[groupKey]}"`;
+			}
+
+			html += `<tr data-id="${id}"${extra}>`;
 
 			let btnExtra = "";
 
