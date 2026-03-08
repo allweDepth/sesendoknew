@@ -616,6 +616,21 @@ class FormEngine {
 
 			case "progress":
 				return UIComponents.progress(prop);
+			/* ======================================================
+SEARCH FIELD (FOMANTIC SEARCH)
+====================================================== */
+
+			case "search":
+				return UIComponents.search(prop.label, prop.name, prop.source);
+
+			/* ======================================================
+			SEARCH DROPDOWN
+			====================================================== */
+
+			case "searchDropdown":
+				return UIComponents.searchDropdown(prop.label, prop.name);
+			case "lookupDropdown":
+				return UIComponents.lookupDropdown(prop.label, prop.name, prop.source);
 			default:
 				return "";
 		}

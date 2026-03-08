@@ -397,6 +397,89 @@ class UIComponents {
 
 		return field;
 	}
+	/* =========================================================
+LOOKUP DROPDOWN (SERVER REQUEST)
+---------------------------------------------------------
+Digunakan untuk lookup database besar
+
+contoh:
+- akun
+- master_biaya
+- rekanan
+- asn
+========================================================= */
+
+	static lookupDropdown(label, name, source) {
+		const html = `
+    
+    <div class="field">
+
+        <label>${label}</label>
+
+        <div class="ui fluid search selection dropdown lookup-dropdown"
+             data-source="${source}">
+
+            <input type="hidden" name="${name}">
+
+            <i class="dropdown icon"></i>
+
+            <div class="default text">Cari ${label}</div>
+
+        </div>
+
+    </div>
+
+    `;
+
+		return html;
+	}
+	/* =========================================================
+INIT LOOKUP DROPDOWN
+========================================================= */
+
+	static initLookupDropdown() {
+		$(".lookup-dropdown").dropdown({
+			minCharacters: 2,
+
+			apiSettings: {
+				method: "POST",
+
+				url: "/dynamic",
+
+				beforeSend(settings) {
+					const source = $(settings.element).data("source");
+
+					settings.data = {
+						action: "dropdown",
+
+						tbl: source,
+
+						cari: settings.urlData.query,
+
+						req: window.app.state.req,
+					};
+
+					return settings;
+				},
+
+				onResponse(response) {
+					if (!response.success) {
+						return { success: false, results: [] };
+					}
+
+					const results = response.data.map((row) => ({
+						name: row.label || row.uraian,
+						value: row.value || row.id,
+					}));
+
+					return {
+						success: true,
+						results: results,
+					};
+				},
+			},
+		});
+	}
 }
 // REGISTER ALL COMPONENTS
 UIComponentRegistry.register("search", (p) =>

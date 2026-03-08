@@ -729,7 +729,7 @@ UIConfig.sumber_dana = {
 };
 
 UIConfig.mapping = {
-	layout: { columns: 2 },
+	layout: { columns: 1 },
 
 	form: {
 		elements: [
@@ -738,25 +738,31 @@ UIConfig.mapping = {
 			========================================= */
 
 			{
-				tag: "fieldDropdown",
+				tag: "field",
 				prop: {
 					label: "Tipe Standar Biaya",
 					name: "tipe",
-					sourceStatic: [
-						{ value: "ssh", label: "SSH" },
-						{ value: "sbu", label: "SBU" },
-						{ value: "asb", label: "ASB" },
-						{ value: "hspk", label: "HSPK" },
-					],
+					readonly: true,
 				},
 			},
-
+			/* =========================================
+			ASB/SSH/SBU/HSPK
+			========================================= */
+			{
+				tag: "search",
+				prop: {
+					label: "Uraian",
+					name: "uraian",
+					source: "master_biaya",
+				},
+			},
 			/* =========================================
 			STANDAR BIAYA
 			========================================= */
 
 			{
-				tag: "searchDropdown",
+				tag: "lookupDropdown",
+
 				prop: {
 					label: "Standar Biaya",
 					name: "master_biaya_id",
@@ -769,7 +775,8 @@ UIConfig.mapping = {
 			========================================= */
 
 			{
-				tag: "fieldDropdown",
+				tag: "lookupDropdown",
+
 				prop: {
 					label: "Akun Belanja",
 					name: "kd_akun",
