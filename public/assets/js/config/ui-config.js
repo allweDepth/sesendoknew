@@ -215,7 +215,8 @@ UIConfig.indikator_sasaran_renstra_neo = {
 				prop: {
 					label: "Sasaran",
 					name: "sasaran_id",
-					source: "sasaran_renstra_neo",search: true,
+					source: "sasaran_renstra_neo",
+					search: true,
 				},
 			},
 			{
@@ -246,12 +247,18 @@ UIConfig.program_renstra_neo = {
 				prop: {
 					label: "Sasaran",
 					name: "sasaran_id",
-					source: "sasaran_renstra_neo",search: true,
+					source: "sasaran_renstra_neo",
+					search: true,
 				},
 			},
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Program", name: "kode_program", source: "program",search: true },
+				prop: {
+					label: "Program",
+					name: "kode_program",
+					source: "program",
+					search: true,
+				},
 			},
 			{
 				tag: "fieldTextarea",
@@ -270,7 +277,8 @@ UIConfig.indikator_program_renstra_neo = {
 				prop: {
 					label: "Program",
 					name: "program_id",
-					source: "program_renstra_neo",search: true,
+					source: "program_renstra_neo",
+					search: true,
 				},
 			},
 			{
@@ -301,7 +309,8 @@ UIConfig.kegiatan_renstra_neo = {
 				prop: {
 					label: "Program",
 					name: "program_id",
-					source: "program_renstra_neo",search: true,
+					source: "program_renstra_neo",
+					search: true,
 				},
 			},
 			{ tag: "field", prop: { label: "Kode Kegiatan", name: "kode_kegiatan" } },
@@ -330,7 +339,8 @@ UIConfig.sub_kegiatan_renstra_neo = {
 				prop: {
 					label: "Kegiatan",
 					name: "kegiatan_renstra_id",
-					source: "kegiatan_renstra_neo",search: true,
+					source: "kegiatan_renstra_neo",
+					search: true,
 				},
 			},
 			{
@@ -394,7 +404,12 @@ UIConfig.bidang = {
 		elements: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Urusan", name: "kode_urusan", source: "urusan",search: true },
+				prop: {
+					label: "Urusan",
+					name: "kode_urusan",
+					source: "urusan",
+					search: true,
+				},
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
@@ -407,7 +422,12 @@ UIConfig.program = {
 		elements: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Bidang", name: "kode_bidang", source: "bidang",search: true },
+				prop: {
+					label: "Bidang",
+					name: "kode_bidang",
+					source: "bidang",
+					search: true,
+				},
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
@@ -420,7 +440,12 @@ UIConfig.kegiatan = {
 		elements: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Program", name: "kode_program", source: "program",search: true },
+				prop: {
+					label: "Program",
+					name: "kode_program",
+					source: "program",
+					search: true,
+				},
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
@@ -433,13 +458,23 @@ UIConfig.sub_kegiatan_ref = {
 		elements: [
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Kegiatan", name: "kode_kegiatan", source: "kegiatan",search: true },
+				prop: {
+					label: "Kegiatan",
+					name: "kode_kegiatan",
+					source: "kegiatan",
+					search: true,
+				},
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Satuan", name: "satuan", source: "satuan",search: true },
+				prop: {
+					label: "Satuan",
+					name: "satuan",
+					source: "satuan",
+					search: true,
+				},
 			},
 			{
 				tag: "fieldTextarea",
@@ -694,13 +729,10 @@ UIConfig.sumber_dana = {
 };
 
 UIConfig.mapping = {
-
 	layout: { columns: 2 },
 
 	form: {
-
 		elements: [
-
 			/* =========================================
 			FILTER STANDAR BIAYA
 			========================================= */
@@ -714,27 +746,9 @@ UIConfig.mapping = {
 						{ value: "ssh", label: "SSH" },
 						{ value: "sbu", label: "SBU" },
 						{ value: "asb", label: "ASB" },
-						{ value: "hspk", label: "HSPK" }
-					]
-				}
-			},
-
-			{
-				tag: "field",
-				prop: {
-					label: "Tahun",
-					name: "tahun",
-					type: "number"
-				}
-			},
-
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Peraturan",
-					name: "peraturan_id",
-					source: "peraturan"
-				}
+						{ value: "hspk", label: "HSPK" },
+					],
+				},
 			},
 
 			/* =========================================
@@ -742,12 +756,12 @@ UIConfig.mapping = {
 			========================================= */
 
 			{
-				tag: "fieldDropdown",
+				tag: "searchDropdown",
 				prop: {
 					label: "Standar Biaya",
 					name: "master_biaya_id",
-					source: "master_biaya"
-				}
+					source: "master_biaya",
+				},
 			},
 
 			/* =========================================
@@ -759,8 +773,8 @@ UIConfig.mapping = {
 				prop: {
 					label: "Akun Belanja",
 					name: "kd_akun",
-					source: "akun_neo"
-				}
+					source: "akun_neo",
+				},
 			},
 
 			/* =========================================
@@ -772,14 +786,11 @@ UIConfig.mapping = {
 				prop: {
 					label: "Keterangan",
 					name: "keterangan",
-					atribut: `rows="2"`
-				}
-			}
-
-		]
-
-	}
-
+					atribut: `rows="2"`,
+				},
+			},
+		],
+	},
 };
 
 UIConfig.aset = {

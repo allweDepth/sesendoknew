@@ -88,50 +88,45 @@ class UIComponents {
 	// ==================================================
 	// UI MASSAGE
 	// ==================================================
-static message(prop = {}) {
+	static message(prop = {}) {
+		const {
+			label = "",
+			header = "",
+			html = "",
+			type = "info", // info | warning | error | success
+			icon = null, // ex: "info circle"
+			size = "", // small | large
+			compact = false,
+			floating = false,
+			shadow = false,
+			list = [], // array of string
+			dismissible = false,
+			subtle = false, // soft style
+			className = "",
+		} = prop;
 
-    const {
-        label = "",
-        header = "",
-        html = "",
-        type = "info",          // info | warning | error | success
-        icon = null,            // ex: "info circle"
-        size = "",              // small | large
-        compact = false,
-        floating = false,
-        shadow = false,
-        list = [],              // array of string
-        dismissible = false,
-        subtle = false,         // soft style
-        className = ""
-    } = prop;
+		const iconHtml = icon ? `<i class="${icon} icon"></i>` : "";
 
-    const iconHtml = icon
-        ? `<i class="${icon} icon"></i>`
-        : "";
+		const headerHtml = header ? `<div class="header">${header}</div>` : "";
 
-    const headerHtml = header
-        ? `<div class="header">${header}</div>`
-        : "";
-
-    const listHtml = list.length
-        ? `<ul class="list">
-            ${list.map(item => `<li>${item}</li>`).join("")}
+		const listHtml = list.length
+			? `<ul class="list">
+            ${list.map((item) => `<li>${item}</li>`).join("")}
            </ul>`
-        : "";
+			: "";
 
-    const subtleClass = subtle ? "basic" : "";
-    const compactClass = compact ? "compact" : "";
-    const floatingClass = floating ? "floating" : "";
-    const shadowStyle = shadow
-        ? "style='box-shadow:0 4px 12px rgba(0,0,0,0.08);'"
-        : "";
+		const subtleClass = subtle ? "basic" : "";
+		const compactClass = compact ? "compact" : "";
+		const floatingClass = floating ? "floating" : "";
+		const shadowStyle = shadow
+			? "style='box-shadow:0 4px 12px rgba(0,0,0,0.08);'"
+			: "";
 
-    const dismissBtn = dismissible
-        ? `<i class="close icon message-close"></i>`
-        : "";
+		const dismissBtn = dismissible
+			? `<i class="close icon message-close"></i>`
+			: "";
 
-    return `
+		return `
         <div class="field ${className}">
             ${label ? `<label>${label}</label>` : ""}
 
@@ -151,7 +146,7 @@ static message(prop = {}) {
             </div>
         </div>
     `;
-}
+	}
 	// ==================================================
 	// RANGE CALENDAR
 	// ==================================================
@@ -190,7 +185,6 @@ static message(prop = {}) {
 
     </div>
     `;
-		
 	}
 
 	// ==================================================
@@ -199,9 +193,10 @@ static message(prop = {}) {
 
 	static initAll() {
 		$(".ui.dropdown").dropdown();
+
 		$(".ui.checkbox").checkbox();
 
-		// $(".ui.calendar").calendar();
+		UIComponents.initSearch();
 	}
 
 	static initRange(elements = []) {
@@ -225,18 +220,12 @@ static message(prop = {}) {
 		});
 	}
 	// ==================================================
-// ENTERPRISE ALERT
-// ==================================================
-static alert(prop = {}) {
+	// ENTERPRISE ALERT
+	// ==================================================
+	static alert(prop = {}) {
+		const { variant = "info", title = "", message = "", icon = null } = prop;
 
-    const {
-        variant = "info",
-        title = "",
-        message = "",
-        icon = null
-    } = prop;
-
-    return `
+		return `
         <div class="field">
             <div class="ui ${variant} message">
                 ${icon ? `<i class="${icon} icon"></i>` : ""}
@@ -247,31 +236,135 @@ static alert(prop = {}) {
             </div>
         </div>
     `;
-}
-// ==================================================
-// ENTERPRISE PROGRESS
-// ==================================================
-static progress(prop = {}) {
+	}
+	// ==================================================
+	// ENTERPRISE PROGRESS
+	// ==================================================
+	static progress(prop = {}) {
+		const {
+			percent = 0,
+			label = "Processing...",
+			size = "small",
+			color = "blue",
+		} = prop;
 
-    const {
-        percent = 0,
-        label = "Processing...",
-        size = "small",
-        color = "blue"
-    } = prop;
-
-    return `
+		return `
         <div class="ui ${size} ${color} progress ds-progress" data-percent="${percent}">
             <div class="bar" style="width:${percent}%"></div>
             <div class="label">${label}</div>
         </div>
     `;
-}
+	}
+	// ======================================================
+	// ALIAS FIELD (AGAR COMPATIBLE DENGAN UI CONFIG)
+	// ======================================================
+
+	static field(label, name, type = "text") {
+		// gunakan input yang sudah ada
+		return UIComponents.input(label, name, type);
+	}
+
+	static fieldTextarea(label, name) {
+		// gunakan textarea yang sudah ada
+		return UIComponents.textarea(label, name);
+	}
+
+	static fieldDropdown(label, name, options = []) {
+		// gunakan dropdown yang sudah ada
+		return UIComponents.dropdown(label, name, options);
+	}
+	// ======================================================
+	// DROPDOWN SEARCH (FOMANTIC UI)
+	// ======================================================
+
+	static searchDropdown(label, name) {
+		return `
+    <div class="field">
+        <label>${label}</label>
+
+        <div class="ui fluid search selection dropdown">
+
+            <input type="hidden" name="${name}">
+
+            <i class="dropdown icon"></i>
+
+            <div class="default text">Cari...</div>
+
+            <div class="menu"></div>
+
+        </div>
+
+    </div>
+    `;
+	}
+	// ======================================================
+	// FOMANTIC SEARCH MODULE
+	// ======================================================
+
+	static search(label, name, source) {
+		return `
+	<div class="field">
+
+		<label>${label}</label>
+
+		<div class="ui search ds-search"
+		     data-source="${source}"
+		     data-name="${name}">
+
+			<div class="ui icon input">
+
+				<input class="prompt" type="text" placeholder="Cari...">
+
+				<i class="search icon"></i>
+
+			</div>
+
+			<input type="hidden" name="${name}">
+
+			<div class="results"></div>
+
+		</div>
+
+	</div>
+	`;
+	}
+	// ======================================================
+	// INIT FOMANTIC SEARCH
+	// ======================================================
+
+	static initSearch() {
+		$(".ds-search").each(function () {
+			const source = $(this).data("source");
+			const name = $(this).data("name");
+
+			const el = $(this);
+
+			el.search({
+				apiSettings: {
+					url: "/dynamic?action=lookup&tbl=" + source + "&q={query}",
+
+					onResponse: function (res) {
+						return {
+							results: res.data.map((d) => ({
+								title: d.uraian,
+								value: d.id,
+							})),
+						};
+					},
+				},
+
+				onSelect: function (result) {
+					el.find(`input[name="${name}"]`).val(result.value);
+				},
+			});
+		});
+	}
 }
 // REGISTER ALL COMPONENTS
-UIComponentRegistry.register("fieldMessage", (p) =>
-    UIComponents.message(p)
+UIComponentRegistry.register("search", (p) =>
+	UIComponents.search(p.label, p.name, p.source),
 );
+UIComponentRegistry.register("fieldMessage", (p) => UIComponents.message(p));
 UIComponentRegistry.register("input", (p) =>
 	UIComponents.input(p.label, p.name, p.type || "text"),
 );
@@ -304,10 +397,6 @@ UIComponentRegistry.register("dropdown", (p) =>
 // REGISTER ENTERPRISE COMPONENTS
 // ======================================================
 
-UIComponentRegistry.register("alert", (p) =>
-    UIComponents.alert(p)
-);
+UIComponentRegistry.register("alert", (p) => UIComponents.alert(p));
 
-UIComponentRegistry.register("progress", (p) =>
-    UIComponents.progress(p)
-);
+UIComponentRegistry.register("progress", (p) => UIComponents.progress(p));
