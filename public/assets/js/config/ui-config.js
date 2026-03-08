@@ -748,19 +748,28 @@ UIConfig.mapping = {
 			/* =========================================
 			ASB/SSH/SBU/HSPK
 			========================================= */
+			/* =====================================================
+SEARCH MASTER BIAYA
+===================================================== */
+
 			{
 				tag: "search",
 				prop: {
-					label: "Uraian",
-					name: "uraian",
+					label: "Cari Standar Biaya",
+					name: "master_biaya_id",
 					source: "master_biaya",
 				},
 			},
+
+			/* =====================================================
+FIELD LABEL HASIL SEARCH
+===================================================== */
+
 			{
 				tag: "field",
 				prop: {
 					label: "Uraian",
-					name: "....",
+					name: "uraian_label",
 					readonly: true,
 				},
 			},

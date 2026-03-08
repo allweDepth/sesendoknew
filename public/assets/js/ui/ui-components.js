@@ -192,16 +192,36 @@ class UIComponents {
 	// ==================================================
 
 	static initAll() {
+		/* =========================================
+	INIT SEMUA DROPDOWN FOMANTIC
+	========================================= */
 
-	$(".ui.dropdown").dropdown();
+		$(".ui.dropdown").dropdown();
 
-	$(".ui.checkbox").checkbox();
+		/* =========================================
+	INIT CHECKBOX FOMANTIC
+	========================================= */
 
-	UIComponents.initSearch();
+		$(".ui.checkbox").checkbox();
 
-	UIComponents.initLookupDropdown();
+		/* =========================================
+	INIT SEARCH MODULE
+	komponen:
+	- tag: search
+	class: ds-search
+	========================================= */
 
-}
+		UIComponents.initSearch();
+
+		/* =========================================
+	INIT LOOKUP DROPDOWN SERVER
+	komponen:
+	- tag: lookupDropdown
+	class: lookup-dropdown
+	========================================= */
+
+		UIComponents.initLookupDropdown();
+	}
 
 	static initRange(elements = []) {
 		elements.forEach((e) => {
@@ -282,24 +302,29 @@ class UIComponents {
 	// ======================================================
 
 	static searchDropdown(label, name) {
+		/* =====================================================
+	COMPONENT DROPDOWN SEARCH
+	===================================================== */
+
 		return `
-    <div class="field">
-        <label>${label}</label>
+	<div class="field">
 
-        <div class="ui fluid search selection dropdown">
+		<label>${label}</label>
 
-            <input type="hidden" name="${name}">
+		<div class="ui fluid search selection dropdown">
 
-            <i class="dropdown icon"></i>
+			<input type="hidden" name="${name}">
 
-            <div class="default text">Cari...</div>
+			<i class="dropdown icon"></i>
 
-            <div class="menu"></div>
+			<div class="default text">Cari ${label}</div>
 
-        </div>
+			<div class="menu"></div>
 
-    </div>
-    `;
+		</div>
+
+	</div>
+	`;
 	}
 	// ======================================================
 	// FOMANTIC SEARCH MODULE
@@ -336,33 +361,65 @@ class UIComponents {
 	// INIT FOMANTIC SEARCH
 	// ======================================================
 
-	static initSearch() {
-		$(".ds-search").each(function () {
-			const source = $(this).data("source");
-			const name = $(this).data("name");
+	static initSearch()
+{
 
-			const el = $(this);
+    $(".ds-search").each(function () {
 
-			el.search({
-				apiSettings: {
-					url: "/dynamic?action=lookup&tbl=" + source + "&q={query}",
+        const source = $(this).data("source");
 
-					onResponse: function (res) {
-						return {
-							results: res.data.map((d) => ({
-								title: d.uraian,
-								value: d.id,
-							})),
-						};
-					},
-				},
+        const name = $(this).data("name");
 
-				onSelect: function (result) {
-					el.find(`input[name="${name}"]`).val(result.value);
-				},
-			});
-		});
-	}
+        const el = $(this);
+
+        el.search({
+
+            apiSettings: {
+
+                url: function (query) {
+
+                    const req = window.app?.state?.req || null;
+
+                    const countRow = $("#countRow").val() || 20;
+
+                    return "/dynamic?action=dropdown"
+                        + "&tbl=" + source
+                        + "&req=" + req
+                        + "&cari=" + query
+                        + "&limit=" + countRow;
+
+                },
+
+                onResponse: function (res) {
+
+                    return {
+
+                        results: res.data.map((d) => ({
+                            title: d.text || d.uraian,
+                            value: d.value || d.id
+                        }))
+
+                    };
+
+                }
+
+            },
+
+            onSelect: function (result) {
+
+                el.find(`input[name="${name}"]`).val(result.value);
+
+                const form = el.closest("form");
+
+                form.find('[name="uraian_label"]').val(result.title);
+
+            }
+
+        });
+
+    });
+
+}
 	static searchDropdown(label, name, value = "") {
 		/* =====================================================
     FIELD CONTAINER
@@ -442,29 +499,62 @@ INIT LOOKUP DROPDOWN
 ========================================================= */
 
 	static initLookupDropdown() {
+		/* =====================================================
+	INIT DROPDOWN SERVER LOOKUP
+	class: lookup-dropdown
+	===================================================== */
+
 		$(".lookup-dropdown").dropdown({
-			minCharacters: 2,
+			minCharacters: 2, // minimal karakter search
 
 			apiSettings: {
 				method: "POST",
 
 				url: "/dynamic",
 
+				/* =================================================
+			SEBELUM REQUEST DIKIRIM
+			================================================= */
+
 				beforeSend(settings) {
-					const source = $(settings.element).data("source");
 
-					settings.data = {
-						action: "dropdown",
+	/* =====================================
+	AMBIL SOURCE DARI HTML
+	contoh:
+	data-source="akun_neo"
+	data-source="master_biaya"
+	===================================== */
 
-						tbl: source,
+	const source = $(settings.element).data("source");
 
-						cari: settings.urlData.query,
+	settings.data = {
 
-						req: window.app.state.req,
-					};
+		action: "dropdown",
 
-					return settings;
-				},
+		/* =====================================
+		UI hanya kirim source
+		tidak boleh tahu req
+		===================================== */
+
+		tbl: source,
+
+		cari: settings.urlData.query,
+
+		/* =====================================
+		kirim state global jika ada
+		backend boleh pakai atau tidak
+		===================================== */
+
+		req: window.app?.state?.req || null,
+
+	};
+
+	return settings;
+},
+
+				/* =================================================
+			RESPONSE SERVER → FORMAT FOMANTIC
+			================================================= */
 
 				onResponse(response) {
 					if (!response.success) {
@@ -473,11 +563,13 @@ INIT LOOKUP DROPDOWN
 
 					const results = response.data.map((row) => ({
 						name: row.label || row.uraian,
+
 						value: row.value || row.id,
 					}));
 
 					return {
 						success: true,
+
 						results: results,
 					};
 				},
