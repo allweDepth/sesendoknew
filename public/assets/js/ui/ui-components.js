@@ -192,12 +192,16 @@ class UIComponents {
 	// ==================================================
 
 	static initAll() {
-		$(".ui.dropdown").dropdown();
 
-		$(".ui.checkbox").checkbox();
+	$(".ui.dropdown").dropdown();
 
-		UIComponents.initSearch();
-	}
+	$(".ui.checkbox").checkbox();
+
+	UIComponents.initSearch();
+
+	UIComponents.initLookupDropdown();
+
+}
 
 	static initRange(elements = []) {
 		elements.forEach((e) => {

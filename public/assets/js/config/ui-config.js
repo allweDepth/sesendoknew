@@ -756,6 +756,14 @@ UIConfig.mapping = {
 					source: "master_biaya",
 				},
 			},
+			{
+				tag: "field",
+				prop: {
+					label: "Uraian",
+					name: "....",
+					readonly: true,
+				},
+			},
 			/* =========================================
 			STANDAR BIAYA
 			========================================= */
