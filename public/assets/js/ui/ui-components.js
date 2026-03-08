@@ -361,103 +361,58 @@ class UIComponents {
 	// INIT FOMANTIC SEARCH
 	// ======================================================
 
-	static initSearch()
-{
+	static initSearch() {
+		$(".ds-search").each(function () {
+			const el = $(this);
 
-    $(".ds-search").each(function () {
+			const source = el.data("source");
 
-        const source = $(this).data("source");
+			const name = el.data("name");
 
-        const name = $(this).data("name");
+			el.search({
+				apiSettings: {
+					method: "POST",
 
-        const el = $(this);
+					url: "/dynamic",
 
-        el.search({
+					beforeSend(settings) {
+						settings.data = {
+							action: "dropdown",
 
-            apiSettings: {
+							tbl: source,
 
-                url: function (query) {
+							cari: settings.urlData.query,
 
-                    const req = window.app?.state?.req || null;
+							limit: $("#countRow").val() || 20,
 
-                    const countRow = $("#countRow").val() || 20;
+							req: window.app?.state?.req || null,
+						};
 
-                    return "/dynamic?action=dropdown"
-                        + "&tbl=" + source
-                        + "&req=" + req
-                        + "&cari=" + query
-                        + "&limit=" + countRow;
+						return settings;
+					},
 
-                },
+					onResponse(res) {
+						return {
+							results: res.data.map((row) => ({
+								title: row.text || row.uraian,
 
-                onResponse: function (res) {
+								value: row.value || row.id,
+							})),
+						};
+					},
+				},
 
-                    return {
+				onSelect(result) {
+					el.find(`input[name="${name}"]`).val(result.value);
 
-                        results: res.data.map((d) => ({
-                            title: d.text || d.uraian,
-                            value: d.value || d.id
-                        }))
+					const form = el.closest("form");
 
-                    };
-
-                }
-
-            },
-
-            onSelect: function (result) {
-
-                el.find(`input[name="${name}"]`).val(result.value);
-
-                const form = el.closest("form");
-
-                form.find('[name="uraian_label"]').val(result.title);
-
-            }
-
-        });
-
-    });
-
-}
-	static searchDropdown(label, name, value = "") {
-		/* =====================================================
-    FIELD CONTAINER
-    ===================================================== */
-
-		const field = $('<div class="field"></div>');
-
-		/* label field */
-
-		field.append(`<label>${label}</label>`);
-
-		/* =====================================================
-    DROPDOWN HTML
-    ===================================================== */
-
-		const dropdown = $(`
-        <div class="ui fluid search selection dropdown">
-            <input type="hidden" name="${name}" value="${value}">
-            <i class="dropdown icon"></i>
-            <div class="default text">Pilih ${label}</div>
-            <div class="menu"></div>
-        </div>
-    `);
-
-		field.append(dropdown);
-
-		/* =====================================================
-    AKTIFKAN FOMANTIC SEARCH
-    ===================================================== */
-
-		setTimeout(() => {
-			dropdown.dropdown({
-				fullTextSearch: true,
+					form.find('[name="uraian_label"]').val(result.title);
+				},
 			});
-		}, 10);
-
-		return field;
+		});
 	}
+
 	/* =========================================================
 LOOKUP DROPDOWN (SERVER REQUEST)
 ---------------------------------------------------------
@@ -499,78 +454,43 @@ INIT LOOKUP DROPDOWN
 ========================================================= */
 
 	static initLookupDropdown() {
-		/* =====================================================
-	INIT DROPDOWN SERVER LOOKUP
-	class: lookup-dropdown
-	===================================================== */
-
 		$(".lookup-dropdown").dropdown({
-			minCharacters: 2, // minimal karakter search
+			minCharacters: 2,
 
 			apiSettings: {
 				method: "POST",
 
 				url: "/dynamic",
 
-				/* =================================================
-			SEBELUM REQUEST DIKIRIM
-			================================================= */
-
 				beforeSend(settings) {
+					const source = $(settings.element).data("source");
 
-	/* =====================================
-	AMBIL SOURCE DARI HTML
-	contoh:
-	data-source="akun_neo"
-	data-source="master_biaya"
-	===================================== */
+					settings.data = {
+						action: "dropdown",
 
-	const source = $(settings.element).data("source");
+						tbl: source,
 
-	settings.data = {
+						cari: settings.urlData.query,
 
-		action: "dropdown",
+						limit: $("#countRow").val() || 20,
 
-		/* =====================================
-		UI hanya kirim source
-		tidak boleh tahu req
-		===================================== */
+						req: window.app?.state?.req || null,
+					};
 
-		tbl: source,
+					return settings;
+				},
 
-		cari: settings.urlData.query,
-
-		/* =====================================
-		kirim state global jika ada
-		backend boleh pakai atau tidak
-		===================================== */
-
-		req: window.app?.state?.req || null,
-
-	};
-
-	return settings;
-},
-
-				/* =================================================
-			RESPONSE SERVER → FORMAT FOMANTIC
-			================================================= */
-
-				onResponse(response) {
-					if (!response.success) {
-						return { success: false, results: [] };
-					}
-
-					const results = response.data.map((row) => ({
-						name: row.label || row.uraian,
-
-						value: row.value || row.id,
-					}));
+				onResponse(res) {
+					if (!res.success) return { success: false, results: [] };
 
 					return {
 						success: true,
 
-						results: results,
+						results: res.data.map((row) => ({
+							name: row.text || row.uraian,
+
+							value: row.value || row.id,
+						})),
 					};
 				},
 			},
