@@ -98,7 +98,7 @@
         </a>
 
         <a class="item" href="/mapping" data-spa="client">
-          <i class="purple map icon"></i> Mapping
+          <i class="purple map icon"></i> Mapping Biaya Akun
         </a>
 
         <a class="item" href="/referensi?tbl=aset" data-spa="client">

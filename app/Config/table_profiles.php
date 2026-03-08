@@ -401,89 +401,187 @@ $profiles = [
         ]
     ],
     'mapping' => [
-        'table' => 'mapping_aset_akun',
-        'primary_key' => 'id',
-        'allowed_roles' => ['super_admin', 'admin_wilayah'],
-        'soft_lock' => true,
-        'modes' => [
 
-            'default' => [
-                'select' => [
-                    'id',
-                    'kd_aset',
-                    'uraian_aset',
-                    'kd_akun',
-                    'uraian_akun',
-                    'kelompok',
-                    'disable',
-                    'aksi',
-                    'keterangan',
-                    'peraturan',
-                    'tgl_insert',
-                    'username_insert',
-                    'tgl_update',
-                    'username_update'
-                ],
-                'searchable' => [
-                    'kd_aset',
-                    'uraian_aset',
-                    'kd_akun',
-                    'uraian_akun',
-                    'kelompok',
-                    'keterangan',
-                    'peraturan'
-                ],
-                'order_by' => 'kd_aset ASC'
+    'table' => 'master_biaya_akun',
+
+    'primary_key' => 'id',
+
+    'allowed_roles' => ['super_admin','admin_wilayah'],
+
+    'soft_lock' => true,
+
+    /* =====================================================
+    JOIN TABLE
+    ===================================================== */
+
+    'join' => [
+
+        [
+            'table' => 'master_biaya',
+            'on' => 'master_biaya.id = master_biaya_akun.master_biaya_id'
+        ],
+
+        [
+            'table' => 'akun_neo',
+            'on' => 'akun_neo.kode = master_biaya_akun.kd_akun'
+        ]
+
+    ],
+
+    /* =====================================================
+    FILTER UI
+    ===================================================== */
+
+    'filters' => [
+
+        'tipe' => [
+            'type' => 'dropdown',
+            'label' => 'Tipe Standar Biaya',
+            'column' => 'master_biaya.tipe',
+            'options' => [
+                'ssh' => 'SSH',
+                'sbu' => 'SBU',
+                'asb' => 'ASB',
+                'hspk' => 'HSPK'
+            ]
+        ],
+
+        'tahun' => [
+            'type' => 'dropdown',
+            'label' => 'Tahun',
+            'column' => 'master_biaya.tahun'
+        ],
+
+        'peraturan' => [
+            'type' => 'dropdown',
+            'label' => 'Peraturan',
+            'column' => 'master_biaya.peraturan_id'
+        ]
+
+    ],
+
+    /* =====================================================
+    FORM CRUD
+    ===================================================== */
+
+    'form' => [
+
+        'fields' => [
+
+            'master_biaya_id' => [
+
+                'type' => 'lookup',
+
+                'label' => 'Standar Biaya',
+
+                'lookup' => [
+
+                    'table' => 'master_biaya',
+
+                    'value_field' => 'id',
+
+                    'label_field' => 'nama',
+
+                    'searchable' => [
+                        'kode',
+                        'nama',
+                        'spesifikasi'
+                    ]
+
+                ]
+
             ],
 
-            'referensi' => [
-                'select' => [
-                    'id',
-                    'kd_aset',
-                    'uraian_aset',
-                    'kd_akun',
-                    'uraian_akun',
-                    'kelompok',
-                    'keterangan',
-                    'peraturan'
-                ],
-                'searchable' => [
-                    'kd_aset',
-                    'uraian_aset',
-                    'kd_akun',
-                    'uraian_akun',
-                    'kelompok'
-                ],
-                'order_by' => 'kd_aset ASC'
+            'kd_akun' => [
+
+                'type' => 'lookup',
+
+                'label' => 'Akun Belanja',
+
+                'lookup' => [
+
+                    'table' => 'akun_neo',
+
+                    'value_field' => 'kode',
+
+                    'label_field' => 'uraian',
+
+                    'searchable' => [
+                        'kode',
+                        'uraian'
+                    ]
+
+                ]
+
             ],
 
-            'aktif' => [
-                'select' => [
-                    'id',
-                    'kd_aset',
-                    'uraian_aset',
-                    'kd_akun',
-                    'uraian_akun',
-                    'kelompok'
-                ],
-                'searchable' => [
-                    'kd_aset',
-                    'uraian_aset',
-                    'kd_akun',
-                    'uraian_akun'
-                ],
-                'order_by' => 'kd_aset ASC',
-                'where' => "disable = 0"
-            ],
-
-            'edit' => [
-                'select' => ['*'],
-                'searchable' => ['*'],
-                'order_by' => 'id ASC'
+            'keterangan' => [
+                'type' => 'text'
             ]
 
         ]
+
     ],
+
+    /* =====================================================
+    TABEL GRID
+    ===================================================== */
+
+    'modes' => [
+
+        'default' => [
+
+            'select' => [
+
+                'master_biaya_akun.id',
+
+                'master_biaya.kode',
+
+                'master_biaya.nama AS uraian_biaya',
+
+                'master_biaya.tipe',
+
+                'master_biaya.kelompok_barang',
+
+                'master_biaya.tahun',
+
+                'master_biaya_akun.kd_akun',
+
+                'akun_neo.uraian AS uraian_akun',
+
+                'master_biaya_akun.disable',
+
+                'master_biaya_akun.tgl_insert',
+
+                'master_biaya_akun.username_insert',
+
+                'master_biaya_akun.tgl_update',
+
+                'master_biaya_akun.username_update'
+
+            ],
+
+            'searchable' => [
+
+                'master_biaya.kode',
+
+                'master_biaya.nama',
+
+                'master_biaya.kelompok_barang',
+
+                'akun_neo.uraian',
+
+                'master_biaya_akun.kd_akun'
+
+            ],
+
+            'order_by' => 'master_biaya.kode ASC'
+
+        ]
+
+    ]
+
+],
     'aset' => [
         'table' => 'aset_neo',
         'primary_key' => 'id',

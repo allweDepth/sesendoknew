@@ -694,14 +694,92 @@ UIConfig.sumber_dana = {
 };
 
 UIConfig.mapping = {
+
+	layout: { columns: 2 },
+
 	form: {
+
 		elements: [
-			{ tag: "field", prop: { label: "Kode Aset", name: "kd_aset" } },
-			{ tag: "field", prop: { label: "Uraian Aset", name: "uraian_aset" } },
-			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
-			{ tag: "field", prop: { label: "Uraian Akun", name: "uraian_akun" } },
-		],
-	},
+
+			/* =========================================
+			FILTER STANDAR BIAYA
+			========================================= */
+
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Tipe Standar Biaya",
+					name: "tipe",
+					sourceStatic: [
+						{ value: "ssh", label: "SSH" },
+						{ value: "sbu", label: "SBU" },
+						{ value: "asb", label: "ASB" },
+						{ value: "hspk", label: "HSPK" }
+					]
+				}
+			},
+
+			{
+				tag: "field",
+				prop: {
+					label: "Tahun",
+					name: "tahun",
+					type: "number"
+				}
+			},
+
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Peraturan",
+					name: "peraturan_id",
+					source: "peraturan"
+				}
+			},
+
+			/* =========================================
+			STANDAR BIAYA
+			========================================= */
+
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Standar Biaya",
+					name: "master_biaya_id",
+					source: "master_biaya"
+				}
+			},
+
+			/* =========================================
+			AKUN BELANJA
+			========================================= */
+
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Akun Belanja",
+					name: "kd_akun",
+					source: "akun_neo"
+				}
+			},
+
+			/* =========================================
+			KETERANGAN
+			========================================= */
+
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Keterangan",
+					name: "keterangan",
+					atribut: `rows="2"`
+				}
+			}
+
+		]
+
+	}
+
 };
 
 UIConfig.aset = {
