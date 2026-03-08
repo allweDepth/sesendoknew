@@ -111,14 +111,17 @@ class TableManager {
 ===================================================== */
 
 		let payload = {
-			/* action backend */
+			/* aksi CRUD */
 			action: "list",
 
-			/* tabel utama */
+			/* alias tabel dari config */
 			tbl: this.state.tbl,
 
-			/* module context */
+			/* module tetap dikirim agar tidak merusak menu lama */
 			module: this.state.tbl,
+
+			/* request tambahan opsional */
+			req: this.state.req || "",
 
 			/* pagination */
 			halaman: this.currentPage,

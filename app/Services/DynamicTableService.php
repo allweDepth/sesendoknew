@@ -871,8 +871,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     ): string {
 
         /* ======================================================
-    1️⃣ AMBIL KONFIGURASI MODE
-    ====================================================== */
+        1️⃣ AMBIL KONFIGURASI MODE
+        ====================================================== */
 
         // Ambil konfigurasi mode dari profile
         // Jika mode tidak ada gunakan 'default'
@@ -883,8 +883,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
 
         /* ======================================================
-    2️⃣ PAGINATION
-    ====================================================== */
+        2️⃣ PAGINATION
+        ====================================================== */
 
         // jumlah data per halaman
         $limit = max(1, (int)($request['rows'] ?? 10));
@@ -903,8 +903,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
 
         /* ======================================================
-    3️⃣ RESOLVE USER SCOPE
-    ====================================================== */
+        3️⃣ RESOLVE USER SCOPE
+        ====================================================== */
 
         // resolveScope() akan menambahkan filter otomatis
         // berdasarkan role user (admin_opd, admin_wilayah dll)
@@ -914,8 +914,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
 
         /* ======================================================
-    4️⃣ RESOLVE SEARCH
-    ====================================================== */
+        4️⃣ RESOLVE SEARCH
+        ====================================================== */
 
         // resolveSearch() membangun query LIKE
         // berdasarkan kolom searchable
@@ -925,8 +925,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
 
         /* ======================================================
-    5️⃣ INISIALISASI ARRAY WHERE
-    ====================================================== */
+        5️⃣ INISIALISASI ARRAY WHERE
+        ====================================================== */
 
         // array kondisi WHERE
         $whereParts = [];
@@ -937,8 +937,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
 
         /* ======================================================
-    6️⃣ APPLY PROFILE WHERE
-    ====================================================== */
+        6️⃣ APPLY PROFILE WHERE
+        ====================================================== */
 
         // contoh profile:
         // 'where' => [
@@ -963,8 +963,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
                 $whereParts[] = "`$field` = ?";
 
                 /* ==================================================
-            VALUE RESOLUTION
-            ================================================== */
+                VALUE RESOLUTION
+                ================================================== */
 
                 if ($value === 'user') {
 
@@ -985,8 +985,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
                         }
 
                         /* ==========================================
-                    MAP PERATURAN BERDASARKAN TABEL
-                    ========================================== */
+                        MAP PERATURAN BERDASARKAN TABEL
+                        ========================================== */
 
                         $map = [
                             'urusan'       => 'aturan_sub_kegiatan',
@@ -1027,8 +1027,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
 
         /* ======================================================
-    7️⃣ GABUNGKAN SEMUA WHERE
-    ====================================================== */
+        7️⃣ GABUNGKAN SEMUA WHERE
+        ====================================================== */
 
         // gabungkan scope + search + profile where
         $whereParts = array_merge(
@@ -1052,18 +1052,50 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
 
         /* ======================================================
-    8️⃣ SELECT FIELD
-    ====================================================== */
+        8️⃣ SELECT FIELD
+        ====================================================== */
+
+        /* ======================================================
+8️⃣ SELECT FIELD
+====================================================== */
 
         // ambil kolom select dari profile
-        // jika kosong gunakan *
         $select = implode(',', $modeConfig['select'] ?? ['*']);
+
+
+        /* ======================================================
+8️⃣.1 BUILD JOIN QUERY
+====================================================== */
+
+        // default join kosong
+        $joinSQL = "";
+
+        // cek apakah profile memiliki konfigurasi join
+        if (!empty($profile['join'])) {
+
+            // loop semua join
+            foreach ($profile['join'] as $join) {
+
+                // nama tabel join
+                $joinTable = $join['table'] ?? null;
+
+                // kondisi ON join
+                $joinOn = $join['on'] ?? null;
+
+                // jika table dan kondisi ada
+                if ($joinTable && $joinOn) {
+
+                    // tambahkan LEFT JOIN
+                    $joinSQL .= " LEFT JOIN `$joinTable` ON $joinOn ";
+                }
+            }
+        }
 
 
 
         /* ======================================================
-    9️⃣ PRIMARY KEY
-    ====================================================== */
+        9️⃣ PRIMARY KEY
+        ====================================================== */
 
         // ambil primary key tabel
         $primaryKey = $this->getPrimaryKey($table);
@@ -1071,8 +1103,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
 
         /* ======================================================
-    🔟 ORDER BY
-    ====================================================== */
+        🔟 ORDER BY
+        ====================================================== */
 
         // ambil konfigurasi order_by dari profile
         $orderBy = $modeConfig['order_by'] ?? "`$primaryKey` DESC";
@@ -1092,15 +1124,16 @@ DELETE (FULL IDENTIK LOGIC ASLI)
         }
 
         /* ======================================================
-    1️⃣1️⃣ TOTAL DATA
-    ====================================================== */
+        1️⃣1️⃣ TOTAL DATA
+        ====================================================== */
 
         // hitung total data untuk pagination
         $total = $this->db->query(
 
             "SELECT COUNT(*) as total
-        FROM `$table`
-        $where",
+                FROM `$table`
+                $joinSQL
+                $where",
 
             $params
 
@@ -1109,17 +1142,18 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
 
         /* ======================================================
-    1️⃣2️⃣ AMBIL DATA
-    ====================================================== */
+        1️⃣2️⃣ AMBIL DATA
+        ====================================================== */
 
         // query data utama
         $rows = $this->db->query(
 
             "SELECT $select
-        FROM `$table`
-        $where
-        ORDER BY $orderBy
-        LIMIT $offset, $limit",
+                FROM `$table`
+                $joinSQL
+                $where
+                ORDER BY $orderBy
+                LIMIT $offset, $limit",
 
             $params
 
@@ -1128,8 +1162,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
 
         /* ======================================================
-    1️⃣3️⃣ RESPONSE JSON
-    ====================================================== */
+        1️⃣3️⃣ RESPONSE JSON
+        ====================================================== */
 
         return JsonResponse::success(
 

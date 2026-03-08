@@ -410,9 +410,7 @@ $profiles = [
 
         'soft_lock' => true,
 
-        /* =====================================================
-            JOIN TABLE
-            ===================================================== */
+        /* JOIN RELASI */
 
         'join' => [
 
@@ -428,105 +426,6 @@ $profiles = [
 
         ],
 
-        /* =====================================================
-        FILTER UI
-        ===================================================== */
-
-        'filters' => [
-
-            'tipe' => [
-                'type' => 'dropdown',
-                'label' => 'Tipe Standar Biaya',
-                'column' => 'master_biaya.tipe',
-                'options' => [
-                    'ssh' => 'SSH',
-                    'sbu' => 'SBU',
-                    'asb' => 'ASB',
-                    'hspk' => 'HSPK'
-                ]
-            ],
-
-            'tahun' => [
-                'type' => 'dropdown',
-                'label' => 'Tahun',
-                'column' => 'master_biaya.tahun'
-            ],
-
-            'peraturan' => [
-                'type' => 'dropdown',
-                'label' => 'Peraturan',
-                'column' => 'master_biaya.peraturan_id'
-            ]
-
-        ],
-
-        /* =====================================================
-        FORM CRUD
-        ===================================================== */
-
-        'form' => [
-
-            'fields' => [
-
-                'master_biaya_id' => [
-
-                    'type' => 'lookup',
-
-                    'label' => 'Standar Biaya',
-
-                    'lookup' => [
-
-                        'table' => 'master_biaya',
-
-                        'value_field' => 'id',
-
-                        'label_field' => 'nama',
-
-                        'searchable' => [
-                            'kode',
-                            'nama',
-                            'spesifikasi'
-                        ]
-
-                    ]
-
-                ],
-
-                'kd_akun' => [
-
-                    'type' => 'lookup',
-
-                    'label' => 'Akun Belanja',
-
-                    'lookup' => [
-
-                        'table' => 'akun_neo',
-
-                        'value_field' => 'kode',
-
-                        'label_field' => 'uraian',
-
-                        'searchable' => [
-                            'kode',
-                            'uraian'
-                        ]
-
-                    ]
-
-                ],
-
-                'keterangan' => [
-                    'type' => 'text'
-                ]
-
-            ]
-
-        ],
-
-        /* =====================================================
-        TABEL GRID
-        ===================================================== */
-
         'modes' => [
 
             'default' => [
@@ -535,29 +434,23 @@ $profiles = [
 
                     'master_biaya_akun.id',
 
-                    'master_biaya.kode',
+                    /* kode aset dari standar biaya */
+                    'master_biaya.kode_aset',
 
-                    'master_biaya.nama AS uraian_biaya',
+                    /* nama komponen */
+                    'master_biaya.uraian AS uraian_biaya',
 
+                    /* tipe ssh/sbu/asb/hspk */
                     'master_biaya.tipe',
 
                     'master_biaya.kelompok_barang',
 
                     'master_biaya.tahun',
 
+                    /* akun belanja */
                     'master_biaya_akun.kd_akun',
 
                     'akun_neo.uraian AS uraian_akun',
-
-                    'master_biaya_akun.disable',
-
-                    'master_biaya_akun.tgl_insert',
-
-                    'master_biaya_akun.username_insert',
-
-                    'master_biaya_akun.tgl_update',
-
-                    'master_biaya_akun.username_update'
 
                 ],
 
@@ -565,14 +458,11 @@ $profiles = [
 
                     'master_biaya.kode',
 
-                    'master_biaya.nama',
+                    'master_biaya.uraian',
 
                     'master_biaya.kelompok_barang',
 
-                    'akun_neo.uraian',
-
-                    'master_biaya_akun.kd_akun'
-
+                    'akun_neo.uraian'
                 ],
 
                 'order_by' => 'master_biaya.kode ASC'

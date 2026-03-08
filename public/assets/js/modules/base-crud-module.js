@@ -28,7 +28,11 @@ class BaseCrudModule {
 		const tblFromUrl = urlParams.get("tbl");
 
 		if (tblFromUrl) {
-			this.loadTable(tblFromUrl);
+			const item = this.menuItems.find((m) => m.tbl === tblFromUrl);
+
+			const req = item?.req || null;
+
+			this.loadTable(tblFromUrl, req);
 		} else if (this.menuItems.length > 0) {
 			this.loadTable(this.menuItems[0].tbl);
 		}
@@ -45,9 +49,10 @@ class BaseCrudModule {
 		this.menuItems.forEach((item, index) => {
 			menuHtml += `
             <a class="item ${index === 0 ? "active" : ""}" 
-               data-tbl="${item.tbl}">
-               ${item.label}
-            </a>
+   data-tbl="${item.tbl}"
+   data-req="${item.req || ""}">
+   ${item.label}
+</a>
         `;
 		});
 
@@ -86,14 +91,15 @@ class BaseCrudModule {
 		$(document).off("click", "#crudMenu .item");
 
 		$(document).on("click", "#crudMenu .item", (e) => {
-			const $item = $(e.currentTarget);
+			const $item = $(e.currentTarget); // item menu yang diklik
 
-			$("#crudMenu .item").removeClass("active");
-			$item.addClass("active");
+			$("#crudMenu .item").removeClass("active"); // reset active
+			$item.addClass("active"); // aktifkan menu ini
 
-			const tbl = $item.data("tbl");
+			const tbl = $item.data("tbl"); // tabel
+			const req = $item.data("req") || null; // req tambahan jika ada
 
-			this.loadTable(tbl);
+			this.loadTable(tbl, req); // kirim ke loadTable
 		});
 	}
 
@@ -102,13 +108,15 @@ class BaseCrudModule {
 	 * LOAD TABLE
 	 * ========================================================
 	 */
-	loadTable(tbl) {
-		// 🔥 FLAT STRUCTURE
-		// module tetap nama module utama (mapping / renstra / referensi)
-this.state.setModule(this.moduleName);
+	loadTable(tbl, req = null) {
+		// module utama
+		this.state.setModule(this.moduleName);
 
-// tbl adalah tabel aktif
-this.state.setTable(tbl);
+		// tabel aktif
+		this.state.setTable(tbl);
+
+		// reset request tambahan
+		this.state.req = req || null;
 		// ====================================================
 		// 🔥 SYNC URL AGAR REFRESH AMAN
 		// ====================================================
