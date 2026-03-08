@@ -365,26 +365,50 @@ ANTI DOUBLE SUBMIT
     ===================================================== */
         foreach ($request as $key => $value) {
 
-            /* =========================================
-IGNORE SYSTEM FIELD
-========================================= */
-
+            // =========================================
+            // IGNORE FIELD SISTEM
+            // =========================================
             if (in_array($key, ['action', 'module', 'tbl', 'req'])) {
                 continue;
             }
 
+            // =========================================
+            // HANYA FIELD YANG ADA DI KOLOM TABEL
+            // =========================================
             if (in_array($key, $columns)) {
                 $filtered[$key] = $value;
             }
         }
 
+        /* =====================================================
+DEBUG JIKA FILTERED KOSONG
+Tujuan:
+Mengetahui kenapa request tidak cocok dengan kolom tabel
+===================================================== */
+
         if (empty($filtered)) {
-            return JsonResponse::error("Tidak ada data yang bisa disimpan");
+
+            return JsonResponse::error(
+                "Tidak ada data yang bisa disimpan",
+                400,
+                [
+
+                    // tabel yang sedang dipakai
+                    'table_used' => $table,
+
+                    // kolom yang ada di tabel database
+                    'table_columns' => $columns,
+
+                    // field yang dikirim dari request
+                    'request_fields' => array_keys($request)
+
+                ]
+            );
         }
 
         /* =====================================================
-2️⃣ NORMALISASI BOOLEAN & DATE
-===================================================== */
+        2️⃣ NORMALISASI BOOLEAN & DATE
+        ===================================================== */
         foreach ($filtered as $field => $value) {
 
             // checkbox
@@ -1259,8 +1283,35 @@ CACHE OPTIMIZATION SECTION
             return self::$columnCache[$table];
         }
 
-        $stmt = $this->db->query("SHOW COLUMNS FROM `$table`");
-        self::$columnCache[$table] = array_column($stmt->fetchAll(), 'Field');
+        /* =========================================================
+        AMBIL KOLOM TABEL DARI DATABASE
+        ========================================================= */
+
+        $stmt = $this->db->query("
+    SELECT COLUMN_NAME AS Field
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = ?
+", [$table]);
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        /* =========================================================
+JIKA KOLOM TIDAK DITEMUKAN
+========================================================= */
+
+        if (empty($rows)) {
+
+            throw new Exception(
+                "Kolom tabel `$table` tidak ditemukan pada database aktif."
+            );
+        }
+
+        /* =========================================================
+AMBIL FIELD NAME
+========================================================= */
+
+        self::$columnCache[$table] = array_column($rows, 'Field');
 
         return self::$columnCache[$table];
     }

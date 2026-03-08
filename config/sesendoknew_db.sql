@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 08 Mar 2026 pada 04.26
+-- Waktu pembuatan: 08 Mar 2026 pada 08.22
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -8625,9 +8625,9 @@ CREATE TABLE `berita_neo` (
 CREATE TABLE `bidang` (
   `id` bigint(20) NOT NULL,
   `kode` varchar(10) NOT NULL,
-  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_wilayah` varchar(25) DEFAULT NULL,
   `kode_urusan` varchar(10) NOT NULL,
-  `nama` text DEFAULT NULL,
+  `uraian` varchar(510) DEFAULT NULL,
   `status` tinyint(4) DEFAULT 1,
   `peraturan` int(11) NOT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
@@ -8640,7 +8640,7 @@ CREATE TABLE `bidang` (
 -- Dumping data untuk tabel `bidang`
 --
 
-INSERT INTO `bidang` (`id`, `kode`, `kd_wilayah`, `kode_urusan`, `nama`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `bidang` (`id`, `kode`, `kd_wilayah`, `kode_urusan`, `uraian`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (3, '1.1', '76.01', '1', 'URUSAN PEMERINTAHAN BIDANG PENDIDIKAN', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (4, '1.2', '76.01', '1', 'URUSAN PEMERINTAHAN BIDANG KESEHATAN', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (5, '1.3', '76.01', '1', 'URUSAN PEMERINTAHAN BIDANG PEKERJAAN UMUM DAN PENATAAN RUANG', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -9313,6 +9313,13 @@ CREATE TABLE `indikator_sasaran_renstra_neo` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `indikator_sasaran_renstra_neo`
+--
+
+INSERT INTO `indikator_sasaran_renstra_neo` (`id`, `sasaran_id`, `nama_indikator`, `satuan`, `baseline`, `target_t1`, `target_t2`, `target_t3`, `target_t4`, `target_t5`, `target_akhir`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, 4, 'jalan', 'km', 10.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0, 'oke', '2026-03-08 05:15:30', 'inayah', '2026-03-08 13:15:30', NULL, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -9343,9 +9350,9 @@ CREATE TABLE `kd_wilayah_neo` (
 CREATE TABLE `kegiatan` (
   `id` bigint(20) NOT NULL,
   `kode` varchar(40) NOT NULL,
-  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_wilayah` varchar(25) DEFAULT NULL,
   `kode_program` varchar(15) NOT NULL,
-  `nama` text DEFAULT NULL,
+  `uraian` varchar(510) DEFAULT NULL,
   `status` tinyint(4) DEFAULT 1,
   `peraturan` int(11) NOT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
@@ -9358,7 +9365,7 @@ CREATE TABLE `kegiatan` (
 -- Dumping data untuk tabel `kegiatan`
 --
 
-INSERT INTO `kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_program`, `nama`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_program`, `uraian`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (1, '1.1.2.2.01', '76.01', '1.1.2', 'Pengelolaan Pendidikan Sekolah Dasar', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2, '1.1.2.2.02', '76.01', '1.1.2', 'Pengelolaan Pendidikan Sekolah Menengah Pertama', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (3, '1.1.2.2.03', '76.01', '1.1.2', 'Pengelolaan Pendidikan Anak Usia Dini (PAUD)', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -9641,7 +9648,7 @@ INSERT INTO `kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_program`, `nama`, `sta
 (280, '2.12.4.2.02', '76.01', '2.12.4', 'Penataan Pengelolaan Informasi Administrasi Kependudukan', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (281, '2.12.4.2.03', '76.01', '2.12.4', 'Penyelenggaraan Pengelolaan Informasi Administrasi Kependudukan', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (282, '2.12.4.2.04', '76.01', '2.12.4', 'Pembinaan dan Pengawasan Pengelolaan Informasi Administrasi Kependudukan', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_program`, `nama`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_program`, `uraian`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (283, '2.12.5.2.01', '76.01', '2.12.5', 'Penyusunan Profil Kependudukan', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (284, '2.13.2.2.01', '76.01', '2.13.2', 'Penyelenggaraan Penataan Desa', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (285, '2.13.2.3.01', '76.01', '2.13.2', 'Penyelenggaraan Penataan Desa', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -9907,7 +9914,7 @@ INSERT INTO `kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_program`, `nama`, `sta
 (545, '3.28.8.3.02', '76.01', '3.28.8', 'Peningkatan   kapasitas   MHA,   kearifan   lokal   atau   pengetahuan   tradisional   dan   hak   kearifan   lokal   atau pengetahuan tradisional dan hak MHA terkait dengan PPLH yang berada di daerah kabupaten/kota', 1, 4, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (546, '3.28.8.4.01', '76.01', '3.28.8', 'Penetapan  dan  pengakuan  MHA,  kearifan  lokal  atau  pengetahuan  tradisional  dan  hak  kearifan  lokal  atau pengetahuan tradisional dan hak MHA terkait dengan PPLH yang berada di daerah kabupaten/kota', 1, 4, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (547, '3.29.2.3.01', '76.01', '3.29.2', 'Inventarisasi keragaman geologi (geodiversity), dan pemanfaatan situs warisan geologi (geoheritage)', 1, 4, '2026-02-23 18:51:02', 'inayah', NULL, NULL);
-INSERT INTO `kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_program`, `nama`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_program`, `uraian`, `status`, `peraturan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (548, '3.29.2.3.02', '76.01', '3.29.2', 'Penyediaan data geologi untuk menyusun peringatan dini potensi gerakan tanah.', 1, 4, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (549, '3.29.2.3.03', '76.01', '3.29.2', 'Penyediaan data geologi untuk penetapan kawasan rawan bencana geologi.', 1, 4, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (550, '3.29.2.4.01', '76.01', '3.29.2', 'Inventarisasi keragaman geologi (geodiversity), dan pemanfaatan situs warisan geologi (geoheritage)', 1, 4, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
@@ -10067,7 +10074,7 @@ CREATE TABLE `kegiatan_renstra_neo` (
   `id` int(11) NOT NULL,
   `program_id` int(11) NOT NULL,
   `kode_kegiatan` varchar(20) DEFAULT NULL,
-  `nama_kegiatan` text NOT NULL,
+  `uraian` varchar(510) DEFAULT NULL,
   `disable` tinyint(1) DEFAULT 0,
   `keterangan` text DEFAULT NULL,
   `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
@@ -11965,7 +11972,17 @@ INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data
 (1847, 'renstra_neo', 1, 'delete', '{\"id\":1,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"periode_id\":1,\"visi\":\"visiku\",\"status\":\"1\",\"kunci\":1,\"setujui\":1,\"disable\":0,\"keterangan\":\"okedeh renstra\",\"tgl_insert\":\"2026-02-20 16:12:23\",\"tgl_update\":null,\"username_insert\":\"nabiila\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:25:01'),
 (1848, 'renstra_neo', 2, 'insert', NULL, '{\"periode_id\":\"1\",\"visi\":\"visi\",\"status\":1,\"kunci\":1,\"setujui\":1,\"keterangan\":\"keterangan\",\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-03-08 04:25:24\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:25:24'),
 (1849, 'renstra_neo', 3, 'insert', NULL, '{\"periode_id\":\"1\",\"visi\":\"visi\",\"status\":1,\"kunci\":1,\"setujui\":1,\"keterangan\":\"keterangan\",\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-03-08 04:25:24\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:25:24'),
-(1850, 'renstra_neo', 4, 'insert', NULL, '{\"periode_id\":\"1\",\"visi\":\"visi\",\"status\":1,\"kunci\":1,\"setujui\":1,\"keterangan\":\"keterangan\",\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-03-08 04:25:24\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:25:24');
+(1850, 'renstra_neo', 4, 'insert', NULL, '{\"periode_id\":\"1\",\"visi\":\"visi\",\"status\":1,\"kunci\":1,\"setujui\":1,\"keterangan\":\"keterangan\",\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-03-08 04:25:24\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:25:24'),
+(1851, 'satuan_neo', 436, 'insert', NULL, '{\"value\":\"xxx\",\"item\":\"xxx\",\"keterangan\":\"xxx\",\"disable\":0,\"is_deleted\":0,\"peraturan_id\":4,\"tgl_insert\":\"2026-03-08 04:32:41\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:32:41'),
+(1852, 'renstra_neo', 2, 'delete', '{\"id\":2,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"periode_id\":1,\"visi\":\"visi\",\"status\":\"1\",\"kunci\":1,\"setujui\":1,\"disable\":0,\"keterangan\":\"keterangan\",\"tgl_insert\":\"2026-03-08 04:25:24\",\"tgl_update\":\"2026-03-08 12:25:24\",\"username_insert\":\"inayah\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:34:36'),
+(1853, 'renstra_neo', 3, 'delete', '{\"id\":3,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"periode_id\":1,\"visi\":\"visi\",\"status\":\"1\",\"kunci\":1,\"setujui\":1,\"disable\":0,\"keterangan\":\"keterangan\",\"tgl_insert\":\"2026-03-08 04:25:24\",\"tgl_update\":\"2026-03-08 12:25:24\",\"username_insert\":\"inayah\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:34:38'),
+(1854, 'misi_renstra_neo', 2, 'insert', NULL, '{\"renstra_id\":\"4\",\"nama_misi\":\"misi 1\",\"keterangan\":\"ket\",\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-03-08 04:45:28\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:45:28'),
+(1855, 'tujuan_renstra_neo', 2, 'insert', NULL, '{\"misi_id\":\"2\",\"nama_tujuan\":\"tujuan 1\",\"keterangan\":\"tujuan 2\",\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-03-08 04:46:05\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:46:05'),
+(1856, 'tujuan_renstra_neo', 3, 'insert', NULL, '{\"misi_id\":\"2\",\"nama_tujuan\":\"tujuan 1\",\"keterangan\":\"tujuan 2\",\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-03-08 04:46:05\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:46:05'),
+(1857, 'tujuan_renstra_neo', 2, 'delete', '{\"id\":2,\"misi_id\":2,\"kode_tujuan\":null,\"nama_tujuan\":\"tujuan 1\",\"disable\":0,\"keterangan\":\"tujuan 2\",\"tgl_insert\":\"2026-03-08 04:46:05\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-08 12:46:05\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:49:37'),
+(1858, 'sasaran_renstra_neo', 2, 'delete', '{\"id\":2,\"tujuan_id\":3,\"kode_sasaran\":null,\"nama_sasaran\":\"sasaran 1\",\"disable\":0,\"keterangan\":\"ket\",\"tgl_insert\":\"2026-03-08 05:06:27\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-08 13:06:27\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 05:11:39'),
+(1859, 'sasaran_renstra_neo', 3, 'delete', '{\"id\":3,\"tujuan_id\":3,\"kode_sasaran\":null,\"nama_sasaran\":\"sasaran 1\",\"disable\":0,\"keterangan\":\"ket\",\"tgl_insert\":\"2026-03-08 05:06:27\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-08 13:06:27\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 05:11:42'),
+(1860, 'tujuan_renstra_neo', 5, 'delete', '{\"id\":5,\"misi_id\":3,\"kode_tujuan\":null,\"nama_tujuan\":\"tujuan 1 misi 2\",\"disable\":0,\"keterangan\":\"ket\",\"tgl_insert\":\"2026-03-08 05:18:34\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-08 13:18:34\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 05:27:37');
 
 -- --------------------------------------------------------
 
@@ -14974,6 +14991,14 @@ CREATE TABLE `misi_renstra_neo` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `misi_renstra_neo`
+--
+
+INSERT INTO `misi_renstra_neo` (`id`, `renstra_id`, `nama_misi`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(2, 4, 'misi 1', 0, 'ket', '2026-03-08 04:45:28', 'inayah', '2026-03-08 12:45:28', NULL, 0),
+(3, 4, 'misi 2', 0, 'ket 2', '2026-03-08 05:18:05', 'inayah', '2026-03-08 13:18:05', NULL, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -15246,9 +15271,9 @@ INSERT INTO `periode_rpjmd` (`id`, `kd_wilayah`, `periode_mulai`, `periode_seles
 CREATE TABLE `program` (
   `id` bigint(20) NOT NULL,
   `kode` varchar(15) NOT NULL,
-  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_wilayah` varchar(25) DEFAULT NULL,
   `kode_bidang` varchar(10) NOT NULL,
-  `nama` text DEFAULT NULL,
+  `uraian` varchar(510) DEFAULT NULL,
   `status` tinyint(4) DEFAULT 1,
   `peraturan_id` int(11) NOT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
@@ -15261,7 +15286,7 @@ CREATE TABLE `program` (
 -- Dumping data untuk tabel `program`
 --
 
-INSERT INTO `program` (`id`, `kode`, `kd_wilayah`, `kode_bidang`, `nama`, `status`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `program` (`id`, `kode`, `kd_wilayah`, `kode_bidang`, `uraian`, `status`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (1, '1.1.2', '76.01', '1.1', 'PROGRAM PENGELOLAAN PENDIDIKAN', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2, '1.1.3', '76.01', '1.1', 'PROGRAM PENGEMBANGAN KURIKULUM', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (3, '1.1.4', '76.01', '1.1', 'PROGRAM PENDIDIK DAN TENAGA KEPENDIDIKAN', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -15461,7 +15486,7 @@ CREATE TABLE `program_renstra_neo` (
   `id` int(11) NOT NULL,
   `sasaran_id` int(11) NOT NULL,
   `kode_program` varchar(20) DEFAULT NULL,
-  `nama_program` text NOT NULL,
+  `uraian` varchar(510) DEFAULT NULL,
   `disable` tinyint(1) DEFAULT 0,
   `keterangan` text DEFAULT NULL,
   `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
@@ -16078,8 +16103,6 @@ CREATE TABLE `renstra_neo` (
 --
 
 INSERT INTO `renstra_neo` (`id`, `kd_wilayah`, `kd_opd`, `periode_id`, `visi`, `status`, `kunci`, `setujui`, `disable`, `keterangan`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`, `is_deleted`) VALUES
-(2, '76.01', '1.03.0.00.0.00.01.0000', 1, 'visi', '1', 1, 1, 0, 'keterangan', '2026-03-08 04:25:24', '2026-03-08 12:25:24', 'inayah', NULL, 0),
-(3, '76.01', '1.03.0.00.0.00.01.0000', 1, 'visi', '1', 1, 1, 0, 'keterangan', '2026-03-08 04:25:24', '2026-03-08 12:25:24', 'inayah', NULL, 0),
 (4, '76.01', '1.03.0.00.0.00.01.0000', 1, 'visi', '1', 1, 1, 0, 'keterangan', '2026-03-08 04:25:24', '2026-03-08 12:25:24', 'inayah', NULL, 0);
 
 -- --------------------------------------------------------
@@ -16210,6 +16233,14 @@ CREATE TABLE `sasaran_renstra_neo` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `sasaran_renstra_neo`
+--
+
+INSERT INTO `sasaran_renstra_neo` (`id`, `tujuan_id`, `kode_sasaran`, `nama_sasaran`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(4, 3, NULL, 'sasaran 1', 0, 'ket', '2026-03-08 05:06:27', 'inayah', '2026-03-08 13:06:27', NULL, 0),
+(5, 3, NULL, 'sasaran 2', 0, 'ket sasaran 2', '2026-03-08 05:12:09', 'inayah', '2026-03-08 13:12:09', NULL, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -16219,7 +16250,7 @@ CREATE TABLE `sasaran_renstra_neo` (
 CREATE TABLE `satuan_neo` (
   `id` int(11) NOT NULL,
   `value` varchar(255) NOT NULL,
-  `item` varchar(255) NOT NULL,
+  `uraian` varchar(510) DEFAULT NULL,
   `sebutan_lain` varchar(255) DEFAULT NULL,
   `disable` tinyint(1) NOT NULL DEFAULT 0,
   `aksi` varchar(50) DEFAULT NULL,
@@ -16236,7 +16267,7 @@ CREATE TABLE `satuan_neo` (
 -- Dumping data untuk tabel `satuan_neo`
 --
 
-INSERT INTO `satuan_neo` (`id`, `value`, `item`, `sebutan_lain`, `disable`, `aksi`, `keterangan`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+INSERT INTO `satuan_neo` (`id`, `value`, `uraian`, `sebutan_lain`, `disable`, `aksi`, `keterangan`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
 (1, '%', '%', 'persen', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
 (2, '1 Kg', '1 Kg', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
 (3, '1 Liter', '1 Liter', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
@@ -16667,10 +16698,11 @@ INSERT INTO `satuan_neo` (`id`, `value`, `item`, `sebutan_lain`, `disable`, `aks
 (429, 'VUB', 'VUB', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
 (430, 'Watt', 'Watt', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
 (431, 'yard', 'yard(3 kaki)', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0);
-INSERT INTO `satuan_neo` (`id`, `value`, `item`, `sebutan_lain`, `disable`, `aksi`, `keterangan`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+INSERT INTO `satuan_neo` (`id`, `value`, `uraian`, `sebutan_lain`, `disable`, `aksi`, `keterangan`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
 (432, 'yard2', 'yard2', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
 (433, 'yard3', 'yard3', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
-(434, 'zak', 'zak', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0);
+(434, 'zak', 'zak', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(436, 'xxx', 'xxx', NULL, 0, NULL, 'xxx', 4, '2026-03-08 04:32:41', 'inayah', '2026-03-08 12:32:41', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -16864,9 +16896,9 @@ INSERT INTO `sk_asn_neo` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `nomor`, `tgl_s
 CREATE TABLE `sub_kegiatan` (
   `id` bigint(20) NOT NULL,
   `kode` varchar(40) NOT NULL,
-  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_wilayah` varchar(25) DEFAULT NULL,
   `kode_kegiatan` varchar(20) NOT NULL,
-  `nama` text DEFAULT NULL,
+  `uraian` varchar(510) DEFAULT NULL,
   `kinerja` text NOT NULL,
   `indikator` text DEFAULT NULL,
   `satuan` varchar(100) DEFAULT NULL,
@@ -16882,7 +16914,7 @@ CREATE TABLE `sub_kegiatan` (
 -- Dumping data untuk tabel `sub_kegiatan`
 --
 
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (1, '1.1.2.2.01.1', '76.01', '1.1.2.2.01', 'Pembangunan    Unit    Sekolah Baru (USB)', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2, '1.1.2.2.01.3', '76.01', '1.1.2.2.01', 'Pembangunan                   Ruang Guru/Kepala Sekolah/TU', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (3, '1.1.2.2.01.4', '76.01', '1.1.2.2.01', 'Pembangunan     Ruang     Unit Kesehatan Sekolah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -17156,7 +17188,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (271, '1.1.2.3.06.39', '76.01', '1.1.2.3.06', 'Penyelengaraan                Proses Belajar dan Ujian bagi Peserta Didik', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (272, '1.1.2.3.06.41', '76.01', '1.1.2.3.06', 'Pembinaan  Minat,  Bakat  dan Kreativitas Siswa', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (273, '1.1.2.3.06.42', '76.01', '1.1.2.3.06', 'Penyediaan       Pendidik       dan Tenaga     Kependidikan     bagi Satuan    Pendidikan    Sekolah Menengah Kejuruan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (274, '1.1.2.3.06.43', '76.01', '1.1.2.3.06', 'Pengembangan  Karir  Pendidik dan      Tenaga      Kependidikan pada       Satuan       Pendidikan Sekolah Menengah Kejuruan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (275, '1.1.2.3.06.44', '76.01', '1.1.2.3.06', 'Pembangunan     Bengkel/Unit Produksi', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (276, '1.1.2.3.06.45', '76.01', '1.1.2.3.06', 'Pembinaan  Kelembagaan  dan Manajemen                      Sekolah Menengah Kejuruan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -17383,7 +17415,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (497, '1.1.7.7.01.7', '76.01', '1.1.7.7.01', 'Peningkatan      Kualitas      dan Pengembangan    Kelembagaan Dayah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (498, '1.1.7.7.01.8', '76.01', '1.1.7.7.01', 'Pengadaan               Kitab/Buku Pendidikan Dayah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (499, '1.1.7.7.01.9', '76.01', '1.1.7.7.01', 'Pembangunan                        dan Rehabilitasi    Tempat    Ibadah Dayah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (500, '1.1.7.7.01.10', '76.01', '1.1.7.7.01', 'Koordinasi    dan    Sinkronisasi Pelaksanaan        Kependidikan Dayah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (501, '1.1.7.7.01.11', '76.01', '1.1.7.7.01', 'Pelaksanaan               Akreditasi Pendidikan Dayah/Pesantren', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (502, '1.1.7.7.01.12', '76.01', '1.1.7.7.01', 'Fasilitasi     dan     Pengawasan Penyelenggaraan     Pendidikan Dayah/Pesantren    dan    Balai Pengajian', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -17626,7 +17658,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (739, '1.3.2.2.02.13', '76.01', '1.3.2.2.02', 'Peningkatan   Jaringan   Irigasi Air Tanah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (740, '1.3.2.2.02.14', '76.01', '1.3.2.2.02', 'Rehabilitasi    Jaringan    Irigasi Permukaan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (741, '1.3.2.2.02.16', '76.01', '1.3.2.2.02', 'Rehabilitasi    Jaringan    Irigasi Rawa', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (742, '1.3.2.2.02.17', '76.01', '1.3.2.2.02', 'Rehabilitasi    Jaringan    Irigasi Tambak', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (743, '1.3.2.2.02.19', '76.01', '1.3.2.2.02', 'Rehabilitasi    Jaringan    Irigasi Air Tanah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (744, '1.3.2.2.02.21', '76.01', '1.3.2.2.02', 'Operasi     dan     Pemeliharaan Jaringan Irigasi Permukaan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -17864,7 +17896,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (976, '1.4.2.2.01.9', '76.01', '1.4.2.2.01', 'Identifikasi      Perumahan      di Lokasi         Rawan        Bencana Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (977, '1.4.2.2.01.10', '76.01', '1.4.2.2.01', 'Pendataan       dan       Verifikasi Calon   Penerima   Rumah   bagi Korban                             Bencana Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (978, '1.4.2.2.02.1', '76.01', '1.4.2.2.02', 'Sosialisasi     Standar     Teknis Penyediaan   dan   Rehabilitasi Rumah                                kepada\nMasyarakat/Sukarelawan Tanggap Bencana', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (979, '1.4.2.2.02.4', '76.01', '1.4.2.2.02', 'Pembentukan   dan   Pelatihan Tim  Satgas,  Tim  Pendamping dan Fasilitator', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (980, '1.4.2.2.02.6', '76.01', '1.4.2.2.02', 'Koordinasi                           untuk Menyepakati     Penerima     dan Jenis Pelayanan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (981, '1.4.2.2.02.7', '76.01', '1.4.2.2.02', 'Rembug          Warga          untuk Menentukan   Calon   Penerima Rumah  bagi  Masyarakat  yang Terkena      Relokasi      Program Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -18083,7 +18115,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (1194, '1.6.2.2.03.17', '76.01', '1.6.2.2.03', 'Pembinaan     Teknis     Sumber Daya         Manusia         Sumber Kesejahteraan   Sosial   Daerah Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1195, '1.6.2.3.03.6', '76.01', '1.6.2.3.03', 'Fasilitasi             Pengembangan Potensi                               Sumber\nKesejahteraan   Sosial   Daerah di    Kabupaten/Kota     melalui Pemberdayaan Ekonomi', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1196, '1.6.2.3.04.1', '76.01', '1.6.2.3.04', 'Pendataan,     Verifikasi,     dan Validasi     Sertifikasi     Sumber Daya     Kesejahteraan     Sosial Daerah Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (1197, '1.6.2.3.05.1', '76.01', '1.6.2.3.05', 'Pendataan,     Verifikasi,     dan Validasi                           Lembaga Kesejahteraan   Sosial   Daerah Kabupaten/Kota.', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1198, '1.6.2.4.03.6', '76.01', '1.6.2.4.03', 'Fasilitasi             Pengembangan Potensi                               Sumber\nKesejahteraan   Sosial   Daerah di    Kabupaten/Kota     melalui Pemberdayaan Ekonomi', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1199, '1.6.2.4.03.7', '76.01', '1.6.2.4.03', 'Pengelolaan  Layanan  Terpadu Penanggulangan Kemiskinan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -18297,7 +18329,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (1407, '2.9.3.2.01.14', '76.01', '2.9.3.2.01', 'Koordinasi    dan    Sinkronisasi Pemantauan    Stok,    Pasokan dan     Harga     Pangan     Pokok Strategis', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1408, '2.9.3.2.01.16', '76.01', '2.9.3.2.01', 'Penyusunan     Neraca     Bahan Makanan (NBM)', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1409, '2.9.3.2.01.20', '76.01', '2.9.3.2.01', 'Penyusunan   Proyeksi   Neraca Pangan                              Wilayah Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (1410, '2.9.3.2.02.2', '76.01', '2.9.3.2.02', 'Penyusunan                   Rencana Kebutuhan Pangan Lokal', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1411, '2.9.3.2.02.3', '76.01', '2.9.3.2.02', 'Pengadaan  Cadangan  Pangan Pemerintah Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1412, '2.9.3.2.02.5', '76.01', '2.9.3.2.02', 'Penyaluran  Cadangan  Pangan Pemerintah Kab/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -18511,7 +18543,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (1620, '2.11.8.2.01.4', '76.01', '2.11.8.2.01', 'Penumbuhan             Kesadaran Keluarga   dalam   Peningkatan Kualitas    Lingkungan    Hidup dan      Kawasan      Pemukiman yang Sehat', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1621, '2.11.8.2.01.5', '76.01', '2.11.8.2.01', 'Peningkatan    Kapasitas    dan Kompetensi      Sumber      Daya Manusia    Bidang    lingkungan hidup         untuk         Lembaga pendidikan       formal/lembaga masyarakat/komunitas/kelo mpok masyarakat', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1622, '2.11.9.2.01.1', '76.01', '2.11.9.2.01', 'Penilaian                            Kinerja Masyarakat/Lembaga Masyarakat/Dunia Usaha/Dunia Pendidikan/Filantropi    dalam Perlindungan dan Pengelolaan Lingkungan Hidup', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (1623, '2.11.10.2.01.3', '76.01', '2.11.10.2.01', 'Penyelesaian     kasus     tindak pidana   lingkungan   hidup  (P- 21)           yang           merupakan kewenangan kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1624, '2.11.10.2.01.5', '76.01', '2.11.10.2.01', 'Penyelesaian                 sengketa lingkungan         hidup         yang ditangani        yang        menjadi kewenangan kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1625, '2.11.10.2.01.9', '76.01', '2.11.10.2.01', 'Pengelolaan               Pengaduan permasalahan        Pencemaran dan    Perusakan    Lingkungan Hidup                                  tingkat\nKabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -18717,7 +18749,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (1825, '2.14.2.2.01.33', '76.01', '2.14.2.2.01', 'Penyediaan                              dan\nPengembangan                  Materi Pendidikan        Kependudukan Jalur    Pendidikan    Nonformal dan  informal  Sesuai  Isu  Lokal Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1826, '2.14.2.2.01.34', '76.01', '2.14.2.2.01', 'Sosialisasi           Pembangunan Berwawasan     Kependudukan (PBK)      dan      alat      ukurnya Indeks                   Pembangunan Berwawasan     Kependudukan (IPBK)      serta      pemanfaatan IPBK       dalam       penyusunan kebijakan    dan    perencanaan pembangunan daerah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1827, '2.14.2.2.02.9', '76.01', '2.14.2.2.02', 'Pembinaan   dan   Pengawasan Penyelenggaraan              Sistem Informasi Keluarga', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (1828, '2.14.2.2.02.10', '76.01', '2.14.2.2.02', 'Pemanfaatan       Data       Hasil Pemutakhiran Data Keluarga', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1829, '2.14.2.2.02.11', '76.01', '2.14.2.2.02', 'Penyediaan          Data          dan Informasi Keluarga', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1830, '2.14.2.2.02.12', '76.01', '2.14.2.2.02', 'Pencatatan  dan  Pengumpulan Data Keluarga', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -18907,7 +18939,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (2014, '2.15.3.2.17.1', '76.01', '2.15.3.2.17', 'Fasilitasi                   Pemenuhan Persyaratan     Perolehan     Izin Pekerjaan       Pengerukan       di Wilayah   Perairan   Pelabuhan Pengumpan       Lokal       dalam Sistem    Pelayanan    Perizinan Berusaha  Terintegrasi  Secara Elektronik', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2015, '2.15.3.2.17.2', '76.01', '2.15.3.2.17', 'Koordinasi    dan    Sinkronisasi Pengawasan  Pelaksanaan  Izin Pekerjaan       Pengerukan       di Wilayah   Perairan   Pelabuhan Pengumpan Lokal', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2016, '2.15.3.2.18.1', '76.01', '2.15.3.2.18', 'Fasilitasi                   Pemenuhan Persyaratan     Perolehan     Izin Reklamasi          di          Wilayah Perairan                       Pelabuhan Pengumpan       Lokal       dalam Sistem    Pelayanan    Perizinan Berusaha  Terintegrasi  Secara Elektronik', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (2017, '2.15.3.2.18.2', '76.01', '2.15.3.2.18', 'Koordinasi    dan    Sinkronisasi Pengawasan  Pelaksanaan  Izin Reklamasi          di          Wilayah Perairan                       Pelabuhan Pengumpan Lokal', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2018, '2.15.3.2.19.1', '76.01', '2.15.3.2.19', 'Fasilitasi                   Pemenuhan Persyaratan     Perolehan     Izin Pengelolaan    Terminal    untuk Kepentingan Sendiri (TUKS) di dalam                       DLKR/DLKP Pelabuhan   Pengumpan   Lokal dalam       Sistem       Pelayanan Perizinan                       Berusaha Terintegrasi Secara Elektronik', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2019, '2.15.3.2.19.2', '76.01', '2.15.3.2.19', 'Koordinasi    dan    Sinkronisasi Pengawasan  Pelaksanaan  Izin Pengelolaan    Terminal    untuk Kepentingan Sendiri (TUKS) di dalam                       DLKR/DLKP Pelabuhan Pengumpan Lokal', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -19115,7 +19147,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (2221, '2.20.2.2.01.21', '76.01', '2.20.2.2.01', 'Pelaksanaan     Proses     Bisnis Statistik       Sektoral       Sesuai Standar', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2222, '2.20.2.2.01.22', '76.01', '2.20.2.2.01', 'Koordinasi     dan     Kolaborasi Dalam              Penyelenggaraan Statistik Sektoral', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2223, '2.21.2.2.01.5', '76.01', '2.21.2.2.01', 'Pelaksanaan              Keamanan Informasi              Pemerintahan Daerah    Berbasis    Elektronik dan Non Elektronik', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (2224, '2.21.2.2.01.6', '76.01', '2.21.2.2.01', 'Pengelolaan      Sumber      Daya Keamanan      Informasi      dan Persandian                Pemerintah Daerah   berdasarkan   Analisis Kebutuhan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2225, '2.21.2.2.01.7', '76.01', '2.21.2.2.01', 'Penyediaan                     Layanan Keamanan      Informasi      dan Persandian                Pemerintah Daerah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2226, '2.21.2.2.01.8', '76.01', '2.21.2.2.01', 'Penetapan      Kebijakan      Tata Kelola    Keamanan    Informasi dan    Persandian    Pemerintah Daerah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -19348,7 +19380,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (2453, '3.25.5.2.01.3', '76.01', '3.25.5.2.01', 'Operasi       Kapal       Pengawas Perikanan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2454, '3.25.5.2.01.4', '76.01', '3.25.5.2.01', 'Pengawasan                        usaha pembudidayaan    ikan    sesuai kewenangan kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2455, '3.25.5.2.01.5', '76.01', '3.25.5.2.01', 'Kapal     Pengawas     Perikanan yang dirawat', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (2456, '3.25.5.2.01.6', '76.01', '3.25.5.2.01', 'Pengawasan                        usaha pemasaran    hasil    perikanan dan/atau   usaha   pengolahan hasil         perikanan         sesuai kewenangan kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2457, '3.25.5.2.01.7', '76.01', '3.25.5.2.01', 'Pengawasan                        usaha penangkapan   ikan   dan/atau usaha      pengangkutan      ikan sesuai                       kewenangan kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2458, '3.25.5.2.01.8', '76.01', '3.25.5.2.01', 'Pengadaan    Kapal    Pengawas Perikanan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -19572,7 +19604,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (2676, '3.28.8.3.01.1', '76.01', '3.28.8.3.01', 'Penetapan     dan     pengakuan MHA,     kearifan     lokal     atau pengetahuan   tradisional   dan hak      kearifan      lokal      atau pengetahuan   tradisional   dan hak     MHA     terkait     dengan PPLH  yang  berada  di  daerah kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2677, '3.28.8.3.02.1', '76.01', '3.28.8.3.02', 'Peningkatan   kapasitas   MHA, kearifan             lokal             atau pengetahuan   tradisional   dan hak      kearifan      lokal      atau pengetahuan   tradisional   dan hak     MHA     terkait     dengan PPLH  yang  berada  di  daerah kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2678, '3.28.8.4.01.1', '76.01', '3.28.8.4.01', 'Penetapan     dan     pengakuan MHA,     kearifan     lokal     atau pengetahuan   tradisional   dan hak      kearifan      lokal      atau pengetahuan   tradisional   dan hak     MHA     terkait     dengan PPLH  yang  berada  di  daerah kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (2679, '3.29.2.3.01.1', '76.01', '3.29.2.3.01', 'Inventarisasi             keragaman geologi      (geodiversity),      dan pemanfaatan     situs     warisan geologi (geoheritage)', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2680, '3.29.2.3.02.1', '76.01', '3.29.2.3.02', 'Penyediaan        data        geologi untuk   menyusun   peringatan dini potensi gerakan tanah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2681, '3.29.2.3.03.1', '76.01', '3.29.2.3.03', 'Penyediaan        data        geologi untuk     penetapan     kawasan rawan bencana geologi', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
@@ -19798,7 +19830,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (2901, '4.2.2.2.02.6', '76.01', '4.2.2.2.02', 'Pembahasan Pertanggungjawaban APBD', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2902, '4.2.2.2.03.1', '76.01', '4.2.2.2.03', 'Pengawasan                     Urusan\nPemerintahan                   Bidang Pemerintahan dan Hukum', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2903, '4.2.2.2.03.2', '76.01', '4.2.2.2.03', 'Pengawasan                     Urusan\nPemerintahan                   Bidang Infrastruktur', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (2904, '4.2.2.2.03.3', '76.01', '4.2.2.2.03', 'Pengawasan                     Urusan\nPemerintahan                   Bidang Kesejahteraan Rakyat', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2905, '4.2.2.2.03.4', '76.01', '4.2.2.2.03', 'Pengawasan                     Urusan\nPemerintahan                   Bidang Perekonomian', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2906, '4.2.2.2.03.5', '76.01', '4.2.2.2.03', 'Pengawasan                     Urusan Pemerintahan  Bidang  Sumber Daya Alam', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
@@ -20036,7 +20068,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (3138, '5.5.2.2.03.7', '76.01', '5.5.2.2.03', 'Penelitian  dan  Pengembangan Lingkungan Hidup', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3139, '5.5.2.2.03.8', '76.01', '5.5.2.2.03', 'Penelitian  dan  Pengembangan Kehutanan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3140, '5.5.2.2.03.9', '76.01', '5.5.2.2.03', 'Penelitian  dan  Pengembangan Pekerjaan Umum', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (3141, '5.5.2.2.03.10', '76.01', '5.5.2.2.03', 'Penelitian  dan  Pengembangan Perhubungan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3142, '5.5.2.2.03.11', '76.01', '5.5.2.2.03', 'Penelitian  dan  Pengembangan Perumahan      dan      Kawasan Permukiman', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3143, '5.5.2.2.03.12', '76.01', '5.5.2.2.03', 'Penelitian  dan  Pengembangan Penataan           Ruang           dan Pertanahan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
@@ -20244,7 +20276,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (3345, '9.1.2.7.04.6', '76.01', '9.1.2.7.04', 'Pelaksanaan   Cerdas   Cermat Syariat Islam', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3346, '9.1.2.7.04.7', '76.01', '9.1.2.7.04', 'Pembinaan                   Gampong Percontohan Syariat', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3347, '9.1.2.7.04.8', '76.01', '9.1.2.7.04', 'Pengiriman  Khatib  Jum\'\'at  Ke Gampong', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `uraian`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (3348, '9.1.2.7.04.9', '76.01', '9.1.2.7.04', 'Ceramah           Bulan           Suci Ramadhan                                   di\nMasjid/Meunasah/ Mushalla', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3349, '9.1.2.7.04.10', '76.01', '9.1.2.7.04', 'Penyelenggaraan  Pengajian  di Gampong', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3350, '9.1.2.7.04.11', '76.01', '9.1.2.7.04', 'Penyediaan,     Pendistribusian dan       Pengawasan       Sarana Peribadatan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
@@ -21230,6 +21262,14 @@ CREATE TABLE `tujuan_renstra_neo` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `tujuan_renstra_neo`
+--
+
+INSERT INTO `tujuan_renstra_neo` (`id`, `misi_id`, `kode_tujuan`, `nama_tujuan`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(3, 2, NULL, 'tujuan 1', 0, 'tujuan 2', '2026-03-08 04:46:05', 'inayah', '2026-03-08 12:46:05', NULL, 0),
+(4, 3, NULL, 'tujuan 1 misi 2', 0, 'ket', '2026-03-08 05:18:34', 'inayah', '2026-03-08 13:18:34', NULL, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -21239,8 +21279,8 @@ CREATE TABLE `tujuan_renstra_neo` (
 CREATE TABLE `urusan` (
   `id` bigint(20) NOT NULL,
   `kode` varchar(10) NOT NULL,
-  `kd_wilayah` varchar(60) DEFAULT NULL,
-  `nama` text DEFAULT NULL,
+  `kd_wilayah` varchar(25) DEFAULT NULL,
+  `uraian` varchar(510) DEFAULT NULL,
   `status` tinyint(4) DEFAULT 1,
   `peraturan_id` int(11) NOT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
@@ -21253,7 +21293,7 @@ CREATE TABLE `urusan` (
 -- Dumping data untuk tabel `urusan`
 --
 
-INSERT INTO `urusan` (`id`, `kode`, `kd_wilayah`, `nama`, `status`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `urusan` (`id`, `kode`, `kd_wilayah`, `uraian`, `status`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (3, '1', '76.01', 'URUSAN PEMERINTAHAN WAJIB YANG BERKAITAN DENGAN PELAYANAN DASAR', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (4, '2', '76.01', 'URUSAN PEMERINTAHAN WAJIB YANG TIDAK BERKAITAN DENGAN PELAYANAN DASAR', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (5, '3', '76.01', 'URUSAN PEMERINTAHAN PILIHAN', 1, 4, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -21581,7 +21621,8 @@ ALTER TABLE `master_biaya_akun`
 -- Indeks untuk tabel `misi_renstra_neo`
 --
 ALTER TABLE `misi_renstra_neo`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_misi` (`renstra_id`,`nama_misi`) USING HASH;
 
 --
 -- Indeks untuk tabel `naskah_dinas_neo`
@@ -21947,7 +21988,7 @@ ALTER TABLE `indikator_program_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `indikator_sasaran_renstra_neo`
 --
 ALTER TABLE `indikator_sasaran_renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `kd_wilayah_neo`
@@ -21971,7 +22012,7 @@ ALTER TABLE `kegiatan_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `log_activity`
 --
 ALTER TABLE `log_activity`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1851;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1861;
 
 --
 -- AUTO_INCREMENT untuk tabel `mapping_aset_akun`
@@ -21995,7 +22036,7 @@ ALTER TABLE `master_biaya_akun`
 -- AUTO_INCREMENT untuk tabel `misi_renstra_neo`
 --
 ALTER TABLE `misi_renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `naskah_dinas_neo`
@@ -22127,13 +22168,13 @@ ALTER TABLE `rka_p_neo`
 -- AUTO_INCREMENT untuk tabel `sasaran_renstra_neo`
 --
 ALTER TABLE `sasaran_renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `satuan_neo`
 --
 ALTER TABLE `satuan_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=436;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=437;
 
 --
 -- AUTO_INCREMENT untuk tabel `sk_asn_neo`
@@ -22199,7 +22240,7 @@ ALTER TABLE `trx_nomor_counter`
 -- AUTO_INCREMENT untuk tabel `tujuan_renstra_neo`
 --
 ALTER TABLE `tujuan_renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `urusan`

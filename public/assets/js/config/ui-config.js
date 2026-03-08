@@ -251,7 +251,7 @@ UIConfig.program_renstra_neo = {
 			},
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Program", name: "kode_program", source: "program" },
+				prop: { label: "Program", name: "kode_program", source: "program",search: true },
 			},
 			{
 				tag: "fieldTextarea",
