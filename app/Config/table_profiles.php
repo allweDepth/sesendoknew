@@ -165,7 +165,7 @@ $profiles = [
                     'table' => 'satuan_neo',
 
                     // kolom yang dicari
-                    'lookup' => 'item',
+                    'lookup' => 'uraian',
 
                     // primary key yang diambil
                     'id' => 'id',
@@ -524,7 +524,7 @@ $profiles = [
 
     'satuan' => [
         'table' => 'satuan_neo',
-        'not_duplicate' => ['item', 'peraturan_id'],
+        'not_duplicate' => ['uraian', 'peraturan_id'],
         'primary_key' => 'id',
         'import' => [
             'enabled' => true,
@@ -534,7 +534,7 @@ $profiles = [
             'relation_map' => [
                 'satuan' => [
                     'target_table' => 'satuan_neo',
-                    'target_field' => 'item',
+                    'target_field' => 'uraian',
                     'target_id'    => 'id',
                     'store_as'     => 'satuan_id'
                 ]
@@ -542,28 +542,28 @@ $profiles = [
         ],
         'dropdown' => [
             'value' => 'id',
-            'label' => 'item',  // 🔥 ini yang benar
-            'searchable' => ['item', 'value'],
-            'order_by' => 'item ASC'
+            'label' => 'uraian',  // 🔥 ini yang benar
+            'searchable' => ['uraian', 'value'],
+            'order_by' => 'uraian ASC'
         ],
 
         'allowed_roles' => ['super_admin', 'admin_wilayah'],
         'soft_lock' => true,
         'modes' => [
             'dropdown' => [
-                'select' => ['id', 'value', 'item'],
-                'searchable' => ['item', 'value'],
-                'order_by' => 'item ASC'
+                'select' => ['id', 'value', 'uraian'],
+                'searchable' => ['uraian', 'value'],
+                'order_by' => 'uraian ASC'
             ],
             'referensi' => [
-                'select' => ['id', 'value', 'item', 'keterangan'],
-                'searchable' => ['item', 'value'],
-                'order_by' => 'item ASC'
+                'select' => ['id', 'value', 'uraian', 'keterangan'],
+                'searchable' => ['uraian', 'value'],
+                'order_by' => 'uraian ASC'
             ],
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['item'],
-                'order_by' => 'item ASC'
+                'searchable' => ['uraian'],
+                'order_by' => 'uraian ASC'
             ]
         ]
     ],
@@ -799,18 +799,18 @@ $profiles = [
         ],
         'modes' => [
             'dropdown' => [
-                'select' => ['id', 'nama', 'nip', 'alamat', 'golongan', 'ruang', 'jabatan', 'keterangan'],
-                'searchable' => ['kd_opd', 'nama', 'nip', 'npwp'],
+                'select' => ['id', 'uraian', 'nip', 'alamat', 'golongan', 'ruang', 'jabatan', 'keterangan'],
+                'searchable' => ['kd_opd', 'uraian', 'nip', 'npwp'],
                 'order_by' => 'nama ASC'
             ],
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['id', 'kd_opd', 'nama', 'nip', 'npwp'],
+                'searchable' => ['id', 'kd_opd', 'uraian', 'nip', 'npwp'],
                 'order_by' => 'nama ASC'
             ],
             'kepegawaian' => [
-                'select' => ['id', 'nama', 'nip', 'alamat', 'golongan', 'ruang', 'jabatan', 'keterangan'],
-                'searchable' => ['id', 'kd_opd', 'nama', 'nip', 'npwp'],
+                'select' => ['id', 'uraian', 'nip', 'alamat', 'golongan', 'ruang', 'jabatan', 'keterangan'],
+                'searchable' => ['id', 'kd_opd', 'uraian', 'nip', 'npwp'],
                 'order_by' => 'nama ASC'
             ],
             'edit' => [
@@ -1056,12 +1056,12 @@ $profiles = [
         'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'dropdown' => [
             'value' => 'id',
-            'label' => 'nama_program'
+            'label' => 'uraian'
         ],
         'modes' => [
             'default' => [
-                'select' => ['id', 'sasaran_id', 'kode_program', 'nama_program', 'disable', 'keterangan'],
-                'searchable' => ['kode_program', 'nama_program'],
+                'select' => ['id', 'sasaran_id', 'kode_program', 'uraian', 'disable', 'keterangan'],
+                'searchable' => ['kode_program', 'uraian'],
                 'order_by' => 'id DESC',
             ],
             'edit' => [
@@ -1070,8 +1070,8 @@ $profiles = [
                 'order_by' => 'id ASC'
             ],
             'dropdown' => [
-                'select' => ['id', 'nama_program'],
-                'searchable' => ['nama_program'],
+                'select' => ['id', 'uraian'],
+                'searchable' => ['uraian'],
                 'order_by' => 'nama_program ASC'
             ],
         ]
@@ -1103,8 +1103,8 @@ $profiles = [
                 'order_by' => 'id DESC',
             ],
             'dropdown' => [
-                'select' => ['id', 'nama_kegiatan'],
-                'searchable' => ['nama_kegiatan'],
+                'select' => ['id', 'uraian'],
+                'searchable' => ['uraian'],
                 'order_by' => 'nama_kegiatan ASC'
             ],
             'edit' => [
@@ -1123,18 +1123,18 @@ $profiles = [
         'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
         'dropdown' => [
             'value' => 'id',
-            'label' => 'nama_kegiatan'
+            'label' => 'uraian'
         ],
         'modes' => [
             'default' => [
-                'select' => ['id', 'program_id', 'kode_kegiatan', 'nama_kegiatan', 'keterangan'],
-                'searchable' => ['kode_kegiatan', 'nama_kegiatan'],
+                'select' => ['id', 'program_id', 'kode_kegiatan', 'uraian', 'keterangan'],
+                'searchable' => ['kode_kegiatan', 'uraian'],
                 'order_by' => 'id DESC'
             ]
         ],
         'validation' => [
             'program_id'    => ['required', 'numeric'],
-            'nama_kegiatan' => ['required']
+            'uraian' => ['required']
         ]
     ],
 
@@ -1264,13 +1264,13 @@ $profiles = [
         */
         'dropdown' => [
             'value' => 'kode',
-            'label' => 'nama'
+            'label' => 'uraian'
         ],
 
         'modes' => [
             'default' => [
-                'select' => ['id', 'kode', 'nama'],
-                'searchable' => ['kode', 'nama'],
+                'select' => ['id', 'kode', 'uraian'],
+                'searchable' => ['kode', 'uraian'],
                 'order_by' => 'kode ASC',
 
                 // WAJIB agar tidak bocor wilayah/peraturan
@@ -1314,13 +1314,13 @@ $profiles = [
 
         'dropdown' => [
             'value' => 'kode',
-            'label' => 'nama'
+            'label' => 'uraian'
         ],
 
         'modes' => [
             'default' => [
-                'select' => ['id', 'kode', 'kode_urusan', 'nama'],
-                'searchable' => ['kode', 'nama'],
+                'select' => ['id', 'kode', 'kode_urusan', 'uraian'],
+                'searchable' => ['kode', 'uraian'],
                 'order_by' => 'kode ASC',
                 'where' => [
                     'kd_wilayah' => 'user',
@@ -1359,13 +1359,13 @@ $profiles = [
 
         'dropdown' => [
             'value' => 'kode',
-            'label' => 'nama'
+            'label' => 'uraian'
         ],
 
         'modes' => [
             'default' => [
-                'select' => ['id', 'kode', 'kode_bidang', 'nama'],
-                'searchable' => ['kode', 'nama'],
+                'select' => ['id', 'kode', 'kode_bidang', 'uraian'],
+                'searchable' => ['kode', 'uraian'],
                 'order_by' => 'kode ASC',
                 'where' => [
                     'kd_wilayah' => 'user',
@@ -1404,13 +1404,13 @@ $profiles = [
 
         'dropdown' => [
             'value' => 'kode',
-            'label' => 'nama'
+            'label' => 'uraian'
         ],
 
         'modes' => [
             'default' => [
-                'select' => ['id', 'kode', 'kode_program', 'nama'],
-                'searchable' => ['kode', 'nama'],
+                'select' => ['id', 'kode', 'kode_program', 'uraian'],
+                'searchable' => ['kode', 'uraian'],
                 'order_by' => 'kode ASC',
                 'where' => [
                     'kd_wilayah' => 'user',
@@ -1453,7 +1453,7 @@ $profiles = [
 
         'dropdown' => [
             'value' => 'kode',
-            'label' => 'nama'
+            'label' => 'uraian'
         ],
 
         'modes' => [
@@ -1463,12 +1463,12 @@ $profiles = [
                     'id',
                     'kode',
                     'kode_kegiatan',
-                    'nama'
+                    'uraian'
                 ],
 
                 'searchable' => [
                     'kode',
-                    'nama'
+                    'uraian'
                 ],
 
                 'order_by' => 'kode ASC',
@@ -1511,13 +1511,13 @@ $profiles = [
         'primary_key' => 'id',
         'modes' => [
             'dropdown' => [
-                'select' => ['id', 'nama'],
-                'searchable' => ['nama'],
+                'select' => ['id', 'uraian'],
+                'searchable' => ['uraian'],
                 'order_by' => 'nama ASC'
             ],
             'default' => [
                 'select' => ['*'],
-                'searchable' => ['nama'],
+                'searchable' => ['uraian'],
                 'order_by' => 'id ASC'
             ]
         ]
@@ -1603,53 +1603,7 @@ $profiles = [
             'viewer'        => ['view']
         ],
     ],
-    'sbu_akun_map' => [
-        'table' => 'sbu_akun_map',
-        'primary_key' => 'id',
-        'allowed_roles' => ['super_admin', 'admin_wilayah'],
-        'soft_lock' => true,
 
-        'modes' => [
-
-            'default' => [
-                'select' => [
-                    'id',
-                    'sbu_id',
-                    'kd_akun',
-                    'kd_wilayah',
-                    'peraturan_id',
-                    'created_at'
-                ],
-                'searchable' => [
-                    'kd_akun'
-                ],
-                'order_by' => 'id DESC'
-            ],
-
-            'aktif' => [
-                'select' => [
-                    'id',
-                    'sbu_id',
-                    'kd_akun'
-                ],
-                'searchable' => [
-                    'kd_akun'
-                ],
-                'order_by' => 'id DESC'
-            ],
-
-            'edit' => [
-                'select' => ['*'],
-                'searchable' => ['*'],
-                'order_by' => 'id DESC'
-            ]
-        ],
-
-        'validation' => [
-            'sbu_id' => ['required', 'numeric'],
-            'kd_akun' => ['required']
-        ]
-    ],
     /* =========================================================
    GROUP SUB KEGIATAN
    ---------------------------------------------------------
@@ -1757,7 +1711,7 @@ $profiles = [
 
                 'table' => 'sub_kegiatan',
 
-                'value_field' => 'nama',
+                'value_field' => 'uraian',
 
                 'match' => [
 

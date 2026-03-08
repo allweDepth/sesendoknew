@@ -384,7 +384,7 @@ UIConfig.urusan = {
 	form: {
 		elements: [
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
-			{ tag: "field", prop: { label: "Nama", name: "nama" } },
+			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
 		],
 	},
 };
@@ -397,7 +397,7 @@ UIConfig.bidang = {
 				prop: { label: "Urusan", name: "kode_urusan", source: "urusan",search: true },
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
-			{ tag: "field", prop: { label: "Nama", name: "nama" } },
+			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
 		],
 	},
 };
@@ -410,7 +410,7 @@ UIConfig.program = {
 				prop: { label: "Bidang", name: "kode_bidang", source: "bidang",search: true },
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
-			{ tag: "field", prop: { label: "Nama", name: "nama" } },
+			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
 		],
 	},
 };
@@ -423,7 +423,7 @@ UIConfig.kegiatan = {
 				prop: { label: "Program", name: "kode_program", source: "program",search: true },
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
-			{ tag: "field", prop: { label: "Nama", name: "nama" } },
+			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
 		],
 	},
 };
@@ -436,7 +436,7 @@ UIConfig.sub_kegiatan_ref = {
 				prop: { label: "Kegiatan", name: "kode_kegiatan", source: "kegiatan",search: true },
 			},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
-			{ tag: "field", prop: { label: "Nama", name: "nama" } },
+			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
 			{
 				tag: "fieldDropdown",
 				prop: { label: "Satuan", name: "satuan", source: "satuan",search: true },
