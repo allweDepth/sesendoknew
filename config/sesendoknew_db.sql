@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 06 Mar 2026 pada 00.34
+-- Waktu pembuatan: 08 Mar 2026 pada 04.26
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -4388,8 +4388,8 @@ CREATE TABLE `anggaran_copy_log` (
 
 CREATE TABLE `anggaran_perubahan_template` (
   `id` bigint(20) NOT NULL,
-  `kd_wilayah` varchar(20) DEFAULT NULL,
-  `kd_opd` varchar(20) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
   `kd_sub_keg` varchar(50) DEFAULT NULL,
   `kd_akun` varchar(50) DEFAULT NULL,
@@ -4467,8 +4467,8 @@ CREATE TABLE `anggaran_program_renstra_neo` (
 
 CREATE TABLE `anggaran_template` (
   `id` bigint(20) NOT NULL,
-  `kd_wilayah` varchar(20) DEFAULT NULL,
-  `kd_opd` varchar(20) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
   `kd_sub_keg` varchar(50) DEFAULT NULL,
   `kd_akun` varchar(50) DEFAULT NULL,
@@ -8599,7 +8599,7 @@ INSERT INTO `aset_neo` (`id`, `akun`, `kelompok`, `jenis_akun`, `objek`, `rincia
 
 CREATE TABLE `berita_neo` (
   `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(50) NOT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
   `judul` varchar(400) NOT NULL,
   `id_pengenal` varchar(255) NOT NULL,
   `kelompok` varchar(50) NOT NULL,
@@ -8625,7 +8625,7 @@ CREATE TABLE `berita_neo` (
 CREATE TABLE `bidang` (
   `id` bigint(20) NOT NULL,
   `kode` varchar(10) NOT NULL,
-  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
   `kode_urusan` varchar(10) NOT NULL,
   `nama` text DEFAULT NULL,
   `status` tinyint(4) DEFAULT 1,
@@ -8718,8 +8718,8 @@ CREATE TABLE `daftar_paket_neo` (
   `id` int(11) NOT NULL,
   `kd_rup` varchar(25) DEFAULT NULL,
   `kd_paket` varchar(25) DEFAULT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kd_opd` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tahun` year(4) NOT NULL,
   `uraian` text NOT NULL,
   `id_uraian` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`id_uraian`)),
@@ -8791,8 +8791,8 @@ CREATE TABLE `daftar_paket_neo` (
 CREATE TABLE `daftar_realisasi_neo` (
   `id` int(11) NOT NULL,
   `tahun` year(4) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `kd_sub_keg` varchar(100) NOT NULL,
   `kd_akun` varchar(100) NOT NULL,
   `id_paket` int(11) NOT NULL,
@@ -8826,8 +8826,8 @@ CREATE TABLE `daftar_uraian_paket` (
   `id_dok_anggaran` int(11) NOT NULL,
   `dok` varchar(25) NOT NULL,
   `tahun` year(4) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kd_opd` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `kd_sub_keg` varchar(50) NOT NULL,
   `kd_akun` varchar(50) NOT NULL,
   `kel_rek` varchar(50) NOT NULL,
@@ -8852,8 +8852,8 @@ CREATE TABLE `daftar_uraian_paket` (
 
 CREATE TABLE `db_asn_pemda_neo` (
   `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kd_opd` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `nama` varchar(400) NOT NULL,
   `gelar_depan` varchar(50) DEFAULT NULL,
   `gelar` varchar(60) DEFAULT NULL,
@@ -9090,8 +9090,8 @@ INSERT INTO `db_asn_pemda_neo` (`id`, `kd_wilayah`, `kd_opd`, `nama`, `gelar_dep
 
 CREATE TABLE `dpa_neo` (
   `id` bigint(20) NOT NULL,
-  `kd_wilayah` varchar(20) DEFAULT NULL,
-  `kd_opd` varchar(20) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
   `kd_sub_keg` varchar(50) DEFAULT NULL,
   `kd_akun` varchar(50) DEFAULT NULL,
@@ -9139,8 +9139,8 @@ CREATE TABLE `dpa_neo` (
 
 CREATE TABLE `dppa_neo` (
   `id` bigint(20) NOT NULL,
-  `kd_wilayah` varchar(20) DEFAULT NULL,
-  `kd_opd` varchar(20) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
   `kd_sub_keg` varchar(50) DEFAULT NULL,
   `kd_akun` varchar(50) DEFAULT NULL,
@@ -9198,8 +9198,8 @@ CREATE TABLE `dppa_neo` (
 
 CREATE TABLE `group_rekap_akun` (
   `id` bigint(20) NOT NULL,
-  `kd_wilayah` varchar(20) DEFAULT NULL,
-  `kd_opd` varchar(20) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
   `kd_sub_keg` varchar(50) DEFAULT NULL,
   `kd_akun` varchar(50) DEFAULT NULL,
@@ -9218,8 +9218,8 @@ CREATE TABLE `group_rekap_akun` (
 
 CREATE TABLE `group_sub_kegiatan` (
   `id` bigint(20) NOT NULL,
-  `kd_wilayah` varchar(20) DEFAULT NULL,
-  `kd_opd` varchar(20) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
   `kd_sub_keg` varchar(50) DEFAULT NULL,
   `nama_sub_keg` text DEFAULT NULL,
@@ -9231,6 +9231,13 @@ CREATE TABLE `group_sub_kegiatan` (
   `tgl_update` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `group_sub_kegiatan`
+--
+
+INSERT INTO `group_sub_kegiatan` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `nama_sub_keg`, `tahap`, `total_anggaran`, `disable`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+(1, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.53', NULL, 'renja', NULL, 0, '2026-03-07 17:48:06', 'inayah', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -9336,7 +9343,7 @@ CREATE TABLE `kd_wilayah_neo` (
 CREATE TABLE `kegiatan` (
   `id` bigint(20) NOT NULL,
   `kode` varchar(40) NOT NULL,
-  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
   `kode_program` varchar(15) NOT NULL,
   `nama` text DEFAULT NULL,
   `status` tinyint(4) DEFAULT 1,
@@ -11942,7 +11949,23 @@ INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data
 (1831, 'rekanan_neo', 64, 'update', '{\"id\":64,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"PT. Yabes Sarana Mandiri\",\"alamat\":\"Jl. Pelota Raya VI No. 8 Makassar Telp (0411) 432689\",\"email\":\"\",\"npwp\":\"70.895.218.9-805.000\",\"no_rekening\":\"\",\"bank_rekening\":\"\",\"atas_nama_rekening\":\"\",\"direktur\":\"MUH. NAWIR, ST\",\"jabatan\":\"Direktur\",\"no_ktp\":\"\",\"alamat_dir\":\"\",\"no_akta_pendirian\":\"07\",\"tgl_akta_pendirian\":\"2014-03-07\",\"lokasi_notaris_pendirian\":\"\",\"nama_notaris_pendirian\":\"SUKWANTO TANDI, SH. M.Kn\",\"file\":null,\"keterangan\":\"\",\"no_sortir\":null,\"disable\":0,\"username_insert\":\"nabiila\",\"tgl_insert\":\"2024-04-06 16:18:45\",\"tgl_update\":\"2024-04-06 16:18:45\",\"username_update\":\"nabiila\",\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', '{\"tgl_akta_pendirian\":\"2014-03-07 00:00:00\",\"tgl_update\":\"2026-03-05 21:27:57\",\"username_update\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-05 21:27:57'),
 (1832, 'satuan_neo', 1019, 'delete', '{\"id\":1019,\"value\":\"\",\"item\":\"\",\"sebutan_lain\":\"\",\"disable\":0,\"aksi\":null,\"keterangan\":\"\",\"peraturan_id\":4,\"tgl_insert\":\"2026-03-05 22:27:53\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-06 06:27:53\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-05 22:28:20'),
 (1833, 'satuan_neo', 111, 'delete', '{\"id\":111,\"value\":\"\",\"item\":\"\",\"sebutan_lain\":\"\",\"disable\":0,\"aksi\":null,\"keterangan\":\"\",\"peraturan_id\":4,\"tgl_insert\":\"2026-03-05 22:20:16\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-06 06:20:16\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-05 22:28:23'),
-(1834, 'satuan_neo', 565, 'delete', '{\"id\":565,\"value\":\"\",\"item\":\"\",\"sebutan_lain\":\"\",\"disable\":0,\"aksi\":null,\"keterangan\":\"\",\"peraturan_id\":4,\"tgl_insert\":\"2026-03-05 22:27:53\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-06 06:27:53\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-05 22:28:26');
+(1834, 'satuan_neo', 565, 'delete', '{\"id\":565,\"value\":\"\",\"item\":\"\",\"sebutan_lain\":\"\",\"disable\":0,\"aksi\":null,\"keterangan\":\"\",\"peraturan_id\":4,\"tgl_insert\":\"2026-03-05 22:27:53\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-06 06:27:53\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-05 22:28:26'),
+(1835, 'satuan_neo', 111, 'delete', '{\"id\":111,\"value\":\"\",\"item\":\"\",\"sebutan_lain\":\"\",\"disable\":0,\"aksi\":null,\"keterangan\":\"\",\"peraturan_id\":4,\"tgl_insert\":\"2026-03-06 16:55:38\",\"username_insert\":\"nabiila\",\"tgl_update\":\"2026-03-07 00:55:38\",\"username_update\":null,\"is_deleted\":0}', NULL, 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-06 16:55:55'),
+(1836, 'satuan_neo', 435, 'delete', '{\"id\":435,\"value\":\"\",\"item\":\"\",\"sebutan_lain\":\"\",\"disable\":0,\"aksi\":null,\"keterangan\":\"\",\"peraturan_id\":4,\"tgl_insert\":\"2026-03-06 16:56:06\",\"username_insert\":\"nabiila\",\"tgl_update\":\"2026-03-07 00:56:06\",\"username_update\":null,\"is_deleted\":0}', NULL, 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-06 16:56:36'),
+(1837, 'sub_kegiatan', 3414, 'update', '{\"id\":3414,\"kode\":\"9.1.4.7.03.9\",\"kd_wilayah\":\"76.01\",\"kode_kegiatan\":\"9.1.4.7.03\",\"nama\":\"Pengelolaan Wakaf\",\"kinerja\":\"\",\"indikator\":null,\"satuan\":null,\"peraturan_id\":4,\"status\":1,\"tgl_insert\":\"2026-02-23 18:51:02\",\"username_insert\":\"inayah\",\"tgl_update\":null,\"username_update\":null}', '{\"kinerja\":\"kinerja\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-06 17:18:36'),
+(1838, 'sub_kegiatan', 3414, 'update', '{\"id\":3414,\"kode\":\"9.1.4.7.03.9\",\"kd_wilayah\":\"76.01\",\"kode_kegiatan\":\"9.1.4.7.03\",\"nama\":\"Pengelolaan Wakaf\",\"kinerja\":\"kinerja\",\"indikator\":null,\"satuan\":null,\"peraturan_id\":4,\"status\":1,\"tgl_insert\":\"2026-02-23 18:51:02\",\"username_insert\":\"inayah\",\"tgl_update\":null,\"username_update\":null}', '{\"kinerja\":\"kinerja2\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-06 17:46:56'),
+(1839, 'sub_kegiatan', 3414, 'update', '{\"id\":3414,\"kode\":\"9.1.4.7.03.9\",\"kd_wilayah\":\"76.01\",\"kode_kegiatan\":\"9.1.4.7.03\",\"nama\":\"Pengelolaan Wakaf\",\"kinerja\":\"kinerja2\",\"indikator\":null,\"satuan\":null,\"peraturan_id\":4,\"status\":1,\"tgl_insert\":\"2026-02-23 18:51:02\",\"username_insert\":\"inayah\",\"tgl_update\":null,\"username_update\":null}', '{\"indikator\":\"indikator2\",\"tgl_update\":\"2026-03-06 17:53:27\",\"username_update\":\"nabiila\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-06 17:53:27'),
+(1840, 'sub_kegiatan', 3414, 'update', '{\"id\":3414,\"kode\":\"9.1.4.7.03.9\",\"kd_wilayah\":\"76.01\",\"kode_kegiatan\":\"9.1.4.7.03\",\"nama\":\"Pengelolaan Wakaf\",\"kinerja\":\"kinerja2\",\"indikator\":\"indikator2\",\"satuan\":null,\"peraturan_id\":4,\"status\":1,\"tgl_insert\":\"2026-02-23 18:51:02\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-06 17:53:27\",\"username_update\":\"nabiila\"}', '{\"satuan\":\"2\",\"tgl_update\":\"2026-03-06 17:53:44\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-06 17:53:44'),
+(1841, 'sub_kegiatan', 3414, 'update', '{\"id\":3414,\"kode\":\"9.1.4.7.03.9\",\"kd_wilayah\":\"76.01\",\"kode_kegiatan\":\"9.1.4.7.03\",\"nama\":\"Pengelolaan Wakaf\",\"kinerja\":\"kinerja2\",\"indikator\":\"indikator2\",\"satuan\":\"2\",\"peraturan_id\":4,\"status\":1,\"tgl_insert\":\"2026-02-23 18:51:02\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-06 17:53:44\",\"username_update\":\"nabiila\"}', '{\"tgl_update\":\"2026-03-06 17:54:04\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-06 17:54:04'),
+(1842, 'sub_kegiatan', 3414, 'update', '{\"id\":3414,\"kode\":\"9.1.4.7.03.9\",\"kd_wilayah\":\"76.01\",\"kode_kegiatan\":\"9.1.4.7.03\",\"nama\":\"Pengelolaan Wakaf\",\"kinerja\":\"kinerja2\",\"indikator\":\"indikator2\",\"satuan\":\"2\",\"peraturan_id\":4,\"status\":1,\"tgl_insert\":\"2026-02-23 18:51:02\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-06 17:54:04\",\"username_update\":\"nabiila\"}', '{\"tgl_update\":\"2026-03-06 17:55:07\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-06 17:55:07'),
+(1843, 'sub_kegiatan', 3414, 'update', '{\"id\":3414,\"kode\":\"9.1.4.7.03.9\",\"kd_wilayah\":\"76.01\",\"kode_kegiatan\":\"9.1.4.7.03\",\"nama\":\"Pengelolaan Wakaf\",\"kinerja\":\"kinerja2\",\"indikator\":\"indikator2\",\"satuan\":\"2\",\"peraturan_id\":4,\"status\":1,\"tgl_insert\":\"2026-02-23 18:51:02\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-06 17:55:07\",\"username_update\":\"nabiila\"}', '{\"kinerja\":\"kinerja3\",\"indikator\":\"indikator3\",\"tgl_update\":\"2026-03-06 17:55:42\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-06 17:55:42'),
+(1844, 'sub_kegiatan', 3414, 'update', '{\"id\":3414,\"kode\":\"9.1.4.7.03.9\",\"kd_wilayah\":\"76.01\",\"kode_kegiatan\":\"9.1.4.7.03\",\"nama\":\"Pengelolaan Wakaf\",\"kinerja\":\"kinerja3\",\"indikator\":\"indikator3\",\"satuan\":\"2\",\"peraturan_id\":4,\"status\":1,\"tgl_insert\":\"2026-02-23 18:51:02\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-06 17:55:42\",\"username_update\":\"nabiila\"}', '{\"tgl_update\":\"2026-03-06 18:01:40\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Safari/605.1.15', '2026-03-06 18:01:40'),
+(1845, 'sub_kegiatan', 3414, 'update', '{\"id\":3414,\"kode\":\"9.1.4.7.03.9\",\"kd_wilayah\":\"76.01\",\"kode_kegiatan\":\"9.1.4.7.03\",\"nama\":\"Pengelolaan Wakaf\",\"kinerja\":\"kinerja3\",\"indikator\":\"indikator3\",\"satuan\":\"2\",\"peraturan_id\":4,\"status\":1,\"tgl_insert\":\"2026-02-23 18:51:02\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-06 18:01:40\",\"username_update\":\"nabiila\"}', '{\"satuan\":\"367\",\"tgl_update\":\"2026-03-07 07:59:51\",\"username_update\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-07 07:59:51'),
+(1846, 'group_sub_kegiatan', 1, 'insert', NULL, '{\"kd_sub_keg\":\"1.3.10.2.01.53\",\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"tahun\":\"2026\",\"tahap\":\"renja\",\"disable\":0,\"tgl_insert\":\"2026-03-07 17:48:06\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-07 17:48:06'),
+(1847, 'renstra_neo', 1, 'delete', '{\"id\":1,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"periode_id\":1,\"visi\":\"visiku\",\"status\":\"1\",\"kunci\":1,\"setujui\":1,\"disable\":0,\"keterangan\":\"okedeh renstra\",\"tgl_insert\":\"2026-02-20 16:12:23\",\"tgl_update\":null,\"username_insert\":\"nabiila\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:25:01'),
+(1848, 'renstra_neo', 2, 'insert', NULL, '{\"periode_id\":\"1\",\"visi\":\"visi\",\"status\":1,\"kunci\":1,\"setujui\":1,\"keterangan\":\"keterangan\",\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-03-08 04:25:24\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:25:24'),
+(1849, 'renstra_neo', 3, 'insert', NULL, '{\"periode_id\":\"1\",\"visi\":\"visi\",\"status\":1,\"kunci\":1,\"setujui\":1,\"keterangan\":\"keterangan\",\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-03-08 04:25:24\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:25:24'),
+(1850, 'renstra_neo', 4, 'insert', NULL, '{\"periode_id\":\"1\",\"visi\":\"visi\",\"status\":1,\"kunci\":1,\"setujui\":1,\"keterangan\":\"keterangan\",\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-03-08 04:25:24\",\"username_insert\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:25:24');
 
 -- --------------------------------------------------------
 
@@ -14901,7 +14924,7 @@ CREATE TABLE `master_biaya` (
   `harga` decimal(18,2) DEFAULT NULL,
   `tkdn` decimal(5,2) DEFAULT NULL,
   `keterangan` text DEFAULT NULL,
-  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
   `tahun` int(11) DEFAULT NULL,
   `peraturan_id` bigint(20) DEFAULT NULL,
   `disable` tinyint(4) DEFAULT 0,
@@ -14922,7 +14945,7 @@ CREATE TABLE `master_biaya_akun` (
   `id` bigint(20) NOT NULL,
   `master_biaya_id` bigint(20) DEFAULT NULL,
   `kd_akun` varchar(50) DEFAULT NULL,
-  `kd_wilayah` varchar(20) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
   `peraturan_id` bigint(20) DEFAULT NULL,
   `disable` tinyint(4) DEFAULT 0,
   `is_deleted` tinyint(4) DEFAULT 0,
@@ -14960,8 +14983,8 @@ CREATE TABLE `misi_renstra_neo` (
 CREATE TABLE `naskah_dinas_neo` (
   `id` int(11) NOT NULL,
   `tahun` year(4) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kd_opd` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `jenis_naskah_dinas` varchar(255) NOT NULL,
   `nomor` varchar(255) NOT NULL,
   `tgl_surat_dibuat` date NOT NULL,
@@ -15007,7 +15030,7 @@ CREATE TABLE `naskah_dinas_neo` (
 
 CREATE TABLE `organisasi_neo` (
   `id` int(8) NOT NULL,
-  `kd_wilayah` varchar(25) NOT NULL,
+  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `kode` varchar(30) NOT NULL,
   `uraian` varchar(400) NOT NULL,
   `alamat` varchar(255) DEFAULT NULL,
@@ -15072,7 +15095,7 @@ INSERT INTO `organisasi_neo` (`id`, `kd_wilayah`, `kode`, `uraian`, `alamat`, `n
 
 CREATE TABLE `pengaturan_neo` (
   `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(50) NOT NULL,
+  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tahun` year(4) NOT NULL,
   `tahun_renstra` year(4) NOT NULL,
   `aturan_anggaran` varchar(255) NOT NULL,
@@ -15155,7 +15178,7 @@ INSERT INTO `pengaturan_neo` (`id`, `kd_wilayah`, `tahun`, `tahun_renstra`, `atu
 
 CREATE TABLE `peraturan_neo` (
   `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(25) NOT NULL,
+  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `kode` varchar(255) NOT NULL,
   `type_dok` varchar(255) NOT NULL,
   `judul` varchar(400) NOT NULL,
@@ -15196,7 +15219,7 @@ INSERT INTO `peraturan_neo` (`id`, `kd_wilayah`, `kode`, `type_dok`, `judul`, `j
 
 CREATE TABLE `periode_rpjmd` (
   `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
   `periode_mulai` year(4) NOT NULL,
   `periode_selesai` year(4) NOT NULL,
   `status_aktif` tinyint(1) DEFAULT 1,
@@ -15223,7 +15246,7 @@ INSERT INTO `periode_rpjmd` (`id`, `kd_wilayah`, `periode_mulai`, `periode_seles
 CREATE TABLE `program` (
   `id` bigint(20) NOT NULL,
   `kode` varchar(15) NOT NULL,
-  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
   `kode_bidang` varchar(10) NOT NULL,
   `nama` text DEFAULT NULL,
   `status` tinyint(4) DEFAULT 1,
@@ -15457,8 +15480,8 @@ CREATE TABLE `program_renstra_neo` (
 CREATE TABLE `rab_paket_neo` (
   `id` int(11) NOT NULL,
   `tahun` year(4) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kd_opd` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `id_renja_p` int(11) NOT NULL,
   `id_dpa` int(11) NOT NULL,
   `id_dppa` int(11) NOT NULL,
@@ -15502,8 +15525,8 @@ CREATE TABLE `ref_jenis_naskah` (
   `schema_version` int(11) DEFAULT 1,
   `allowed_roles` varchar(255) DEFAULT NULL,
   `auto_generate_nomor` tinyint(4) DEFAULT 0,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_insert` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL,
@@ -15555,8 +15578,8 @@ CREATE TABLE `ref_jenis_naskah_dinas` (
   `kategori` varchar(50) DEFAULT NULL,
   `orientasi` varchar(20) DEFAULT NULL,
   `template_default` text DEFAULT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_insert` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL,
@@ -15575,8 +15598,8 @@ CREATE TABLE `ref_kelompok_naskah` (
   `kode` varchar(5) DEFAULT NULL,
   `nama` varchar(150) DEFAULT NULL,
   `urutan` int(11) DEFAULT 0,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_insert` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL,
@@ -15604,8 +15627,8 @@ CREATE TABLE `ref_klasifikasi_keamanan` (
   `kode` varchar(5) DEFAULT NULL,
   `nama` varchar(50) DEFAULT NULL,
   `warna` varchar(20) DEFAULT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_insert` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL,
@@ -15624,8 +15647,8 @@ CREATE TABLE `ref_template_naskah` (
   `jenis_id` int(11) NOT NULL,
   `nama_template` varchar(150) DEFAULT NULL,
   `form_schema` longtext DEFAULT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_insert` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL,
@@ -15649,8 +15672,8 @@ INSERT INTO `ref_template_naskah` (`id`, `jenis_id`, `nama_template`, `form_sche
 CREATE TABLE `register_naskah_dinas` (
   `id` int(11) NOT NULL,
   `tahun` year(4) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `klasifikasi_keamanan` varchar(255) NOT NULL,
   `jenis_naskah_dinas` varchar(255) NOT NULL,
   `sifat` varchar(255) NOT NULL,
@@ -15706,7 +15729,7 @@ CREATE TABLE `rekanan_akta` (
 
 CREATE TABLE `rekanan_neo` (
   `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(25) NOT NULL,
+  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `nama_perusahaan` varchar(255) NOT NULL,
   `alamat` varchar(255) NOT NULL,
   `email` varchar(255) DEFAULT NULL,
@@ -15926,8 +15949,8 @@ INSERT INTO `rekanan_neo` (`id`, `kd_wilayah`, `nama_perusahaan`, `alamat`, `ema
 
 CREATE TABLE `renja_neo` (
   `id` bigint(20) NOT NULL,
-  `kd_wilayah` varchar(20) DEFAULT NULL,
-  `kd_opd` varchar(20) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
   `kd_sub_keg` varchar(50) DEFAULT NULL,
   `kd_akun` varchar(50) DEFAULT NULL,
@@ -15975,8 +15998,8 @@ CREATE TABLE `renja_neo` (
 
 CREATE TABLE `renja_p_neo` (
   `id` bigint(20) NOT NULL,
-  `kd_wilayah` varchar(20) DEFAULT NULL,
-  `kd_opd` varchar(20) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
   `kd_sub_keg` varchar(50) DEFAULT NULL,
   `kd_akun` varchar(50) DEFAULT NULL,
@@ -16034,8 +16057,8 @@ CREATE TABLE `renja_p_neo` (
 
 CREATE TABLE `renstra_neo` (
   `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `periode_id` int(11) NOT NULL,
   `visi` text NOT NULL,
   `status` varchar(50) DEFAULT NULL,
@@ -16055,7 +16078,9 @@ CREATE TABLE `renstra_neo` (
 --
 
 INSERT INTO `renstra_neo` (`id`, `kd_wilayah`, `kd_opd`, `periode_id`, `visi`, `status`, `kunci`, `setujui`, `disable`, `keterangan`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`, `is_deleted`) VALUES
-(1, '76.01', '1.03.0.00.0.00.01.0000', 1, 'visiku', '1', 1, 1, 0, 'okedeh renstra', '2026-02-20 16:12:23', NULL, 'nabiila', NULL, 0);
+(2, '76.01', '1.03.0.00.0.00.01.0000', 1, 'visi', '1', 1, 1, 0, 'keterangan', '2026-03-08 04:25:24', '2026-03-08 12:25:24', 'inayah', NULL, 0),
+(3, '76.01', '1.03.0.00.0.00.01.0000', 1, 'visi', '1', 1, 1, 0, 'keterangan', '2026-03-08 04:25:24', '2026-03-08 12:25:24', 'inayah', NULL, 0),
+(4, '76.01', '1.03.0.00.0.00.01.0000', 1, 'visi', '1', 1, 1, 0, 'keterangan', '2026-03-08 04:25:24', '2026-03-08 12:25:24', 'inayah', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -16065,8 +16090,8 @@ INSERT INTO `renstra_neo` (`id`, `kd_wilayah`, `kd_opd`, `periode_id`, `visi`, `
 
 CREATE TABLE `rka_neo` (
   `id` bigint(20) NOT NULL,
-  `kd_wilayah` varchar(20) DEFAULT NULL,
-  `kd_opd` varchar(20) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
   `kd_sub_keg` varchar(50) DEFAULT NULL,
   `kd_akun` varchar(50) DEFAULT NULL,
@@ -16114,8 +16139,8 @@ CREATE TABLE `rka_neo` (
 
 CREATE TABLE `rka_p_neo` (
   `id` bigint(20) NOT NULL,
-  `kd_wilayah` varchar(20) DEFAULT NULL,
-  `kd_opd` varchar(20) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
   `kd_sub_keg` varchar(50) DEFAULT NULL,
   `kd_akun` varchar(50) DEFAULT NULL,
@@ -16207,6 +16232,446 @@ CREATE TABLE `satuan_neo` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
+--
+-- Dumping data untuk tabel `satuan_neo`
+--
+
+INSERT INTO `satuan_neo` (`id`, `value`, `item`, `sebutan_lain`, `disable`, `aksi`, `keterangan`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, '%', '%', 'persen', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(2, '1 Kg', '1 Kg', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(3, '1 Liter', '1 Liter', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(4, '20 Gr / bks', '20 Gr / bks', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(5, '250 Ml', '250 Ml', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(6, '40 PK', '40 PK', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(7, '40 Wat', '40 Wat', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(8, '500 Gr / klg', '500 Gr / klg', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(9, 'Alat', 'Alat', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(10, 'ampere', 'Ampere (A)', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(11, 'Ampul', 'Ampul', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(12, 'Anakan', 'Anakan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(13, 'Arsip', 'Arsip', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(14, 'Asosiasi dan Serikat Pekerja', 'Asosiasi dan Serikat Pekerja', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(15, 'Badan Usaha', 'Badan Usaha', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(16, 'Baduta', 'Baduta', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(17, 'Bahasa', 'Bahasa', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(18, 'Balita', 'Balita', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(19, 'Baru', 'Baru', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(20, 'batang', 'Btg', 'btg,batang', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(21, 'Batang', 'Batang', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(22, 'Batang Pohon', 'Batang Pohon', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(23, 'Beasiswa', 'Beasiswa', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(24, 'Bendung', 'Bendung', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(25, 'Bendungan', 'Bendungan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(26, 'Berita Acara', 'Berita Acara', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(27, 'Berkas', 'Berkas', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(28, 'Bh', 'Bh', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(29, 'Biaya', 'Biaya', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(30, 'Bidang', 'Bidang', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(31, 'Biji', 'Biji', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(32, 'bit', 'bit', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(33, 'Bks', 'Bks', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(34, 'Boks', 'Boks', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(35, 'botol', 'Botol', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(36, 'Botol / 100', 'Botol / 100', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(37, 'Botol / 1000', 'Botol / 1000', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(38, 'Botol / 7 Caps', 'Botol / 7 Caps', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(39, 'botol 10 ml', 'botol 10 ml', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(40, 'BOTOL 10 TEST', 'BOTOL 10 TEST', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(41, 'BOTOL 25 TEST', 'BOTOL 25 TEST', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(42, 'botol 250 ml', 'botol 250 ml', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(43, 'botol 500 ml', 'botol 500 ml', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(44, 'botol 60 ml', 'botol 60 ml', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(45, 'Box', 'Box', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(46, 'Box / 100', 'Box / 100', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(47, 'Box / 20', 'Box / 20', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(48, 'Box / 30', 'Box / 30', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(49, 'BPSK', 'BPSK', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(50, 'btl 100 tab', 'btl 100 tab', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(51, 'btl 1000 tab', 'btl 1000 tab', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(52, 'btl 15 ml', 'btl 15 ml', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(53, 'btl 250 tab', 'btl 250 tab', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(54, 'btl 60 ml', 'btl 60 ml', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(55, 'Btp', 'Btp', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(56, 'buah', 'buah', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(57, 'buah_hari', 'Buah hari', 'b/h', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(58, 'Buku', 'Buku', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(59, 'bulan', 'Bulan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(60, 'Butir', 'Butir', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(61, 'byte', 'Byte', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(62, 'cd', 'Kandela', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(63, 'celcius', 'Celcius', 'derajat celcius, dc', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(64, 'cm', 'cm', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(65, 'cm2', 'cm2', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(66, 'cm3', 'cm3', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(67, 'Daftar', 'Daftar', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(68, 'derajat', 'Derajat', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(69, 'Desa', 'Desa', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(70, 'detik', 'Detik', 'second', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(71, 'DI', 'DI', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(72, 'Dokumen', 'Dokumen', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(73, 'Dokumen Ketetapan', 'Dokumen Ketetapan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(74, 'Dokumen SSPD', 'Dokumen SSPD', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(75, 'Dokumen Surat Persetujuan/Penolakan', 'Dokumen Surat Persetujuan/Penolakan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(76, 'Domain', 'Domain', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(77, 'Dos', 'Dos', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(78, 'Dos / 10 Vial', 'Dos / 10 Vial', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(79, 'Dos / 100 Tablet', 'Dos / 100 Tablet', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(80, 'Dos / 5', 'Dos / 5', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(81, 'Dos / 50', 'Dos / 50', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(82, 'Dosis', 'Dosis', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(83, 'doz', 'doz', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(84, 'Drum', 'Drum', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(85, 'Dsn', 'Dsn', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(86, 'Dus', 'Dus', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(87, 'Ekor', 'Ekor', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(88, 'Ekpl', 'Ekpl', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(89, 'Eksemplar', 'Eksemplar', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(90, 'Eksemplar / Buku', 'Eksemplar / Buku', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(91, 'Entitas', 'Entitas', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(92, 'Entry', 'Entry', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(93, 'examplar', 'Examplar', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(94, 'feet', 'feet(kaki)', 'kaki, foot', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(95, 'feet2', 'feet2', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(96, 'feet3', 'feet3', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(97, 'Flacon', 'Flacon', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(98, 'Fls', 'Fls', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(99, 'Fokus', 'Fokus', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(100, 'galloon', 'Galloon', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(101, 'Galon', 'Galon', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(102, 'Gampong', 'Gampong', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(103, 'Gelas', 'Gelas', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(104, 'gr', 'gram', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(105, 'Gross', 'Gross', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(106, 'Group', 'Group', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(107, 'GULUNG', 'GULUNG', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(108, 'ha', 'Hektar', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(109, 'Ha', 'Ha', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(110, 'hari', 'Hari', 'day', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(112, 'Hari / M2', 'Hari / M2', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(113, 'Helicopter', 'Helicopter', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(114, 'horsepower', 'HP', 'hp, tenaga kuda', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(115, 'hz', 'Herz', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(116, 'Ijin', 'Ijin', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(117, 'Ikat', 'Ikat', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(118, 'inch', 'inch', 'inci', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(119, 'inch2', 'inch2', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(120, 'inch3', 'inch3', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(121, 'Institusi', 'Institusi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(122, 'jam', 'Jam', 'hour', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(123, 'Jenis', 'Jenis', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(124, 'Jerigen', 'Jerigen', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(125, 'joule', 'Joule', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(126, 'Kab/Kota', 'Kab/Kota', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(127, 'Kabupaten/Kota', 'Kabupaten/Kota', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(128, 'Kaleng', 'Kaleng', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(129, 'kaleng 1000', 'kaleng 1000', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(130, 'kaleng 250', 'kaleng 250', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(131, 'Kaleng/1000 Tablet', 'Kaleng/1000 Tablet', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(132, 'Kali', 'Kali', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(133, 'Kampung', 'Kampung', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(134, 'Kamus', 'Kamus', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(135, 'Kaplet', 'Kaplet', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(136, 'Kapsul', 'Kapsul', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(137, 'Kapsul/Tablet/Kaplet', 'Kapsul/Tablet/Kaplet', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(138, 'karton', 'karton', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(139, 'Kartu', 'Kartu', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(140, 'Kasus', 'Kasus', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(141, 'Kawasan', 'Kawasan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(142, 'Kawasan Transmigrasi', 'Kawasan Transmigrasi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(143, 'Kecamatan', 'Kecamatan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(144, 'kegiatan', 'Kegiatan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(145, 'Kegiatan usaha', 'Kegiatan usaha', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(146, 'Kelompok', 'Kelompok', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(147, 'Kelompok Masyarakat', 'Kelompok Masyarakat', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(148, 'Keluarga', 'Keluarga', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(149, 'Kelurahan', 'Kelurahan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(150, 'kelvin', 'Kelvin (K)', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(151, 'Kendaraan', 'Kendaraan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(152, 'Kepala Keluarga', 'Kepala Keluarga', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(153, 'keping', 'Keping', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(154, 'Keranjang', 'Keranjang', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(155, 'Kerja Sama', 'Kerja Sama', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(156, 'Kesepakatan', 'Kesepakatan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(157, 'kg', 'kg', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(158, 'Kg / Powder', 'Kg / Powder', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(159, 'Kit', 'Kit', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(160, 'KK', 'KK', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(161, 'km', 'kilometer', 'km', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(162, 'Km', 'Km', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(163, 'km2', 'km2', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(164, 'km3', 'km3', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(165, 'Komoditi', 'Komoditi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(166, 'Konten Digital', 'Konten Digital', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(167, 'Kotak', 'Kotak', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(168, 'KOTAK 100', 'KOTAK 100', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(169, 'KOTAK 101', 'KOTAK 101', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(170, 'KOTAK 24 PCS', 'KOTAK 24 PCS', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(171, 'KOTAK 36 PCS', 'KOTAK 36 PCS', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(172, 'KOTAK 50', 'KOTAK 50', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(173, 'KOTAK 50 PASANG', 'KOTAK 50 PASANG', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(174, 'Kpg', 'Kpg', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(175, 'Krt', 'Krt', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(176, 'Ktg', 'Ktg', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(177, 'ktk 10 amp', 'ktk 10 amp', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(178, 'ktk 10 vial', 'ktk 10 vial', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(179, 'ktk 10 x 10 tab', 'ktk 10 x 10 tab', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(180, 'ktk 100 ampul', 'ktk 100 ampul', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(181, 'ktk 2 x 10 supp', 'ktk 2 x 10 supp', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(182, 'ktk 20 amp', 'ktk 20 amp', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(183, 'ktk 24', 'ktk 24', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(184, 'ktk 24 pot', 'ktk 24 pot', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(185, 'ktk 25 tube', 'ktk 25 tube', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(186, 'ktk 30 amp', 'ktk 30 amp', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(187, 'ktk 30 ampul', 'ktk 30 ampul', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(188, 'ktk 30 tab', 'ktk 30 tab', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(189, 'ktk 480 tab', 'ktk 480 tab', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(190, 'ktk 5 x 10 tab', 'ktk 5 x 10 tab', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(191, 'ktk 50 tablet', 'ktk 50 tablet', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(192, 'ktk25 tube', 'ktk25 tube', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(193, 'Kwh', 'Kwh', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(194, 'Laporan', 'Laporan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(195, 'Lembaga', 'Lembaga', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(196, 'Lembaga Kemasyarakatan', 'Lembaga Kemasyarakatan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(197, 'Lembaga Masyarakat', 'Lembaga Masyarakat', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(198, 'lembar', 'Lbr', 'lembar', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(199, 'Lembar', 'Lembar', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(200, 'liter', 'Liter', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(201, 'Liter/Detik', 'Liter/Detik', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(202, 'Log', 'Log', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(203, 'Lokasi', 'Lokasi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(204, 'Lokus', 'Lokus', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(205, 'Lot', 'Lot', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(206, 'LPK', 'LPK', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(207, 'LPKSM', 'LPKSM', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(208, 'Ls', 'Ls', 'lusin', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(209, 'Ltr', 'Ltr', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(210, 'Luas / M2', 'Luas / M2', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(211, 'Lusin', 'Lusin', 'ls', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(212, 'M', 'M', 'meter', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(213, 'M / Lari', 'M / Lari', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(214, 'm/s', 'meter/Detik', 'm/s', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(215, 'M1', 'M1', 'meter lari', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(216, 'm2', 'm2', 'meter persegi', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(217, 'M2 Kedalaman S.D 1 M', 'M2 Kedalaman S.D 1 M', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(218, 'M2 Per Bulan', 'M2 Per Bulan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(219, 'M2 Per Hari', 'M2 Per Hari', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(220, 'M2/Tahun', 'M2/Tahun', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(221, 'm3', 'm3', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(222, 'M³/Hari', 'M³/Hari', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(223, 'm3/m', 'm3/m', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(224, 'Macam', 'Macam', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(225, 'Makam', 'Makam', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(226, 'Materi', 'Materi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(227, 'Media', 'Media', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(228, 'Menit', 'Menit', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(229, 'meter', 'meter', 'm', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(230, 'mile', 'Mil', 'mil, mill', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(231, 'Minggu', 'Minggu', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(232, 'Ml', 'Ml', 'mili liter', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(233, 'mm', 'mm', 'milimeter', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(234, 'mm2', 'mm2', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(235, 'mm3', 'mm3', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(236, 'MMKolom', 'MMKolom', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(237, 'Mobil', 'Mobil', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(238, 'mol', 'mol (jumlah zat)', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(239, 'mpa', 'Mpa', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(240, 'Naskah', 'Naskah', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(241, 'Naskah / Pelajaran', 'Naskah / Pelajaran', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(242, 'ob', 'OB', '', 0, NULL, 'Orang Bulan', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(243, 'Objek', 'Objek', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(244, 'Obyek Pajak', 'Obyek Pajak', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(245, 'oh', 'OH', 'orang hari, orang_hari,orang/hari,oranghari', 0, NULL, 'Orang Hari', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(246, 'OJ', 'OJ', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(247, 'OK', 'OK', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(248, 'Ons', 'Ons', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(249, 'OP', 'OP', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(250, 'Operasi', 'Operasi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(251, 'Orang', 'Orang', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(252, 'Orang / Acara', 'Orang / Acara', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(253, 'Orang / Alamat', 'Orang / Alamat', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(254, 'Orang / Bulan', 'Orang / Bulan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(255, 'Orang / Bulan / Kegiatan', 'Orang / Bulan / Kegiatan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(256, 'Orang / Flight', 'Orang / Flight', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(257, 'Orang / Hari', 'Orang / Hari', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(258, 'Orang / Jam', 'Orang / Jam', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(259, 'Orang / Jam / Pelajaran', 'Orang / Jam / Pelajaran', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(260, 'Orang / Jam Pelajaran', 'Orang / Jam Pelajaran', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(261, 'Orang / Kali', 'Orang / Kali', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(262, 'Orang / Kamar', 'Orang / Kamar', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(263, 'Orang / Kedatangan', 'Orang / Kedatangan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(264, 'Orang / Keg. / Bln', 'Orang / Keg. / Bln', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(265, 'Orang / Kegiatan', 'Orang / Kegiatan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(266, 'Orang / Materi', 'Orang / Materi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(267, 'Orang / Paket', 'Orang / Paket', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(268, 'Orang / Paket / Pekerjaan', 'Orang / Paket / Pekerjaan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(269, 'Orang / Perjalanan', 'Orang / Perjalanan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(270, 'Orang / PP', 'Orang / PP', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(271, 'Orang / Responden', 'Orang / Responden', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(272, 'Orang / Semester', 'Orang / Semester', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(273, 'Orang / Sessi', 'Orang / Sessi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(274, 'Orang / Session', 'Orang / Session', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(275, 'Orang / Tahun', 'Orang / Tahun', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(276, 'Orang / Terbitan', 'Orang / Terbitan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(277, 'Orang / Titik', 'Orang / Titik', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(278, 'Orang / Triwulan', 'Orang / Triwulan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(279, 'Orang Kegiatan', 'Orang Kegiatan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(280, 'Orang/Kali', 'Orang/Kali', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(281, 'Orang/Paket', 'Orang/Paket', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(282, 'Organisasi', 'Organisasi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(283, 'Orter', 'Orter', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(284, 'OT', 'OT', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(285, 'pa', 'Pascal', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(286, 'Pack', 'Pack', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(287, 'Pail', 'Pail', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(288, 'Pak', 'Pak', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(289, 'Paket', 'Paket', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(290, 'Paku', 'Paku', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(291, 'Parpol', 'Parpol', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(292, 'Pasang', 'Pasang', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(293, 'Pc', 'Pc', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(294, 'Pcs', 'Pcs', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(295, 'Pekerjaan', 'Pekerjaan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(296, 'Pelabuhan Perikanan', 'Pelabuhan Perikanan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(297, 'Pelaku Ekonomi', 'Pelaku Ekonomi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(298, 'Pelaku Usaha', 'Pelaku Usaha', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(299, 'Pelatda', 'Pelatda', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(300, 'Pelepah', 'Pelepah', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(301, 'Pendampingan', 'Pendampingan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(302, 'Penerbit', 'Penerbit', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(303, 'Pengaduan', 'Pengaduan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(304, 'Pengelola', 'Pengelola', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(305, 'Pengguna', 'Pengguna', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(306, 'Penyelenggara SPAM', 'Penyelenggara SPAM', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(307, 'Per 100 Lembar', 'Per 100 Lembar', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(308, 'Per Balok', 'Per Balok', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(309, 'Per Batang', 'Per Batang', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(310, 'Per Batang Pohon', 'Per Batang Pohon', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(311, 'Per Buku', 'Per Buku', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(312, 'Per Bulan', 'Per Bulan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(313, 'Per Bungkus', 'Per Bungkus', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(314, 'Per Butir Soal', 'Per Butir Soal', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(315, 'Per Detik', 'Per Detik', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(316, 'Per Halaman', 'Per Halaman', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(317, 'Per Hari', 'Per Hari', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(318, 'Per Karung', 'Per Karung', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(319, 'Per Keping', 'Per Keping', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(320, 'Per Kotak', 'Per Kotak', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(321, 'Per Liputan', 'Per Liputan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(322, 'Per Modul', 'Per Modul', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(323, 'Per Orang', 'Per Orang', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(324, 'Per Rim', 'Per Rim', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(325, 'Per Ruang', 'Per Ruang', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(326, 'Per Sampel', 'Per Sampel', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(327, 'Per Sisir', 'Per Sisir', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(328, 'Per Tayang', 'Per Tayang', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(329, 'Per Titik', 'Per Titik', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(330, 'Per Tumpuk', 'Per Tumpuk', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(331, 'Perangkat Daerah', 'Perangkat Daerah', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(332, 'Perizinan', 'Perizinan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(333, 'Perkara', 'Perkara', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(334, 'perm2', 'Per m2', '/m2', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(335, 'Perm3', 'Per m3', '/m3', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(336, 'permeter', 'Per m\'', '/m', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(337, 'Permohonan', 'Permohonan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(338, 'Perpustakaan', 'Perpustakaan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(339, 'Persen', 'Persen', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(340, 'Pert 100 Buah', 'Pert 100 Buah', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(341, 'Perusahaan', 'Perusahaan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(342, 'Peserta didik', 'Peserta didik', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(343, 'Pick Up', 'Pick Up', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(344, 'Pokmas / Ormas', 'Pokmas / Ormas', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(345, 'Pols', 'Pols', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(346, 'Porsi', 'Porsi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(347, 'Posyandu', 'Posyandu', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(348, 'Pot', 'Pot', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(349, 'pound', 'Pound', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(350, 'pp', 'pp', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(351, 'ppn', 'ppn', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(352, 'Produk', 'Produk', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(353, 'Produk Hukum', 'Produk Hukum', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(354, 'Publikasi', 'Publikasi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(355, 'Pulsa', 'Pulsa', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(356, 'Rean', 'Rean', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(357, 'Regu', 'Regu', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(358, 'Rekomendasi', 'Rekomendasi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(359, 'Rim', 'Rim', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(360, 'rol', 'Rol', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(361, 'Roll', 'Roll', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(362, 'Roll Besar', 'Roll Besar', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(363, 'rt', 'rt', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(364, 'rtng', 'rtng', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(365, 'Ruang', 'Ruang', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(366, 'Rumah Tangga', 'Rumah Tangga', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(367, 'Rupiah', 'Rupiah', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(368, 'RW', 'RW', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(369, 'Sachet', 'Sachet', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(370, 'SAK', 'SAK', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(371, 'Sampel', 'Sampel', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(372, 'Sarana', 'Sarana', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(373, 'Sarana dan Prasarana', 'Sarana dan Prasarana', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(374, 'Satuan Pendidikan', 'Satuan Pendidikan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(375, 'Satuan Pendidikan Tinggi', 'Satuan Pendidikan Tinggi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(376, 'Satuan Permukiman', 'Satuan Permukiman', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(377, 'Sekolah', 'Sekolah', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(378, 'Semester', 'Semester', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(379, 'Sertifikat', 'Sertifikat', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(380, 'Sesi', 'Sesi', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(381, 'set', 'set', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(382, 'Shift', 'Shift', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(383, 'Siklus', 'Siklus', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(384, 'Sistem Jaringan', 'Sistem Jaringan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(385, 'Siswa', 'Siswa', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(386, 'Siswa / Mata Ujian', 'Siswa / Mata Ujian', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(387, 'SOP', 'SOP', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(388, 'SR', 'SR', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(389, 'Stek', 'Stek', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(390, 'Stel', 'Stel', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(391, 'Strip', 'Strip', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(392, 'Supp', 'Supp', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(393, 'Surat', 'Surat', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(394, 'Surat Keputusan', 'Surat Keputusan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(395, 'Tablet', 'Tablet', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(396, 'Tabung', 'Tabung', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(397, 'tahun', 'Tahun', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(398, 'Tangki (4000 Liter)', 'Tangki (4000 Liter)', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(399, 'Tatanan', 'Tatanan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(400, 'Tayang / Spot', 'Tayang / Spot', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(401, 'Tayang / Spot Durasi 30 Detik', 'Tayang / Spot Durasi 30 Detik', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(402, 'Tempat', 'Tempat', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(403, 'tes', 'tes', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(404, 'TEST', 'TEST', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(405, 'Titik', 'Titik', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(406, 'Titik Lampu', 'Titik Lampu', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(407, 'ton', 'ton', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(408, 'Triwulan', 'Triwulan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(409, 'tube', 'Tube', 'tub', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(410, 'TUMPUK', 'TUMPUK', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(411, 'UMKM', 'UMKM', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(412, 'unit', 'unit', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(413, 'Unit / Bulan', 'Unit / Bulan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(414, 'Unit / Pompa', 'Unit / Pompa', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(415, 'Unit / Tahun', 'Unit / Tahun', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(416, 'Unit Kerja', 'Unit Kerja', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(417, 'Unit Managemen', 'Unit Managemen', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(418, 'Unit Rumah', 'Unit Rumah', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(419, 'Unit Usaha', 'Unit Usaha', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(420, 'unit_hari', 'Unit Hari', 'u/h, unit hari', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(421, 'unit/item', 'Unit/Item', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(422, 'Unit/Tahun', 'Unit/Tahun', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(423, 'USK', 'USK', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(424, 'Usulan', 'Usulan', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(425, 'VA', 'VA', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(426, 'Varietas', 'Varietas', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(427, 'Varietas Unggul Baru (VUB)', 'Varietas Unggul Baru (VUB)', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(428, 'Vial', 'Vial', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(429, 'VUB', 'VUB', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(430, 'Watt', 'Watt', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(431, 'yard', 'yard(3 kaki)', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0);
+INSERT INTO `satuan_neo` (`id`, `value`, `item`, `sebutan_lain`, `disable`, `aksi`, `keterangan`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(432, 'yard2', 'yard2', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(433, 'yard3', 'yard3', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0),
+(434, 'zak', 'zak', '', 0, NULL, '', 4, '2026-03-06 16:55:38', 'nabiila', '2026-03-07 00:55:38', NULL, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -16216,8 +16681,8 @@ CREATE TABLE `satuan_neo` (
 CREATE TABLE `sk_asn_neo` (
   `id` int(11) NOT NULL,
   `tahun` year(4) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kd_opd` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `nomor` varchar(255) NOT NULL,
   `tgl_surat_dibuat` date NOT NULL,
   `tentang` varchar(400) NOT NULL,
@@ -16399,13 +16864,13 @@ INSERT INTO `sk_asn_neo` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `nomor`, `tgl_s
 CREATE TABLE `sub_kegiatan` (
   `id` bigint(20) NOT NULL,
   `kode` varchar(40) NOT NULL,
-  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
   `kode_kegiatan` varchar(20) NOT NULL,
   `nama` text DEFAULT NULL,
   `kinerja` text NOT NULL,
   `indikator` text DEFAULT NULL,
   `satuan` varchar(100) DEFAULT NULL,
-  `peraturan` int(11) NOT NULL,
+  `peraturan_id` int(11) NOT NULL,
   `status` tinyint(4) DEFAULT 1,
   `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) DEFAULT NULL,
@@ -16417,7 +16882,7 @@ CREATE TABLE `sub_kegiatan` (
 -- Dumping data untuk tabel `sub_kegiatan`
 --
 
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (1, '1.1.2.2.01.1', '76.01', '1.1.2.2.01', 'Pembangunan    Unit    Sekolah Baru (USB)', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2, '1.1.2.2.01.3', '76.01', '1.1.2.2.01', 'Pembangunan                   Ruang Guru/Kepala Sekolah/TU', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (3, '1.1.2.2.01.4', '76.01', '1.1.2.2.01', 'Pembangunan     Ruang     Unit Kesehatan Sekolah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -16691,7 +17156,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (271, '1.1.2.3.06.39', '76.01', '1.1.2.3.06', 'Penyelengaraan                Proses Belajar dan Ujian bagi Peserta Didik', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (272, '1.1.2.3.06.41', '76.01', '1.1.2.3.06', 'Pembinaan  Minat,  Bakat  dan Kreativitas Siswa', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (273, '1.1.2.3.06.42', '76.01', '1.1.2.3.06', 'Penyediaan       Pendidik       dan Tenaga     Kependidikan     bagi Satuan    Pendidikan    Sekolah Menengah Kejuruan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (274, '1.1.2.3.06.43', '76.01', '1.1.2.3.06', 'Pengembangan  Karir  Pendidik dan      Tenaga      Kependidikan pada       Satuan       Pendidikan Sekolah Menengah Kejuruan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (275, '1.1.2.3.06.44', '76.01', '1.1.2.3.06', 'Pembangunan     Bengkel/Unit Produksi', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (276, '1.1.2.3.06.45', '76.01', '1.1.2.3.06', 'Pembinaan  Kelembagaan  dan Manajemen                      Sekolah Menengah Kejuruan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -16918,7 +17383,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (497, '1.1.7.7.01.7', '76.01', '1.1.7.7.01', 'Peningkatan      Kualitas      dan Pengembangan    Kelembagaan Dayah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (498, '1.1.7.7.01.8', '76.01', '1.1.7.7.01', 'Pengadaan               Kitab/Buku Pendidikan Dayah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (499, '1.1.7.7.01.9', '76.01', '1.1.7.7.01', 'Pembangunan                        dan Rehabilitasi    Tempat    Ibadah Dayah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (500, '1.1.7.7.01.10', '76.01', '1.1.7.7.01', 'Koordinasi    dan    Sinkronisasi Pelaksanaan        Kependidikan Dayah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (501, '1.1.7.7.01.11', '76.01', '1.1.7.7.01', 'Pelaksanaan               Akreditasi Pendidikan Dayah/Pesantren', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (502, '1.1.7.7.01.12', '76.01', '1.1.7.7.01', 'Fasilitasi     dan     Pengawasan Penyelenggaraan     Pendidikan Dayah/Pesantren    dan    Balai Pengajian', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -17161,7 +17626,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (739, '1.3.2.2.02.13', '76.01', '1.3.2.2.02', 'Peningkatan   Jaringan   Irigasi Air Tanah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (740, '1.3.2.2.02.14', '76.01', '1.3.2.2.02', 'Rehabilitasi    Jaringan    Irigasi Permukaan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (741, '1.3.2.2.02.16', '76.01', '1.3.2.2.02', 'Rehabilitasi    Jaringan    Irigasi Rawa', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (742, '1.3.2.2.02.17', '76.01', '1.3.2.2.02', 'Rehabilitasi    Jaringan    Irigasi Tambak', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (743, '1.3.2.2.02.19', '76.01', '1.3.2.2.02', 'Rehabilitasi    Jaringan    Irigasi Air Tanah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (744, '1.3.2.2.02.21', '76.01', '1.3.2.2.02', 'Operasi     dan     Pemeliharaan Jaringan Irigasi Permukaan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -17399,7 +17864,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (976, '1.4.2.2.01.9', '76.01', '1.4.2.2.01', 'Identifikasi      Perumahan      di Lokasi         Rawan        Bencana Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (977, '1.4.2.2.01.10', '76.01', '1.4.2.2.01', 'Pendataan       dan       Verifikasi Calon   Penerima   Rumah   bagi Korban                             Bencana Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (978, '1.4.2.2.02.1', '76.01', '1.4.2.2.02', 'Sosialisasi     Standar     Teknis Penyediaan   dan   Rehabilitasi Rumah                                kepada\nMasyarakat/Sukarelawan Tanggap Bencana', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (979, '1.4.2.2.02.4', '76.01', '1.4.2.2.02', 'Pembentukan   dan   Pelatihan Tim  Satgas,  Tim  Pendamping dan Fasilitator', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (980, '1.4.2.2.02.6', '76.01', '1.4.2.2.02', 'Koordinasi                           untuk Menyepakati     Penerima     dan Jenis Pelayanan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (981, '1.4.2.2.02.7', '76.01', '1.4.2.2.02', 'Rembug          Warga          untuk Menentukan   Calon   Penerima Rumah  bagi  Masyarakat  yang Terkena      Relokasi      Program Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -17618,7 +18083,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (1194, '1.6.2.2.03.17', '76.01', '1.6.2.2.03', 'Pembinaan     Teknis     Sumber Daya         Manusia         Sumber Kesejahteraan   Sosial   Daerah Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1195, '1.6.2.3.03.6', '76.01', '1.6.2.3.03', 'Fasilitasi             Pengembangan Potensi                               Sumber\nKesejahteraan   Sosial   Daerah di    Kabupaten/Kota     melalui Pemberdayaan Ekonomi', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1196, '1.6.2.3.04.1', '76.01', '1.6.2.3.04', 'Pendataan,     Verifikasi,     dan Validasi     Sertifikasi     Sumber Daya     Kesejahteraan     Sosial Daerah Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (1197, '1.6.2.3.05.1', '76.01', '1.6.2.3.05', 'Pendataan,     Verifikasi,     dan Validasi                           Lembaga Kesejahteraan   Sosial   Daerah Kabupaten/Kota.', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1198, '1.6.2.4.03.6', '76.01', '1.6.2.4.03', 'Fasilitasi             Pengembangan Potensi                               Sumber\nKesejahteraan   Sosial   Daerah di    Kabupaten/Kota     melalui Pemberdayaan Ekonomi', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1199, '1.6.2.4.03.7', '76.01', '1.6.2.4.03', 'Pengelolaan  Layanan  Terpadu Penanggulangan Kemiskinan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -17832,7 +18297,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (1407, '2.9.3.2.01.14', '76.01', '2.9.3.2.01', 'Koordinasi    dan    Sinkronisasi Pemantauan    Stok,    Pasokan dan     Harga     Pangan     Pokok Strategis', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1408, '2.9.3.2.01.16', '76.01', '2.9.3.2.01', 'Penyusunan     Neraca     Bahan Makanan (NBM)', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1409, '2.9.3.2.01.20', '76.01', '2.9.3.2.01', 'Penyusunan   Proyeksi   Neraca Pangan                              Wilayah Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (1410, '2.9.3.2.02.2', '76.01', '2.9.3.2.02', 'Penyusunan                   Rencana Kebutuhan Pangan Lokal', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1411, '2.9.3.2.02.3', '76.01', '2.9.3.2.02', 'Pengadaan  Cadangan  Pangan Pemerintah Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1412, '2.9.3.2.02.5', '76.01', '2.9.3.2.02', 'Penyaluran  Cadangan  Pangan Pemerintah Kab/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -18046,7 +18511,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (1620, '2.11.8.2.01.4', '76.01', '2.11.8.2.01', 'Penumbuhan             Kesadaran Keluarga   dalam   Peningkatan Kualitas    Lingkungan    Hidup dan      Kawasan      Pemukiman yang Sehat', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1621, '2.11.8.2.01.5', '76.01', '2.11.8.2.01', 'Peningkatan    Kapasitas    dan Kompetensi      Sumber      Daya Manusia    Bidang    lingkungan hidup         untuk         Lembaga pendidikan       formal/lembaga masyarakat/komunitas/kelo mpok masyarakat', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1622, '2.11.9.2.01.1', '76.01', '2.11.9.2.01', 'Penilaian                            Kinerja Masyarakat/Lembaga Masyarakat/Dunia Usaha/Dunia Pendidikan/Filantropi    dalam Perlindungan dan Pengelolaan Lingkungan Hidup', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (1623, '2.11.10.2.01.3', '76.01', '2.11.10.2.01', 'Penyelesaian     kasus     tindak pidana   lingkungan   hidup  (P- 21)           yang           merupakan kewenangan kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1624, '2.11.10.2.01.5', '76.01', '2.11.10.2.01', 'Penyelesaian                 sengketa lingkungan         hidup         yang ditangani        yang        menjadi kewenangan kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1625, '2.11.10.2.01.9', '76.01', '2.11.10.2.01', 'Pengelolaan               Pengaduan permasalahan        Pencemaran dan    Perusakan    Lingkungan Hidup                                  tingkat\nKabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -18252,7 +18717,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (1825, '2.14.2.2.01.33', '76.01', '2.14.2.2.01', 'Penyediaan                              dan\nPengembangan                  Materi Pendidikan        Kependudukan Jalur    Pendidikan    Nonformal dan  informal  Sesuai  Isu  Lokal Kabupaten/Kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1826, '2.14.2.2.01.34', '76.01', '2.14.2.2.01', 'Sosialisasi           Pembangunan Berwawasan     Kependudukan (PBK)      dan      alat      ukurnya Indeks                   Pembangunan Berwawasan     Kependudukan (IPBK)      serta      pemanfaatan IPBK       dalam       penyusunan kebijakan    dan    perencanaan pembangunan daerah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1827, '2.14.2.2.02.9', '76.01', '2.14.2.2.02', 'Pembinaan   dan   Pengawasan Penyelenggaraan              Sistem Informasi Keluarga', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (1828, '2.14.2.2.02.10', '76.01', '2.14.2.2.02', 'Pemanfaatan       Data       Hasil Pemutakhiran Data Keluarga', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1829, '2.14.2.2.02.11', '76.01', '2.14.2.2.02', 'Penyediaan          Data          dan Informasi Keluarga', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (1830, '2.14.2.2.02.12', '76.01', '2.14.2.2.02', 'Pencatatan  dan  Pengumpulan Data Keluarga', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -18442,7 +18907,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (2014, '2.15.3.2.17.1', '76.01', '2.15.3.2.17', 'Fasilitasi                   Pemenuhan Persyaratan     Perolehan     Izin Pekerjaan       Pengerukan       di Wilayah   Perairan   Pelabuhan Pengumpan       Lokal       dalam Sistem    Pelayanan    Perizinan Berusaha  Terintegrasi  Secara Elektronik', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2015, '2.15.3.2.17.2', '76.01', '2.15.3.2.17', 'Koordinasi    dan    Sinkronisasi Pengawasan  Pelaksanaan  Izin Pekerjaan       Pengerukan       di Wilayah   Perairan   Pelabuhan Pengumpan Lokal', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2016, '2.15.3.2.18.1', '76.01', '2.15.3.2.18', 'Fasilitasi                   Pemenuhan Persyaratan     Perolehan     Izin Reklamasi          di          Wilayah Perairan                       Pelabuhan Pengumpan       Lokal       dalam Sistem    Pelayanan    Perizinan Berusaha  Terintegrasi  Secara Elektronik', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (2017, '2.15.3.2.18.2', '76.01', '2.15.3.2.18', 'Koordinasi    dan    Sinkronisasi Pengawasan  Pelaksanaan  Izin Reklamasi          di          Wilayah Perairan                       Pelabuhan Pengumpan Lokal', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2018, '2.15.3.2.19.1', '76.01', '2.15.3.2.19', 'Fasilitasi                   Pemenuhan Persyaratan     Perolehan     Izin Pengelolaan    Terminal    untuk Kepentingan Sendiri (TUKS) di dalam                       DLKR/DLKP Pelabuhan   Pengumpan   Lokal dalam       Sistem       Pelayanan Perizinan                       Berusaha Terintegrasi Secara Elektronik', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2019, '2.15.3.2.19.2', '76.01', '2.15.3.2.19', 'Koordinasi    dan    Sinkronisasi Pengawasan  Pelaksanaan  Izin Pengelolaan    Terminal    untuk Kepentingan Sendiri (TUKS) di dalam                       DLKR/DLKP Pelabuhan Pengumpan Lokal', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -18650,7 +19115,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (2221, '2.20.2.2.01.21', '76.01', '2.20.2.2.01', 'Pelaksanaan     Proses     Bisnis Statistik       Sektoral       Sesuai Standar', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2222, '2.20.2.2.01.22', '76.01', '2.20.2.2.01', 'Koordinasi     dan     Kolaborasi Dalam              Penyelenggaraan Statistik Sektoral', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2223, '2.21.2.2.01.5', '76.01', '2.21.2.2.01', 'Pelaksanaan              Keamanan Informasi              Pemerintahan Daerah    Berbasis    Elektronik dan Non Elektronik', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (2224, '2.21.2.2.01.6', '76.01', '2.21.2.2.01', 'Pengelolaan      Sumber      Daya Keamanan      Informasi      dan Persandian                Pemerintah Daerah   berdasarkan   Analisis Kebutuhan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2225, '2.21.2.2.01.7', '76.01', '2.21.2.2.01', 'Penyediaan                     Layanan Keamanan      Informasi      dan Persandian                Pemerintah Daerah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2226, '2.21.2.2.01.8', '76.01', '2.21.2.2.01', 'Penetapan      Kebijakan      Tata Kelola    Keamanan    Informasi dan    Persandian    Pemerintah Daerah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -18883,7 +19348,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (2453, '3.25.5.2.01.3', '76.01', '3.25.5.2.01', 'Operasi       Kapal       Pengawas Perikanan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2454, '3.25.5.2.01.4', '76.01', '3.25.5.2.01', 'Pengawasan                        usaha pembudidayaan    ikan    sesuai kewenangan kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2455, '3.25.5.2.01.5', '76.01', '3.25.5.2.01', 'Kapal     Pengawas     Perikanan yang dirawat', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (2456, '3.25.5.2.01.6', '76.01', '3.25.5.2.01', 'Pengawasan                        usaha pemasaran    hasil    perikanan dan/atau   usaha   pengolahan hasil         perikanan         sesuai kewenangan kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2457, '3.25.5.2.01.7', '76.01', '3.25.5.2.01', 'Pengawasan                        usaha penangkapan   ikan   dan/atau usaha      pengangkutan      ikan sesuai                       kewenangan kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
 (2458, '3.25.5.2.01.8', '76.01', '3.25.5.2.01', 'Pengadaan    Kapal    Pengawas Perikanan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:01', 'inayah', NULL, NULL),
@@ -19107,7 +19572,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (2676, '3.28.8.3.01.1', '76.01', '3.28.8.3.01', 'Penetapan     dan     pengakuan MHA,     kearifan     lokal     atau pengetahuan   tradisional   dan hak      kearifan      lokal      atau pengetahuan   tradisional   dan hak     MHA     terkait     dengan PPLH  yang  berada  di  daerah kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2677, '3.28.8.3.02.1', '76.01', '3.28.8.3.02', 'Peningkatan   kapasitas   MHA, kearifan             lokal             atau pengetahuan   tradisional   dan hak      kearifan      lokal      atau pengetahuan   tradisional   dan hak     MHA     terkait     dengan PPLH  yang  berada  di  daerah kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2678, '3.28.8.4.01.1', '76.01', '3.28.8.4.01', 'Penetapan     dan     pengakuan MHA,     kearifan     lokal     atau pengetahuan   tradisional   dan hak      kearifan      lokal      atau pengetahuan   tradisional   dan hak     MHA     terkait     dengan PPLH  yang  berada  di  daerah kabupaten/kota', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (2679, '3.29.2.3.01.1', '76.01', '3.29.2.3.01', 'Inventarisasi             keragaman geologi      (geodiversity),      dan pemanfaatan     situs     warisan geologi (geoheritage)', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2680, '3.29.2.3.02.1', '76.01', '3.29.2.3.02', 'Penyediaan        data        geologi untuk   menyusun   peringatan dini potensi gerakan tanah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2681, '3.29.2.3.03.1', '76.01', '3.29.2.3.03', 'Penyediaan        data        geologi untuk     penetapan     kawasan rawan bencana geologi', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
@@ -19333,7 +19798,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (2901, '4.2.2.2.02.6', '76.01', '4.2.2.2.02', 'Pembahasan Pertanggungjawaban APBD', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2902, '4.2.2.2.03.1', '76.01', '4.2.2.2.03', 'Pengawasan                     Urusan\nPemerintahan                   Bidang Pemerintahan dan Hukum', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2903, '4.2.2.2.03.2', '76.01', '4.2.2.2.03', 'Pengawasan                     Urusan\nPemerintahan                   Bidang Infrastruktur', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (2904, '4.2.2.2.03.3', '76.01', '4.2.2.2.03', 'Pengawasan                     Urusan\nPemerintahan                   Bidang Kesejahteraan Rakyat', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2905, '4.2.2.2.03.4', '76.01', '4.2.2.2.03', 'Pengawasan                     Urusan\nPemerintahan                   Bidang Perekonomian', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (2906, '4.2.2.2.03.5', '76.01', '4.2.2.2.03', 'Pengawasan                     Urusan Pemerintahan  Bidang  Sumber Daya Alam', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
@@ -19571,7 +20036,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (3138, '5.5.2.2.03.7', '76.01', '5.5.2.2.03', 'Penelitian  dan  Pengembangan Lingkungan Hidup', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3139, '5.5.2.2.03.8', '76.01', '5.5.2.2.03', 'Penelitian  dan  Pengembangan Kehutanan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3140, '5.5.2.2.03.9', '76.01', '5.5.2.2.03', 'Penelitian  dan  Pengembangan Pekerjaan Umum', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (3141, '5.5.2.2.03.10', '76.01', '5.5.2.2.03', 'Penelitian  dan  Pengembangan Perhubungan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3142, '5.5.2.2.03.11', '76.01', '5.5.2.2.03', 'Penelitian  dan  Pengembangan Perumahan      dan      Kawasan Permukiman', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3143, '5.5.2.2.03.12', '76.01', '5.5.2.2.03', 'Penelitian  dan  Pengembangan Penataan           Ruang           dan Pertanahan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
@@ -19779,7 +20244,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (3345, '9.1.2.7.04.6', '76.01', '9.1.2.7.04', 'Pelaksanaan   Cerdas   Cermat Syariat Islam', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3346, '9.1.2.7.04.7', '76.01', '9.1.2.7.04', 'Pembinaan                   Gampong Percontohan Syariat', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3347, '9.1.2.7.04.8', '76.01', '9.1.2.7.04', 'Pengiriman  Khatib  Jum\'\'at  Ke Gampong', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL);
-INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`, `kinerja`, `indikator`, `satuan`, `peraturan_id`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (3348, '9.1.2.7.04.9', '76.01', '9.1.2.7.04', 'Ceramah           Bulan           Suci Ramadhan                                   di\nMasjid/Meunasah/ Mushalla', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3349, '9.1.2.7.04.10', '76.01', '9.1.2.7.04', 'Penyelenggaraan  Pengajian  di Gampong', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3350, '9.1.2.7.04.11', '76.01', '9.1.2.7.04', 'Penyediaan,     Pendistribusian dan       Pengawasan       Sarana Peribadatan', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
@@ -19846,7 +20311,7 @@ INSERT INTO `sub_kegiatan` (`id`, `kode`, `kd_wilayah`, `kode_kegiatan`, `nama`,
 (3411, '9.1.4.7.03.6', '76.01', '9.1.4.7.03', 'Pendistribusian                      dan Pendayagunaan      ZIS      Senif Fisabilillah', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3412, '9.1.4.7.03.7', '76.01', '9.1.4.7.03', 'Pendistribusian                      dan Pendayagunaan      ZIS      Senif Ibnu Sabil', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
 (3413, '9.1.4.7.03.8', '76.01', '9.1.4.7.03', 'Pendistribusian                      dan Pendayagunaan      ZIS      Senif Infaq', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
-(3414, '9.1.4.7.03.9', '76.01', '9.1.4.7.03', 'Pengelolaan Wakaf', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL),
+(3414, '9.1.4.7.03.9', '76.01', '9.1.4.7.03', 'Pengelolaan Wakaf', 'kinerja3', 'indikator3', '367', 4, 1, '2026-02-23 18:51:02', 'inayah', '2026-03-07 07:59:51', 'inayah'),
 (3415, '9.1.4.7.03.10', '76.01', '9.1.4.7.03', 'Pendistribusian                      dan Pendayagunaan      ZIS      Guru SMA dan Sederajat', '', NULL, NULL, 4, 1, '2026-02-23 18:51:02', 'inayah', NULL, NULL);
 
 -- --------------------------------------------------------
@@ -19890,8 +20355,8 @@ CREATE TABLE `sub_kegiatan_renstra_neo` (
 
 CREATE TABLE `sub_keg_dpa_neo` (
   `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kd_opd` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tahun` year(4) NOT NULL,
   `kd_sub_keg` varchar(22) NOT NULL,
   `kel_rek` varchar(50) NOT NULL,
@@ -20023,8 +20488,8 @@ INSERT INTO `sub_keg_dpa_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_ke
 
 CREATE TABLE `sub_keg_renja_neo` (
   `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `kd_opd` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tahun` year(4) NOT NULL,
   `kd_sub_keg` varchar(22) NOT NULL,
   `kel_rek` varchar(50) NOT NULL,
@@ -20652,8 +21117,8 @@ CREATE TABLE `trx_naskah_dinas` (
   `perihal` varchar(255) DEFAULT NULL,
   `status` enum('draft','final') DEFAULT 'draft',
   `file_pdf` varchar(255) DEFAULT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_insert` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL,
@@ -20693,8 +21158,8 @@ CREATE TABLE `trx_naskah_meta` (
   `naskah_id` bigint(20) DEFAULT NULL,
   `meta_key` varchar(100) DEFAULT NULL,
   `meta_value` longtext DEFAULT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_insert` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -20709,8 +21174,8 @@ CREATE TABLE `trx_naskah_struktur` (
   `id` bigint(20) NOT NULL,
   `naskah_id` bigint(20) NOT NULL,
   `struktur_json` longtext NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` int(11) DEFAULT NULL,
   `tgl_insert` datetime DEFAULT NULL,
   `username_insert` varchar(100) DEFAULT NULL,
@@ -20774,7 +21239,7 @@ CREATE TABLE `tujuan_renstra_neo` (
 CREATE TABLE `urusan` (
   `id` bigint(20) NOT NULL,
   `kode` varchar(10) NOT NULL,
-  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
   `nama` text DEFAULT NULL,
   `status` tinyint(4) DEFAULT 1,
   `peraturan_id` int(11) NOT NULL,
@@ -20830,9 +21295,9 @@ CREATE TABLE `user_sesendok_biila` (
   `nip` varchar(18) DEFAULT NULL,
   `password` varchar(225) NOT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
-  `kd_opd` varchar(50) DEFAULT NULL,
+  `kd_opd` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `nama_org` varchar(400) NOT NULL,
-  `kd_wilayah` varchar(50) DEFAULT NULL,
+  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `type_user` varchar(20) NOT NULL,
   `photo` varchar(255) NOT NULL DEFAULT 'default.jpeg',
   `signature_image` varchar(255) DEFAULT NULL,
@@ -21270,7 +21735,7 @@ ALTER TABLE `sk_asn_neo`
 --
 ALTER TABLE `sub_kegiatan`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniq_urusan_scope` (`kd_wilayah`,`peraturan`,`kode`),
+  ADD UNIQUE KEY `uniq_urusan_scope` (`kd_wilayah`,`peraturan_id`,`kode`),
   ADD KEY `idx_kode_kegiatan` (`kode_kegiatan`);
 
 --
@@ -21464,7 +21929,7 @@ ALTER TABLE `group_rekap_akun`
 -- AUTO_INCREMENT untuk tabel `group_sub_kegiatan`
 --
 ALTER TABLE `group_sub_kegiatan`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `import_logs`
@@ -21506,7 +21971,7 @@ ALTER TABLE `kegiatan_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `log_activity`
 --
 ALTER TABLE `log_activity`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1835;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1851;
 
 --
 -- AUTO_INCREMENT untuk tabel `mapping_aset_akun`
@@ -21644,7 +22109,7 @@ ALTER TABLE `renja_p_neo`
 -- AUTO_INCREMENT untuk tabel `renstra_neo`
 --
 ALTER TABLE `renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `rka_neo`
@@ -21668,7 +22133,7 @@ ALTER TABLE `sasaran_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `satuan_neo`
 --
 ALTER TABLE `satuan_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=436;
 
 --
 -- AUTO_INCREMENT untuk tabel `sk_asn_neo`
