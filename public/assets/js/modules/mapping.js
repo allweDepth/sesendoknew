@@ -1,14 +1,27 @@
 class MappingModule extends BaseCrudModule {
-    constructor() {
+
+    constructor(){
+
         super({
-            moduleName: "mapping",
-            menuItems: [
-                { label: "SBU", tbl: "sbu_akun_map" },
-                { label: "SSH", tbl: "ssh_akun_map" },
-                { label: "ASB", tbl: "asb_akun_map" },
-                { label: "HSPK", tbl: "hspk_akun_map" }
+
+            moduleName : "mapping",   // alias config
+
+            menuItems : [
+
+                { label:"SSH", tbl:"mapping", tipe:"ssh" },
+
+                { label:"SBU", tbl:"mapping", tipe:"sbu" },
+
+                { label:"ASB", tbl:"mapping", tipe:"asb" },
+
+                { label:"HSPK", tbl:"mapping", tipe:"hspk" }
+
             ],
-            useMenu: true
+
+            useMenu : true
+
         });
+
     }
+
 }
