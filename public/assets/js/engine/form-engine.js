@@ -232,132 +232,132 @@ class FormEngine {
 	 * ============================================================
 	 */
 	submit() {
-		// =============================================
-		// CEGAH DOUBLE SUBMIT
-		// =============================================
-		if (this.isSubmitting) {
+		// ======================================================
+		// CEGAH DOUBLE SUBMIT GLOBAL
+		// ======================================================
+		if (this.isSubmitting === true) {
 			return;
 		}
+
+		// ======================================================
+		// AKTIFKAN LOCK SEBELUM VALIDASI
+		// ======================================================
+		this.isSubmitting = true;
 
 		const form = $(this.formSelector);
 
-		// =============================================
-		// VALIDASI FORM
-		// =============================================
+		// ======================================================
+		// VALIDASI FORM FOMANTIC
+		// ======================================================
 		form.form("validate form");
 
-		// jika tidak valid → reset flag
+		// jika tidak valid
 		if (!form.form("is valid")) {
+			// reset lock
 			this.isSubmitting = false;
+
 			return;
 		}
 
-		// =============================================
-		// AKTIFKAN LOCK SUBMIT
-		// =============================================
-		this.isSubmitting = true;
+		// ======================================================
+		// NORMALISASI CALENDAR KOSONG
+		// ======================================================
+		// ======================================================
+		// NORMALISASI CALENDAR KOSONG
+		// ======================================================
+		const disabledCalendars = [];
 
-		// normalisasi calendar kosong → null
 		form.find(".ui.calendar input").each(function () {
-			// jika input kosong
 			if ($(this).val() === "") {
-				// disable agar tidak ikut serialize
 				$(this).prop("disabled", true);
+
+				// simpan referensi untuk diaktifkan kembali
+				disabledCalendars.push(this);
 			}
 		});
 
-		// cek apakah form memiliki input file
+		// ======================================================
+		// CEK INPUT FILE
+		// ======================================================
 		const hasFileInput = form.find('input[type="file"]').length > 0;
 
-		// ==================================================
-		// MODE IMPORT FILE (FormData)
-		// ==================================================
-
+		// ======================================================
+		// MODE IMPORT FILE
+		// ======================================================
 		if (hasFileInput) {
-			// ambil element form native
 			const formElement = document.querySelector(this.formSelector);
 
-			// buat FormData
 			const formData = new FormData(formElement);
 
-			// tambahkan action
 			formData.append("action", this.state.action);
-
-			// tambahkan nama tabel
 			formData.append("tbl", this.state.tbl);
 
-			// kirim request ajax
 			this.ajax.request({
 				data: formData,
 
-				processData: false, // wajib untuk FormData
+				processData: false,
 
-				contentType: false, // wajib untuk FormData
+				contentType: false,
 
 				success: () => {
-					// reset flag submit
 					this.isSubmitting = false;
-					// tentukan tabel yang harus reload
+
+					// ==================================================
+					// AKTIFKAN KEMBALI CALENDAR YANG TADI DISABLE
+					// ==================================================
+					disabledCalendars.forEach((el) => {
+						$(el).prop("disabled", false);
+					});
+
 					const reloadTable = this.state.reloadTable || this.state.tbl;
 
-					/**
-					 * ======================================================
-					 * RELOAD TABLE ENGINE
-					 * ======================================================
-					 * hanya satu event agar tidak double request
-					 */
-					$(document).trigger(`table:reload.${reloadTable}`);
+					$(document).trigger(`form:success.${reloadTable}`);
+				},
+
+				error: () => {
+					this.isSubmitting = false;
+
+					disabledCalendars.forEach((el) => {
+						$(el).prop("disabled", false);
+					});
 				},
 			});
 
 			return;
 		}
 
-		// ==================================================
+		// ======================================================
 		// MODE NORMAL SUBMIT
-		// ==================================================
+		// ======================================================
 
-		// serialize form menjadi query string
 		let formData = form.serialize();
 
-		// tambahkan action
 		formData += `&action=${this.state.action}`;
-
-		// tambahkan nama tabel
 		formData += `&tbl=${this.state.tbl}`;
-
-		/* =========================================
-			PRIORITAS TABLE CRUD
-		========================================= */
 
 		if (this.state.req) {
 			formData += `&req=${this.state.req}`;
-		}
-
-		// prioritas 2 : tombol submit
-		else {
+		} else {
 			const btn = $(this.formSelector).find("button[type=submit]");
 
 			if (btn.length && btn.data("req")) {
 				formData += `&req=${btn.data("req")}`;
 			}
 		}
-		/* ======================================
-   CEK BUTTON YANG MEMICU SUBMIT
-====================================== */
 
-		// kirim request ajax
 		this.ajax.request({
 			data: formData,
 
 			success: () => {
-				// reset flag submit
 				this.isSubmitting = false;
-				// tentukan tabel yang harus reload
+
 				const reloadTable = this.state.reloadTable || this.state.tbl;
 
-				// trigger reload table
 				$(document).trigger(`form:success.${reloadTable}`);
+			},
+
+			error: () => {
+				this.isSubmitting = false;
 			},
 		});
 	}
@@ -817,29 +817,33 @@ class FormEngine {
 
 			const parent = $dropdown.data("parent");
 
+			// ======================================================
+			// SKIP JIKA DROPDOWN CHILD (CASCADE)
+			// ======================================================
 			if (parent) return;
 
-			/**
-			 * ===============================================
-			 * GUARD LOADED
-			 * ===============================================
-			 */
+			// ======================================================
+			// GUARD SUDAH LOAD
+			// ======================================================
+			if ($dropdown.data("loaded") === true) return;
 
-			if ($dropdown.data("loaded")) return;
+			// ======================================================
+			// GUARD SEDANG LOADING
+			// ======================================================
+			if ($dropdown.data("loading") === true) return;
 
-			/**
-			 * ===============================================
-			 * GUARD LOADING
-			 * ===============================================
-			 */
-
-			if ($dropdown.data("loading")) return;
-
+			// ======================================================
+			// SET STATUS LOADING
+			// ======================================================
 			$dropdown.data("loading", true);
 
 			const source = $dropdown.data("source");
 
-			if (!source) return;
+			if (!source) {
+				$dropdown.data("loading", false);
+
+				return;
+			}
 
 			self.ajax.request({
 				data: {
@@ -849,29 +853,36 @@ class FormEngine {
 				},
 
 				success: (res) => {
-					if (!res.success || !res.data) return;
-
 					const $menu = $dropdown.find(".menu");
 
 					$menu.empty();
 
-					res.data.forEach((item) => {
-						$menu.append(`
-                        <div class="item" data-value="${item.value}">
-                            ${item.text}
-                        </div>
-                    `);
-					});
+					if (res && res.success && res.data) {
+						res.data.forEach((item) => {
+							$menu.append(`
+							<div class="item" data-value="${item.value}">
+								${item.text}
+							</div>
+						`);
+						});
+					}
 
+					// ==================================================
+					// REFRESH DROPDOWN
+					// ==================================================
 					$dropdown.dropdown("refresh");
 
-					/**
-					 * ===============================================
-					 * SET STATUS LOADED
-					 * ===============================================
-					 */
-
+					// ==================================================
+					// SET STATUS LOADED
+					// ==================================================
 					$dropdown.data("loaded", true);
+					$dropdown.data("loading", false);
+				},
+
+				error: () => {
+					// ==================================================
+					// RESET LOADING JIKA REQUEST GAGAL
+					// ==================================================
 					$dropdown.data("loading", false);
 				},
 			});
@@ -1170,74 +1181,57 @@ class FormEngine {
 	initCascadeDropdown() {
 		const self = this;
 
-		/**
-		 * ======================================================
-		 * HAPUS EVENT LAMA
-		 * ======================================================
-		 */
+		// ======================================================
+		// EVENT NAMESPACE UNIK PER TABLE
+		// ======================================================
+		const eventName = `change.formCascade.${this.state.tbl}`;
 
+		// ======================================================
+		// HAPUS EVENT LAMA
+		// ======================================================
 		$(document).off(
-			"change.formCascade",
+			eventName,
 			`${this.formSelector} .ui.dropdown[data-source]`,
 		);
 
-		/**
-		 * ======================================================
-		 * BIND EVENT CASCADE BARU
-		 * ======================================================
-		 */
-
+		// ======================================================
+		// BIND EVENT BARU
+		// ======================================================
 		$(document).on(
-			"change.formCascade",
+			eventName,
 			`${this.formSelector} .ui.dropdown[data-source]`,
 			function () {
-				/**
-				 * ==================================================
-				 * GUARD POPULATE MODE
-				 * ==================================================
-				 * mencegah cascade saat populateForm()
-				 */
-
+				// ==================================================
+				// GUARD POPULATE MODE
+				// ==================================================
 				if (self.isPopulating) return;
 
 				const $parentDropdown = $(this);
 
-				/**
-				 * ==================================================
-				 * CEK SKIP CASCADE FLAG
-				 * ==================================================
-				 */
-
+				// ==================================================
+				// CEK SKIP CASCADE FLAG
+				// ==================================================
 				if ($parentDropdown.data("skip-cascade")) return;
 
-				/**
-				 * ==================================================
-				 * AMBIL FIELD NAME
-				 * ==================================================
-				 */
-
+				// ==================================================
+				// AMBIL FIELD NAME
+				// ==================================================
 				const parentName = $parentDropdown
 					.find("input[type=hidden]")
 					.attr("name");
 
 				if (!parentName) return;
 
-				/**
-				 * ==================================================
-				 * AMBIL VALUE PARENT
-				 * ==================================================
-				 */
-
+				// ==================================================
+				// AMBIL VALUE PARENT
+				// ==================================================
 				const parentValue = $parentDropdown.find("input[type=hidden]").val();
 
 				if (!parentValue) return;
 
-				/**
-				 * ==================================================
-				 * CARI DROPDOWN CHILD
-				 * ==================================================
-				 */
-
+				// ==================================================
+				// CARI DROPDOWN CHILD
+				// ==================================================
 				$(
 					`${self.formSelector} .ui.dropdown[data-parent="${parentName}"]`,
 				).each(function () {
@@ -1249,28 +1243,21 @@ class FormEngine {
 
 					const $menu = $child.find(".menu");
 
-					/**
-					 * ==================================================
-					 * RESET CHILD
-					 * ==================================================
-					 */
-
+					// ==================================================
+					// RESET CHILD
+					// ==================================================
 					$menu.empty();
 
 					$child.dropdown("clear");
 
-					/**
-					 * ==================================================
-					 * REQUEST DATA CHILD
-					 * ==================================================
-					 */
-
+					// ==================================================
+					// REQUEST DATA CHILD
+					// ==================================================
 					self.ajax.request({
 						data: {
 							module: source,
 							action: "dropdown",
 							tbl: source,
-
 							parent: parentName,
 							parent_field: $child.data("parent-field"),
 							value: parentValue,
@@ -1281,18 +1268,15 @@ class FormEngine {
 
 							res.data.forEach((item) => {
 								$menu.append(`
-                                <div class="item" data-value="${item.value}">
-                                    ${item.text}
-                                </div>
-                            `);
+								<div class="item" data-value="${item.value}">
+									${item.text}
+								</div>
+							`);
 							});
 
-							/**
-							 * ==================================================
-							 * REFRESH DROPDOWN
-							 * ==================================================
-							 */
-
+							// ==================================================
+							// REFRESH DROPDOWN
+							// ==================================================
 							$child.dropdown("refresh");
 						},
 					});
