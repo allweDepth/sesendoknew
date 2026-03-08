@@ -482,22 +482,22 @@ IGNORE SYSTEM FIELD
         $this->validateTimeWindow($table);
 
         // 🔥 Auto generate kode misi
-        if ($table === 'misi_renstra_neo') {
+        // if ($table === 'misi_renstra_neo') {
 
-            $renstraId = $filtered['renstra_id'] ?? null;
+        //     $renstraId = $filtered['renstra_id'] ?? null;
 
-            if (!$renstraId) {
-                return JsonResponse::error("Renstra wajib dipilih");
-            }
+        //     if (!$renstraId) {
+        //         return JsonResponse::error("Renstra wajib dipilih");
+        //     }
 
-            $lastKode = $this->db->query("
-    SELECT MAX(CAST(kode AS UNSIGNED)) as max_kode
-    FROM misi_renstra_neo
-    WHERE renstra_id = ?
-", [$renstraId])->fetch()['max_kode'] ?? 0;
+        //     $lastKode = $this->db->query("
+        //         SELECT MAX(CAST(kode AS UNSIGNED)) as max_kode
+        //         FROM misi_renstra_neo
+        //         WHERE renstra_id = ?
+        //     ", [$renstraId])->fetch()['max_kode'] ?? 0;
 
-            $filtered['kode'] = $lastKode + 1;
-        }
+        //     $filtered['kode'] = $lastKode + 1;
+        // }
 
         /* =====================================================
 5️⃣ SYSTEM DEFAULT FIELD
@@ -533,14 +533,14 @@ kd_sub_keg → nama_sub_keg
         $this->validateAkunMapping($table, $filtered);
 
         /* =====================================================
-8️⃣ SANITATION & AUDIT
-===================================================== */
+        8️⃣ SANITATION & AUDIT
+        ===================================================== */
         $filtered = $this->applySanitization($table, $filtered);
         $filtered = $this->injectAudit($filtered, 'insert');
 
         /* =====================================================
-9️⃣ HYBRID VALIDATION (SCHEMA + PROFILE)
-===================================================== */
+        9️⃣ HYBRID VALIDATION (SCHEMA + PROFILE)
+        ===================================================== */
         $profile = $this->getProfileByTable($table);
         $errors  = $this->validate($filtered, $table, $profile);
 
@@ -549,16 +549,29 @@ kd_sub_keg → nama_sub_keg
         }
 
         /* =====================================================
-🔟 FINAL TRANSACTION
-===================================================== */
+        🔟 FINAL TRANSACTION
+        ===================================================== */
         return $this->runTransaction(function () use ($table, $filtered) {
 
+            // ======================================================
+            // VALIDASI DUPLICATE DI DALAM TRANSACTION
+            // ======================================================
+            // penting untuk mencegah race condition
+            $this->validateDuplicate($table, $filtered);
+
+            // ======================================================
+            // INSERT DATA
+            // ======================================================
             $this->db->insert($table, $filtered);
 
+            // ======================================================
+            // AMBIL ID TERAKHIR
+            // ======================================================
             $id = $this->db->lastInsertId();
 
-            $this->logActivity($table, $id, 'insert', null, $filtered);
-
+            // ======================================================
+            // RESPONSE SUCCESS
+            // ======================================================
             return JsonResponse::success("Data berhasil disimpan");
         });
     }
@@ -1692,15 +1705,21 @@ VALIDASI IMPORT PERMISSION
         $primaryKey = $this->getPrimaryKey($table);
 
         // jalankan query cek duplicate
+        // ==========================================================
+        // VALIDASI DUPLICATE DENGAN ROW LOCK
+        // ----------------------------------------------------------
+        // menggunakan SELECT ... FOR UPDATE agar request paralel
+        // tidak dapat melewati validasi duplicate secara bersamaan
+        // ==========================================================
+
         $exists = $this->db->query(
 
-            // query cek data
             "SELECT `$primaryKey`
-FROM `$table`
-WHERE " . implode(" AND ", $whereParts) . "
-LIMIT 1",
+                FROM `$table`
+                WHERE " . implode(" AND ", $whereParts) . "
+                LIMIT 1
+                FOR UPDATE",
 
-            // parameter query
             $params
 
         )->fetch();

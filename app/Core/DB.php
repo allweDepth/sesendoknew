@@ -50,10 +50,28 @@ class DB
 
     public function query($sql, $params = [])
     {
+        // ==================================================
+        // PREPARE QUERY
+        // ==================================================
         $stmt = $this->pdo->prepare($sql);
+
+        // ==================================================
+        // EXECUTE QUERY
+        // ==================================================
         $stmt->execute($params);
+
+        // ==================================================
+        // SIMPAN JUMLAH ROW TERPENGARUH
+        // ==================================================
         $this->count = $stmt->rowCount();
-        $this->lastInsertId = $this->pdo->lastInsertId();
+
+        // ==================================================
+        // HANYA UPDATE lastInsertId JIKA QUERY INSERT
+        // ==================================================
+        if (stripos(trim($sql), 'insert') === 0) {
+            $this->lastInsertId = $this->pdo->lastInsertId();
+        }
+
         return $stmt;
     }
 
@@ -108,7 +126,17 @@ class DB
 
     public function lastInsertId()
     {
-        return $this->lastInsertId;
+        // ==========================================
+        // AMBIL INSERT ID
+        // ==========================================
+        $id = $this->lastInsertId;
+
+        // ==========================================
+        // RESET AGAR TIDAK TERPAKAI ULANG
+        // ==========================================
+        $this->lastInsertId = 0;
+
+        return $id;
     }
     /* ===============================
        MINI QUERY BUILDER

@@ -227,7 +227,15 @@ class FormEngine {
 	 * ============================================================
 	 */
 	submit() {
-		// ambil elemen form dari selector yang disimpan engine
+		// ==========================================================
+		// CEGAH DOUBLE SUBMIT
+		// ==========================================================
+		if (this.isSubmitting) {
+			return; // jika sedang submit maka hentikan
+		}
+
+		this.isSubmitting = true;
+
 		const form = $(this.formSelector);
 
 		// jalankan validasi Fomantic UI
@@ -276,6 +284,8 @@ class FormEngine {
 				contentType: false, // wajib untuk FormData
 
 				success: () => {
+					// reset flag submit
+					this.isSubmitting = false;
 					// tentukan tabel yang harus reload
 					const reloadTable = this.state.reloadTable || this.state.tbl;
 
@@ -330,6 +340,8 @@ class FormEngine {
 			data: formData,
 
 			success: () => {
+				// reset flag submit
+				this.isSubmitting = false;
 				// tentukan tabel yang harus reload
 				const reloadTable = this.state.reloadTable || this.state.tbl;
 
@@ -345,9 +357,20 @@ class FormEngine {
 	 * ============================================================
 	 */
 	destroy() {
-		$(document).off("submit", this.formSelector);
+		// ==========================================================
+		// HAPUS SEMUA EVENT SUBMIT YANG MEMILIKI NAMESPACE formEngine
+		// ==========================================================
+		// ini wajib agar event submit tidak terdaftar lebih dari sekali
+		$(document).off(`submit.formEngine.${this.state.tbl}`, this.formSelector);
+
+		// ==========================================================
+		// HAPUS EVENT EDIT TABLE
+		// ==========================================================
 		$(document).off("table:edit");
 
+		// ==========================================================
+		// RESET STATUS ENGINE
+		// ==========================================================
 		this.isInitialized = false;
 	}
 
