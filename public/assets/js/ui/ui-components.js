@@ -359,6 +359,44 @@ class UIComponents {
 			});
 		});
 	}
+	static searchDropdown(label, name, value = "") {
+		/* =====================================================
+    FIELD CONTAINER
+    ===================================================== */
+
+		const field = $('<div class="field"></div>');
+
+		/* label field */
+
+		field.append(`<label>${label}</label>`);
+
+		/* =====================================================
+    DROPDOWN HTML
+    ===================================================== */
+
+		const dropdown = $(`
+        <div class="ui fluid search selection dropdown">
+            <input type="hidden" name="${name}" value="${value}">
+            <i class="dropdown icon"></i>
+            <div class="default text">Pilih ${label}</div>
+            <div class="menu"></div>
+        </div>
+    `);
+
+		field.append(dropdown);
+
+		/* =====================================================
+    AKTIFKAN FOMANTIC SEARCH
+    ===================================================== */
+
+		setTimeout(() => {
+			dropdown.dropdown({
+				fullTextSearch: true,
+			});
+		}, 10);
+
+		return field;
+	}
 }
 // REGISTER ALL COMPONENTS
 UIComponentRegistry.register("search", (p) =>

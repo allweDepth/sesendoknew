@@ -30,7 +30,15 @@ $profiles = [
         'primary_key' => 'id', // 🔥 Semua PK konsisten pakai id
         'allowed_roles' => ['super_admin'],
         'soft_lock' => true,
-
+        /* ======================================================
+    DROPDOWN CONFIG
+    ------------------------------------------------------
+    menentukan field dropdown lookup
+    ====================================================== */
+        'dropdown' => [
+            'value' => 'kode',     // value yang disimpan di mapping
+            'label' => 'uraian'    // teks yang tampil di dropdown
+        ],
         'modes' => [
             'default' => [
                 'select' => ['*'],
@@ -1718,6 +1726,7 @@ $profiles = [
 
     ],
 ];
+$profiles['akun_neo'] = $profiles['akun'];
 $profiles['sub_kegiatan_ref'] = $profiles['sub_kegiatan'];
 $profiles['sub_kegiatan_ref']['module_alias'] = 'sub_kegiatan_ref';
 return $profiles;
