@@ -549,30 +549,35 @@ kd_sub_keg → nama_sub_keg
         }
 
         /* =====================================================
-        🔟 FINAL TRANSACTION
-        ===================================================== */
+🔟 FINAL TRANSACTION (SAFE INSERT VERSION)
+===================================================== */
+
         return $this->runTransaction(function () use ($table, $filtered) {
 
-            // ======================================================
-            // VALIDASI DUPLICATE DI DALAM TRANSACTION
-            // ======================================================
+            /* =========================================
+    1️⃣ VALIDASI DUPLICATE DALAM TRANSACTION
+    ========================================= */
+
             // penting untuk mencegah race condition
             $this->validateDuplicate($table, $filtered);
 
-            // ======================================================
-            // INSERT DATA
-            // ======================================================
-            $this->db->insert($table, $filtered);
+            /* =========================================
+    2️⃣ INSERT DATA SECARA AMAN
+    ========================================= */
 
-            // ======================================================
-            // AMBIL ID TERAKHIR
-            // ======================================================
-            $id = $this->db->lastInsertId();
+            // menggunakan safe insert
+            $id = $this->insertSafe($table, $filtered);
 
-            // ======================================================
-            // RESPONSE SUCCESS
-            // ======================================================
-            return JsonResponse::success("Data berhasil disimpan");
+            /* =========================================
+    3️⃣ RESPONSE SUCCESS
+    ========================================= */
+
+            return JsonResponse::success(
+                "Data berhasil disimpan",
+                [
+                    'insert_id' => $id
+                ]
+            );
         });
     }
     /* =========================================================
@@ -730,12 +735,30 @@ IGNORE SYSTEM FIELD
 
         return $this->runTransaction(function () use ($table, $primaryKey, $id, $diff, $oldData) {
 
-            $this->db->update(
-                $table,
-                $diff,
-                "WHERE `$primaryKey` = ?",
-                [$id]
-            );
+            /* =========================================
+UPDATE DATA DENGAN DUPLICATE HANDLER
+========================================= */
+
+            try {
+
+                $this->db->update(
+                    $table,
+                    $diff,
+                    "WHERE `$primaryKey` = ?",
+                    [$id]
+                );
+            } catch (PDOException $e) {
+
+                // SQLSTATE duplicate
+                if ($e->getCode() === '23000') {
+
+                    return JsonResponse::error(
+                        "Update gagal karena data duplicate."
+                    );
+                }
+
+                throw $e;
+            }
 
             $this->logActivity($table, $id, 'update', $oldData, $diff);
 
@@ -1555,19 +1578,91 @@ UTIL: CEK APAKAH TABEL ADA
 
         return (bool)$result;
     }
+    /* =========================================================
+TRANSACTION WRAPPER (FIXED VERSION)
+---------------------------------------------------------
+Perbaikan:
+1. Menggunakan PDO native transaction API
+2. Mencegah nested transaction error
+3. Lebih aman untuk concurrency
+========================================================= */
     private function runTransaction(callable $callback)
     {
         try {
 
-            $this->db->query("START TRANSACTION");
+            /* =========================================
+        1️⃣ MULAI TRANSACTION PDO
+        ========================================= */
 
+            // gunakan PDO beginTransaction
+            // lebih aman dibanding START TRANSACTION SQL
+            $this->db->begin();
+
+            /* =========================================
+        2️⃣ JALANKAN LOGIC CALLBACK
+        ========================================= */
+
+            // callback biasanya berisi insert/update/delete
             $result = $callback();
 
-            $this->db->query("COMMIT");
+            /* =========================================
+        3️⃣ COMMIT TRANSACTION
+        ========================================= */
 
+            // jika tidak ada exception
+            $this->db->commit();
+
+            // kembalikan hasil callback
             return $result;
-        } catch (Exception $e) {
-            $this->db->query("ROLLBACK");
+        } catch (\Throwable $e) {
+
+            /* =========================================
+        4️⃣ ROLLBACK JIKA ERROR
+        ========================================= */
+
+            // batalkan semua query dalam transaction
+            $this->db->rollback();
+
+            // lempar kembali error agar layer atas tahu
+            throw $e;
+        }
+    }
+    /* =========================================================
+SAFE INSERT ENGINE
+---------------------------------------------------------
+Menangkap duplicate key error dari MySQL
+SQLSTATE 23000
+========================================================= */
+    private function insertSafe(string $table, array $data)
+    {
+        try {
+
+            /* =========================================
+        1️⃣ LAKUKAN INSERT NORMAL
+        ========================================= */
+
+            $this->db->insert($table, $data);
+
+            /* =========================================
+        2️⃣ RETURN LAST INSERT ID
+        ========================================= */
+
+            return $this->db->lastInsertId();
+        } catch (PDOException $e) {
+
+            /* =========================================
+        3️⃣ DETEKSI DUPLICATE KEY
+        ========================================= */
+
+            // SQLSTATE 23000 = duplicate constraint
+            if ($e->getCode() === '23000') {
+
+                throw new Exception(
+                    "Data sudah ada (duplicate key constraint)."
+                );
+            }
+
+            // lempar error lain
             throw $e;
         }
     }
