@@ -202,18 +202,23 @@ class FormEngine {
 		// =====================================================
 		// HAPUS EVENT LAMA DENGAN SELECTOR
 		// =====================================================
-		$(document).off(eventName, this.formSelector);
+		// =============================================
+		// HAPUS SEMUA EVENT FORM ENGINE
+		// =============================================
+		$(document).off(`submit.formEngine.${this.state.tbl}`);
 
-		// =====================================================
+		// =============================================
 		// BIND EVENT BARU
-		// =====================================================
-		$(document).on(eventName, this.formSelector, (e) => {
-			// cegah submit browser
-			e.preventDefault();
+		// =============================================
+		$(document).on(
+			`submit.formEngine.${this.state.tbl}`,
+			this.formSelector,
+			(e) => {
+				e.preventDefault();
 
-			// jalankan submit engine
-			this.submit();
-		});
+				this.submit();
+			},
+		);
 	}
 
 	/**
@@ -227,24 +232,30 @@ class FormEngine {
 	 * ============================================================
 	 */
 	submit() {
-		// ==========================================================
+		// =============================================
 		// CEGAH DOUBLE SUBMIT
-		// ==========================================================
+		// =============================================
 		if (this.isSubmitting) {
-			return; // jika sedang submit maka hentikan
+			return;
 		}
-
-		this.isSubmitting = true;
 
 		const form = $(this.formSelector);
 
-		// jalankan validasi Fomantic UI
+		// =============================================
+		// VALIDASI FORM
+		// =============================================
 		form.form("validate form");
 
-		// jika form tidak valid → hentikan proses submit
+		// jika tidak valid → reset flag
 		if (!form.form("is valid")) {
+			this.isSubmitting = false;
 			return;
 		}
+
+		// =============================================
+		// AKTIFKAN LOCK SUBMIT
+		// =============================================
+		this.isSubmitting = true;
 
 		// normalisasi calendar kosong → null
 		form.find(".ui.calendar input").each(function () {
@@ -1003,22 +1014,35 @@ class FormEngine {
 	 * - scroll ke field error pertama
 	 */
 	initFomanticValidation() {
+		// ============================================================
+		// AMBIL KONFIG VALIDASI DARI UICONFIG
+		// ============================================================
 		const config = UIConfig[this.state.tbl];
 
+		// jika tidak ada schema validation → hentikan
 		if (!config?.validation) return;
 
+		// ============================================================
+		// BANGUN RULE VALIDATION
+		// ============================================================
 		const fields = this.buildFomanticRules(config.validation);
 
+		// ============================================================
+		// INISIALISASI VALIDATION FOMANTIC
+		// ============================================================
 		$(this.formSelector).form({
+			// validasi inline
 			inline: true,
+
+			// trigger validasi saat blur
 			on: "blur",
+
+			// rule field
 			fields: fields,
 
-			/**
-			 * ========================================================
-			 * VALIDATION FAILED
-			 * ========================================================
-			 */
+			// ========================================================
+			// VALIDATION FAILED
+			// ========================================================
 			onFailure: function (errors) {
 				const form = $(this);
 
@@ -1047,15 +1071,25 @@ class FormEngine {
 						300,
 					);
 				}
+
+				// hentikan submit browser
+				return false;
 			},
 
-			/**
-			 * ========================================================
-			 * VALIDATION SUCCESS
-			 * ========================================================
-			 */
-			onSuccess: function () {
+			// ========================================================
+			// VALIDATION SUCCESS
+			// ========================================================
+			onSuccess: function (event) {
+				// ================================================
+				// BLOK SUBMIT DEFAULT BROWSER
+				// ================================================
+				event.preventDefault();
+
+				// sembunyikan error summary
 				$(this).find(".ui.error.message").hide().empty();
+
+				// return false wajib agar browser tidak submit ulang
+				return false;
 			},
 		});
 	}
