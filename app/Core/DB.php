@@ -40,15 +40,20 @@ class DB
 
         try {
 
-            // ==================================================
-            // CEK SOCKET MYSQL OTOMATIS
-            // ==================================================
+            /* ==================================================
+BUILD DSN DATABASE CONNECTION
+----------------------------------------------------
+Prioritas:
+1. Socket config
+2. Auto detect socket
+3. Fallback ke TCP host
+================================================== */
 
             $socket = $config['socket'] ?? null;
 
-            /* ===============================
-AUTO DETECT SOCKET
-=============================== */
+            /* =========================================
+AUTO DETECT SOCKET JIKA BELUM ADA
+========================================= */
 
             if (!$socket) {
 
@@ -60,40 +65,27 @@ AUTO DETECT SOCKET
 
                 foreach ($possibleSockets as $s) {
 
+                    // cek apakah file socket ada di server
                     if (file_exists($s)) {
+
+                        // gunakan socket tersebut
                         $socket = $s;
                         break;
                     }
                 }
             }
 
-            // jika socket tidak di set tapi file socket ada
-            if (!$socket && file_exists('/run/mysqld/mysqld.sock')) {
-                $socket = '/run/mysqld/mysqld.sock';
-            }
+            /* =========================================
+BUILD DSN BERDASARKAN SOCKET / HOST
+========================================= */
 
-            // jika socket Synology
             if ($socket) {
+
+                // koneksi menggunakan unix socket
                 $dsn = "mysql:unix_socket={$socket};dbname={$config['dbname']};charset=utf8mb4";
             } else {
-                $dsn = "mysql:host={$config['host']};dbname={$config['dbname']};charset=utf8mb4";
-            }
 
-            // ==================================================
-            // JIKA SOCKET ADA → PAKAI SOCKET
-            // ==================================================
-
-            if ($socket) {
-
-                $dsn = "mysql:unix_socket={$socket};dbname={$config['dbname']};charset=utf8mb4";
-            }
-
-            // ==================================================
-            // JIKA TIDAK → PAKAI HOST
-            // ==================================================
-
-            else {
-
+                // fallback menggunakan TCP host
                 $dsn = "mysql:host={$config['host']};dbname={$config['dbname']};charset=utf8mb4";
             }
 
@@ -148,40 +140,79 @@ AUTO DETECT SOCKET
     }
 
     /* ======================================================
-       CORE QUERY
-    ====================================================== */
-
+CORE QUERY ENGINE (HARDENED VERSION)
+--------------------------------------------------------
+Perbaikan:
+1. Validasi SQL kosong
+2. Exception lebih jelas
+3. Simpan rowCount
+4. Simpan lastInsertId
+====================================================== */
     public function query($sql, $params = [])
     {
-        // ==================================================
-        // PREPARE QUERY
-        // ==================================================
-        $stmt = $this->pdo->prepare($sql);
+        /* =========================================
+    VALIDASI QUERY
+    ========================================= */
 
-        // ==================================================
-        // EXECUTE QUERY DENGAN PARAMETER
-        // ==================================================
-        $stmt->execute($params);
+        if (!$sql || !is_string($sql)) {
 
-        // ==================================================
-        // SIMPAN JUMLAH ROW TERPENGARUH
-        // ==================================================
-        $this->count = $stmt->rowCount();
-
-        // ==================================================
-        // DETEKSI QUERY INSERT
-        // ==================================================
-        if (stripos(trim($sql), 'insert') === 0) {
-
-            // simpan last insert id
-            $this->lastInsertId = $this->pdo->lastInsertId();
+            throw new Exception("SQL query tidak valid.");
         }
 
-        // ==================================================
-        // RETURN PDOStatement
-        // agar bisa fetch(), fetchAll(), dll
-        // ==================================================
-        return $stmt;
+        try {
+
+            /* =========================================
+        PREPARE STATEMENT
+        ========================================= */
+
+            $stmt = $this->pdo->prepare($sql);
+
+            /* =========================================
+            EXECUTE QUERY
+            ========================================= */
+
+            $stmt->execute($params);
+
+            /* =========================================
+            RELEASE CURSOR UNTUK QUERY NON SELECT
+            mencegah memory leak saat import besar
+            ========================================= */
+
+            if (stripos(trim($sql), 'select') !== 0) {
+                $stmt->closeCursor();
+            }
+
+            /* =========================================
+            SIMPAN ROW COUNT
+            ========================================= */
+
+            $this->count = $stmt->rowCount();
+
+            /* =========================================
+            DETEKSI INSERT
+            ========================================= */
+
+            if (stripos(trim($sql), 'insert') === 0) {
+
+                // ambil last insert id dari PDO
+                $this->lastInsertId = $this->pdo->lastInsertId();
+            }
+
+            /* =========================================
+        RETURN STATEMENT
+        ========================================= */
+
+            return $stmt;
+        } catch (PDOException $e) {
+
+            /* =========================================
+        THROW ERROR DENGAN SQL CONTEXT
+        ========================================= */
+
+            throw new Exception(
+                "SQL Error: " . $e->getMessage()
+            );
+        }
     }
 
     // ======================================================
@@ -197,6 +228,23 @@ AUTO DETECT SOCKET
         $sql = "SELECT * FROM {$table} {$where}";
 
         return $this->query($sql, $params)->fetchAll();
+    }
+    /* ======================================================
+RESET QUERY BUILDER
+--------------------------------------------------------
+Digunakan untuk membersihkan state builder
+====================================================== */
+    private function resetQB()
+    {
+        $this->qb = [
+            'table' => null,
+            'select' => '*',
+            'join' => [],
+            'where' => [],
+            'params' => [],
+            'order' => '',
+            'limit' => ''
+        ];
     }
 
     // ======================================================
@@ -338,21 +386,55 @@ AUTO DETECT SOCKET
        TRANSACTION HELPER
     ====================================================== */
 
+    /* ======================================================
+BEGIN TRANSACTION (SAFE VERSION)
+--------------------------------------------------------
+Mencegah nested transaction error
+Jika transaction sudah aktif → tidak membuat baru
+====================================================== */
     public function begin()
     {
-        $this->pdo->beginTransaction();
+        // cek apakah PDO sudah berada dalam transaction
+        if (!$this->pdo->inTransaction()) {
+
+            // mulai transaction
+            $this->pdo->beginTransaction();
+        }
     }
 
+    /* ======================================================
+COMMIT TRANSACTION (SAFE VERSION)
+--------------------------------------------------------
+Hanya commit jika transaction aktif
+====================================================== */
     public function commit()
     {
-        $this->pdo->commit();
+        if ($this->pdo->inTransaction()) {
+
+            $this->pdo->commit();
+        }
     }
 
+    /* ======================================================
+ROLLBACK TRANSACTION (SAFE VERSION)
+--------------------------------------------------------
+Mencegah rollback error jika tidak ada transaction
+====================================================== */
     public function rollback()
     {
-        $this->pdo->rollBack();
+        if ($this->pdo->inTransaction()) {
+
+            $this->pdo->rollBack();
+        }
     }
 
+    /* ======================================================
+CEK STATUS TRANSACTION
+====================================================== */
+    public function inTransaction()
+    {
+        return $this->pdo->inTransaction();
+    }
     /* ======================================================
        MULTI QUERY EXECUTOR
        DIGUNAKAN UNTUK RESTORE SQL
@@ -475,7 +557,7 @@ AUTO DETECT SOCKET
         // ==================================================
         // RESET QUERY BUILDER
         // ==================================================
-        $this->qb = [];
+        $this->resetQB();
 
         return $result;
     }
@@ -499,8 +581,14 @@ AUTO DETECT SOCKET
     }
     private function validateTable($table)
     {
+        if (!is_string($table) || $table === '') {
+
+            throw new Exception("Table name kosong.");
+        }
+
         if (!preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
-            throw new Exception("Invalid table name");
+
+            throw new Exception("Invalid table name: {$table}");
         }
     }
 }

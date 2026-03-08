@@ -352,6 +352,11 @@ INSERT (FIXED STABLE VERSION v3.1)
 ========================================================= */
     private function insert(string $table, array $request): string
     {
+        /* =========================================
+ANTI DOUBLE SUBMIT
+========================================= */
+
+        $this->guardDoubleSubmit($request);
         $columns  = $this->getTableColumns($table);
         $filtered = [];
 
@@ -579,6 +584,26 @@ kd_sub_keg → nama_sub_keg
                 ]
             );
         });
+    }
+    /* ======================================================
+REQUEST GUARD (ANTI DOUBLE SUBMIT)
+--------------------------------------------------------
+Mencegah form submit dua kali
+====================================================== */
+    private function guardDoubleSubmit(array $request): void
+    {
+        ksort($request); // stabilkan urutan key
+
+        $fingerprint = md5(json_encode($request));
+
+        $last = $_SESSION['_last_request'] ?? null;
+
+        if ($last === $fingerprint) {
+
+            throw new Exception("Duplicate request terdeteksi.");
+        }
+
+        $_SESSION['_last_request'] = $fingerprint;
     }
     /* =========================================================
 UPDATE (FIXED STABLE VERSION v3.1)
@@ -2316,13 +2341,10 @@ HEADER PROCESSING
                     // CEK DUPLICATE DALAM FILE EXCEL
                     // ======================================================
 
-                    // ambil rule duplicate dari profile
                     $profile = $this->getProfileByTable($table);
 
-                    // jika ada rule duplicate
                     if (!empty($profile['not_duplicate'])) {
 
-                        // buat key duplicate
                         $keyParts = [];
 
                         foreach ($profile['not_duplicate'] as $field) {
@@ -2330,10 +2352,8 @@ HEADER PROCESSING
                             $keyParts[] = $data[$field] ?? '';
                         }
 
-                        // gabungkan menjadi key unik
                         $duplicateKey = implode('|', $keyParts);
-                        $duplicateMemory = [];
-                        // jika key sudah ada
+
                         if (isset($duplicateMemory[$duplicateKey])) {
 
                             throw new Exception(
@@ -2341,7 +2361,6 @@ HEADER PROCESSING
                             );
                         }
 
-                        // simpan key ke memory
                         $duplicateMemory[$duplicateKey] = true;
                     }
 
