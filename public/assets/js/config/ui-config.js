@@ -743,6 +743,7 @@ TIPE STANDAR BIAYA
 					label: "Tipe Standar Biaya",
 					name: "tipe",
 					readonly: true,
+					value: window.app?.state?.req,
 				},
 			},
 
@@ -756,6 +757,7 @@ SEARCH MASTER BIAYA
 					label: "Cari Standar Biaya",
 					name: "master_biaya_id",
 					source: "master_biaya",
+					labelField: "uraian_label",
 				},
 			},
 

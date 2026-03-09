@@ -37,6 +37,9 @@ class FormEngine {
 
 		this.loadDropdownSources();
 		this.initCascadeDropdown(); // ← aktifkan cascade dropdown
+		/* re-init komponen UI setelah render form */
+		UIComponents.initSearch();
+		UIComponents.initLookupDropdown();
 		// GLOBAL HEADER FLYOUT
 		this.setFlyoutHeader(this.state.tbl);
 	}
@@ -330,7 +333,21 @@ class FormEngine {
 		// MODE NORMAL SUBMIT
 		// ======================================================
 
+		/* =====================================================
+AMBIL STATE GLOBAL
+===================================================== */
+
+		const req = window.app?.state?.req || null;
+
+		/* =====================================================
+TAMBAHKAN KE FORM DATA
+===================================================== */
+
 		let formData = form.serialize();
+
+		if (req !== null) {
+			formData += "&req=" + encodeURIComponent(req);
+		}
 
 		formData += `&action=${this.state.action}`;
 		formData += `&tbl=${this.state.tbl}`;

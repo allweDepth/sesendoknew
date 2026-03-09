@@ -7,13 +7,53 @@ class UIComponents {
 	// BASIC INPUT
 	// ==================================================
 
-	static input(label, name, type = "text") {
+	/* ======================================================
+INPUT FIELD UNIVERSAL
+mendukung:
+- readonly
+- required
+- placeholder
+- value
+- atribut tambahan
+====================================================== */
+
+	static input(label, name, type = "text", prop = {}) {
+		/* =========================================
+	AMBIL ATRIBUT DARI CONFIG
+	========================================= */
+
+		/* FIX: support boolean dan string */
+		const readonly =
+			prop.readonly === true || prop.readonly === "readonly"
+				? "readonly disabled"
+				: ""; // readonly
+		const required = prop.required ? "required" : ""; // required
+		/* value harus tetap muncul walau kosong atau 0 */
+		const value = prop.value !== undefined ? `value="${prop.value}"` : ""; // default value
+		const placeholder = prop.placeholder
+			? `placeholder="${prop.placeholder}"`
+			: "";
+
+		/* atribut tambahan */
+		const atribut = prop.atribut ? prop.atribut : "";
+
 		return `
-        <div class="field">
-            <label>${label}</label>
-            <input type="${type}" name="${name}">
-        </div>
-        `;
+	<div class="field">
+
+		<label>${label}</label>
+
+		<input 
+			type="${type}" 
+			name="${name}"
+			${readonly}
+			${required}
+			${value}
+			${placeholder}
+			${atribut}
+		>
+
+	</div>
+	`;
 	}
 
 	// ==================================================
@@ -283,9 +323,8 @@ class UIComponents {
 	// ALIAS FIELD (AGAR COMPATIBLE DENGAN UI CONFIG)
 	// ======================================================
 
-	static field(label, name, type = "text") {
-		// gunakan input yang sudah ada
-		return UIComponents.input(label, name, type);
+	static field(label, name, type = "text", prop = {}) {
+		return UIComponents.input(label, name, type, prop);
 	}
 
 	static fieldTextarea(label, name) {
@@ -330,7 +369,7 @@ class UIComponents {
 	// FOMANTIC SEARCH MODULE
 	// ======================================================
 
-	static search(label, name, source) {
+	static search(label, name, source, prop = {}) {
 		return `
 	<div class="field">
 
@@ -338,7 +377,7 @@ class UIComponents {
 
 		<div class="ui search ds-search"
 		     data-source="${source}"
-		     data-name="${name}">
+		     data-name="${name}" data-label-field="${prop.labelField || ""}">
 
 			<div class="ui icon input">
 
@@ -357,41 +396,111 @@ class UIComponents {
 	</div>
 	`;
 	}
-	// ======================================================
-	// INIT FOMANTIC SEARCH
-	// ======================================================
+	/* ======================================================
+INIT FOMANTIC SEARCH
+FILE:
+public/assets/js/ui/ui-components.js
+====================================================== */
 
 	static initSearch() {
+		/* ==================================================
+	LOOP SEMUA SEARCH COMPONENT
+	class: ds-search
+	================================================== */
+
 		$(".ds-search").each(function () {
+			/* =========================================
+		ELEMENT SEARCH
+		========================================= */
+
 			const el = $(this);
+
+			/* =========================================
+		SOURCE TABEL LOOKUP
+		contoh:
+		master_biaya
+		akun_neo
+		========================================= */
 
 			const source = el.data("source");
 
+			/* =========================================
+		NAMA FIELD YANG DIKIRIM KE FORM
+		========================================= */
+
 			const name = el.data("name");
 
+			/* =========================================
+		AKTIFKAN FOMANTIC SEARCH
+		========================================= */
+
 			el.search({
+				minCharacters: 3,
+				searchDelay: 1200,
 				apiSettings: {
 					method: "POST",
 
+					/* =====================================
+				URL API ENGINE
+				===================================== */
+
 					url: "/dynamic",
+					beforeXHR: function (xhr) {
+						xhr.setRequestHeader("X-CSRF-TOKEN", window.CSRF_TOKEN);
+					},
+					/* =====================================
+				BUILD REQUEST SEBELUM DIKIRIM
+				===================================== */
 
 					beforeSend(settings) {
+						/* =================================
+					AMBIL QUERY DARI INPUT SEARCH
+					bukan dari settings.urlData.query
+					================================= */
+
+						const query = el.find(".prompt").val();
+
+						/* =================================
+					AMBIL LIMIT ROW DARI NAVBAR
+					id="countRow"
+					================================= */
+
+						const limit = $("#countRow").dropdown("get value") || 20;
+
+						/* =================================
+					STATE MENU (SSH/SBU/ASB/HSPK)
+					================================= */
+
+						const req = window.app?.state?.req || null;
+
+						/* =================================
+					DATA YANG DIKIRIM KE SERVER
+					================================= */
+
+						/* ambil token csrf dari meta */
+						const csrf = $('meta[name="csrf-token"]').attr("content");
+
 						settings.data = {
 							action: "dropdown",
-
 							tbl: source,
-
-							cari: settings.urlData.query,
-
-							limit: $("#countRow").val() || 20,
-
-							req: window.app?.state?.req || null,
+							cari: query,
+							limit: limit,
+							req: req,
+							csrf_token: csrf,
 						};
 
 						return settings;
 					},
 
+					/* =====================================
+				MAP RESPONSE SERVER → FORMAT FOMANTIC
+				===================================== */
+
 					onResponse(res) {
+						if (!res.success) {
+							return { results: [] };
+						}
+
 						return {
 							results: res.data.map((row) => ({
 								title: row.text || row.uraian,
@@ -402,12 +511,28 @@ class UIComponents {
 					},
 				},
 
+				/* =====================================
+			KETIKA USER MEMILIH RESULT
+			===================================== */
+
 				onSelect(result) {
+					/* =================================
+				SIMPAN ID KE FIELD HIDDEN
+				================================= */
+
 					el.find(`input[name="${name}"]`).val(result.value);
+
+					/* =================================
+				ISI LABEL HASIL SEARCH
+				================================= */
 
 					const form = el.closest("form");
 
-					form.find('[name="uraian_label"]').val(result.title);
+					const labelField = el.data("label-field");
+
+					if (labelField) {
+						form.find(`[name="${labelField}"]`).val(result.title);
+					}
 				},
 			});
 		});
@@ -449,39 +574,92 @@ contoh:
 
 		return html;
 	}
-	/* =========================================================
+	/* ======================================================
 INIT LOOKUP DROPDOWN
-========================================================= */
+FILE:
+public/assets/js/ui/ui-components.js
+====================================================== */
 
 	static initLookupDropdown() {
+		/* =========================================
+	LOOP SEMUA LOOKUP DROPDOWN
+	class: lookup-dropdown
+	========================================= */
+
 		$(".lookup-dropdown").dropdown({
+			/* =====================================
+		MINIMAL KARAKTER SEARCH
+		===================================== */
+
 			minCharacters: 2,
 
 			apiSettings: {
 				method: "POST",
 
+				/* =====================================
+			URL API ENGINE
+			===================================== */
+
 				url: "/dynamic",
 
+				/* =====================================
+			BUILD REQUEST DATA
+			===================================== */
+
 				beforeSend(settings) {
+					/* =================================
+				AMBIL SOURCE DARI HTML
+				contoh:
+				data-source="master_biaya"
+				================================= */
+
 					const source = $(settings.element).data("source");
+
+					/* =================================
+				QUERY DROPDOWN DARI FOMANTIC
+				================================= */
+
+					const query = settings.urlData.query || "";
+
+					/* =================================
+				LIMIT ROW
+				================================= */
+
+					const limit = $("#countRow").dropdown("get value") || 20;
+
+					/* =================================
+				STATE MENU
+				================================= */
+
+					const req = window.app?.state?.req || null;
+
+					/* =================================
+				DATA DIKIRIM KE SERVER
+				================================= */
 
 					settings.data = {
 						action: "dropdown",
 
 						tbl: source,
 
-						cari: settings.urlData.query,
+						cari: query,
 
-						limit: $("#countRow").val() || 20,
+						limit: limit,
 
-						req: window.app?.state?.req || null,
+						req: req,
 					};
 
 					return settings;
 				},
 
+				/* =====================================
+			RESPONSE SERVER → FORMAT FOMANTIC
+			===================================== */
+
 				onResponse(res) {
-					if (!res.success) return { success: false, results: [] };
+					if (!res.success) {
+						return { success: false, results: [] };
+					}
 
 					return {
 						success: true,
@@ -499,13 +677,15 @@ INIT LOOKUP DROPDOWN
 }
 // REGISTER ALL COMPONENTS
 UIComponentRegistry.register("search", (p) =>
-	UIComponents.search(p.label, p.name, p.source),
+	UIComponents.search(p.label, p.name, p.source, p),
 );
 UIComponentRegistry.register("fieldMessage", (p) => UIComponents.message(p));
 UIComponentRegistry.register("input", (p) =>
-	UIComponents.input(p.label, p.name, p.type || "text"),
+	UIComponents.input(p.label, p.name, p.type || "text", p),
 );
-
+UIComponentRegistry.register("field", (p) =>
+	UIComponents.field(p.label, p.name, p.type || "text", p),
+);
 UIComponentRegistry.register("textarea", (p) =>
 	UIComponents.textarea(p.label, p.name),
 );
