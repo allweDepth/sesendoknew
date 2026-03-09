@@ -109,7 +109,15 @@ class TableManager {
 		/* =====================================================
    BUILD PAYLOAD REQUEST
 ===================================================== */
+		/* =====================================================
+AMBIL LIMIT TERBARU DARI NAVBAR
+===================================================== */
 
+		const limitNavbar = $("#countRow").dropdown("get value");
+		// membaca jumlah row dari dropdown navbar
+
+		this.limit = limitNavbar || this.limit;
+		// jika navbar kosong gunakan limit lama
 		let payload = {
 			/* aksi CRUD */
 			action: "list",
@@ -125,6 +133,9 @@ class TableManager {
 
 			/* pagination */
 			halaman: this.currentPage,
+			/* =====================================================
+KIRIM KE SERVER
+===================================================== */
 			rows: this.limit,
 
 			/* search */

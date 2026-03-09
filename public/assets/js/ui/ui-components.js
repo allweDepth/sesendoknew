@@ -435,16 +435,27 @@ public/assets/js/ui/ui-components.js
 		========================================= */
 
 			el.search({
+				/* =============================================
+	MINIMAL KARAKTER SEBELUM SEARCH DIJALANKAN
+	menghindari request terlalu cepat
+	============================================= */
+
 				minCharacters: 3,
-				searchDelay: 1200,
+
+				/* =============================================
+	JEDA ANTAR REQUEST KE SERVER (ms)
+	agar server tidak dibanjiri request
+	============================================= */
+
+				searchDelay: 700,
 				apiSettings: {
 					method: "POST",
-
-					/* =====================================
-				URL API ENGINE
-				===================================== */
-
 					url: "/dynamic",
+
+					/* =====================================================
+	SERAGAMKAN CSRF DENGAN AJAX ENGINE
+	===================================================== */
+
 					beforeXHR: function (xhr) {
 						xhr.setRequestHeader("X-CSRF-TOKEN", window.CSRF_TOKEN);
 					},
@@ -477,16 +488,17 @@ public/assets/js/ui/ui-components.js
 					DATA YANG DIKIRIM KE SERVER
 					================================= */
 
-						/* ambil token csrf dari meta */
-						const csrf = $('meta[name="csrf-token"]').attr("content");
+						/* =====================================================
+KIRIM DATA REQUEST
+CSRF DIKIRIM VIA HEADER GLOBAL
+===================================================== */
 
 						settings.data = {
-							action: "dropdown",
-							tbl: source,
-							cari: query,
-							limit: limit,
-							req: req,
-							csrf_token: csrf,
+							action: "dropdown", // jenis request
+							tbl: source, // tabel lookup
+							cari: query, // keyword search
+							limit: limit, // limit navbar
+							req: req, // tipe mapping aktif
 						};
 
 						return settings;
@@ -516,22 +528,37 @@ public/assets/js/ui/ui-components.js
 			===================================== */
 
 				onSelect(result) {
-					/* =================================
-				SIMPAN ID KE FIELD HIDDEN
-				================================= */
+					/* =============================================
+	SIMPAN ID KE FIELD HIDDEN
+	============================================= */
 
 					el.find(`input[name="${name}"]`).val(result.value);
-
-					/* =================================
-				ISI LABEL HASIL SEARCH
-				================================= */
+					// menyimpan id hasil search
 
 					const form = el.closest("form");
+					// mencari form parent
 
 					const labelField = el.data("label-field");
+					// nama field label jika ada
 
 					if (labelField) {
 						form.find(`[name="${labelField}"]`).val(result.title);
+						// isi label uraian
+					}
+
+					/* =============================================
+	SINKRONKAN DENGAN TABLE MANAGER
+	============================================= */
+
+					if (window.tableManager) {
+						window.tableManager.searchQuery = result.title;
+						// set query grid
+
+						window.tableManager.currentPage = 1;
+						// reset halaman
+
+						window.tableManager.loadData();
+						// reload tabel
 					}
 				},
 			});
@@ -595,13 +622,29 @@ public/assets/js/ui/ui-components.js
 
 			apiSettings: {
 				method: "POST",
-
-				/* =====================================
-			URL API ENGINE
-			===================================== */
-
 				url: "/dynamic",
 
+				/* =====================================================
+	SERAGAMKAN CSRF DENGAN AJAX ENGINE
+	===================================================== */
+
+				beforeXHR: function (xhr) {
+					xhr.setRequestHeader("X-CSRF-TOKEN", window.CSRF_TOKEN);
+				},
+
+				/* =============================================
+	MINIMAL KARAKTER SEBELUM SEARCH DIJALANKAN
+	menghindari request terlalu cepat
+	============================================= */
+
+				minCharacters: 3,
+
+				/* =============================================
+	JEDA ANTAR REQUEST KE SERVER (ms)
+	agar server tidak dibanjiri request
+	============================================= */
+
+				searchDelay: 700,
 				/* =====================================
 			BUILD REQUEST DATA
 			===================================== */
@@ -637,16 +680,21 @@ public/assets/js/ui/ui-components.js
 				DATA DIKIRIM KE SERVER
 				================================= */
 
+					/* =================================
+AMBIL TOKEN CSRF DARI META
+================================= */
+
+					/* =====================================================
+KIRIM DATA REQUEST
+CSRF DIKIRIM VIA HEADER GLOBAL
+===================================================== */
+
 					settings.data = {
-						action: "dropdown",
-
-						tbl: source,
-
-						cari: query,
-
-						limit: limit,
-
-						req: req,
+						action: "dropdown", // jenis request
+						tbl: source, // tabel lookup
+						cari: query, // keyword search
+						limit: limit, // limit navbar
+						req: req, // tipe mapping aktif
 					};
 
 					return settings;

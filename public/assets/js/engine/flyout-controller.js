@@ -54,6 +54,22 @@ class FlyoutController {
 		$(document).on("click", ".btnFlyoutClose", function () {
 			self.$flyout.sidebar("hide");
 		});
+		/* =====================================================
+LISTENER LIMIT NAVBAR
+===================================================== */
+
+		$("#countRow").dropdown({
+			onChange: (value) => {
+				this.limit = value;
+				// update limit table
+
+				this.currentPage = 1;
+				// reset halaman
+
+				this.loadData();
+				// reload tabel
+			},
+		});
 	}
 
 	getActiveForm() {

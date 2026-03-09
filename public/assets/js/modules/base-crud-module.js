@@ -99,7 +99,22 @@ class BaseCrudModule {
 			const tbl = $item.data("tbl"); // tabel
 			const req = $item.data("req") || null; // req tambahan jika ada
 
-			this.loadTable(tbl, req); // kirim ke loadTable
+			/* =====================================================
+RESET SEARCH FIELD SAAT TAB MENU BERUBAH
+===================================================== */
+
+			$(".ds-search .prompt").val("");
+			// kosongkan text search agar query lama tidak dipakai
+
+			$(".ds-search input[type='hidden']").val("");
+			// kosongkan value id hasil search
+
+			/* =====================================================
+LANJUTKAN LOAD TABLE
+===================================================== */
+
+			this.loadTable(tbl, req);
+			// load tabel sesuai tab baru
 		});
 	}
 
@@ -117,6 +132,14 @@ class BaseCrudModule {
 
 		// reset request tambahan
 		this.state.req = req || null;
+
+		/* =========================================
+SYNC GLOBAL STATE
+agar komponen lain seperti search dapat membaca
+========================================= */
+
+		window.app = window.app || {};
+		window.app.state = this.state;
 		// ====================================================
 		// 🔥 SYNC URL AGAR REFRESH AMAN
 		// ====================================================
@@ -158,13 +181,30 @@ class BaseCrudModule {
         </div>
     `);
 
+		/* =============================================
+BUAT INSTANCE TABLE MANAGER
+============================================= */
+
 		this.tableManager = new TableManager({
 			state: this.state,
 			tbody: "#crud-tbody",
 			pagination: "#crud-pagination",
 		});
+		// membuat instance manager tabel
+
+		/* =============================================
+SIMPAN GLOBAL AGAR BISA DIAKSES UI COMPONENT
+============================================= */
+
+		window.tableManager = this.tableManager;
+		// sinkronisasi dengan UIComponents.search()
+
+		/* =============================================
+INISIALISASI TABLE
+============================================= */
 
 		this.tableManager.init();
+		// memulai load tabel
 	}
 	buildActionButtons(tbl) {
 		let importType = "import";
