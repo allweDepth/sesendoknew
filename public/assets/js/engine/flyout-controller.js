@@ -113,13 +113,6 @@ LISTENER LIMIT NAVBAR
 		state.setTable(tbl);
 
 		state.action = jns;
-
-		/* =========================================
-   OVERRIDE TABLE CRUD
-========================================= */
-
-		state.req = req;
-
 		/* =========================================
    TRACE: ambil data-req dari tombol
    ========================================= */
@@ -143,31 +136,16 @@ LISTENER LIMIT NAVBAR
 		const config = this.buildConfig(jns, configKey);
 
 		/* =====================================================
-FIX MAPPING CONTEXT
+RENDER FORM
 ===================================================== */
 
-		if (window.app?.state?.tbl === "mapping") {
-			config.elements.forEach((el) => {
-				/* =================================================
-		FIELD TIPE
-		================================================= */
-				if (el.prop && el.prop.name === "tipe") {
-					/* isi tipe dari req aktif */
-					el.prop.value = window.app.state.req;
-				}
-
-				/* =================================================
-		SEARCH MASTER BIAYA
-		source mengikuti req aktif
-		================================================= */
-				if (el.tag === "search" && el.prop?.name === "master_biaya_id") {
-					/* ubah source dari master_biaya menjadi req */
-					el.prop.source = window.app.state.req;
-				}
-			});
-		}
-
 		FormEngine.render($(formSelector), config.elements, this.formEngine, config.layout || {});
+
+		/* isi tipe dari state menu */
+
+		if (state.tbl === "mapping") {
+			$(formSelector).find('[name="tipe"]').val(state.req);
+		}
 
 		/* =========================================================
    AUTO PRIMARY KEY FIELD (ID_ROW)

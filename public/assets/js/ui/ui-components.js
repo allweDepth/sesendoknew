@@ -23,7 +23,7 @@ mendukung:
 	========================================= */
 
 		/* FIX: support boolean dan string */
-		const readonly = prop.readonly === true || prop.readonly === "readonly" ? "readonly disabled" : ""; // readonly
+		const readonly = prop.readonly === true || prop.readonly === "true" ? "readonly disabled" : ""; // readonly
 		const required = prop.required ? "required" : ""; // required
 		/* value harus tetap muncul walau kosong atau 0 */
 		const value = prop.value !== undefined ? `value="${prop.value}"` : ""; // default value
@@ -477,17 +477,17 @@ REQUEST DROPDOWN
 						settings.data = {
 							action: "dropdown",
 
-							/* tbl mengikuti source */
+							/* tbl dari source */
 							tbl: source,
 
-							/* keyword pencarian */
+							/* keyword */
 							cari: query,
 
-							/* limit hasil */
+							/* limit */
 							limit: limit,
 
-							/* req selalu mengikuti state */
-							req: req,
+							/* req dari state aktif */
+							req: window.app?.state?.req || null,
 						};
 
 						return settings;
@@ -679,11 +679,19 @@ CSRF DIKIRIM VIA HEADER GLOBAL
 ===================================================== */
 
 					settings.data = {
-						action: "dropdown", // jenis request
-						tbl: source, // tabel lookup
-						cari: query, // keyword search
-						limit: limit, // limit navbar
-						req: req, // tipe mapping aktif
+						action: "dropdown",
+
+						/* tbl dari source */
+						tbl: source,
+
+						/* keyword */
+						cari: query,
+
+						/* limit */
+						limit: limit,
+
+						/* req dari state aktif */
+						req: window.app?.state?.req || null,
 					};
 
 					return settings;
@@ -713,11 +721,18 @@ CSRF DIKIRIM VIA HEADER GLOBAL
 	}
 }
 // REGISTER ALL COMPONENTS
-UIComponentRegistry.register("search", (p) => UIComponents.search(p.label, p.name, p.source, p));
+UIComponentRegistry.register("lookupDropdown", (p) =>
+	UIComponents.lookupDropdown(p.prop?.label, p.prop?.name, p.prop?.source),
+);
+UIComponentRegistry.register("search", (p) => UIComponents.search(p.prop?.label, p.prop?.name, p.prop?.source, p.prop));
 UIComponentRegistry.register("fieldMessage", (p) => UIComponents.message(p));
-UIComponentRegistry.register("input", (p) => UIComponents.input(p.label, p.name, p.type || "text", p));
-UIComponentRegistry.register("field", (p) => UIComponents.field(p.label, p.name, p.type || "text", p));
-UIComponentRegistry.register("textarea", (p) => UIComponents.textarea(p.label, p.name));
+UIComponentRegistry.register("input", (p) =>
+	UIComponents.field(p.prop?.label, p.prop?.name, p.prop?.type || "text", p.prop),
+);
+UIComponentRegistry.register("field", (p) =>
+	UIComponents.field(p.prop?.label, p.prop?.name, p.prop?.type || "text", p.prop),
+);
+UIComponentRegistry.register("textarea", (p) => UIComponents.textarea(p.prop?.label, p.prop?.name));
 
 UIComponentRegistry.register("toggle", (p) => UIComponents.toggle(p.label, p.name));
 
