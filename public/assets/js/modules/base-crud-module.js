@@ -60,7 +60,7 @@ class BaseCrudModule {
 			menuHtml += `
             <a class="item ${index === 0 ? "active" : ""}" 
    data-tbl="${item.tbl}"
-   data-req="${item.req || ""}">
+   ${item.req ? `data-req="${item.req}"` : ``}>
    ${item.label}
 </a>
         `;

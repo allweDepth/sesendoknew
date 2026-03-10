@@ -127,10 +127,8 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			// KIRIM KE SERVER
 			// =====================================================
 			rows: this.limit,
-
 			/* search */
 			cari: this.searchQuery,
-
 			/* sorting */
 			sort_by: this.sortBy,
 			sort_dir: this.sortDir,
@@ -604,5 +602,21 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		instance.init();
 
 		return instance;
+	}
+	// =====================================================
+	// DESTROY INSTANCE
+	// membersihkan event agar tidak terjadi event stacking
+	// =====================================================
+	destroy() {
+		// hapus event reload form
+		const reloadEvent = `form:success.${this.state.tbl}.table`;
+
+		$(document).off(reloadEvent); // hapus listener reload
+
+		// hapus semua event pagination / sorting / search
+		$(document).off(`.table-${this.state.tbl}`);
+
+		// reset flag init
+		this.initialized = false;
 	}
 }
