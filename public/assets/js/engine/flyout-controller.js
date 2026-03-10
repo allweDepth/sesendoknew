@@ -73,9 +73,7 @@ LISTENER LIMIT NAVBAR
 	}
 
 	getActiveForm() {
-		return this.activeContainer === "modal"
-			? $("#form_modal")
-			: $("#form_flyout");
+		return this.activeContainer === "modal" ? $("#form_modal") : $("#form_flyout");
 	}
 
 	open($btn) {
@@ -102,10 +100,7 @@ LISTENER LIMIT NAVBAR
 		const req = $btn.data("req") || null;
 
 		const configKey =
-			$btn.data("config") ||
-			(window.UIConfig[tbl] && window.UIConfig[tbl][jns]
-				? `${tbl}.${jns}`
-				: tbl);
+			$btn.data("config") || (window.UIConfig[tbl] && window.UIConfig[tbl][jns] ? `${tbl}.${jns}` : tbl);
 
 		const id = $btn.data("id") || null;
 
@@ -147,12 +142,32 @@ LISTENER LIMIT NAVBAR
 
 		const config = this.buildConfig(jns, configKey);
 
-		FormEngine.render(
-			$(formSelector),
-			config.elements,
-			this.formEngine,
-			config.layout || {},
-		);
+		/* =====================================================
+FIX MAPPING CONTEXT
+===================================================== */
+
+		if (window.app?.state?.tbl === "mapping") {
+			config.elements.forEach((el) => {
+				/* =================================================
+		FIELD TIPE
+		================================================= */
+				if (el.prop && el.prop.name === "tipe") {
+					/* isi tipe dari req aktif */
+					el.prop.value = window.app.state.req;
+				}
+
+				/* =================================================
+		SEARCH MASTER BIAYA
+		source mengikuti req aktif
+		================================================= */
+				if (el.tag === "search" && el.prop?.name === "master_biaya_id") {
+					/* ubah source dari master_biaya menjadi req */
+					el.prop.source = window.app.state.req;
+				}
+			});
+		}
+
+		FormEngine.render($(formSelector), config.elements, this.formEngine, config.layout || {});
 
 		/* =========================================================
    AUTO PRIMARY KEY FIELD (ID_ROW)

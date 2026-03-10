@@ -743,7 +743,6 @@ TIPE STANDAR BIAYA
 					label: "Tipe Standar Biaya",
 					name: "tipe",
 					readonly: true,
-					value: window.app?.state?.req,
 				},
 			},
 
@@ -1101,10 +1100,7 @@ UIConfig.__importFactory = function (tbl, templateFile) {
 		},
 	};
 };
-UIConfig.satuan.import = UIConfig.__importFactory(
-	"satuan",
-	"9. Satuan 1 Header.xlsx",
-);
+UIConfig.satuan.import = UIConfig.__importFactory("satuan", "9. Satuan 1 Header.xlsx");
 
 UIConfig.sbu.import = UIConfig.__importFactory("sbu_neo", "17. sbu 2024.xlsx");
 

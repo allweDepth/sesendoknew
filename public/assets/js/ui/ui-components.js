@@ -23,16 +23,11 @@ mendukung:
 	========================================= */
 
 		/* FIX: support boolean dan string */
-		const readonly =
-			prop.readonly === true || prop.readonly === "readonly"
-				? "readonly disabled"
-				: ""; // readonly
+		const readonly = prop.readonly === true || prop.readonly === "readonly" ? "readonly disabled" : ""; // readonly
 		const required = prop.required ? "required" : ""; // required
 		/* value harus tetap muncul walau kosong atau 0 */
 		const value = prop.value !== undefined ? `value="${prop.value}"` : ""; // default value
-		const placeholder = prop.placeholder
-			? `placeholder="${prop.placeholder}"`
-			: "";
+		const placeholder = prop.placeholder ? `placeholder="${prop.placeholder}"` : "";
 
 		/* atribut tambahan */
 		const atribut = prop.atribut ? prop.atribut : "";
@@ -89,9 +84,7 @@ mendukung:
 	// ==================================================
 
 	static dropdown(label, name, options = []) {
-		let items = options
-			.map((o) => `<div class="item" data-value="${o.value}">${o.text}</div>`)
-			.join("");
+		let items = options.map((o) => `<div class="item" data-value="${o.value}">${o.text}</div>`).join("");
 
 		return `
         <div class="field">
@@ -158,13 +151,9 @@ mendukung:
 		const subtleClass = subtle ? "basic" : "";
 		const compactClass = compact ? "compact" : "";
 		const floatingClass = floating ? "floating" : "";
-		const shadowStyle = shadow
-			? "style='box-shadow:0 4px 12px rgba(0,0,0,0.08);'"
-			: "";
+		const shadowStyle = shadow ? "style='box-shadow:0 4px 12px rgba(0,0,0,0.08);'" : "";
 
-		const dismissBtn = dismissible
-			? `<i class="close icon message-close"></i>`
-			: "";
+		const dismissBtn = dismissible ? `<i class="close icon message-close"></i>` : "";
 
 		return `
         <div class="field ${className}">
@@ -305,12 +294,7 @@ mendukung:
 	// ENTERPRISE PROGRESS
 	// ==================================================
 	static progress(prop = {}) {
-		const {
-			percent = 0,
-			label = "Processing...",
-			size = "small",
-			color = "blue",
-		} = prop;
+		const { percent = 0, label = "Processing...", size = "small", color = "blue" } = prop;
 
 		return `
         <div class="ui ${size} ${color} progress ds-progress" data-percent="${percent}">
@@ -482,23 +466,28 @@ public/assets/js/ui/ui-components.js
 					STATE MENU (SSH/SBU/ASB/HSPK)
 					================================= */
 
-						const req = window.app?.state?.req || null;
-
-						/* =================================
-					DATA YANG DIKIRIM KE SERVER
-					================================= */
+						/* =====================================================
+AMBIL REQ DARI STATE GLOBAL
+===================================================== */
+						const req = window.app?.state?.req;
 
 						/* =====================================================
-KIRIM DATA REQUEST
-CSRF DIKIRIM VIA HEADER GLOBAL
+REQUEST DROPDOWN
 ===================================================== */
-
 						settings.data = {
-							action: "dropdown", // jenis request
-							tbl: source, // tabel lookup
-							cari: query, // keyword search
-							limit: limit, // limit navbar
-							req: req, // tipe mapping aktif
+							action: "dropdown",
+
+							/* tbl mengikuti source */
+							tbl: source,
+
+							/* keyword pencarian */
+							cari: query,
+
+							/* limit hasil */
+							limit: limit,
+
+							/* req selalu mengikuti state */
+							req: req,
 						};
 
 						return settings;
@@ -724,40 +713,21 @@ CSRF DIKIRIM VIA HEADER GLOBAL
 	}
 }
 // REGISTER ALL COMPONENTS
-UIComponentRegistry.register("search", (p) =>
-	UIComponents.search(p.label, p.name, p.source, p),
-);
+UIComponentRegistry.register("search", (p) => UIComponents.search(p.label, p.name, p.source, p));
 UIComponentRegistry.register("fieldMessage", (p) => UIComponents.message(p));
-UIComponentRegistry.register("input", (p) =>
-	UIComponents.input(p.label, p.name, p.type || "text", p),
-);
-UIComponentRegistry.register("field", (p) =>
-	UIComponents.field(p.label, p.name, p.type || "text", p),
-);
-UIComponentRegistry.register("textarea", (p) =>
-	UIComponents.textarea(p.label, p.name),
-);
+UIComponentRegistry.register("input", (p) => UIComponents.input(p.label, p.name, p.type || "text", p));
+UIComponentRegistry.register("field", (p) => UIComponents.field(p.label, p.name, p.type || "text", p));
+UIComponentRegistry.register("textarea", (p) => UIComponents.textarea(p.label, p.name));
 
-UIComponentRegistry.register("toggle", (p) =>
-	UIComponents.toggle(p.label, p.name),
-);
+UIComponentRegistry.register("toggle", (p) => UIComponents.toggle(p.label, p.name));
 
-UIComponentRegistry.register("calendar", (p) =>
-	UIComponents.calendar(p.label, p.name),
-);
+UIComponentRegistry.register("calendar", (p) => UIComponents.calendar(p.label, p.name));
 
 UIComponentRegistry.register("rangeCalendar", (p) =>
-	UIComponents.rangeCalendar(
-		p.nameStart,
-		p.nameEnd,
-		p.label,
-		p.calendarType || "datetime",
-	),
+	UIComponents.rangeCalendar(p.nameStart, p.nameEnd, p.label, p.calendarType || "datetime"),
 );
 
-UIComponentRegistry.register("dropdown", (p) =>
-	UIComponents.dropdown(p.label, p.name, p.options || []),
-);
+UIComponentRegistry.register("dropdown", (p) => UIComponents.dropdown(p.label, p.name, p.options || []));
 // ======================================================
 // REGISTER ENTERPRISE COMPONENTS
 // ======================================================
