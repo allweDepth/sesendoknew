@@ -23,7 +23,7 @@ mendukung:
 	========================================= */
 
 		/* FIX: support boolean dan string */
-		const readonly = prop.readonly === true || prop.readonly === "true" ? "readonly disabled" : ""; // readonly
+		const readonly = prop.readonly === true || prop.readonly === "true" ? "readonly" : ""; // readonly
 		const required = prop.required ? "required" : ""; // required
 		/* value harus tetap muncul walau kosong atau 0 */
 		const value = prop.value !== undefined ? `value="${prop.value}"` : ""; // default value
@@ -400,13 +400,11 @@ public/assets/js/ui/ui-components.js
 			const el = $(this);
 
 			/* =========================================
-		SOURCE TABEL LOOKUP
-		contoh:
-		master_biaya
-		akun_neo
-		========================================= */
+AMBIL SOURCE DARI HTML
+fallback ke attribute jika dataset kosong
+========================================= */
 
-			const source = el.data("source");
+			const source = el.data("source") || el.attr("data-source");
 
 			/* =========================================
 		NAMA FIELD YANG DIKIRIM KE FORM
@@ -465,29 +463,41 @@ public/assets/js/ui/ui-components.js
 						/* =================================
 					STATE MENU (SSH/SBU/ASB/HSPK)
 					================================= */
+						/* =========================================
+AMBIL MODULE AKTIF
+========================================= */
 
-						/* =====================================================
-AMBIL REQ DARI STATE GLOBAL
-===================================================== */
-						const req = window.app?.state?.req;
+						const tbl = window.app?.state?.tbl;
 
-						/* =====================================================
-REQUEST DROPDOWN
-===================================================== */
+						/* =========================================
+AMBIL TAB AKTIF (ssh/sbu/asb/hspk)
+========================================= */
+
+						let req = window.app?.state?.req;
+
+						if (!req) {
+							const urlParams = new URLSearchParams(window.location.search);
+							req = urlParams.get("req");
+						}
+
+						/* =========================================
+REQUEST KE SERVER
+========================================= */
+
 						settings.data = {
 							action: "dropdown",
 
-							/* tbl dari source */
-							tbl: source,
+							/* module utama */
+							tbl: tbl || null,
 
-							/* keyword */
+							/* konteks tab mapping */
+							req: req || null,
+
+							/* lookup table */
+							source: source || null,
+
 							cari: query,
-
-							/* limit */
 							limit: limit,
-
-							/* req dari state aktif */
-							req: window.app?.state?.req || null,
 						};
 
 						return settings;
@@ -658,40 +668,38 @@ public/assets/js/ui/ui-components.js
 				================================= */
 
 					const limit = $("#countRow").dropdown("get value") || 20;
+					/* =========================================
+MODULE AKTIF
+========================================= */
 
-					/* =================================
-				STATE MENU
-				================================= */
+					const tbl = window.app?.state?.tbl;
 
-					const req = window.app?.state?.req || null;
+					/* =========================================
+TAB AKTIF
+========================================= */
 
-					/* =================================
-				DATA DIKIRIM KE SERVER
-				================================= */
+					let req = window.app?.state?.req;
 
-					/* =================================
-AMBIL TOKEN CSRF DARI META
-================================= */
+					if (!req) {
+						const urlParams = new URLSearchParams(window.location.search);
+						req = urlParams.get("req");
+					}
 
-					/* =====================================================
-KIRIM DATA REQUEST
-CSRF DIKIRIM VIA HEADER GLOBAL
-===================================================== */
+					/* =========================================
+REQUEST
+========================================= */
 
 					settings.data = {
 						action: "dropdown",
 
-						/* tbl dari source */
-						tbl: source,
+						tbl: tbl || null,
 
-						/* keyword */
+						req: req || null,
+
+						source: source || null,
+
 						cari: query,
-
-						/* limit */
 						limit: limit,
-
-						/* req dari state aktif */
-						req: window.app?.state?.req || null,
 					};
 
 					return settings;
@@ -724,6 +732,7 @@ CSRF DIKIRIM VIA HEADER GLOBAL
 UIComponentRegistry.register("lookupDropdown", (p) =>
 	UIComponents.lookupDropdown(p.prop?.label, p.prop?.name, p.prop?.source),
 );
+
 UIComponentRegistry.register("search", (p) => UIComponents.search(p.prop?.label, p.prop?.name, p.prop?.source, p.prop));
 UIComponentRegistry.register("fieldMessage", (p) => UIComponents.message(p));
 UIComponentRegistry.register("input", (p) =>
@@ -734,15 +743,17 @@ UIComponentRegistry.register("field", (p) =>
 );
 UIComponentRegistry.register("textarea", (p) => UIComponents.textarea(p.prop?.label, p.prop?.name));
 
-UIComponentRegistry.register("toggle", (p) => UIComponents.toggle(p.label, p.name));
+UIComponentRegistry.register("toggle", (p) => UIComponents.toggle(p.prop?.label, p.prop?.name));
 
-UIComponentRegistry.register("calendar", (p) => UIComponents.calendar(p.label, p.name));
+UIComponentRegistry.register("calendar", (p) => UIComponents.calendar(p.prop?.label, p.prop?.name));
 
 UIComponentRegistry.register("rangeCalendar", (p) =>
 	UIComponents.rangeCalendar(p.nameStart, p.nameEnd, p.label, p.calendarType || "datetime"),
 );
 
-UIComponentRegistry.register("dropdown", (p) => UIComponents.dropdown(p.label, p.name, p.options || []));
+UIComponentRegistry.register("dropdown", (p) =>
+	UIComponents.dropdown(p.prop?.label, p.prop?.name, p.prop?.options || []),
+);
 // ======================================================
 // REGISTER ENTERPRISE COMPONENTS
 // ======================================================

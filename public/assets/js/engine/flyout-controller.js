@@ -97,7 +97,36 @@ LISTENER LIMIT NAVBAR
 			TRACE MODE
 			ambil data-req dari tombol
 		========================================= */
-		const req = $btn.data("req") || null;
+		/* =========================================
+AMBIL req DARI BUTTON JIKA ADA
+JIKA TIDAK ADA → PERTAHANKAN STATE MENU
+========================================= */
+
+		const state = window.app.state;
+
+		/* =========================================
+AMBIL req DARI BUTTON
+========================================= */
+
+		state.setTable(tbl);
+		state.action = jns;
+
+		const req = $btn.data("req");
+
+		if (req !== undefined && req !== null) {
+			state.req = req;
+		} else {
+			const urlParams = new URLSearchParams(window.location.search);
+			const reqFromUrl = urlParams.get("req");
+
+			if (reqFromUrl) {
+				state.req = reqFromUrl;
+			}
+		}
+
+		/* =========================================
+UPDATE req HANYA JIKA ADA
+========================================= */
 
 		const configKey =
 			$btn.data("config") || (window.UIConfig[tbl] && window.UIConfig[tbl][jns] ? `${tbl}.${jns}` : tbl);
@@ -107,17 +136,6 @@ LISTENER LIMIT NAVBAR
 		const container = $btn.data("container") || "flyout";
 
 		if (!tbl) return;
-
-		const state = window.app.state;
-
-		state.setTable(tbl);
-
-		state.action = jns;
-		/* =========================================
-   TRACE: ambil data-req dari tombol
-   ========================================= */
-
-		state.req = req;
 
 		const formSelector = container === "modal" ? "#form_modal" : "#form_flyout";
 
@@ -135,17 +153,13 @@ LISTENER LIMIT NAVBAR
 
 		const config = this.buildConfig(jns, configKey);
 
-		/* =====================================================
-RENDER FORM
-===================================================== */
+		/* =========================================
+ISI FIELD TIPE UNTUK MODULE MAPPING
+========================================= */
 
 		FormEngine.render($(formSelector), config.elements, this.formEngine, config.layout || {});
 
 		/* isi tipe dari state menu */
-
-		if (state.tbl === "mapping") {
-			$(formSelector).find('[name="tipe"]').val(state.req);
-		}
 
 		/* =========================================================
    AUTO PRIMARY KEY FIELD (ID_ROW)
