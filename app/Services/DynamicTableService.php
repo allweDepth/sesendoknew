@@ -1458,15 +1458,8 @@ BUILD RULE DARI SCHEMA DATABASE
 
     return $rules;
   }
-
   /* =========================================================
-DROPDOWN ENGINE (FULL IDENTIK)
-========================================================= */
-  /* =========================================================
-DROPDOWN ENGINE (PROFILE-DRIVEN + AKUN FILTER)
-========================================================= */
-  /* =========================================================
-DROPDOWN ENGINE (PROFILE DRIVEN - STABLE VERSION)
+DROPDOWN ENGINE (PROFILE DRIVEN - FIXED CASCADE VERSION)
 ========================================================= */
   private function loadDropdown(
     string $source,
@@ -1483,9 +1476,11 @@ DROPDOWN ENGINE (PROFILE DRIVEN - STABLE VERSION)
     }
 
     $profile = $this->profiles[$source];
-    $table   = $profile['table'];
+
+    $table = $profile['table'];
 
     $columns = $this->getTableColumns($table);
+
 
     /* =========================================
     2️⃣ FIELD DROPDOWN
@@ -1494,14 +1489,17 @@ DROPDOWN ENGINE (PROFILE DRIVEN - STABLE VERSION)
     $primaryKey = $profile['primary_key'] ?? 'id';
 
     $valueField = $profile['dropdown']['value'] ?? $primaryKey;
+
     $labelField = $profile['dropdown']['label'] ?? 'nama';
 
+
     /* =========================================
-    3️⃣ BUILD WHERE
+    3️⃣ INIT WHERE
     ========================================= */
 
     $whereParts = [];
     $params     = [];
+
 
     /* =========================================
     4️⃣ PARENT RELATION DARI PROFILE
@@ -1509,88 +1507,112 @@ DROPDOWN ENGINE (PROFILE DRIVEN - STABLE VERSION)
 
     $parentField = $profile['dropdown']['parent_field'] ?? null;
 
+    // parent hanya dipakai jika value dikirim
     if (
-      $parentValue !== null &&
       $parentField &&
+      $parentValue !== null &&
       in_array($parentField, $columns)
     ) {
 
       $whereParts[] = "`$table`.`$parentField` = ?";
-      $params[]     = $parentValue;
+
+      $params[] = $parentValue;
     }
 
+
     /* =========================================
-    5️⃣ FILTER BY AKUN (JIKA ADA)
+    5️⃣ FILTER PERATURAN
     ========================================= */
 
-    $join       = '';
-    $akunWhere  = '';
-    $akunParams = [];
-
-    $filterByAkun = $profile['dropdown']['filter_by_akun'] ?? false;
-    $pivotConfig  = $profile['pivot'] ?? null;
-
-    if ($filterByAkun && $kdAkun && $pivotConfig) {
-
-      $pivotTable = $pivotConfig['table'];
-      $fkField    = $pivotConfig['foreign_key'];
-
-      $join = "
-            INNER JOIN `$pivotTable` p
-            ON p.`$fkField` = `$table`.`$primaryKey`
-        ";
+    if (in_array('peraturan_id', $columns)) {
 
       $pengaturan = $this->getPengaturanAktif();
 
-      $akunWhere = "
-            AND p.`kd_akun` = ?
-            AND p.`kd_wilayah` = ?
-            AND p.`peraturan_id` = ?
-        ";
+      if ($pengaturan) {
 
-      $akunParams = [
-        $kdAkun,
-        $this->user['kd_wilayah'] ?? null,
-        $pengaturan['aturan_sbu'] ?? null
-      ];
+        $map = [
+
+          'urusan'       => 'aturan_sub_kegiatan',
+          'bidang'       => 'aturan_sub_kegiatan',
+          'program'      => 'aturan_sub_kegiatan',
+          'kegiatan'     => 'aturan_sub_kegiatan',
+          'sub_kegiatan' => 'aturan_sub_kegiatan',
+
+          'ssh'  => 'aturan_ssh',
+          'sbu'  => 'aturan_sbu',
+          'asb'  => 'aturan_asb',
+          'hspk' => 'aturan_hspk'
+
+        ];
+
+        if (isset($map[$source])) {
+
+          $field = $map[$source];
+
+          $whereParts[] = "`$table`.`peraturan_id` = ?";
+
+          $params[] = (int)$pengaturan[$field];
+        }
+      }
     }
 
+
     /* =========================================
-    6️⃣ FINAL WHERE
+    6️⃣ FILTER WILAYAH
+    ========================================= */
+
+    if (in_array('kd_wilayah', $columns)) {
+
+      if (!empty($this->user['kd_wilayah'])) {
+
+        $whereParts[] = "`$table`.`kd_wilayah` = ?";
+
+        $params[] = $this->user['kd_wilayah'];
+      }
+    }
+
+
+    /* =========================================
+    7️⃣ BUILD WHERE
     ========================================= */
 
     $where = '';
 
     if (!empty($whereParts)) {
+
       $where = "WHERE " . implode(" AND ", $whereParts);
     }
 
+
     /* =========================================
-    7️⃣ QUERY DROPDOWN
+    8️⃣ QUERY
     ========================================= */
 
     $query = "
+
         SELECT
             `$table`.`$valueField` AS value,
             `$table`.`$labelField` AS text
+
         FROM `$table`
-        $join
+
         $where
-        $akunWhere
+
         ORDER BY `$table`.`$labelField` ASC
     ";
 
+
     /* =========================================
-    8️⃣ EXECUTE QUERY
+    9️⃣ EXECUTE
     ========================================= */
 
-    $rows = $this->db->query(
-      $query,
-      array_merge($params, $akunParams)
-    )->fetchAll();
+    $rows = $this->db
+      ->query($query, $params)
+      ->fetchAll();
+
 
     /* =========================================
-    9️⃣ FORMAT RESPONSE
+    🔟 FORMAT
     ========================================= */
 
     $dropdown = array_map(function ($row) {
@@ -1600,6 +1622,7 @@ DROPDOWN ENGINE (PROFILE DRIVEN - STABLE VERSION)
         'text'  => $row['text']
       ];
     }, $rows);
+
 
     return JsonResponse::success(
       "Dropdown loaded",
@@ -3849,16 +3872,36 @@ AND is_deleted = 0
 | PRIORITAS 1 : RELATION
 |--------------------------------------------------------------------------
 */
-    if ($value && !empty($profile['relations'])) {
+    /* =========================================
+RELATION DROPDOWN (PROFILE RELATIONS)
+========================================= */
+
+    if ($parentValue !== null && !empty($profile['relations'])) {
 
       foreach ($profile['relations'] as $relation) {
 
-        $localKey = $relation['local_key'];
+        $localKey = $relation['local_key'] ?? null;
 
-        $where[] = "{$localKey} = :parent";
-        $params['parent'] = $value;
+        if ($localKey && in_array($localKey, $columns)) {
 
-        break;
+          $whereParts[] = "`$table`.`$localKey` = ?";
+          $params[]     = $parentValue;
+
+          break;
+        }
+      }
+    }
+
+    /* =========================================
+FALLBACK parent_field
+========================================= */ elseif ($parentValue !== null) {
+
+      $parentField = $profile['dropdown']['parent_field'] ?? null;
+
+      if ($parentField && in_array($parentField, $columns)) {
+
+        $whereParts[] = "`$table`.`$parentField` = ?";
+        $params[]     = $parentValue;
       }
     }
 
