@@ -58,6 +58,7 @@ class FormEngine {
 				action: "edit",
 				tbl: this.state.tbl,
 				id_row: id,
+				req: this.state.req,
 			},
 
 			success: (res) => {
@@ -340,29 +341,14 @@ SET VALUE NORMAL
 AMBIL STATE GLOBAL
 ===================================================== */
 
-		const req = window.app?.state?.req || null;
-
-		/* =====================================================
-TAMBAHKAN KE FORM DATA
-===================================================== */
-
 		let formData = form.serialize();
-
-		if (req !== null) {
-			formData += "&req=" + encodeURIComponent(req);
-		}
 
 		formData += `&action=${this.state.action}`;
 		formData += `&tbl=${this.state.tbl}`;
 
-		if (this.state.req) {
-			formData += `&req=${this.state.req}`;
-		} else {
-			const btn = $(this.formSelector).find("button[type=submit]");
-
-			if (btn.length && btn.data("req")) {
-				formData += `&req=${btn.data("req")}`;
-			}
+		// ambil req hanya dari state
+		if (this.state.req !== null && this.state.req !== undefined) {
+			formData += `&req=${encodeURIComponent(this.state.req)}`;
 		}
 
 		this.ajax.request({
