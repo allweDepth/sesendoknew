@@ -173,11 +173,17 @@ class FormEngine {
 				return;
 			}
 
-			/**
-			 * =====================================================
-			 * DEFAULT INPUT
-			 * =====================================================
-			 */
+			/* =====================================================
+CEK FIELD READONLY
+agar tidak diubah saat populate
+===================================================== */
+			if (field.is("[readonly]")) {
+				return; // skip field readonly
+			}
+
+			/* =====================================================
+SET VALUE NORMAL
+===================================================== */
 			field.val(data[key]);
 		});
 
@@ -213,15 +219,11 @@ class FormEngine {
 		// =============================================
 		// BIND EVENT BARU
 		// =============================================
-		$(document).on(
-			`submit.formEngine.${this.state.tbl}`,
-			this.formSelector,
-			(e) => {
-				e.preventDefault();
+		$(document).on(`submit.formEngine.${this.state.tbl}`, this.formSelector, (e) => {
+			e.preventDefault();
 
-				this.submit();
-			},
-		);
+			this.submit();
+		});
 	}
 
 	/**
@@ -449,9 +451,7 @@ TAMBAHKAN KE FORM DATA
 			}
 
 			// jika element punya width
-			const widthClass = el.prop?.width
-				? `${el.prop.width} wide column`
-				: "column";
+			const widthClass = el.prop?.width ? `${el.prop.width} wide column` : "column";
 
 			html += `
 		<div class="${widthClass}">
@@ -568,10 +568,7 @@ TAMBAHKAN KE FORM DATA
 				return this.fieldWrapper(this.input(prop), prop);
 
 			case "fieldTextarea":
-				return this.fieldWrapper(
-					`<textarea name="${prop.name}" ${prop.atribut || ""}></textarea>`,
-					prop,
-				);
+				return this.fieldWrapper(`<textarea name="${prop.name}" ${prop.atribut || ""}></textarea>`, prop);
 
 			case "fieldDropdown":
 				return this.fieldWrapper(this.dropdown(prop), prop);
@@ -614,12 +611,7 @@ TAMBAHKAN KE FORM DATA
                     </div>
                 `;
 			case "rangeCalendar":
-				return UIComponents.rangeCalendar(
-					prop.nameStart,
-					prop.nameEnd,
-					prop.label,
-					prop.calendarType || "datetime",
-				);
+				return UIComponents.rangeCalendar(prop.nameStart, prop.nameEnd, prop.label, prop.calendarType || "datetime");
 			case "divider":
 				return `
                     <h4 class="ui dividing header">
@@ -952,9 +944,7 @@ SEARCH FIELD (FOMANTIC SEARCH)
 
 		UIComponents.initAll();
 
-		const rangeNames = config.elements
-			.filter((e) => e.tag === "rangeCalendar")
-			.map((e) => e.prop.name);
+		const rangeNames = config.elements.filter((e) => e.tag === "rangeCalendar").map((e) => e.prop.name);
 
 		UIComponents.initRange(rangeNames);
 	}
@@ -1010,9 +1000,7 @@ SEARCH FIELD (FOMANTIC SEARCH)
 				label = labelElement.text().trim();
 			} else {
 				// fallback dari name field
-				label = name
-					.replace(/_/g, " ")
-					.replace(/\b\w/g, (c) => c.toUpperCase());
+				label = name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 			}
 
 			// required rule
@@ -1221,99 +1209,88 @@ SEARCH FIELD (FOMANTIC SEARCH)
 		// ======================================================
 		// HAPUS EVENT LAMA
 		// ======================================================
-		$(document).off(
-			eventName,
-			`${this.formSelector} .ui.dropdown[data-source]`,
-		);
+		$(document).off(eventName, `${this.formSelector} .ui.dropdown[data-source]`);
 
 		// ======================================================
 		// BIND EVENT BARU
 		// ======================================================
-		$(document).on(
-			eventName,
-			`${this.formSelector} .ui.dropdown[data-source]`,
-			function () {
+		$(document).on(eventName, `${this.formSelector} .ui.dropdown[data-source]`, function () {
+			// ==================================================
+			// GUARD POPULATE MODE
+			// ==================================================
+			if (self.isPopulating) return;
+
+			const $parentDropdown = $(this);
+
+			// ==================================================
+			// CEK SKIP CASCADE FLAG
+			// ==================================================
+			if ($parentDropdown.data("skip-cascade")) return;
+
+			// ==================================================
+			// AMBIL FIELD NAME
+			// ==================================================
+			const parentName = $parentDropdown.find("input[type=hidden]").attr("name");
+
+			if (!parentName) return;
+
+			// ==================================================
+			// AMBIL VALUE PARENT
+			// ==================================================
+			const parentValue = $parentDropdown.find("input[type=hidden]").val();
+
+			if (!parentValue) return;
+
+			// ==================================================
+			// CARI DROPDOWN CHILD
+			// ==================================================
+			$(`${self.formSelector} .ui.dropdown[data-parent="${parentName}"]`).each(function () {
+				const $child = $(this);
+
+				const source = $child.data("source");
+
+				if (!source) return;
+
+				const $menu = $child.find(".menu");
+
 				// ==================================================
-				// GUARD POPULATE MODE
+				// RESET CHILD
 				// ==================================================
-				if (self.isPopulating) return;
+				$menu.empty();
 
-				const $parentDropdown = $(this);
-
-				// ==================================================
-				// CEK SKIP CASCADE FLAG
-				// ==================================================
-				if ($parentDropdown.data("skip-cascade")) return;
+				$child.dropdown("clear");
 
 				// ==================================================
-				// AMBIL FIELD NAME
+				// REQUEST DATA CHILD
 				// ==================================================
-				const parentName = $parentDropdown
-					.find("input[type=hidden]")
-					.attr("name");
+				self.ajax.request({
+					data: {
+						module: source,
+						action: "dropdown",
+						tbl: source,
+						parent: parentName,
+						parent_field: $child.data("parent-field"),
+						value: parentValue,
+					},
 
-				if (!parentName) return;
+					success: (res) => {
+						if (!res.success || !res.data) return;
 
-				// ==================================================
-				// AMBIL VALUE PARENT
-				// ==================================================
-				const parentValue = $parentDropdown.find("input[type=hidden]").val();
-
-				if (!parentValue) return;
-
-				// ==================================================
-				// CARI DROPDOWN CHILD
-				// ==================================================
-				$(
-					`${self.formSelector} .ui.dropdown[data-parent="${parentName}"]`,
-				).each(function () {
-					const $child = $(this);
-
-					const source = $child.data("source");
-
-					if (!source) return;
-
-					const $menu = $child.find(".menu");
-
-					// ==================================================
-					// RESET CHILD
-					// ==================================================
-					$menu.empty();
-
-					$child.dropdown("clear");
-
-					// ==================================================
-					// REQUEST DATA CHILD
-					// ==================================================
-					self.ajax.request({
-						data: {
-							module: source,
-							action: "dropdown",
-							tbl: source,
-							parent: parentName,
-							parent_field: $child.data("parent-field"),
-							value: parentValue,
-						},
-
-						success: (res) => {
-							if (!res.success || !res.data) return;
-
-							res.data.forEach((item) => {
-								$menu.append(`
+						res.data.forEach((item) => {
+							$menu.append(`
 								<div class="item" data-value="${item.value}">
 									${item.text}
 								</div>
 							`);
-							});
+						});
 
-							// ==================================================
-							// REFRESH DROPDOWN
-							// ==================================================
-							$child.dropdown("refresh");
-						},
-					});
+						// ==================================================
+						// REFRESH DROPDOWN
+						// ==================================================
+						$child.dropdown("refresh");
+					},
 				});
-			},
-		);
+			});
+		});
 	}
 }

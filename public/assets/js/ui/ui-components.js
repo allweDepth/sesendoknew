@@ -463,11 +463,15 @@ fallback ke attribute jika dataset kosong
 						/* =================================
 					STATE MENU (SSH/SBU/ASB/HSPK)
 					================================= */
-						/* =========================================
-AMBIL MODULE AKTIF
-========================================= */
+						//=====================================================
+						//PASTIKAN TABLE AKTIF ADA
+						//===================================================== */
+						let tbl = window.app?.state?.tbl;
 
-						const tbl = window.app?.state?.tbl;
+						if (!tbl) {
+							const urlParams = new URLSearchParams(window.location.search);
+							tbl = urlParams.get("tbl");
+						}
 
 						/* =========================================
 AMBIL TAB AKTIF (ssh/sbu/asb/hspk)

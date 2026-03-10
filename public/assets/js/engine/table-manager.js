@@ -38,8 +38,7 @@ class TableManager {
 		this.tbody = config.tbody || `tbody[name="tabel_${this.state.tbl}"]`;
 
 		// selector pagination
-		this.pagination =
-			config.pagination || `div[name="pagination_${this.state.tbl}"]`;
+		this.pagination = config.pagination || `div[name="pagination_${this.state.tbl}"]`;
 
 		// pagination state
 		this.currentPage = 1;
@@ -125,8 +124,11 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			/* alias tabel dari config */
 			tbl: this.state.tbl,
 
-			/* module tetap dikirim agar tidak merusak menu lama */
-			module: this.state.tbl,
+			/* =====================================================
+MODULE HARUS MENGGUNAKAN STATE MODULE
+bukan tbl
+===================================================== */
+			module: this.state.module,
 
 			/* request tambahan opsional */
 			req: this.state.req || "",
@@ -225,9 +227,7 @@ KIRIM KE SERVER
 				(item) =>
 					item.prop?.name &&
 					item.prop?.table !== false &&
-					!["divider", "header", "fieldHidden", "fieldCustom"].includes(
-						item.tag,
-					),
+					!["divider", "header", "fieldHidden", "fieldCustom"].includes(item.tag),
 			)
 			.map((item) => ({
 				key: item.prop.name,
@@ -273,10 +273,8 @@ KIRIM KE SERVER
 		}
 
 		if (format === "status") {
-			if (value == 1 || value === "aktif")
-				return `<div class="ui green basic label">Aktif</div>`;
-			if (value == 0 || value === "nonaktif")
-				return `<div class="ui red basic label">Non Aktif</div>`;
+			if (value == 1 || value === "aktif") return `<div class="ui green basic label">Aktif</div>`;
+			if (value == 0 || value === "nonaktif") return `<div class="ui red basic label">Non Aktif</div>`;
 		}
 
 		return value;
@@ -409,17 +407,12 @@ KIRIM KE SERVER
 		if (current - range > 2) html += `<div class="disabled item">...</div>`;
 
 		// Middle range
-		for (
-			let i = Math.max(2, current - range);
-			i <= Math.min(total - 1, current + range);
-			i++
-		) {
+		for (let i = Math.max(2, current - range); i <= Math.min(total - 1, current + range); i++) {
 			html += createItem(i, i === current);
 		}
 
 		// Dots after
-		if (current + range < total - 1)
-			html += `<div class="disabled item">...</div>`;
+		if (current + range < total - 1) html += `<div class="disabled item">...</div>`;
 
 		// Last page
 		if (total > 1) html += createItem(total, current === total);
@@ -528,12 +521,7 @@ KIRIM KE SERVER
 
 		$("#form_flyout").empty();
 
-		FormEngine.render(
-			"#form_flyout",
-			UIConfig.rekanan_akta.form.elements,
-			form,
-			UIConfig.rekanan_akta.layout,
-		);
+		FormEngine.render("#form_flyout", UIConfig.rekanan_akta.form.elements, form, UIConfig.rekanan_akta.layout);
 
 		$("#form_flyout [name=rekanan_id]").val(id);
 
@@ -555,9 +543,7 @@ KIRIM KE SERVER
 			cancelText: "Batal",
 			onApprove: () => {
 				return new Promise((resolve, reject) => {
-					const btn = $(
-						`${this.tbody} tr[data-id="${id}"] [data-action="delete"]`,
-					);
+					const btn = $(`${this.tbody} tr[data-id="${id}"] [data-action="delete"]`);
 
 					let req = btn.data("req") || null;
 
