@@ -176,8 +176,10 @@ class FormEngine {
 CEK FIELD READONLY
 agar tidak diubah saat populate
 ===================================================== */
+			// jika readonly tetap isi value tetapi jangan ubah readonly
 			if (field.is("[readonly]")) {
-				return; // skip field readonly
+				field.val(data[key]); // isi data dari server
+				return; // tidak perlu proses lain
 			}
 
 			/* =====================================================

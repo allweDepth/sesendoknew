@@ -119,17 +119,13 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		let payload = {
 			/* aksi CRUD */
 			action: "list",
-
 			/* alias tabel dari config */
 			tbl: this.state.tbl,
-			/* request tambahan opsional */
-			req: this.state.req || "",
-
 			/* pagination */
 			halaman: this.currentPage,
-			/* =====================================================
-KIRIM KE SERVER
-===================================================== */
+			//=====================================================
+			// KIRIM KE SERVER
+			// =====================================================
 			rows: this.limit,
 
 			/* search */
@@ -139,20 +135,23 @@ KIRIM KE SERVER
 			sort_by: this.sortBy,
 			sort_dir: this.sortDir,
 		};
-
-		/* =====================================================
-   OPTIONAL PROFILE OVERRIDE
-   -----------------------------------------------------
-   hanya kirim jika state.req ada
-===================================================== */
+		// hanya kirim req jika ada
+		if (this.state.req !== null && this.state.req !== undefined && this.state.req !== "") {
+			payload.req = this.state.req; // kirim req hanya jika valid
+		}
+		//=====================================================
+		//OPTIONAL PROFILE OVERRIDE
+		//-----------------------------------------------------
+		//hanya kirim jika state.req ada
+		//=====================================================
 
 		if (this.state.req) {
 			payload.req = this.state.req;
 		}
 
-		/* =====================================================
-   AJAX REQUEST
-===================================================== */
+		//=====================================================
+		//AJAX REQUEST
+		//===================================================== */
 
 		this.ajax.request({
 			method: "POST",
@@ -335,7 +334,7 @@ KIRIM KE SERVER
 							data-ui="open-form"
 							data-jns="edit"
 							data-tbl="${this.state.tbl}"
-							data-req="${this.state.req || ""}"
+							${this.state.req ? `data-req="${this.state.req}"` : ``}
 							data-id="${id}">
 								<i class="edit icon"></i>
 							</button>
@@ -344,7 +343,7 @@ KIRIM KE SERVER
 
 							<button class="ui red button"
 								data-action="delete"
-								data-req="${this.state.req || ""}">
+								${this.state.req ? `data-req="${this.state.req}"` : ``}
 								<i class="trash icon"></i>
 							</button>
 

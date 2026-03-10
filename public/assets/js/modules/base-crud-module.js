@@ -34,7 +34,17 @@ class BaseCrudModule {
 
 			this.loadTable(tblFromUrl, req);
 		} else if (this.menuItems.length > 0) {
-			this.loadTable(this.menuItems[0].tbl);
+			// ambil item menu pertama
+			const firstMenu = this.menuItems[0];
+
+			// tbl dari menu pertama
+			const tbl = firstMenu.tbl;
+
+			// req dari menu pertama jika ada
+			const req = firstMenu.req || null;
+
+			// load tabel dengan req
+			this.loadTable(tbl, req);
 		}
 	}
 
