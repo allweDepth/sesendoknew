@@ -322,15 +322,15 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 							data-tbl="${this.state.tbl}"
 							${this.state.req ? `data-req="${this.state.req}"` : ``}
 							data-id="${id}">
-								<i class="edit icon"></i>
+								<i class="blue edit icon"></i>
 							</button>
 
 							${btnExtra}
 
 							<button class="ui red button"
 								data-action="delete"
-								${this.state.req ? `data-req="${this.state.req}"` : ``}
-								<i class="trash icon"></i>
+								${this.state.req ? `data-req="${this.state.req}"` : ``}>
+								<i class="red trash icon"></i>
 							</button>
 
 						</div>

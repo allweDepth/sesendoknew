@@ -123,25 +123,25 @@ PERUBAHAN:
       $tbl = $request['tbl'] ?? null;
       $req = $request['req'] ?? null;
 
-      /* =====================================
-            PRIORITAS data-req
-            ===================================== */
 
-      switch (true) {
+      //|--------------------------------------------------------------------------
+      //| PROFILE RESOLUTION
+      //|--------------------------------------------------------------------------
+      //| tbl selalu menentukan profile utama
+      //| req hanya menjadi context tambahan (filter / dropdown)
 
-        case ($req && isset($this->profiles[$req])):
 
-          $profile = $this->profiles[$req];
-          break;
+      if (!$tbl || !isset($this->profiles[$tbl])) {
 
-        case ($tbl && isset($this->profiles[$tbl])):
+        return JsonResponse::error("Tabel tidak terdaftar");
+      }
 
-          $profile = $this->profiles[$tbl];
-          break;
+      $profile = $this->profiles[$tbl]; // profile utama selalu dari tbl
 
-        default:
+      // simpan req context jika ada
+      if ($req && isset($this->profiles[$req])) {
 
-          return JsonResponse::error("Tabel tidak terdaftar");
+        $request['_req_profile'] = $this->profiles[$req];
       }
 
       $table = $profile['table'];
@@ -231,16 +231,17 @@ PERUBAHAN:
           ?? $request['value']
           ?? null;
 
+        // gunakan source jika ada
+        $source = $request['source'] ?? $request['tbl'];
+
         return $this->loadDropdown(
-          $request['tbl'] ?? null,
+          $source, // dropdown source
           $parentValue,
           $request['kd_akun'] ?? null
         );
-
-
-        /* =====================================================
-📤 EXPORT
-===================================================== */
+        //=====================================================
+        //📤 EXPORT
+        //===================================================== */
       case 'export':
         $this->authorize('view', $table);
         return $this->export(
