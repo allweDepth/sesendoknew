@@ -107,7 +107,7 @@ class BaseCrudModule {
 			$item.addClass("active"); // aktifkan menu ini
 
 			const tbl = $item.data("tbl"); // tabel
-			const req = $item.data("req") || null; // req tambahan jika ada
+			const req = $item.data("req") ?? null; // gunakan nullish coalescing
 
 			/* =====================================================
 RESET SEARCH FIELD SAAT TAB MENU BERUBAH
@@ -155,8 +155,8 @@ agar komponen lain seperti search dapat membaca
 		// ====================================================
 		const basePath = window.location.pathname;
 		window.history.replaceState(null, "", `${basePath}?tbl=${tbl}`);
-		if (this.tableManager) {
-			this.tableManager.destroy();
+		if (this.tableManager && typeof this.tableManager.destroy === "function") {
+			this.tableManager.destroy(); // hancurkan event lama
 		}
 
 		const title = this.formatTitle(tbl);

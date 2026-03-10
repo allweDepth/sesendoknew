@@ -7,39 +7,34 @@
  */
 
 class AppState {
+	constructor() {
+		this.module = null; // modul aktif
 
-    constructor() {
+		this.tbl = null; // tabel aktif
 
-        // Module aktif
-        this.module = null;
+		this.activeRow = null; // row aktif
 
-        // Tabel aktif
-        this.tbl = null;
+		this.req = null; // request tambahan (mapping dll)
+	}
 
-        // Row aktif
-        this.activeRow = null;
+	/**
+	 * Set module aktif
+	 */
+	setModule(moduleName) {
+		this.module = moduleName;
+	}
 
-    }
+	/**
+	 * Set tabel aktif
+	 */
+	setTable(tableName) {
+		this.tbl = tableName;
+	}
 
-    /**
-     * Set module aktif
-     */
-    setModule(moduleName) {
-        this.module = moduleName;
-    }
-
-    /**
-     * Set tabel aktif
-     */
-    setTable(tableName) {
-        this.tbl = tableName;
-    }
-
-    /**
-     * Set row aktif
-     */
-    setActiveRow(id) {
-        this.activeRow = id;
-    }
-
+	/**
+	 * Set row aktif
+	 */
+	setActiveRow(id) {
+		this.activeRow = id;
+	}
 }

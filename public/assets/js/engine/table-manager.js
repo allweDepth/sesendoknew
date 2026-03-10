@@ -20,14 +20,10 @@ class TableManager {
 	static instances = {};
 	constructor(config = {}) {
 		// simpan state modul
-		this.state = config.state;
-		/* =====================================================
-   OPTIONAL REQUEST OVERRIDE
-   -----------------------------------------------------
-   dipakai oleh tabel khusus
-===================================================== */
+		this.state = config.state; // referensi state global
 
-		this.state.req = config.state?.req || null;
+		// jangan ubah state di constructor
+		this.req = config.state?.req || null; // simpan req lokal instance
 		// ajax engine
 		this.ajax = window.Ajax;
 
@@ -134,17 +130,9 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			sort_dir: this.sortDir,
 		};
 		// hanya kirim req jika ada
-		if (this.state.req !== null && this.state.req !== undefined && this.state.req !== "") {
-			payload.req = this.state.req; // kirim req hanya jika valid
-		}
-		//=====================================================
-		//OPTIONAL PROFILE OVERRIDE
-		//-----------------------------------------------------
-		//hanya kirim jika state.req ada
-		//=====================================================
-
-		if (this.state.req) {
-			payload.req = this.state.req;
+		// kirim req hanya jika instance memiliki req
+		if (this.req !== null && this.req !== undefined && this.req !== "") {
+			payload.req = this.req; // req instance table manager
 		}
 
 		//=====================================================
