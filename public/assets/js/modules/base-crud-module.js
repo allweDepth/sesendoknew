@@ -59,20 +59,17 @@ class BaseCrudModule {
 		this.menuItems.forEach((item, index) => {
 			menuHtml += `
             <a class="item ${index === 0 ? "active" : ""}" 
-   data-tbl="${item.tbl}"
-   ${item.req ? `data-req="${item.req}"` : ``}>
-   ${item.label}
-</a>
-        `;
+              data-tbl="${item.tbl}"
+              ${item.req ? `data-req="${item.req}"` : ``}>
+              ${item.label}
+            </a>
+            `;
 		});
-
 		const html = `
         <div class="ui container">
-
             <h2 class="ui dividing header">
                 Modul ${this.moduleName.toUpperCase()}
             </h2>
-
             ${
 							this.useMenu
 								? `
