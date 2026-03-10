@@ -318,7 +318,7 @@ SET VALUE NORMAL
 
 					const reloadTable = this.state.reloadTable || this.state.tbl;
 
-					$(document).trigger(`form:success.${reloadTable}`);
+					$(document).trigger(`form:success.${reloadTable}.table`);
 				},
 
 				error: () => {
@@ -359,7 +359,7 @@ AMBIL STATE GLOBAL
 
 				const reloadTable = this.state.reloadTable || this.state.tbl;
 
-				$(document).trigger(`form:success.${reloadTable}`);
+				$(document).trigger(`form:success.${reloadTable}.table`);
 			},
 
 			error: () => {
