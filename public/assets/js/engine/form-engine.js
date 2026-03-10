@@ -55,7 +55,6 @@ class FormEngine {
 		console.log("LOAD DATA", id);
 		this.ajax.request({
 			data: {
-				module: this.state.module || this.state.tbl,
 				action: "edit",
 				tbl: this.state.tbl,
 				id_row: id,
@@ -716,7 +715,7 @@ SEARCH FIELD (FOMANTIC SEARCH)
 		 * ======================================================
 		 * RETURN HTML DROPDOWN
 		 * ======================================================
-		 * data-source       → module sumber dropdown
+		 * data-source
 		 * data-parent       → nama field parent di form
 		 * data-parent-field → nama kolom parent di database
 		 */
@@ -871,7 +870,6 @@ SEARCH FIELD (FOMANTIC SEARCH)
 
 			self.ajax.request({
 				data: {
-					module: source,
 					action: "dropdown",
 					tbl: source,
 				},
@@ -1265,7 +1263,6 @@ SEARCH FIELD (FOMANTIC SEARCH)
 				// ==================================================
 				self.ajax.request({
 					data: {
-						module: source,
 						action: "dropdown",
 						tbl: source,
 						parent: parentName,

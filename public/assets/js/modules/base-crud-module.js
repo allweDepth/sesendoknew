@@ -124,9 +124,6 @@ LANJUTKAN LOAD TABLE
 	 * ========================================================
 	 */
 	loadTable(tbl, req = null) {
-		// module utama
-		this.state.setModule(this.moduleName);
-
 		// tabel aktif
 		this.state.setTable(tbl);
 
@@ -209,24 +206,14 @@ INISIALISASI TABLE
 	buildActionButtons(tbl) {
 		let importType = "import";
 		let importIcon = "upload";
+		// gunakan tbl langsung tanpa module
+		const strukturList = ["urusan", "bidang", "program", "kegiatan", "sub_kegiatan"]; // daftar tabel struktur
 
-		switch (this.moduleName) {
-			case "referensi":
-				const strukturList = [
-					"urusan",
-					"bidang",
-					"program",
-					"kegiatan",
-					"sub_kegiatan",
-				];
-
-				if (strukturList.includes(tbl)) {
-					importType = "import_struktur";
-					importIcon = "sitemap";
-				}
-				break;
+		if (strukturList.includes(tbl)) {
+			// cek apakah tabel termasuk struktur
+			importType = "import_struktur"; // ubah jenis import
+			importIcon = "sitemap"; // ubah icon
 		}
-
 		return `
         <div class="ui right floated basic icon buttons" style="margin-top:10px;">
 

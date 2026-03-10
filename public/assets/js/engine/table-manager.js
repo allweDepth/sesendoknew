@@ -13,7 +13,7 @@ class TableManager {
 			CONSTRUCTOR
 			-----------------------------------------------------
 			Inisialisasi:
-			- State module & tabel aktif
+			- State action & tabel aktif
 			- AJAX engine
 			- Selector fallback otomatis
 		===================================================== */
@@ -94,7 +94,6 @@ class TableManager {
 			-----------------------------------------------------
 			Mengambil data dari backend
 			Parameter:
-			- module
 			- action
 			- tbl
 			- page
@@ -123,13 +122,6 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 
 			/* alias tabel dari config */
 			tbl: this.state.tbl,
-
-			/* =====================================================
-MODULE HARUS MENGGUNAKAN STATE MODULE
-bukan tbl
-===================================================== */
-			module: this.state.module,
-
 			/* request tambahan opsional */
 			req: this.state.req || "",
 
@@ -212,7 +204,7 @@ KIRIM KE SERVER
 	/* =====================================================
 			AMBIL KOLOM DARI UI CONFIG
 			-----------------------------------------------------
-			- Ambil dari UIConfig[module][tbl]
+			- Ambil dari UIConfig[][tbl]
 			- Auto hide id
 			- Skip prop.table === false
 		===================================================== */
@@ -553,8 +545,6 @@ KIRIM KE SERVER
 							action: "delete",
 							// jika ada data-req gunakan itu
 							tbl: req || this.state.tbl,
-
-							module: req || this.state.tbl,
 							id_row: id,
 						},
 						success: () => {

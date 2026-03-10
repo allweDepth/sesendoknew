@@ -2,93 +2,100 @@
 
 class ApiController
 {
-    public function handle()
-    {
-      ini_set('display_errors', 0);
+  public function handle()
+  {
+    ini_set('display_errors', 0); // matikan error display agar response tetap JSON
 
-    header('Content-Type: application/json');
+    header('Content-Type: application/json'); // set header response JSON
 
+    // ==============================
+    // START SESSION JIKA BELUM ADA
+    // ==============================
     if (session_status() === PHP_SESSION_NONE) {
-        session_start();
+      session_start(); // mulai session
     }
-        $module = $_REQUEST['module'] ?? null;
-        $action = $_REQUEST['action'] ?? null;
 
-        if (!$module || !$action) {
-            http_response_code(400);
-            echo json_encode([
-                'success' => false,
-                'message' => 'Module atau action tidak valid'
-            ]);
-            return;
-        }
+    // ==============================
+    // AMBIL PARAMETER REQUEST
+    // ==============================
+    $tbl = $_REQUEST['tbl'] ?? null; // nama resource / tabel
+    $action = $_REQUEST['action'] ?? null; // aksi yang diminta
 
-        /*
-        ==============================
-        PUBLIC MODULE (tanpa login)
-        ==============================
-        */
-        $publicModules = ['public'];
+    // ==============================
+    // VALIDASI PARAMETER
+    // ==============================
+    if (!$tbl || !$action) { // jika tbl atau action kosong
+      http_response_code(400); // set HTTP error
 
-        if (!in_array($module, $publicModules)) {
-            if (!isset($_SESSION['user'])) {
-                http_response_code(401);
-                echo json_encode([
-                    'success' => false,
-                    'expired' => true,
-                    'message' => 'Session habis. Silakan login ulang.'
-                ]);
-                return;
-            }
-        }
+      echo json_encode([
+        'success' => false,
+        'message' => 'tbl atau action tidak valid' // pesan error
+      ]);
 
-        $modelName = ucfirst($module) . 'Model';
-        $modelPath = __DIR__ . '/../Models/' . $modelName . '.php';
-
-        if (!file_exists($modelPath)) {
-            http_response_code(404);
-            echo json_encode([
-                'success' => false,
-                'message' => 'Model tidak ditemukan'
-            ]);
-            return;
-        }
-
-        require_once $modelPath;
-
-        if (!class_exists($modelName)) {
-            http_response_code(500);
-            echo json_encode([
-                'success' => false,
-                'message' => 'Class model tidak ditemukan'
-            ]);
-            return;
-        }
-
-        $model = new $modelName();
-
-        if (!method_exists($model, $action)) {
-            http_response_code(404);
-            echo json_encode([
-                'success' => false,
-                'message' => 'Method tidak ditemukan'
-            ]);
-            return;
-        }
-
-        try {
-            $result = $model->$action($_REQUEST);
-
-            echo json_encode([
-                'success' => true,
-                'data' => $result
-            ]);
-        } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-        }
+      return; // hentikan eksekusi
     }
+
+    // ==============================
+    // RESOURCE YANG BOLEH TANPA LOGIN
+    // ==============================
+    $publicModules = ['public']; // daftar resource publik
+
+    // ==============================
+    // CEK SESSION LOGIN
+    // ==============================
+    if (!in_array($tbl, $publicModules)) { // jika bukan resource public
+      if (!isset($_SESSION['user'])) { // jika session user tidak ada
+
+        http_response_code(401); // unauthorized
+
+        echo json_encode([
+          'success' => false,
+          'expired' => true,
+          'message' => 'Session habis. Silakan login ulang.'
+        ]);
+
+        return; // hentikan eksekusi
+      }
+    }
+
+    // ==============================
+    // RESOLVE MODEL BERDASARKAN TBL
+    // ==============================
+    // ==============================
+    // LOAD DYNAMIC TABLE SERVICE
+    // ==============================
+    require_once __DIR__ . '/../Services/DynamicTableService.php'; // load service utama
+
+    // ==============================
+    // BUAT INSTANCE SERVICE
+    // ==============================
+    $service = new DynamicTableService(); // buat instance service
+
+    try {
+
+      // ==============================
+      // EKSEKUSI SERVICE
+      // ==============================
+      $result = $service->handle($_REQUEST); // jalankan handler service
+
+      // ==============================
+      // RESPONSE BERHASIL
+      // ==============================
+      echo json_encode([
+        'success' => true,
+        'data' => $result
+      ]);
+    } catch (Exception $e) {
+
+      // ==============================
+      // RESPONSE ERROR SERVER
+      // ==============================
+      http_response_code(500);
+
+      echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
+      ]);
+    }
+  }
 }
