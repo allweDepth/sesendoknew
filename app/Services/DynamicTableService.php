@@ -227,15 +227,12 @@ PERUBAHAN:
 ===================================================== */
       case 'dropdown':
 
-        $parentValue = $request['parent_value']
-          ?? $request['value']
-          ?? null;
+        $parentValue = $request['value'] ?? null;
 
-        // gunakan source jika ada
-        $source = $request['source'] ?? $request['tbl'];
+        $source = $request['tbl'];
 
         return $this->loadDropdown(
-          $source, // dropdown source
+          $source,
           $parentValue,
           $request['kd_akun'] ?? null
         );
@@ -1468,119 +1465,63 @@ DROPDOWN ENGINE (FULL IDENTIK)
   /* =========================================================
 DROPDOWN ENGINE (PROFILE-DRIVEN + AKUN FILTER)
 ========================================================= */
+  /* =========================================================
+DROPDOWN ENGINE (PROFILE DRIVEN - STABLE VERSION)
+========================================================= */
   private function loadDropdown(
     string $source,
     $parentValue = null,
     ?string $kdAkun = null
   ): string {
 
-    // ======================================================
-    // AMBIL PARAMETER REQUEST
-    // ======================================================
-
-    $req   = $_POST['req']  ?? null;           // dataset tambahan
-    $cari  = $_POST['cari'] ?? null;           // keyword search
-    $limit = isset($_POST['limit']) ? intval($_POST['limit']) : 20;
-    $currentValue = $_POST['value'] ?? null;   // value yang sedang dipilih (untuk edit)
-
-    // ======================================================
-    // RESOLVE SOURCE PROFILE
-    // ======================================================
+    /* =========================================
+    1️⃣ VALIDASI PROFILE
+    ========================================= */
 
     if (!isset($this->profiles[$source])) {
-
-      // jika source adalah nama tabel
-      foreach ($this->profiles as $key => $p) {
-
-        if (($p['table'] ?? null) === $source) {
-
-          $source = $key;
-          break;
-        }
-      }
-
-      if (!isset($this->profiles[$source])) {
-        return JsonResponse::error("Source tidak ditemukan");
-      }
+      return JsonResponse::error("Source tidak ditemukan");
     }
 
     $profile = $this->profiles[$source];
     $table   = $profile['table'];
 
-    // ======================================================
-    // PRIMARY KEY
-    // ======================================================
+    $columns = $this->getTableColumns($table);
+
+    /* =========================================
+    2️⃣ FIELD DROPDOWN
+    ========================================= */
 
     $primaryKey = $profile['primary_key'] ?? 'id';
 
     $valueField = $profile['dropdown']['value'] ?? $primaryKey;
     $labelField = $profile['dropdown']['label'] ?? 'nama';
 
-    $columns = $this->getTableColumns($table);
-
-    // ======================================================
-    // BUILD WHERE CONDITION
-    // ======================================================
+    /* =========================================
+    3️⃣ BUILD WHERE
+    ========================================= */
 
     $whereParts = [];
     $params     = [];
 
-    // ======================================================
-    // PROFILE WHERE
-    // ======================================================
+    /* =========================================
+    4️⃣ PARENT RELATION DARI PROFILE
+    ========================================= */
 
-    if (!empty($profile['where'])) {
+    $parentField = $profile['dropdown']['parent_field'] ?? null;
 
-      foreach ($profile['where'] as $col => $val) {
-
-        $whereParts[] = "`$table`.`$col` = ?";
-        $params[]     = $val;
-      }
-    }
-
-    // ======================================================
-    // REQ DATASET FILTER (ssh/sbu/asb/hspk)
-    // ======================================================
-
-    if ($req && isset($this->profiles[$req])) {
-
-      $reqProfile = $this->profiles[$req];
-
-      if (!empty($reqProfile['where'])) {
-
-        foreach ($reqProfile['where'] as $col => $val) {
-
-          $whereParts[] = "`$table`.`$col` = ?";
-          $params[]     = $val;
-        }
-      }
-    }
-
-    // ======================================================
-    // FILTER PARENT DROPDOWN (CASCADE)
-    // ======================================================
-
-    $parentField = $_POST['parent_field'] ?? null;
-
-    if ($parentValue !== null && $parentField && in_array($parentField, $columns)) {
+    if (
+      $parentValue !== null &&
+      $parentField &&
+      in_array($parentField, $columns)
+    ) {
 
       $whereParts[] = "`$table`.`$parentField` = ?";
       $params[]     = $parentValue;
     }
 
-    // ======================================================
-    // SEARCH DROPDOWN
-    // ======================================================
-
-    if ($cari) {
-
-      $whereParts[] = "`$table`.`$labelField` LIKE ?";
-      $params[]     = "%$cari%";
-    }
-
-    // ======================================================
-    // PROFILE-DRIVEN AKUN FILTER
-    // ======================================================
+    /* =========================================
+    5️⃣ FILTER BY AKUN (JIKA ADA)
+    ========================================= */
 
     $join       = '';
     $akunWhere  = '';
@@ -1595,17 +1536,17 @@ DROPDOWN ENGINE (PROFILE-DRIVEN + AKUN FILTER)
       $fkField    = $pivotConfig['foreign_key'];
 
       $join = "
-        INNER JOIN `$pivotTable` p
+            INNER JOIN `$pivotTable` p
             ON p.`$fkField` = `$table`.`$primaryKey`
-    ";
+        ";
 
       $pengaturan = $this->getPengaturanAktif();
 
       $akunWhere = "
-        AND p.`kd_akun` = ?
-        AND p.`kd_wilayah` = ?
-        AND p.`peraturan_id` = ?
-    ";
+            AND p.`kd_akun` = ?
+            AND p.`kd_wilayah` = ?
+            AND p.`peraturan_id` = ?
+        ";
 
       $akunParams = [
         $kdAkun,
@@ -1614,69 +1555,43 @@ DROPDOWN ENGINE (PROFILE-DRIVEN + AKUN FILTER)
       ];
     }
 
-    // ======================================================
-    // FINAL WHERE BUILD
-    // ======================================================
+    /* =========================================
+    6️⃣ FINAL WHERE
+    ========================================= */
 
     $where = '';
 
     if (!empty($whereParts)) {
-
       $where = "WHERE " . implode(" AND ", $whereParts);
     }
 
-    // ======================================================
-    // QUERY DROPDOWN
-    // ======================================================
+    /* =========================================
+    7️⃣ QUERY DROPDOWN
+    ========================================= */
 
     $query = "
-      SELECT
-          `$table`.`$valueField` AS value,
-          `$table`.`$labelField` AS text
-      FROM `$table`
-      $join
-      $where
-      $akunWhere
-  ";
-
-    // ======================================================
-    // TAMBAHKAN CURRENT VALUE AGAR EDIT TETAP TERPILIH
-    // ======================================================
-
-    if ($currentValue) {
-
-      $query .= "
-        UNION
         SELECT
             `$table`.`$valueField` AS value,
             `$table`.`$labelField` AS text
         FROM `$table`
-        WHERE `$table`.`$valueField` = ?
+        $join
+        $where
+        $akunWhere
+        ORDER BY `$table`.`$labelField` ASC
     ";
 
-      $params[] = $currentValue;
-    }
-
-    // ======================================================
-    // ORDER DAN LIMIT
-    // ======================================================
-
-    $query .= "
-      ORDER BY text ASC
-      LIMIT " . intval($limit);
-
-    // ======================================================
-    // EXECUTE QUERY
-    // ======================================================
+    /* =========================================
+    8️⃣ EXECUTE QUERY
+    ========================================= */
 
     $rows = $this->db->query(
       $query,
       array_merge($params, $akunParams)
     )->fetchAll();
 
-    // ======================================================
-    // NORMALISASI RESPONSE
-    // ======================================================
+    /* =========================================
+    9️⃣ FORMAT RESPONSE
+    ========================================= */
 
     $dropdown = array_map(function ($row) {
 
@@ -1685,10 +1600,6 @@ DROPDOWN ENGINE (PROFILE-DRIVEN + AKUN FILTER)
         'text'  => $row['text']
       ];
     }, $rows);
-
-    // ======================================================
-    // RESPONSE KE FRONTEND
-    // ======================================================
 
     return JsonResponse::success(
       "Dropdown loaded",
