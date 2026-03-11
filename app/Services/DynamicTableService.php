@@ -120,29 +120,43 @@ PERUBAHAN:
       /* =====================================================
             2️⃣ VALIDASI TABEL
             ===================================================== */
-      $tbl = $request['tbl'] ?? null; // ambil alias tabel dari request
-      $req = $request['req'] ?? null; // ambil req override jika ada
+      $tbl = $request['tbl'] ?? null; // ambil logical table dari request
+      $req = $request['req'] ?? null; // ambil override table jika ada
 
 
-      //------------------------------------------------------------------------------
-      // PROFILE RESOLUTION
-      //------------------------------------------------------------------------------
-      // tbl menentukan profile utama sistem
+      // ============================================================
+      // VALIDASI PROFILE BERDASARKAN TBL
+      // ============================================================
 
-
-      if (!$tbl || !isset($this->profiles[$tbl])) { // jika tbl tidak terdaftar
+      if (!$tbl || !isset($this->profiles[$tbl])) { // jika tbl tidak dikenal
 
         return JsonResponse::error("Tabel tidak terdaftar"); // kirim error
+
       }
 
-      $profile = $this->profiles[$tbl]; // ambil profile utama berdasarkan tbl
+
+      // ============================================================
+      // PROFILE DEFAULT
+      // ============================================================
+
+      $profile = $this->profiles[$tbl]; // ambil profile utama
+
+      $table = $profile['table']; // tabel default dari profile
 
 
-      //------------------------------------------------------------------------------
-      // DEFAULT TABLE DARI PROFILE
-      //------------------------------------------------------------------------------
+      // ============================================================
+      // REQ TABLE OVERRIDE
+      // ============================================================
 
-      $table = $profile['table']; // default tabel database dari profile
+      if ($req && isset($this->profiles[$req])) { // jika req dikirim dan profile ada
+
+        $reqProfile = $this->profiles[$req]; // ambil profile req
+
+        $table = $reqProfile['table']; // override tabel database
+
+        $request['_req_profile'] = $reqProfile; // simpan context req
+
+      }
 
 
       //------------------------------------------------------------------------------

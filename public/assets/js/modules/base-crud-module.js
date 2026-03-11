@@ -63,9 +63,6 @@ class BaseCrudModule {
 			// ======================================================
 			// jika keduanya tidak ada → tetap null
 			// ======================================================
-
-			this.loadTable(tblFromUrl, req);
-
 			this.loadTable(tblFromUrl, req);
 		} else if (this.menuItems.length > 0) {
 			// ambil item menu pertama

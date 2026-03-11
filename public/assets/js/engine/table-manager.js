@@ -19,41 +19,29 @@ class TableManager {
 		===================================================== */
 	static instances = {};
 	constructor(config = {}) {
-		// simpan state modul
-		this.state = config.state; // referensi state global
+		// constructor instance table manager
 
-		// jangan ubah state di constructor
-		this.req = config.state?.req || null; // simpan req lokal instance
-		// ajax engine
-		this.ajax = window.Ajax;
+		this.state = config.state; // simpan state global
 
-		// flag agar init tidak double
-		this.initialized = false;
+		this.req = config.state?.req || null; // simpan req lokal
 
-		// selector tbody tabel
-		this.tbody = config.tbody || `tbody[name="tabel_${this.state.tbl}"]`;
+		this.ajax = window.Ajax; // engine ajax
 
-		// selector pagination
-		this.pagination = config.pagination || `div[name="pagination_${this.state.tbl}"]`;
+		this.initialized = false; // flag agar init tidak dobel
 
-		// pagination state
-		this.currentPage = 1;
-		this.limit = config.limit || 10;
-		this.totalRows = 0;
-		this.totalPages = 0;
+		// ======================================================
+		// INSTANCE REGISTRY
+		// ======================================================
 
-		// sorting state
-		this.sortBy = null;
-		this.sortDir = "asc";
+		const key = this.state.tbl; // gunakan nama tabel sebagai key
 
-		// search state
-		this.searchQuery = "";
+		if (TableManager.instances[key]) {
+			// jika instance sudah ada
 
-		// data hasil fetch
-		this.data = [];
+			return TableManager.instances[key]; // gunakan instance lama
+		}
 
-		// primary key default
-		this.primaryKey = "id";
+		TableManager.instances[key] = this; // simpan instance baru
 	}
 
 	/* =====================================================
