@@ -3738,16 +3738,16 @@ AND is_deleted = 0
     // load profile configuration
     // ----------------------------------------------------
 
-    $profiles = require __DIR__ . '/../Config/table_profiles.php'; // load table profiles
+    $profiles = require __DIR__ . '/../Config/table_profiles.php'; // load profiles
 
 
     // ----------------------------------------------------
-    // cek apakah module ada
+    // cek module
     // ----------------------------------------------------
 
     if (!isset($profiles[$module])) {
 
-      return JsonResponse::error("Module {$module} tidak ditemukan"); // module tidak ditemukan
+      return JsonResponse::error("Module {$module} tidak ditemukan"); // module tidak ada
 
     }
 
@@ -3763,11 +3763,11 @@ AND is_deleted = 0
     // resolve nama tabel
     // ----------------------------------------------------
 
-    $table = $profile['table'] ?? $module; // fallback ke nama module jika table tidak ada
+    $table = $profile['table'] ?? $module; // fallback ke nama module
 
 
     // ----------------------------------------------------
-    // ambil parameter dari request
+    // ambil parameter request
     // ----------------------------------------------------
 
     $parent      = $_POST['parent'] ?? null; // parent value
@@ -3783,15 +3783,15 @@ AND is_deleted = 0
 
     $sql = "SELECT * FROM {$table}"; // query dasar
 
-    $params = []; // parameter query
+    $params = []; // parameter bind
 
     $where = []; // kondisi where
 
 
     /*
-    -----------------------------------------------------
+    ----------------------------------------------------
     PRIORITAS 1 : RELATION PROFILE
-    -----------------------------------------------------
+    ----------------------------------------------------
     */
 
     if ($parent !== null && !empty($profile['relations'])) {
@@ -3802,9 +3802,9 @@ AND is_deleted = 0
 
         if ($localKey) {
 
-          $where[] = "{$localKey} = :parent"; // filter relasi
+          $where[] = "{$localKey} = :parent"; // filter parent
 
-          $params['parent'] = $parent; // bind parent
+          $params['parent'] = $parent; // bind parameter
 
           break;
         }
@@ -3813,12 +3813,12 @@ AND is_deleted = 0
 
 
     /*
-    -----------------------------------------------------
+    ----------------------------------------------------
     PRIORITAS 2 : parent_field fallback
-    -----------------------------------------------------
+    ----------------------------------------------------
     */ elseif ($value && $parentField) {
 
-      $where[] = "{$parentField} = :parent"; // fallback parent field
+      $where[] = "{$parentField} = :parent"; // fallback parent
 
       $params['parent'] = $value; // bind parameter
 
@@ -3826,9 +3826,9 @@ AND is_deleted = 0
 
 
     /*
-    -----------------------------------------------------
+    ----------------------------------------------------
     APPLY WHERE
-    -----------------------------------------------------
+    ----------------------------------------------------
     */
 
     if (!empty($where)) {
@@ -3839,25 +3839,25 @@ AND is_deleted = 0
 
 
     /*
-    -----------------------------------------------------
+    ----------------------------------------------------
     ORDER DATA
-    -----------------------------------------------------
+    ----------------------------------------------------
     */
 
-    $sql .= " ORDER BY kode"; // urutkan berdasarkan kode
+    $sql .= " ORDER BY kode"; // urut berdasarkan kode
 
 
     // ----------------------------------------------------
-    // eksekusi query database
+    // eksekusi query
     // ----------------------------------------------------
 
     $rows = $this->db
-      ->query($sql, $params) // gunakan query engine yang konsisten
-      ->fetchAll(); // ambil semua hasil
+      ->query($sql, $params) // gunakan engine query
+      ->fetchAll(); // ambil hasil
 
 
     // ----------------------------------------------------
-    // kirim response JSON
+    // response
     // ----------------------------------------------------
 
     return JsonResponse::success(
@@ -3934,25 +3934,55 @@ AND is_deleted = 0
    * 3. table name fallback
    */
 
-  private function resolveProfileKey(string $tbl, ?string $source = null): ?string
+  // ======================================================
+  // RESOLVE PROFILE KEY
+  // ======================================================
+
+  private function resolveProfileKey(?string $tbl, ?string $source = null): ?string
   {
-    // 1️⃣ jika source adalah profile langsung
-    if ($source && isset($this->profiles[$source])) {
-      return $source;
+
+    // --------------------------------------------------
+    // PRIORITAS 1 : SOURCE PROFILE
+    // --------------------------------------------------
+
+    if ($source !== null && isset($this->profiles[$source])) {
+
+      return $source; // gunakan source sebagai profile
+
     }
 
-    // 2️⃣ jika tbl adalah profile langsung
-    if (isset($this->profiles[$tbl])) {
-      return $tbl;
+
+    // --------------------------------------------------
+    // PRIORITAS 2 : TBL PROFILE
+    // --------------------------------------------------
+
+    if ($tbl !== null && isset($this->profiles[$tbl])) {
+
+      return $tbl; // tbl langsung adalah profile key
+
     }
 
-    // 3️⃣ fallback: cari berdasarkan nama tabel
-    foreach ($this->profiles as $key => $profile) {
 
-      if (($profile['table'] ?? null) === $tbl) {
-        return $key;
+    // --------------------------------------------------
+    // PRIORITAS 3 : CARI BERDASARKAN NAMA TABEL
+    // --------------------------------------------------
+
+    if ($tbl !== null) {
+
+      foreach ($this->profiles as $key => $profile) {
+
+        if (($profile['table'] ?? null) === $tbl) {
+
+          return $key; // temukan profile dari table name
+
+        }
       }
     }
+
+
+    // --------------------------------------------------
+    // PROFILE TIDAK DITEMUKAN
+    // --------------------------------------------------
 
     return null;
   }
