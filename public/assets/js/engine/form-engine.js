@@ -35,7 +35,7 @@ class FormEngine {
 
 		this.initFomanticValidation();
 
-		this.loadDropdownSources();
+		// this.loadDropdownSources();
 		this.initCascadeDropdown(); // ← aktifkan cascade dropdown
 		/* re-init komponen UI setelah render form */
 		UIComponents.initSearch();
@@ -65,6 +65,9 @@ class FormEngine {
 				if (!res || !res.data) return;
 
 				this.populateForm(res.data);
+
+				// load dropdown setelah value tersedia
+				this.loadDropdownSources();
 			},
 		});
 	}
@@ -129,15 +132,8 @@ class FormEngine {
 				const value = data[key];
 
 				// cek apakah menu dropdown sudah ada
-				if (dropdown.find(".menu .item").length === 0) {
-					// jika dropdown ajax belum load item
-					setTimeout(() => {
-						dropdown.dropdown("set selected", value);
-					}, 100);
-				} else {
-					// jika item sudah tersedia
-					dropdown.dropdown("set selected", value);
-				}
+				// hanya set hidden value
+				dropdown.find("input[type='hidden']").val(value);
 
 				// ==================================================
 				// HAPUS FLAG SKIP CASCADE
@@ -855,18 +851,16 @@ SEARCH FIELD (FOMANTIC SEARCH)
 
 				return;
 			}
-
+			const currentValue = $dropdown.find("input[type='hidden']").val();
 			self.ajax.request({
 				data: {
 					action: "dropdown",
 					tbl: source,
+					value: currentValue, // kirim value edit
 				},
-
 				success: (res) => {
 					const $menu = $dropdown.find(".menu");
-
 					$menu.empty();
-
 					if (res && res.success && res.data) {
 						res.data.forEach((item) => {
 							$menu.append(`
@@ -882,6 +876,9 @@ SEARCH FIELD (FOMANTIC SEARCH)
 					// ==================================================
 					$dropdown.dropdown("refresh");
 
+					if (currentValue) {
+						$dropdown.dropdown("set selected", currentValue);
+					}
 					// ==================================================
 					// SET STATUS LOADED
 					// ==================================================
@@ -1255,7 +1252,7 @@ SEARCH FIELD (FOMANTIC SEARCH)
 						tbl: source,
 						parent: parentName,
 						parent_field: $child.data("parent-field"),
-						value: parentValue,
+						parent_value: parentValue,
 					},
 
 					success: (res) => {

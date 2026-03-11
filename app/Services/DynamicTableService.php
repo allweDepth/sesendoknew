@@ -227,14 +227,23 @@ PERUBAHAN:
 ===================================================== */
       case 'dropdown':
 
-        $parentValue = $request['value'] ?? null;
+        $tbl    = $_POST['tbl'] ?? null;
+        $source = $_POST['source'] ?? null;
 
-        $source = $request['tbl'];
+        // resolve profile key
+        $profileKey = $this->resolveProfileKey($tbl, $source);
+
+        if (!$profileKey) {
+          return JsonResponse::error("Source tidak ditemukan");
+        }
+
+        $parentValue = $_POST['parent_value'] ?? null;
+        $kdAkun      = $_POST['kd_akun'] ?? null;
 
         return $this->loadDropdown(
-          $source,
+          $profileKey,
           $parentValue,
-          $request['kd_akun'] ?? null
+          $kdAkun
         );
         //=====================================================
         //📤 EXPORT
@@ -1458,33 +1467,43 @@ BUILD RULE DARI SCHEMA DATABASE
 
     return $rules;
   }
-  /* =========================================================
-DROPDOWN ENGINE (PROFILE DRIVEN - FIXED CASCADE VERSION)
-========================================================= */
+  /**
+   * ======================================================
+   * LOAD DROPDOWN ENGINE (FINAL STABLE ARCHITECTURE)
+   * ======================================================
+   *
+   * fitur:
+   * - membaca profile dropdown
+   * - membaca relations parent dari profile
+   * - filter scope profile
+   * - search dropdown
+   * - pivot filter ssh/sbu/asb/hspk
+   * - limit dropdown
+   * - memastikan value edit tetap muncul
+   * - filter disable otomatis
+   */
+
   private function loadDropdown(
-    string $source,
+    string $profileKey,
     $parentValue = null,
     ?string $kdAkun = null
   ): string {
 
-    /* =========================================
-    1️⃣ VALIDASI PROFILE
-    ========================================= */
+    /* ======================================================
+       VALIDASI PROFILE
+    ====================================================== */
 
-    if (!isset($this->profiles[$source])) {
-      return JsonResponse::error("Source tidak ditemukan");
+    if (!isset($this->profiles[$profileKey])) {
+      return JsonResponse::error("Profile tidak ditemukan");
     }
 
-    $profile = $this->profiles[$source];
+    $profile = $this->profiles[$profileKey];
 
     $table = $profile['table'];
 
-    $columns = $this->getTableColumns($table);
-
-
-    /* =========================================
-    2️⃣ FIELD DROPDOWN
-    ========================================= */
+    /* ======================================================
+       FIELD DROPDOWN
+    ====================================================== */
 
     $primaryKey = $profile['primary_key'] ?? 'id';
 
@@ -1492,141 +1511,226 @@ DROPDOWN ENGINE (PROFILE DRIVEN - FIXED CASCADE VERSION)
 
     $labelField = $profile['dropdown']['label'] ?? 'nama';
 
+    /* ======================================================
+       KOLOM TABEL
+    ====================================================== */
 
-    /* =========================================
-    3️⃣ INIT WHERE
-    ========================================= */
+    $columns = $this->getTableColumns($table);
 
-    $whereParts = [];
-    $params     = [];
+    /* ======================================================
+       PARAMETER REQUEST
+    ====================================================== */
 
+    $cari  = $_POST['cari'] ?? null;
 
-    /* =========================================
-    4️⃣ PARENT RELATION DARI PROFILE
-    ========================================= */
+    $limit = isset($_POST['limit']) ? intval($_POST['limit']) : 20;
 
-    $parentField = $profile['dropdown']['parent_field'] ?? null;
-
-    // parent hanya dipakai jika value dikirim
-    if (
-      $parentField &&
-      $parentValue !== null &&
-      in_array($parentField, $columns)
-    ) {
-
-      $whereParts[] = "`$table`.`$parentField` = ?";
-
-      $params[] = $parentValue;
+    if ($limit > 100) {
+      $limit = 100;
     }
 
+    $currentValue = $_POST['value'] ?? null;
 
-    /* =========================================
-    5️⃣ FILTER PERATURAN
-    ========================================= */
+    /* ======================================================
+       WHERE BUILDER
+    ====================================================== */
 
-    if (in_array('peraturan_id', $columns)) {
+    $mandatoryWhere = [];
+    $optionalWhere  = [];
 
-      $pengaturan = $this->getPengaturanAktif();
+    $paramsMandatory = [];
+    $paramsOptional  = [];
 
-      if ($pengaturan) {
+    /* ======================================================
+       PROFILE WHERE (scope default)
+    ====================================================== */
 
-        $map = [
+    if (!empty($profile['where'])) {
 
-          'urusan'       => 'aturan_sub_kegiatan',
-          'bidang'       => 'aturan_sub_kegiatan',
-          'program'      => 'aturan_sub_kegiatan',
-          'kegiatan'     => 'aturan_sub_kegiatan',
-          'sub_kegiatan' => 'aturan_sub_kegiatan',
+      foreach ($profile['where'] as $col => $val) {
 
-          'ssh'  => 'aturan_ssh',
-          'sbu'  => 'aturan_sbu',
-          'asb'  => 'aturan_asb',
-          'hspk' => 'aturan_hspk'
+        if (!in_array($col, $columns)) {
+          continue;
+        }
 
-        ];
+        if ($val === 'user') {
 
-        if (isset($map[$source])) {
+          $mandatoryWhere[] = "`$table`.`$col` = ?";
 
-          $field = $map[$source];
+          $paramsMandatory[] = $this->user[$col] ?? null;
+        } else {
 
-          $whereParts[] = "`$table`.`peraturan_id` = ?";
+          $mandatoryWhere[] = "`$table`.`$col` = ?";
 
-          $params[] = (int)$pengaturan[$field];
+          $paramsMandatory[] = $val;
         }
       }
     }
 
+    /* ======================================================
+       FILTER DISABLE OTOMATIS
+    ====================================================== */
 
-    /* =========================================
-    6️⃣ FILTER WILAYAH
-    ========================================= */
+    if (in_array('disable', $columns)) {
 
-    if (in_array('kd_wilayah', $columns)) {
+      $mandatoryWhere[] = "`$table`.`disable` = 0";
+    }
 
-      if (!empty($this->user['kd_wilayah'])) {
+    /* ======================================================
+       RELATION PARENT DROPDOWN
+    ====================================================== */
 
-        $whereParts[] = "`$table`.`kd_wilayah` = ?";
+    if (!empty($profile['relations'])) {
 
-        $params[] = $this->user['kd_wilayah'];
+      $relation = reset($profile['relations']);
+
+      $localKey = $relation['local_key'] ?? null;
+
+      if ($localKey && $parentValue !== null && in_array($localKey, $columns)) {
+
+        $mandatoryWhere[] = "`$table`.`$localKey` = ?";
+
+        $paramsMandatory[] = $parentValue;
       }
     }
 
+    /* ======================================================
+       SEARCH DROPDOWN
+    ====================================================== */
 
-    /* =========================================
-    7️⃣ BUILD WHERE
-    ========================================= */
+    if ($cari) {
+
+      $optionalWhere[] = "`$table`.`$labelField` LIKE ?";
+
+      $paramsOptional[] = "%$cari%";
+    }
+
+    /* ======================================================
+       CURRENT VALUE (EDIT MODE)
+    ====================================================== */
+
+    if ($currentValue !== null) {
+
+      $optionalWhere[] = "`$table`.`$valueField` = ?";
+
+      $paramsOptional[] = $currentValue;
+    }
+
+    /* ======================================================
+       FINAL WHERE BUILDER
+    ====================================================== */
 
     $where = '';
 
-    if (!empty($whereParts)) {
+    if (!empty($mandatoryWhere)) {
 
-      $where = "WHERE " . implode(" AND ", $whereParts);
+      $where = "WHERE " . implode(" AND ", $mandatoryWhere);
+
+      if (!empty($optionalWhere)) {
+
+        $where .= " AND (" . implode(" OR ", $optionalWhere) . ")";
+      }
+    } elseif (!empty($optionalWhere)) {
+
+      $where = "WHERE (" . implode(" OR ", $optionalWhere) . ")";
     }
 
+    /* ======================================================
+       PIVOT FILTER (SSH / SBU / ASB / HSPK)
+    ====================================================== */
 
-    /* =========================================
-    8️⃣ QUERY
-    ========================================= */
+    $join = '';
+
+    $akunWhere = '';
+
+    $akunParams = [];
+
+    $filterByAkun = $profile['dropdown']['filter_by_akun'] ?? false;
+
+    $pivotConfig = $profile['pivot'] ?? null;
+
+    if ($filterByAkun && $kdAkun && $pivotConfig) {
+
+      $pivotTable = $pivotConfig['table'];
+
+      $fkField = $pivotConfig['foreign_key'];
+
+      $join = "
+            INNER JOIN `$pivotTable` p
+            ON p.`$fkField` = `$table`.`$primaryKey`
+        ";
+
+      $pengaturan = $this->getPengaturanAktif();
+
+      $akunWhere = "
+            AND p.kd_akun = ?
+            AND p.kd_wilayah = ?
+            AND p.peraturan_id = ?
+        ";
+
+      $akunParams = [
+
+        $kdAkun,
+
+        $this->user['kd_wilayah'] ?? null,
+
+        $pengaturan['aturan_sbu'] ?? null
+      ];
+    }
+
+    /* ======================================================
+       QUERY DROPDOWN
+    ====================================================== */
 
     $query = "
-
         SELECT
             `$table`.`$valueField` AS value,
             `$table`.`$labelField` AS text
-
         FROM `$table`
-
+        $join
         $where
-
+        $akunWhere
         ORDER BY `$table`.`$labelField` ASC
+        LIMIT $limit
     ";
 
+    /* ======================================================
+       EXECUTE QUERY
+    ====================================================== */
 
-    /* =========================================
-    9️⃣ EXECUTE
-    ========================================= */
+    $rows = $this->db->query(
 
-    $rows = $this->db
-      ->query($query, $params)
-      ->fetchAll();
+      $query,
 
+      array_merge($paramsMandatory, $paramsOptional, $akunParams)
 
-    /* =========================================
-    🔟 FORMAT
-    ========================================= */
+    )->fetchAll();
+
+    /* ======================================================
+       NORMALISASI RESPONSE
+    ====================================================== */
 
     $dropdown = array_map(function ($row) {
 
       return [
+
         'value' => $row['value'],
+
         'text'  => $row['text']
+
       ];
     }, $rows);
 
+    /* ======================================================
+       RETURN RESPONSE
+    ====================================================== */
 
     return JsonResponse::success(
+
       "Dropdown loaded",
+
       [],
+
       $dropdown
     );
   }
@@ -3989,5 +4093,39 @@ FALLBACK parent_field
         $data[$target] = $row[$valueField];
       }
     }
+  }
+  /**
+   * ============================================================
+   * RESOLVE PROFILE KEY
+   * ============================================================
+   *
+   * Menentukan profile mana yang dipakai oleh engine
+   * berdasarkan:
+   * 1. source (jika dropdown spesifik)
+   * 2. tbl
+   * 3. table name fallback
+   */
+
+  private function resolveProfileKey(string $tbl, ?string $source = null): ?string
+  {
+    // 1️⃣ jika source adalah profile langsung
+    if ($source && isset($this->profiles[$source])) {
+      return $source;
+    }
+
+    // 2️⃣ jika tbl adalah profile langsung
+    if (isset($this->profiles[$tbl])) {
+      return $tbl;
+    }
+
+    // 3️⃣ fallback: cari berdasarkan nama tabel
+    foreach ($this->profiles as $key => $profile) {
+
+      if (($profile['table'] ?? null) === $tbl) {
+        return $key;
+      }
+    }
+
+    return null;
   }
 }
