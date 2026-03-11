@@ -28,9 +28,43 @@ class BaseCrudModule {
 		const tblFromUrl = urlParams.get("tbl");
 
 		if (tblFromUrl) {
-			const item = this.menuItems.find((m) => m.tbl === tblFromUrl);
+			// ======================================================
+			// cari menuItems berdasarkan tbl
+			// ======================================================
 
-			const req = item?.req || null;
+			const item = this.menuItems?.find((m) => m.tbl === tblFromUrl) || null;
+
+			// ======================================================
+			// default req
+			// ======================================================
+
+			let req = null;
+
+			// ======================================================
+			// prioritas 1: dari menuItems
+			// ======================================================
+
+			if (item && item.req) {
+				req = item.req;
+			}
+
+			// ======================================================
+			// prioritas 2: dari sidebar data-req
+			// ======================================================
+
+			if (!req) {
+				const menu = document.querySelector(`a[data-spa][href*="tbl=${tblFromUrl}"]`);
+
+				if (menu && menu.dataset.req) {
+					req = menu.dataset.req;
+				}
+			}
+
+			// ======================================================
+			// jika keduanya tidak ada → tetap null
+			// ======================================================
+
+			this.loadTable(tblFromUrl, req);
 
 			this.loadTable(tblFromUrl, req);
 		} else if (this.menuItems.length > 0) {

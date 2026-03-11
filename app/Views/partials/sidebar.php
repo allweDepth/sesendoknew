@@ -69,7 +69,7 @@
         <i class="dropdown icon"></i> Referensi
       </div>
       <div class="content">
-        <a class="item" href="/referensi?tbl=urusan" data-spa="client">
+        <a class="item" href="/referensi?tbl=urusan" data-req="client" data-spa="client">
           <i class="blue briefcase icon"></i> Urusan
         </a>
 
@@ -85,7 +85,7 @@
           <i class="olive clipboard list icon"></i> Kegiatan
         </a>
 
-        <a class="item" href="/referensi?tbl=sub_kegiatan_ref" data-spa="client">
+        <a class="item" href="/referensi?tbl=sub_kegiatan" data-spa="client">
           <i class="grey list alternate icon"></i> Sub Kegiatan
         </a>
 
