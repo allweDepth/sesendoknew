@@ -4010,173 +4010,133 @@ AND is_deleted = 0
   private function loadDropdownHierarchy($parentValue = null)
   {
 
-    // =====================================================
-    // PROFILE SIPD
-    // =====================================================
+    // ----------------------------------------------------
+    // nama tabel hierarchy SIPD
+    // ----------------------------------------------------
 
-    $profileKey = 'rekening_kegiatan'; // nama profile
-
-
-    // =====================================================
-    // AMBIL PROFILE
-    // =====================================================
-
-    if (!isset($this->profiles[$profileKey])) {
-
-      return JsonResponse::error("Profile tidak ditemukan"); // jika profile tidak ada
-
-    }
+    $table = 'rekening_kegiatan';
 
 
-    $profile = $this->profiles[$profileKey]; // ambil konfigurasi profile
+    // ----------------------------------------------------
+    // ambil struktur kolom tabel
+    // ----------------------------------------------------
 
-    $table = $profile['table']; // nama tabel sumber dropdown
-
-
-    // =====================================================
-    // FIELD DROPDOWN
-    // =====================================================
-
-    $valueField = $profile['dropdown']['value']; // field value dropdown
-
-    $labelField = $profile['dropdown']['label']; // field label dropdown
+    $columns = $this->getTableColumns($table); // engine existing
 
 
-    // =====================================================
-    // DETEKSI KOLOM TABEL
-    // =====================================================
+    // ----------------------------------------------------
+    // array kondisi query
+    // ----------------------------------------------------
 
-    $columns = $this->getTableColumns($table); // ambil semua kolom tabel
+    $mandatoryWhere = [];
 
-
-    // =====================================================
-    // WHERE ENGINE
-    // =====================================================
-
-    $where = []; // kondisi wajib
-    $params = []; // parameter query
+    $params = [];
 
 
-    // =====================================================
-    // STATUS DATA
-    // =====================================================
+    // ----------------------------------------------------
+    // filter status jika kolom ada
+    // ----------------------------------------------------
 
     if (in_array('status', $columns)) {
 
-      $where[] = "`$table`.`status` = 1"; // hanya data aktif
-
+      $mandatoryWhere[] = "`$table`.`status` = 1";
     }
 
 
-    // =====================================================
-    // FILTER HIERARCHY
-    // =====================================================
-
-    if ($parentValue === null) {
-
-      if (in_array('parent_kode', $columns)) {
-
-        $where[] = "`$table`.`parent_kode` IS NULL"; // root hierarchy
-
-      }
-    } else {
-
-      if (in_array('parent_kode', $columns)) {
-
-        $where[] = "`$table`.`parent_kode` = ?"; // child hierarchy
-
-        $params[] = $parentValue;
-      }
-    }
-
-
-    // =====================================================
-    // SCOPE ENGINE (MENGGUNAKAN ENGINE YANG SUDAH ADA)
-    // =====================================================
+    // ----------------------------------------------------
+    // filter scope tahun
+    // ----------------------------------------------------
 
     if (in_array('tahun', $columns) && !empty($this->user['tahun'])) {
 
-      $where[] = "`$table`.`tahun` = ?";
+      $mandatoryWhere[] = "`$table`.`tahun` = ?";
       $params[] = $this->user['tahun'];
     }
 
 
+    // ----------------------------------------------------
+    // filter scope wilayah
+    // ----------------------------------------------------
+
     if (in_array('kd_wilayah', $columns) && !empty($this->user['kd_wilayah'])) {
 
-      $where[] = "`$table`.`kd_wilayah` = ?";
+      $mandatoryWhere[] = "`$table`.`kd_wilayah` = ?";
       $params[] = $this->user['kd_wilayah'];
     }
 
 
+    // ----------------------------------------------------
+    // filter scope opd jika ada
+    // ----------------------------------------------------
+
     if (in_array('kd_opd', $columns) && !empty($this->user['kd_opd'])) {
 
-      $where[] = "`$table`.`kd_opd` = ?";
+      $mandatoryWhere[] = "`$table`.`kd_opd` = ?";
       $params[] = $this->user['kd_opd'];
     }
 
 
+    // ----------------------------------------------------
+    // filter peraturan
+    // ----------------------------------------------------
+
     if (in_array('peraturan_id', $columns) && !empty($this->user['peraturan_id'])) {
 
-      $where[] = "`$table`.`peraturan_id` = ?";
+      $mandatoryWhere[] = "`$table`.`peraturan_id` = ?";
       $params[] = $this->user['peraturan_id'];
     }
 
 
-    // =====================================================
-    // BUILD WHERE
-    // =====================================================
+    // ----------------------------------------------------
+    // filter hierarchy parent
+    // ----------------------------------------------------
 
-    $whereSql = '';
+    if ($parentValue === null) {
 
-    if (!empty($where)) {
+      $mandatoryWhere[] = "`$table`.`parent_kode` IS NULL";
+    } else {
 
-      $whereSql = "WHERE " . implode(" AND ", $where);
+      $mandatoryWhere[] = "`$table`.`parent_kode` = ?";
+      $params[] = $parentValue;
     }
 
 
-    // =====================================================
-    // QUERY DROPDOWN
-    // =====================================================
+    // ----------------------------------------------------
+    // build where clause
+    // ----------------------------------------------------
+
+    $where = '';
+
+    if ($mandatoryWhere) {
+
+      $where = "WHERE " . implode(" AND ", $mandatoryWhere);
+    }
+
+
+    // ----------------------------------------------------
+    // query dropdown
+    // ----------------------------------------------------
 
     $sql = "
         SELECT
-            `$table`.`$valueField` AS value,
-            `$table`.`$labelField` AS text
+            `$table`.`kode` AS value,
+            `$table`.`uraian` AS text
         FROM `$table`
-        $whereSql
-        ORDER BY `$table`.`$valueField` ASC
+        $where
+        ORDER BY `$table`.`kode` ASC
     ";
 
 
-    // =====================================================
-    // EKSEKUSI QUERY
-    // =====================================================
+    // ----------------------------------------------------
+    // eksekusi query
+    // ----------------------------------------------------
 
-    $rows = $this->db->query($sql, $params)->fetchAll(); // jalankan query
-
-
-    // =====================================================
-    // FALLBACK ENGINE
-    // =====================================================
-
-    if (empty($rows)) {
-
-      $fallback = "
-            SELECT
-                `$table`.`$valueField` AS value,
-                `$table`.`$labelField` AS text
-            FROM `$table`
-            ORDER BY `$table`.`$valueField` ASC
-            LIMIT 20
-        ";
-
-      $rows = $this->db->query($fallback)->fetchAll();
-    }
+    $rows = $this->db->query($sql, $params)->fetchAll();
 
 
-    // =====================================================
-    // RESPONSE
-    // =====================================================
+    // ----------------------------------------------------
+    // response dropdown
+    // ----------------------------------------------------
 
     return JsonResponse::success(
       "Dropdown loaded",
@@ -4184,13 +4144,6 @@ AND is_deleted = 0
       $rows
     );
   }
-  // ======================================================
-  // DROPDOWN GENERIC ENGINE (ENGINE LAMA)
-  // ======================================================
-
-  // ======================================================
-  // DROPDOWN GENERIC ENGINE (ENGINE CORE)
-  // ======================================================
 
   // ======================================================
   // DROPDOWN GENERIC ENGINE
