@@ -1489,29 +1489,48 @@ BUILD RULE DARI SCHEMA DATABASE
     ?string $kdAkun = null
   ): string {
 
+    // ----------------------------------------------------
+    // VALIDASI PROFILE
+    // ----------------------------------------------------
     if (!isset($this->profiles[$profileKey])) {
-      return JsonResponse::error("Profile tidak ditemukan");
+      return JsonResponse::error("Profile tidak ditemukan"); // profile tidak ada
     }
 
-    $profile = $this->profiles[$profileKey];
-    $table   = $profile['table'];
+    // ----------------------------------------------------
+    // AMBIL PROFILE
+    // ----------------------------------------------------
+    $profile = $this->profiles[$profileKey]; // konfigurasi profile
+    $table   = $profile['table'];             // tabel sumber dropdown
 
-    $primaryKey = $profile['primary_key'] ?? 'id';
-    $valueField = $profile['dropdown']['value'] ?? $primaryKey;
-    $labelField = $profile['dropdown']['label'] ?? 'nama';
+    // ----------------------------------------------------
+    // FIELD UTAMA
+    // ----------------------------------------------------
+    $primaryKey = $profile['primary_key'] ?? 'id';              // primary key tabel
+    $valueField = $profile['dropdown']['value'] ?? $primaryKey; // field value dropdown
+    $labelField = $profile['dropdown']['label'] ?? 'nama';      // field label dropdown
 
-    $columns = $this->getTableColumns($table);
+    // ----------------------------------------------------
+    // CEK KOLOM TABEL
+    // ----------------------------------------------------
+    $columns = $this->getTableColumns($table); // ambil struktur kolom tabel
 
-    $cari  = $_POST['cari'] ?? null;
-    $limit = min((int)($_POST['limit'] ?? 20), 100);
-    $currentValue = $_POST['value'] ?? null;
+    // ----------------------------------------------------
+    // PARAMETER REQUEST
+    // ----------------------------------------------------
+    $cari         = $_POST['cari']  ?? null; // keyword search
+    $limit        = min((int)($_POST['limit'] ?? 20), 100); // batas data dropdown
+    $currentValue = $_POST['value'] ?? null; // nilai saat edit
 
-    $mandatoryWhere = [];
-    $params = [];
+    // ----------------------------------------------------
+    // ARRAY KONDISI
+    // ----------------------------------------------------
+    $mandatoryWhere = []; // kondisi wajib
+    $optionalWhere  = []; // kondisi opsional
+    $params         = []; // parameter query
 
     /*
     |--------------------------------------------------------------------------
-    | PROFILE WHERE
+    | PROFILE WHERE (FILTER WAJIB DARI PROFILE)
     |--------------------------------------------------------------------------
     */
 
@@ -1519,68 +1538,78 @@ BUILD RULE DARI SCHEMA DATABASE
 
       foreach ($profile['where'] as $col => $val) {
 
-        if (!in_array($col, $columns)) continue;
+        if (!in_array($col, $columns)) continue; // skip jika kolom tidak ada
 
-        $mandatoryWhere[] = "`$table`.`$col` = ?";
+        $mandatoryWhere[] = "`$table`.`$col` = ?"; // tambahkan kondisi
 
         if ($val === 'user') {
+
+          // ambil nilai dari user session
           $params[] = $this->user[$col] ?? null;
         } else {
-          $params[] = $val;
+
+          $params[] = $val; // nilai tetap
+
         }
       }
     }
 
     /*
     |--------------------------------------------------------------------------
-    | FILTER DISABLE
+    | FILTER DISABLE (AUTO FILTER)
     |--------------------------------------------------------------------------
     */
 
     if (in_array('disable', $columns)) {
-      $mandatoryWhere[] = "`$table`.`disable` = 0";
+
+      $mandatoryWhere[] = "`$table`.`disable` = 0"; // hanya data aktif
+
     }
 
     /*
     |--------------------------------------------------------------------------
-    | RELATION PARENT
+    | RELATION PARENT (CASCADE DROPDOWN)
     |--------------------------------------------------------------------------
     */
 
     if ($parentValue !== null && !empty($profile['relations'])) {
 
-      $relation = reset($profile['relations']);
+      $relation = reset($profile['relations']); // ambil relasi pertama
 
-      $localKey = $relation['local_key'] ?? null;
+      $localKey = $relation['local_key'] ?? null; // field relasi
 
       if ($localKey && in_array($localKey, $columns)) {
 
-        $mandatoryWhere[] = "`$table`.`$localKey` = ?";
-        $params[] = $parentValue;
+        $mandatoryWhere[] = "`$table`.`$localKey` = ?"; // filter parent
+
+        $params[] = $parentValue; // nilai parent
+
       }
     }
 
     /*
     |--------------------------------------------------------------------------
-    | SEARCH
+    | SEARCH ENGINE
     |--------------------------------------------------------------------------
     */
 
-    $optionalWhere = [];
-
     if ($cari) {
-      $optionalWhere[] = "`$table`.`$labelField` LIKE ?";
+
+      $optionalWhere[] = "`$table`.`$labelField` LIKE ?"; // search label
+
       $params[] = "%$cari%";
     }
 
     /*
     |--------------------------------------------------------------------------
-    | CURRENT VALUE (EDIT)
+    | CURRENT VALUE (UNTUK MODE EDIT)
     |--------------------------------------------------------------------------
     */
 
     if ($currentValue !== null) {
-      $optionalWhere[] = "`$table`.`$valueField` = ?";
+
+      $optionalWhere[] = "`$table`.`$valueField` = ?"; // pastikan value tetap muncul
+
       $params[] = $currentValue;
     }
 
@@ -1594,19 +1623,22 @@ BUILD RULE DARI SCHEMA DATABASE
 
     if ($mandatoryWhere) {
 
-      $where = "WHERE " . implode(" AND ", $mandatoryWhere);
+      $where = "WHERE " . implode(" AND ", $mandatoryWhere); // kondisi wajib
 
       if ($optionalWhere) {
-        $where .= " AND (" . implode(" OR ", $optionalWhere) . ")";
+
+        $where .= " AND (" . implode(" OR ", $optionalWhere) . ")"; // kondisi opsional
+
       }
     } elseif ($optionalWhere) {
 
-      $where = "WHERE (" . implode(" OR ", $optionalWhere) . ")";
+      $where = "WHERE (" . implode(" OR ", $optionalWhere) . ")"; // hanya optional
+
     }
 
     /*
     |--------------------------------------------------------------------------
-    | QUERY
+    | QUERY DROPDOWN
     |--------------------------------------------------------------------------
     */
 
@@ -1620,7 +1652,10 @@ BUILD RULE DARI SCHEMA DATABASE
         LIMIT $limit
     ";
 
-    $rows = $this->db->query($query, $params)->fetchAll();
+    // ----------------------------------------------------
+    // EKSEKUSI QUERY
+    // ----------------------------------------------------
+    $rows = $this->db->query($query, $params)->fetchAll(); // jalankan query
 
     /*
     |--------------------------------------------------------------------------
@@ -1639,23 +1674,27 @@ BUILD RULE DARI SCHEMA DATABASE
             LIMIT $limit
         ";
 
-      $rows = $this->db->query($queryFallback)->fetchAll();
+      $rows = $this->db->query($queryFallback)->fetchAll(); // ambil data fallback
+
     }
 
     /*
     |--------------------------------------------------------------------------
-    | NORMALIZE
+    | NORMALIZE RESULT
     |--------------------------------------------------------------------------
     */
 
     $dropdown = array_map(function ($row) {
 
       return [
-        'value' => $row['value'],
-        'text'  => $row['text']
+        'value' => $row['value'], // value dropdown
+        'text'  => $row['text']   // label dropdown
       ];
     }, $rows);
 
+    // ----------------------------------------------------
+    // RESPONSE JSON
+    // ----------------------------------------------------
     return JsonResponse::success(
       "Dropdown loaded",
       [],
