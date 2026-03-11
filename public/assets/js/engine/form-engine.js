@@ -817,50 +817,56 @@ SEARCH FIELD (FOMANTIC SEARCH)
 	 * - aman untuk SPA
 	 */
 	loadDropdownSources() {
-		const self = this;
+		const self = this; // simpan referensi instance
 
 		$(`${this.formSelector} .ui.dropdown[data-source]`).each(function () {
-			const $dropdown = $(this);
+			const $dropdown = $(this); // dropdown saat ini
 
-			const parent = $dropdown.data("parent");
+			const parent = $dropdown.data("parent"); // ambil parent dropdown
 
 			// ======================================================
-			// SKIP JIKA DROPDOWN CHILD (CASCADE)
+			// FIX CHILD DROPDOWN
 			// ======================================================
-			if (parent) return;
+			// child dropdown tidak boleh load saat ADD
+			// karena parent belum dipilih
+			if (parent && !self.isPopulating) return; // skip hanya jika bukan populate
 
 			// ======================================================
 			// GUARD SUDAH LOAD
 			// ======================================================
-			if ($dropdown.data("loaded") === true) return;
+			if ($dropdown.data("loaded") === true) return; // sudah load
 
 			// ======================================================
 			// GUARD SEDANG LOADING
 			// ======================================================
-			if ($dropdown.data("loading") === true) return;
+			if ($dropdown.data("loading") === true) return; // sedang load
 
 			// ======================================================
 			// SET STATUS LOADING
 			// ======================================================
-			$dropdown.data("loading", true);
+			$dropdown.data("loading", true); // tandai loading
 
-			const source = $dropdown.data("source");
+			const source = $dropdown.data("source"); // ambil nama tabel
 
 			if (!source) {
-				$dropdown.data("loading", false);
-
+				$dropdown.data("loading", false); // reset loading
 				return;
 			}
-			const currentValue = $dropdown.find("input[type='hidden']").val();
+
+			const currentValue = $dropdown.find("input[type='hidden']").val(); // ambil value edit
+
 			self.ajax.request({
 				data: {
-					action: "dropdown",
-					tbl: source,
+					action: "dropdown", // action dropdown
+					tbl: source, // nama tabel
 					value: currentValue, // kirim value edit
 				},
+
 				success: (res) => {
-					const $menu = $dropdown.find(".menu");
-					$menu.empty();
+					const $menu = $dropdown.find(".menu"); // menu dropdown
+
+					$menu.empty(); // kosongkan menu
+
 					if (res && res.success && res.data) {
 						res.data.forEach((item) => {
 							$menu.append(`
@@ -871,26 +877,20 @@ SEARCH FIELD (FOMANTIC SEARCH)
 						});
 					}
 
-					// ==================================================
-					// REFRESH DROPDOWN
-					// ==================================================
+					// refresh dropdown
 					$dropdown.dropdown("refresh");
 
+					// set selected jika edit
 					if (currentValue) {
 						$dropdown.dropdown("set selected", currentValue);
 					}
-					// ==================================================
-					// SET STATUS LOADED
-					// ==================================================
-					$dropdown.data("loaded", true);
-					$dropdown.data("loading", false);
+
+					$dropdown.data("loaded", true); // tandai loaded
+					$dropdown.data("loading", false); // reset loading
 				},
 
 				error: () => {
-					// ==================================================
-					// RESET LOADING JIKA REQUEST GAGAL
-					// ==================================================
-					$dropdown.data("loading", false);
+					$dropdown.data("loading", false); // reset loading
 				},
 			});
 		});

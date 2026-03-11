@@ -1291,203 +1291,35 @@ $profiles = [
     ]
   ],
 
-  /*
-        |--------------------------------------------------------------------------
-        | BIDANG
-        |--------------------------------------------------------------------------
-        */
-  'bidang' => [
+  // ======================================================
+  // PROFIL REKENING KEGIATAN (SIPD HIERARKI)
+  // ======================================================
 
-    'table' => 'bidang',
-    'primary_key' => 'id',
+  'rekening_kegiatan' => [
 
-    'allowed_roles' => ['super_admin'],
-    'soft_lock' => true,
-    'auto_session' => ['kd_wilayah', 'peraturan_id'],
+    // tabel utama
+    'table' => 'rekening_kegiatan',
 
-    /*
-        |--------------------------------------------------------------------------
-        | RELATIONS
-        |--------------------------------------------------------------------------
-        | bidang adalah anak dari urusan
-        |
-        | local_key  → kolom di tabel bidang
-        | parent_key → kolom di tabel urusan
-        */
-    'relations' => [
-      'urusan' => [
-        'local_key'  => 'kode_urusan',
-        'parent_key' => 'kode'
-      ]
+    // field primary
+    'primary' => 'id',
+
+    // value dropdown
+    'value' => 'kode',
+
+    // text dropdown
+    'text' => 'uraian',
+
+    // parent relationship
+    'parent_field' => 'parent_kode',
+
+    // filter aktif
+    'where' => [
+      'status' => 1
     ],
 
-    'dropdown' => [
-      'value' => 'kode',
-      'label' => 'uraian'
-    ],
+    // default order
+    'order_by' => 'kode ASC'
 
-    'modes' => [
-      'default' => [
-        'select' => ['id', 'kode', 'kode_urusan', 'uraian'],
-        'searchable' => ['kode', 'uraian'],
-        'order_by' => 'kode ASC',
-        'where' => [
-          'kd_wilayah' => 'user',
-          'peraturan_id'  => 'user'
-        ]
-      ]
-    ]
-  ],
-
-  /*
-|--------------------------------------------------------------------------
-| PROGRAM
-|--------------------------------------------------------------------------
-*/
-  'program' => [
-
-    'table' => 'program',
-    'primary_key' => 'id',
-
-    'allowed_roles' => ['super_admin'],
-    'soft_lock' => true,
-    'auto_session' => ['kd_wilayah', 'peraturan_id'],
-
-    /*
-        |--------------------------------------------------------------------------
-        | RELATION
-        |--------------------------------------------------------------------------
-        | program anak dari bidang
-        */
-    'relations' => [
-      'bidang' => [
-        'local_key'  => 'kode_bidang',
-        'parent_key' => 'kode'
-      ]
-    ],
-
-    'dropdown' => [
-      'value' => 'kode',
-      'label' => 'uraian'
-    ],
-
-    'modes' => [
-      'default' => [
-        'select' => ['id', 'kode', 'kode_bidang', 'uraian'],
-        'searchable' => ['kode', 'uraian'],
-        'order_by' => 'kode ASC',
-        'where' => [
-          'kd_wilayah' => 'user',
-          'peraturan_id'  => 'user'
-        ]
-      ]
-    ]
-  ],
-
-  /*
-|--------------------------------------------------------------------------
-| KEGIATAN
-|--------------------------------------------------------------------------
-*/
-  'kegiatan' => [
-
-    'table' => 'kegiatan',
-    'primary_key' => 'id',
-
-    'allowed_roles' => ['super_admin'],
-    'soft_lock' => true,
-    'auto_session' => ['kd_wilayah', 'peraturan_id'],
-
-    /*
-        |--------------------------------------------------------------------------
-        | RELATION
-        |--------------------------------------------------------------------------
-        | kegiatan anak dari program
-        */
-    'relations' => [
-      'program' => [
-        'local_key'  => 'kode_program',
-        'parent_key' => 'kode'
-      ]
-    ],
-
-    'dropdown' => [
-      'value' => 'kode',
-      'label' => 'uraian'
-    ],
-
-    'modes' => [
-      'default' => [
-        'select' => ['id', 'kode', 'kode_program', 'uraian'],
-        'searchable' => ['kode', 'uraian'],
-        'order_by' => 'kode ASC',
-        'where' => [
-          'kd_wilayah' => 'user',
-          'peraturan_id'  => 'user'
-        ]
-      ]
-    ]
-  ],
-
-  /*
-|--------------------------------------------------------------------------
-| SUB KEGIATAN
-|--------------------------------------------------------------------------
-*/
-  'sub_kegiatan' => [
-
-    'table' => 'sub_kegiatan',
-    'primary_key' => 'id',
-
-    'allowed_roles' => ['super_admin'],
-    'soft_lock' => true,
-
-    'auto_session' => [
-      'kd_wilayah',
-      'peraturan_id'
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | RELATION
-    |--------------------------------------------------------------------------
-    */
-    'relations' => [
-      'kegiatan' => [
-        'table'      => 'kegiatan',
-        'local_key'  => 'kode_kegiatan',
-        'parent_key' => 'kode'
-      ]
-    ],
-
-    'dropdown' => [
-      'value' => 'kode',
-      'label' => 'uraian'
-    ],
-
-    'modes' => [
-      'default' => [
-
-        'select' => [
-          'id',
-          'kode',
-          'kode_kegiatan',
-          'uraian'
-        ],
-
-        'searchable' => [
-          'kode',
-          'uraian'
-        ],
-
-        'order_by' => 'kode ASC',
-
-        'where' => [
-          'kd_wilayah'   => 'user',
-          'peraturan_id' => 'user'
-        ]
-      ]
-    ]
   ],
 
 
