@@ -4129,10 +4129,14 @@ AND is_deleted = 0
   // DROPDOWN GENERIC ENGINE (ENGINE CORE)
   // ======================================================
 
+  // ======================================================
+  // DROPDOWN GENERIC ENGINE
+  // ======================================================
+
   private function loadDropdownGeneric(
     string $profileKey,
     $parentValue = null,
-    $kdAkun = null // menerima parameter tambahan dari router
+    $kdAkun = null
   ): string {
 
     // --------------------------------------------------
@@ -4166,25 +4170,25 @@ AND is_deleted = 0
 
 
     // --------------------------------------------------
-    // ambil struktur kolom tabel
+    // ambil kolom tabel
     // --------------------------------------------------
 
-    $columns = $this->getTableColumns($table); // baca kolom tabel
+    $columns = $this->getTableColumns($table); // baca schema
 
 
     // --------------------------------------------------
-    // request parameter
+    // parameter request
     // --------------------------------------------------
 
     $cari  = $_POST['cari'] ?? null; // keyword search
 
     $limit = min((int)($_POST['limit'] ?? 20), 100); // limit dropdown
 
-    $currentValue = $_POST['value'] ?? null; // value edit
+    $currentValue = $_POST['value'] ?? null; // current edit value
 
 
     // --------------------------------------------------
-    // where clause
+    // kondisi where
     // --------------------------------------------------
 
     $mandatoryWhere = []; // kondisi wajib
@@ -4198,17 +4202,20 @@ AND is_deleted = 0
     -----------------------------------------------------
     */
 
-    list($scopeWhere, $scopeParams) =
-      $this->resolveScope($table, $profile, 'default'); // gunakan engine scope
+    if (method_exists($this, 'resolveScope')) {
 
-    $mandatoryWhere = array_merge($mandatoryWhere, $scopeWhere); // gabungkan scope
+      list($scopeWhere, $scopeParams) =
+        $this->resolveScope($table, $profile, 'default'); // gunakan scope engine
 
-    $params         = array_merge($params, $scopeParams); // gabungkan parameter
+      $mandatoryWhere = array_merge($mandatoryWhere, $scopeWhere);
+
+      $params         = array_merge($params, $scopeParams);
+    }
 
 
     /*
     -----------------------------------------------------
-    PROFILE WHERE CONFIG
+    PROFILE WHERE
     -----------------------------------------------------
     */
 
@@ -4216,18 +4223,16 @@ AND is_deleted = 0
 
       foreach ($profile['where'] as $col => $val) {
 
-        if (!in_array($col, $columns)) continue; // pastikan kolom ada
+        if (!in_array($col, $columns)) continue;
 
-        $mandatoryWhere[] = "`$table`.`$col` = ?"; // where profile
+        $mandatoryWhere[] = "`$table`.`$col` = ?";
 
         if ($val === 'user') {
 
-          $params[] = $this->user[$col] ?? null; // ambil dari session
-
+          $params[] = $this->user[$col] ?? null;
         } else {
 
-          $params[] = $val; // value statis
-
+          $params[] = $val;
         }
       }
     }
@@ -4241,8 +4246,7 @@ AND is_deleted = 0
 
     if (in_array('disable', $columns)) {
 
-      $mandatoryWhere[] = "`$table`.`disable` = 0"; // hanya aktif
-
+      $mandatoryWhere[] = "`$table`.`disable` = 0";
     }
 
 
@@ -4254,8 +4258,7 @@ AND is_deleted = 0
 
     if (in_array('status', $columns)) {
 
-      $mandatoryWhere[] = "`$table`.`status` = 1"; // status aktif
-
+      $mandatoryWhere[] = "`$table`.`status` = 1";
     }
 
 
@@ -4267,29 +4270,28 @@ AND is_deleted = 0
 
     if ($parentValue !== null && !empty($profile['relations'])) {
 
-      $relation = reset($profile['relations']); // ambil relasi pertama
+      $relation = reset($profile['relations']);
 
-      $localKey = $relation['local_key'] ?? null; // field relasi
+      $localKey = $relation['local_key'] ?? null;
 
       if ($localKey && in_array($localKey, $columns)) {
 
-        $mandatoryWhere[] = "`$table`.`$localKey` = ?"; // filter parent
+        $mandatoryWhere[] = "`$table`.`$localKey` = ?";
 
-        $params[] = $parentValue; // bind parent
-
+        $params[] = $parentValue;
       }
     }
 
 
     /*
     -----------------------------------------------------
-    FILTER AKUN (JIKA ADA)
+    FILTER AKUN
     -----------------------------------------------------
     */
 
     if ($kdAkun !== null && in_array('kd_akun', $columns)) {
 
-      $mandatoryWhere[] = "`$table`.`kd_akun` = ?"; // filter akun
+      $mandatoryWhere[] = "`$table`.`kd_akun` = ?";
 
       $params[] = $kdAkun;
     }
@@ -4297,7 +4299,7 @@ AND is_deleted = 0
 
     /*
     -----------------------------------------------------
-    SEARCH DROPDOWN
+    SEARCH
     -----------------------------------------------------
     */
 
@@ -4305,7 +4307,7 @@ AND is_deleted = 0
 
     if ($cari) {
 
-      $optionalWhere[] = "`$table`.`$labelField` LIKE ?"; // search label
+      $optionalWhere[] = "`$table`.`$labelField` LIKE ?";
 
       $params[] = "%$cari%";
     }
@@ -4319,7 +4321,7 @@ AND is_deleted = 0
 
     if ($currentValue !== null) {
 
-      $optionalWhere[] = "`$table`.`$valueField` = ?"; // value edit
+      $optionalWhere[] = "`$table`.`$valueField` = ?";
 
       $params[] = $currentValue;
     }
@@ -4335,12 +4337,11 @@ AND is_deleted = 0
 
     if ($mandatoryWhere) {
 
-      $where = "WHERE " . implode(" AND ", $mandatoryWhere); // mandatory where
+      $where = "WHERE " . implode(" AND ", $mandatoryWhere);
 
       if ($optionalWhere) {
 
-        $where .= " AND (" . implode(" OR ", $optionalWhere) . ")"; // optional
-
+        $where .= " AND (" . implode(" OR ", $optionalWhere) . ")";
       }
     } elseif ($optionalWhere) {
 
@@ -4377,7 +4378,7 @@ AND is_deleted = 0
 
     $rows = $this->db
       ->query($query, $params)
-      ->fetchAll(); // ambil hasil
+      ->fetchAll();
 
 
     // --------------------------------------------------
