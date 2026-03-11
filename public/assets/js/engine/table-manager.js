@@ -114,25 +114,35 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		// jika navbar kosong gunakan limit lama
 		let payload = {
 			/* aksi CRUD */
-			action: "list",
-			/* alias tabel dari config */
-			tbl: this.state.tbl,
+			action: "list", // aksi default list
+
+			/* alias tabel logical */
+			tbl: this.state.tbl, // tbl berasal dari global state
+
 			/* pagination */
-			halaman: this.currentPage,
-			//=====================================================
-			// KIRIM KE SERVER
-			// =====================================================
-			rows: this.limit,
+			halaman: this.currentPage, // halaman aktif
+
+			rows: this.limit, // jumlah baris
+
 			/* search */
-			cari: this.searchQuery,
+			cari: this.searchQuery, // keyword pencarian
+
 			/* sorting */
-			sort_by: this.sortBy,
-			sort_dir: this.sortDir,
+			sort_by: this.sortBy, // kolom sort
+
+			sort_dir: this.sortDir, // arah sort
 		};
-		// hanya kirim req jika ada
-		// kirim req hanya jika instance memiliki req
-		if (this.req !== null && this.req !== undefined && this.req !== "") {
-			payload.req = this.req; // req instance table manager
+
+		//=====================================================
+		// REQ TABLE OVERRIDE
+		//=====================================================
+
+		const reqTable = this.req || this.state.req || window.app.req; // ambil req dari berbagai sumber state
+
+		if (reqTable !== null && reqTable !== undefined && reqTable !== "") {
+			// jika req ada
+
+			payload.req = reqTable; // kirim req sebagai override tabel database
 		}
 
 		//=====================================================

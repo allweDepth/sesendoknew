@@ -69,23 +69,23 @@
         <i class="dropdown icon"></i> Referensi
       </div>
       <div class="content">
-        <a class="item" href="/referensi?tbl=urusan" data-req="client" data-spa="client">
+        <a class="item" href="/referensi?tbl=urusan" data-req="rekening_kegiatan" data-spa="client">
           <i class="blue briefcase icon"></i> Urusan
         </a>
 
-        <a class="item" href="/referensi?tbl=bidang" data-spa="client">
+        <a class="item" href="/referensi?tbl=bidang" data-req="rekening_kegiatan" data-spa="client">
           <i class="teal layer group icon"></i> Bidang
         </a>
 
-        <a class="item" href="/referensi?tbl=program" data-spa="client">
+        <a class="item" href="/referensi?tbl=program" data-req="rekening_kegiatan" data-spa="client">
           <i class="green project diagram icon"></i> Program
         </a>
 
-        <a class="item" href="/referensi?tbl=kegiatan" data-spa="client">
+        <a class="item" href="/referensi?tbl=kegiatan" data-req="rekening_kegiatan" data-spa="client">
           <i class="olive clipboard list icon"></i> Kegiatan
         </a>
 
-        <a class="item" href="/referensi?tbl=sub_kegiatan" data-spa="client">
+        <a class="item" href="/referensi?tbl=sub_kegiatan" data-req="rekening_kegiatan" data-spa="client">
           <i class="grey list alternate icon"></i> Sub Kegiatan
         </a>
 
@@ -206,15 +206,15 @@
     </div>
 
     <?php if (($_SESSION['user']['type_user'] ?? '') !== 'viewer'): ?>
-      <a class="item" href="/halaman_berita" data-spa="server">
-        <i class="newspaper icon"></i> Halaman Berita
-      </a>
-      <a class="item" href="/reset_tabel" data-spa="client">
-        <i class="erase icon"></i> Reset Tabel
-      </a>
-      <a class="item" href="/pengaturan" data-spa="client">
-        <i class="toolbox icon"></i> Pengaturan
-      </a>
+    <a class="item" href="/halaman_berita" data-spa="server">
+      <i class="newspaper icon"></i> Halaman Berita
+    </a>
+    <a class="item" href="/reset_tabel" data-spa="client">
+      <i class="erase icon"></i> Reset Tabel
+    </a>
+    <a class="item" href="/pengaturan" data-spa="client">
+      <i class="toolbox icon"></i> Pengaturan
+    </a>
     <?php endif; ?>
 
     <a class="item" href="/wallchat" data-spa="server">
