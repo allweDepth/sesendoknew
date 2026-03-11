@@ -35,7 +35,7 @@ class FormEngine {
 
 		this.initFomanticValidation();
 
-		// this.loadDropdownSources();
+		this.loadDropdownSources();
 		this.initCascadeDropdown(); // ← aktifkan cascade dropdown
 		/* re-init komponen UI setelah render form */
 		UIComponents.initSearch();

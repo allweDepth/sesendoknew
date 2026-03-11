@@ -1489,255 +1489,183 @@ BUILD RULE DARI SCHEMA DATABASE
     ?string $kdAkun = null
   ): string {
 
-    /* ======================================================
-       VALIDASI PROFILE
-    ====================================================== */
-
     if (!isset($this->profiles[$profileKey])) {
       return JsonResponse::error("Profile tidak ditemukan");
     }
 
     $profile = $this->profiles[$profileKey];
-
-    $table = $profile['table'];
-
-    /* ======================================================
-       FIELD DROPDOWN
-    ====================================================== */
+    $table   = $profile['table'];
 
     $primaryKey = $profile['primary_key'] ?? 'id';
-
     $valueField = $profile['dropdown']['value'] ?? $primaryKey;
-
     $labelField = $profile['dropdown']['label'] ?? 'nama';
-
-    /* ======================================================
-       KOLOM TABEL
-    ====================================================== */
 
     $columns = $this->getTableColumns($table);
 
-    /* ======================================================
-       PARAMETER REQUEST
-    ====================================================== */
-
     $cari  = $_POST['cari'] ?? null;
-
-    $limit = isset($_POST['limit']) ? intval($_POST['limit']) : 20;
-
-    if ($limit > 100) {
-      $limit = 100;
-    }
-
+    $limit = min((int)($_POST['limit'] ?? 20), 100);
     $currentValue = $_POST['value'] ?? null;
 
-    /* ======================================================
-       WHERE BUILDER
-    ====================================================== */
-
     $mandatoryWhere = [];
-    $optionalWhere  = [];
+    $params = [];
 
-    $paramsMandatory = [];
-    $paramsOptional  = [];
-
-    /* ======================================================
-       PROFILE WHERE (scope default)
-    ====================================================== */
+    /*
+    |--------------------------------------------------------------------------
+    | PROFILE WHERE
+    |--------------------------------------------------------------------------
+    */
 
     if (!empty($profile['where'])) {
 
       foreach ($profile['where'] as $col => $val) {
 
-        if (!in_array($col, $columns)) {
-          continue;
-        }
+        if (!in_array($col, $columns)) continue;
+
+        $mandatoryWhere[] = "`$table`.`$col` = ?";
 
         if ($val === 'user') {
-
-          $mandatoryWhere[] = "`$table`.`$col` = ?";
-
-          $paramsMandatory[] = $this->user[$col] ?? null;
+          $params[] = $this->user[$col] ?? null;
         } else {
-
-          $mandatoryWhere[] = "`$table`.`$col` = ?";
-
-          $paramsMandatory[] = $val;
+          $params[] = $val;
         }
       }
     }
 
-    /* ======================================================
-       FILTER DISABLE OTOMATIS
-    ====================================================== */
+    /*
+    |--------------------------------------------------------------------------
+    | FILTER DISABLE
+    |--------------------------------------------------------------------------
+    */
 
     if (in_array('disable', $columns)) {
-
       $mandatoryWhere[] = "`$table`.`disable` = 0";
     }
 
-    /* ======================================================
-       RELATION PARENT DROPDOWN
-    ====================================================== */
+    /*
+    |--------------------------------------------------------------------------
+    | RELATION PARENT
+    |--------------------------------------------------------------------------
+    */
 
-    if (!empty($profile['relations'])) {
+    if ($parentValue !== null && !empty($profile['relations'])) {
 
       $relation = reset($profile['relations']);
 
       $localKey = $relation['local_key'] ?? null;
 
-      if ($localKey && $parentValue !== null && in_array($localKey, $columns)) {
+      if ($localKey && in_array($localKey, $columns)) {
 
         $mandatoryWhere[] = "`$table`.`$localKey` = ?";
-
-        $paramsMandatory[] = $parentValue;
+        $params[] = $parentValue;
       }
     }
 
-    /* ======================================================
-       SEARCH DROPDOWN
-    ====================================================== */
+    /*
+    |--------------------------------------------------------------------------
+    | SEARCH
+    |--------------------------------------------------------------------------
+    */
+
+    $optionalWhere = [];
 
     if ($cari) {
-
       $optionalWhere[] = "`$table`.`$labelField` LIKE ?";
-
-      $paramsOptional[] = "%$cari%";
+      $params[] = "%$cari%";
     }
 
-    /* ======================================================
-       CURRENT VALUE (EDIT MODE)
-    ====================================================== */
+    /*
+    |--------------------------------------------------------------------------
+    | CURRENT VALUE (EDIT)
+    |--------------------------------------------------------------------------
+    */
 
     if ($currentValue !== null) {
-
       $optionalWhere[] = "`$table`.`$valueField` = ?";
-
-      $paramsOptional[] = $currentValue;
+      $params[] = $currentValue;
     }
 
-    /* ======================================================
-       FINAL WHERE BUILDER
-    ====================================================== */
+    /*
+    |--------------------------------------------------------------------------
+    | BUILD WHERE
+    |--------------------------------------------------------------------------
+    */
 
     $where = '';
 
-    if (!empty($mandatoryWhere)) {
+    if ($mandatoryWhere) {
 
       $where = "WHERE " . implode(" AND ", $mandatoryWhere);
 
-      if (!empty($optionalWhere)) {
-
+      if ($optionalWhere) {
         $where .= " AND (" . implode(" OR ", $optionalWhere) . ")";
       }
-    } elseif (!empty($optionalWhere)) {
+    } elseif ($optionalWhere) {
 
       $where = "WHERE (" . implode(" OR ", $optionalWhere) . ")";
     }
 
-    /* ======================================================
-       PIVOT FILTER (SSH / SBU / ASB / HSPK)
-    ====================================================== */
-
-    $join = '';
-
-    $akunWhere = '';
-
-    $akunParams = [];
-
-    $filterByAkun = $profile['dropdown']['filter_by_akun'] ?? false;
-
-    $pivotConfig = $profile['pivot'] ?? null;
-
-    if ($filterByAkun && $kdAkun && $pivotConfig) {
-
-      $pivotTable = $pivotConfig['table'];
-
-      $fkField = $pivotConfig['foreign_key'];
-
-      $join = "
-            INNER JOIN `$pivotTable` p
-            ON p.`$fkField` = `$table`.`$primaryKey`
-        ";
-
-      $pengaturan = $this->getPengaturanAktif();
-
-      $akunWhere = "
-            AND p.kd_akun = ?
-            AND p.kd_wilayah = ?
-            AND p.peraturan_id = ?
-        ";
-
-      $akunParams = [
-
-        $kdAkun,
-
-        $this->user['kd_wilayah'] ?? null,
-
-        $pengaturan['aturan_sbu'] ?? null
-      ];
-    }
-
-    /* ======================================================
-       QUERY DROPDOWN
-    ====================================================== */
+    /*
+    |--------------------------------------------------------------------------
+    | QUERY
+    |--------------------------------------------------------------------------
+    */
 
     $query = "
         SELECT
             `$table`.`$valueField` AS value,
             `$table`.`$labelField` AS text
         FROM `$table`
-        $join
         $where
-        $akunWhere
         ORDER BY `$table`.`$labelField` ASC
         LIMIT $limit
     ";
 
-    /* ======================================================
-       EXECUTE QUERY
-    ====================================================== */
+    $rows = $this->db->query($query, $params)->fetchAll();
 
-    $rows = $this->db->query(
+    /*
+    |--------------------------------------------------------------------------
+    | FALLBACK ENGINE (ANTI DROPDOWN KOSONG)
+    |--------------------------------------------------------------------------
+    */
 
-      $query,
+    if (empty($rows)) {
 
-      array_merge($paramsMandatory, $paramsOptional, $akunParams)
+      $queryFallback = "
+            SELECT
+                `$table`.`$valueField` AS value,
+                `$table`.`$labelField` AS text
+            FROM `$table`
+            ORDER BY `$table`.`$labelField` ASC
+            LIMIT $limit
+        ";
 
-    )->fetchAll();
+      $rows = $this->db->query($queryFallback)->fetchAll();
+    }
 
-    /* ======================================================
-       NORMALISASI RESPONSE
-    ====================================================== */
+    /*
+    |--------------------------------------------------------------------------
+    | NORMALIZE
+    |--------------------------------------------------------------------------
+    */
 
     $dropdown = array_map(function ($row) {
 
       return [
-
         'value' => $row['value'],
-
         'text'  => $row['text']
-
       ];
     }, $rows);
 
-    /* ======================================================
-       RETURN RESPONSE
-    ====================================================== */
-
     return JsonResponse::success(
-
       "Dropdown loaded",
-
       [],
-
       $dropdown
     );
   }
 
   /* =========================================================
-UTIL: GET PROFILE BY TABLE
-========================================================= */
+  UTIL: GET PROFILE BY TABLE
+  ========================================================= */
   private function getProfileByTable(string $table): array
   {
     foreach ($this->profiles as $profile) {
@@ -3994,18 +3922,14 @@ RELATION DROPDOWN (PROFILE RELATIONS)
           break;
         }
       }
-    }
-
-    /* =========================================
-FALLBACK parent_field
-========================================= */ elseif ($parentValue !== null) {
+    } elseif ($parentValue !== null) {
 
       $parentField = $profile['dropdown']['parent_field'] ?? null;
 
       if ($parentField && in_array($parentField, $columns)) {
 
-        $whereParts[] = "`$table`.`$parentField` = ?";
-        $params[]     = $parentValue;
+        $mandatoryWhere[] = "`$table`.`$parentField` = ?";
+        $paramsMandatory[] = $parentValue;
       }
     }
 
