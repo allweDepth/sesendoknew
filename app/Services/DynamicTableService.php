@@ -94,15 +94,15 @@ PERUBAHAN:
     try {
 
       /* =====================================================
-1️⃣ VALIDASI ACTION
-===================================================== */
+    1️⃣ VALIDASI ACTION
+    ===================================================== */
+
       if (empty($request['action'])) {
         return JsonResponse::error("Action wajib dikirim");
       }
 
       $action = $request['action'];
 
-      // 🔥 Daftar action yang diizinkan sistem
       $allowedActions = [
         'add',
         'edit',
@@ -118,63 +118,56 @@ PERUBAHAN:
       }
 
       /* =====================================================
-            2️⃣ VALIDASI TABEL
-            ===================================================== */
-      $tbl = $request['tbl'] ?? null; // ambil logical table dari request
-      $req = $request['req'] ?? null; // ambil override table jika ada
-      // ============================================================
-      // VALIDASI PROFILE BERDASARKAN TBL
-      // ============================================================
-      if (!$tbl || !isset($this->profiles[$tbl])) { // jika tbl tidak dikenal
+    2️⃣ VALIDASI MENU (TBL)
+    ===================================================== */
 
-        return JsonResponse::error("Tabel tidak terdaftar"); // kirim error
+      $tbl = $request['tbl'] ?? null;
+      $req = $request['req'] ?? null;
 
+      if (!$tbl) {
+        return JsonResponse::error("Tabel tidak terdaftar");
       }
 
-
-      // ============================================================
-      // PROFILE DEFAULT
-      // ============================================================
-
-      $profile = $this->profiles[$tbl]; // ambil profile utama
-
-      $table = $profile['table']; // tabel default dari profile
-      if ($req && isset($this->profiles[$req])) {
-        $table = $this->profiles[$req]['table']; // override tabel fisik
-      }
-
-      // ============================================================
-      // REQ TABLE OVERRIDE
-      // ============================================================
-
-      if ($req && isset($this->profiles[$req])) { // jika req dikirim dan profile ada
-
-        $reqProfile = $this->profiles[$req]; // ambil profile req
-
-        $table = $reqProfile['table']; // override tabel database
-
-        $request['_req_profile'] = $reqProfile; // simpan context req
-
-      }
-
-
-      //------------------------------------------------------------------------------
-      // REQ OVERRIDE TABLE
-      //------------------------------------------------------------------------------
-
-      if ($req && isset($this->profiles[$req])) { // jika req dikirim dan profile ada
-
-        $reqProfile = $this->profiles[$req]; // ambil profile req
-
-        $table = $reqProfile['table']; // override tabel database
-
-        $request['_req_profile'] = $reqProfile; // simpan profile req untuk context
-
+      if (!isset($this->profiles[$tbl]) && !$req) {
+        return JsonResponse::error("Tabel tidak terdaftar");
       }
 
       /* =====================================================
-3️⃣ EKSEKUSI ACTION
-===================================================== */
+    3️⃣ PROFILE MENU
+    ===================================================== */
+
+      $profile = $this->profiles[$tbl];
+
+      /* =====================================================
+    4️⃣ RESOLVE TABLE
+    PRIORITAS:
+    req → profile table
+    ===================================================== */
+
+      $table = $profile['table'];
+
+      if ($req) {
+
+        // jika req adalah profile key
+        if (isset($this->profiles[$req])) {
+
+          $reqProfile = $this->profiles[$req];
+
+          $table = $reqProfile['table'];
+
+          $request['_req_profile'] = $reqProfile;
+        }
+        // jika req adalah nama tabel langsung
+        else {
+
+          $table = $req;
+        }
+      }
+
+      /* =====================================================
+    5️⃣ EKSEKUSI ACTION
+    ===================================================== */
+
       return $this->executeAction(
         $action,
         $tbl,
