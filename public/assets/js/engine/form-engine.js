@@ -825,28 +825,38 @@ SEARCH FIELD (FOMANTIC SEARCH)
 			const parent = $dropdown.data("parent"); // ambil parent dropdown
 
 			// ======================================================
-			// FIX CHILD DROPDOWN
+			// PERBAIKAN ENGINE
 			// ======================================================
-			// child dropdown tidak boleh load saat ADD
-			// karena parent belum dipilih
-			if (parent && !self.isPopulating) return; // skip hanya jika bukan populate
+			// child dropdown hanya skip jika parent belum dipilih
+			// tetapi tetap boleh load saat ADD untuk root dropdown
+
+			if (parent && !self.isPopulating) {
+				const parentField = `${self.formSelector} [name="${parent}"]`; // cari parent field
+
+				const parentValue = $(parentField).val(); // ambil value parent
+
+				if (!parentValue) return; // skip jika parent kosong
+			}
 
 			// ======================================================
 			// GUARD SUDAH LOAD
 			// ======================================================
+
 			if ($dropdown.data("loaded") === true) return; // sudah load
 
 			// ======================================================
 			// GUARD SEDANG LOADING
 			// ======================================================
-			if ($dropdown.data("loading") === true) return; // sedang load
+
+			if ($dropdown.data("loading") === true) return; // sedang loading
 
 			// ======================================================
 			// SET STATUS LOADING
 			// ======================================================
+
 			$dropdown.data("loading", true); // tandai loading
 
-			const source = $dropdown.data("source"); // ambil nama tabel
+			const source = $dropdown.data("source"); // nama tabel dropdown
 
 			if (!source) {
 				$dropdown.data("loading", false); // reset loading
@@ -855,11 +865,17 @@ SEARCH FIELD (FOMANTIC SEARCH)
 
 			const currentValue = $dropdown.find("input[type='hidden']").val(); // ambil value edit
 
+			// ======================================================
+			// REQUEST DROPDOWN
+			// ======================================================
+
 			self.ajax.request({
 				data: {
-					action: "dropdown", // action dropdown
+					action: "dropdown", // action backend
+
 					tbl: source, // nama tabel
-					value: currentValue, // kirim value edit
+
+					value: currentValue, // value edit
 				},
 
 				success: (res) => {
@@ -877,15 +893,14 @@ SEARCH FIELD (FOMANTIC SEARCH)
 						});
 					}
 
-					// refresh dropdown
-					$dropdown.dropdown("refresh");
+					$dropdown.dropdown("refresh"); // refresh dropdown
 
-					// set selected jika edit
 					if (currentValue) {
-						$dropdown.dropdown("set selected", currentValue);
+						$dropdown.dropdown("set selected", currentValue); // set selected edit
 					}
 
 					$dropdown.data("loaded", true); // tandai loaded
+
 					$dropdown.data("loading", false); // reset loading
 				},
 
