@@ -3900,94 +3900,168 @@ RELATION DROPDOWN (PROFILE RELATIONS)
   // DROPDOWN HIERARCHY SIPD
   // ======================================================
 
+  // ======================================================
+  // DROPDOWN HIERARCHY SIPD
+  // ======================================================
+
   private function loadDropdownHierarchy($parentValue = null)
   {
 
     // ----------------------------------------------------
-    // ambil kolom tabel
+    // nama tabel hierarchy SIPD
     // ----------------------------------------------------
 
-    $columns = $this->getTableColumns('rekening_kegiatan');
+    $table = 'rekening_kegiatan'; // tabel struktur sipd
 
 
     // ----------------------------------------------------
-    // where dasar
+    // ambil profile tabel
     // ----------------------------------------------------
 
-    $where = [
-      "status = 1"
-    ];
+    $profile = $this->getProfileByTable($table); // gunakan metode engine
+
+
+    // ----------------------------------------------------
+    // ambil struktur kolom tabel
+    // ----------------------------------------------------
+
+    $columns = $this->getTableColumns($table); // membaca schema database
+
+
+    // ----------------------------------------------------
+    // array kondisi WHERE
+    // ----------------------------------------------------
+
+    $whereParts = []; // kondisi where
+
+
+    // ----------------------------------------------------
+    // parameter prepared statement
+    // ----------------------------------------------------
 
     $params = [];
 
 
-    // ----------------------------------------------------
-    // scope tahun jika ada
-    // ----------------------------------------------------
+    /*
+    -----------------------------------------------------
+    APPLY USER SCOPE ENGINE
+    -----------------------------------------------------
+    */
 
-    if (in_array('tahun', $columns) && !empty($this->user['tahun'])) {
+    // gunakan scope engine yang sama dengan listing
 
-      $where[] = "tahun = ?";
-      $params[] = $this->user['tahun'];
+    list($scopeWhere, $scopeParams) =
+      $this->resolveScope($table, $profile, 'default');
+
+
+    // gabungkan scope ke where utama
+
+    $whereParts = array_merge($whereParts, $scopeWhere);
+
+    $params     = array_merge($params, $scopeParams);
+
+
+    /*
+    -----------------------------------------------------
+    FILTER STATUS AKTIF
+    -----------------------------------------------------
+    */
+
+    if (in_array('status', $columns)) { // cek kolom status
+
+      $whereParts[] = "`$table`.`status` = 1"; // hanya aktif
     }
 
 
-    // ----------------------------------------------------
-    // scope wilayah jika ada
-    // ----------------------------------------------------
+    /*
+    -----------------------------------------------------
+    FILTER DISABLE
+    -----------------------------------------------------
+    */
 
-    if (in_array('kd_wilayah', $columns) && !empty($this->user['kd_wilayah'])) {
+    if (in_array('disable', $columns)) { // cek kolom disable
 
-      $where[] = "kd_wilayah = ?";
-      $params[] = $this->user['kd_wilayah'];
+      $whereParts[] = "`$table`.`disable` = 0"; // hanya tidak disable
     }
 
 
-    // ----------------------------------------------------
-    // parent hierarchy
-    // ----------------------------------------------------
+    /*
+    -----------------------------------------------------
+    HIERARCHY PARENT FILTER
+    -----------------------------------------------------
+    */
 
     if ($parentValue === null) {
 
-      $where[] = "parent_kode IS NULL";
+      // root hierarchy
+
+      if (in_array('parent_kode', $columns)) {
+
+        $whereParts[] = "`$table`.`parent_kode` IS NULL";
+      }
     } else {
 
-      $where[] = "parent_kode = ?";
-      $params[] = $parentValue;
+      // child hierarchy
+
+      if (in_array('parent_kode', $columns)) {
+
+        $whereParts[] = "`$table`.`parent_kode` = ?";
+        $params[]     = $parentValue;
+      }
     }
 
 
-    // ----------------------------------------------------
-    // build where
-    // ----------------------------------------------------
+    /*
+    -----------------------------------------------------
+    BUILD WHERE CLAUSE
+    -----------------------------------------------------
+    */
 
-    $whereSql = implode(" AND ", $where);
+    $where = '';
+
+    if (!empty($whereParts)) {
+
+      $where = "WHERE " . implode(" AND ", $whereParts);
+    }
 
 
-    // ----------------------------------------------------
-    // query dropdown
-    // ----------------------------------------------------
+    /*
+    -----------------------------------------------------
+    BUILD QUERY DROPDOWN
+    -----------------------------------------------------
+    */
 
     $sql = "
+
         SELECT
-            kode AS value,
-            uraian AS text
-        FROM rekening_kegiatan
-        WHERE $whereSql
-        ORDER BY kode
+            `$table`.`kode`   AS value,   -- value dropdown
+            `$table`.`uraian` AS text     -- label dropdown
+
+        FROM `$table`
+
+        $where
+
+        ORDER BY `$table`.`kode` ASC
+
     ";
 
 
-    // ----------------------------------------------------
-    // execute
-    // ----------------------------------------------------
+    /*
+    -----------------------------------------------------
+    EKSEKUSI QUERY
+    -----------------------------------------------------
+    */
 
-    $rows = $this->db->query($sql, $params)->fetchAll();
+    $rows = $this->db
+      ->query($sql, $params)
+      ->fetchAll();
 
 
-    // ----------------------------------------------------
-    // response
-    // ----------------------------------------------------
+    /*
+    -----------------------------------------------------
+    RESPONSE JSON
+    -----------------------------------------------------
+    */
 
     return JsonResponse::success(
       "Dropdown loaded",
@@ -3999,35 +4073,85 @@ RELATION DROPDOWN (PROFILE RELATIONS)
   // DROPDOWN GENERIC ENGINE (ENGINE LAMA)
   // ======================================================
 
+  // ======================================================
+  // DROPDOWN GENERIC ENGINE (ENGINE CORE)
+  // ======================================================
+
   private function loadDropdownGeneric(
     string $profileKey,
     $parentValue = null
   ): string {
 
+    // --------------------------------------------------
+    // cek profile
+    // --------------------------------------------------
+
     if (!isset($this->profiles[$profileKey])) {
+
       return JsonResponse::error("Profile tidak ditemukan");
     }
 
     $profile = $this->profiles[$profileKey];
+
     $table   = $profile['table'];
 
+
+    // --------------------------------------------------
+    // field dropdown
+    // --------------------------------------------------
+
     $primaryKey = $profile['primary_key'] ?? 'id';
+
     $valueField = $profile['dropdown']['value'] ?? $primaryKey;
+
     $labelField = $profile['dropdown']['label'] ?? 'nama';
+
+
+    // --------------------------------------------------
+    // ambil struktur kolom tabel
+    // --------------------------------------------------
 
     $columns = $this->getTableColumns($table);
 
+
+    // --------------------------------------------------
+    // parameter request
+    // --------------------------------------------------
+
     $cari  = $_POST['cari'] ?? null;
+
     $limit = min((int)($_POST['limit'] ?? 20), 100);
+
     $currentValue = $_POST['value'] ?? null;
 
+
+    // --------------------------------------------------
+    // kondisi WHERE
+    // --------------------------------------------------
+
     $mandatoryWhere = [];
+
     $params = [];
 
+
     /*
-    |--------------------------------------------------------------------------
-    | PROFILE WHERE
-    |--------------------------------------------------------------------------
+    -----------------------------------------------------
+    APPLY ENGINE SCOPE
+    -----------------------------------------------------
+    */
+
+    list($scopeWhere, $scopeParams) =
+      $this->resolveScope($table, $profile, 'default');
+
+    $mandatoryWhere = array_merge($mandatoryWhere, $scopeWhere);
+
+    $params         = array_merge($params, $scopeParams);
+
+
+    /*
+    -----------------------------------------------------
+    PROFILE WHERE CONFIG
+    -----------------------------------------------------
     */
 
     if (!empty($profile['where'])) {
@@ -4039,8 +4163,10 @@ RELATION DROPDOWN (PROFILE RELATIONS)
         $mandatoryWhere[] = "`$table`.`$col` = ?";
 
         if ($val === 'user') {
+
           $params[] = $this->user[$col] ?? null;
         } else {
+
           $params[] = $val;
         }
       }
@@ -4048,20 +4174,33 @@ RELATION DROPDOWN (PROFILE RELATIONS)
 
 
     /*
-    |--------------------------------------------------------------------------
-    | FILTER DISABLE
-    |--------------------------------------------------------------------------
+    -----------------------------------------------------
+    FILTER DISABLE
+    -----------------------------------------------------
     */
 
     if (in_array('disable', $columns)) {
+
       $mandatoryWhere[] = "`$table`.`disable` = 0";
     }
 
 
     /*
-    |--------------------------------------------------------------------------
-    | RELATION PARENT
-    |--------------------------------------------------------------------------
+    -----------------------------------------------------
+    FILTER STATUS
+    -----------------------------------------------------
+    */
+
+    if (in_array('status', $columns)) {
+
+      $mandatoryWhere[] = "`$table`.`status` = 1";
+    }
+
+
+    /*
+    -----------------------------------------------------
+    RELATION PARENT
+    -----------------------------------------------------
     */
 
     if ($parentValue !== null && !empty($profile['relations'])) {
@@ -4073,15 +4212,16 @@ RELATION DROPDOWN (PROFILE RELATIONS)
       if ($localKey && in_array($localKey, $columns)) {
 
         $mandatoryWhere[] = "`$table`.`$localKey` = ?";
+
         $params[] = $parentValue;
       }
     }
 
 
     /*
-    |--------------------------------------------------------------------------
-    | SEARCH
-    |--------------------------------------------------------------------------
+    -----------------------------------------------------
+    SEARCH DROPDOWN
+    -----------------------------------------------------
     */
 
     $optionalWhere = [];
@@ -4089,27 +4229,29 @@ RELATION DROPDOWN (PROFILE RELATIONS)
     if ($cari) {
 
       $optionalWhere[] = "`$table`.`$labelField` LIKE ?";
+
       $params[] = "%$cari%";
     }
 
 
     /*
-    |--------------------------------------------------------------------------
-    | CURRENT VALUE (EDIT)
-    |--------------------------------------------------------------------------
+    -----------------------------------------------------
+    CURRENT VALUE (EDIT MODE)
+    -----------------------------------------------------
     */
 
     if ($currentValue !== null) {
 
       $optionalWhere[] = "`$table`.`$valueField` = ?";
+
       $params[] = $currentValue;
     }
 
 
     /*
-    |--------------------------------------------------------------------------
-    | BUILD WHERE
-    |--------------------------------------------------------------------------
+    -----------------------------------------------------
+    BUILD WHERE
+    -----------------------------------------------------
     */
 
     $where = '';
@@ -4119,6 +4261,7 @@ RELATION DROPDOWN (PROFILE RELATIONS)
       $where = "WHERE " . implode(" AND ", $mandatoryWhere);
 
       if ($optionalWhere) {
+
         $where .= " AND (" . implode(" OR ", $optionalWhere) . ")";
       }
     } elseif ($optionalWhere) {
@@ -4128,24 +4271,40 @@ RELATION DROPDOWN (PROFILE RELATIONS)
 
 
     /*
-    |--------------------------------------------------------------------------
-    | QUERY
-    |--------------------------------------------------------------------------
+    -----------------------------------------------------
+    QUERY DROPDOWN
+    -----------------------------------------------------
     */
 
     $query = "
+
         SELECT
             `$table`.`$valueField` AS value,
             `$table`.`$labelField` AS text
+
         FROM `$table`
+
         $where
+
         ORDER BY `$table`.`$labelField` ASC
+
         LIMIT $limit
+
     ";
 
 
-    $rows = $this->db->query($query, $params)->fetchAll();
+    // --------------------------------------------------
+    // eksekusi query
+    // --------------------------------------------------
 
+    $rows = $this->db
+      ->query($query, $params)
+      ->fetchAll();
+
+
+    // --------------------------------------------------
+    // response
+    // --------------------------------------------------
 
     return JsonResponse::success(
       "Dropdown loaded",
