@@ -4173,9 +4173,56 @@ AND is_deleted = 0
     // cek profile
     // --------------------------------------------------
 
+    // =====================================================
+    // PROFILE RESOLUTION
+    // =====================================================
+
+    // cek apakah profile ada
     if (!isset($this->profiles[$profileKey])) {
 
-      return JsonResponse::error("Profile tidak ditemukan"); // profile tidak ada
+      // ---------------------------------------------
+      // fallback gunakan nama tabel langsung
+      // ---------------------------------------------
+
+      $table = $profileKey; // gunakan tbl sebagai nama tabel
+
+      // ambil kolom tabel
+      $columns = $this->getTableColumns($table); // deteksi kolom tabel
+
+      // field default
+      $valueField = 'id'; // default value
+      $labelField = 'nama'; // default label
+
+      // deteksi kolom kode
+      if (in_array('kode', $columns)) {
+
+        $valueField = 'kode'; // gunakan kode sebagai value
+
+      }
+
+      // deteksi uraian
+      if (in_array('uraian', $columns)) {
+
+        $labelField = 'uraian'; // gunakan uraian sebagai label
+
+      }
+    } else {
+
+      // ---------------------------------------------
+      // profile normal
+      // ---------------------------------------------
+
+      $profile = $this->profiles[$profileKey]; // ambil profile
+
+      $table   = $profile['table']; // tabel dari profile
+
+      $primaryKey = $profile['primary_key'] ?? 'id'; // primary key
+
+      $valueField = $profile['dropdown']['value'] ?? $primaryKey; // value dropdown
+
+      $labelField = $profile['dropdown']['label'] ?? 'nama'; // label dropdown
+
+      $columns = $this->getTableColumns($table); // ambil kolom tabel
 
     }
 

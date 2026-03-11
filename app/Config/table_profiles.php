@@ -1556,6 +1556,6 @@ $profiles = [
   ],
 ];
 $profiles['akun_neo'] = $profiles['akun'];
-$profiles['sub_kegiatan_ref'] = $profiles['sub_kegiatan'];
-$profiles['sub_kegiatan_ref']['module_alias'] = 'sub_kegiatan_ref';
+// $profiles['sub_kegiatan_ref'] = $profiles['sub_kegiatan'];
+// $profiles['sub_kegiatan_ref']['module_alias'] = 'sub_kegiatan_ref';
 return $profiles;
