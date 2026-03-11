@@ -1487,7 +1487,11 @@ BUILD RULE DARI SCHEMA DATABASE
   // ROUTER DROPDOWN
   // ======================================================
 
-  private function loadDropdown($profileKey, $parentValue = null)
+  // ======================================================
+  // ROUTER DROPDOWN
+  // ======================================================
+
+  private function loadDropdown($profileKey, $parentValue = null, $kdAkun = null)
   {
 
     // ----------------------------------------------------
@@ -1496,13 +1500,17 @@ BUILD RULE DARI SCHEMA DATABASE
 
     if ($profileKey === 'rekening_kegiatan') {
 
+      // kirim parentValue ke hierarchy dropdown
       return $this->loadDropdownHierarchy($parentValue);
     }
 
 
     // ----------------------------------------------------
-    // selain itu pakai engine lama
+    // selain itu pakai engine generic
     // ----------------------------------------------------
+
+    // kdAkun tidak digunakan pada dropdown generic
+    // tetapi tetap diterima agar kompatibel dengan router
 
     return $this->loadDropdownGeneric($profileKey, $parentValue);
   }
@@ -3725,86 +3733,138 @@ AND is_deleted = 0
 
   public function getReference($module)
   {
-    $profiles = require __DIR__ . '/../Config/table_profiles.php';
+
+    // ----------------------------------------------------
+    // load profile configuration
+    // ----------------------------------------------------
+
+    $profiles = require __DIR__ . '/../Config/table_profiles.php'; // load table profiles
+
+
+    // ----------------------------------------------------
+    // cek apakah module ada
+    // ----------------------------------------------------
 
     if (!isset($profiles[$module])) {
-      return JsonResponse::error("Module {$module} tidak ditemukan");
+
+      return JsonResponse::error("Module {$module} tidak ditemukan"); // module tidak ditemukan
+
     }
 
-    $profile = $profiles[$module];
 
-    $table = $profile['table'] ?? $module;
+    // ----------------------------------------------------
+    // ambil profile module
+    // ----------------------------------------------------
 
-    $parent      = $_POST['parent'] ?? null;
-    $parentField = $_POST['parent_field'] ?? null;
-    $value       = $_POST['value'] ?? null;
+    $profile = $profiles[$module]; // ambil profile
 
-    $sql = "SELECT * FROM {$table}";
-    $params = [];
-    $where = [];
+
+    // ----------------------------------------------------
+    // resolve nama tabel
+    // ----------------------------------------------------
+
+    $table = $profile['table'] ?? $module; // fallback ke nama module jika table tidak ada
+
+
+    // ----------------------------------------------------
+    // ambil parameter dari request
+    // ----------------------------------------------------
+
+    $parent      = $_POST['parent'] ?? null; // parent value
+
+    $parentField = $_POST['parent_field'] ?? null; // parent field
+
+    $value       = $_POST['value'] ?? null; // value edit
+
+
+    // ----------------------------------------------------
+    // inisialisasi query dasar
+    // ----------------------------------------------------
+
+    $sql = "SELECT * FROM {$table}"; // query dasar
+
+    $params = []; // parameter query
+
+    $where = []; // kondisi where
+
 
     /*
-|--------------------------------------------------------------------------
-| PRIORITAS 1 : RELATION
-|--------------------------------------------------------------------------
-*/
-    /* =========================================
-RELATION DROPDOWN (PROFILE RELATIONS)
-========================================= */
+    -----------------------------------------------------
+    PRIORITAS 1 : RELATION PROFILE
+    -----------------------------------------------------
+    */
 
-    if ($parentValue !== null && !empty($profile['relations'])) {
+    if ($parent !== null && !empty($profile['relations'])) {
 
       foreach ($profile['relations'] as $relation) {
 
-        $localKey = $relation['local_key'] ?? null;
+        $localKey = $relation['local_key'] ?? null; // field relasi
 
-        if ($localKey && in_array($localKey, $columns)) {
+        if ($localKey) {
 
-          $whereParts[] = "`$table`.`$localKey` = ?";
-          $params[]     = $parentValue;
+          $where[] = "{$localKey} = :parent"; // filter relasi
+
+          $params['parent'] = $parent; // bind parent
 
           break;
         }
       }
-    } elseif ($parentValue !== null) {
-
-      $parentField = $profile['dropdown']['parent_field'] ?? null;
-
-      if ($parentField && in_array($parentField, $columns)) {
-
-        $mandatoryWhere[] = "`$table`.`$parentField` = ?";
-        $paramsMandatory[] = $parentValue;
-      }
     }
 
-    /*
-            |--------------------------------------------------------------------------
-            | PRIORITAS 2 : parent_field fallback
-            |--------------------------------------------------------------------------*/ elseif ($value && $parentField) {
 
-      $where[] = "{$parentField} = :parent";
-      $params['parent'] = $value;
+    /*
+    -----------------------------------------------------
+    PRIORITAS 2 : parent_field fallback
+    -----------------------------------------------------
+    */ elseif ($value && $parentField) {
+
+      $where[] = "{$parentField} = :parent"; // fallback parent field
+
+      $params['parent'] = $value; // bind parameter
+
     }
 
+
     /*
-|--------------------------------------------------------------------------
-| APPLY WHERE
-|--------------------------------------------------------------------------
-*/
+    -----------------------------------------------------
+    APPLY WHERE
+    -----------------------------------------------------
+    */
+
     if (!empty($where)) {
-      $sql .= " WHERE " . implode(" AND ", $where);
+
+      $sql .= " WHERE " . implode(" AND ", $where); // gabungkan where
+
     }
 
+
     /*
-|--------------------------------------------------------------------------
-| ORDER
-|--------------------------------------------------------------------------
-*/
-    $sql .= " ORDER BY kode";
+    -----------------------------------------------------
+    ORDER DATA
+    -----------------------------------------------------
+    */
 
-    $data = $this->db->select($sql, $params);
+    $sql .= " ORDER BY kode"; // urutkan berdasarkan kode
 
-    return JsonResponse::success($data);
+
+    // ----------------------------------------------------
+    // eksekusi query database
+    // ----------------------------------------------------
+
+    $rows = $this->db
+      ->query($sql, $params) // gunakan query engine yang konsisten
+      ->fetchAll(); // ambil semua hasil
+
+
+    // ----------------------------------------------------
+    // kirim response JSON
+    // ----------------------------------------------------
+
+    return JsonResponse::success(
+      "Reference loaded",
+      [],
+      $rows
+    );
   }
   private function resolveTahap(string $tbl): ?string
   {
@@ -3904,42 +3964,41 @@ RELATION DROPDOWN (PROFILE RELATIONS)
   // DROPDOWN HIERARCHY SIPD
   // ======================================================
 
+  // ======================================================
+  // DROPDOWN HIERARCHY SIPD
+  // ======================================================
+
   private function loadDropdownHierarchy($parentValue = null)
   {
 
-    // ----------------------------------------------------
-    // nama tabel hierarchy SIPD
-    // ----------------------------------------------------
+    // --------------------------------------------
+    // nama tabel sipd
+    // --------------------------------------------
 
-    $table = 'rekening_kegiatan'; // tabel struktur sipd
+    $table = 'rekening_kegiatan'; // tabel hierarchy sipd
 
 
-    // ----------------------------------------------------
+    // --------------------------------------------
     // ambil profile tabel
-    // ----------------------------------------------------
+    // --------------------------------------------
 
-    $profile = $this->getProfileByTable($table); // gunakan metode engine
+    $profile = $this->getProfileByTable($table); // ambil profile tabel
 
 
-    // ----------------------------------------------------
+    // --------------------------------------------
     // ambil struktur kolom tabel
-    // ----------------------------------------------------
+    // --------------------------------------------
 
-    $columns = $this->getTableColumns($table); // membaca schema database
-
-
-    // ----------------------------------------------------
-    // array kondisi WHERE
-    // ----------------------------------------------------
-
-    $whereParts = []; // kondisi where
+    $columns = $this->getTableColumns($table); // baca kolom database
 
 
-    // ----------------------------------------------------
-    // parameter prepared statement
-    // ----------------------------------------------------
+    // --------------------------------------------
+    // kondisi where
+    // --------------------------------------------
 
-    $params = [];
+    $mandatoryWhere = []; // array kondisi where
+
+    $params = []; // parameter query
 
 
     /*
@@ -3948,28 +4007,24 @@ RELATION DROPDOWN (PROFILE RELATIONS)
     -----------------------------------------------------
     */
 
-    // gunakan scope engine yang sama dengan listing
-
     list($scopeWhere, $scopeParams) =
-      $this->resolveScope($table, $profile, 'default');
+      $this->resolveScope($table, $profile, 'default'); // gunakan scope engine
 
+    $mandatoryWhere = array_merge($mandatoryWhere, $scopeWhere); // gabungkan scope
 
-    // gabungkan scope ke where utama
-
-    $whereParts = array_merge($whereParts, $scopeWhere);
-
-    $params     = array_merge($params, $scopeParams);
+    $params         = array_merge($params, $scopeParams); // gabungkan parameter
 
 
     /*
     -----------------------------------------------------
-    FILTER STATUS AKTIF
+    FILTER STATUS
     -----------------------------------------------------
     */
 
     if (in_array('status', $columns)) { // cek kolom status
 
-      $whereParts[] = "`$table`.`status` = 1"; // hanya aktif
+      $mandatoryWhere[] = "`$table`.`status` = 1"; // hanya status aktif
+
     }
 
 
@@ -3981,61 +4036,62 @@ RELATION DROPDOWN (PROFILE RELATIONS)
 
     if (in_array('disable', $columns)) { // cek kolom disable
 
-      $whereParts[] = "`$table`.`disable` = 0"; // hanya tidak disable
+      $mandatoryWhere[] = "`$table`.`disable` = 0"; // hanya yang tidak disable
+
     }
 
 
     /*
     -----------------------------------------------------
-    HIERARCHY PARENT FILTER
+    FILTER HIERARCHY PARENT
     -----------------------------------------------------
     */
 
-    if ($parentValue === null) {
-
-      // root hierarchy
+    if ($parentValue === null) { // jika root
 
       if (in_array('parent_kode', $columns)) {
 
-        $whereParts[] = "`$table`.`parent_kode` IS NULL";
+        $mandatoryWhere[] = "`$table`.`parent_kode` IS NULL"; // ambil root
+
       }
-    } else {
-
-      // child hierarchy
+    } else { // jika child
 
       if (in_array('parent_kode', $columns)) {
 
-        $whereParts[] = "`$table`.`parent_kode` = ?";
-        $params[]     = $parentValue;
+        $mandatoryWhere[] = "`$table`.`parent_kode` = ?"; // filter parent
+
+        $params[] = $parentValue; // bind parent
+
       }
     }
 
 
     /*
     -----------------------------------------------------
-    BUILD WHERE CLAUSE
+    BUILD WHERE
     -----------------------------------------------------
     */
 
-    $where = '';
+    $where = ''; // inisialisasi where
 
-    if (!empty($whereParts)) {
+    if ($mandatoryWhere) {
 
-      $where = "WHERE " . implode(" AND ", $whereParts);
+      $where = "WHERE " . implode(" AND ", $mandatoryWhere); // gabungkan kondisi
+
     }
 
 
     /*
     -----------------------------------------------------
-    BUILD QUERY DROPDOWN
+    QUERY DROPDOWN
     -----------------------------------------------------
     */
 
     $sql = "
 
         SELECT
-            `$table`.`kode`   AS value,   -- value dropdown
-            `$table`.`uraian` AS text     -- label dropdown
+            `$table`.`kode` AS value, // value dropdown
+            `$table`.`uraian` AS text // label dropdown
 
         FROM `$table`
 
@@ -4046,22 +4102,18 @@ RELATION DROPDOWN (PROFILE RELATIONS)
     ";
 
 
-    /*
-    -----------------------------------------------------
-    EKSEKUSI QUERY
-    -----------------------------------------------------
-    */
+    // --------------------------------------------
+    // eksekusi query
+    // --------------------------------------------
 
     $rows = $this->db
       ->query($sql, $params)
-      ->fetchAll();
+      ->fetchAll(); // ambil hasil
 
 
-    /*
-    -----------------------------------------------------
-    RESPONSE JSON
-    -----------------------------------------------------
-    */
+    // --------------------------------------------
+    // response json
+    // --------------------------------------------
 
     return JsonResponse::success(
       "Dropdown loaded",
@@ -4079,7 +4131,8 @@ RELATION DROPDOWN (PROFILE RELATIONS)
 
   private function loadDropdownGeneric(
     string $profileKey,
-    $parentValue = null
+    $parentValue = null,
+    $kdAkun = null // menerima parameter tambahan dari router
   ): string {
 
     // --------------------------------------------------
@@ -4088,64 +4141,69 @@ RELATION DROPDOWN (PROFILE RELATIONS)
 
     if (!isset($this->profiles[$profileKey])) {
 
-      return JsonResponse::error("Profile tidak ditemukan");
+      return JsonResponse::error("Profile tidak ditemukan"); // profile tidak ada
+
     }
 
-    $profile = $this->profiles[$profileKey];
+    // --------------------------------------------------
+    // ambil profile
+    // --------------------------------------------------
 
-    $table   = $profile['table'];
+    $profile = $this->profiles[$profileKey]; // profile tabel
+
+    $table   = $profile['table']; // nama tabel
 
 
     // --------------------------------------------------
     // field dropdown
     // --------------------------------------------------
 
-    $primaryKey = $profile['primary_key'] ?? 'id';
+    $primaryKey = $profile['primary_key'] ?? 'id'; // primary key
 
-    $valueField = $profile['dropdown']['value'] ?? $primaryKey;
+    $valueField = $profile['dropdown']['value'] ?? $primaryKey; // field value
 
-    $labelField = $profile['dropdown']['label'] ?? 'nama';
+    $labelField = $profile['dropdown']['label'] ?? 'nama'; // field label
 
 
     // --------------------------------------------------
     // ambil struktur kolom tabel
     // --------------------------------------------------
 
-    $columns = $this->getTableColumns($table);
+    $columns = $this->getTableColumns($table); // baca kolom tabel
 
 
     // --------------------------------------------------
-    // parameter request
+    // request parameter
     // --------------------------------------------------
 
-    $cari  = $_POST['cari'] ?? null;
+    $cari  = $_POST['cari'] ?? null; // keyword search
 
-    $limit = min((int)($_POST['limit'] ?? 20), 100);
+    $limit = min((int)($_POST['limit'] ?? 20), 100); // limit dropdown
 
-    $currentValue = $_POST['value'] ?? null;
+    $currentValue = $_POST['value'] ?? null; // value edit
 
 
     // --------------------------------------------------
-    // kondisi WHERE
+    // where clause
     // --------------------------------------------------
 
-    $mandatoryWhere = [];
+    $mandatoryWhere = []; // kondisi wajib
 
-    $params = [];
+    $params = []; // parameter query
 
 
     /*
     -----------------------------------------------------
-    APPLY ENGINE SCOPE
+    APPLY USER SCOPE ENGINE
     -----------------------------------------------------
     */
 
     list($scopeWhere, $scopeParams) =
-      $this->resolveScope($table, $profile, 'default');
+      $this->resolveScope($table, $profile, 'default'); // gunakan engine scope
 
-    $mandatoryWhere = array_merge($mandatoryWhere, $scopeWhere);
+    $mandatoryWhere = array_merge($mandatoryWhere, $scopeWhere); // gabungkan scope
 
-    $params         = array_merge($params, $scopeParams);
+    $params         = array_merge($params, $scopeParams); // gabungkan parameter
 
 
     /*
@@ -4158,16 +4216,18 @@ RELATION DROPDOWN (PROFILE RELATIONS)
 
       foreach ($profile['where'] as $col => $val) {
 
-        if (!in_array($col, $columns)) continue;
+        if (!in_array($col, $columns)) continue; // pastikan kolom ada
 
-        $mandatoryWhere[] = "`$table`.`$col` = ?";
+        $mandatoryWhere[] = "`$table`.`$col` = ?"; // where profile
 
         if ($val === 'user') {
 
-          $params[] = $this->user[$col] ?? null;
+          $params[] = $this->user[$col] ?? null; // ambil dari session
+
         } else {
 
-          $params[] = $val;
+          $params[] = $val; // value statis
+
         }
       }
     }
@@ -4181,7 +4241,8 @@ RELATION DROPDOWN (PROFILE RELATIONS)
 
     if (in_array('disable', $columns)) {
 
-      $mandatoryWhere[] = "`$table`.`disable` = 0";
+      $mandatoryWhere[] = "`$table`.`disable` = 0"; // hanya aktif
+
     }
 
 
@@ -4193,7 +4254,8 @@ RELATION DROPDOWN (PROFILE RELATIONS)
 
     if (in_array('status', $columns)) {
 
-      $mandatoryWhere[] = "`$table`.`status` = 1";
+      $mandatoryWhere[] = "`$table`.`status` = 1"; // status aktif
+
     }
 
 
@@ -4205,16 +4267,31 @@ RELATION DROPDOWN (PROFILE RELATIONS)
 
     if ($parentValue !== null && !empty($profile['relations'])) {
 
-      $relation = reset($profile['relations']);
+      $relation = reset($profile['relations']); // ambil relasi pertama
 
-      $localKey = $relation['local_key'] ?? null;
+      $localKey = $relation['local_key'] ?? null; // field relasi
 
       if ($localKey && in_array($localKey, $columns)) {
 
-        $mandatoryWhere[] = "`$table`.`$localKey` = ?";
+        $mandatoryWhere[] = "`$table`.`$localKey` = ?"; // filter parent
 
-        $params[] = $parentValue;
+        $params[] = $parentValue; // bind parent
+
       }
+    }
+
+
+    /*
+    -----------------------------------------------------
+    FILTER AKUN (JIKA ADA)
+    -----------------------------------------------------
+    */
+
+    if ($kdAkun !== null && in_array('kd_akun', $columns)) {
+
+      $mandatoryWhere[] = "`$table`.`kd_akun` = ?"; // filter akun
+
+      $params[] = $kdAkun;
     }
 
 
@@ -4228,7 +4305,7 @@ RELATION DROPDOWN (PROFILE RELATIONS)
 
     if ($cari) {
 
-      $optionalWhere[] = "`$table`.`$labelField` LIKE ?";
+      $optionalWhere[] = "`$table`.`$labelField` LIKE ?"; // search label
 
       $params[] = "%$cari%";
     }
@@ -4242,7 +4319,7 @@ RELATION DROPDOWN (PROFILE RELATIONS)
 
     if ($currentValue !== null) {
 
-      $optionalWhere[] = "`$table`.`$valueField` = ?";
+      $optionalWhere[] = "`$table`.`$valueField` = ?"; // value edit
 
       $params[] = $currentValue;
     }
@@ -4258,11 +4335,12 @@ RELATION DROPDOWN (PROFILE RELATIONS)
 
     if ($mandatoryWhere) {
 
-      $where = "WHERE " . implode(" AND ", $mandatoryWhere);
+      $where = "WHERE " . implode(" AND ", $mandatoryWhere); // mandatory where
 
       if ($optionalWhere) {
 
-        $where .= " AND (" . implode(" OR ", $optionalWhere) . ")";
+        $where .= " AND (" . implode(" OR ", $optionalWhere) . ")"; // optional
+
       }
     } elseif ($optionalWhere) {
 
@@ -4299,7 +4377,7 @@ RELATION DROPDOWN (PROFILE RELATIONS)
 
     $rows = $this->db
       ->query($query, $params)
-      ->fetchAll();
+      ->fetchAll(); // ambil hasil
 
 
     // --------------------------------------------------
