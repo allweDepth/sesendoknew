@@ -1246,50 +1246,7 @@ $profiles = [
       ]
     ]
   ],
-  /*
-|--------------------------------------------------------------------------
-| URUSAN
-|--------------------------------------------------------------------------
-*/
-  'urusan' => [
 
-    'table' => 'urusan',
-
-    // Primary key internal database
-    'primary_key' => 'id',
-
-    'allowed_roles' => ['super_admin'],
-    'soft_lock' => true,
-
-    // Otomatis isi dari session saat INSERT
-    'auto_session' => ['kd_wilayah', 'peraturan_id'],
-
-    /*
-        |--------------------------------------------------------------------------
-        | DROPDOWN CONFIG
-        |--------------------------------------------------------------------------
-        | value  → value yang dikirim ke form
-        | label  → yang ditampilkan
-        */
-    'dropdown' => [
-      'value' => 'kode',
-      'label' => 'uraian'
-    ],
-
-    'modes' => [
-      'default' => [
-        'select' => ['id', 'kode', 'uraian'],
-        'searchable' => ['kode', 'uraian'],
-        'order_by' => 'kode ASC',
-
-        // WAJIB agar tidak bocor wilayah/peraturan
-        'where' => [
-          'kd_wilayah' => 'user',
-          'peraturan_id'  => 'user'
-        ]
-      ]
-    ]
-  ],
 
   // ======================================================
   // PROFIL REKENING KEGIATAN (SIPD HIERARKI)
@@ -1297,28 +1254,55 @@ $profiles = [
 
   'rekening_kegiatan' => [
 
-    // tabel utama
+    // --------------------------------------------------
+    // tabel utama hierarki SIPD
+    // --------------------------------------------------
     'table' => 'rekening_kegiatan',
 
-    // field primary
-    'primary' => 'id',
 
-    // value dropdown
-    'value' => 'kode',
+    // --------------------------------------------------
+    // primary key tabel
+    // --------------------------------------------------
+    'primary_key' => 'id',
 
-    // text dropdown
-    'text' => 'uraian',
 
-    // parent relationship
-    'parent_field' => 'parent_kode',
+    // --------------------------------------------------
+    // konfigurasi dropdown
+    // --------------------------------------------------
+    'dropdown' => [
 
-    // filter aktif
-    'where' => [
-      'status' => 1
+      // nilai dropdown
+      'value' => 'kode',
+
+      // label dropdown
+      'label' => 'uraian'
     ],
 
-    // default order
-    'order_by' => 'kode ASC'
+
+    // --------------------------------------------------
+    // relasi parent-child menggunakan parent_kode
+    // --------------------------------------------------
+    'relations' => [
+
+      [
+
+        // field lokal untuk relasi
+        'local_key' => 'parent_kode'
+
+      ]
+
+    ],
+
+
+    // --------------------------------------------------
+    // filter default
+    // --------------------------------------------------
+    'where' => [
+
+      // hanya data aktif
+      'status' => 1
+
+    ]
 
   ],
 
