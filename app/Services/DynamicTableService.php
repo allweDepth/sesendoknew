@@ -122,12 +122,9 @@ PERUBAHAN:
             ===================================================== */
       $tbl = $request['tbl'] ?? null; // ambil logical table dari request
       $req = $request['req'] ?? null; // ambil override table jika ada
-
-
       // ============================================================
       // VALIDASI PROFILE BERDASARKAN TBL
       // ============================================================
-
       if (!$tbl || !isset($this->profiles[$tbl])) { // jika tbl tidak dikenal
 
         return JsonResponse::error("Tabel tidak terdaftar"); // kirim error
@@ -142,7 +139,9 @@ PERUBAHAN:
       $profile = $this->profiles[$tbl]; // ambil profile utama
 
       $table = $profile['table']; // tabel default dari profile
-
+      if ($req && isset($this->profiles[$req])) {
+        $table = $this->profiles[$req]['table']; // override tabel fisik
+      }
 
       // ============================================================
       // REQ TABLE OVERRIDE
