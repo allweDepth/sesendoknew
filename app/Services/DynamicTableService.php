@@ -124,11 +124,7 @@ PERUBAHAN:
       $tbl = $request['tbl'] ?? null;
       $req = $request['req'] ?? null;
 
-      if (!$tbl) {
-        return JsonResponse::error("Tabel tidak terdaftar");
-      }
-
-      if (!isset($this->profiles[$tbl]) && !$req) {
+      if (!$tbl || !isset($this->profiles[$tbl])) {
         return JsonResponse::error("Tabel tidak terdaftar");
       }
 
@@ -148,7 +144,6 @@ PERUBAHAN:
 
       if ($req) {
 
-        // jika req adalah profile key
         if (isset($this->profiles[$req])) {
 
           $reqProfile = $this->profiles[$req];
@@ -156,18 +151,14 @@ PERUBAHAN:
           $table = $reqProfile['table'];
 
           $request['_req_profile'] = $reqProfile;
-        }
-        // jika req adalah nama tabel langsung
-        else {
+        } else {
 
           $table = $req;
         }
       }
-
-      /* =====================================================
-    5️⃣ EKSEKUSI ACTION
-    ===================================================== */
-
+      //=====================================================
+      //5️⃣ EKSEKUSI ACTION
+      // ====================================================
       return $this->executeAction(
         $action,
         $tbl,
@@ -181,14 +172,14 @@ PERUBAHAN:
     }
   }
 
-  /* =========================================================
-EXECUTE ACTION (NO IMPLICIT FALLBACK)
----------------------------------------------------------
-PERUBAHAN:
-- Listing hanya via action = 'list'
-- Tidak ada default auto listing
-- Lebih eksplisit & SPA konsisten
-========================================================= */
+  //=========================================================
+  // EXECUTE ACTION (NO IMPLICIT FALLBACK)
+  //---------------------------------------------------------
+  //PERUBAHAN:
+  //- Listing hanya via action = 'list'
+  //- Tidak ada default auto listing
+  //- Lebih eksplisit & SPA konsisten
+  //=========================================================
   private function executeAction(
     string $action,
     string $tbl,
@@ -199,9 +190,9 @@ PERUBAHAN:
 
     switch ($action) {
 
-      /* =====================================================
-➕ ADD
-===================================================== */
+      //=====================================================
+      //ADD
+      //=====================================================
       case 'add':
         $this->authorize('add', $table);
         return $this->insert($table, $request);
@@ -947,7 +938,24 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     // berdasarkan kolom searchable
     list($searchWhere, $searchParams) =
       $this->resolveSearch($table, $modeConfig, $search);
+    $req = $request['req'] ?? null;
 
+    if ($req && $table === 'rekening_kegiatan') {
+
+      $map = [
+        'urusan' => 1,
+        'bidang' => 2,
+        'program' => 3,
+        'kegiatan' => 5,
+        'sub_kegiatan' => 6
+      ];
+
+      if (isset($map[$req])) {
+
+        $whereParts[] = "CHAR_LENGTH(REPLACE(kode,'.','')) = ?";
+        $params[] = $map[$req];
+      }
+    }
 
 
     /* ======================================================
@@ -2508,183 +2516,97 @@ HEADER PROCESSING
   {
     return $this->runTransaction(function () use ($filePath, $jmlHeader) {
 
-      // 🔹 Load file Excel
+      // load excel
       $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
 
-      // 🔹 Ambil semua baris jadi array
+      // ambil semua baris
       $rows = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
 
-      // 🔹 Validasi minimal baris
+      // validasi file
       if (count($rows) <= $jmlHeader) {
         throw new Exception("File kosong atau header tidak sesuai.");
       }
 
       $inserted = 0;
 
-      // 🔹 Loop mulai setelah header
       foreach (array_slice($rows, $jmlHeader) as $rowIndex => $row) {
 
-        // 🔹 Hitung nomor baris asli Excel
+        // nomor baris excel
         $excelRow = $rowIndex + $jmlHeader + 1;
 
-        // 🔹 Ambil kolom pertama = kode
+        // kode template
         $kode = trim((string)($row[0] ?? ''));
 
-        // 🔹 Ambil kolom kedua = nama
-        $nama = trim((string)($row[1] ?? ''));
+        // nama uraian
+        $uraian = trim((string)($row[1] ?? ''));
 
-        // 🔹 Skip jika kosong
-        if ($kode === '' || $nama === '') {
+        // skip kosong
+        if ($kode === '' || $uraian === '') {
           continue;
-        }
-
-        // 🔹 Pecah kode berdasarkan titik
-        $segments = explode('.', $kode);
-
-        // 🔹 Hitung jumlah segment
-        $segmentCount = count($segments);
-
-        // 🔹 Validasi semua segment harus angka
-        foreach ($segments as $seg) {
-          if ($seg === '' || !ctype_digit($seg)) {
-            // Lompat ke baris Excel berikutnya
-            continue 2;
-          }
         }
 
         try {
 
-          switch ($segmentCount) {
+          // hitung jumlah segment
+          $segments = explode('.', $kode);
 
-            // ==================================================
-            // 1 SEGMENT = URUSAN
-            // contoh: 1
-            // ==================================================
-            case 1:
+          $segmentCount = count($segments);
 
-              $this->insertIfNotExists('urusan', [
-                'kode' => $kode,
-                'nama' => $nama
-              ]);
+          // tentukan level hierarchy
+          $level = match ($segmentCount) {
 
-              break;
+            1 => 'urusan',
+            2 => 'bidang',
+            3 => 'program',
+            5 => 'kegiatan',
+            6 => 'sub_kegiatan',
+            default => null
+          };
 
-
-            // ==================================================
-            // 2 SEGMENT = BIDANG
-            // contoh: 1.01
-            // ==================================================
-            case 2:
-
-              // parent = urusan
-              $kodeUrusan = $segments[0];
-
-              // pastikan urusan ada
-              $this->ensureParentExists('urusan', [
-                'kode' => $kodeUrusan
-              ]);
-
-              $this->insertIfNotExists('bidang', [
-                'kode' => $kode,
-                'kode_urusan' => $kodeUrusan,
-                'nama' => $nama
-              ]);
-
-              break;
-
-
-            // ==================================================
-            // 3 SEGMENT = PROGRAM
-            // contoh: 1.01.02
-            // ==================================================
-            case 3:
-
-              // parent = bidang
-              $kodeBidang = implode('.', array_slice($segments, 0, 2));
-
-              $this->ensureParentExists('bidang', [
-                'kode' => $kodeBidang
-              ]);
-
-              $this->insertIfNotExists('program', [
-                'kode' => $kode,
-                'kode_urusan' => $segments[0],
-                'kode_bidang' => $kodeBidang,
-                'nama' => $nama
-              ]);
-
-              break;
-
-
-            // ==================================================
-            // 5 SEGMENT = KEGIATAN
-            // contoh: 1.01.02.2.01
-            // ==================================================
-            case 5:
-
-              // parent = program (3 segment pertama)
-              $kodeProgram = implode('.', array_slice($segments, 0, 3));
-
-              $this->ensureParentExists('program', [
-                'kode' => $kodeProgram
-              ]);
-
-              $this->insertIfNotExists('kegiatan', [
-                'kode' => $kode,
-                'kode_urusan' => $segments[0],
-                'kode_bidang' => implode('.', array_slice($segments, 0, 2)),
-                'kode_program' => $kodeProgram,
-                'nama' => $nama
-              ]);
-
-              break;
-
-
-            // ==================================================
-            // 6 SEGMENT = SUB KEGIATAN
-            // contoh: 1.01.02.2.01.0001
-            // ==================================================
-            case 6:
-
-              // parent = kegiatan (5 segment pertama)
-              $kodeKegiatan = implode('.', array_slice($segments, 0, 5));
-
-              $this->ensureParentExists('kegiatan', [
-                'kode' => $kodeKegiatan
-              ]);
-
-              $this->insertIfNotExists('sub_kegiatan', [
-                'kode' => $kode,
-                'kode_urusan' => $segments[0],
-                'kode_bidang' => implode('.', array_slice($segments, 0, 2)),
-                'kode_program' => implode('.', array_slice($segments, 0, 3)),
-                'kode_kegiatan' => $kodeKegiatan,
-                'nama' => $nama
-              ]);
-
-              break;
-
-
-            // ==================================================
-            // Format lain diabaikan
-            // ==================================================
-            default:
-              continue 2;
+          // jika level tidak valid skip
+          if (!$level) {
+            continue;
           }
+
+          // hitung parent kode otomatis
+          $parent = null;
+
+          if (str_contains($kode, '.')) {
+
+            // ambil substring sebelum titik terakhir
+            $parent = substr($kode, 0, strrpos($kode, '.'));
+          }
+
+          // insert ke tabel rekening_kegiatan
+          $this->insertIfNotExists('rekening_kegiatan', [
+
+            'kode' => $kode,
+
+            'parent_kode' => $parent,
+
+            'level' => $level,
+
+            'uraian' => $uraian
+          ]);
 
           $inserted++;
         } catch (\Throwable $e) {
 
-          // 🔥 Jika error, tampilkan baris Excel
+          // error baris excel
           throw new Exception(
             "Baris Excel {$excelRow} gagal → " . $e->getMessage()
           );
         }
       }
 
-      return JsonResponse::success("Import struktur berhasil.", [
-        'inserted' => $inserted
-      ]);
+      return JsonResponse::success(
+
+        "Import struktur berhasil",
+
+        [
+          'inserted' => $inserted
+        ]
+      );
     });
   }
   private function ensureParentExists(string $table, array $data): void

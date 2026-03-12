@@ -1259,7 +1259,29 @@ $profiles = [
     // --------------------------------------------------
     'table' => 'rekening_kegiatan',
 
+    'req_filters' => [
 
+      'urusan' => [
+        'where' => ['level' => 'urusan']
+      ],
+
+      'bidang' => [
+        'where' => ['level' => 'bidang']
+      ],
+
+      'program' => [
+        'where' => ['level' => 'program']
+      ],
+
+      'kegiatan' => [
+        'where' => ['level' => 'kegiatan']
+      ],
+
+      'sub_kegiatan' => [
+        'where' => ['level' => 'sub_kegiatan']
+      ]
+
+    ],
     // --------------------------------------------------
     // primary key tabel
     // --------------------------------------------------
