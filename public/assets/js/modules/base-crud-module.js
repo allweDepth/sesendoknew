@@ -21,63 +21,44 @@ class BaseCrudModule {
 	// public/assets/js/modules/base-crud-module.js
 
 	init() {
-		// render layout modul
-		this.renderLayout();
+		// ====================================================
+		// RENDER LAYOUT
+		// ====================================================
+		this.renderLayout(); // tampilkan layout modul
 
-		// jika modul menggunakan menu
+		// ====================================================
+		// INISIALISASI MENU
+		// ====================================================
 		if (this.useMenu) {
-			// inisialisasi event menu
-			this.initMenu();
+			this.initMenu(); // aktifkan event menu
 		}
 
-		// ============================================
+		// ====================================================
 		// AMBIL PARAMETER URL
-		// ============================================
+		// ====================================================
+		const urlParams = new URLSearchParams(window.location.search); // ambil query url
 
-		const urlParams = new URLSearchParams(window.location.search); // ambil query string url
+		const tblFromUrl = urlParams.get("tbl"); // hanya membaca tbl
 
-		const tblFromUrl = urlParams.get("tbl"); // baca tbl dari url
-
-		const reqFromUrl = urlParams.get("req"); // baca req dari url
-
-		// ============================================
+		// ====================================================
 		// JIKA URL MEMILIKI TBL
-		// ============================================
-
+		// ====================================================
 		if (tblFromUrl) {
-			// cari menuItems yang sesuai dengan tbl
+			// cari menu yang memiliki tbl tersebut
 			const item = this.menuItems?.find((m) => m.tbl === tblFromUrl) || null;
 
-			// ============================================
-			// PRIORITAS REQ
-			// 1. dari URL
-			// 2. dari menuItems
-			// 3. dari sidebar
-			// ============================================
+			// ====================================================
+			// REQ HANYA DARI menuItems
+			// ====================================================
+			const req = item?.req ?? null; // req hanya dari data menu
 
-			let req = reqFromUrl || null; // gunakan req dari url jika ada
-
-			// jika url tidak punya req gunakan req dari menu
-			if (!req && item && item.req) {
-				req = item.req;
-			}
-
-			// jika masih tidak ada req coba baca dari sidebar
-			if (!req) {
-				const menu = document.querySelector(`a[data-spa][href*="tbl=${tblFromUrl}"]`); // cari menu sidebar
-
-				if (menu && menu.dataset.req) {
-					req = menu.dataset.req; // ambil req dari data-req sidebar
-				}
-			}
-
-			// load tabel dengan tbl dan req
+			// load tabel
 			this.loadTable(tblFromUrl, req);
 		}
 
-		// ============================================
+		// ====================================================
 		// JIKA URL TIDAK MEMILIKI TBL
-		// ============================================
+		// ====================================================
 		else if (this.menuItems.length > 0) {
 			// ambil menu pertama
 			const firstMenu = this.menuItems[0];
@@ -86,7 +67,7 @@ class BaseCrudModule {
 			const tbl = firstMenu.tbl;
 
 			// req dari menu pertama jika ada
-			const req = firstMenu.req || null;
+			const req = firstMenu.req ?? null;
 
 			// load tabel default
 			this.loadTable(tbl, req);
@@ -162,8 +143,8 @@ RESET SEARCH FIELD SAAT TAB MENU BERUBAH
 			// kosongkan value id hasil search
 
 			/* =====================================================
-LANJUTKAN LOAD TABLE
-===================================================== */
+      LANJUTKAN LOAD TABLE
+      ===================================================== */
 
 			this.loadTable(tbl, req);
 			// load tabel sesuai tab baru
@@ -176,45 +157,45 @@ LANJUTKAN LOAD TABLE
 	 * ========================================================
 	 */
 	loadTable(tbl, req = null) {
-		// tabel aktif
-		this.state.setTable(tbl);
-
-		// reset request tambahan
-		this.state.req = req || null;
-
-		/* =========================================
-SYNC GLOBAL STATE
-agar komponen lain seperti search dapat membaca
-========================================= */
-
-		window.app = window.app || {};
-		window.app.state = this.state;
 		// ====================================================
-		// 🔥 SYNC URL AGAR REFRESH AMAN
+		// SET TABEL AKTIF
 		// ====================================================
+		this.state.setTable(tbl); // simpan tbl ke state global
+
 		// ====================================================
-		// 🔥 SYNC URL AGAR REFRESH AMAN (GENERIC)
+		// SET REQ HANYA DARI PARAMETER MENU
 		// ====================================================
-		// public/assets/js/modules/base-crud-module.js
+		this.state.req = req ?? null; // req hanya dari data-req menu
 
-		const basePath = window.location.pathname; // path halaman
+		// ====================================================
+		// SYNC GLOBAL STATE
+		// ====================================================
+		window.app = window.app || {}; // pastikan object app ada
+		window.app.state = this.state; // sinkronisasi state global
 
-		let url = `${basePath}?tbl=${tbl}`; // default url
+		// ====================================================
+		// UPDATE URL TANPA MENYIMPAN req
+		// ====================================================
+		const basePath = window.location.pathname; // path halaman saat ini
 
-		if (req) {
-			// jika req ada
-			url += `&req=${req}`; // tambahkan req ke url
-		}
+		const url = `${basePath}?tbl=${tbl}`; // URL hanya menyimpan tbl
 
-		window.history.replaceState(null, "", url); // update url browser
+		window.history.replaceState(null, "", url); // update browser URL tanpa reload
+
+		// ====================================================
+		// DESTROY TABLE MANAGER LAMA
+		// ====================================================
 		if (this.tableManager && typeof this.tableManager.destroy === "function") {
-			this.tableManager.destroy(); // hancurkan event lama
+			this.tableManager.destroy(); // hapus event lama
 		}
 
-		const title = this.formatTitle(tbl);
+		// ====================================================
+		// RENDER HEADER TABEL
+		// ====================================================
+		const title = this.formatTitle(tbl); // format nama tabel
 
 		const actionHtml = `
-         ${this.buildActionButtons(tbl, req)}
+        ${this.buildActionButtons(tbl)} 
         <div class="ui hidden divider"></div>
         <h3 class="ui dividing header">
             <i class="left align icon"></i>

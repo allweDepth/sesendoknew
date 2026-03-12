@@ -111,17 +111,28 @@ AMBIL req DARI BUTTON
 		state.setTable(tbl);
 		state.action = jns;
 
+		// ======================================================
+		// FLYOUT CONTROLLER TIDAK BOLEH MENGUBAH req
+		// req hanya dikontrol oleh menu (BaseCrudModule)
+		// ======================================================
+
+		// ambil req dari tombol jika ada
 		const req = $btn.data("req");
 
+		// ======================================================
+		// JIKA TOMBOL MEMILIKI data-req
+		// ======================================================
 		if (req !== undefined && req !== null) {
-			state.req = req;
-		} else {
-			const urlParams = new URLSearchParams(window.location.search);
-			const reqFromUrl = urlParams.get("req");
+			state.req = req; // gunakan req dari tombol
+		}
 
-			if (reqFromUrl) {
-				state.req = reqFromUrl;
-			}
+		// ======================================================
+		// JIKA TOMBOL TIDAK MEMILIKI data-req
+		// ======================================================
+		else {
+			// jangan membaca URL
+			// jangan mempertahankan req lama
+			state.req = null; // reset req
 		}
 
 		/* =========================================

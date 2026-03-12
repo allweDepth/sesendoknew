@@ -42,8 +42,17 @@ class SpaRouter {
 		$(document).on("click", "[data-spa]", (e) => {
 			e.preventDefault();
 
-			const url = $(e.currentTarget).attr("href");
-			const mode = $(e.currentTarget).data("spa");
+			const $link = $(e.currentTarget);
+
+			const url = $link.attr("href");
+			const mode = $link.data("spa");
+
+			const req = $link.data("req") ?? null; // ← baca data-req
+
+			// simpan ke state global
+			if (window.app && window.app.state) {
+				window.app.state.req = req;
+			}
 
 			history.pushState({ mode }, "", url);
 
@@ -52,7 +61,7 @@ class SpaRouter {
 			} else {
 				this.loadServerPartial(url);
 			}
-			const $link = $(e.currentTarget);
+
 			const iconClass = $link.find("i").attr("class");
 			const text = $link.text().trim();
 
