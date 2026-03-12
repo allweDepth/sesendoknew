@@ -31,10 +31,10 @@ class TableManager {
 		this.initialized = false;
 
 		// selector tbody tabel
-		this.tbody = config.tbody || tbody[(name = "tabel_${this.state.tbl}")];
+		this.tbody = config.tbody || `tbody[name="tabel_${this.state.tbl}"]`; // gunakan selector string
 
 		// selector pagination
-		this.pagination = config.pagination || div[(name = "pagination_${this.state.tbl}")];
+		this.pagination = config.pagination || `div[name="pagination_${this.state.tbl}"]`; // gunakan selector string
 
 		// pagination state
 		this.currentPage = 1;

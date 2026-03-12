@@ -16,57 +16,70 @@ class BaseCrudModule {
 		this.tableManager = null;
 	}
 
+	// public/assets/js/modules/base-crud-module.js
+
+	// public/assets/js/modules/base-crud-module.js
+
 	init() {
+		// render layout modul
 		this.renderLayout();
 
+		// jika modul menggunakan menu
 		if (this.useMenu) {
+			// inisialisasi event menu
 			this.initMenu();
 		}
 
-		// 🔥 AMBIL TBL DARI URL
-		const urlParams = new URLSearchParams(window.location.search);
-		const tblFromUrl = urlParams.get("tbl");
-		const reqFromUrl = urlParams.get("req");
+		// ============================================
+		// AMBIL PARAMETER URL
+		// ============================================
+
+		const urlParams = new URLSearchParams(window.location.search); // ambil query string url
+
+		const tblFromUrl = urlParams.get("tbl"); // baca tbl dari url
+
+		const reqFromUrl = urlParams.get("req"); // baca req dari url
+
+		// ============================================
+		// JIKA URL MEMILIKI TBL
+		// ============================================
 
 		if (tblFromUrl) {
-			// ======================================================
-			// cari menuItems berdasarkan tbl
-			// ======================================================
-
+			// cari menuItems yang sesuai dengan tbl
 			const item = this.menuItems?.find((m) => m.tbl === tblFromUrl) || null;
 
-			// ======================================================
-			// default req
-			// ======================================================
+			// ============================================
+			// PRIORITAS REQ
+			// 1. dari URL
+			// 2. dari menuItems
+			// 3. dari sidebar
+			// ============================================
 
-			let req = reqFromUrl || null;
+			let req = reqFromUrl || null; // gunakan req dari url jika ada
 
-			// ======================================================
-			// prioritas 1: dari menuItems
-			// ======================================================
-
+			// jika url tidak punya req gunakan req dari menu
 			if (!req && item && item.req) {
 				req = item.req;
 			}
 
-			// ======================================================
-			// prioritas 2: dari sidebar data-req
-			// ======================================================
-
+			// jika masih tidak ada req coba baca dari sidebar
 			if (!req) {
-				const menu = document.querySelector(`a[data-spa][href*="tbl=${tblFromUrl}"]`);
+				const menu = document.querySelector(`a[data-spa][href*="tbl=${tblFromUrl}"]`); // cari menu sidebar
 
 				if (menu && menu.dataset.req) {
-					req = menu.dataset.req;
+					req = menu.dataset.req; // ambil req dari data-req sidebar
 				}
 			}
 
-			// ======================================================
-			// jika keduanya tidak ada → tetap null
-			// ======================================================
+			// load tabel dengan tbl dan req
 			this.loadTable(tblFromUrl, req);
-		} else if (this.menuItems.length > 0) {
-			// ambil item menu pertama
+		}
+
+		// ============================================
+		// JIKA URL TIDAK MEMILIKI TBL
+		// ============================================
+		else if (this.menuItems.length > 0) {
+			// ambil menu pertama
 			const firstMenu = this.menuItems[0];
 
 			// tbl dari menu pertama
@@ -75,7 +88,7 @@ class BaseCrudModule {
 			// req dari menu pertama jika ada
 			const req = firstMenu.req || null;
 
-			// load tabel dengan req
+			// load tabel default
 			this.loadTable(tbl, req);
 		}
 	}
@@ -182,15 +195,18 @@ agar komponen lain seperti search dapat membaca
 		// ====================================================
 		// 🔥 SYNC URL AGAR REFRESH AMAN (GENERIC)
 		// ====================================================
-		const basePath = window.location.pathname;
+		// public/assets/js/modules/base-crud-module.js
 
-		let url = `${basePath}?tbl=${tbl}`;
+		const basePath = window.location.pathname; // path halaman
+
+		let url = `${basePath}?tbl=${tbl}`; // default url
 
 		if (req) {
-			url += `&req=${req}`;
+			// jika req ada
+			url += `&req=${req}`; // tambahkan req ke url
 		}
 
-		window.history.replaceState(null, "", url);
+		window.history.replaceState(null, "", url); // update url browser
 		if (this.tableManager && typeof this.tableManager.destroy === "function") {
 			this.tableManager.destroy(); // hancurkan event lama
 		}
