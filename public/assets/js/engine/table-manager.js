@@ -23,7 +23,7 @@ class TableManager {
 		this.state = config.state; // referensi state global
 
 		// jangan ubah state di constructor
-		this.req = config.state?.req || null; // simpan req lokal instance
+		this.req = null; // jangan snapshot state.req agar selalu membaca state terbaru
 		// ajax engine
 		this.ajax = window.Ajax;
 
@@ -137,12 +137,14 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		// REQ TABLE OVERRIDE
 		//=====================================================
 
-		const reqTable = this.req || this.state.req || window.app.req; // ambil req dari berbagai sumber state
+		// public/assets/js/engine/table-manager.js
 
+		// gunakan state.req sebagai sumber utama
+		const reqTable = this.state.req || this.req || window.app.req; // prioritaskan state terbaru
+
+		// jika req ada
 		if (reqTable !== null && reqTable !== undefined && reqTable !== "") {
-			// jika req ada
-
-			payload.req = reqTable; // kirim req sebagai override tabel database
+			payload.req = reqTable; // kirim req ke backend
 		}
 
 		//=====================================================
