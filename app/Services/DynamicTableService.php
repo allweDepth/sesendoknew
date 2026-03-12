@@ -142,19 +142,14 @@ PERUBAHAN:
 
       $table = $profile['table'];
 
-      if ($req) {
+      // req hanya override jika profile valid
+      if ($req && isset($this->profiles[$req])) {
 
-        if (isset($this->profiles[$req])) {
+        $reqProfile = $this->profiles[$req];
 
-          $reqProfile = $this->profiles[$req];
+        $table = $reqProfile['table'];
 
-          $table = $reqProfile['table'];
-
-          $request['_req_profile'] = $reqProfile;
-        } else {
-
-          $table = $req;
-        }
+        $request['_req_profile'] = $reqProfile;
       }
       //=====================================================
       //5️⃣ EKSEKUSI ACTION

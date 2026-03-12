@@ -453,7 +453,7 @@ UIConfig.kegiatan = {
 	},
 };
 
-UIConfig.sub_kegiatan_ref = {
+UIConfig.sub_kegiatan = {
 	form: {
 		elements: [
 			{
@@ -1135,7 +1135,7 @@ UIConfig.aset.import = UIConfig.__importFactory("aset_neo", null); //DEFAULT GLO
 |--------------------------------------------------------------------------
 */
 
-UIConfig.sub_kegiatan = {
+UIConfig.sub_kegiatan_anggaran = {
 	title: "Sub Kegiatan",
 
 	table: "sub_kegiatan",

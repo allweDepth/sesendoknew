@@ -128,8 +128,13 @@ AMBIL req DARI BUTTON
 UPDATE req HANYA JIKA ADA
 ========================================= */
 
-		const configKey =
-			$btn.data("config") || (window.UIConfig[tbl] && window.UIConfig[tbl][jns] ? `${tbl}.${jns}` : tbl);
+		// gunakan req sebagai module UI jika ada
+		let configKey = $btn.data("config") || state.req;
+
+		if (!configKey) {
+			console.warn("Module UI tidak ditemukan untuk:", tbl);
+			return;
+		}
 
 		const id = $btn.data("id") || null;
 

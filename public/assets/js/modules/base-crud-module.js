@@ -26,6 +26,7 @@ class BaseCrudModule {
 		// 🔥 AMBIL TBL DARI URL
 		const urlParams = new URLSearchParams(window.location.search);
 		const tblFromUrl = urlParams.get("tbl");
+		const reqFromUrl = urlParams.get("req");
 
 		if (tblFromUrl) {
 			// ======================================================
@@ -38,13 +39,13 @@ class BaseCrudModule {
 			// default req
 			// ======================================================
 
-			let req = null;
+			let req = reqFromUrl || null;
 
 			// ======================================================
 			// prioritas 1: dari menuItems
 			// ======================================================
 
-			if (item && item.req) {
+			if (!req && item && item.req) {
 				req = item.req;
 			}
 
@@ -182,7 +183,14 @@ agar komponen lain seperti search dapat membaca
 		// 🔥 SYNC URL AGAR REFRESH AMAN (GENERIC)
 		// ====================================================
 		const basePath = window.location.pathname;
-		window.history.replaceState(null, "", `${basePath}?tbl=${tbl}`);
+
+		let url = `${basePath}?tbl=${tbl}`;
+
+		if (req) {
+			url += `&req=${req}`;
+		}
+
+		window.history.replaceState(null, "", url);
 		if (this.tableManager && typeof this.tableManager.destroy === "function") {
 			this.tableManager.destroy(); // hancurkan event lama
 		}
@@ -190,7 +198,7 @@ agar komponen lain seperti search dapat membaca
 		const title = this.formatTitle(tbl);
 
 		const actionHtml = `
-        ${this.buildActionButtons(tbl)}
+         ${this.buildActionButtons(tbl, req)}
         <div class="ui hidden divider"></div>
         <h3 class="ui dividing header">
             <i class="left align icon"></i>
@@ -252,6 +260,12 @@ INISIALISASI TABLE
 			importType = "import_struktur"; // ubah jenis import
 			importIcon = "sitemap"; // ubah icon
 		}
+		// ambil req dari state
+		const req = this.state.req;
+
+		// buat atribut req hanya jika ada nilainya
+		const reqAttr = req ? `data-req="${req}"` : "";
+
 		return `
         <div class="ui right floated basic icon buttons" style="margin-top:10px;">
 
@@ -259,7 +273,8 @@ INISIALISASI TABLE
                 data-ui="open-form"
 								data-container="flyout"
 								data-jns="add"
-								data-tbl="${tbl}">
+								data-tbl="${tbl}"
+                ${reqAttr}>
                 <i class="plus icon"></i>
             </button>
 
@@ -267,13 +282,15 @@ INISIALISASI TABLE
                 data-ui="open-form"
 								data-container="flyout"
 								data-jns="${importType}"
-								data-tbl="${tbl}">
+								data-tbl="${tbl}"
+                ${reqAttr}>
                 <i class="${importIcon} icon"></i>
             </button>
 
             <button class="ui icon button"
                 data-action="export"
-                data-tbl="${tbl}">
+                data-tbl="${tbl}"
+                ${reqAttr}>
                 <i class="alternate download icon"></i>
             </button>
 
