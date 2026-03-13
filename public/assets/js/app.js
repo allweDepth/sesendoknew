@@ -66,10 +66,15 @@ class App {
 
 		if (this.state) {
 			// jika AppState digunakan
-			this.state.tbl = this.tbl; // sinkronkan tbl
-			this.state.req = this.req; // sinkronkan req
-			this.state.action = this.action; // sinkronkan action
-			this.state.id = this.id; // sinkronkan id
+			this.state.tbl = this.tbl;
+
+			// jangan timpa req jika URL tidak punya req
+			if (this.req !== null && this.req !== undefined) {
+				this.state.req = this.req;
+			}
+
+			this.state.action = this.action;
+			this.state.id = this.id;
 		}
 	}
 
