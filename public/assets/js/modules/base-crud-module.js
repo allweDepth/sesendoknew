@@ -157,30 +157,19 @@ RESET SEARCH FIELD SAAT TAB MENU BERUBAH
 	 * ========================================================
 	 */
 	loadTable(tbl, req = null) {
-		// ====================================================
-		// SET TABEL AKTIF
-		// ====================================================
-		this.state.setTable(tbl); // simpan tbl ke state global
+		this.state.setTable(tbl);
 
-		// ====================================================
-		// SET REQ HANYA DARI PARAMETER MENU
-		// ====================================================
-		this.state.req = req ?? null; // req hanya dari data-req menu
+		if (req !== undefined) {
+			this.state.req = req;
+		}
 
-		// ====================================================
-		// SYNC GLOBAL STATE
-		// ====================================================
-		window.app = window.app || {}; // pastikan object app ada
-		window.app.state = this.state; // sinkronisasi state global
+		window.app = window.app || {};
+		window.app.state = this.state;
 
-		// ====================================================
-		// UPDATE URL TANPA MENYIMPAN req
-		// ====================================================
-		const basePath = window.location.pathname; // path halaman saat ini
+		const basePath = window.location.pathname;
+		const url = `${basePath}?tbl=${tbl}`;
 
-		const url = `${basePath}?tbl=${tbl}`; // URL hanya menyimpan tbl
-
-		window.history.replaceState(null, "", url); // update browser URL tanpa reload
+		window.history.replaceState(null, "", url);
 
 		// ====================================================
 		// DESTROY TABLE MANAGER LAMA

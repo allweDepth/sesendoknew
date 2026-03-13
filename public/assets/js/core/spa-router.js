@@ -47,15 +47,13 @@ class SpaRouter {
 			const url = $link.attr("href");
 			const mode = $link.data("spa");
 
-			const req = $link.data("req") ?? null; // ← baca data-req
-
-			// simpan ke state global
+			const req = $link.data("req");
 
 			if (window.app?.resetState) {
 				window.app.resetState();
 			}
 
-			if (window.app?.state) {
+			if (window.app?.state && req !== undefined) {
 				window.app.state.req = req;
 			}
 
@@ -66,13 +64,6 @@ class SpaRouter {
 			} else {
 				this.loadServerPartial(url);
 			}
-
-			const iconClass = $link.find("i").attr("class");
-			const text = $link.text().trim();
-
-			// update header
-			$("#dynamicHeaderIcon").attr("class", iconClass);
-			$("#dynamicHeaderTitle").text(text);
 		});
 	}
 

@@ -116,38 +116,17 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		this.limit = limitNavbar || this.limit;
 		// jika navbar kosong gunakan limit lama
 		let payload = {
-			/* aksi CRUD */
-			action: "list", // aksi default list
-
-			/* alias tabel logical */
-			tbl: this.state.tbl, // tbl berasal dari global state
-
-			/* pagination */
-			halaman: this.currentPage, // halaman aktif
-
-			rows: this.limit, // jumlah baris
-
-			/* search */
-			cari: this.searchQuery, // keyword pencarian
-
-			/* sorting */
-			sort_by: this.sortBy, // kolom sort
-
-			sort_dir: this.sortDir, // arah sort
+			action: "list",
+			tbl: this.state.tbl,
+			halaman: this.currentPage,
+			rows: this.limit,
+			cari: this.searchQuery,
+			sort_by: this.sortBy,
+			sort_dir: this.sortDir,
 		};
 
-		//=====================================================
-		// REQ TABLE OVERRIDE
-		//=====================================================
-
-		// public/assets/js/engine/table-manager.js
-
-		// gunakan state.req sebagai sumber utama
-		const reqTable = this.state.req; // prioritaskan state terbaru
-
-		// jika req ada
-		if (reqTable !== null && reqTable !== undefined && reqTable !== "") {
-			payload.req = reqTable; // kirim req ke backend
+		if (this.state.req) {
+			payload.req = this.state.req;
 		}
 
 		//=====================================================
