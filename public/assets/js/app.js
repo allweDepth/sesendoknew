@@ -59,22 +59,28 @@ class App {
 
 		const params = new URLSearchParams(query); // parsing query
 
-		this.tbl = params.get("tbl"); // ambil tbl dari URL
-		this.req = params.get("req"); // ambil req dari URL
-		this.action = params.get("action"); // ambil action dari URL
-		this.id = params.get("id"); // ambil id dari URL
+		this.tbl = params.get("tbl");
+		this.req = params.get("req");
+		this.action = params.get("action");
+		this.id = params.get("id");
 
 		if (this.state) {
-			// jika AppState digunakan
-			this.state.tbl = this.tbl;
+			if (this.tbl !== null) {
+				this.state.tbl = this.tbl;
+			}
 
-			// jangan timpa req jika URL tidak punya req
-			if (this.req !== null && this.req !== undefined) {
+			// 🔥 JANGAN TIMPA req JIKA TIDAK ADA DI URL
+			if (this.req !== null) {
 				this.state.req = this.req;
 			}
 
-			this.state.action = this.action;
-			this.state.id = this.id;
+			if (this.action !== null) {
+				this.state.action = this.action;
+			}
+
+			if (this.id !== null) {
+				this.state.id = this.id;
+			}
 		}
 	}
 

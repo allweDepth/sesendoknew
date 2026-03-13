@@ -36,23 +36,23 @@ class BaseCrudModule {
 		// ====================================================
 		// AMBIL PARAMETER URL
 		// ====================================================
-		const urlParams = new URLSearchParams(window.location.search); // ambil query url
+		const urlParams = new URLSearchParams(window.location.search);
 
-		const tblFromUrl = urlParams.get("tbl"); // hanya membaca tbl
+		const tblFromUrl = urlParams.get("tbl");
 
-		// ====================================================
-		// JIKA URL MEMILIKI TBL
-		// ====================================================
+		// 🔥 TAMBAHAN INI
+		const reqFromUrl = urlParams.get("req");
+
 		if (tblFromUrl) {
-			// cari menu yang memiliki tbl tersebut
 			const item = this.menuItems?.find((m) => m.tbl === tblFromUrl) || null;
 
 			// PRIORITAS:
-			// 1. req dari sidebar
-			// 2. req dari menuItems
-			const req = item?.req ?? this.state.req ?? null; // req hanya dari data menu
+			// 1 req dari URL
+			// 2 req dari menuItems
+			// 3 req dari state
 
-			// load tabel
+			const req = reqFromUrl ?? item?.req ?? this.state.req ?? null;
+
 			this.loadTable(tblFromUrl, req);
 		}
 
@@ -86,7 +86,7 @@ class BaseCrudModule {
 			menuHtml += `
             <a class="item ${index === 0 ? "active" : ""}" 
               data-tbl="${item.tbl}"
-              ${item.req ? `data-req="${item.req}"` : ``}>
+              ${item.req !== undefined ? `data-req="${item.req}"` : ``}>
               ${item.label}
             </a>
             `;

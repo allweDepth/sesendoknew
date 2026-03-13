@@ -150,6 +150,8 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			method: "POST",
 			data: payload,
 			success: (res) => {
+				if (currentRequest !== this.requestId) return;
+
 				if (!res || !res.success) {
 					Toast.error(res?.message || "Gagal memuat data");
 					return;
@@ -560,12 +562,16 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		===================================================== */
 	destroy() {
 		delete TableManager.instances[this.state.tbl];
-		$(document).off(`click.tablePagination.${this.tbl}`);
 
+		// hapus event pagination dari container yang benar
+		$(this.pagination).off(`click.tablePagination.${this.state.tbl}`);
+
+		// hapus event global
 		$(document).off(`click.tableAction.${this.state.tbl}`);
 
 		$(document).off(`keypress.tableSearch.${this.state.tbl}`);
 
+		// bersihkan DOM
 		$(this.tbody).empty();
 
 		$(this.pagination).empty();
