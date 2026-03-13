@@ -2259,30 +2259,26 @@ LIMIT 1",
         foreach ($cellIterator as $cell) {
           $values[] = trim((string)$cell->getValue());
         }
-
-
-        /* ===============================================
-HEADER PROCESSING
-=============================================== */
+        //===============================================
+        // HEADER PROCESSING
+        // ===============================================
 
         if ($rowNumber <= $jmlHeader) {
 
           // header terakhir
           if ($rowNumber === $jmlHeader) {
-
             foreach ($values as $h) {
-
+              if ($h === '') {
+                continue;
+              }
               // normalisasi header
               $normalized = $this->normalizeForCompare($h);
-
               // cek apakah cocok dengan kolom tabel
               if (!isset($columnMap[$normalized])) {
-
                 throw new Exception(
                   "Header Excel '{$h}' tidak cocok dengan kolom tabel."
                 );
               }
-
               // simpan mapping header
               $headers[] = $columnMap[$normalized];
             }
@@ -2308,14 +2304,10 @@ HEADER PROCESSING
 
           $data[$headers[$k]] = $v;
         }
-
-
         try {
-
           // ==================================================
           // INJECT SCOPE
           // ==================================================
-
           if (in_array('kd_wilayah', $columns)) {
             $data['kd_wilayah'] = $kd_wilayah;
           }
