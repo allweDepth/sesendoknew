@@ -140,7 +140,7 @@ UPDATE req HANYA JIKA ADA
 ========================================= */
 
 		// gunakan req sebagai module UI jika ada
-		let configKey = $btn.data("config") || state.req;
+		let configKey = $btn.data("config") || state.req || tbl;
 
 		if (!configKey) {
 			console.warn("Module UI tidak ditemukan untuk:", tbl);
