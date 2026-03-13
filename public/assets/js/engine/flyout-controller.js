@@ -118,9 +118,11 @@ AMBIL req DARI BUTTON
 		// ======================================================
 		// JIKA TOMBOL MEMILIKI data-req
 		// ======================================================
-		if (req !== undefined && req !== null) {
-			state.req = req; // gunakan req dari tombol
-		}
+		// req tidak boleh diubah flyout
+		// state.req = req;
+		// if (req !== undefined && req !== null) {
+		// 	state.req = req; // gunakan req dari tombol
+		// }
 
 		/* =========================================
 UPDATE req HANYA JIKA ADA
