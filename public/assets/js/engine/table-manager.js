@@ -110,10 +110,10 @@ class TableManager {
 AMBIL LIMIT TERBARU DARI NAVBAR
 ===================================================== */
 
-		const limitNavbar = $("#countRow").dropdown("get value");
-		// membaca jumlah row dari dropdown navbar
+		// const limitNavbar = $("#countRow").dropdown("get value");
+		// // membaca jumlah row dari dropdown navbar
 
-		this.limit = limitNavbar || this.limit;
+		// this.limit = limitNavbar || this.limit;
 		// jika navbar kosong gunakan limit lama
 		let payload = {
 			action: "list",
@@ -125,9 +125,22 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			sort_dir: this.sortDir,
 		};
 
+		// kirim req jika ada
 		if (this.state.req) {
 			payload.req = this.state.req;
 		}
+
+		//=====================================================
+		// REQ TABLE OVERRIDE
+		//=====================================================
+
+		// const reqTable = this.state.req;
+		// tidak diperlukan karena sudah memakai this.state.req di atas
+
+		// if (reqTable !== null && reqTable !== undefined && reqTable !== "") {
+		//     payload.req = reqTable;
+		// }
+		// blok ini duplikat dan menyebabkan kebingungan
 
 		//=====================================================
 		//AJAX REQUEST
@@ -592,16 +605,4 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 	// DESTROY INSTANCE
 	// membersihkan event agar tidak terjadi event stacking
 	// =====================================================
-	destroy() {
-		// hapus event reload form
-		const reloadEvent = `form:success.${this.tbl}.table`;
-
-		$(document).off(reloadEvent); // hapus listener reload
-
-		// hapus semua event pagination / sorting / search
-		$(document).off(`.table-${this.state.tbl}`);
-
-		// reset flag init
-		this.initialized = false;
-	}
 }
