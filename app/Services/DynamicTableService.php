@@ -2503,44 +2503,77 @@ LIMIT 1",
   {
     return $this->runTransaction(function () use ($filePath, $jmlHeader) {
 
-      // load excel
       $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
 
-      // ambil semua baris
-      $rows = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
+      $rows = $spreadsheet
+        ->getActiveSheet()
+        ->toArray(null, true, true, false);
 
-      // validasi file
       if (count($rows) <= $jmlHeader) {
         throw new Exception("File kosong atau header tidak sesuai.");
       }
 
       $inserted = 0;
 
+      /* =====================================================
+        CACHE SEMUA KODE YANG SUDAH ADA DI DATABASE
+        ===================================================== */
+
+      $kodeCache = [];
+
+      $existing = $this->db->query("
+            SELECT kode
+            FROM rekening_kegiatan
+        ")->fetchAll();
+
+      foreach ($existing as $r) {
+        $kodeCache[$r['kode']] = true;
+      }
+
+      /* =====================================================
+        MEMORY DUPLICATE EXCEL
+        ===================================================== */
+
+      $excelDuplicate = [];
+
+      /* =====================================================
+        LOOP DATA EXCEL
+        ===================================================== */
+
       foreach (array_slice($rows, $jmlHeader) as $rowIndex => $row) {
 
-        // nomor baris excel
         $excelRow = $rowIndex + $jmlHeader + 1;
 
-        // kode template
-        $kode = trim((string)($row[0] ?? ''));
-
-        // nama uraian
+        $kode   = trim((string)($row[0] ?? ''));
         $uraian = trim((string)($row[1] ?? ''));
 
-        // skip kosong
         if ($kode === '' || $uraian === '') {
           continue;
         }
 
         try {
 
-          // hitung jumlah segment
+          /* =====================================================
+                CEK DUPLICATE DALAM FILE
+                ===================================================== */
+
+          if (isset($excelDuplicate[$kode])) {
+
+            throw new Exception(
+              "Duplicate kode {$kode} dalam Excel."
+            );
+          }
+
+          $excelDuplicate[$kode] = true;
+
+          /* =====================================================
+                DETEKSI LEVEL BERDASARKAN SEGMENT
+                ===================================================== */
+
           $segments = explode('.', $kode);
+          $count    = count($segments);
 
-          $segmentCount = count($segments);
-
-          // tentukan level hierarchy
-          $level = match ($segmentCount) {
+          $level = match ($count) {
 
             1 => 'urusan',
             2 => 'bidang',
@@ -2550,36 +2583,55 @@ LIMIT 1",
             default => null
           };
 
-          // jika level tidak valid skip
           if (!$level) {
             continue;
           }
 
-          // hitung parent kode otomatis
+          /* =====================================================
+                DETEKSI PARENT
+                ===================================================== */
+
           $parent = null;
 
           if (str_contains($kode, '.')) {
 
-            // ambil substring sebelum titik terakhir
             $parent = substr($kode, 0, strrpos($kode, '.'));
+
+            /* ===============================================
+                    VALIDASI PARENT ADA
+                    =============================================== */
+
+            if (!isset($kodeCache[$parent])) {
+
+              throw new Exception(
+                "Parent {$parent} belum ada untuk kode {$kode}"
+              );
+            }
           }
 
-          // insert ke tabel rekening_kegiatan
-          $this->insertIfNotExists('rekening_kegiatan', [
+          /* =====================================================
+                INSERT DATA
+                ===================================================== */
 
-            'kode' => $kode,
+          $this->insertIfNotExists(
+            'rekening_kegiatan',
+            [
+              'kode' => $kode,
+              'parent_kode' => $parent,
+              'level' => $level,
+              'uraian' => $uraian
+            ]
+          );
 
-            'parent_kode' => $parent,
+          /* =====================================================
+                UPDATE CACHE
+                ===================================================== */
 
-            'level' => $level,
-
-            'uraian' => $uraian
-          ]);
+          $kodeCache[$kode] = true;
 
           $inserted++;
         } catch (\Throwable $e) {
 
-          // error baris excel
           throw new Exception(
             "Baris Excel {$excelRow} gagal → " . $e->getMessage()
           );
@@ -2587,9 +2639,7 @@ LIMIT 1",
       }
 
       return JsonResponse::success(
-
         "Import struktur berhasil",
-
         [
           'inserted' => $inserted
         ]
