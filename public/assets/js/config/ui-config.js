@@ -1101,7 +1101,9 @@ UIConfig.__importFactory = function (tbl, templateFile) {
 	};
 };
 UIConfig.satuan.import = UIConfig.__importFactory("satuan", "9. Satuan 1 Header.xlsx");
-UIConfig.rekening_kegiatan = UIConfig.rekening_kegiatan || {};
+UIConfig.rekening_kegiatan = UIConfig.rekening_kegiatan || {
+	form: { elements: [] },
+};
 UIConfig.rekening_kegiatan.import = UIConfig.__importFactory("rekening_kegiatan", "9. Satuan 1 Header.xlsx");
 UIConfig.sbu.import = UIConfig.__importFactory("sbu_neo", "17. sbu 2024.xlsx");
 
