@@ -122,13 +122,6 @@ class App {
 
 	loadModule(url) {
 		// fungsi untuk memuat module berdasarkan URL
-
-		// ============================================
-		// RESET STATE SETIAP MENU BERUBAH
-		// ============================================
-
-		this.resetState(); // reset semua state
-
 		// ============================================
 		// SYNC STATE DARI URL
 		// ============================================

@@ -130,7 +130,7 @@ class BaseCrudModule {
 			$item.addClass("active"); // aktifkan menu ini
 
 			const tbl = $item.data("tbl"); // tabel
-			const req = $item.data("req") ?? null; // jangan pakai ?? null
+			const req = $item.data("req") || null; // jangan pakai ?? null
 
 			/* =====================================================
 RESET SEARCH FIELD SAAT TAB MENU BERUBAH
@@ -159,15 +159,13 @@ RESET SEARCH FIELD SAAT TAB MENU BERUBAH
 	loadTable(tbl, req = null) {
 		this.state.setTable(tbl);
 
-		if (req !== undefined && req !== null) {
-			this.state.req = req ?? null;
-		}
+		this.state.req = req ?? null;
 
 		window.app = window.app || {};
 		window.app.state = this.state;
 
 		const basePath = window.location.pathname;
-		const url = `${basePath}?tbl=${tbl}`;
+		const url = req ? `${basePath}?tbl=${tbl}&req=${req}` : `${basePath}?tbl=${tbl}`;
 
 		window.history.replaceState(null, "", url);
 
