@@ -1046,7 +1046,9 @@ SEARCH FIELD (FOMANTIC SEARCH)
 		// ============================================================
 		// AMBIL KONFIG VALIDASI DARI UICONFIG
 		// ============================================================
-		const config = UIConfig[this.state.tbl];
+
+		const configKey = this.state.req || this.state.tbl;
+		const config = UIConfig[configKey];
 
 		// jika tidak ada schema validation → hentikan
 		if (!config?.validation) return;
@@ -1173,16 +1175,13 @@ SEARCH FIELD (FOMANTIC SEARCH)
 				});
 			});
 	}
-	setFlyoutHeader(tbl) {
-		const config = UIConfig?.[tbl];
-
+	setFlyoutHeader() {
+		const configKey = this.state.req || this.state.tbl;
+		const config = UIConfig?.[configKey];
 		if (!config) return;
-
 		const title = config.title || "Form Data";
 		const icon = config.icon || "folder";
-
 		$("#content_flyout").text(title);
-
 		$("#icon_flyout").attr("class", "").addClass(`${icon} icon`);
 	}
 	/**

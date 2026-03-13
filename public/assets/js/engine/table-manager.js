@@ -204,8 +204,9 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		===================================================== */
 	getColumnsFromConfig() {
 		if (!window.UIConfig) return [];
-
-		const config = window.UIConfig?.[this.state.tbl];
+		// Gunakan req jika ada, fallback ke tbl
+		const configKey = this.state.req || this.state.tbl;
+		const config = window.UIConfig?.[configKey];
 		if (!config || !config.form?.elements) return [];
 
 		return config.form.elements
