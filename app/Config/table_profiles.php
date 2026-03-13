@@ -1259,6 +1259,38 @@ $profiles = [
     // --------------------------------------------------
     'table' => 'rekening_kegiatan',
 
+    // --------------------------------------------------
+    // primary key
+    // --------------------------------------------------
+    'primary_key' => 'id',
+
+    // --------------------------------------------------
+    // dropdown configuration
+    // --------------------------------------------------
+    'dropdown' => [
+      'value' => 'kode',
+      'label' => 'uraian'
+    ],
+
+    // --------------------------------------------------
+    // relasi parent-child
+    // --------------------------------------------------
+    'relations' => [
+      [
+        'local_key' => 'parent_kode'
+      ]
+    ],
+
+    // --------------------------------------------------
+    // filter default
+    // --------------------------------------------------
+    'where' => [
+      'status' => 1
+    ],
+
+    // --------------------------------------------------
+    // request filter berdasarkan level
+    // --------------------------------------------------
     'req_filters' => [
 
       'urusan' => [
@@ -1282,50 +1314,120 @@ $profiles = [
       ]
 
     ],
-    // --------------------------------------------------
-    // primary key tabel
-    // --------------------------------------------------
-    'primary_key' => 'id',
-
 
     // --------------------------------------------------
-    // konfigurasi dropdown
+    // listing modes
     // --------------------------------------------------
-    'dropdown' => [
+    'modes' => [
 
-      // nilai dropdown
-      'value' => 'kode',
+      'default' => [
 
-      // label dropdown
-      'label' => 'uraian'
-    ],
+        'select' => [
+          'kode',
+          'parent_kode',
+          'level',
+          'uraian'
+        ],
 
+        'searchable' => [
+          'kode',
+          'uraian'
+        ],
 
-    // --------------------------------------------------
-    // relasi parent-child menggunakan parent_kode
-    // --------------------------------------------------
-    'relations' => [
+        // urutan hierarchy benar
+        'order_by' => 'kode ASC'
 
-      [
+      ],
 
-        // field lokal untuk relasi
-        'local_key' => 'parent_kode'
+      // ----------------------------------------------
+      // khusus urusan
+      // ----------------------------------------------
+      'urusan' => [
 
+        'select' => [
+          'kode',
+          'uraian'
+        ],
+
+        'where' => [
+          'level' => 'urusan'
+        ],
+
+        'order_by' => 'kode ASC'
+      ],
+
+      // ----------------------------------------------
+      // bidang
+      // ----------------------------------------------
+      'bidang' => [
+
+        'select' => [
+          'kode',
+          'uraian',
+          'parent_kode'
+        ],
+
+        'where' => [
+          'level' => 'bidang'
+        ],
+
+        'order_by' => 'kode ASC'
+      ],
+
+      // ----------------------------------------------
+      // program
+      // ----------------------------------------------
+      'program' => [
+
+        'select' => [
+          'kode',
+          'uraian',
+          'parent_kode'
+        ],
+
+        'where' => [
+          'level' => 'program'
+        ],
+
+        'order_by' => 'kode ASC'
+      ],
+
+      // ----------------------------------------------
+      // kegiatan
+      // ----------------------------------------------
+      'kegiatan' => [
+
+        'select' => [
+          'kode',
+          'uraian',
+          'parent_kode'
+        ],
+
+        'where' => [
+          'level' => 'kegiatan'
+        ],
+
+        'order_by' => 'kode ASC'
+      ],
+
+      // ----------------------------------------------
+      // sub kegiatan
+      // ----------------------------------------------
+      'sub_kegiatan' => [
+
+        'select' => [
+          'kode',
+          'uraian',
+          'parent_kode'
+        ],
+
+        'where' => [
+          'level' => 'sub_kegiatan'
+        ],
+
+        'order_by' => 'kode ASC'
       ]
-
-    ],
-
-
-    // --------------------------------------------------
-    // filter default
-    // --------------------------------------------------
-    'where' => [
-
-      // hanya data aktif
-      'status' => 1
-
     ]
-
   ],
 
 
