@@ -2342,7 +2342,35 @@ LIMIT 1",
             );
           }
 
+          // ==================================================
+          // AUTO DETECT LEVEL UNTUK rekening_kegiatan
+          // ==================================================
 
+          if ($table === 'rekening_kegiatan' && !empty($data['kode'])) {
+
+            $segments = explode('.', $data['kode']);
+            $count = count($segments);
+
+            $data['level'] = match ($count) {
+
+              1 => 'urusan',
+              2 => 'bidang',
+              3 => 'program',
+              5 => 'kegiatan',
+              6 => 'sub_kegiatan',
+
+              default => 'urusan'
+            };
+
+            // set parent_kode otomatis
+            if ($count > 1) {
+              $data['parent_kode'] = substr(
+                $data['kode'],
+                0,
+                strrpos($data['kode'], '.')
+              );
+            }
+          }
           // ==================================================
           // SANITASI DATA
           // ==================================================

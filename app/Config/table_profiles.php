@@ -1323,10 +1323,14 @@ $profiles = [
       'default' => [
 
         'select' => [
+          'id',
           'kode',
           'parent_kode',
           'level',
-          'uraian'
+          'uraian',
+          'kinerja',
+          'indikator',
+          'satuan',
         ],
 
         'searchable' => [
@@ -1345,6 +1349,7 @@ $profiles = [
       'urusan' => [
 
         'select' => [
+          'id',
           'kode',
           'uraian'
         ],
@@ -1362,6 +1367,7 @@ $profiles = [
       'bidang' => [
 
         'select' => [
+          'id',
           'kode',
           'uraian',
           'parent_kode'
@@ -1380,6 +1386,7 @@ $profiles = [
       'program' => [
 
         'select' => [
+          'id',
           'kode',
           'uraian',
           'parent_kode'
@@ -1398,6 +1405,7 @@ $profiles = [
       'kegiatan' => [
 
         'select' => [
+          'id',
           'kode',
           'uraian',
           'parent_kode'
@@ -1416,8 +1424,12 @@ $profiles = [
       'sub_kegiatan' => [
 
         'select' => [
+          'id',
           'kode',
           'uraian',
+          'kinerja',
+          'indikator',
+          'satuan',
           'parent_kode'
         ],
 
