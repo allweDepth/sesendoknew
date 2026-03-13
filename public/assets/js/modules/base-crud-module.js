@@ -50,7 +50,7 @@ class BaseCrudModule {
 			// PRIORITAS:
 			// 1. req dari sidebar
 			// 2. req dari menuItems
-			const req = this.state.req ?? item?.req ?? null; // req hanya dari data menu
+			const req = item?.req ?? this.state.req ?? null; // req hanya dari data menu
 
 			// load tabel
 			this.loadTable(tblFromUrl, req);
@@ -67,7 +67,7 @@ class BaseCrudModule {
 			const tbl = firstMenu.tbl;
 
 			// req dari menu pertama jika ada
-			const req = this.state.req ?? firstMenu.req ?? null;
+			const req = firstMenu.req ?? this.state.req ?? null;
 
 			// load tabel default
 			this.loadTable(tbl, req);
