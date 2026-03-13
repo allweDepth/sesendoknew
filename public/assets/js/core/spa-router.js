@@ -52,11 +52,10 @@ class SpaRouter {
 			if (window.app?.resetState) {
 				window.app.resetState();
 			}
-			// state tidak boleh diubah router
-			// window.app.state.req = req ?? null;
-			// if (window.app?.state) {
-			// 	window.app.state.req = req ?? null;
-			// }
+			// Set req dari menu ke state sebelum navigasi
+			if (window.app?.state && req) {
+				window.app.state.req = req;
+			}
 
 			history.pushState({ mode }, "", url);
 

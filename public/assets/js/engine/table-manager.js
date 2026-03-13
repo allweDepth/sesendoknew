@@ -129,7 +129,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		if (this.state.req) {
 			payload.req = this.state.req;
 		}
-
+		console.log("TableManager fetchData req:", this.state.req);
 		//=====================================================
 		// REQ TABLE OVERRIDE
 		//=====================================================
@@ -145,7 +145,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		//=====================================================
 		//AJAX REQUEST
 		//===================================================== */
-
+		// console.log("Payload:", payload);
 		this.ajax.request({
 			method: "POST",
 			data: payload,
