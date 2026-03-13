@@ -129,7 +129,13 @@ UPDATE req HANYA JIKA ADA
 ========================================= */
 
 		// gunakan req sebagai module UI jika ada
-		let configKey = $btn.data("config") || tbl || state.req;
+		let configKey;
+
+		if (action === "import") {
+			configKey = tbl; // import selalu mengikuti tabel
+		} else {
+			configKey = $btn.data("config") || req || state.req || tbl;
+		}
 
 		if (!configKey) {
 			console.warn("Module UI tidak ditemukan untuk:", tbl);
