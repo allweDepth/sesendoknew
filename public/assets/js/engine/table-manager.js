@@ -328,7 +328,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 						<div class="ui mini basic icon buttons">
 							<button class="ui button"
 							data-ui="open-form"
-							data-jns="edit"
+							data-action="edit"
 							data-tbl="${this.state.tbl}"
 							${this.state.req ? `data-req="${this.state.req}"` : ``}
 							data-id="${id}">

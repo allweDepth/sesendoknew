@@ -87,7 +87,7 @@ LISTENER LIMIT NAVBAR
 			this.isOpening = false;
 		}, 300);
 
-		const jns = $btn.data("jns");
+		const action = $btn.data("action");
 		const tbl = $btn.data("tbl");
 		/* =========================================
 			TRACE MODE
@@ -105,7 +105,7 @@ AMBIL req DARI BUTTON
 ========================================= */
 
 		state.setTable(tbl);
-		state.action = jns;
+		state.action = action;
 
 		// ======================================================
 		// FLYOUT CONTROLLER TIDAK BOLEH MENGUBAH req
@@ -156,7 +156,7 @@ UPDATE req HANYA JIKA ADA
 			formSelector: formSelector,
 		});
 
-		const config = this.buildConfig(jns, configKey);
+		const config = this.buildConfig(action, configKey);
 
 		/* =========================================
 ISI FIELD TIPE UNTUK MODULE MAPPING
@@ -212,7 +212,6 @@ ISI FIELD TIPE UNTUK MODULE MAPPING
 	buildConfig(jenis, configKey) {
 		if (!window.UIConfig) return { elements: [] };
 
-		// Support nested key (ex: satuan.import)
 		const keys = configKey.split(".");
 		let config = window.UIConfig;
 
@@ -223,6 +222,13 @@ ISI FIELD TIPE UNTUK MODULE MAPPING
 		if (!config) {
 			console.warn("Flyout config tidak ditemukan:", configKey);
 			return { elements: [] };
+		}
+
+		// =====================================================
+		// SUPPORT IMPORT FACTORY
+		// =====================================================
+		if (jenis === "import" && config.import) {
+			config = config.import;
 		}
 
 		if (config.form && Array.isArray(config.form.elements)) {
