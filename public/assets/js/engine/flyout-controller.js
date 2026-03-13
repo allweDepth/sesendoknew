@@ -170,7 +170,7 @@ ISI FIELD TIPE UNTUK MODULE MAPPING
    AUTO PRIMARY KEY FIELD (ID_ROW)
    ---------------------------------------------------------
    Jika tombol memiliki:
-   data-jns="edit"
+   data-action="edit"
    data-id="xx"
 
    maka otomatis dibuat:
@@ -180,7 +180,7 @@ ISI FIELD TIPE UNTUK MODULE MAPPING
    agar submit edit memiliki primary key
 ========================================================= */
 
-		if (jns === "edit" && id) {
+		if (action === "edit" && id) {
 			const $form = $(formSelector);
 
 			// cek apakah field id_row sudah ada
@@ -205,7 +205,7 @@ ISI FIELD TIPE UNTUK MODULE MAPPING
 			$(".sidebarkanan").sidebar("show");
 		}
 
-		if (jns === "edit" && id) {
+		if (action === "edit" && id) {
 			this.formEngine.loadData(id);
 		}
 	}
