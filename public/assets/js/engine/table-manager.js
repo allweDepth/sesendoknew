@@ -22,7 +22,7 @@ class TableManager {
 		this.requestId = 0;
 		// simpan state modul
 		this.state = config.state; // referensi state global
-
+		this.tbl = this.state.tbl; // snapshot tabel saat instance dibuat
 		// jangan ubah state di constructor
 		this.req = null; // jangan snapshot state.req agar selalu membaca state terbaru
 		// ajax engine
@@ -76,7 +76,7 @@ class TableManager {
 		this.fetchData();
 
 		// event reload dari form
-		const reloadEvent = `form:success.${this.state.tbl}.table`;
+		const reloadEvent = `form:success.${this.tbl}.table`;
 
 		// hapus event lama
 		$(document)
@@ -446,7 +446,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		// TABLE ACTION EVENT
 		// =====================================================
 
-		const actionEvent = `click.tableAction.${this.state.tbl}`;
+		const actionEvent = `click.tableAction.${this.tbl}`;
 
 		$(document).off(actionEvent);
 
@@ -547,7 +547,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 						data: {
 							action: "delete",
 							// jika ada data-req gunakan itu
-							tbl: req || this.state.tbl,
+							tbl: req || this.tbl,
 							id_row: id,
 						},
 						success: () => {
@@ -568,7 +568,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		===================================================== */
 	destroy() {
 		delete TableManager.instances[this.state.tbl];
-		$(document).off(`click.tablePagination.${this.state.tbl}`);
+		$(document).off(`click.tablePagination.${this.tbl}`);
 
 		$(document).off(`click.tableAction.${this.state.tbl}`);
 
@@ -615,7 +615,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 	// =====================================================
 	destroy() {
 		// hapus event reload form
-		const reloadEvent = `form:success.${this.state.tbl}.table`;
+		const reloadEvent = `form:success.${this.tbl}.table`;
 
 		$(document).off(reloadEvent); // hapus listener reload
 
