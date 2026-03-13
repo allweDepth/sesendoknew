@@ -47,10 +47,10 @@ class BaseCrudModule {
 			// cari menu yang memiliki tbl tersebut
 			const item = this.menuItems?.find((m) => m.tbl === tblFromUrl) || null;
 
-			// ====================================================
-			// REQ HANYA DARI menuItems
-			// ====================================================
-			const req = item?.req ?? null; // req hanya dari data menu
+			// PRIORITAS:
+			// 1. req dari sidebar
+			// 2. req dari menuItems
+			const req = this.state.req ?? item?.req ?? null; // req hanya dari data menu
 
 			// load tabel
 			this.loadTable(tblFromUrl, req);
@@ -67,7 +67,7 @@ class BaseCrudModule {
 			const tbl = firstMenu.tbl;
 
 			// req dari menu pertama jika ada
-			const req = firstMenu.req ?? null;
+			const req = this.state.req ?? firstMenu.req ?? null;
 
 			// load tabel default
 			this.loadTable(tbl, req);
@@ -225,11 +225,12 @@ RESET SEARCH FIELD SAAT TAB MENU BERUBAH
 BUAT INSTANCE TABLE MANAGER
 ============================================= */
 
-		this.tableManager = new TableManager({
+		this.tableManager = TableManager.get({
 			state: this.state,
 			tbody: "#crud-tbody",
 			pagination: "#crud-pagination",
 		});
+
 		// membuat instance manager tabel
 
 		/* =============================================
@@ -243,7 +244,7 @@ SIMPAN GLOBAL AGAR BISA DIAKSES UI COMPONENT
 INISIALISASI TABLE
 ============================================= */
 
-		this.tableManager.init();
+		// this.tableManager.init();
 		// memulai load tabel
 	}
 	buildActionButtons(tbl) {

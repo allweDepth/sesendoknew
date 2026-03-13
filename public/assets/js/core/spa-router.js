@@ -50,7 +50,12 @@ class SpaRouter {
 			const req = $link.data("req") ?? null; // ← baca data-req
 
 			// simpan ke state global
-			if (window.app && window.app.state) {
+
+			if (window.app?.resetState) {
+				window.app.resetState();
+			}
+
+			if (window.app?.state) {
 				window.app.state.req = req;
 			}
 
@@ -94,7 +99,8 @@ class SpaRouter {
 				// render module baru
 				$("#main-content").html(html);
 
-				if (window.app?.loadModule) {
+				if (window.app?.loadModule && !window.app.moduleLoaded) {
+					window.app.moduleLoaded = true;
 					window.app.loadModule(url);
 				}
 

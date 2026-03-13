@@ -19,6 +19,7 @@ class TableManager {
 		===================================================== */
 	static instances = {};
 	constructor(config = {}) {
+		this.requestId = 0;
 		// simpan state modul
 		this.state = config.state; // referensi state global
 
@@ -97,6 +98,8 @@ class TableManager {
 		===================================================== */
 	/* ===================================================== */
 	fetchData() {
+		this.requestId++;
+		const currentRequest = this.requestId;
 		this.syncLimitFromNavbar();
 		this.renderLoader();
 
@@ -140,7 +143,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		// public/assets/js/engine/table-manager.js
 
 		// gunakan state.req sebagai sumber utama
-		const reqTable = this.state.req || this.req || window.app.req; // prioritaskan state terbaru
+		const reqTable = this.state.req; // prioritaskan state terbaru
 
 		// jika req ada
 		if (reqTable !== null && reqTable !== undefined && reqTable !== "") {
@@ -430,8 +433,8 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		const paginationEvent = `click.tablePagination.${this.state.tbl}`;
 
 		$(this.pagination)
-			.off("click.tablePagination")
-			.on("click.tablePagination", "[data-page]", (e) => {
+			.off(`click.tablePagination.${this.state.tbl}`)
+			.on(`click.tablePagination.${this.state.tbl}`, "[data-page]", (e) => {
 				const page = parseInt($(e.currentTarget).data("page"));
 
 				if (!page || page === this.currentPage) return;
@@ -500,11 +503,14 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 	openAkta(id) {
 		const form = new FormEngine({
 			formSelector: "#form_flyout",
-			state: {
-				tbl: "rekanan_akta",
-				action: "insert",
-				reloadTable: "rekanan",
-			},
+			state: Object.assign(
+				{},
+				{
+					tbl: "rekanan_akta",
+					action: "insert",
+					reloadTable: "rekanan",
+				},
+			),
 			ajax: this.ajax,
 		});
 
