@@ -1130,8 +1130,8 @@ UIConfig.aset.import = UIConfig.__importFactory("aset_neo", null); //DEFAULT GLO
 |
 | Dipanggil oleh:
 | data-ui="open-form"
-| data-jns="add"
-| data-jns="edit"
+| data-action="add"
+| data-action="edit"
 |--------------------------------------------------------------------------
 */
 

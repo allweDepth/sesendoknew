@@ -257,7 +257,7 @@ INISIALISASI TABLE
             <button class="ui button"
                 data-ui="open-form"
 								data-container="flyout"
-								data-jns="add"
+								data-action="add"
 								data-tbl="${tbl}"
                 ${reqAttr}>
                 <i class="plus icon"></i>
@@ -266,7 +266,7 @@ INISIALISASI TABLE
             <button class="ui button"
                 data-ui="open-form"
 								data-container="flyout"
-								data-jns="${importType}"
+								data-action="${importType}"
 								data-tbl="${tbl}"
                 ${reqAttr}>
                 <i class="${importIcon} icon"></i>
