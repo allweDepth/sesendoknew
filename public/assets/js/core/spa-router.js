@@ -53,8 +53,8 @@ class SpaRouter {
 				window.app.resetState();
 			}
 
-			if (window.app?.state && req !== undefined) {
-				window.app.state.req = req;
+			if (window.app?.state) {
+				window.app.state.req = req ?? null;
 			}
 
 			history.pushState({ mode }, "", url);
@@ -90,8 +90,7 @@ class SpaRouter {
 				// render module baru
 				$("#main-content").html(html);
 
-				if (window.app?.loadModule && !window.app.moduleLoaded) {
-					window.app.moduleLoaded = true;
+				if (window.app?.loadModule) {
 					window.app.loadModule(url);
 				}
 

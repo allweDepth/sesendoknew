@@ -130,7 +130,7 @@ class BaseCrudModule {
 			$item.addClass("active"); // aktifkan menu ini
 
 			const tbl = $item.data("tbl"); // tabel
-			const req = $item.data("req") ?? null; // gunakan nullish coalescing
+			const req = $item.data("req") ?? null; // jangan pakai ?? null
 
 			/* =====================================================
 RESET SEARCH FIELD SAAT TAB MENU BERUBAH
@@ -159,8 +159,8 @@ RESET SEARCH FIELD SAAT TAB MENU BERUBAH
 	loadTable(tbl, req = null) {
 		this.state.setTable(tbl);
 
-		if (req !== undefined) {
-			this.state.req = req;
+		if (req !== undefined && req !== null) {
+			this.state.req = req ?? null;
 		}
 
 		window.app = window.app || {};

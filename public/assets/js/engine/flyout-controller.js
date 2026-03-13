@@ -59,15 +59,11 @@ LISTENER LIMIT NAVBAR
 ===================================================== */
 
 		$("#countRow").dropdown({
-			onChange: (value) => {
-				this.limit = value;
-				// update limit table
-
-				this.currentPage = 1;
-				// reset halaman
-
-				this.loadData();
-				// reload tabel
+			onChange: () => {
+				if (window.tableManager) {
+					window.tableManager.currentPage = 1;
+					window.tableManager.fetchData();
+				}
 			},
 		});
 	}
@@ -124,15 +120,6 @@ AMBIL req DARI BUTTON
 		// ======================================================
 		if (req !== undefined && req !== null) {
 			state.req = req; // gunakan req dari tombol
-		}
-
-		// ======================================================
-		// JIKA TOMBOL TIDAK MEMILIKI data-req
-		// ======================================================
-		else {
-			// jangan membaca URL
-			// jangan mempertahankan req lama
-			state.req = null; // reset req
 		}
 
 		/* =========================================
