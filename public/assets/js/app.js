@@ -125,11 +125,9 @@ class App {
 					// cek module
 					new ResetTabelModule().init(); // jalankan module
 				break; // keluar dari switch
-			case window.location.pathname === "/profil": // perbaikan kondisi reset tabel
-				if (typeof ResetTabelModule === "function")
-					// cek module
-					new ProfilModule().init(); // jalankan module
-				break; // keluar dari switch
+			case window.location.pathname === "/profil":
+				if (typeof ProfilModule === "function") new ProfilModule().init();
+				break;
 			default: // jika tidak ada kondisi cocok
 				break; // tidak melakukan apa apa
 		}
@@ -248,6 +246,9 @@ class App {
 
 			case "reset_tabel": // module reset tabel
 				if (typeof ResetTabelModule === "function") new ResetTabelModule().init(); // jalankan module
+				break;
+			case "profil":
+				if (typeof ProfilModule === "function") new ProfilModule().init();
 				break;
 		}
 	}
