@@ -5,30 +5,20 @@
  */
 
 class ProfilModule {
+	constructor() {
+		this.state = window.app.state;
+		this.ajax = window.app.ajax;
+		this.state.module = "profil";
+		this.state.setTable("profil");
+	}
 
-    constructor() {
+	init() {
+		this.renderLayout();
+		this.initEngine();
+	}
 
-        this.state = window.app.state;
-        this.ajax = window.app.ajax;
-
-        this.state.setTable("profil");
-
-        this.mainContainer = "#main-content";
-
-        this.tableManager = null;
-        this.formEngine = null;
-        this.formContainer = null;
-    }
-
-    init() {
-
-        this.renderLayout();
-        this.initEngine();
-    }
-
-    renderLayout() {
-
-        const html = `
+	renderLayout() {
+		const html = `
             <div class="ui segment">
                 <h3 class="ui header">Profil</h3>
                 <div id="table-container"></div>
@@ -36,39 +26,36 @@ class ProfilModule {
             </div>
         `;
 
-        $(this.mainContainer).html(html);
-    }
+		$(this.mainContainer).html(html);
+	}
 
-    initEngine() {
+	initEngine() {
+		this.tableManager = new TableManager({
+			state: this.state,
+			ajax: this.ajax,
+			container: "#table-container",
+		});
 
-        this.tableManager = new TableManager({
-            state: this.state,
-            ajax: this.ajax,
-            container: "#table-container"
-        });
+		this.formContainer = new FormContainerManager({
+			container: "#form-container",
+		});
 
-        this.formContainer = new FormContainerManager({
-            container: "#form-container"
-        });
+		this.formEngine = new FormEngine({
+			state: this.state,
+			ajax: this.ajax,
+			formSelector: "#dynamic-form",
+		});
 
-        this.formEngine = new FormEngine({
-            state: this.state,
-            ajax: this.ajax,
-            formSelector: "#dynamic-form"
-        });
+		this.tableManager.init();
+		this.formContainer.init();
+		this.formEngine.init();
+	}
 
-        this.tableManager.init();
-        this.formContainer.init();
-        this.formEngine.init();
-    }
+	destroy() {
+		this.tableManager.destroy();
+		this.formEngine.destroy();
+		this.formContainer.destroy();
 
-    destroy() {
-
-        this.tableManager.destroy();
-        this.formEngine.destroy();
-        this.formContainer.destroy();
-
-        $(this.mainContainer).empty();
-    }
-
+		$(this.mainContainer).empty();
+	}
 }

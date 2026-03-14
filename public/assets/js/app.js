@@ -125,7 +125,11 @@ class App {
 					// cek module
 					new ResetTabelModule().init(); // jalankan module
 				break; // keluar dari switch
-
+			case window.location.pathname === "/profil": // perbaikan kondisi reset tabel
+				if (typeof ResetTabelModule === "function")
+					// cek module
+					new ProfilModule().init(); // jalankan module
+				break; // keluar dari switch
 			default: // jika tidak ada kondisi cocok
 				break; // tidak melakukan apa apa
 		}
@@ -259,6 +263,7 @@ window.appModuleMap = {
 	"/tata_naskah": "tata_naskah", // module tata naskah
 	"/mapping": "mapping", // module mapping
 	"/reset_tabel": "reset_tabel", // module reset tabel
+	"/profil": "profil",
 };
 
 // ======================================================
