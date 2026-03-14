@@ -183,7 +183,7 @@ $profiles = [
 
           // scope pencarian
           'scope' => [
-            'peraturan_id'
+            'peraturan_id' => 'user'
           ]
         ]
 
@@ -572,7 +572,10 @@ $profiles = [
       'default' => [
         'select' => ['*'],
         'searchable' => ['uraian'],
-        'order_by' => 'uraian ASC'
+        'order_by' => 'uraian ASC',
+        'scope' => [
+          'peraturan_id' => 'user' // otomatis ambil dari session user
+        ]
       ]
     ]
   ],
