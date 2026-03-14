@@ -4087,7 +4087,6 @@ AND is_deleted = 0
         $mandatoryWhere[] = "`$table`.`kode` = ?";
         $params[] = $_POST['value'];
       } else {
-
         // root level (urusan)
         $mandatoryWhere[] =
           "(`$table`.`parent_kode` IS NULL
