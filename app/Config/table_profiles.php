@@ -1698,6 +1698,67 @@ $profiles = [
 
 
   ],
+  /*
+|--------------------------------------------------------------------------
+| PROFIL USER
+|--------------------------------------------------------------------------
+| Digunakan oleh menu profil
+| Form edit profil mengambil data user login
+*/
+  'profil' => [
+
+    // tabel asli database
+    'table' => 'user_sesendok_biila',
+
+    // primary key tabel
+    'primary_key' => 'id',
+
+    // semua user boleh akses profilnya
+    'allowed_roles' => ['super_admin', 'admin', 'user'],
+
+    // tidak menggunakan soft lock
+    'soft_lock' => false,
+
+    /*
+  =====================================================
+  MODE EDIT (dipakai oleh form profil)
+  =====================================================
+  */
+    'modes' => [
+
+      'edit' => [
+
+        // field yang boleh dibaca
+        'select' => [
+          'id',
+          'username',
+          'email',
+          'nama',
+          'nip',
+          'type_user',
+          'photo',
+          'tgl_login',
+          'tahun',
+          'kontak_person',
+          'nama_org',
+          'kd_opd'
+        ],
+
+        // field yang boleh dicari
+        'searchable' => [
+          'nama',
+          'username',
+          'email'
+        ],
+
+        // default order
+        'order_by' => 'id ASC'
+
+      ]
+
+    ]
+
+  ],
 ];
 $profiles['akun_neo'] = $profiles['akun'];
 // $profiles['sub_kegiatan_ref'] = $profiles['sub_kegiatan'];

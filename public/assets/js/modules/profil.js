@@ -19,6 +19,43 @@ class ProfilModule {
 		this.initUI();
 		this.bindFormWatcher();
 		this.bindPhotoWatcher();
+
+		this.loadData();
+	}
+
+	// ======================================================
+	// LOAD PROFIL DARI DYNAMIC
+	// ======================================================
+
+	loadProfil() {
+		const form = $('form[name="profil"]');
+
+		const id = form.attr("id_row");
+
+		if (!id) return;
+
+		this.ajax
+			.post("/dynamic", {
+				action: "edit",
+				tbl: "profil",
+				id: id,
+			})
+			.then((res) => {
+				if (!res || !res.data) return;
+
+				const data = res.data;
+
+				Object.keys(data).forEach((k) => {
+					const field = form.find(`[name="${k}"]`);
+
+					if (field.length) {
+						field.val(data[k]);
+					}
+				});
+
+				// trigger watcher agar card update
+				form.trigger("change");
+			});
 	}
 
 	// ======================================================
@@ -44,11 +81,13 @@ class ProfilModule {
 			$("#card_nama").text(form.find('[name="nama"]').val() || "-");
 			$("#card_type").text(form.find('[name="type_user"]').val() || "-");
 			$("#card_tahun").text(form.find('[name="tahun"]').val() || "-");
+
+			// login terakhir
+			$("#card_login").text(form.find('[name="tgl_login"]').val() || "-");
 		};
 
 		form.on("change keyup", "input,textarea", syncCard);
 
-		// initial sync
 		setTimeout(syncCard, 300);
 	}
 
@@ -68,5 +107,27 @@ class ProfilModule {
 
 	destroy() {
 		$(document).off("upload:success");
+	}
+	loadData() {
+		this.ajax.request({
+			data: {
+				action: "edit",
+				tbl: "profil",
+				id_row: window.app.user.id,
+			},
+			success: (res) => {
+				if (!res.success) return;
+
+				const data = res.data;
+
+				const form = $('form[name="profil"]');
+
+				Object.keys(data).forEach((k) => {
+					form.find(`[name="${k}"]`).val(data[k]);
+				});
+
+				form.trigger("change");
+			},
+		});
 	}
 }

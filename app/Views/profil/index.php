@@ -65,7 +65,7 @@
   <div class="twelve wide column">
 
     <form class="ui form profil" name="profil" jns="edit" tbl="profil" req="profil"
-      id_row="<?= $_SESSION['user_id'] ?>">
+      id_row="<?= $_SESSION['user']['id'] ?>">
 
       <h3 class="ui dividing header">
         <i class="user icon"></i>
@@ -123,7 +123,7 @@
 
         <div class="field">
           <label>Kode OPD</label>
-          <input type="text" name="kd_organisasi" readonly>
+          <input type="text" name="kd_opd" readonly>
         </div>
 
       </div>
