@@ -933,6 +933,18 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     // berdasarkan kolom searchable
     list($searchWhere, $searchParams) =
       $this->resolveSearch($table, $modeConfig, $search);
+
+
+
+    /* ======================================================
+        5️⃣ INISIALISASI ARRAY WHERE
+        ====================================================== */
+
+    // array kondisi WHERE
+    $whereParts = [];
+
+    // parameter query
+    $params = [];
     $req = $request['req'] ?? null;
 
     if ($req && $table === 'rekening_kegiatan') {
@@ -946,23 +958,11 @@ DELETE (FULL IDENTIK LOGIC ASLI)
       ];
 
       if (isset($map[$req])) {
-
-        $whereParts[] = "CHAR_LENGTH(REPLACE(kode,'.','')) = ?";
-        $params[] = $map[$req];
+        $whereParts[] = "level = ?";
+        $params[] = $req;
+        // $params[] = $map[$req];
       }
     }
-
-
-    /* ======================================================
-        5️⃣ INISIALISASI ARRAY WHERE
-        ====================================================== */
-
-    // array kondisi WHERE
-    $whereParts = [];
-
-    // parameter query
-    $params = [];
-
 
 
     /* ======================================================

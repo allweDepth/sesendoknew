@@ -135,6 +135,8 @@ class FormEngine {
 
 				dropdown.dropdown("set selected", value);
 
+				dropdown.find("input[type=hidden]").trigger("change");
+
 				dropdown.data("skip-cascade", false);
 
 				// ==================================================
@@ -821,7 +823,7 @@ SEARCH FIELD (FOMANTIC SEARCH)
 	loadDropdownSources() {
 		const self = this; // simpan referensi instance
 
-		$(`${this.formSelector} .ui.dropdown[data-source]:not([data-parent])`).each(function () {
+		$(`${this.formSelector} .ui.dropdown[data-source]`).each(function () {
 			const $dropdown = $(this); // dropdown saat ini
 
 			const parent = $dropdown.data("parent"); // ambil parent dropdown
@@ -832,12 +834,15 @@ SEARCH FIELD (FOMANTIC SEARCH)
 			// child dropdown hanya skip jika parent belum dipilih
 			// tetapi tetap boleh load saat ADD untuk root dropdown
 
-			if (parent && !self.isPopulating) {
-				const parentField = `${self.formSelector} [name="${parent}"]`; // cari parent field
+			if (parent) {
+				const parentField = `${self.formSelector} [name="${parent}"]`;
 
-				const parentValue = $(parentField).val(); // ambil value parent
+				const parentValue = $(parentField).val();
 
-				if (!parentValue) return; // skip jika parent kosong
+				// skip hanya jika bukan mode populate
+				if (!parentValue && !self.isPopulating) {
+					return;
+				}
 			}
 
 			// ======================================================
