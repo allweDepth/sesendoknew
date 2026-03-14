@@ -4228,31 +4228,7 @@ AND is_deleted = 0
 
     }
 
-    // --------------------------------------------------
-    // ambil profile
-    // --------------------------------------------------
 
-    $profile = $this->profiles[$profileKey]; // profile tabel
-
-    $table   = $profile['table']; // nama tabel
-
-
-    // --------------------------------------------------
-    // field dropdown
-    // --------------------------------------------------
-
-    $primaryKey = $profile['primary_key'] ?? 'id'; // primary key
-
-    $valueField = $profile['dropdown']['value'] ?? $primaryKey; // field value
-
-    $labelField = $profile['dropdown']['label'] ?? 'nama'; // field label
-
-
-    // --------------------------------------------------
-    // ambil kolom tabel
-    // --------------------------------------------------
-
-    $columns = $this->getTableColumns($table); // baca schema
 
 
     // --------------------------------------------------
@@ -4284,11 +4260,11 @@ AND is_deleted = 0
     if (method_exists($this, 'resolveScope')) {
 
       list($scopeWhere, $scopeParams) =
-        $this->resolveScope($table, $profile, 'default'); // gunakan scope engine
+        $this->resolveScope($table, $profile, 'dropdown'); // gunakan scope engine
 
       $mandatoryWhere = array_merge($mandatoryWhere, $scopeWhere);
 
-      $params         = array_merge($params, $scopeParams);
+      $params = array_merge($params, $scopeParams);
     }
 
 
@@ -4398,7 +4374,7 @@ AND is_deleted = 0
     -----------------------------------------------------
     */
 
-    if ($currentValue !== null) {
+    if ($currentValue !== null && is_numeric($currentValue)) {
 
       $optionalWhere[] = "`$table`.`$valueField` = ?";
 
