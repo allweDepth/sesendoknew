@@ -133,8 +133,8 @@ class FormEngine {
 				// hanya set hidden value
 				dropdown.data("skip-cascade", true);
 
+				dropdown.dropdown("refresh");
 				dropdown.dropdown("set selected", value);
-
 				dropdown.find("input[type=hidden]").trigger("change");
 
 				dropdown.data("skip-cascade", false);
@@ -823,7 +823,7 @@ SEARCH FIELD (FOMANTIC SEARCH)
 	loadDropdownSources() {
 		const self = this; // simpan referensi instance
 
-		$(`${this.formSelector} .ui.dropdown[data-source]`).each(function () {
+		$(`${self.formSelector} .ui.dropdown[data-source]`).each(function () {
 			const $dropdown = $(this); // dropdown saat ini
 
 			const parent = $dropdown.data("parent"); // ambil parent dropdown
@@ -834,15 +834,11 @@ SEARCH FIELD (FOMANTIC SEARCH)
 			// child dropdown hanya skip jika parent belum dipilih
 			// tetapi tetap boleh load saat ADD untuk root dropdown
 
-			if (parent) {
+			if (parent && !self.isPopulating) {
 				const parentField = `${self.formSelector} [name="${parent}"]`;
-
 				const parentValue = $(parentField).val();
 
-				// skip hanya jika bukan mode populate
-				if (!parentValue && !self.isPopulating) {
-					return;
-				}
+				if (!parentValue) return;
 			}
 
 			// ======================================================
@@ -1218,13 +1214,13 @@ SEARCH FIELD (FOMANTIC SEARCH)
 		// ======================================================
 		// BIND EVENT BARU
 		// ======================================================
-		$(document).on(eventName, `${this.formSelector} .ui.dropdown[data-source]`, function () {
+		$(document).on(eventName, `${this.formSelector} .ui.dropdown[data-source] input[type=hidden]`, function () {
 			// ==================================================
 			// GUARD POPULATE MODE
 			// ==================================================
 			if (self.isPopulating) return;
 
-			const $parentDropdown = $(this);
+			const $parentDropdown = $(this).closest(".ui.dropdown");
 
 			// ==================================================
 			// CEK SKIP CASCADE FLAG
@@ -1263,7 +1259,8 @@ SEARCH FIELD (FOMANTIC SEARCH)
 				$menu.empty();
 
 				$child.dropdown("clear");
-
+				$child.data("loaded", false);
+				$child.data("loading", false);
 				// ==================================================
 				// REQUEST DATA CHILD
 				// ==================================================
