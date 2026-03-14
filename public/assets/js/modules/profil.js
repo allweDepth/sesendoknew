@@ -8,13 +8,16 @@ class ProfilModule {
 	constructor() {
 		this.state = window.app.state;
 		this.ajax = window.app.ajax;
+		this.mainContainer = "#main-content";
 		this.state.module = "profil";
 		this.state.setTable("profil");
+		this.tableManager = null;
+		this.formEngine = null;
+		this.formContainer = null;
 	}
 
 	init() {
 		this.renderLayout();
-		this.initEngine();
 	}
 
 	renderLayout() {
@@ -27,28 +30,6 @@ class ProfilModule {
         `;
 
 		$(this.mainContainer).html(html);
-	}
-
-	initEngine() {
-		this.tableManager = new TableManager({
-			state: this.state,
-			ajax: this.ajax,
-			container: "#table-container",
-		});
-
-		this.formContainer = new FormContainerManager({
-			container: "#form-container",
-		});
-
-		this.formEngine = new FormEngine({
-			state: this.state,
-			ajax: this.ajax,
-			formSelector: "#dynamic-form",
-		});
-
-		this.tableManager.init();
-		this.formContainer.init();
-		this.formEngine.init();
 	}
 
 	destroy() {

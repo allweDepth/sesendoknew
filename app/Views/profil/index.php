@@ -11,12 +11,8 @@
         <div class="ui dimmer">
           <div class="content">
             <div class="center">
-              <button type="button"
-                      name="direct"
-                      jns="upload"
-                      tbl="user_sesendok_biila"
-                      dok="photo"
-                      class="ui inverted icon button">
+              <button type="button" name="direct" jns="upload" tbl="user_sesendok_biila" dok="photo"
+                class="ui inverted icon button">
                 <i class="camera icon"></i>
                 Ganti Foto
               </button>
@@ -24,10 +20,8 @@
           </div>
         </div>
 
-        <img id="preview_photo"
-             class="ui medium rounded image"
-             src="assets/img/avatar/default.png"
-             onerror="this.src='assets/img/avatar/default.png'">
+        <img id="preview_photo" class="ui medium rounded image" src="assets/img/avatar/default.png"
+          onerror="this.src='assets/img/avatar/default.png'">
       </div>
 
       <div class="content center aligned">
@@ -187,99 +181,115 @@
 </div>
 
 <script>
+  function initProfil() {
 
-function initProfil() {
+    // =============================
+    // LOAD DATA
+    // =============================
+    Ajax.post({
+      module: 'profil',
+      tbl: 'profil',
+      action: 'load'
+    }).then(function(res) {
 
-  // =============================
-  // LOAD DATA
-  // =============================
-  $.post('/profil/load', function(res){
+      if (res.status === 'success') {
 
-    if(res.status === 'success') {
+        let d = res.data;
 
-      let d = res.data;
+        Object.keys(d).forEach(function(key) {
+          let el = $('[name="' + key + '"]');
+          if (el.length) {
+            el.val(d[key]);
+          }
+        });
 
-      Object.keys(d).forEach(function(key){
-        let el = $('[name="'+key+'"]');
-        if(el.length){
-          el.val(d[key]);
+        $('#card_nama').text(d.nama ?? '');
+        $('#card_type').text(d.type_user ?? '');
+        $('#card_tahun').text(d.tahun ?? '');
+        $('#card_login').text(d.tgl_login ?? '-');
+
+        if (d.photo) {
+          $('#preview_photo').attr('src', 'uploads/' + d.photo);
+        }
+
+        $('.ui.dropdown').dropdown('refresh');
+      }
+
+    }, 'json');
+
+
+    // =============================
+    // FORM VALIDATION (FORMANTIC)
+    // =============================
+    $('.ui.form.profil')
+      .form({
+        fields: {
+          nama: {
+            identifier: 'nama',
+            rules: [{
+              type: 'empty',
+              prompt: 'Nama tidak boleh kosong'
+            }]
+          },
+          email: {
+            identifier: 'email',
+            rules: [{
+                type: 'empty',
+                prompt: 'Email tidak boleh kosong'
+              },
+              {
+                type: 'email',
+                prompt: 'Format email tidak valid'
+              }
+            ]
+          },
+          tahun: {
+            identifier: 'tahun',
+            rules: [{
+              type: 'empty',
+              prompt: 'Tahun wajib diisi'
+            }]
+          }
+        },
+        onSuccess: function(event, fields) {
+          event.preventDefault();
+
+          Ajax.post({
+            module: 'profil',
+            tbl: 'profil',
+            action: 'update',
+            data: fields
+          }).then(function(res) {
+
+            if (res.status === 'success') {
+
+              $('.ui.form.profil .success.message')
+                .removeClass('hidden')
+                .transition('fade');
+
+            } else {
+
+              $('.ui.form.profil .error.message')
+                .removeClass('hidden')
+                .html(res.message);
+
+            }
+
+          }, 'json');
         }
       });
 
-      $('#card_nama').text(d.nama ?? '');
-      $('#card_type').text(d.type_user ?? '');
-      $('#card_tahun').text(d.tahun ?? '');
-      $('#card_login').text(d.tgl_login ?? '-');
-
-      if(d.photo){
-        $('#preview_photo').attr('src', 'uploads/' + d.photo);
-      }
-
-      $('.ui.dropdown').dropdown('refresh');
-    }
-
-  }, 'json');
-
-
-  // =============================
-  // FORM VALIDATION (FORMANTIC)
-  // =============================
-  $('.ui.form.profil')
-    .form({
-      fields: {
-        nama: {
-          identifier: 'nama',
-          rules: [
-            { type: 'empty', prompt: 'Nama tidak boleh kosong' }
-          ]
-        },
-        email: {
-          identifier: 'email',
-          rules: [
-            { type: 'empty', prompt: 'Email tidak boleh kosong' },
-            { type: 'email', prompt: 'Format email tidak valid' }
-          ]
-        },
-        tahun: {
-          identifier: 'tahun',
-          rules: [
-            { type: 'empty', prompt: 'Tahun wajib diisi' }
-          ]
-        }
-      },
-      onSuccess: function(event, fields) {
-        event.preventDefault();
-
-        $.post('/profil/update', fields, function(res){
-
-          if(res.status === 'success'){
-
-            $('.ui.form.profil .success.message')
-              .removeClass('hidden')
-              .transition('fade');
-
-          } else {
-
-            $('.ui.form.profil .error.message')
-              .removeClass('hidden')
-              .html(res.message);
-
-          }
-
-        }, 'json');
-      }
+    $('.ui.dropdown').dropdown();
+    $('.blurring.dimmable.image').dimmer({
+      on: 'hover'
     });
 
-  $('.ui.dropdown').dropdown();
-  $('.blurring.dimmable.image').dimmer({ on: 'hover' });
-
-}
-
-// Jalankan saat view sudah ada
-setTimeout(function(){
-  if($('#profilPage').length){
-    initProfil();
   }
-}, 100);
 
+  // Jalankan saat view sudah ada
+  setTimeout(function() {
+    if ($('#profilPage').length) {
+      initProfil();
+    }
+  }, 100);
 </script>
