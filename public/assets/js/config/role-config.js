@@ -3,7 +3,7 @@
 ========================================================= */
 
 const RoleConfig = {
-	admin_opd: {
+	admin_wilayah: {
 		canAdd: true,
 		canEdit: true,
 		canDelete: true,
@@ -15,13 +15,7 @@ const RoleConfig = {
 		canDelete: true,
 		canUpload: true,
 	},
-	admin: {
-		canAdd: true,
-		canEdit: true,
-		canDelete: true,
-		canUpload: true,
-	},
-	editor: {
+	admin_opd: {
 		canAdd: true,
 		canEdit: true,
 		canDelete: false,

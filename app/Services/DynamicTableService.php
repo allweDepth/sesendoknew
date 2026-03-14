@@ -1024,6 +1024,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
               'kegiatan'     => 'aturan_sub_kegiatan',
               'sub_kegiatan' => 'aturan_sub_kegiatan',
 
+              // TAMBAHAN
+              'rekening_kegiatan' => 'aturan_sub_kegiatan',
               'ssh'          => 'aturan_ssh',
               'sbu'          => 'aturan_sbu',
               'asb'          => 'aturan_asb',
@@ -2166,7 +2168,10 @@ LIMIT 1",
         'urusan'        => 'aturan_sub_kegiatan',
         'bidang'        => 'aturan_sub_kegiatan',
         'program'       => 'aturan_sub_kegiatan',
-        'kegiatan'      => 'aturan_sub_kegiatan'
+        'kegiatan'      => 'aturan_sub_kegiatan',
+
+        // TAMBAHAN
+        'rekening_kegiatan' => 'aturan_sub_kegiatan'
       ];
 
       if (isset($map[$tbl])) {
@@ -2351,16 +2356,19 @@ LIMIT 1",
             $segments = explode('.', $data['kode']);
             $count = count($segments);
 
-            $data['level'] = match ($count) {
-
+            $levelMap = [
               1 => 'urusan',
               2 => 'bidang',
               3 => 'program',
               5 => 'kegiatan',
-              6 => 'sub_kegiatan',
+              6 => 'sub_kegiatan'
+            ];
 
-              default => 'urusan'
-            };
+            if (!isset($levelMap[$count])) {
+              continue;
+            }
+
+            $data['level'] = $levelMap[$count];
 
             // set parent_kode otomatis
             if ($count > 1) {
@@ -3048,6 +3056,8 @@ ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filte
       'kegiatan'     => 'aturan_sub_kegiatan',
       'sub_kegiatan' => 'aturan_sub_kegiatan',
 
+      // TAMBAHAN
+      'rekening_kegiatan' => 'aturan_sub_kegiatan',
       'satuan'     => 'aturan_ssh',
       'satuan_neo' => 'aturan_ssh',
 
