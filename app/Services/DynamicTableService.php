@@ -4109,7 +4109,7 @@ AND is_deleted = 0
 
     if ($parentValue === null || $parentValue === '') {
 
-      $mandatoryWhere[] = "`$table`.`parent_kode` IS NULL";
+      $mandatoryWhere[] = "(`$table`.`parent_kode` IS NULL OR `$table`.`parent_kode`='' OR `$table`.`parent_kode`='0')";
     } else {
 
       $mandatoryWhere[] = "`$table`.`parent_kode` = ?";

@@ -63,9 +63,9 @@ class FormEngine {
 
 			success: (res) => {
 				if (!res || !res.data) return;
-				// load dropdown setelah value tersedia
-				this.loadDropdownSources();
+
 				this.populateForm(res.data);
+				this.loadDropdownSources();
 			},
 		});
 	}
@@ -898,10 +898,12 @@ SEARCH FIELD (FOMANTIC SEARCH)
 						});
 					}
 
-					$dropdown.dropdown("refresh"); // refresh dropdown
+					$dropdown.dropdown("refresh");
 
 					if (currentValue) {
-						$dropdown.dropdown("set selected", currentValue); // set selected edit
+						setTimeout(() => {
+							$dropdown.dropdown("set selected", currentValue);
+						}, 0);
 					}
 
 					$dropdown.data("loaded", true); // tandai loaded
