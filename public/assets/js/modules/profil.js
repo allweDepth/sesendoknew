@@ -19,7 +19,7 @@ class ProfilModule {
 		this.initUI();
 		this.bindFormWatcher();
 		this.bindPhotoWatcher();
-
+		// this.loadProfil();
 		this.loadData();
 	}
 
