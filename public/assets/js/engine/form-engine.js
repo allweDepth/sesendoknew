@@ -834,11 +834,13 @@ SEARCH FIELD (FOMANTIC SEARCH)
 			// child dropdown hanya skip jika parent belum dipilih
 			// tetapi tetap boleh load saat ADD untuk root dropdown
 
-			if (parent && !self.isPopulating) {
+			if (parent) {
 				const parentField = `${self.formSelector} [name="${parent}"]`;
 				const parentValue = $(parentField).val();
 
-				if (!parentValue) return;
+				if (!parentValue && !self.isPopulating) {
+					return;
+				}
 			}
 
 			// ======================================================
