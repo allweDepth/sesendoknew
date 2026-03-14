@@ -1523,14 +1523,21 @@ BUILD RULE DARI SCHEMA DATABASE
     // karena router tidak meneruskan parameter cascade
     // maka diambil langsung dari POST
     // =====================================================
-    if ($parentValue === null && isset($_POST['parent_value'])) {
-      $parentValue = $_POST['parent_value']; // nilai parent dropdown
-    }
-    // =====================================================
-    // PATCH: ambil value dropdown saat mode edit
-    // =====================================================
-    if ($kdAkun === null && isset($_POST['value'])) {
-      $kdAkun = $_POST['value']; // value current dropdown
+    //=================================================
+    //CASCADE PARENT VALUE (FIX)
+    // =================================================
+
+    if ($parentValue === null) {
+
+      if (isset($_POST['parent_value'])) {
+        $parentValue = $_POST['parent_value'];
+      }
+
+      /* fallback untuk sistem SPA yang kirim value */ elseif (isset($_POST['parent'])) {
+        $parentValue = $_POST['parent'];
+      } elseif (isset($_POST['value']) && $_POST['value'] !== '') {
+        $parentValue = $_POST['value'];
+      }
     }
     // =====================================================
     // HIERARCHY ENGINE UNTUK SIPD
@@ -4037,7 +4044,7 @@ AND is_deleted = 0
     // ambil struktur kolom tabel
     // ----------------------------------------------------
 
-    $columns = $this->getTableColumns($table); // engine existing
+    $columns = $this->getTableColumns($table);
 
 
     // ----------------------------------------------------
@@ -4045,61 +4052,26 @@ AND is_deleted = 0
     // ----------------------------------------------------
 
     $mandatoryWhere = [];
-
     $params = [];
 
 
     // ----------------------------------------------------
-    // filter status jika kolom ada
+    // gunakan engine scope yang sudah ada
+    // filter:
+    // status
+    // tahun
+    // kd_wilayah
+    // kd_opd
+    // peraturan_id
     // ----------------------------------------------------
 
-    if (in_array('status', $columns)) {
+    if (method_exists($this, 'resolveScope')) {
 
-      $mandatoryWhere[] = "`$table`.`status` = 1";
-    }
+      list($scopeWhere, $scopeParams) =
+        $this->resolveScope($table, $this->profiles['rekening_kegiatan'], 'dropdown');
 
-
-    // ----------------------------------------------------
-    // filter scope tahun
-    // ----------------------------------------------------
-
-    if (in_array('tahun', $columns) && !empty($this->user['tahun'])) {
-
-      $mandatoryWhere[] = "`$table`.`tahun` = ?";
-      $params[] = $this->user['tahun'];
-    }
-
-
-    // ----------------------------------------------------
-    // filter scope wilayah
-    // ----------------------------------------------------
-
-    if (in_array('kd_wilayah', $columns) && !empty($this->user['kd_wilayah'])) {
-
-      $mandatoryWhere[] = "`$table`.`kd_wilayah` = ?";
-      $params[] = $this->user['kd_wilayah'];
-    }
-
-
-    // ----------------------------------------------------
-    // filter scope opd jika ada
-    // ----------------------------------------------------
-
-    if (in_array('kd_opd', $columns) && !empty($this->user['kd_opd'])) {
-
-      $mandatoryWhere[] = "`$table`.`kd_opd` = ?";
-      $params[] = $this->user['kd_opd'];
-    }
-
-
-    // ----------------------------------------------------
-    // filter peraturan
-    // ----------------------------------------------------
-
-    if (in_array('peraturan_id', $columns) && !empty($this->user['peraturan_id'])) {
-
-      $mandatoryWhere[] = "`$table`.`peraturan_id` = ?";
-      $params[] = $this->user['peraturan_id'];
+      $mandatoryWhere = array_merge($mandatoryWhere, $scopeWhere);
+      $params = array_merge($params, $scopeParams);
     }
 
 
@@ -4109,9 +4081,22 @@ AND is_deleted = 0
 
     if ($parentValue === null || $parentValue === '') {
 
-      $mandatoryWhere[] = "(`$table`.`parent_kode` IS NULL OR `$table`.`parent_kode`='' OR `$table`.`parent_kode`='0')";
+      // mode EDIT: jika value ada
+      if (!empty($_POST['value'])) {
+
+        $mandatoryWhere[] = "`$table`.`kode` = ?";
+        $params[] = $_POST['value'];
+      } else {
+
+        // root level (urusan)
+        $mandatoryWhere[] =
+          "(`$table`.`parent_kode` IS NULL
+              OR `$table`.`parent_kode`=''
+              OR `$table`.`parent_kode`='0')";
+      }
     } else {
 
+      // cascade normal
       $mandatoryWhere[] = "`$table`.`parent_kode` = ?";
       $params[] = $parentValue;
     }
@@ -4123,7 +4108,7 @@ AND is_deleted = 0
 
     $where = '';
 
-    if ($mandatoryWhere) {
+    if (!empty($mandatoryWhere)) {
 
       $where = "WHERE " . implode(" AND ", $mandatoryWhere);
     }
