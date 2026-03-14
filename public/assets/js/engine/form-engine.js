@@ -847,7 +847,7 @@ SEARCH FIELD (FOMANTIC SEARCH)
 			// GUARD SUDAH LOAD
 			// ======================================================
 
-			if ($dropdown.data("loaded") === true) return; // sudah load
+			if ($dropdown.data("loaded") === true && !self.isPopulating) return; // sudah load
 
 			// ======================================================
 			// GUARD SEDANG LOADING
@@ -868,7 +868,13 @@ SEARCH FIELD (FOMANTIC SEARCH)
 				return;
 			}
 
-			const currentValue = $dropdown.find("input[type='hidden']").val(); // ambil value edit
+			const currentValue = $dropdown.find("input[type='hidden']").val();
+
+			let requestValue = currentValue; // ambil value edit
+			if (parent) {
+				const parentField = `${self.formSelector} [name="${parent}"]`;
+				requestValue = $(parentField).val();
+			}
 
 			// ======================================================
 			// REQUEST DROPDOWN
@@ -880,7 +886,7 @@ SEARCH FIELD (FOMANTIC SEARCH)
 
 					tbl: source, // nama tabel
 
-					value: currentValue, // value edit
+					value: requestValue, // value edit
 				},
 
 				success: (res) => {
