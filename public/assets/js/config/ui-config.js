@@ -389,6 +389,9 @@ UIConfig.sub_kegiatan_renstra_neo = {
 /* ======================================================
    4️⃣ REFERENSI MODULES (SEMUA FLAT)
 ====================================================== */
+/* ======================================================
+   REFERENSI – URUSAN
+====================================================== */
 
 UIConfig.urusan = {
 	form: {
@@ -399,6 +402,10 @@ UIConfig.urusan = {
 	},
 };
 
+/* ======================================================
+   REFERENSI – BIDANG
+====================================================== */
+
 UIConfig.bidang = {
 	form: {
 		elements: [
@@ -407,6 +414,28 @@ UIConfig.bidang = {
 				prop: {
 					label: "Urusan",
 					name: "kode_urusan",
+					source: "rekening_kegiatan",
+					search: true,
+				},
+			},
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
+			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
+		],
+	},
+};
+
+/* ======================================================
+   REFERENSI – PROGRAM
+====================================================== */
+
+UIConfig.program = {
+	form: {
+		elements: [
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Bidang",
+					name: "kode_bidang",
 					source: "rekening_kegiatan",
 					parent: "kode_urusan",
 					search: true,
@@ -418,14 +447,18 @@ UIConfig.bidang = {
 	},
 };
 
-UIConfig.program = {
+/* ======================================================
+   REFERENSI – KEGIATAN
+====================================================== */
+
+UIConfig.kegiatan = {
 	form: {
 		elements: [
 			{
 				tag: "fieldDropdown",
 				prop: {
-					label: "Bidang",
-					name: "kode_bidang",
+					label: "Program",
+					name: "kode_program",
 					source: "rekening_kegiatan",
 					parent: "kode_bidang",
 					search: true,
@@ -437,24 +470,9 @@ UIConfig.program = {
 	},
 };
 
-UIConfig.kegiatan = {
-	form: {
-		elements: [
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Program",
-					name: "kode_program",
-					source: "rekening_kegiatan",
-					parent: "kode_program",
-					search: true,
-				},
-			},
-			{ tag: "field", prop: { label: "Kode", name: "kode" } },
-			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
-		],
-	},
-};
+/* ======================================================
+   REFERENSI – SUB KEGIATAN
+====================================================== */
 
 UIConfig.sub_kegiatan = {
 	form: {
@@ -465,12 +483,14 @@ UIConfig.sub_kegiatan = {
 					label: "Kegiatan",
 					name: "kode_kegiatan",
 					source: "rekening_kegiatan",
-					parent: "kode_kegiatan",
+					parent: "kode_program",
 					search: true,
 				},
 			},
+
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
+
 			{
 				tag: "fieldDropdown",
 				prop: {
@@ -480,13 +500,39 @@ UIConfig.sub_kegiatan = {
 					search: true,
 				},
 			},
+
 			{
 				tag: "fieldTextarea",
 				prop: { label: "Kinerja", name: "kinerja", atribut: `rows="2"` },
 			},
+
 			{
 				tag: "fieldTextarea",
 				prop: { label: "Indikator", name: "indikator", atribut: `rows="2"` },
+			},
+		],
+	},
+};
+
+/* ======================================================
+   SUB KEGIATAN ANGGARAN
+   (RENJA / RKA / DPA)
+====================================================== */
+
+UIConfig.sub_kegiatan_anggaran = {
+	title: "Sub Kegiatan",
+	table: "sub_kegiatan",
+
+	form: {
+		elements: [
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Sub Kegiatan",
+					name: "kd_sub_keg",
+					source: "rekening_kegiatan",
+					search: true,
+				},
 			},
 		],
 	},
@@ -1142,73 +1188,6 @@ UIConfig.aset.import = UIConfig.__importFactory("aset_neo", null); //DEFAULT GLO
 |--------------------------------------------------------------------------
 */
 
-UIConfig.sub_kegiatan_anggaran = {
-	title: "Sub Kegiatan",
-
-	table: "sub_kegiatan",
-
-	form: {
-		elements: [
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Urusan",
-					name: "kd_urusan",
-					source: "rekening_kegiatan",
-					search: true,
-				},
-			},
-
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Bidang",
-					name: "kd_bidang",
-					source: "rekening_kegiatan",
-					parent: "kode",
-					parent_field: "parent_kode",
-					search: true,
-				},
-			},
-
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Program",
-					name: "kd_program",
-					source: "rekening_kegiatan",
-					parent: "kode",
-					parent_field: "parent_kode",
-					search: true,
-				},
-			},
-
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Kegiatan",
-					name: "kd_kegiatan",
-					source: "rekening_kegiatan",
-					parent: "kode",
-					parent_field: "parent_kode",
-					search: true,
-				},
-			},
-
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Sub Kegiatan",
-					name: "kd_sub_keg",
-					source: "rekening_kegiatan",
-					parent: "kode",
-					parent_field: "parent_kode",
-					search: true,
-				},
-			},
-		],
-	},
-};
 /*
 |--------------------------------------------------------------------------
 | ANGGARAN - RINCIAN BELANJA

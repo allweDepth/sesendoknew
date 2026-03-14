@@ -1258,7 +1258,12 @@ $profiles = [
     // tabel utama hierarki SIPD
     // --------------------------------------------------
     'table' => 'rekening_kegiatan',
+    'primary_key' => 'id',
 
+    'auto_session' => [
+      'kd_wilayah',
+      'peraturan_id'
+    ],
     // --------------------------------------------------
     // primary key
     // --------------------------------------------------
