@@ -63,11 +63,9 @@ class FormEngine {
 
 			success: (res) => {
 				if (!res || !res.data) return;
-
-				this.populateForm(res.data);
-
 				// load dropdown setelah value tersedia
 				this.loadDropdownSources();
+				this.populateForm(res.data);
 			},
 		});
 	}
@@ -133,7 +131,11 @@ class FormEngine {
 
 				// cek apakah menu dropdown sudah ada
 				// hanya set hidden value
-				dropdown.find("input[type='hidden']").val(value);
+				dropdown.data("skip-cascade", true);
+
+				dropdown.dropdown("set selected", value);
+
+				dropdown.data("skip-cascade", false);
 
 				// ==================================================
 				// HAPUS FLAG SKIP CASCADE
@@ -819,7 +821,7 @@ SEARCH FIELD (FOMANTIC SEARCH)
 	loadDropdownSources() {
 		const self = this; // simpan referensi instance
 
-		$(`${this.formSelector} .ui.dropdown[data-source]`).each(function () {
+		$(`${this.formSelector} .ui.dropdown[data-source]:not([data-parent])`).each(function () {
 			const $dropdown = $(this); // dropdown saat ini
 
 			const parent = $dropdown.data("parent"); // ambil parent dropdown

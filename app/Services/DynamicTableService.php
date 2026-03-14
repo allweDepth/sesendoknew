@@ -4097,7 +4097,7 @@ AND is_deleted = 0
     // filter hierarchy parent
     // ----------------------------------------------------
 
-    if ($parentValue === null) {
+    if ($parentValue === null || $parentValue === '') {
 
       $mandatoryWhere[] = "`$table`.`parent_kode` IS NULL";
     } else {
