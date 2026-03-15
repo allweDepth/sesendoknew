@@ -48,7 +48,7 @@ class WallchatModule {
 			const token = $("#csrf_token").val();
 			this.ajax.request({
 				data: {
-					action: "create",
+					action: "add",
 					tbl: "wallchat",
 					content: content,
 					type: "status",
@@ -75,7 +75,7 @@ class WallchatModule {
 
 			this.ajax.request({
 				data: {
-					action: "create",
+					action: "add",
 					tbl: "wallchat",
 					parent_id: feedId,
 					content: content,
@@ -98,7 +98,7 @@ class WallchatModule {
 
 			this.ajax.request({
 				data: {
-					action: "create",
+					action: "add",
 					tbl: "wallchat",
 					receiver_id: receiver,
 					content: content,

@@ -1760,16 +1760,30 @@ $profiles = [
 
   ],
   'wallchat' => [
+
     'table' => 'wallchat',
+
     'primary' => 'id',
+
     'fields' => [
       'user_id',
       'receiver_id',
       'parent_id',
       'content',
       'type'
-    ]
-  ]
+    ],
+
+    // audit field sesuai struktur tabel
+    'audit' => [
+      'insert_time' => 'tgl_insert',
+      'insert_user' => 'username_insert',
+      'update_time' => 'tgl_update',
+      'update_user' => 'username_update'
+    ],
+
+    // soft delete sesuai tabel
+    'soft_delete' => 'is_deleted'
+  ],
 ];
 $profiles['akun_neo'] = $profiles['akun'];
 // $profiles['sub_kegiatan_ref'] = $profiles['sub_kegiatan'];
