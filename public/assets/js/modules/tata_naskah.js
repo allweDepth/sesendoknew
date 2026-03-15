@@ -181,30 +181,22 @@ class TataNaskahModule {
 		for (let kategori in grouped) {
 			html += `
             <div class="ui segment">
-
                 <h4 class="ui dividing header">
                     ${kategori || "Lainnya"}
                 </h4>
-
                 <div class="ui relaxed divided list">
             `;
-
 			grouped[kategori].forEach((j) => {
 				html += `
                 <div class="item">
-
                     <button
                         class="ui fluid basic button btn-open-naskah"
                         data-jenis-id="${j.id}"
                         data-nama="${j.nama}"
                         data-kelompok="${j.kelompok_kode}"
-                        data-kelompok-nama="${j.kelompok_nama}"
-                    >
-
+                        data-kelompok-nama="${j.kelompok_nama}">
                         ${j.nama}
-
                     </button>
-
                 </div>
                 `;
 			});
@@ -262,22 +254,17 @@ class TataNaskahModule {
 	showAddForm() {
 		const html = `
         <form id="dynamic-form" class="ui form">
-
             <div class="field">
                 <label>Judul</label>
                 <input type="text" name="judul">
             </div>
-
             <button class="ui green button" type="submit">
                 Simpan
             </button>
-
         </form>
         `;
-
 		this.formContainer.show(html);
 	}
-
 	/**
 	 * DESTROY MODULE
 	 */
