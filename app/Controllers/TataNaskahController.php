@@ -278,6 +278,10 @@ class TataNaskahController extends Controller
 
     $id = $_POST['id'] ?? null;
     $status = $_POST['status'] ?? null;
+    $update = [
+      "workflow_status" => $status
+    ];
+
     if ($status === 'final') {
 
       $struktur = $db->query(
@@ -555,5 +559,6 @@ class TataNaskahController extends Controller
     echo JsonResponse::success("Schema ditemukan", [
       "schema" => $schema
     ]);
+    return;
   }
 }
