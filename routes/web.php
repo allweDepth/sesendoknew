@@ -126,8 +126,8 @@ return [
     */
   '/tata_naskah/dashboard'      => ['TataNaskahController', 'dashboard'],
   '/tata_naskah/buat'           => ['TataNaskahController', 'buat'],
-  '/tata_naskah/load_jenis'     => ['TataNaskahController', 'loadJenis'],
-  '/tata_naskah/load_form'      => ['TataNaskahController', 'loadForm'],
+  '/tata_naskah/load_jenis'     => ['TataNaskahController', 'Jenis'],
+  '/tata_naskah/load_form'      => ['TataNaskahController', 'Form'],
   '/tata_naskah/generate_pdf'   => ['TataNaskahController', 'generate_pdf'],
   '/tata_naskah/schema'         => ['TataNaskahController', 'schema'],
   '/tata_naskah/generateNomor'  => ['TataNaskahController', 'generateNomor'],

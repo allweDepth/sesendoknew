@@ -32,7 +32,7 @@ class TataNaskahController extends Controller
     ]);
   }
 
-  public function loadJenis()
+  public function Jenis()
   {
     $kelompokId = $_POST['kelompok_id'] ?? null;
 
@@ -532,7 +532,7 @@ class TataNaskahController extends Controller
   // LOAD FORM SCHEMA
   // ======================================================
 
-  public function loadForm()
+  public function Form()
   {
 
     $db = DB::getInstance();
