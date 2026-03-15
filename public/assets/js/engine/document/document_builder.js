@@ -4,7 +4,10 @@ class DocumentBuilder {
 		this.type = type;
 
 		this.schema = null;
-
+		// ======================================================
+		// SECTION CONTAINER
+		// ======================================================
+		this.sectionContainer = null;
 		// FIX: container data schema
 		this.data = {};
 	}
@@ -12,30 +15,64 @@ class DocumentBuilder {
 	render() {
 		if (!this.schema) return;
 
+		// ======================================================
+		// CLEAR CONTAINER
+		// ======================================================
 		this.container.empty();
+		// ======================================================
+		// BUAT CONTAINER SECTION
+		// ======================================================
+		this.sectionContainer = this.container.find("#doc-sections");
 
+		if (!this.sectionContainer.length) {
+			this.container.append(`<div id="doc-sections"></div>`);
+
+			this.sectionContainer = this.container.find("#doc-sections");
+		}
+
+		this.sectionContainer.empty();
 		let fields = this.schema.sections || this.schema;
 
 		fields.forEach((field) => {
-			switch (field.type) {
-				case "auto_nomor":
-					this.renderAutoNomor(field);
-					break;
-
-				case "text":
-					this.renderText(field);
-					break;
-
-				case "date":
-					this.renderDate(field);
-					break;
-
-				case "section":
-					this.renderSection(field);
-					break;
+			// ==================================================
+			// SECTION BUILDER
+			// ==================================================
+			if (field.type === "section") {
+				this.renderSection(field);
+				return;
 			}
+
+			// ==================================================
+			// AUTO NOMOR (extension)
+			// ==================================================
+			if (field.type === "auto_nomor") {
+				this.renderAutoNomor(field);
+				return;
+			}
+
+			// ==================================================
+			// MAPPING TYPE → UI REGISTRY TAG
+			// ==================================================
+			let tag = "field";
+
+			if (field.type === "date") tag = "calendar";
+			if (field.type === "dropdown") tag = "dropdown";
+			if (field.type === "textarea") tag = "textarea";
+
+			// ==================================================
+			// RENDER DENGAN REGISTRY (sama seperti modul lain)
+			// ==================================================
+			const html = UIComponentRegistry.render({
+				tag: tag,
+				prop: field,
+			});
+
+			this.container.append(html);
 		});
 
+		// ======================================================
+		// INIT SEMUA FOMANTIC COMPONENT
+		// ======================================================
 		UIComponents.initAll();
 
 		this.bindEvents();
