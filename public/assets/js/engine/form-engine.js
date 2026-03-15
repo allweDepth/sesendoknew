@@ -122,28 +122,24 @@ class FormEngine {
 				// ==================================================
 				// AKTIFKAN FLAG SKIP CASCADE
 				// ==================================================
+				// aktifkan flag skip cascade
 				dropdown.data("skip-cascade", true);
 
-				// ==================================================
-				// SET VALUE DROPDOWN
-				// ==================================================
 				const value = data[key];
 
-				// cek apakah menu dropdown sudah ada
-				// hanya set hidden value
-				dropdown.data("skip-cascade", true);
+				// set hidden value langsung
+				dropdown.find("input[type=hidden]").val(value); //
 
-				dropdown.dropdown("refresh");
-				dropdown.dropdown("set selected", value);
-				dropdown.find("input[type=hidden]").trigger("change");
+				// hanya set dropdown jika item sudah ada
+				if (dropdown.find(`.item[data-value="${value}"]`).length) {
+					//
+					dropdown.dropdown("set selected", value); //
+				}
 
-				dropdown.data("skip-cascade", false);
-
-				// ==================================================
-				// HAPUS FLAG SKIP CASCADE
-				// ==================================================
+				// hapus flag setelah populate selesai
 				setTimeout(() => {
-					dropdown.removeData("skip-cascade");
+					//
+					dropdown.removeData("skip-cascade"); //
 				}, 100);
 
 				return;
