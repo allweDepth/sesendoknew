@@ -191,10 +191,15 @@ class TataNaskahModule {
                 <div class="item">
                     <button
                         class="ui fluid basic button btn-open-naskah"
-                        data-jenis-id="${j.id}"
-                        data-nama="${j.nama}"
-                        data-kelompok="${j.kelompok_kode}"
-                        data-kelompok-nama="${j.kelompok_nama}">
+                        class="ui fluid basic button btn-open-naskah"
+                        data-ui="open-form" // memanggil UI engine
+                        data-container="modal" // target container modal
+                        data-module="tata_naskah" // module aktif
+                        data-jenis-id="${j.id}" // id jenis
+                        data-tbl="${j.kode_form}" // tipe dokumen
+                        data-nama="${j.nama}" // nama dokumen
+                        data-kelompok="${j.kelompok_kode}" // kelompok
+                        data-kelompok-nama="${j.kelompok_nama}" // label
                         ${j.nama}
                     </button>
                 </div>
