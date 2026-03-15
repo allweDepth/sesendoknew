@@ -6,24 +6,21 @@
  * Tidak mengatur AJAX langsung
  * Tidak mengatur DOM langsung selain container utama
  */
-
 class TataNaskahModule {
 	constructor() {
-		// Ambil state dan ajax dari global App
 		this.state = window.app.state;
-		this.ajax = window.app.ajax;
 
-		// Set table aktif default
-		this.state.setTable("tata_naskah");
+		this.mainContainer = "#main-content";
 
-		// Inisialisasi engine
+		this.formContainerSelector = "#form-container";
+
 		this.tableManager = null;
 		this.formEngine = null;
 		this.formContainer = null;
 
-		// Container utama
-		this.mainContainer = "#main-content";
-		this.formContainerSelector = "#form-container";
+		// Ajax khusus endpoint
+		this.ajaxJenis = window.app.ajax;
+		this.ajaxSchema = new AjaxEngine(AppConfig.apiUrl + "tata_naskah/schema");
 	}
 
 	/**
@@ -32,29 +29,45 @@ class TataNaskahModule {
 	init() {
 		const path = window.location.pathname;
 
-		// jika halaman utama tata_naskah
+		this.bindEvents();
+
+		// =========================
+		// HALAMAN DAFTAR
+		// =========================
+
 		if (path === "/tata_naskah") {
 			this.renderLayout();
+
+			this.initTableEngine();
 		}
 
-		this.initEngine();
+		// =========================
+		// HALAMAN BUAT
+		// =========================
 
-		this.bindEvents();
+		if (path === "/tata_naskah/buat") {
+			this.initFormEngine();
+		}
 	}
 
 	/**
-	 * RENDER LAYOUT DASAR
+	 * RENDER LAYOUT
 	 */
 	renderLayout() {
 		const html = `
-            <div class="ui segment">
-                <h3 class="ui header">Tata Naskah</h3>
-                <button class="ui primary button" id="btn-add">
-                    Tambah Data
-                </button>
-                <div id="table-container"></div>
-                <div id="form-container" style="display:none;"></div>
-            </div>
+        <div class="ui segment">
+
+            <h3 class="ui header">Tata Naskah</h3>
+
+            <button class="ui primary button" id="btn-add">
+                Tambah Data
+            </button>
+
+            <div id="table-container"></div>
+
+            <div id="form-container" style="display:none;"></div>
+
+        </div>
         `;
 
 		$(this.mainContainer).html(html);
@@ -64,26 +77,20 @@ class TataNaskahModule {
 	 * INIT ENGINE
 	 */
 	initEngine() {
-		// Table manager
 		this.tableManager = new TableManager({
 			state: this.state,
-			ajax: this.ajax,
 			container: "#table-container",
 		});
 
-		// Form container
 		this.formContainer = new FormContainerManager({
 			container: this.formContainerSelector,
 		});
 
-		// Form engine
 		this.formEngine = new FormEngine({
 			state: this.state,
-			ajax: this.ajax,
 			formSelector: "#dynamic-form",
 		});
 
-		// Jalankan semuanya
 		this.tableManager.init();
 		this.formContainer.init();
 		this.formEngine.init();
@@ -93,12 +100,145 @@ class TataNaskahModule {
 	 * BIND EVENTS
 	 */
 	bindEvents() {
+		/**
+		 * tombol tambah
+		 */
 		$(document).on("click", "#btn-add", () => {
 			this.showAddForm();
 		});
 
+		/**
+		 * reload table setelah form submit
+		 */
 		$(document).on("form:success", () => {
 			this.tableManager.loadData();
+		});
+
+		/**
+		 * klik kelompok naskah
+		 */
+		$(document).on("click", ".kelompok-card", (e) => {
+			const kelompokId = $(e.currentTarget).data("id");
+
+			this.loadJenis(kelompokId);
+		});
+
+		/**
+		 * klik jenis naskah
+		 */
+		$(document).on("click", ".btn-open-naskah", (e) => {
+			const jenisId = $(e.currentTarget).data("jenis-id");
+
+			if (!jenisId) return;
+
+			this.loadSchema(jenisId);
+		});
+	}
+
+	/**
+	 * LOAD JENIS NASKAH
+	 */
+	loadJenis(kelompokId) {
+		this.ajaxJenis.request({
+			action: "custom",
+			module: "tata_naskah",
+			method: "loadJenis",
+			data: {
+				kelompok_id: kelompokId,
+			},
+			success: (res) => {
+				let data;
+
+				if (Array.isArray(res)) {
+					data = res;
+				} else if (res.success && res.data) {
+					data = res.data;
+				}
+
+				if (!data || !data.length) return;
+
+				this.renderJenis(data);
+			},
+		});
+	}
+
+	/**
+	 * RENDER JENIS NASKAH
+	 */
+	renderJenis(data) {
+		let grouped = {};
+
+		data.forEach((j) => {
+			if (!grouped[j.sub_kategori]) {
+				grouped[j.sub_kategori] = [];
+			}
+
+			grouped[j.sub_kategori].push(j);
+		});
+
+		let html = "";
+
+		for (let kategori in grouped) {
+			html += `
+            <div class="ui segment">
+
+                <h4 class="ui dividing header">
+                    ${kategori || "Lainnya"}
+                </h4>
+
+                <div class="ui relaxed divided list">
+            `;
+
+			grouped[kategori].forEach((j) => {
+				html += `
+                <div class="item">
+
+                    <button
+                        class="ui fluid basic button btn-open-naskah"
+                        data-jenis-id="${j.id}"
+                        data-nama="${j.nama}"
+                        data-kelompok="${j.kelompok_kode}"
+                        data-kelompok-nama="${j.kelompok_nama}"
+                    >
+
+                        ${j.nama}
+
+                    </button>
+
+                </div>
+                `;
+			});
+
+			html += `</div></div>`;
+		}
+
+		$("#jenis-list").html(html);
+
+		$("#jenis-container").removeClass("hidden");
+	}
+
+	/**
+	 * LOAD SCHEMA FORM
+	 */
+	loadSchema(jenisId) {
+		this.ajaxSchema.request({
+			data: { jenis_id: jenisId },
+
+			success: (res) => {
+				if (res.error) {
+					Toast.show("error", res.error);
+					return;
+				}
+
+				if (!res.schema) return;
+
+				this.formContainer.render({
+					schema: res.schema,
+					asn: res.asn || [],
+					klasifikasi: res.klasifikasi || [],
+					nomor_auto: res.nomor_auto || null,
+				});
+			},
 		});
 	}
 
@@ -107,15 +247,18 @@ class TataNaskahModule {
 	 */
 	showAddForm() {
 		const html = `
-            <form id="dynamic-form" class="ui form">
-                <div class="field">
-                    <label>Judul</label>
-                    <input type="text" name="judul">
-                </div>
-                <button class="ui green button" type="submit">
-                    Simpan
-                </button>
-            </form>
+        <form id="dynamic-form" class="ui form">
+
+            <div class="field">
+                <label>Judul</label>
+                <input type="text" name="judul">
+            </div>
+
+            <button class="ui green button" type="submit">
+                Simpan
+            </button>
+
+        </form>
         `;
 
 		this.formContainer.show(html);
@@ -125,11 +268,13 @@ class TataNaskahModule {
 	 * DESTROY MODULE
 	 */
 	destroy() {
-		this.tableManager.destroy();
-		this.formEngine.destroy();
-		this.formContainer.destroy();
+		this.tableManager?.destroy();
+		this.formEngine?.destroy();
+		this.formContainer?.destroy();
 
 		$(document).off("click", "#btn-add");
+		$(document).off("click", ".kelompok-card");
+		$(document).off("click", ".btn-open-naskah");
 		$(document).off("form:success");
 
 		$(this.mainContainer).empty();
