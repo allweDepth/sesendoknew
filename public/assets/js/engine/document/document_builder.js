@@ -83,13 +83,7 @@ class DocumentBuilder {
 			const html = UIComponentRegistry.render({
 				tag: tag,
 				prop: {
-					prop: {
-						label: field.label,
-						name: field.name,
-						type: field.type || "text",
-						value: field.value || "",
-						options: field.options || [],
-					},
+					prop: prop,
 				},
 			});
 
@@ -129,7 +123,7 @@ class DocumentBuilder {
 			</table>
 		`;
 
-		this.container.append(html);
+		this.sectionContainer.append(html);
 	}
 
 	buildRow(section, text = "", type = "paragraph") {
@@ -217,7 +211,7 @@ class DocumentBuilder {
 			value: this.data.nomor_auto,
 		});
 
-		this.container.append(html);
+		this.container.find("#doc-fields").append(html);
 	}
 	renderText(field) {
 		const html = UIComponentRegistry.render({
