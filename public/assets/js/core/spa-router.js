@@ -111,6 +111,11 @@ class SpaRouter {
 			.then((html) => {
 				$("#main-content").html(html);
 
+				// 🔥 memastikan module JS tersedia
+				if (window.app?.loadModule) {
+					window.app.loadModule(url);
+				}
+
 				if (window.app?.initPage) {
 					window.app.initPage();
 				}
@@ -118,9 +123,6 @@ class SpaRouter {
 				if (typeof initFomantic === "function") {
 					initFomantic();
 				}
-			})
-			.catch(() => {
-				window.location.href = url;
 			});
 	}
 

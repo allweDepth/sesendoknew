@@ -125,7 +125,7 @@ class App {
 					// cek module
 					new ResetTabelModule().init(); // jalankan module
 				break; // keluar dari switch
-			case window.location.pathname === "/profil":
+			case !!document.getElementById("profilPage"):
 				if (typeof ProfilModule === "function") new ProfilModule().init();
 				break;
 			default: // jika tidak ada kondisi cocok
