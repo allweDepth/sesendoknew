@@ -82,7 +82,15 @@ class DocumentBuilder {
 
 			const html = UIComponentRegistry.render({
 				tag: tag,
-				prop: prop,
+				prop: {
+					prop: {
+						label: field.label,
+						name: field.name,
+						type: field.type || "text",
+						value: field.value || "",
+						options: field.options || [],
+					},
+				},
 			});
 
 			fieldContainer.append(html);
