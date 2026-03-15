@@ -191,7 +191,6 @@ class TataNaskahModule {
                 <div class="item">
                     <button
                         class="ui fluid basic button btn-open-naskah"
-                        class="ui fluid basic button btn-open-naskah"
                         data-ui="open-form" // memanggil UI engine
                         data-container="modal" // target container modal
                         data-module="tata_naskah" // module aktif
