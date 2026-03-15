@@ -51,6 +51,10 @@ class TataNaskahModule {
 			// halaman daftar naskah
 			this.initEngine();
 		}
+		if (path === "/tata_naskah/buat") {
+			// halaman daftar naskah
+			this.initEngine();
+		}
 	}
 
 	/**
@@ -244,10 +248,21 @@ class TataNaskahModule {
 				const type = res.schema.kode_form || "sk"; // ambil kode form jika ada
 
 				// buat builder dokumen
-				const builder = new DocumentBuilder(container, type); // inisialisasi builder
+				const builder = new DocumentBuilder(container, type); // buat builder
 
-				// render schema
-				builder.render(); // render section dokumen
+				builder.schema = res.schema; // ambil schema dari database
+
+				// normalisasi struktur schema
+				if (!builder.schema.sections) {
+					// jika sections tidak ada
+
+					builder.schema = {
+						// buat struktur baru
+						sections: builder.schema, // jadikan array schema sebagai sections
+					};
+				}
+
+				builder.render(); // render builder
 			},
 		});
 	}
