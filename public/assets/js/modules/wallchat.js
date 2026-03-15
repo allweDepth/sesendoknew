@@ -61,6 +61,53 @@ class WallchatModule {
 					this.reloadFeed();
 				});
 		});
+		// komentar feed
+		$(document).off("submit", ".formComment");
+
+		$(document).on("submit", ".formComment", (e) => {
+			e.preventDefault();
+
+			const form = $(e.currentTarget);
+
+			const feedId = form.data("id");
+
+			const content = form.find('input[name="content"]').val();
+
+			fetch("/wallchat/comment", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: "feed_id=" + encodeURIComponent(feedId) + "&content=" + encodeURIComponent(content),
+			})
+				.then((res) => res.json())
+				.then(() => {
+					form.find("input").val("");
+				});
+		});
+		// kirim pesan pribadi
+		$(document).off("submit", "#formPrivateMessage");
+
+		$(document).on("submit", "#formPrivateMessage", (e) => {
+			e.preventDefault();
+
+			const receiver = $('input[name="receiver_id"]').val();
+			const content = $('#formPrivateMessage textarea[name="content"]').val();
+
+			fetch("/wallchat/privateMessage", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: "receiver_id=" + encodeURIComponent(receiver) + "&content=" + encodeURIComponent(content),
+			})
+				.then((res) => res.json())
+				.then(() => {
+					$("#modalPrivateMessage").modal("hide");
+
+					$("#formPrivateMessage textarea").val("");
+				});
+		});
 	}
 	reloadFeed() {
 		fetch("/wallchat/feed", {
@@ -81,6 +128,9 @@ class WallchatModule {
 	destroy() {
 		$(document).off("submit", "#formPost"); // selector benar
 
-		$(this.mainContainer).empty();
+		// hanya unbind event
+		$(document).off("submit", "#formPost");
+		$(document).off("submit", ".formComment");
+		$(document).off("submit", "#formPrivateMessage");
 	}
 }
