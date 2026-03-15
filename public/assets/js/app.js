@@ -128,6 +128,9 @@ class App {
 			case !!document.getElementById("profilPage"):
 				if (typeof ProfilModule === "function") new ProfilModule().init();
 				break;
+			case "wallchat":
+				if (typeof WallchatModule === "function") new WallchatModule().init();
+				break;
 			default: // jika tidak ada kondisi cocok
 				break; // tidak melakukan apa apa
 		}
@@ -250,6 +253,9 @@ class App {
 			case "profil":
 				if (typeof ProfilModule === "function") new ProfilModule().init();
 				break;
+			case "wallchat":
+				if (typeof WallchatModule === "function") new WallchatModule().init();
+				break;
 		}
 	}
 }
@@ -265,6 +271,7 @@ window.appModuleMap = {
 	"/mapping": "mapping", // module mapping
 	"/reset_tabel": "reset_tabel", // module reset tabel
 	"/profil": "profil",
+	"/wallchat": "wallchat",
 };
 
 // ======================================================

@@ -6,24 +6,21 @@
  */
 
 class WallchatModule {
+	constructor() {
+		this.state = window.app.state;
+		this.ajax = window.app.ajax;
 
-    constructor() {
+		this.mainContainer = "#main-content";
+	}
 
-        this.state = window.app.state;
-        this.ajax = window.app.ajax;
+	init() {
+		this.renderLayout();
+		this.bindEvents();
+	}
 
-        this.mainContainer = "#main-content";
-    }
-
-    init() {
-
-        this.renderLayout();
-        this.bindEvents();
-    }
-
-    renderLayout() {
-
-        const html = `
+	renderLayout() {
+		if ($("#chat-box").length) return;
+		const html = `
             <div class="ui segment">
                 <h3 class="ui header">Wallchat</h3>
                 <div id="chat-box"></div>
@@ -36,33 +33,34 @@ class WallchatModule {
             </div>
         `;
 
-        $(this.mainContainer).html(html);
-    }
+		if ($("#chat-box").length) return;
 
-    bindEvents() {
+		$(this.mainContainer).append(html);
+	}
 
-        $(document).on("submit", "#chat-form", (e) => {
+	bindEvents() {
+		$(document).on("submit", "#chat-form", (e) => {
+			e.preventDefault();
 
-            e.preventDefault();
+			const message = $('input[name="message"]').val();
 
-            const data = $("#chat-form").serialize();
+			this.ajax.request({
+				data: {
+					action: "insert",
+					tbl: "wallchat",
+					message: message,
+				},
 
-            this.ajax.request({
-                data: data,
-                success: () => {
-                    $("#chat-form")[0].reset();
-                }
-            });
+				success: () => {
+					$("#chat-form")[0].reset();
+				},
+			});
+		});
+	}
 
-        });
+	destroy() {
+		$(document).off("submit", "#chat-form");
 
-    }
-
-    destroy() {
-
-        $(document).off("submit", "#chat-form");
-
-        $(this.mainContainer).empty();
-    }
-
+		$(this.mainContainer).empty();
+	}
 }
