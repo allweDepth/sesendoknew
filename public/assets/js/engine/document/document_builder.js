@@ -35,7 +35,8 @@ class DocumentBuilder {
 					break;
 			}
 		});
-
+		// INIT FOMANTIC COMPONENT
+		UIComponents.initAll();
 		this.bindEvents();
 	}
 
@@ -136,22 +137,26 @@ class DocumentBuilder {
 		});
 	}
 	renderText(field) {
-		// FIX:
-		// gunakan UIComponents agar konsisten dengan FormEngine
-
-		const html = UIComponents.renderText({
-			label: field.label,
-			name: field.name,
-			value: field.value || "",
+		const html = UIComponentRegistry.render({
+			tag: "input",
+			prop: {
+				label: field.label,
+				name: field.name,
+				type: "text",
+				value: field.value || "",
+			},
 		});
 
 		this.container.append(html);
 	}
 
 	renderDate(field) {
-		const html = UIComponents.renderDate({
-			label: field.label,
-			name: field.name,
+		const html = UIComponentRegistry.render({
+			tag: "calendar",
+			prop: {
+				label: field.label,
+				name: field.name,
+			},
 		});
 
 		this.container.append(html);
