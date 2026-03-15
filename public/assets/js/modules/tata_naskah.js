@@ -12,9 +12,9 @@ class TataNaskahModule {
 
 		this.state.setTable("trx_naskah_dinas"); // set tabel agar TableManager tahu tabel yang dipakai
 
-		this.mainContainer = "#main-content";
+		this.mainContainer = "#form_modal";
 
-		this.formContainerSelector = "#form-container";
+		this.formContainerSelector = "#form_modal";
 
 		this.tableManager = null;
 		this.formEngine = null;
