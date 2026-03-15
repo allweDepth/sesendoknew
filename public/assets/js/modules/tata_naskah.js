@@ -232,12 +232,26 @@ class TataNaskahModule {
 
 				if (!res.schema) return;
 
-				this.formContainer.render({
-					schema: res.schema,
-					asn: res.asn || [],
-					klasifikasi: res.klasifikasi || [],
-					nomor_auto: res.nomor_auto || null,
-				});
+				// this.formContainer.render({
+				// 	schema: res.schema,
+				// 	asn: res.asn || [],
+				// 	klasifikasi: res.klasifikasi || [],
+				// 	nomor_auto: res.nomor_auto || null,
+				// });
+				// tampilkan container dulu
+				this.formContainer.show(""); // menampilkan container form
+
+				// ambil container DOM
+				const container = $(this.formContainerSelector); // ambil element container
+
+				// ambil tipe dokumen
+				const type = res.schema.kode_form || "sk"; // ambil kode form jika ada
+
+				// buat builder dokumen
+				const builder = new DocumentBuilder(container, type); // inisialisasi builder
+
+				// render schema
+				builder.render(); // render section dokumen
 			},
 		});
 	}
