@@ -731,8 +731,44 @@ REQUEST
 			},
 		});
 	}
+	//   {
+	// 	tag: "fields",
+	// 	prop: {
+	// 		size: "two",
+	// 		items: [
+	// 			{
+	// 				tag: "input",
+	// 				prop: { label: "Latitude", name: "lat" }
+	// 			},
+	// 			{
+	// 				tag: "input",
+	// 				prop: { label: "Longitude", name: "lng" }
+	// 			}
+	// 		]
+	// 	}
+	// }
+	// ==================================================
+	// FIELDS WRAPPER
+	// ==================================================
+	static fields(prop = {}) {
+		const size = prop.size || "two"; // default two
+		const items = prop.items || [];
+
+		let html = `<div class="${size} fields">`; // wrapper
+
+		items.forEach((el) => {
+			html += UIComponentRegistry.render(el);
+		});
+
+		html += `</div>`;
+
+		return html;
+	}
 }
 // REGISTER ALL COMPONENTS
+UIComponentRegistry.register("dropdown", (p) =>
+	UIComponents.dropdown(p.prop?.label, p.prop?.name, p.prop?.options || []),
+);
 UIComponentRegistry.register("lookupDropdown", (p) =>
 	UIComponents.lookupDropdown(p.prop?.label, p.prop?.name, p.prop?.source),
 );
