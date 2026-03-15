@@ -8,7 +8,9 @@
  */
 class TataNaskahModule {
 	constructor() {
-		this.state = window.app.state;
+		this.state = window.app.state; // ambil global state
+
+		this.state.setTable("trx_naskah_dinas"); // set tabel agar TableManager tahu tabel yang dipakai
 
 		this.mainContainer = "#main-content";
 
@@ -45,7 +47,8 @@ class TataNaskahModule {
 		// HALAMAN BUAT
 		// =========================
 
-		if (path === "/tata_naskah/buat") {
+		if (path === "/tata_naskah/daftar") {
+			// halaman daftar naskah
 			this.initEngine();
 		}
 	}

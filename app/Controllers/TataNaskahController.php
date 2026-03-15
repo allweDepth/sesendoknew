@@ -57,7 +57,7 @@ class TataNaskahController extends Controller
         ORDER BY j.sub_kategori ASC, j.urutan ASC
     ", [$kelompokId])->fetchAll();
 
-    echo JsonResponse::success("Data ditemukan", $jenis, []);
+    echo JsonResponse::success("Data ditemukan", [], $jenis); // data diisi
   }
   public function generate_pdf()
   {
