@@ -46,19 +46,20 @@ class WallchatModule {
 
 			const content = $('#formPost textarea[name="content"]').val();
 
-			this.ajax.request({
-				data: {
-					action: "add",
-					tbl: "wallchat",
-					content: content,
+			fetch("/wallchat/store", {
+				// kirim ke controller
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
 				},
-
-				success: (res) => {
+				body: "content=" + encodeURIComponent(content),
+			})
+				.then((res) => res.json())
+				.then(() => {
 					$("#formPost textarea").val("");
 
 					this.reloadFeed();
-				},
-			});
+				});
 		});
 	}
 	reloadFeed() {
@@ -78,7 +79,7 @@ class WallchatModule {
 		});
 	}
 	destroy() {
-		$(document).off("submit", "#chat-form");
+		$(document).off("submit", "#formPost"); // selector benar
 
 		$(this.mainContainer).empty();
 	}
