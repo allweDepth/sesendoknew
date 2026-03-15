@@ -19,7 +19,7 @@ class TataNaskahModule {
 		this.formContainer = null;
 
 		// Ajax khusus endpoint
-		this.ajaxJenis = window.app.ajax;
+		this.ajaxJenis = new AjaxEngine(AppConfig.apiUrl + "tata_naskah/jenis");
 		this.ajaxSchema = new AjaxEngine(AppConfig.apiUrl + "tata_naskah/schema");
 	}
 
@@ -46,7 +46,7 @@ class TataNaskahModule {
 		// =========================
 
 		if (path === "/tata_naskah/buat") {
-			this.initFormEngine();
+			this.initEngine();
 		}
 	}
 
@@ -140,9 +140,6 @@ class TataNaskahModule {
 	 */
 	loadJenis(kelompokId) {
 		this.ajaxJenis.request({
-			action: "custom",
-			module: "tata_naskah",
-			method: "loadJenis",
 			data: {
 				kelompok_id: kelompokId,
 			},
