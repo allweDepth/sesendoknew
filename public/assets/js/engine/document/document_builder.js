@@ -20,6 +20,17 @@ class DocumentBuilder {
 		// ======================================================
 		this.container.empty();
 		// ======================================================
+		// CONTAINER FIELD
+		// ======================================================
+		let fieldContainer = this.container.find("#doc-fields");
+
+		if (!fieldContainer.length) {
+			this.container.append(`<div id="doc-fields"></div>`);
+			fieldContainer = this.container.find("#doc-fields");
+		}
+
+		fieldContainer.empty();
+		// ======================================================
 		// BUAT CONTAINER SECTION
 		// ======================================================
 		this.sectionContainer = this.container.find("#doc-sections");
@@ -58,16 +69,23 @@ class DocumentBuilder {
 			if (field.type === "date") tag = "calendar";
 			if (field.type === "dropdown") tag = "dropdown";
 			if (field.type === "textarea") tag = "textarea";
+			// ==================================================
+			// NORMALISASI PROP AGAR SESUAI UIComponentRegistry
+			// ==================================================
+			const prop = {
+				label: field.label || "",
+				name: field.name || "",
+				type: field.type || "text",
+				value: field.value || "",
+				options: field.options || [],
+			};
 
-			// ==================================================
-			// RENDER DENGAN REGISTRY (sama seperti modul lain)
-			// ==================================================
 			const html = UIComponentRegistry.render({
 				tag: tag,
-				prop: field,
+				prop: prop,
 			});
 
-			this.container.append(html);
+			fieldContainer.append(html);
 		});
 
 		// ======================================================

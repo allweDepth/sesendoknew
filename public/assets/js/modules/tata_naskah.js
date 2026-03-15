@@ -250,10 +250,12 @@ class TataNaskahModule {
 				// buat builder dokumen
 				const builder = new DocumentBuilder(container, type); // buat builder
 
-				// kirim schema
+				// ======================================================
+				// NORMALISASI SCHEMA DARI SERVER
+				// ======================================================
 				builder.schema = {
-					sections: res.schema,
-				}; // ambil schema dari database
+					sections: res.schema.schema || res.schema,
+				};
 
 				// normalisasi struktur schema
 				// if (!builder.schema.sections) {
