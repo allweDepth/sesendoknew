@@ -108,8 +108,30 @@ class WallchatModule {
 					$("#formPrivateMessage textarea").val("");
 				});
 		});
+		// delete feed
+		$(document).off("click", ".btnDeleteFeed");
+
+		$(document).on("click", ".btnDeleteFeed", (e) => {
+			const id = $(e.currentTarget).data("id");
+
+			if (!confirm("Hapus status ini?")) return;
+
+			fetch("/wallchat/delete", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: "id=" + encodeURIComponent(id),
+			})
+				.then((res) => res.json())
+				.then(() => {
+					this.reloadFeed();
+				});
+		});
 	}
 	reloadFeed() {
+		if (!$("#feedContainer").length) return; // FIX SPA guard
+
 		fetch("/wallchat/feed", {
 			headers: { "X-Requested-With": "XMLHttpRequest" },
 		})
@@ -126,9 +148,7 @@ class WallchatModule {
 		});
 	}
 	destroy() {
-		$(document).off("submit", "#formPost"); // selector benar
-
-		// hanya unbind event
+		// lepas semua event wallchat
 		$(document).off("submit", "#formPost");
 		$(document).off("submit", ".formComment");
 		$(document).off("submit", "#formPrivateMessage");

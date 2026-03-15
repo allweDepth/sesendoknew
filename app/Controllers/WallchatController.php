@@ -1,8 +1,10 @@
 <?php
 require_once __DIR__ . '/../Core/Auth.php';
+require_once __DIR__ . '/../Models/WallchatModel.php'; // FIX: load model
 
 class WallchatController extends Controller
 {
+
   public function index()
   {
     if (!Auth::check()) {
@@ -12,10 +14,14 @@ class WallchatController extends Controller
 
     $model = new WallchatModel();
 
-    $feeds = $model->getFeeds(); // ambil feed
+    $feeds = $model->getFeeds();
+
+    // FIX: ambil user melalui model
+    $users = $this->getUsers(); // FIX: panggil method controller
 
     $this->view('wallchat/index', [
-      'feeds' => $feeds
+      'feeds' => $feeds,
+      'users' => $users
     ], 'app');
   }
 
@@ -23,6 +29,7 @@ class WallchatController extends Controller
   // endpoint reload feed
   public function feed()
   {
+
     $model = new WallchatModel();
 
     $feeds = $model->getFeeds();
@@ -40,9 +47,16 @@ class WallchatController extends Controller
 
     $model = new WallchatModel();
 
+    $content = trim($_POST['content'] ?? '');
+
+    if ($content === '') {
+      echo json_encode(['success' => false]);
+      return;
+    }
+
     $model->store([
-      'user_id' => $_SESSION['user_id'], // user login
-      'content' => $_POST['content'],
+      'user_id' => $_SESSION['user']['id'],
+      'content' => $content,
       'type' => 'status'
     ]);
 
@@ -56,7 +70,7 @@ class WallchatController extends Controller
     $model = new WallchatModel();
 
     $model->store([
-      'user_id' => $_SESSION['user_id'],
+      'user_id' => $_SESSION['user']['id'],
       'content' => $_POST['content'],
       'parent_id' => $_POST['feed_id'],
       'type' => 'comment'
@@ -72,12 +86,39 @@ class WallchatController extends Controller
     $model = new WallchatModel();
 
     $model->store([
-      'user_id' => $_SESSION['user_id'],
+      'user_id' => $_SESSION['user']['id'],
       'receiver_id' => $_POST['receiver_id'],
       'content' => $_POST['content'],
       'type' => 'private'
     ]);
 
     echo json_encode(['success' => true]);
+  }
+  public function delete()
+  {
+    if (!Auth::check()) exit;
+
+    $model = new WallchatModel();
+
+    $id = $_POST['id'];
+
+    $model->delete($id);
+
+    echo json_encode(['success' => true]);
+  }
+  // =====================================================
+  // ambil daftar user untuk dropdown private message
+  // =====================================================
+  private function getUsers()
+  {
+    $sql = "
+        SELECT id, nama
+        FROM user_sesendok_biila
+        ORDER BY nama
+    ";
+
+    $db = DB::getInstance();
+
+    return $db->query($sql)->fetchAll();
   }
 }

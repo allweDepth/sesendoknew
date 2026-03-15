@@ -28,40 +28,40 @@
   <!-- FEED -->
   <div class="ui feed" id="feedContainer">
 
-    <?php foreach($feeds as $feed): ?>
+    <?php foreach ($feeds as $feed): ?>
 
-      <div class="event">
-        <div class="label">
-          <i class="user circle icon big"></i>
-        </div>
-
-        <div class="content">
-
-          <div class="summary">
-            <strong><?= $feed['nama'] ?? 'User'; ?></strong>
-
-            <div class="date">
-              <?= date('d M Y H:i', strtotime($feed['created_at'])); ?>
-            </div>
-          </div>
-
-          <div class="extra text">
-            <?= nl2br(htmlspecialchars($feed['content'])); ?>
-          </div>
-
-          <!-- KOMENTAR -->
-          <div class="extra">
-            <form class="ui reply form formComment" data-id="<?= $feed['id']; ?>">
-              <div class="field">
-                <input type="text" name="content" placeholder="Tulis komentar...">
-              </div>
-            </form>
-          </div>
-
-        </div>
+    <div class="event">
+      <div class="label">
+        <i class="user circle icon big"></i>
       </div>
 
-      <div class="ui divider"></div>
+      <div class="content">
+
+        <div class="summary">
+          <strong><?= $feed['nama'] ?? 'User'; ?></strong>
+
+          <div class="date">
+            <?= date('d M Y H:i', strtotime($feed['created_at'])); ?>
+          </div>
+        </div>
+
+        <div class="extra text">
+          <?= nl2br(htmlspecialchars($feed['content'])); ?>
+        </div>
+
+        <!-- KOMENTAR -->
+        <div class="extra">
+          <form class="ui reply form formComment" data-id="<?= $feed['id']; ?>">
+            <div class="field">
+              <input type="text" name="content" placeholder="Tulis komentar...">
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="ui divider"></div>
 
     <?php endforeach; ?>
 
@@ -90,11 +90,16 @@
           <i class="dropdown icon"></i>
           <div class="default text">Pilih User</div>
           <div class="menu">
-            <?php foreach($users as $user): ?>
-              <div class="item" data-value="<?= $user['id']; ?>">
-                <?= $user['username']; ?>
-              </div>
+            <?php if (!empty($users)): ?>
+            <?php foreach ($users as $user): ?>
+
+            <div class="item" data-value="<?= $user['id']; ?>">
+              <?= htmlspecialchars($user['nama']); ?>
+              <!-- FIX: kolom tabel adalah 'nama' -->
+            </div>
+
             <?php endforeach; ?>
+            <?php endif; ?>
           </div>
         </div>
       </div>
@@ -115,4 +120,3 @@
 <!-- ==============================
      JAVASCRIPT INTERAKTIF
 ================================= -->
-
