@@ -93,7 +93,15 @@ class DocumentBuilder {
 		// ======================================================
 		// INIT SEMUA FOMANTIC COMPONENT
 		// ======================================================
-		UIComponents.initAll();
+		// UIComponents.initAll();
+		// INIT FOMANTIC COMPONENTS DI DALAM BUILDER
+		this.container.find(".ui.dropdown").dropdown();
+
+		this.container.find(".ui.calendar").calendar({
+			type: "date",
+		});
+
+		this.container.find(".ui.checkbox").checkbox();
 
 		this.bindEvents();
 	}
