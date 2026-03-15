@@ -1759,6 +1759,17 @@ $profiles = [
     ]
 
   ],
+  'wallchat' => [
+    'table' => 'wallchat',
+    'primary' => 'id',
+    'fields' => [
+      'user_id',
+      'receiver_id',
+      'parent_id',
+      'content',
+      'type'
+    ]
+  ]
 ];
 $profiles['akun_neo'] = $profiles['akun'];
 // $profiles['sub_kegiatan_ref'] = $profiles['sub_kegiatan'];

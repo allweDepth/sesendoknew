@@ -46,20 +46,20 @@ class WallchatModule {
 
 			const content = $('#formPost textarea[name="content"]').val();
 			const token = $("#csrf_token").val();
-			fetch("/wallchat/store", {
-				// kirim ke controller
-				method: "POST",
-				headers: {
-					"Content-Type": "application/x-www-form-urlencoded",
+			this.ajax.request({
+				data: {
+					action: "create",
+					tbl: "wallchat",
+					content: content,
+					type: "status",
 				},
-				body: "content=" + encodeURIComponent(content) + "&csrf_token=" + encodeURIComponent(token),
-			})
-				.then((res) => res.json())
-				.then(() => {
+
+				success: () => {
 					$("#formPost textarea").val("");
 
 					this.reloadFeed();
-				});
+				},
+			});
 		});
 		// komentar feed
 		$(document).off("submit", ".formComment");
@@ -73,17 +73,19 @@ class WallchatModule {
 
 			const content = form.find('input[name="content"]').val();
 
-			fetch("/wallchat/comment", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/x-www-form-urlencoded",
+			this.ajax.request({
+				data: {
+					action: "create",
+					tbl: "wallchat",
+					parent_id: feedId,
+					content: content,
+					type: "comment",
 				},
-				body: "feed_id=" + encodeURIComponent(feedId) + "&content=" + encodeURIComponent(content),
-			})
-				.then((res) => res.json())
-				.then(() => {
+
+				success: () => {
 					form.find("input").val("");
-				});
+				},
+			});
 		});
 		// kirim pesan pribadi
 		$(document).off("submit", "#formPrivateMessage");
@@ -94,19 +96,21 @@ class WallchatModule {
 			const receiver = $('input[name="receiver_id"]').val();
 			const content = $('#formPrivateMessage textarea[name="content"]').val();
 
-			fetch("/wallchat/privateMessage", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/x-www-form-urlencoded",
+			this.ajax.request({
+				data: {
+					action: "create",
+					tbl: "wallchat",
+					receiver_id: receiver,
+					content: content,
+					type: "private",
 				},
-				body: "receiver_id=" + encodeURIComponent(receiver) + "&content=" + encodeURIComponent(content),
-			})
-				.then((res) => res.json())
-				.then(() => {
+
+				success: () => {
 					$("#modalPrivateMessage").modal("hide");
 
 					$("#formPrivateMessage textarea").val("");
-				});
+				},
+			});
 		});
 		// delete feed
 		$(document).off("click", ".btnDeleteFeed");
@@ -116,17 +120,17 @@ class WallchatModule {
 
 			if (!confirm("Hapus status ini?")) return;
 
-			fetch("/wallchat/delete", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/x-www-form-urlencoded",
+			this.ajax.request({
+				data: {
+					action: "delete",
+					tbl: "wallchat",
+					id: id,
 				},
-				body: "id=" + encodeURIComponent(id),
-			})
-				.then((res) => res.json())
-				.then(() => {
+
+				success: () => {
 					this.reloadFeed();
-				});
+				},
+			});
 		});
 	}
 	reloadFeed() {
