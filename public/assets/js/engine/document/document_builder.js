@@ -213,28 +213,4 @@ class DocumentBuilder {
 
 		this.container.find("#doc-fields").append(html);
 	}
-	renderText(field) {
-		const html = UIComponentRegistry.render({
-			tag: "field",
-			prop: {
-				label: field.label,
-				name: field.name,
-				type: "text",
-				value: field.value || "",
-			},
-		});
-
-		this.container.append(html);
-	}
-	renderDate(field) {
-		const html = UIComponentRegistry.render({
-			tag: "calendar",
-			prop: {
-				label: field.label,
-				name: field.name,
-			},
-		});
-
-		this.container.append(html);
-	}
 }
