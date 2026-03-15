@@ -199,7 +199,7 @@ class TataNaskahModule {
                         data-tbl="${j.kode_form}" // tipe dokumen
                         data-nama="${j.nama}" // nama dokumen
                         data-kelompok="${j.kelompok_kode}" // kelompok
-                        data-kelompok-nama="${j.kelompok_nama}" // label
+                        data-kelompok-nama="${j.kelompok_nama}" // label >
                         ${j.nama}
                     </button>
                 </div>
