@@ -543,7 +543,7 @@ UIConfig.akun = {
 		elements: [
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
-			{ tag: "field", prop: { label: "Keterangan", name: "keterangan" } },
+			{ tag: "fieldTextarea", prop: { label: "Keterangan", name: "keterangan", atribut: `rows="3"` } },
 		],
 	},
 };
