@@ -18,6 +18,7 @@
     <div class="field">
       <textarea name="content" placeholder="Tulis status..."></textarea>
     </div>
+    <input type="hidden" id="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
     <button class="ui primary button">
       <i class="send icon"></i> Posting
     </button>

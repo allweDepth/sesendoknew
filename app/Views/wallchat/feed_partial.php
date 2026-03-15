@@ -15,7 +15,7 @@
         <?= date('d M Y H:i', strtotime($feed['created_at'])) ?>
       </div>
 
-      <?php if ($feed['user_id'] == $_SESSION['user_id']): ?>
+      <?php if ($feed['user_id'] == $_SESSION['user']['id']): ?>
 
       <!-- tombol edit -->
       <a class="ui mini icon button btnEditFeed" data-id="<?= $feed['id'] ?>">

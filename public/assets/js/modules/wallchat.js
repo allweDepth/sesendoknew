@@ -45,14 +45,14 @@ class WallchatModule {
 			e.preventDefault();
 
 			const content = $('#formPost textarea[name="content"]').val();
-
+			const token = $("#csrf_token").val();
 			fetch("/wallchat/store", {
 				// kirim ke controller
 				method: "POST",
 				headers: {
 					"Content-Type": "application/x-www-form-urlencoded",
 				},
-				body: "content=" + encodeURIComponent(content),
+				body: "content=" + encodeURIComponent(content) + "&csrf_token=" + encodeURIComponent(token),
 			})
 				.then((res) => res.json())
 				.then(() => {
