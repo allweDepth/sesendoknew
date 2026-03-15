@@ -250,18 +250,25 @@ class TataNaskahModule {
 				// buat builder dokumen
 				const builder = new DocumentBuilder(container, type); // buat builder
 
-				builder.schema = res.schema; // ambil schema dari database
+				// kirim schema
+				builder.schema = {
+					sections: res.schema,
+				}; // ambil schema dari database
 
 				// normalisasi struktur schema
-				if (!builder.schema.sections) {
-					// jika sections tidak ada
+				// if (!builder.schema.sections) {
+				// 	// jika sections tidak ada
 
-					builder.schema = {
-						// buat struktur baru
-						sections: builder.schema, // jadikan array schema sebagai sections
-					};
-				}
-
+				// 	builder.schema = {
+				// 		// buat struktur baru
+				// 		sections: builder.schema, // jadikan array schema sebagai sections
+				// 	};
+				// }
+				builder.data = {
+					asn: res.asn || [],
+					klasifikasi: res.klasifikasi || [],
+					nomor_auto: res.nomor_auto || null,
+				};
 				builder.render(); // render builder
 			},
 		});

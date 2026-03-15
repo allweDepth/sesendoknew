@@ -2,34 +2,59 @@ class DocumentBuilder {
 	constructor(container, type) {
 		this.container = container;
 		this.type = type;
-		this.schema = DocumentSchema[type] || null;
+
+		this.schema = null;
+
+		// FIX: container data schema
+		this.data = {};
 	}
 
 	render() {
 		if (!this.schema) return;
 		// 🔥 CLEAR supaya tidak double
 		this.container.empty();
-		this.schema.sections.forEach((section) => {
-			this.renderSection(section);
+		// FIX: dukung schema backend
+		let fields = this.schema.sections || this.schema;
+
+		fields.forEach((field) => {
+			switch (field.type) {
+				case "auto_nomor":
+					this.renderAutoNomor(field);
+					break;
+
+				case "text":
+					this.renderText(field);
+					break;
+
+				case "date":
+					this.renderDate(field);
+					break;
+
+				case "section":
+					this.renderSection(field);
+					break;
+			}
 		});
 
 		this.bindEvents();
 	}
 
 	renderSection(section) {
+		// FIX: gunakan name jika key tidak ada
+		let key = section.key || section.name;
 		let html = `
 			<h4 class="ui horizontal divider header">
 				<i class="feather alternate icon"></i> ${section.label}
 			</h4>
 
-			<table class="ui celled structured table" name="${section.key}">
+			<table class="ui celled structured table" name="${key}">
 				<thead>
 					<tr>
 						<th>URAIAN</th>
 						<th class="collapsing">
 							<button type="button"
 								class="ui green icon mini button btn-add-row"
-								data-section="${section.key}">
+								data-section="${section.key || section.name}">
 								<i class="plus icon"></i>
 							</button>
 						</th>
@@ -89,26 +114,56 @@ class DocumentBuilder {
 	}
 
 	bindEvents() {
-    const self = this;
+		const self = this;
 
-    // 🔥 HAPUS EVENT LAMA DULU
-    this.container.off("click", ".btn-add-row");
-    this.container.off("click", ".btn-del-row");
+		// 🔥 HAPUS EVENT LAMA DULU
+		this.container.off("click", ".btn-add-row");
+		this.container.off("click", ".btn-del-row");
 
-    // ADD ROW
-    this.container.on("click", ".btn-add-row", function () {
+		// ADD ROW
+		this.container.on("click", ".btn-add-row", function () {
+			let section = $(this).data("section");
+			let row = self.buildRow(section);
+			let $tbody = self.container.find(`table[name="${section}"] tbody`);
 
-        let section = $(this).data("section");
-        let row = self.buildRow(section);
-        let $tbody = self.container.find(`table[name="${section}"] tbody`);
+			$tbody.append(row);
+			$tbody.find(".ui.dropdown").dropdown();
+		});
 
-        $tbody.append(row);
-        $tbody.find(".ui.dropdown").dropdown();
-    });
+		// DELETE ROW
+		this.container.on("click", ".btn-del-row", function () {
+			$(this).closest("tr").remove();
+		});
+	}
+	renderText(field) {
+		// FIX:
+		// gunakan UIComponents agar konsisten dengan FormEngine
 
-    // DELETE ROW
-    this.container.on("click", ".btn-del-row", function () {
-        $(this).closest("tr").remove();
-    });
-}
+		const html = UIComponents.renderText({
+			label: field.label,
+			name: field.name,
+			value: field.value || "",
+		});
+
+		this.container.append(html);
+	}
+
+	renderDate(field) {
+		const html = UIComponents.renderDate({
+			label: field.label,
+			name: field.name,
+		});
+
+		this.container.append(html);
+	}
+
+	renderAutoNomor(field) {
+		const html = UIExtensions.renderAutoNumber({
+			label: field.label,
+			name: field.name,
+			value: this.data.nomor_auto,
+		});
+
+		this.container.append(html);
+	}
 }
