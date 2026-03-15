@@ -11,9 +11,9 @@ class DocumentBuilder {
 
 	render() {
 		if (!this.schema) return;
-		// 🔥 CLEAR supaya tidak double
+
 		this.container.empty();
-		// FIX: dukung schema backend
+
 		let fields = this.schema.sections || this.schema;
 
 		fields.forEach((field) => {
@@ -35,8 +35,9 @@ class DocumentBuilder {
 					break;
 			}
 		});
-		// INIT FOMANTIC COMPONENT
+
 		UIComponents.initAll();
+
 		this.bindEvents();
 	}
 
@@ -70,48 +71,57 @@ class DocumentBuilder {
 
 	buildRow(section, text = "", type = "paragraph") {
 		return `
-	<tr>
 
-		<td>
+<tr>
 
-			<textarea class="doc-text"
-	rows="2"
-	data-ignore-validation="true">${text}</textarea>
+<td>
 
-		</td>
+<textarea 
+	class="doc-text"
+	name="${section}[]"
+	rows="2">${text}</textarea>
 
-		<td class="collapsing right aligned">
+</td>
 
-			<div class="ui icon mini buttons">
+<td class="collapsing right aligned">
 
-				<div class="ui floating dropdown icon button upward doc-type"
-					data-value="${type}">
-					<i class="wrench icon"></i>
+<div class="ui icon mini buttons">
 
-					<div class="menu">
-						<div class="item" data-value="paragraph">
-							<i class="align left icon"></i> Paragraf
-						</div>
-						<div class="item" data-value="list">
-							<i class="list icon"></i> List
-						</div>
-						<div class="item" data-value="numbered">
-							<i class="ordered list icon"></i> Numbered
-						</div>
-					</div>
-				</div>
+<div class="ui floating dropdown icon button upward doc-type"
+	data-value="${type}">
 
-				<button type="button"
-					class="ui red icon button btn-del-row">
-					<i class="trash alternate outline icon"></i>
-				</button>
+<i class="wrench icon"></i>
 
-			</div>
+<div class="menu">
 
-		</td>
+<div class="item" data-value="paragraph">
+<i class="align left icon"></i> Paragraf
+</div>
 
-	</tr>
-	`;
+<div class="item" data-value="list">
+<i class="list icon"></i> List
+</div>
+
+<div class="item" data-value="numbered">
+<i class="ordered list icon"></i> Numbered
+</div>
+
+</div>
+
+</div>
+
+<button type="button"
+	class="ui red icon button btn-del-row">
+<i class="trash alternate outline icon"></i>
+</button>
+
+</div>
+
+</td>
+
+</tr>
+
+`;
 	}
 
 	bindEvents() {
@@ -136,9 +146,19 @@ class DocumentBuilder {
 			$(this).closest("tr").remove();
 		});
 	}
+
+	renderAutoNomor(field) {
+		const html = UIExtensions.renderAutoNumber({
+			label: field.label,
+			name: field.name,
+			value: this.data.nomor_auto,
+		});
+
+		this.container.append(html);
+	}
 	renderText(field) {
 		const html = UIComponentRegistry.render({
-			tag: "input",
+			tag: "field",
 			prop: {
 				label: field.label,
 				name: field.name,
@@ -149,7 +169,6 @@ class DocumentBuilder {
 
 		this.container.append(html);
 	}
-
 	renderDate(field) {
 		const html = UIComponentRegistry.render({
 			tag: "calendar",
@@ -157,16 +176,6 @@ class DocumentBuilder {
 				label: field.label,
 				name: field.name,
 			},
-		});
-
-		this.container.append(html);
-	}
-
-	renderAutoNomor(field) {
-		const html = UIExtensions.renderAutoNumber({
-			label: field.label,
-			name: field.name,
-			value: this.data.nomor_auto,
 		});
 
 		this.container.append(html);
