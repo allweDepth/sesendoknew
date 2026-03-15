@@ -18,26 +18,6 @@ class WallchatModule {
 		this.initDropdown();
 	}
 
-	// renderLayout() {
-	// 	if ($("#chat-box").length) return;
-	// 	const html = `
-	//           <div class="ui segment">
-	//               <h3 class="ui header">Wallchat</h3>
-	//               <div id="chat-box"></div>
-	//               <form id="chat-form" class="ui form">
-	//                   <div class="field">
-	//                       <input type="text" name="message" placeholder="Ketik pesan...">
-	//                   </div>
-	//                   <button class="ui primary button">Kirim</button>
-	//               </form>
-	//           </div>
-	//       `;
-
-	// 	if ($("#chat-box").length) return;
-
-	// 	$(this.mainContainer).append(html);
-	// }
-
 	bindEvents() {
 		$(document).off("submit", "#formPost");
 

@@ -37,7 +37,7 @@ class TataNaskahController extends Controller
     $kelompokId = $_POST['kelompok_id'] ?? null;
 
     if (!$kelompokId) {
-      echo JsonResponse::success("Kosong", null, []);
+      echo JsonResponse::success("Kosong", [], []);
       return;
     }
 
@@ -57,7 +57,7 @@ class TataNaskahController extends Controller
         ORDER BY j.sub_kategori ASC, j.urutan ASC
     ", [$kelompokId])->fetchAll();
 
-    echo JsonResponse::success("Data ditemukan", null, $jenis);
+    echo JsonResponse::success("Data ditemukan", $jenis, []);
   }
   public function generate_pdf()
   {
@@ -512,16 +512,48 @@ class TataNaskahController extends Controller
     ]);
   }
   public function get_kelompok()
-{
+  {
     $db = DB::getInstance();
 
     $data = $db->select(
-        'ref_kelompok_naskah',
-        'id, nama',
-        'ORDER BY id ASC'
+      'ref_kelompok_naskah',
+      'id, nama',
+      'ORDER BY id ASC'
     );
 
-    echo JsonResponse::success("Data ditemukan", null, $data);
+    echo JsonResponse::success("Data ditemukan", $data);
     return;
-}
+  }
+  // ======================================================
+  // LOAD FORM SCHEMA
+  // ======================================================
+
+  public function loadForm()
+  {
+
+    $db = DB::getInstance();
+
+    $jenisId = $_GET['jenis_id'] ?? null;
+
+    if (!$jenisId) {
+      JsonResponse::error("Jenis tidak ditemukan");
+      return;
+    }
+
+    $jenis = $db->query(
+      "SELECT * FROM ref_jenis_naskah WHERE id=?",
+      [$jenisId]
+    )->fetch();
+
+    if (!$jenis) {
+      JsonResponse::error("Jenis tidak valid");
+      return;
+    }
+
+    $schema = json_decode($jenis['schema_json'], true);
+
+    echo JsonResponse::success("Schema ditemukan", [
+      "schema" => $schema
+    ]);
+  }
 }

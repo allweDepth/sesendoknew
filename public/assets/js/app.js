@@ -113,7 +113,7 @@ class App {
 				}
 				break; // keluar dari switch
 
-			case window.location.pathname === "/tata_naskah": // jika halaman tata naskah
+			case window.location.pathname.startsWith("/tata_naskah"): // jika halaman tata naskah
 				if (typeof TataNaskahModule === "function") {
 					// cek module
 					new TataNaskahModule().init(); // jalankan module
