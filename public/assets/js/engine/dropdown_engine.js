@@ -41,15 +41,16 @@ class DropdownEngine {
 
 		const tbody = table.find("tbody");
 
-		// FIX: gunakan data-columns yang dipakai DocumentBuilder
-		const colCount = parseInt(table.data("columns") || 1);
+		// FIX: hitung langsung jumlah kolom tabel dari thead
+		// jumlah kolom data dari header tabel
+		const colCount = table.find("thead th").length;
 
 		let cols = "";
 
+		// build kolom data
 		for (let i = 0; i < colCount; i++) {
 			if (i === 0) {
 				const value = data.nama || "";
-
 				cols += `
             <td>
               <input type="hidden" name="${target}_nama[]" value="${value}">
@@ -60,7 +61,6 @@ class DropdownEngine {
 				cols += `<td></td>`;
 			}
 		}
-
 		const row = `
             <tr 
               data-id="${data.id}" 
@@ -74,7 +74,8 @@ class DropdownEngine {
               </td>
             </tr>
             `;
-
+		// FIX: prevent duplicate ASN
+		if (tbody.find(`tr[data-id="${data.id}"]`).length) return;
 		tbody.append(row);
 	}
 }

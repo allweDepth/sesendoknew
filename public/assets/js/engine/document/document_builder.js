@@ -132,16 +132,22 @@ class DocumentBuilder {
 			th.push("<th>" + c + "</th>");
 		});
 
-		return [
-			'<table class="ui celled table" name="' + key + '">',
-			"<thead>",
-			"<tr>",
-			th.join(""),
-			"</tr>",
-			"</thead>",
-			"<tbody></tbody>",
-			"</table>",
-		].join("");
+		return `
+      <table 
+        class="ui celled table"
+        name="${key}"
+        data-dropdown-target="${key}"
+        data-columns="${columns.length}">
+        <thead>
+        <tr>
+        ${th.join("")}
+        </tr>
+        </thead>
+
+        <tbody></tbody>
+
+      </table>
+      `;
 	}
 
 	// ======================================================
@@ -176,8 +182,8 @@ class DocumentBuilder {
 		return `
         <table class="ui celled structured table"
           name="${key}"
-          data-columns="${columns.length}"
-          data-dropdown-target="${key}">
+          data-dropdown-target="${key}"
+          data-columns="${columns.length}"> 
           <thead>
           <tr>
           ${th.join("")}
@@ -291,9 +297,10 @@ class DocumentBuilder {
 
 				var row = $(this);
 
-				var text = row.find(".doc-text").val() || ""; // ambil text
+				// FIX: support dropdown row
+				var text = row.find(".doc-text").val() || row.find("input[type=hidden]").val() || row.text().trim() || "";
 
-				var type = row.find(".doc-type").dropdown("get value") || "paragraph"; // ambil type
+				var type = row.find(".doc-type").dropdown("get value") || row.data("source") || "paragraph";
 
 				rows.push({
 					// push ke array
