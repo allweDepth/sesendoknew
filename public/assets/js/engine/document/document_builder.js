@@ -250,7 +250,47 @@ class DocumentBuilder {
 			$(this).closest("tr").remove();
 		});
 	}
+	// ======================================================
+	// COLLECT STRUCTURE JSON
+	// ======================================================
 
+	collectStructure() {
+		// ambil seluruh editable_table
+
+		var result = {}; // object final
+
+		this.container.find("table").each(function () {
+			// loop semua table
+
+			var table = $(this); // table
+
+			var section = table.attr("name"); // nama section
+
+			if (!section) return; // skip jika tidak ada
+
+			var rows = []; // array row
+
+			table.find("tbody tr").each(function () {
+				// loop row
+
+				var row = $(this);
+
+				var text = row.find(".doc-text").val() || ""; // ambil text
+
+				var type = row.find(".doc-type").dropdown("get value") || "paragraph"; // ambil type
+
+				rows.push({
+					// push ke array
+					type: type,
+					text: text,
+				});
+			});
+
+			result[section] = rows; // assign ke section
+		});
+
+		return result; // return json
+	}
 	// ======================================================
 	// INIT FOMANTIC
 	// ======================================================

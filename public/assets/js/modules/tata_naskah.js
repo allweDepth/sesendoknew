@@ -248,30 +248,34 @@ class TataNaskahModule {
 				const type = res.schema.kode_form || "sk"; // ambil kode form jika ada
 
 				// buat builder dokumen
-				const builder = new DocumentBuilder(container, type); // buat builder
-
+				// const builder = new DocumentBuilder(container, type); // buat builder
 				// ======================================================
-				// NORMALISASI SCHEMA DARI SERVER
+				// INIT DOCUMENT BUILDER
 				// ======================================================
-				builder.schema = {
-					sections: res.schema.schema || res.schema,
-				};
 
-				// normalisasi struktur schema
-				// if (!builder.schema.sections) {
-				// 	// jika sections tidak ada
+				// sebelum
+				// const builder = new DocumentBuilder($("#form_modal"));
 
-				// 	builder.schema = {
-				// 		// buat struktur baru
-				// 		sections: builder.schema, // jadikan array schema sebagai sections
-				// 	};
-				// }
-				builder.data = {
-					asn: res.asn || [],
-					klasifikasi: res.klasifikasi || [],
-					nomor_auto: res.nomor_auto || null,
-				};
-				builder.render(); // render builder
+				// sesudah
+				window.documentBuilder = new DocumentBuilder($("#form_modal")); // expose global agar FormEngine bisa akses
+
+				// sebelum
+				// builder.schema = res.schema;
+
+				// sesudah
+				window.documentBuilder.schema = res.schema; // assign schema
+
+				// sebelum
+				// builder.data = res;
+
+				// sesudah
+				window.documentBuilder.data = res; // assign data server
+
+				// sebelum
+				// builder.render();
+
+				// sesudah
+				window.documentBuilder.render(); // render form
 			},
 		});
 	}

@@ -217,10 +217,23 @@ SET VALUE NORMAL
 		// =============================================
 		// BIND EVENT BARU
 		// =============================================
-		$(document).on(`submit.formEngine.${this.state.tbl}`, this.formSelector, (e) => {
-			e.preventDefault();
+		// ======================================================
+		// BIND EVENT SUBMIT FORM
+		// ======================================================
 
-			this.submit();
+		// sebelum
+		// $(document).on(`submit.formEngine.${this.state.tbl}`, this.formSelector, (e) => {
+
+		$(document).on(`submit.formEngine.${this.state.tbl}`, `${this.formSelector}`, (e) => {
+			// pastikan selector literal
+
+			e.preventDefault(); // cegah submit browser
+
+			e.stopPropagation(); // cegah bubbling submit
+
+			this.submit(); // jalankan submit engine
+
+			return false; // cegah reload browser
 		});
 	}
 
@@ -337,7 +350,21 @@ SET VALUE NORMAL
 AMBIL STATE GLOBAL
 ===================================================== */
 
-		let formData = form.serialize();
+		let formData = form.serialize(); // data normal form
+
+		// ======================================================
+		// TAMBAH STRUKTUR JSON DARI DOCUMENT BUILDER untuk tata naskah
+		// ======================================================
+
+		if (window.documentBuilder) {
+			// cek builder ada
+
+			const struktur = window.documentBuilder.collectStructure(); // ambil struktur table
+
+			if (Object.keys(struktur).length) {
+				formData += "&struktur_json=" + encodeURIComponent(JSON.stringify(struktur)); // kirim json
+			}
+		}
 
 		formData += `&action=${this.state.action}`;
 		formData += `&tbl=${this.state.tbl}`;
