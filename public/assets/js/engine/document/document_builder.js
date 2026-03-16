@@ -31,7 +31,7 @@ class DocumentBuilder {
 	}
 
 	// ============================================================
-	// ELEMENT ROUTER
+	// ROUTER
 	// ============================================================
 
 	renderElement(field) {
@@ -56,12 +56,12 @@ class DocumentBuilder {
 		},
 
 		section(field) {
-			return `
-			<h4 class="ui horizontal divider header">
-				<i class="${field.icon || "file"} icon"></i>
-				${field.label}
-			</h4>
-			`;
+			return [
+				'<h4 class="ui horizontal divider header">',
+				`<i class="${field.icon || "file"} icon"></i>`,
+				field.label,
+				"</h4>",
+			].join("");
 		},
 
 		auto_nomor(field) {
@@ -105,12 +105,12 @@ class DocumentBuilder {
 		},
 
 		file(field) {
-			return `
-			<div class="field">
-				<label>${field.label}</label>
-				<input type="file" name="${field.name}">
-			</div>
-			`;
+			return [
+				'<div class="field">',
+				`<label>${field.label}</label>`,
+				`<input type="file" name="${field.name}">`,
+				"</div>",
+			].join("");
 		},
 	};
 
@@ -131,15 +131,15 @@ class DocumentBuilder {
 	renderFields(group) {
 		const size = group.size || "two";
 
-		let html = `<div class="${size} fields">`;
+		const parts = [`<div class="${size} fields">`];
 
 		(group.fields || []).forEach((field) => {
-			html += this.renderElement(field);
+			parts.push(this.renderElement(field));
 		});
 
-		html += `</div>`;
+		parts.push(`</div>`);
 
-		return html;
+		return parts.join("");
 	}
 
 	// ============================================================
@@ -150,20 +150,22 @@ class DocumentBuilder {
 		const key = field.name;
 		const columns = field.columns || [];
 
-		let header = "";
+		let header = [];
 
 		columns.forEach((col) => {
-			header += `<th>${col}</th>`;
+			header.push(`<th>${col}</th>`);
 		});
 
-		return `
-		<table class="ui celled table" name="${key}">
-			<thead>
-				<tr>${header}</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
-		`;
+		return [
+			`<table class="ui celled table" name="${key}">`,
+			"<thead>",
+			"<tr>",
+			header.join(""),
+			"</tr>",
+			"</thead>",
+			"<tbody></tbody>",
+			"</table>",
+		].join("");
 	}
 
 	// ============================================================
@@ -177,76 +179,62 @@ class DocumentBuilder {
 		let header = "";
 
 		if (title) {
-			header = `
-			<h4 class="ui horizontal divider header">
-				<i class="file alternate outline icon"></i>
-				${title}
-			</h4>`;
+			header = [
+				'<h4 class="ui horizontal divider header">',
+				'<i class="file alternate outline icon"></i>',
+				title,
+				"</h4>",
+			].join("");
 		}
 
-		return `
-		${header}
-
-		<table class="ui celled structured table" name="${key}">
-
-			<thead>
-				<tr>
-
-					<th>URAIAN</th>
-
-					<th class="collapsing">
-
-						<button
-							type="button"
-							class="ui mini green icon button btn-add-row"
-							data-section="${key}">
-
-							<i class="plus icon"></i>
-
-						</button>
-
-					</th>
-
-				</tr>
-			</thead>
-
-			<tbody></tbody>
-
-		</table>
-		`;
+		return [
+			header,
+			`<table class="ui celled structured table" name="${key}">`,
+			"<thead>",
+			"<tr>",
+			"<th>URAIAN</th>",
+			'<th class="collapsing">',
+			`<button type="button" class="ui mini green icon button btn-add-row" data-section="${key}">`,
+			'<i class="plus icon"></i>',
+			"</button>",
+			"</th>",
+			"</tr>",
+			"</thead>",
+			"<tbody></tbody>",
+			"</table>",
+		].join("");
 	}
 
 	// ============================================================
-	// ROW BUILDER
+	// BUILD ROW
 	// ============================================================
 
-	buildRow(section, text = "") {
-		return `
-		<tr>
+	buildRow(section, text = "", type = "paragraph") {
+		return [
+			"<tr>",
+			"<td>",
+			`<textarea class="doc-text" name="${section}[]" rows="2">${text}</textarea>`,
+			"</td>",
+			'<td class="collapsing right aligned">',
+			'<div class="ui mini icon buttons">',
 
-			<td>
+			`<div class="ui floating dropdown icon button upward doc-type" data-value="${type}">`,
+			'<i class="wrench icon"></i>',
+			'<div class="menu">',
+			'<div class="item" data-value="paragraph">Paragraf</div>',
+			'<div class="item" data-value="list">List</div>',
+			'<div class="item" data-value="numbered">Numbered</div>',
+			"</div>",
+			"</div>",
 
-				<textarea
-					class="doc-text"
-					name="${section}[]"
-					rows="2">${text}</textarea>
+			'<button type="button" class="ui red icon button btn-del-row">',
+			'<i class="trash icon"></i>',
+			"</button>",
 
-			</td>
-
-			<td class="collapsing right aligned">
-
-				<button
-					type="button"
-					class="ui red icon button btn-del-row">
-
-					<i class="trash icon"></i>
-
-				</button>
-
-			</td>
-
-		</tr>
-		`;
+			"</div>",
+			"</td>",
+			"</tr>",
+		].join("");
 	}
 
 	// ============================================================
@@ -259,21 +247,43 @@ class DocumentBuilder {
 		this.container.off("click", ".btn-add-row");
 		this.container.off("click", ".btn-del-row");
 
-		// tambah row
+		// add row
 
 		this.container.on("click", ".btn-add-row", function () {
 			const section = $(this).data("section");
 
 			const tbody = self.container.find(`table[name="${section}"] tbody`);
 
-			tbody.append(self.buildRow(section));
+			const index = tbody.children().length + 1;
+
+			const text = self.autoNumber(section, index);
+
+			tbody.append(self.buildRow(section, text));
+
+			self.initFomantic();
 		});
 
-		// hapus row
+		// delete row
 
 		this.container.on("click", ".btn-del-row", function () {
 			$(this).closest("tr").remove();
 		});
+	}
+
+	// ============================================================
+	// AUTO NUMBERING
+	// ============================================================
+
+	autoNumber(section, index) {
+		if (section === "menimbang") {
+			return String.fromCharCode(96 + index) + ". ";
+		}
+
+		if (section === "mengingat") {
+			return index + ". ";
+		}
+
+		return "";
 	}
 
 	// ============================================================
@@ -282,6 +292,8 @@ class DocumentBuilder {
 
 	initFomantic() {
 		this.container.find(".ui.dropdown").dropdown();
+
+		this.container.find(".doc-type").dropdown();
 
 		this.container.find(".ui.calendar").calendar({
 			type: "date",
