@@ -8,103 +8,103 @@
   <link rel="stylesheet" href="/assets/css/fomantic.min.css">
   <link rel="stylesheet" href="/assets/css/dark.css">
   <style>
-    #mainContext {
-      min-height: calc(100vh - 40px);
-    }
+  #mainContext {
+    min-height: calc(100vh - 40px);
+  }
 
-    .pusher .ui .container {
-      padding: 20px !important;
-    }
+  .pusher .ui .container {
+    padding: 20px !important;
+  }
 
-    html,
-    body {
-      height: 100%;
-      overflow: hidden;
-    }
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
 
-    /* FIX SEGMENT PUSHABLE */
-    #mainContext.ui.segment {
-      height: calc(100vh - 40px);
-      padding: 0 !important;
-      overflow: hidden;
-      /* PENTING */
-    }
+  /* FIX SEGMENT PUSHABLE */
+  #mainContext.ui.segment {
+    height: calc(100vh - 40px);
+    padding: 0 !important;
+    overflow: hidden;
+    /* PENTING */
+  }
 
-    /* PUSHER */
-    #mainContext .pusher {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
+  /* PUSHER */
+  #mainContext .pusher {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 
-    /* STICKY HEADER */
-    #mainContext .pusher>.ui.sticky {
-      flex: 0 0 auto;
-    }
+  /* STICKY HEADER */
+  #mainContext .pusher>.ui.sticky {
+    flex: 0 0 auto;
+  }
 
-    /* SCROLL AREA */
-    #mainContext .content-scroll {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-    }
+  /* SCROLL AREA */
+  #mainContext .content-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
 
-    /* ================================
+  /* ================================
    SIDEBAR KANAN WIDTH CONTROL
 ================================ */
 
-    /* Default (Desktop) */
+  /* Default (Desktop) */
+  .sidebarkanan {
+    width: 420px !important;
+  }
+
+  /* Tablet */
+  @media (max-width: 992px) {
     .sidebarkanan {
-      width: 420px !important;
+      width: 360px !important;
     }
+  }
 
-    /* Tablet */
-    @media (max-width: 992px) {
-      .sidebarkanan {
-        width: 360px !important;
-      }
-    }
-
-    /* Mobile */
-    @media (max-width: 768px) {
-      .sidebarkanan {
-        width: 100% !important;
-      }
-    }
-
+  /* Mobile */
+  @media (max-width: 768px) {
     .sidebarkanan {
-      width: 420px;
-      display: flex;
+      width: 100% !important;
     }
+  }
 
-    .flyout-container {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      width: 100%;
-    }
+  .sidebarkanan {
+    width: 420px;
+    display: flex;
+  }
 
-    .flyout-body {
-      flex: 1;
-      overflow-y: auto;
-    }
+  .flyout-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
 
-    .flyout-footer {
-      border-top: 1px solid rgba(0, 0, 0, 0.05);
-    }
+  .flyout-body {
+    flex: 1;
+    overflow-y: auto;
+  }
 
-    #toastContainer {
-      position: absolute;
-      top: 5px;
-      right: 20px;
-      width: 350px;
-      z-index: 9999;
-    }
+  .flyout-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+  }
 
-    /* untuk tabel */
-    .table-wrapper {
-      overflow-x: auto;
-    }
+  #toastContainer {
+    position: absolute;
+    top: 5px;
+    right: 20px;
+    width: 350px;
+    z-index: 9999;
+  }
+
+  /* untuk tabel */
+  .table-wrapper {
+    overflow-x: auto;
+  }
   </style>
 </head>
 
@@ -152,11 +152,11 @@
 
   <!-- JS -->
   <script>
-    window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
+  window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
   </script>
   <script>
-    window.app = window.app || {};
-    window.app.user = <?= json_encode($_SESSION['user'] ?? []); ?>;
+  window.app = window.app || {};
+  window.app.user = <?= json_encode($_SESSION['user'] ?? []); ?>;
   </script>
   <!-- LIBRARY -->
   <script src="/assets/js/jquery.min.js"></script>
@@ -180,7 +180,7 @@
   <script src="/assets/js/engine/form-engine.js"></script>
   <script src="/assets/js/engine/form-container-manager.js"></script>
   <script src="/assets/js/engine/flyout-controller.js"></script>
-
+  <script src="/assets/js/engine/dropdown_engine.js"></script>
   <!-- ================= MODULES ================= -->
   <script src="/assets/js/modules/base-crud-module.js"></script>
 
@@ -200,7 +200,7 @@
   <script src="/assets/js/app-init.js"></script>
 
   <script>
-    window.CSRF_TOKEN = "<?= $_SESSION['csrf_token'] ?? '' ?>";
+  window.CSRF_TOKEN = "<?= $_SESSION['csrf_token'] ?? '' ?>";
   </script>
 </body>
 
