@@ -301,4 +301,37 @@ class DocumentBuilder {
 
 		this.container.find(".ui.checkbox").checkbox();
 	}
+	static initLookupDropdown() {
+		$(".lookup-dropdown").each(function () {
+			const el = $(this);
+			const source = el.data("source");
+
+			// ==============================
+			// LOCAL DATA (ASN dari schema)
+			// ==============================
+
+			if (window.lookupData && window.lookupData[source]) {
+				const items = window.lookupData[source].map((row) => ({
+					name: row.uraian,
+					value: row.id,
+				}));
+
+				el.dropdown({
+					values: items,
+				});
+
+				return;
+			}
+
+			// ==============================
+			// FALLBACK API
+			// ==============================
+
+			el.dropdown({
+				apiSettings: {
+					url: "/dynamic",
+				},
+			});
+		});
+	}
 }
