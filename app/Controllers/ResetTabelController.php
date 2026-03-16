@@ -34,7 +34,8 @@ class ResetTabelController extends Controller
     'program_renstra_neo',
     'indikator_program_renstra_neo',
     'kegiatan_renstra_neo',
-    'sub_kegiatan_renstra_neo',
+    'cache_schema_naskah',
+    'ref_jenis_naskah',
   ];
 
 
