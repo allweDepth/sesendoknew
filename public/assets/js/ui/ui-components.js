@@ -752,10 +752,11 @@ REQUEST
 	// FIELDS WRAPPER
 	// ==================================================
 	static fields(prop = {}) {
-		const size = prop.size || "two"; // default two
-		const items = prop.items || [];
+		const size = prop.size || "two";
 
-		let html = `<div class="${size} fields">`; // wrapper
+		const items = prop.items || prop.fields || [];
+
+		let html = `<div class="${size} fields">`;
 
 		items.forEach((el) => {
 			html += UIComponentRegistry.render(el);
@@ -767,6 +768,7 @@ REQUEST
 	}
 }
 // REGISTER ALL COMPONENTS
+UIComponentRegistry.register("fields", (p) => UIComponents.fields(p.prop));
 UIComponentRegistry.register("dropdown", (p) =>
 	UIComponents.dropdown(p.prop?.label, p.prop?.name, p.prop?.options || []),
 );

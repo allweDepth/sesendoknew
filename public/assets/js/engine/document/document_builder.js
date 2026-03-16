@@ -1,89 +1,133 @@
-/**
- * ============================================================
- * DOCUMENT BUILDER
- * ============================================================
- * Builder dokumen tata naskah dinamis
- * mendukung:
- * - field dinamis
- * - section dinamis
- * - auto nomor
- * - fomantic ui
- */
-
 class DocumentBuilder {
 	constructor(container, type) {
 		this.container = container;
 		this.type = type;
 
 		this.schema = null;
-		this.sectionContainer = null;
 
 		this.data = {};
 	}
 
-	/* ============================================================
-	   RENDER DOCUMENT
-	============================================================ */
+	// ============================================================
+	// RENDER DOCUMENT
+	// ============================================================
 
 	render() {
 		if (!this.schema) return;
 
 		this.container.empty();
 
-		this.container.append(`
-			<div id="doc-fields"></div>
-			<div id="doc-sections"></div>
-		`);
-
-		const fieldContainer = this.container.find("#doc-fields");
-
-		this.sectionContainer = this.container.find("#doc-sections");
+		const container = this.container;
 
 		const fields = this.schema.sections || this.schema;
 
 		fields.forEach((field) => {
-			/* ===============================
-			   SECTION
-			================================ */
+			switch (field.type) {
+				// ===============================
+				// MESSAGE
+				// ===============================
 
-			if (field.type === "section") {
-				this.renderSection(field);
-				return;
+				case "message":
+					container.append(UIComponents.message(field));
+					break;
+
+				// ===============================
+				// SECTION
+				// ===============================
+
+				case "section":
+					container.append(this.renderSection(field));
+					break;
+
+				// ===============================
+				// AUTO NOMOR
+				// ===============================
+
+				case "auto_nomor":
+					container.append(this.renderAutoNomor(field));
+					break;
+
+				// ===============================
+				// GROUP FIELDS
+				// ===============================
+
+				case "fields":
+					container.append(this.renderFields(field));
+					break;
+
+				// ===============================
+				// EDITABLE TABLE
+				// ===============================
+
+				case "editable_table":
+					container.append(this.renderEditableTable(field));
+					break;
+
+				// ===============================
+				// TABLE
+				// ===============================
+
+				case "table":
+					container.append(this.renderDataTable(field));
+					break;
+
+				// ===============================
+				// DROPDOWN AJAX
+				// ===============================
+
+				case "dropdown_ajax":
+					container.append(UIComponents.lookupDropdown(field.label, field.name, field.source));
+					break;
+
+				// ===============================
+				// TOGGLE
+				// ===============================
+
+				case "toggle":
+					container.append(UIComponents.toggle(field.label, field.name));
+					break;
+
+				// ===============================
+				// TEXTAREA
+				// ===============================
+
+				case "textarea":
+					container.append(UIComponents.textarea(field.label, field.name));
+					break;
+
+				// ===============================
+				// CALENDAR
+				// ===============================
+
+				case "calendar":
+				case "date":
+					container.append(UIComponents.calendar(field.label, field.name));
+
+					break;
+
+				// ===============================
+				// FILE
+				// ===============================
+
+				case "file":
+					container.append(`
+						<div class="field">
+							<label>${field.label}</label>
+							<input type="file" name="${field.name}">
+						</div>
+					`);
+
+					break;
+
+				// ===============================
+				// DEFAULT INPUT
+				// ===============================
+
+				default:
+					container.append(
+						UIComponents.input(field.label, field.name, field.type === "input" ? "text" : field.type || "text"),
+					);
 			}
-
-			/* ===============================
-			   AUTO NOMOR
-			================================ */
-
-			if (field.type === "auto_nomor") {
-				this.renderAutoNomor(field);
-				return;
-			}
-
-			/* ===============================
-			   FIELD NORMAL
-			================================ */
-
-			let tag = "field";
-
-			if (field.type === "date") tag = "calendar";
-			if (field.type === "dropdown") tag = "dropdown";
-			if (field.type === "textarea") tag = "textarea";
-
-			const prop = {
-				label: field.label || "",
-				name: field.name || "",
-				type: field.type || "text",
-				value: field.value || "",
-				options: field.options || [],
-			};
-
-			const html = UIComponentRegistry.render({
-				tag: tag,
-				prop: { prop },
-			});
-
-			fieldContainer.append(html);
 		});
 
 		this.initFomantic();
@@ -91,95 +135,165 @@ class DocumentBuilder {
 		this.bindEvents();
 	}
 
-	/* ============================================================
-	   SECTION BUILDER
-	============================================================ */
+	// ============================================================
+	// GROUP FIELD RENDER
+	// ============================================================
 
-	renderSection(section) {
-		const key = section.key || section.name;
+	renderFields(group) {
+		let html = `<div class="${group.size || "two"} fields">`;
 
-		const html = `
-		<h4 class="ui horizontal divider header">
-			<i class="file alternate outline icon"></i>
-			${section.label}
-		</h4>
+		(group.fields || []).forEach((field) => {
+			html += this.renderSingleField(field);
+		});
 
-		<table class="ui celled structured table" name="${key}">
-			<thead>
-				<tr>
-					<th>URAIAN</th>
-					<th class="collapsing">
+		html += `</div>`;
 
-						<button 
-							type="button"
-							class="ui mini green icon button btn-add-row"
-							data-section="${key}">
-
-							<i class="plus icon"></i>
-
-						</button>
-
-					</th>
-				</tr>
-			</thead>
-
-			<tbody></tbody>
-
-		</table>
-		`;
-
-		this.sectionContainer.append(html);
+		return html;
 	}
 
-	/* ============================================================
-	   ROW BUILDER
-	============================================================ */
+	// ============================================================
+	// SINGLE FIELD
+	// ============================================================
 
-	buildRow(section, text = "", type = "paragraph") {
-		return `
-		<tr>
+	renderSingleField(field) {
+		switch (field.type) {
+			case "calendar":
+			case "date":
+				return UIComponents.calendar(field.label, field.name);
 
-			<td>
+			case "textarea":
+				return UIComponents.textarea(field.label, field.name);
 
-				<textarea 
-					class="doc-text"
-					name="${section}[]"
-					rows="2">${text}</textarea>
+			case "dropdown_ajax":
+				return UIComponents.lookupDropdown(field.label, field.name, field.source);
 
-			</td>
+			case "toggle":
+				return UIComponents.toggle(field.label, field.name);
 
-			<td class="collapsing right aligned">
-
-				<div class="ui mini icon buttons">
-
-					<div 
-						class="ui floating dropdown icon button upward doc-type"
-						data-value="${type}">
-
-						<i class="wrench icon"></i>
-
-						<div class="menu">
-
-							<div class="item" data-value="paragraph">
-								<i class="align left icon"></i>
-								Paragraf
-							</div>
-
-							<div class="item" data-value="list">
-								<i class="list icon"></i>
-								List
-							</div>
-
-							<div class="item" data-value="numbered">
-								<i class="ordered list icon"></i>
-								Numbered
-							</div>
-
-						</div>
-
+			case "file":
+				return `
+					<div class="field">
+						<label>${field.label}</label>
+						<input type="file" name="${field.name}">
 					</div>
+				`;
 
-					<button 
+			default:
+				return UIComponents.input(field.label, field.name, field.type === "input" ? "text" : field.type || "text");
+		}
+	}
+
+	// ============================================================
+	// DATA TABLE
+	// ============================================================
+
+	renderDataTable(field) {
+		const key = field.name;
+
+		const columns = field.columns || [];
+
+		let header = "";
+
+		columns.forEach((col) => {
+			header += `<th>${col}</th>`;
+		});
+
+		return `
+			<table class="ui celled table" name="${key}">
+				<thead>
+					<tr>
+						${header}
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		`;
+	}
+
+	// ============================================================
+	// EDITABLE TABLE
+	// ============================================================
+
+	renderEditableTable(field) {
+		const key = field.name;
+
+		const title = field.title || "";
+
+		let header = "";
+
+		if (title) {
+			header = `
+		<h4 class="ui horizontal divider header">
+			<i class="file alternate outline icon"></i>
+			${title}
+		</h4>`;
+		}
+
+		return `
+	${header}
+
+	<table class="ui celled structured table" name="${key}">
+
+		<thead>
+			<tr>
+
+				<th>URAIAN</th>
+
+				<th class="collapsing">
+
+					<button
+						type="button"
+						class="ui mini green icon button btn-add-row"
+						data-section="${key}">
+
+						<i class="plus icon"></i>
+
+					</button>
+
+				</th>
+
+			</tr>
+		</thead>
+
+		<tbody></tbody>
+
+	</table>
+	`;
+	}
+
+	// ============================================================
+	// SECTION
+	// ============================================================
+
+	renderSection(section) {
+		return `
+			<h4 class="ui horizontal divider header">
+				<i class="${section.icon || "file"} icon"></i>
+				${section.label}
+			</h4>
+		`;
+	}
+
+	// ============================================================
+	// ROW BUILDER
+	// ============================================================
+
+	buildRow(section, text = "") {
+		return `
+			<tr>
+
+				<td>
+
+					<textarea
+						class="doc-text"
+						name="${section}[]"
+						rows="2">${text}</textarea>
+
+				</td>
+
+				<td class="collapsing right aligned">
+
+					<button
 						type="button"
 						class="ui red icon button btn-del-row">
 
@@ -187,17 +301,15 @@ class DocumentBuilder {
 
 					</button>
 
-				</div>
+				</td>
 
-			</td>
-
-		</tr>
+			</tr>
 		`;
 	}
 
-	/* ============================================================
-	   EVENT BINDING
-	============================================================ */
+	// ============================================================
+	// EVENTS
+	// ============================================================
 
 	bindEvents() {
 		const self = this;
@@ -205,48 +317,40 @@ class DocumentBuilder {
 		this.container.off("click", ".btn-add-row");
 		this.container.off("click", ".btn-del-row");
 
-		/* ===============================
-		   ADD ROW
-		================================ */
+		// tambah baris
 
 		this.container.on("click", ".btn-add-row", function () {
 			const section = $(this).data("section");
 
-			const row = self.buildRow(section);
-
 			const tbody = self.container.find(`table[name="${section}"] tbody`);
 
-			tbody.append(row);
-
-			self.initFomantic();
+			tbody.append(self.buildRow(section));
 		});
 
-		/* ===============================
-		   DELETE ROW
-		================================ */
+		// hapus baris
 
 		this.container.on("click", ".btn-del-row", function () {
 			$(this).closest("tr").remove();
 		});
 	}
 
-	/* ============================================================
-	   AUTO NOMOR
-	============================================================ */
+	// ============================================================
+	// AUTO NOMOR
+	// ============================================================
 
 	renderAutoNomor(field) {
-		const html = UIExtensions.renderAutoNumber({
+		return UIExtensions.renderAutoNumber({
 			label: field.label,
+
 			name: field.name,
+
 			value: this.data.nomor_auto,
 		});
-
-		this.container.find("#doc-fields").append(html);
 	}
 
-	/* ============================================================
-	   INIT FOMANTIC
-	============================================================ */
+	// ============================================================
+	// INIT FOMANTIC
+	// ============================================================
 
 	initFomantic() {
 		this.container.find(".ui.dropdown").dropdown();
