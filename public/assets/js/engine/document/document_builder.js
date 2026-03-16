@@ -69,6 +69,12 @@ class DocumentBuilder {
 				return this.renderDataTable(field);
 
 			case "dropdown_ajax":
+				// FIX: hanya dropdown tertentu yang punya target table
+
+				if (field.target) {
+					return UIComponents.lookupDropdown(field.label, field.name, field.source, field.target);
+				}
+
 				return UIComponents.lookupDropdown(field.label, field.name, field.source);
 
 			case "toggle":
@@ -167,19 +173,19 @@ class DocumentBuilder {
 				"</th>",
 		);
 
-		return [
-			'<table class="ui celled structured table" name="' + key + '" data-columns="' + columns.length + '">',
-
-			"<thead>",
-			"<tr>",
-			th.join(""),
-			"</tr>",
-			"</thead>",
-
-			"<tbody></tbody>",
-
-			"</table>",
-		].join("");
+		return `
+        <table class="ui celled structured table"
+          name="${key}"
+          data-columns="${columns.length}"
+          data-dropdown-target="${key}">
+          <thead>
+          <tr>
+          ${th.join("")}
+          </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        `;
 	}
 
 	// ======================================================

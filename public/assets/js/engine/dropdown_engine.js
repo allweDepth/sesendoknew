@@ -35,43 +35,45 @@ class DropdownEngine {
 	}
 
 	insertToTable(target, data) {
-		const table = this.container.find('table[data-dropdown-target="' + target + '"]');
+		const table = this.container.find(`table[data-dropdown-target="${target}"]`);
 
 		if (!table.length) return;
 
 		const tbody = table.find("tbody");
 
-		const headers = table.find("thead th");
+		// FIX: gunakan data-columns yang dipakai DocumentBuilder
+		const colCount = parseInt(table.data("columns") || 1);
 
 		let cols = "";
 
-		headers.each(function () {
-			const field = $(this).data("field");
-
-			if (field) {
-				const value = data[field] || "";
+		for (let i = 0; i < colCount; i++) {
+			if (i === 0) {
+				const value = data.nama || "";
 
 				cols += `
-				<td>
-					<input type="hidden" name="${target}_${field}[]" value="${value}">
-					${value}
-				</td>
-				`;
+            <td>
+              <input type="hidden" name="${target}_nama[]" value="${value}">
+              ${value}
+            </td>
+            `;
 			} else {
 				cols += `<td></td>`;
 			}
-		});
+		}
 
 		const row = `
-		<tr data-id="${data.id}" data-source="${data.source}">
-			${cols}
-			<td class="collapsing">
-				<button type="button" class="ui mini red icon button btn-del-row">
-					<i class="trash icon"></i>
-				</button>
-			</td>
-		</tr>
-		`;
+            <tr 
+              data-id="${data.id}" 
+              data-source="${data.source}" 
+              data-section="${target}">
+              ${cols}
+              <td class="collapsing">
+                <button type="button" class="ui mini red icon button btn-del-row">
+                  <i class="trash icon"></i>
+                </button>
+              </td>
+            </tr>
+            `;
 
 		tbody.append(row);
 	}

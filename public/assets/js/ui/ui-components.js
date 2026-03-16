@@ -580,29 +580,26 @@ contoh:
 - asn
 ========================================================= */
 
-	static lookupDropdown(label, name, source) {
-		const html = `
-    
-    <div class="field">
+	static lookupDropdown(label, name, source, target) {
+		const attrTarget = target ? `data-target-table="${target}"` : "";
 
-        <label>${label}</label>
+		return `
+	<div class="field">
+		<label>${label}</label>
 
-        <div class="ui fluid search selection dropdown lookup-dropdown"
-             data-source="${source}">
+		<div class="ui fluid search selection dropdown lookup-dropdown"
+		     data-source="${source}"
+		     ${attrTarget}>
 
-            <input type="hidden" name="${name}">
+			<input type="hidden" name="${name}">
+			<i class="dropdown icon"></i>
 
-            <i class="dropdown icon"></i>
+			<input class="search" autocomplete="off">
 
-            <div class="default text">Cari ${label}</div>
-
-        </div>
-
-    </div>
-
-    `;
-
-		return html;
+			<div class="default text">Cari ${label}</div>
+		</div>
+	</div>
+	`;
 	}
 	/* ======================================================
 INIT LOOKUP DROPDOWN
