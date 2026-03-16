@@ -7,160 +7,130 @@ class DocumentBuilder {
 		this.data = {};
 	}
 
-	// ============================================================
+	// ======================================================
 	// RENDER DOCUMENT
-	// ============================================================
+	// ======================================================
 
 	render() {
 		if (!this.schema) return;
 
 		this.container.empty();
 
-		const fields = this.schema.sections || this.schema;
+		var fields = this.schema.sections || this.schema;
+		var html = [];
 
 		fields.forEach((field) => {
-			const html = this.renderElement(field);
+			var part = this.renderElement(field);
 
-			if (html) {
-				this.container.append(html);
+			if (part) {
+				html.push(part);
 			}
 		});
 
+		this.container.append(html.join(""));
+
 		this.initFomantic();
+		DocumentBuilder.initLookupDropdown(this.data);
+
 		this.bindEvents();
 	}
 
-	// ============================================================
-	// ROUTER
-	// ============================================================
+	// ======================================================
+	// ELEMENT ROUTER
+	// ======================================================
 
 	renderElement(field) {
-		const type = field.type || "input";
+		switch (field.type) {
+			case "message":
+				return UIComponents.message(field);
 
-		const renderer = this.renderers[type];
+			case "section":
+				return [
+					'<h4 class="ui horizontal divider header">',
+					'<i class="' + (field.icon || "file") + ' icon"></i>',
+					field.label,
+					"</h4>",
+				].join("");
 
-		if (renderer) {
-			return renderer.call(this, field);
+			case "auto_nomor":
+				return UIExtensions.renderAutoNumber({
+					label: field.label,
+					name: field.name,
+					value: this.data.nomor_auto,
+				});
+
+			case "fields":
+				return this.renderFields(field);
+
+			case "editable_table":
+				return this.renderEditableTable(field);
+
+			case "table":
+				return this.renderDataTable(field);
+
+			case "dropdown_ajax":
+				return UIComponents.lookupDropdown(field.label, field.name, field.source);
+
+			case "toggle":
+				return UIComponents.toggle(field.label, field.name);
+
+			case "textarea":
+				return UIComponents.textarea(field.label, field.name);
+
+			case "calendar":
+			case "date":
+				return UIComponents.calendar(field.label, field.name);
+
+			case "file":
+				return [
+					'<div class="field">',
+					"<label>" + field.label + "</label>",
+					'<input type="file" name="' + field.name + '">',
+					"</div>",
+				].join("");
+
+			default:
+				return UIComponents.input(field.label, field.name, field.type === "input" ? "text" : field.type);
 		}
-
-		return this.renderInput(field);
 	}
 
-	// ============================================================
-	// RENDERERS MAP
-	// ============================================================
-
-	renderers = {
-		message(field) {
-			return UIComponents.message(field);
-		},
-
-		section(field) {
-			return [
-				'<h4 class="ui horizontal divider header">',
-				`<i class="${field.icon || "file"} icon"></i>`,
-				field.label,
-				"</h4>",
-			].join("");
-		},
-
-		auto_nomor(field) {
-			return UIExtensions.renderAutoNumber({
-				label: field.label,
-				name: field.name,
-				value: this.data.nomor_auto,
-			});
-		},
-
-		fields(field) {
-			return this.renderFields(field);
-		},
-
-		editable_table(field) {
-			return this.renderEditableTable(field);
-		},
-
-		table(field) {
-			return this.renderDataTable(field);
-		},
-
-		dropdown_ajax(field) {
-			return UIComponents.lookupDropdown(field.label, field.name, field.source);
-		},
-
-		toggle(field) {
-			return UIComponents.toggle(field.label, field.name);
-		},
-
-		textarea(field) {
-			return UIComponents.textarea(field.label, field.name);
-		},
-
-		calendar(field) {
-			return UIComponents.calendar(field.label, field.name);
-		},
-
-		date(field) {
-			return UIComponents.calendar(field.label, field.name);
-		},
-
-		file(field) {
-			return [
-				'<div class="field">',
-				`<label>${field.label}</label>`,
-				`<input type="file" name="${field.name}">`,
-				"</div>",
-			].join("");
-		},
-	};
-
-	// ============================================================
-	// DEFAULT INPUT
-	// ============================================================
-
-	renderInput(field) {
-		const type = field.type === "input" ? "text" : field.type || "text";
-
-		return UIComponents.input(field.label, field.name, type);
-	}
-
-	// ============================================================
+	// ======================================================
 	// GROUP FIELDS
-	// ============================================================
+	// ======================================================
 
 	renderFields(group) {
-		const size = group.size || "two";
+		var size = group.size || "two";
+		var parts = [];
 
-		const parts = [`<div class="${size} fields">`];
-
+		parts.push('<div class="' + size + ' fields">');
 		(group.fields || []).forEach((field) => {
 			parts.push(this.renderElement(field));
 		});
 
-		parts.push(`</div>`);
+		parts.push("</div>");
 
 		return parts.join("");
 	}
 
-	// ============================================================
+	// ======================================================
 	// DATA TABLE
-	// ============================================================
+	// ======================================================
 
 	renderDataTable(field) {
-		const key = field.name;
-		const columns = field.columns || [];
+		var key = field.name;
+		var columns = field.columns || [];
 
-		let header = [];
+		var th = [];
 
-		columns.forEach((col) => {
-			header.push(`<th>${col}</th>`);
+		columns.forEach((c) => {
+			th.push("<th>" + c + "</th>");
 		});
 
 		return [
-			`<table class="ui celled table" name="${key}">`,
+			'<table class="ui celled table" name="' + key + '">',
 			"<thead>",
 			"<tr>",
-			header.join(""),
+			th.join(""),
 			"</tr>",
 			"</thead>",
 			"<tbody></tbody>",
@@ -168,36 +138,36 @@ class DocumentBuilder {
 		].join("");
 	}
 
-	// ============================================================
+	// ======================================================
 	// EDITABLE TABLE
-	// ============================================================
+	// ======================================================
 
 	renderEditableTable(field) {
-		const key = field.name;
-		const title = field.title || "";
+		var key = field.name;
 
-		let header = "";
+		var columns = field.columns || ["URAIAN", "JENIS"];
 
-		if (title) {
-			header = [
-				'<h4 class="ui horizontal divider header">',
-				'<i class="file alternate outline icon"></i>',
-				title,
-				"</h4>",
-			].join("");
-		}
+		var th = [];
+
+		columns.forEach((c) => {
+			th.push("<th>" + c + "</th>");
+		});
+
+		th.push(
+			'<th class="collapsing">' +
+				'<button type="button" class="ui mini green icon button btn-add-row" data-section="' +
+				key +
+				'">' +
+				'<i class="plus icon"></i>' +
+				"</button>" +
+				"</th>",
+		);
 
 		return [
-			header,
-			`<table class="ui celled structured table" name="${key}">`,
+			'<table class="ui celled structured table" name="' + key + '">',
 			"<thead>",
 			"<tr>",
-			"<th>URAIAN</th>",
-			'<th class="collapsing">',
-			`<button type="button" class="ui mini green icon button btn-add-row" data-section="${key}">`,
-			'<i class="plus icon"></i>',
-			"</button>",
-			"</th>",
+			th.join(""),
 			"</tr>",
 			"</thead>",
 			"<tbody></tbody>",
@@ -205,21 +175,22 @@ class DocumentBuilder {
 		].join("");
 	}
 
-	// ============================================================
-	// BUILD ROW
-	// ============================================================
+	// ======================================================
+	// ROW BUILDER
+	// ======================================================
 
-	buildRow(section, text = "", type = "paragraph") {
+	buildRow(section) {
 		return [
 			"<tr>",
-			"<td>",
-			`<textarea class="doc-text" name="${section}[]" rows="2">${text}</textarea>`,
-			"</td>",
-			'<td class="collapsing right aligned">',
-			'<div class="ui mini icon buttons">',
 
-			`<div class="ui floating dropdown icon button upward doc-type" data-value="${type}">`,
-			'<i class="wrench icon"></i>',
+			"<td>",
+			'<textarea class="doc-text" name="' + section + '[]" rows="2"></textarea>',
+			"</td>",
+
+			'<td class="collapsing">',
+
+			'<div class="ui mini floating dropdown icon button doc-type">',
+			'<i class="bars icon"></i>',
 			'<div class="menu">',
 			'<div class="item" data-value="paragraph">Paragraf</div>',
 			'<div class="item" data-value="list">List</div>',
@@ -227,68 +198,47 @@ class DocumentBuilder {
 			"</div>",
 			"</div>",
 
-			'<button type="button" class="ui red icon button btn-del-row">',
+			"</td>",
+
+			'<td class="collapsing">',
+			'<button type="button" class="ui mini red icon button btn-del-row">',
 			'<i class="trash icon"></i>',
 			"</button>",
-
-			"</div>",
 			"</td>",
+
 			"</tr>",
 		].join("");
 	}
 
-	// ============================================================
+	// ======================================================
 	// EVENTS
-	// ============================================================
+	// ======================================================
 
 	bindEvents() {
-		const self = this;
+		var self = this;
 
 		this.container.off("click", ".btn-add-row");
-		this.container.off("click", ".btn-del-row");
-
-		// add row
 
 		this.container.on("click", ".btn-add-row", function () {
-			const section = $(this).data("section");
+			var section = $(this).data("section");
 
-			const tbody = self.container.find(`table[name="${section}"] tbody`);
+			var tbody = self.container.find('table[name="' + section + '"] tbody');
 
-			const index = tbody.children().length + 1;
-
-			const text = self.autoNumber(section, index);
-
-			tbody.append(self.buildRow(section, text));
+			tbody.append(self.buildRow(section));
 
 			self.initFomantic();
 		});
 
-		// delete row
+		this.container.off("click", ".btn-del-row");
 
 		this.container.on("click", ".btn-del-row", function () {
 			$(this).closest("tr").remove();
 		});
 	}
 
-	// ============================================================
-	// AUTO NUMBERING
-	// ============================================================
-
-	autoNumber(section, index) {
-		if (section === "menimbang") {
-			return String.fromCharCode(96 + index) + ". ";
-		}
-
-		if (section === "mengingat") {
-			return index + ". ";
-		}
-
-		return "";
-	}
-
-	// ============================================================
+	// ======================================================
 	// INIT FOMANTIC
-	// ============================================================
+	// ======================================================
 
 	initFomantic() {
 		this.container.find(".ui.dropdown").dropdown();
@@ -301,36 +251,46 @@ class DocumentBuilder {
 
 		this.container.find(".ui.checkbox").checkbox();
 	}
-	static initLookupDropdown() {
+
+	// ======================================================
+	// LOOKUP DROPDOWN
+	// ======================================================
+
+	static initLookupDropdown(data) {
+		if (!data) return;
+
+		var alias = {
+			pemberi_tgs: "asn",
+			asn: "asn",
+		};
+
 		$(".lookup-dropdown").each(function () {
-			const el = $(this);
-			const source = el.data("source");
+			var el = $(this);
+			var source = el.data("source");
 
-			// ==============================
-			// LOCAL DATA (ASN dari schema)
-			// ==============================
+			if (!source) return;
 
-			if (window.lookupData && window.lookupData[source]) {
-				const items = window.lookupData[source].map((row) => ({
-					name: row.uraian,
-					value: row.id,
-				}));
+			var real = source;
 
-				el.dropdown({
-					values: items,
-				});
-
-				return;
+			if (!data[source] && alias[source]) {
+				real = alias[source];
 			}
 
-			// ==============================
-			// FALLBACK API
-			// ==============================
+			var dataset = data[real];
+
+			if (!dataset) return;
+
+			var values = [];
+
+			dataset.forEach((row) => {
+				values.push({
+					name: row.uraian,
+					value: row.id,
+				});
+			});
 
 			el.dropdown({
-				apiSettings: {
-					url: "/dynamic",
-				},
+				values: values,
 			});
 		});
 	}

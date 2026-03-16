@@ -55,13 +55,13 @@ mendukung:
 	// TEXTAREA
 	// ==================================================
 
-	static textarea(label, name) {
+	static textarea(label, name, rows = 2) {
 		return `
-        <div class="field">
-            <label>${label}</label>
-            <textarea name="${name}"></textarea>
-        </div>
-        `;
+	<div class="field">
+		${label ? `<label>${label}</label>` : ""}
+		<textarea name="${name}" rows="${rows}"></textarea>
+	</div>
+	`;
 	}
 
 	// ==================================================
