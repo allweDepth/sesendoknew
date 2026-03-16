@@ -107,32 +107,33 @@ class TataNaskahModule {
 	 * BIND EVENTS
 	 */
 	bindEvents() {
-		/**
-		 * tombol tambah
-		 */
+		// ======================================================
+		// FIX: HAPUS EVENT LAMA AGAR TIDAK DUPLIKASI
+		// ======================================================
+
+		$(document).off("click", "#btn-add"); // hapus handler lama
+		$(document).off("form:success"); // hapus handler lama
+		$(document).off("click", ".kelompok-card"); // hapus handler lama
+		$(document).off("click", ".btn-open-naskah"); // hapus handler lama
+
+		// ======================================================
+		// BIND EVENT BARU
+		// ======================================================
+
 		$(document).on("click", "#btn-add", () => {
 			this.showAddForm();
 		});
 
-		/**
-		 * reload table setelah form submit
-		 */
 		$(document).on("form:success", () => {
 			this.tableManager.loadData();
 		});
 
-		/**
-		 * klik kelompok naskah
-		 */
 		$(document).on("click", ".kelompok-card", (e) => {
 			const kelompokId = $(e.currentTarget).data("id");
 
 			this.loadJenis(kelompokId);
 		});
 
-		/**
-		 * klik jenis naskah
-		 */
 		$(document).on("click", ".btn-open-naskah", (e) => {
 			const jenisId = $(e.currentTarget).data("jenis-id");
 

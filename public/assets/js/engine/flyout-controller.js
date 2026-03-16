@@ -45,9 +45,21 @@ class FlyoutController {
 			self.open($(this));
 		});
 
+		// ======================================================
 		// SUBMIT BUTTON
-		$(document).on("click", ".btnSubmit", function () {
-			self.getActiveForm().submit();
+		// ======================================================
+
+		// sebelum
+		// self.getActiveForm().submit();
+
+		$(document).on("click", ".btnSubmit", function (e) {
+			// intercept klik tombol
+
+			e.preventDefault(); // cegah submit native
+
+			const form = self.getActiveForm(); // ambil form aktif
+
+			form.trigger("submit"); // trigger submit event jQuery agar FormEngine menangkap
 		});
 
 		// CLOSE FLYOUT
