@@ -206,34 +206,25 @@ SET VALUE NORMAL
 	bindEvents() {
 		const eventName = `submit.formEngine.${this.state.tbl}`;
 
-		// =====================================================
-		// HAPUS EVENT LAMA DENGAN SELECTOR
-		// =====================================================
-		// =============================================
-		// HAPUS SEMUA EVENT FORM ENGINE
-		// =============================================
-		$(document).off(`submit.formEngine.${this.state.tbl}`);
+		const form = $(this.formSelector); // ambil form langsung
 
-		// =============================================
-		// BIND EVENT BARU
-		// =============================================
 		// ======================================================
-		// BIND EVENT SUBMIT FORM
+		// HAPUS EVENT LAMA
 		// ======================================================
 
-		// sebelum
-		// $(document).on(`submit.formEngine.${this.state.tbl}`, this.formSelector, (e) => {
+		form.off(eventName);
 
-		$(document).on(`submit.formEngine.${this.state.tbl}`, `${this.formSelector}`, (e) => {
-			// pastikan selector literal
+		// ======================================================
+		// BIND EVENT SUBMIT LANGSUNG KE FORM
+		// ======================================================
 
+		form.on(eventName, (e) => {
 			e.preventDefault(); // cegah submit browser
+			e.stopImmediatePropagation(); // cegah handler lain
 
-			e.stopPropagation(); // cegah bubbling submit
+			this.submit(); // jalankan engine
 
-			this.submit(); // jalankan submit engine
-
-			return false; // cegah reload browser
+			return false; // jaga-jaga
 		});
 	}
 
@@ -247,7 +238,11 @@ SET VALUE NORMAL
 	 * SUBMIT FORM
 	 * ============================================================
 	 */
-	submit() {
+	submit(e) {
+		if (e) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+		}
 		// ======================================================
 		// CEGAH DOUBLE SUBMIT GLOBAL
 		// ======================================================
