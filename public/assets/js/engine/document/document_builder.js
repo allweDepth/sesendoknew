@@ -150,7 +150,11 @@ class DocumentBuilder {
 		var th = [];
 
 		columns.forEach((c) => {
-			th.push("<th>" + c + "</th>");
+			if (c === "JENIS") {
+				th.push('<th class="collapsing">' + c + "</th>");
+			} else {
+				th.push("<th>" + c + "</th>");
+			}
 		});
 
 		th.push(
@@ -164,13 +168,16 @@ class DocumentBuilder {
 		);
 
 		return [
-			'<table class="ui celled structured table" name="' + key + '">',
+			'<table class="ui celled structured table" name="' + key + '" data-columns="' + columns.length + '">',
+
 			"<thead>",
 			"<tr>",
 			th.join(""),
 			"</tr>",
 			"</thead>",
+
 			"<tbody></tbody>",
+
 			"</table>",
 		].join("");
 	}
@@ -179,35 +186,39 @@ class DocumentBuilder {
 	// ROW BUILDER
 	// ======================================================
 
-	buildRow(section) {
-		return [
-			"<tr>",
+	buildRow(section, columns) {
+		var td = [];
 
-			"<td>",
-			'<textarea class="doc-text" name="' + section + '[]" rows="2"></textarea>',
-			"</td>",
+		td.push('<textarea class="doc-text" name="' + section + '[]" rows="2"></textarea>');
 
-			'<td class="collapsing">',
+		if (columns >= 2) {
+			td.push(
+				'<div class="ui mini floating dropdown icon button doc-type">' +
+					'<i class="bars icon"></i>' +
+					'<div class="menu">' +
+					'<div class="item" data-value="paragraph">Paragraf</div>' +
+					'<div class="item" data-value="list">List</div>' +
+					'<div class="item" data-value="numbered">Numbered</div>' +
+					"</div>" +
+					"</div>",
+			);
+		}
 
-			'<div class="ui mini floating dropdown icon button doc-type">',
-			'<i class="bars icon"></i>',
-			'<div class="menu">',
-			'<div class="item" data-value="paragraph">Paragraf</div>',
-			'<div class="item" data-value="list">List</div>',
-			'<div class="item" data-value="numbered">Numbered</div>',
-			"</div>",
-			"</div>",
+		var cells = [];
 
-			"</td>",
+		td.forEach((content) => {
+			cells.push("<td>" + content + "</td>");
+		});
 
-			'<td class="collapsing">',
-			'<button type="button" class="ui mini red icon button btn-del-row">',
-			'<i class="trash icon"></i>',
-			"</button>",
-			"</td>",
+		cells.push(
+			'<td class="collapsing">' +
+				'<button type="button" class="ui mini red icon button btn-del-row">' +
+				'<i class="trash icon"></i>' +
+				"</button>" +
+				"</td>",
+		);
 
-			"</tr>",
-		].join("");
+		return ["<tr>", cells.join(""), "</tr>"].join("");
 	}
 
 	// ======================================================
@@ -222,9 +233,13 @@ class DocumentBuilder {
 		this.container.on("click", ".btn-add-row", function () {
 			var section = $(this).data("section");
 
-			var tbody = self.container.find('table[name="' + section + '"] tbody');
+			var table = self.container.find('table[name="' + section + '"]');
 
-			tbody.append(self.buildRow(section));
+			var tbody = table.find("tbody");
+
+			var cols = parseInt(table.data("columns") || 2);
+
+			tbody.append(self.buildRow(section, cols));
 
 			self.initFomantic();
 		});
@@ -266,6 +281,7 @@ class DocumentBuilder {
 
 		$(".lookup-dropdown").each(function () {
 			var el = $(this);
+
 			var source = el.data("source");
 
 			if (!source) return;
