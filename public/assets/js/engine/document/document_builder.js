@@ -249,6 +249,16 @@ class DocumentBuilder {
 		this.container.on("click", ".btn-del-row", function () {
 			$(this).closest("tr").remove();
 		});
+
+		// =====================================
+		// INIT DROPDOWN ENGINE
+		// =====================================
+
+		if (!this.dropdownEngine) {
+			this.dropdownEngine = new DropdownEngine(this.container);
+
+			this.dropdownEngine.init();
+		}
 	}
 	// ======================================================
 	// COLLECT STRUCTURE JSON
