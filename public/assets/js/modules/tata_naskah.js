@@ -280,7 +280,8 @@ class TataNaskahModule {
 
 				// 🔥 WAJIB: init dropdown engine setelah render
 				if (!window.dropdownEngine) {
-					window.dropdownEngine = new DropdownEngine($("#form_modal"));
+					window.dropdownEngine = new DropdownEngine($("#form_modal"), res);
+					window.dropdownEngine.init();
 				}
 
 				window.dropdownEngine.init();

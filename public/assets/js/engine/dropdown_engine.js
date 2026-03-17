@@ -1,51 +1,49 @@
-// FILE: public/assets/js/engine/dropdown_engine.js
-
 class DropdownEngine {
-	constructor(container) {
-		this.container = container || $("body");
+	constructor(container, data) {
+		this.container = container;
+		this.data = data;
 	}
 
 	init() {
-		this.bindDropdownInsert();
+		this.bind();
 	}
 
-	bindDropdownInsert() {
+	bind() {
 		const self = this;
 
 		this.container.find(".lookup-dropdown").each(function () {
-			const dropdown = $(this);
+			const el = $(this);
+			const source = el.data("source");
 
-			// destroy dulu kalau sudah pernah init
-			if (dropdown.hasClass("initialized")) {
-				dropdown.dropdown("destroy");
+			const dataset = self.data[source] || [];
+			if (!dataset.length) return;
+
+			el.data("dataset", dataset);
+
+			if (el.hasClass("initialized")) {
+				el.dropdown("destroy");
 			}
 
-			dropdown.dropdown({
+			el.dropdown({
+				values: dataset.map((row) => ({
+					name: row.uraian,
+					value: row.id,
+				})),
+
 				onChange: function (value, text) {
 					if (!value) return;
 
-					const target = dropdown.data("target-table");
-					if (!target) return;
-
-					// 🔥 AMBIL DARI MEMORY (INI KUNCI)
-					const dataset = dropdown.data("dataset") || [];
-					const selected = dataset.find((row) => row.id == value) || {};
-
-					const data = {
-						id: value,
-						nama: text,
-						source: dropdown.data("source") || "",
-						...selected,
-					};
+					const selected = dataset.find((r) => r.id == value) || {};
 
 					self.container.trigger("dropdown:select", {
-						target: target,
-						data: data,
+						target: el.data("target-table"),
+						data: selected,
+						name: el.find("input[type=hidden]").attr("name"),
 					});
 				},
 			});
 
-			dropdown.addClass("initialized");
+			el.addClass("initialized");
 		});
 	}
 }
