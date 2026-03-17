@@ -247,12 +247,16 @@ class DocumentBuilder {
 
 		let tbody = table.find("tbody");
 
-		let id = data.id || "";
+		// =====================================
+		// FIX: fallback unique key
+		// =====================================
+		let id = data.id || data.nip || data.nama || ""; // // FIX
+
 		if (id && tbody.find(`tr[data-id="${id}"]`).length > 0) return; // prevent duplicate
 
 		let columns = table.data("columns") || []; // 🔥 ambil dari schema, bukan header
 
-		let row = `<tr data-id="${id}">`;
+		let row = `<tr data-id="${id || Date.now()}">`; // // FIX
 
 		columns.forEach((col) => {
 			let key = col.toLowerCase().replace(/\s+/g, "_"); // 🔥 normalisasi key dari schema
@@ -420,7 +424,13 @@ class DocumentBuilder {
 							row.align = rowAlign; // simpan align
 						}
 					}
-
+					// =====================================
+					// FIX: simpan identity row
+					// =====================================
+					let rowId = tr.attr("data-id"); // // FIX
+					if (rowId) {
+						row._id = rowId; // // FIX
+					}
 					if (Object.keys(row).length) {
 						rows.push(row);
 					}
