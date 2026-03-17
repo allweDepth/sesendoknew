@@ -16,6 +16,7 @@ class DropdownEngine {
 			const source = el.data("source");
 
 			const alias = {
+				penandatangan: "asn",
 				pemberi_tgs: "asn",
 				asn: "asn",
 			};
@@ -41,8 +42,8 @@ class DropdownEngine {
 
 					const selected = dataset.find((r) => r.id == value) || {};
 
-					self.container.trigger("dropdown:select", {
-						target: el.data("target-table"),
+					$(document).trigger("dropdown:select", {
+						target: el.attr("data-target-table") || el.attr("data-target"),
 						data: selected,
 						name: el.find("input[type=hidden]").attr("name"),
 					});

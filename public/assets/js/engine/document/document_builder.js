@@ -109,23 +109,30 @@ class DocumentBuilder {
 		let key = field.name;
 		let columns = field.columns || [];
 
-		return `
-		<table class="ui celled table" 
-			name="${key}" 
-			data-columns='${JSON.stringify(columns)}'> <!-- 🔥 simpan kolom asli dari schema -->
-			<thead>
-			<tr>
-				${columns.map((c) => `<th>${c}</th>`).join("")}
-				<th class="collapsing">Aksi</th> <!-- 🔥 kolom aksi -->
-			</tr>
-			</thead>
-			<tbody></tbody>
-		</table>`;
-	}
+		let showAction = this.hasActionColumn(key); // 🔥 cek dulu
 
+		return `
+	<table class="ui celled table" 
+		name="${key}" 
+		data-columns='${JSON.stringify(columns)}'>
+		<thead>
+		<tr>
+			${columns.map((c) => `<th>${c}</th>`).join("")}
+			${showAction ? `<th class="collapsing">Aksi</th>` : ""} <!-- 🔥 conditional -->
+		</tr>
+		</thead>
+		<tbody></tbody>
+	</table>`;
+	}
+	// 🔥 tentukan tabel mana yang punya aksi
+	hasActionColumn(tableName) {
+		return ["nama_ditugaskan"].includes(tableName); // bisa tambah lagi nanti
+	}
 	renderEditableTable(field) {
 		let key = field.name;
 		let columns = field.columns || ["URAIAN", "JENIS"];
+
+		let showAction = this.hasActionColumn(key); // 🔥 cek
 
 		return `
 	<table class="ui celled structured table" 
@@ -134,7 +141,7 @@ class DocumentBuilder {
 		<thead>
 			<tr>
 				${columns.map((c) => `<th>${c}</th>`).join("")}
-				<th class="collapsing">Aksi</th> <!-- 🔥 header aksi -->
+				${showAction ? `<th class="collapsing">Aksi</th>` : ""}
 				<th class="collapsing">
 					<button type="button" class="ui mini green icon button btn-add-row" data-section="${key}">
 						<i class="plus icon"></i>
@@ -173,11 +180,11 @@ class DocumentBuilder {
 		// DROPDOWN SELECT
 		this.container.off("dropdown:select");
 
-		this.container.on("dropdown:select", (e, payload) => {
+		$(document).on("dropdown:select", (e, payload) => {
 			const { target, data, name } = payload;
 
 			// AUTO HEADER
-			if (name === "pemberi_tgs") {
+			if (name === "penandatangan") {
 				this.container.find('[name="jbt_pemberi_tgs"]').val(data.jabatan || "");
 				this.container.find('[name="pangkat_pemberi_tgs"]').val(data.pangkat || "");
 			}
