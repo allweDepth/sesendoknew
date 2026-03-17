@@ -24,16 +24,15 @@ class DocumentBuilder {
 			if (part) html.push(part);
 		});
 
-		this.container.append(html.join("")); // inject ke DOM
+		this.container.append(html.join(""));
 
-		this.initFomantic(); // init UI
+		this.bindEvents(); // FIX: bind dulu
 
-		// init dropdown engine (WAJIB)
+		this.initFomantic();
+
 		if (window.dropdownEngine) {
 			window.dropdownEngine.init();
 		}
-
-		this.bindEvents(); // bind event
 	}
 
 	// ======================================================
@@ -257,7 +256,10 @@ class DocumentBuilder {
 
 		columns.forEach((col) => {
 			let key = col.toLowerCase().replace(/\s+/g, "_"); // 🔥 normalisasi key dari schema
-			let value = data[key] || ""; // 🔥 langsung mapping tanpa normalize
+			// =====================================
+			// FIX: fallback mapping
+			// =====================================
+			let value = data[key] ?? data[col] ?? data.nama ?? data.text ?? ""; // // FIX
 
 			row += `
 			<td contenteditable="true" data-key="${key}">
@@ -450,23 +452,39 @@ class DocumentBuilder {
 				// =====================================
 				let schemaFields = [];
 
+				// =====================================
+				// FIX: flatten semua field schema
+				// =====================================
+				const extractFields = (items) => {
+					items.forEach((f) => {
+						if (f.name) {
+							schemaFields.push(f); // // FIX
+						}
+						if (Array.isArray(f.fields)) {
+							extractFields(f.fields); // // FIX recursive
+						}
+					});
+				};
+
 				if (this.schema) {
-					if (Array.isArray(this.schema.sections)) {
-						this.schema.sections.forEach((sec) => {
-							if (Array.isArray(sec.fields)) {
-								schemaFields = schemaFields.concat(sec.fields);
-							}
-						});
-					} else if (Array.isArray(this.schema)) {
-						schemaFields = this.schema;
+					let root = this.schema.sections || this.schema;
+					if (Array.isArray(root)) {
+						extractFields(root); // // FIX
 					}
 				}
 
 				// =====================================
 				// FIX: hanya ambil field yg ada di schema
 				// =====================================
-				const exists = schemaFields.find((f) => f.name === name); // // FIX
-				if (!exists) return; // // FIX
+				const fieldDef = schemaFields.find((f) => f.name === name); // // FIX
+				if (!fieldDef) return;
+
+				// =====================================
+				// FIX: skip dropdown_ajax yang punya target
+				// =====================================
+				if (fieldDef.type === "dropdown_ajax" && fieldDef.target) {
+					return; // // FIX
+				}
 
 				result[name] = $(el).val();
 			});
