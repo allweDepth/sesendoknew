@@ -25,6 +25,12 @@ class FlyoutController {
 			closable: false,
 			allowMultiple: true,
 			observeChanges: true,
+			// ================================
+			// FIX: CEGAH MODAL TUTUP SAAT SUBMIT
+			// ================================
+			onApprove: function () {
+				return false; //wajib: blok auto close
+			},
 		});
 
 		this.bindEvents();
