@@ -200,7 +200,9 @@ class TataNaskahModule {
                         data-container="modal" // target container modal
                         data-module="tata_naskah" // module aktif
                         data-jenis-id="${j.id}" // id jenis
-                        data-tbl="${j.kode_form}" // tipe dokumen
+                        data-kode-form="${j.kode_form}" // tipe dokumen
+                        data-tbl="trx_naskah_dinas"
+                        data-action="add"
                         data-nama="${j.nama}" // nama dokumen
                         data-kelompok="${j.kelompok_kode}" // kelompok
                         data-kelompok-nama="${j.kelompok_nama}" // label >

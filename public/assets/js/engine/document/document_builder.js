@@ -446,6 +446,13 @@ class DocumentBuilder {
 				let name = $(this).attr("name");
 				if (!name) return;
 
+				// =====================================
+				// FIX: exclude field sistem
+				// =====================================
+				if (["kode_form", "jenis_id", "action", "tbl"].includes(name)) {
+					return; // // FIX
+				}
+
 				result[name] = $(this).val();
 			});
 

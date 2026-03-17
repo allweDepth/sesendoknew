@@ -369,6 +369,18 @@ AMBIL STATE GLOBAL
 			formData += `&req=${encodeURIComponent(this.state.req)}`;
 		}
 
+		// =====================================
+		// FIX GLOBAL: forward semua state tambahan
+		// =====================================
+		Object.keys(this.state).forEach((key) => {
+			if (["action", "tbl", "req"].includes(key)) return; // skip core
+
+			const val = this.state[key];
+
+			if (val !== null && val !== undefined && typeof val !== "function") {
+				formData.append(key, val); // // FIX GLOBAL
+			}
+		});
 		this.ajax.request({
 			data: formData,
 
