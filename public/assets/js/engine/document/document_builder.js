@@ -435,25 +435,40 @@ class DocumentBuilder {
 				result[tableName] = rows;
 			}
 		});
-
 		// =========================
-		// FIELD BIASA (TIDAK DIUBAH)
+		// FIELD BIASA (SCHEMA DRIVEN)
 		// =========================
 		this.container
 			.find("input, textarea, select")
 			.not("table input, table textarea")
-			.each(function () {
-				let name = $(this).attr("name");
+			.each((i, el) => {
+				let name = $(el).attr("name");
 				if (!name) return;
 
 				// =====================================
-				// FIX: exclude field sistem
+				// FIX: ambil schema fields
 				// =====================================
-				if (["kode_form", "jenis_id", "action", "tbl"].includes(name)) {
-					return; // // FIX
+				let schemaFields = [];
+
+				if (this.schema) {
+					if (Array.isArray(this.schema.sections)) {
+						this.schema.sections.forEach((sec) => {
+							if (Array.isArray(sec.fields)) {
+								schemaFields = schemaFields.concat(sec.fields);
+							}
+						});
+					} else if (Array.isArray(this.schema)) {
+						schemaFields = this.schema;
+					}
 				}
 
-				result[name] = $(this).val();
+				// =====================================
+				// FIX: hanya ambil field yg ada di schema
+				// =====================================
+				const exists = schemaFields.find((f) => f.name === name); // // FIX
+				if (!exists) return; // // FIX
+
+				result[name] = $(el).val();
 			});
 
 		return result;
