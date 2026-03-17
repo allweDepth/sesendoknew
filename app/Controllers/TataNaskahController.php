@@ -484,6 +484,10 @@ class TataNaskahController extends Controller
       // ============================
 
       $nama = strtolower($row['nama']);
+
+      // perbaiki titik tanpa spasi → kasih spasi
+      $nama = preg_replace('/\.(\S)/', '. $1', $nama);
+
       $nama = ucwords($nama);
 
       // ============================

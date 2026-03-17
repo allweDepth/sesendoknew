@@ -373,4 +373,61 @@ class DocumentBuilder {
 			});
 		});
 	}
+	// ==============================
+	// INSERT DROPDOWN → TABLE (GENERIC)
+	// ==============================
+
+	insertToTable(target, data) {
+		// ==============================
+		// AMBIL TABLE TARGET
+		// ==============================
+
+		const table = this.container.find(`table[name="${target}"]`);
+
+		if (!table.length) return;
+
+		const tbody = table.find("tbody");
+
+		// ==============================
+		// AMBIL KOLOM DARI THEAD
+		// ==============================
+
+		const columns = [];
+
+		table.find("thead th").each(function () {
+			columns.push($(this).text().trim().toLowerCase());
+		});
+
+		// ==============================
+		// BUILD ROW
+		// ==============================
+
+		let row = "<tr>";
+
+		columns.forEach((col) => {
+			// mapping otomatis berdasarkan nama kolom
+			const value = data[col] ?? "";
+
+			row += `
+			<td>
+				<input 
+					type="text" 
+					name="${target}_${col}[]" 
+					value="${value}" 
+					data-field="${col}"
+				/>
+			</td>
+		`;
+		});
+
+		row += `
+		<td>
+			<button type="button" class="ui red mini button btn-remove-row">
+				<i class="trash icon"></i>
+			</button>
+		</td>
+	</tr>`;
+
+		tbody.append(row);
+	}
 }
