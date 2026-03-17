@@ -15,7 +15,13 @@ class DropdownEngine {
 			const el = $(this);
 			const source = el.data("source");
 
-			const dataset = self.data[source] || [];
+			const alias = {
+				pemberi_tgs: "asn",
+				asn: "asn",
+			};
+
+			const real = self.data[source] ? source : alias[source];
+			const dataset = self.data[real] || [];
 			if (!dataset.length) return;
 
 			el.data("dataset", dataset);

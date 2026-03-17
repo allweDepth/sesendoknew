@@ -27,6 +27,12 @@ class DocumentBuilder {
 		this.container.append(html.join(""));
 
 		this.initFomantic();
+
+		// 🔥 INI YANG HILANG (WAJIB ADA)
+		if (window.dropdownEngine) {
+			window.dropdownEngine.init();
+		}
+
 		this.bindEvents();
 	}
 
@@ -120,7 +126,7 @@ class DocumentBuilder {
 
 		th.push(`
 			<th class="collapsing">
-				<button class="ui mini green icon button btn-add-row" data-section="${key}">
+				<button type="button" class="ui mini green icon button btn-add-row" data-section="${key}">
 					<i class="plus icon"></i>
 				</button>
 			</th>`);
@@ -133,7 +139,95 @@ class DocumentBuilder {
 	}
 
 	// ======================================================
-	// ROW BUILDER (LEGACY TETAP ADA)
+	// EVENTS
+	// ======================================================
+
+	bindEvents() {
+		let self = this;
+
+		// ADD ROW MANUAL (TIDAK DIUBAH)
+		this.container.off("click", ".btn-add-row");
+		this.container.on("click", ".btn-add-row", function () {
+			let section = $(this).data("section");
+			let table = self.container.find(`table[name="${section}"]`);
+			let tbody = table.find("tbody");
+			let cols = parseInt(table.data("columns") || 2);
+
+			tbody.append(self.buildRow(section, cols));
+			self.initFomantic();
+		});
+
+		// DELETE ROW (TIDAK DIUBAH)
+		this.container.off("click", ".btn-del-row");
+		this.container.on("click", ".btn-del-row", function () {
+			$(this).closest("tr").remove();
+		});
+
+		// 🔥 EVENT DROPDOWN (INTI MASALAH KAMU)
+		this.container.off("dropdown:select");
+
+		this.container.on("dropdown:select", (e, payload) => {
+			const { target, data, name } = payload;
+
+			// HEADER AUTO
+			if (name === "pemberi_tgs") {
+				this.container.find('[name="jbt_pemberi_tgs"]').val(data.jabatan || "");
+				this.container.find('[name="pangkat_pemberi_tgs"]').val(data.pangkat || "");
+			}
+
+			// TABLE INSERT
+			if (target) {
+				this.insertToTable(target, data);
+			}
+		});
+	}
+
+	// ======================================================
+	// INSERT TABLE (FIX FINAL)
+	// ======================================================
+
+	insertToTable(target, data) {
+		let table = this.container.find(`table[name="${target}"]`);
+		if (!table.length) return;
+
+		let tbody = table.find("tbody");
+
+		// 🔥 CEK DUPLIKAT PALING SEDERHANA
+		let nip = data.nip || "";
+
+		if (nip && tbody.find(`tr[data-nip="${nip}"]`).length > 0) {
+			return; // STOP, sudah ada
+		}
+
+		let columns = [];
+		table.find("thead th").each(function () {
+			let col = $(this).text().trim().toLowerCase();
+			if (col) columns.push(col);
+		});
+
+		let row = `<tr data-nip="${nip}">`;
+
+		columns.forEach((col) => {
+			let value = data[col] || data.uraian || "";
+
+			row += `<td>
+			<input type="text" name="${target}_${col}[]" value="${value}">
+		</td>`;
+		});
+
+		row += `
+	<td>
+		<button type="button" class="ui mini red icon button btn-del-row">
+			<i class="trash icon"></i>
+		</button>
+	</td>
+	</tr>`;
+
+		tbody.append(row);
+	}
+
+	// ======================================================
+	// LEGACY ROW (TIDAK DIUBAH)
 	// ======================================================
 
 	buildRow(section, columns) {
@@ -157,109 +251,12 @@ class DocumentBuilder {
 
 		cells.push(`
 			<td class="collapsing">
-				<button class="ui mini red icon button btn-del-row">
+				<button type="button" class="ui mini red icon button btn-del-row">
 					<i class="trash icon"></i>
 				</button>
 			</td>`);
 
 		return `<tr>${cells.join("")}</tr>`;
-	}
-
-	// ======================================================
-	// EVENTS (FINAL - TERIMA EVENT SAJA)
-	// ======================================================
-
-	bindEvents() {
-		let self = this;
-
-		// ADD ROW
-		this.container.off("click", ".btn-add-row");
-		this.container.on("click", ".btn-add-row", function () {
-			let section = $(this).data("section");
-			let table = self.container.find(`table[name="${section}"]`);
-			let tbody = table.find("tbody");
-			let cols = parseInt(table.data("columns") || 2);
-
-			tbody.append(self.buildRow(section, cols));
-			self.initFomantic();
-		});
-
-		// DELETE ROW
-		this.container.off("click", ".btn-del-row");
-		this.container.on("click", ".btn-del-row", function () {
-			$(this).closest("tr").remove();
-		});
-
-		// 🔥 TERIMA EVENT DARI DropdownEngine
-		this.container.off("dropdown:select");
-
-		this.container.on("dropdown:select", (e, payload) => {
-			const { target, data, name } = payload;
-
-			// HEADER AUTO
-			if (name === "pemberi_tgs") {
-				this.container.find('[name="jbt_pemberi_tgs"]').val(data.jabatan || "");
-				this.container.find('[name="pangkat_pemberi_tgs"]').val(data.pangkat || "");
-			}
-
-			// TABLE AUTO
-			if (target) {
-				this.insertToTable(target, data);
-			}
-		});
-	}
-
-	// ======================================================
-	// INSERT TABLE (TETAP SUPPORT SEMUA MODE)
-	// ======================================================
-
-	insertToTable(target, data) {
-		let table = this.container.find(`table[name="${target}"]`);
-		if (!table.length) return;
-
-		let tbody = table.find("tbody");
-
-		if (tbody.find(`tr[data-id="${data.id}"]`).length) return;
-
-		let columns = [];
-		table.find("thead th").each(function () {
-			let col = $(this).text().trim().toLowerCase();
-			if (col) columns.push(col);
-		});
-
-		const map = {
-			nama: data.nama || data.uraian || "",
-			pangkat: data.pangkat || "",
-			nip: data.nip || "",
-			jabatan: data.jabatan || "",
-			jabatan_sk: data.jabatan_sk || "",
-		};
-
-		let row = `<tr data-id="${data.id}">`;
-
-		columns.forEach((col, i) => {
-			let value = map[col] ?? "";
-
-			if (columns.length > 2) {
-				row += `<td><input type="text" name="${target}_${col}[]" value="${value}"></td>`;
-			} else {
-				row +=
-					i === 0
-						? `<td><textarea class="doc-text">${value}</textarea></td>`
-						: `<td><div class="ui mini dropdown doc-type"></div></td>`;
-			}
-		});
-
-		row += `
-			<td class="collapsing">
-				<button class="ui mini red icon button btn-del-row">
-					<i class="trash icon"></i>
-				</button>
-			</td>
-		</tr>`;
-
-		tbody.append(row);
-		this.initFomantic();
 	}
 
 	// ======================================================
@@ -271,5 +268,26 @@ class DocumentBuilder {
 		this.container.find(".doc-type").dropdown();
 		this.container.find(".ui.calendar").calendar({ type: "date" });
 		this.container.find(".ui.checkbox").checkbox();
+	}
+	collectStructure() {
+		let result = {};
+
+		this.container.find("input, textarea, select").each(function () {
+			let name = $(this).attr("name");
+			if (!name) return;
+
+			let value = $(this).val();
+
+			// array support
+			if (name.endsWith("[]")) {
+				let key = name.replace("[]", "");
+				if (!result[key]) result[key] = [];
+				result[key].push(value);
+			} else {
+				result[name] = value;
+			}
+		});
+
+		return result;
 	}
 }
