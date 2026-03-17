@@ -313,6 +313,39 @@ GET SINGLE ROW
       [$id]
     )->fetch();
 
+    // ======================================================
+    // 🔥 TAMBAHAN: LOAD RELATIONS
+    // ======================================================
+
+    $profile = $this->getProfileByTable($table);
+
+    if (!empty($profile['write_relations'])) {
+
+      foreach ($profile['write_relations'] as $relTable => $rel) {
+
+        $fk = $rel['fk'];
+
+        $relRow = $this->db->query(
+          "SELECT * FROM `$relTable` WHERE `$fk` = ? LIMIT 1",
+          [$id]
+        )->fetch();
+
+        if (!$relRow) continue;
+
+        // 🔥 JSON RELATION
+        if ($rel['type'] === 'json' && !empty($relRow['meta_json'])) {
+
+          $json = json_decode($relRow['meta_json'], true);
+
+          if (is_array($json)) {
+            $row = array_merge($row, $json);
+          }
+        } else {
+          $row = array_merge($row, $relRow);
+        }
+      }
+    }
+
     return JsonResponse::success("Data ditemukan", [], $row ?? []);
   }
 
