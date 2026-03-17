@@ -17,7 +17,6 @@ class DropdownEngine {
 
 			const alias = {
 				penandatangan: "asn",
-				pemberi_tgs: "asn",
 				asn: "asn",
 			};
 
