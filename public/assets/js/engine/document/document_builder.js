@@ -439,9 +439,14 @@ class DocumentBuilder {
 			// 🔥 NORMALISASI OUTPUT
 			if (type === "editable_table") {
 				result[tableName] = rows.map((r) => ({
+					// =====================================
+					// FIX: preserve identity
+					// =====================================
+					...(r._id ? { _id: r._id } : {}), // // FIX
+
 					type: r.type || "paragraph",
 					text: r.text || "",
-					...(r.align ? { align: r.align } : {}), // 🔥 FIX: jangan hilangkan align
+					...(r.align ? { align: r.align } : {}),
 				}));
 			} else {
 				result[tableName] = rows;
