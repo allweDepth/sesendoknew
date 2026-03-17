@@ -180,9 +180,9 @@ class DocumentBuilder {
 		});
 
 		// DROPDOWN SELECT
-		this.container.off("dropdown:select");
+		$(document).off("dropdown:select.documentBuilder"); // 🔥 namespace biar aman
 
-		$(document).on("dropdown:select", (e, payload) => {
+		$(document).on("dropdown:select.documentBuilder", (e, payload) => {
 			const { target, data, name } = payload;
 
 			// AUTO HEADER
