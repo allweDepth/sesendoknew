@@ -218,8 +218,10 @@ ISI FIELD TIPE UNTUK MODULE MAPPING
 		}
 
 		if (container === "modal") {
+			this.activeContainer = "modal"; // // FIX: set container aktif
 			$("#mainModal").modal("show");
 		} else {
+			this.activeContainer = "flyout"; // // FIX: set container aktif
 			$(".sidebarkanan").sidebar("show");
 		}
 
