@@ -1472,7 +1472,14 @@ $profiles = [
       ]
 
     ],
-
+    // JANGAN DUPLIKAT
+    'not_duplicate' => [
+      'nomor',
+      'tgl_surat_dibuat',
+      'kd_wilayah',
+      'tahun',
+      'kd_opd'
+    ],
     // ===================================================
     // COUNTER
     // ===================================================

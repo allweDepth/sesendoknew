@@ -813,7 +813,28 @@ IGNORE SYSTEM FIELD
     if (!$oldData) {
       return JsonResponse::error("Data tidak ditemukan");
     }
+    // ======================================================
+    // 🔥 CEK PERUBAHAN NOMOR + TANGGAL
+    // ======================================================
 
+    if (
+      isset($filtered['nomor'], $filtered['tgl_surat_dibuat'])
+    ) {
+
+      if (
+        $filtered['nomor'] != $oldData['nomor']
+        || $filtered['tgl_surat_dibuat'] != $oldData['tgl_surat_dibuat']
+      ) {
+
+        // ==================================================
+        // 🔥 CONVERT UPDATE → INSERT
+        // ==================================================
+
+        unset($filtered[$primaryKey]);
+
+        return $this->insert($table, $filtered);
+      }
+    }
     /* =====================================================
 4️⃣ AUTO FIELD RESOLUTION
 ===================================================== */
