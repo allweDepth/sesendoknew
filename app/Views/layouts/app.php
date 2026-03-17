@@ -16,10 +16,12 @@
     padding: 20px !important;
   }
 
+  /* 🔥 FIX GLOBAL SCROLL (JANGAN LOCK TOTAL) */
   html,
   body {
     height: 100%;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   /* FIX SEGMENT PUSHABLE */
@@ -27,7 +29,6 @@
     height: calc(100vh - 40px);
     padding: 0 !important;
     overflow: hidden;
-    /* PENTING */
   }
 
   /* PUSHER */
@@ -56,6 +57,7 @@
   /* Default (Desktop) */
   .sidebarkanan {
     width: 420px !important;
+    display: flex;
   }
 
   /* Tablet */
@@ -72,11 +74,7 @@
     }
   }
 
-  .sidebarkanan {
-    width: 420px;
-    display: flex;
-  }
-
+  /* FLYOUT */
   .flyout-container {
     display: flex;
     flex-direction: column;
@@ -93,6 +91,7 @@
     border-top: 1px solid rgba(0, 0, 0, 0.05);
   }
 
+  /* TOAST */
   #toastContainer {
     position: absolute;
     top: 5px;
@@ -101,9 +100,90 @@
     z-index: 9999;
   }
 
-  /* untuk tabel */
+  /* TABLE WRAPPER */
   .table-wrapper {
     overflow-x: auto;
+  }
+
+  /* ================================
+   DOCUMENT BUILDER (DESKTOP)
+================================ */
+
+  /* container cell */
+  .doc-cell {
+    position: relative;
+    padding-top: 28px !important;
+  }
+
+  /* editor */
+  .doc-editor {
+    min-height: 32px;
+    outline: none;
+  }
+
+  /* toolbar floating */
+  .doc-toolbar {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    display: none;
+    gap: 2px;
+  }
+
+  /* tampil saat hover / focus */
+  .doc-cell:hover .doc-toolbar,
+  .doc-editor:focus+.doc-toolbar {
+    display: flex;
+  }
+
+  /* kecilkan button */
+  .doc-toolbar .button {
+    padding: 4px !important;
+  }
+
+  /* aktif */
+  .doc-toolbar .button.active {
+    background: #2185d0 !important;
+    color: #fff !important;
+  }
+
+  /* ================================
+   MOBILE FIX (TIDAK GANGGU DESKTOP)
+================================ */
+
+  @media (max-width: 768px) {
+
+    /* 🔥 table tidak kepotong */
+    .ui.table {
+      display: block;
+      overflow-x: auto;
+    }
+
+    /* 🔥 cell spacing normal */
+    .doc-cell {
+      padding-top: 8px !important;
+    }
+
+    /* 🔥 toolbar jadi inline */
+    .doc-toolbar {
+      position: static !important;
+      display: grid !important;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    /* 🔥 editor lebih besar */
+    .doc-editor {
+      width: 100%;
+      min-height: 60px;
+    }
+
+    /* 🔥 tombol lebih besar (touch friendly) */
+    .doc-toolbar .button {
+      padding: 8px !important;
+      font-size: 14px;
+    }
   }
   </style>
 </head>

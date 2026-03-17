@@ -109,16 +109,17 @@ class DocumentBuilder {
 		let key = field.name;
 		let columns = field.columns || [];
 
-		let showAction = this.hasActionColumn(key); // 🔥 cek dulu
+		let showAction = this.hasActionColumn(key); // cek apakah ada kolom aksi
 
 		return `
 	<table class="ui celled table" 
 		name="${key}" 
+		data-type="table" // 🔥 FIX: tandai ini tabel biasa
 		data-columns='${JSON.stringify(columns)}'>
 		<thead>
 		<tr>
 			${columns.map((c) => `<th>${c}</th>`).join("")}
-			${showAction ? `<th class="collapsing">Aksi</th>` : ""} <!-- 🔥 conditional -->
+			${showAction ? `<th class="collapsing">Aksi</th>` : ""}
 		</tr>
 		</thead>
 		<tbody></tbody>
@@ -130,13 +131,14 @@ class DocumentBuilder {
 	}
 	renderEditableTable(field) {
 		let key = field.name;
-		let columns = field.columns || ["URAIAN", "JENIS"];
+		let columns = field.columns || ["URAIAN"];
 
-		let showAction = this.hasActionColumn(key); // 🔥 cek
+		let showAction = this.hasActionColumn(key);
 
 		return `
 	<table class="ui celled structured table" 
 		name="${key}" 
+		data-type="editable_table"
 		data-columns='${JSON.stringify(columns)}'>
 		<thead>
 			<tr>
@@ -194,6 +196,46 @@ class DocumentBuilder {
 				this.insertToTable(target, data);
 			}
 		});
+		// 🔥 HANDLE FORMAT DROPDOWN
+		// 🔥 INLINE TOOLBAR HANDLER
+		this.container.off("click", ".doc-toolbar button");
+
+		this.container.on("click", ".doc-toolbar button", function () {
+			let btn = $(this);
+			let tr = btn.closest("tr");
+			let toolbar = btn.closest(".doc-toolbar");
+
+			// 🔥 tentukan group (type / align / format)
+			let groupKey = btn.data("type") ? "type" : btn.data("align") ? "align" : "format";
+
+			// reset active dalam group
+			toolbar.find(`button[data-${groupKey}]`).removeClass("active");
+			btn.addClass("active");
+
+			// TYPE
+			let type = btn.data("type");
+			if (type) {
+				tr.attr("data-type", type);
+			}
+
+			// ALIGN
+			let align = btn.data("align");
+			if (align) {
+				tr.attr("data-align", align);
+				tr.find(".doc-editor").css("text-align", align);
+			}
+
+			// FORMAT LABEL
+			let format = btn.data("format");
+			if (format === "label") {
+				let editor = tr.find(".doc-editor");
+				let val = editor.text().trim();
+
+				if (val && !val.includes(":")) {
+					editor.text(val + " : ");
+				}
+			}
+		});
 	}
 
 	// ======================================================
@@ -239,32 +281,70 @@ class DocumentBuilder {
 	// ======================================================
 
 	buildRow(section, columns) {
+		let table = this.container.find(`table[name="${section}"]`);
+		let cols = table.data("columns") || [];
+
+		let row = `<tr data-type="paragraph" data-align="left">`; // default
 		let cells = [];
 
-		cells.push(`<td contenteditable="true" data-key="uraian"></td>`); // editable cell
+		cols.forEach((col, i) => {
+			let key = col.toLowerCase().replace(/\s+/g, "_");
 
-		if (columns >= 2) {
-			cells.push(`
-			<td>
-				<div class="ui mini floating dropdown icon button doc-type">
-					<i class="bars icon"></i>
-					<div class="menu">
-						<div class="item" data-value="paragraph">Paragraf</div>
-						<div class="item" data-value="list">List</div>
-						<div class="item" data-value="numbered">Numbered</div>
-					</div>
-				</div>
-			</td>`);
-		}
+			if (i === 0) {
+				// 🔥 CELL UTAMA + INLINE TOOLBAR
+				cells.push(`
+			<td data-key="${key}" class="doc-cell">
 
+	<div class="doc-editor" contenteditable="true"></div>
+
+	<!-- 🔥 TOOLBAR FLOAT -->
+	<div class="doc-toolbar">
+		<button type="button" class="ui icon button" data-type="paragraph">
+			<i class="align left icon"></i>
+		</button>
+		<button type="button" class="ui icon button" data-type="list">
+			<i class="list ul icon"></i>
+		</button>
+		<button type="button" class="ui icon button" data-type="numbered">
+			<i class="list ol icon"></i>
+		</button>
+
+		<button type="button" class="ui icon button" data-align="left">
+			<i class="align left icon"></i>
+		</button>
+		<button type="button" class="ui icon button" data-align="center">
+			<i class="align center icon"></i>
+		</button>
+		<button type="button" class="ui icon button" data-align="right">
+			<i class="align right icon"></i>
+		</button>
+		<button type="button" class="ui icon button" data-align="justify">
+			<i class="align justify icon"></i>
+		</button>
+
+		<button type="button" class="ui icon button" data-format="label">
+			<i class="tag icon"></i>
+		</button>
+	</div>
+
+</td>`);
+			} else {
+				// kolom lain tetap editable biasa
+				cells.push(`<td contenteditable="true" data-key="${key}"></td>`);
+			}
+		});
+
+		// tombol delete
 		cells.push(`
-		<td class="collapsing">
-			<button type="button" class="ui mini red icon button btn-del-row">
-				<i class="trash icon"></i>
-			</button>
-		</td>`);
+	<td class="collapsing">
+		<button type="button" class="ui mini red icon button btn-del-row">
+			<i class="trash icon"></i>
+		</button>
+	</td>`);
 
-		return `<tr>${cells.join("")}</tr>`;
+		row += cells.join("") + "</tr>";
+
+		return row;
 	}
 
 	// ======================================================
@@ -285,34 +365,80 @@ class DocumentBuilder {
 	collectStructure() {
 		let result = {};
 
-		// TABLE → JSON
+		// =========================
+		// TABLE → JSON (DINAMIS)
+		// =========================
 		this.container.find("table[name]").each(function () {
-			let tableName = $(this).attr("name");
+			let tableName = $(this).attr("name"); // nama tabel dari schema
+			let type = $(this).data("type"); // 🔥 FIX: ambil tipe tabel
 			let rows = [];
 
 			$(this)
 				.find("tbody tr")
 				.each(function () {
 					let row = {};
+					let tr = $(this);
+
+					// 🔥 ambil metadata row (dari dropdown)
+					let rowType = tr.attr("data-type");
+					let rowAlign = tr.attr("data-align");
 
 					$(this)
 						.find("td[data-key]")
 						.each(function () {
 							let key = $(this).data("key");
-							let value = $(this).text().trim();
+							let value;
 
-							row[key] = value;
+							// 🔥 FIX: ambil dari editor kalau ada
+							let editor = $(this).find(".doc-editor");
+
+							if (editor.length) {
+								value = editor.text().trim();
+							} else {
+								value = $(this).text().trim();
+							}
+
+							if (type === "editable_table") {
+								if (key === "uraian") {
+									row.text = value; // isi utama
+								} else {
+									row[key] = value; // fallback (future-proof)
+								}
+							} else {
+								row[key] = value;
+							}
 						});
+
+					// 🔥 FINALIZE editable_table
+					if (type === "editable_table") {
+						row.type = rowType || row.type || "paragraph"; // prioritas dropdown
+						row.text = row.text || "";
+
+						if (rowAlign) {
+							row.align = rowAlign; // simpan align
+						}
+					}
 
 					if (Object.keys(row).length) {
 						rows.push(row);
 					}
 				});
 
-			result[tableName] = rows;
+			// 🔥 NORMALISASI OUTPUT
+			if (type === "editable_table") {
+				result[tableName] = rows.map((r) => ({
+					type: r.type || "paragraph",
+					text: r.text || "",
+					...(r.align ? { align: r.align } : {}), // 🔥 FIX: jangan hilangkan align
+				}));
+			} else {
+				result[tableName] = rows;
+			}
 		});
 
-		// FIELD BIASA
+		// =========================
+		// FIELD BIASA (TIDAK DIUBAH)
+		// =========================
 		this.container
 			.find("input, textarea, select")
 			.not("table input, table textarea")
