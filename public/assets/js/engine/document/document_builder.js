@@ -1,3 +1,5 @@
+// FILE: public/assets/js/engine/document_builder.js
+
 class DocumentBuilder {
 	constructor(container, type) {
 		this.container = container;
@@ -8,7 +10,7 @@ class DocumentBuilder {
 	}
 
 	// ======================================================
-	// RENDER DOCUMENT
+	// RENDER
 	// ======================================================
 
 	render() {
@@ -16,18 +18,9 @@ class DocumentBuilder {
 
 		this.container.empty();
 
-		var fields = this.schema.sections || this.schema;
-		var html = [];
+		const fields = this.schema.sections || this.schema;
 
-		fields.forEach((field) => {
-			var part = this.renderElement(field);
-
-			if (part) {
-				html.push(part);
-			}
-		});
-
-		this.container.append(html.join(""));
+		this.container.append(fields.map((f) => this.renderElement(f)).join(""));
 
 		this.initFomantic();
 		DocumentBuilder.initLookupDropdown(this.data);
@@ -41,23 +34,13 @@ class DocumentBuilder {
 
 	renderElement(field) {
 		switch (field.type) {
-			case "message":
-				return UIComponents.message(field);
-
 			case "section":
-				return [
-					'<h4 class="ui horizontal divider header">',
-					'<i class="' + (field.icon || "file") + ' icon"></i>',
-					field.label,
-					"</h4>",
-				].join("");
-
-			case "auto_nomor":
-				return UIExtensions.renderAutoNumber({
-					label: field.label,
-					name: field.name,
-					value: this.data.nomor_auto,
-				});
+				return `
+					<h4 class="ui horizontal divider header">
+						<i class="${field.icon || "file"} icon"></i>
+						${field.label}
+					</h4>
+				`;
 
 			case "fields":
 				return this.renderFields(field);
@@ -67,170 +50,154 @@ class DocumentBuilder {
 
 			case "table":
 				return this.renderDataTable(field);
+			case "message":
+				return UIComponents.message(field);
 
 			case "dropdown_ajax":
-				// FIX: hanya dropdown tertentu yang punya target table
-
-				if (field.target) {
-					return UIComponents.lookupDropdown(field.label, field.name, field.source, field.target);
-				}
-
-				return UIComponents.lookupDropdown(field.label, field.name, field.source);
-
-			case "toggle":
-				return UIComponents.toggle(field.label, field.name);
-
-			case "textarea":
-				return UIComponents.textarea(field.label, field.name);
-
-			case "calendar":
-			case "date":
-				return UIComponents.calendar(field.label, field.name);
-
-			case "file":
-				return [
-					'<div class="field">',
-					"<label>" + field.label + "</label>",
-					'<input type="file" name="' + field.name + '">',
-					"</div>",
-				].join("");
+				return UIComponents.lookupDropdown(field.label, field.name, field.source, field.target);
 
 			default:
-				return UIComponents.input(field.label, field.name, field.type === "input" ? "text" : field.type);
+				return UIComponents.input(field.label, field.name, "text");
 		}
 	}
 
 	// ======================================================
-	// GROUP FIELDS
+	// GROUP
 	// ======================================================
 
 	renderFields(group) {
-		var size = group.size || "two";
-		var parts = [];
-
-		parts.push('<div class="' + size + ' fields">');
-		(group.fields || []).forEach((field) => {
-			parts.push(this.renderElement(field));
-		});
-
-		parts.push("</div>");
-
-		return parts.join("");
+		return `
+			<div class="${group.size || "two"} fields">
+				${group.fields.map((f) => this.renderElement(f)).join("")}
+			</div>
+		`;
 	}
 
 	// ======================================================
-	// DATA TABLE
+	// DATA TABLE (CONTENTEDITABLE)
 	// ======================================================
 
 	renderDataTable(field) {
-		var key = field.name;
-		var columns = field.columns || [];
-
-		var th = [];
-
-		columns.forEach((c) => {
-			th.push("<th>" + c + "</th>");
-		});
+		const key = field.name;
+		const columns = field.columns || [];
 
 		return `
-      <table 
-        class="ui celled table"
+		<table class="ui celled table"
+			name="${key}"
+			data-dropdown-target="${key}">
+			<thead>
+				<tr>
+					${columns.map((c) => `<th>${c}</th>`).join("")}
+					<th class="collapsing"></th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+		`;
+	}
+
+	// ======================================================
+	// EDITABLE TABLE (LEGACY)
+	// ======================================================
+
+	renderEditableTable(field) {
+		const key = field.name;
+
+		const columns = field.columns || ["URAIAN", "JENIS"];
+
+		return `
+      <table class="ui celled structured table"
         name="${key}"
-        data-dropdown-target="${key}"
-        data-columns="${columns.length}">
+        data-dropdown-target="${key}">
         <thead>
-        <tr>
-        ${th.join("")}
-        </tr>
+          <tr>
+            ${columns.map((c) => `<th>${c}</th>`).join("")}
+            <th class="collapsing">
+              <button type="button" class="ui mini green icon button btn-add-row" data-section="${key}">
+                <i class="plus icon"></i>
+              </button>
+            </th>
+          </tr>
         </thead>
-
         <tbody></tbody>
-
       </table>
       `;
 	}
 
 	// ======================================================
-	// EDITABLE TABLE
+	// INSERT → TABLE (CORE ENGINE)
 	// ======================================================
 
-	renderEditableTable(field) {
-		var key = field.name;
+	insertToTable(target, data) {
+		const table = this.container.find(`table[name="${target}"]`);
+		if (!table.length) return;
 
-		var columns = field.columns || ["URAIAN", "JENIS"];
+		const tbody = table.find("tbody");
 
-		var th = [];
+		// 🔥 prevent duplicate
+		if (tbody.find(`tr[data-id="${data.id}"]`).length) return;
 
-		columns.forEach((c) => {
-			if (c === "JENIS") {
-				th.push('<th class="collapsing">' + c + "</th>");
-			} else {
-				th.push("<th>" + c + "</th>");
-			}
+		// 🔥 ambil kolom dari DOM (bukan schema)
+		const columns = [];
+		table.find("thead th").each(function () {
+			const col = $(this).text().trim().toLowerCase();
+			if (col) columns.push(col);
 		});
 
-		th.push(
-			'<th class="collapsing">' +
-				'<button type="button" class="ui mini green icon button btn-add-row" data-section="' +
-				key +
-				'">' +
-				'<i class="plus icon"></i>' +
-				"</button>" +
-				"</th>",
-		);
+		// 🔥 mapping pintar
+		const map = {
+			nama: data.nama || data.uraian || "",
+			pangkat: data.pangkat || this.buildPangkat(data),
+			nip: data.nip || "",
+			jabatan: data.jabatan || "",
+			jabatan_sk: data.jabatan_sk || "",
+		};
 
-		return `
-        <table class="ui celled structured table"
-          name="${key}"
-          data-dropdown-target="${key}"
-          data-columns="${columns.length}"> 
-          <thead>
-          <tr>
-          ${th.join("")}
-          </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        `;
+		let row = `
+			<tr data-id="${data.id}" data-source="${data.source}" data-section="${target}">
+		`;
+
+		columns.forEach((col) => {
+			const value = map[col] ?? data[col] ?? "";
+
+			row += `
+				<td data-field="${col}" contenteditable="true">
+					${value}
+				</td>
+			`;
+		});
+
+		row += `
+			<td class="collapsing">
+				<button class="ui mini red icon button btn-del-row">
+					<i class="trash icon"></i>
+				</button>
+			</td>
+		</tr>`;
+
+		tbody.append(row);
 	}
 
 	// ======================================================
-	// ROW BUILDER
+	// FORMAT ASN
 	// ======================================================
 
-	buildRow(section, columns) {
-		var td = [];
+	buildPangkat(data) {
+		if (!data.golongan && !data.ruang) return "";
 
-		td.push('<textarea class="doc-text" name="' + section + '[]" rows="2"></textarea>');
+		const mapGol = {
+			I: "Juru",
+			II: "Pengatur",
+			III: "Penata",
+			IV: "Pembina",
+		};
 
-		if (columns >= 2) {
-			td.push(
-				'<div class="ui mini floating dropdown icon button doc-type">' +
-					'<i class="bars icon"></i>' +
-					'<div class="menu">' +
-					'<div class="item" data-value="paragraph">Paragraf</div>' +
-					'<div class="item" data-value="list">List</div>' +
-					'<div class="item" data-value="numbered">Numbered</div>' +
-					"</div>" +
-					"</div>",
-			);
-		}
+		const gol = data.golongan || "";
+		const ruang = data.ruang || "";
 
-		var cells = [];
+		const nama = mapGol[gol] || "";
 
-		td.forEach((content) => {
-			cells.push("<td>" + content + "</td>");
-		});
-
-		cells.push(
-			'<td class="collapsing">' +
-				'<button type="button" class="ui mini red icon button btn-del-row">' +
-				'<i class="trash icon"></i>' +
-				"</button>" +
-				"</td>",
-		);
-
-		return ["<tr>", cells.join(""), "</tr>"].join("");
+		return nama ? `${nama}, ${gol}/${ruang}` : `${gol}/${ruang}`;
 	}
 
 	// ======================================================
@@ -238,196 +205,82 @@ class DocumentBuilder {
 	// ======================================================
 
 	bindEvents() {
-		var self = this;
-
-		this.container.off("click", ".btn-add-row");
-
-		this.container.on("click", ".btn-add-row", function () {
-			var section = $(this).data("section");
-
-			var table = self.container.find('table[name="' + section + '"]');
-
-			var tbody = table.find("tbody");
-
-			var cols = parseInt(table.data("columns") || 2);
-
-			tbody.append(self.buildRow(section, cols));
-
-			self.initFomantic();
-		});
-
+		// delete row
 		this.container.off("click", ".btn-del-row");
-
 		this.container.on("click", ".btn-del-row", function () {
 			$(this).closest("tr").remove();
 		});
 
-		// =====================================
-		// INIT DROPDOWN ENGINE
-		// =====================================
+		// 🔥 GLOBAL EVENT DARI DropdownEngine
+		this.container.off("dropdown:select");
 
-		if (!this.dropdownEngine) {
-			this.dropdownEngine = new DropdownEngine(this.container);
-
-			this.dropdownEngine.init();
-		}
+		this.container.on("dropdown:select", (e, payload) => {
+			const { target, data } = payload;
+			this.insertToTable(target, data);
+		});
 	}
+
 	// ======================================================
-	// COLLECT STRUCTURE JSON
+	// COLLECT JSON
 	// ======================================================
 
 	collectStructure() {
-		// ambil seluruh editable_table
-
-		var result = {}; // object final
+		const result = {};
 
 		this.container.find("table").each(function () {
-			// loop semua table
+			const table = $(this);
+			const section = table.attr("name");
 
-			var table = $(this); // table
+			if (!section) return;
 
-			var section = table.attr("name"); // nama section
-
-			if (!section) return; // skip jika tidak ada
-
-			var rows = []; // array row
+			const rows = [];
 
 			table.find("tbody tr").each(function () {
-				// loop row
+				const obj = {};
 
-				var row = $(this);
+				$(this)
+					.find("td[data-field]")
+					.each(function () {
+						obj[$(this).data("field")] = $(this).text().trim();
+					});
 
-				// FIX: support dropdown row
-				var text = row.find(".doc-text").val() || row.find("input[type=hidden]").val() || row.text().trim() || "";
-
-				var type = row.find(".doc-type").dropdown("get value") || row.data("source") || "paragraph";
-
-				rows.push({
-					// push ke array
-					type: type,
-					text: text,
-				});
+				rows.push(obj);
 			});
 
-			result[section] = rows; // assign ke section
+			result[section] = rows;
 		});
 
-		return result; // return json
+		return result;
 	}
+
 	// ======================================================
-	// INIT FOMANTIC
+	// INIT
 	// ======================================================
 
 	initFomantic() {
 		this.container.find(".ui.dropdown").dropdown();
-
-		this.container.find(".doc-type").dropdown();
-
-		this.container.find(".ui.calendar").calendar({
-			type: "date",
-		});
-
+		this.container.find(".ui.calendar").calendar({ type: "date" });
 		this.container.find(".ui.checkbox").checkbox();
 	}
-
-	// ======================================================
-	// LOOKUP DROPDOWN
-	// ======================================================
 
 	static initLookupDropdown(data) {
 		if (!data) return;
 
-		var alias = {
-			pemberi_tgs: "asn",
-			asn: "asn",
-		};
-
 		$(".lookup-dropdown").each(function () {
-			var el = $(this);
+			const el = $(this);
+			const source = el.data("source");
 
-			var source = el.data("source");
-
-			if (!source) return;
-
-			var real = source;
-
-			if (!data[source] && alias[source]) {
-				real = alias[source];
-			}
-
-			var dataset = data[real];
-
+			const dataset = data[source];
 			if (!dataset) return;
 
-			var values = [];
-
-			dataset.forEach((row) => {
-				values.push({
-					name: row.uraian,
-					value: row.id,
-				});
-			});
+			el.data("dataset", dataset); // 🔥 simpan full dataset
 
 			el.dropdown({
-				values: values,
+				values: dataset.map((row) => ({
+					name: row.uraian,
+					value: row.id,
+				})),
 			});
 		});
-	}
-	// ==============================
-	// INSERT DROPDOWN → TABLE (GENERIC)
-	// ==============================
-
-	insertToTable(target, data) {
-		// ==============================
-		// AMBIL TABLE TARGET
-		// ==============================
-
-		const table = this.container.find(`table[name="${target}"]`);
-
-		if (!table.length) return;
-
-		const tbody = table.find("tbody");
-
-		// ==============================
-		// AMBIL KOLOM DARI THEAD
-		// ==============================
-
-		const columns = [];
-
-		table.find("thead th").each(function () {
-			columns.push($(this).text().trim().toLowerCase());
-		});
-
-		// ==============================
-		// BUILD ROW
-		// ==============================
-
-		let row = "<tr>";
-
-		columns.forEach((col) => {
-			// mapping otomatis berdasarkan nama kolom
-			const value = data[col] ?? "";
-
-			row += `
-			<td>
-				<input 
-					type="text" 
-					name="${target}_${col}[]" 
-					value="${value}" 
-					data-field="${col}"
-				/>
-			</td>
-		`;
-		});
-
-		row += `
-		<td>
-			<button type="button" class="ui red mini button btn-remove-row">
-				<i class="trash icon"></i>
-			</button>
-		</td>
-	</tr>`;
-
-		tbody.append(row);
 	}
 }

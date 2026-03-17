@@ -1,3 +1,5 @@
+// FILE: public/assets/js/engine/dropdown_engine.js
+
 class DropdownEngine {
 	constructor(container) {
 		this.container = container || $("body");
@@ -10,72 +12,40 @@ class DropdownEngine {
 	bindDropdownInsert() {
 		const self = this;
 
-		this.container.off("change", ".lookup-dropdown");
-
-		this.container.on("change", ".lookup-dropdown", function () {
+		this.container.find(".lookup-dropdown").each(function () {
 			const dropdown = $(this);
 
-			const value = dropdown.dropdown("get value");
-			const text = dropdown.dropdown("get text");
-
-			if (!value) return;
-
-			const target = dropdown.data("target-table");
-
-			if (!target) return;
-
-			const data = {
-				id: value,
-				nama: text,
-				source: dropdown.data("source") || "",
-			};
-
-			self.insertToTable(target, data);
-		});
-	}
-
-	insertToTable(target, data) {
-		const table = this.container.find(`table[data-dropdown-target="${target}"]`);
-
-		if (!table.length) return;
-
-		const tbody = table.find("tbody");
-
-		// FIX: hitung langsung jumlah kolom tabel dari thead
-		// jumlah kolom data dari header tabel
-		const colCount = table.find("thead th").length;
-
-		let cols = "";
-
-		// build kolom data
-		for (let i = 0; i < colCount; i++) {
-			if (i === 0) {
-				const value = data.nama || "";
-				cols += `
-            <td>
-              <input type="hidden" name="${target}_nama[]" value="${value}">
-              ${value}
-            </td>
-            `;
-			} else {
-				cols += `<td></td>`;
+			// destroy dulu kalau sudah pernah init
+			if (dropdown.hasClass("initialized")) {
+				dropdown.dropdown("destroy");
 			}
-		}
-		const row = `
-            <tr 
-              data-id="${data.id}" 
-              data-source="${data.source}" 
-              data-section="${target}">
-              ${cols}
-              <td class="collapsing">
-                <button type="button" class="ui mini red icon button btn-del-row">
-                  <i class="trash icon"></i>
-                </button>
-              </td>
-            </tr>
-            `;
-		// FIX: prevent duplicate ASN
-		if (tbody.find(`tr[data-id="${data.id}"]`).length) return;
-		tbody.append(row);
+
+			dropdown.dropdown({
+				onChange: function (value, text) {
+					if (!value) return;
+
+					const target = dropdown.data("target-table");
+					if (!target) return;
+
+					// 🔥 AMBIL DARI MEMORY (INI KUNCI)
+					const dataset = dropdown.data("dataset") || [];
+					const selected = dataset.find((row) => row.id == value) || {};
+
+					const data = {
+						id: value,
+						nama: text,
+						source: dropdown.data("source") || "",
+						...selected,
+					};
+
+					self.container.trigger("dropdown:select", {
+						target: target,
+						data: data,
+					});
+				},
+			});
+
+			dropdown.addClass("initialized");
+		});
 	}
 }
