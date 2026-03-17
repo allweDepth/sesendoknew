@@ -1,10 +1,10 @@
 class DocumentBuilder {
 	constructor(container, type) {
-		this.container = container;
-		this.type = type;
+		this.container = container; // container utama form
+		this.type = type; // tipe dokumen
 
-		this.schema = null;
-		this.data = {};
+		this.schema = null; // schema dari backend
+		this.data = {}; // data tambahan dari backend
 	}
 
 	// ======================================================
@@ -12,28 +12,28 @@ class DocumentBuilder {
 	// ======================================================
 
 	render() {
-		if (!this.schema) return;
+		if (!this.schema) return; // stop kalau tidak ada schema
 
-		this.container.empty();
+		this.container.empty(); // reset container
 
-		let fields = this.schema.sections || this.schema;
+		let fields = this.schema.sections || this.schema; // ambil sections
 		let html = [];
 
 		fields.forEach((field) => {
-			let part = this.renderElement(field);
+			let part = this.renderElement(field); // render per field
 			if (part) html.push(part);
 		});
 
-		this.container.append(html.join(""));
+		this.container.append(html.join("")); // inject ke DOM
 
-		this.initFomantic();
+		this.initFomantic(); // init UI
 
-		// 🔥 INI YANG HILANG (WAJIB ADA)
+		// init dropdown engine (WAJIB)
 		if (window.dropdownEngine) {
 			window.dropdownEngine.init();
 		}
 
-		this.bindEvents();
+		this.bindEvents(); // bind event
 	}
 
 	// ======================================================
@@ -110,9 +110,14 @@ class DocumentBuilder {
 		let columns = field.columns || [];
 
 		return `
-		<table class="ui celled table" name="${key}" data-columns="${columns.length}">
+		<table class="ui celled table" 
+			name="${key}" 
+			data-columns='${JSON.stringify(columns)}'> <!-- 🔥 simpan kolom asli dari schema -->
 			<thead>
-				<tr>${columns.map((c) => `<th>${c}</th>`).join("")}</tr>
+			<tr>
+				${columns.map((c) => `<th>${c}</th>`).join("")}
+				<th class="collapsing">Aksi</th> <!-- 🔥 kolom aksi -->
+			</tr>
 			</thead>
 			<tbody></tbody>
 		</table>`;
@@ -122,20 +127,23 @@ class DocumentBuilder {
 		let key = field.name;
 		let columns = field.columns || ["URAIAN", "JENIS"];
 
-		let th = columns.map((c) => (c === "JENIS" ? `<th class="collapsing">${c}</th>` : `<th>${c}</th>`));
-
-		th.push(`
-			<th class="collapsing">
-				<button type="button" class="ui mini green icon button btn-add-row" data-section="${key}">
-					<i class="plus icon"></i>
-				</button>
-			</th>`);
-
 		return `
-		<table class="ui celled structured table" name="${key}" data-columns="${columns.length}">
-			<thead><tr>${th.join("")}</tr></thead>
-			<tbody></tbody>
-		</table>`;
+	<table class="ui celled structured table" 
+		name="${key}" 
+		data-columns='${JSON.stringify(columns)}'>
+		<thead>
+			<tr>
+				${columns.map((c) => `<th>${c}</th>`).join("")}
+				<th class="collapsing">Aksi</th> <!-- 🔥 header aksi -->
+				<th class="collapsing">
+					<button type="button" class="ui mini green icon button btn-add-row" data-section="${key}">
+						<i class="plus icon"></i>
+					</button>
+				</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>`;
 	}
 
 	// ======================================================
@@ -145,37 +153,36 @@ class DocumentBuilder {
 	bindEvents() {
 		let self = this;
 
-		// ADD ROW MANUAL (TIDAK DIUBAH)
+		// ADD ROW
 		this.container.off("click", ".btn-add-row");
 		this.container.on("click", ".btn-add-row", function () {
 			let section = $(this).data("section");
 			let table = self.container.find(`table[name="${section}"]`);
-			let tbody = table.find("tbody");
-			let cols = parseInt(table.data("columns") || 2);
+			let cols = table.data("columns")?.length || 2; // 🔥 pakai schema, bukan DOM
 
-			tbody.append(self.buildRow(section, cols));
+			table.find("tbody").append(self.buildRow(section, cols));
 			self.initFomantic();
 		});
 
-		// DELETE ROW (TIDAK DIUBAH)
+		// DELETE ROW
 		this.container.off("click", ".btn-del-row");
 		this.container.on("click", ".btn-del-row", function () {
 			$(this).closest("tr").remove();
 		});
 
-		// 🔥 EVENT DROPDOWN (INTI MASALAH KAMU)
+		// DROPDOWN SELECT
 		this.container.off("dropdown:select");
 
 		this.container.on("dropdown:select", (e, payload) => {
 			const { target, data, name } = payload;
 
-			// HEADER AUTO
+			// AUTO HEADER
 			if (name === "pemberi_tgs") {
 				this.container.find('[name="jbt_pemberi_tgs"]').val(data.jabatan || "");
 				this.container.find('[name="pangkat_pemberi_tgs"]').val(data.pangkat || "");
 			}
 
-			// TABLE INSERT
+			// INSERT TABLE
 			if (target) {
 				this.insertToTable(target, data);
 			}
@@ -183,7 +190,7 @@ class DocumentBuilder {
 	}
 
 	// ======================================================
-	// INSERT TABLE (FIX FINAL)
+	// INSERT TABLE (FIX FINAL - SCHEMA DRIVEN)
 	// ======================================================
 
 	insertToTable(target, data) {
@@ -192,69 +199,63 @@ class DocumentBuilder {
 
 		let tbody = table.find("tbody");
 
-		// 🔥 CEK DUPLIKAT PALING SEDERHANA
-		let nip = data.nip || "";
+		let id = data.id || "";
+		if (id && tbody.find(`tr[data-id="${id}"]`).length > 0) return; // prevent duplicate
 
-		if (nip && tbody.find(`tr[data-nip="${nip}"]`).length > 0) {
-			return; // STOP, sudah ada
-		}
+		let columns = table.data("columns") || []; // 🔥 ambil dari schema, bukan header
 
-		let columns = [];
-		table.find("thead th").each(function () {
-			let col = $(this).text().trim().toLowerCase();
-			if (col) columns.push(col);
-		});
-
-		let row = `<tr data-nip="${nip}">`;
+		let row = `<tr data-id="${id}">`;
 
 		columns.forEach((col) => {
-			let value = data[col] || data.uraian || "";
+			let key = col.toLowerCase().replace(/\s+/g, "_"); // 🔥 normalisasi key dari schema
+			let value = data[key] || ""; // 🔥 langsung mapping tanpa normalize
 
-			row += `<td>
-			<input type="text" name="${target}_${col}[]" value="${value}">
-		</td>`;
+			row += `
+			<td contenteditable="true" data-key="${key}">
+				${value}
+			</td>`;
 		});
 
 		row += `
-	<td>
-		<button type="button" class="ui mini red icon button btn-del-row">
-			<i class="trash icon"></i>
-		</button>
-	</td>
-	</tr>`;
+		<td class="collapsing">
+			<button type="button" class="ui mini red icon button btn-del-row">
+				<i class="trash icon"></i>
+			</button>
+		</td>
+		</tr>`;
 
 		tbody.append(row);
 	}
 
 	// ======================================================
-	// LEGACY ROW (TIDAK DIUBAH)
+	// LEGACY ROW
 	// ======================================================
 
 	buildRow(section, columns) {
 		let cells = [];
 
-		cells.push(`<td><textarea class="doc-text" name="${section}[]" rows="2"></textarea></td>`);
+		cells.push(`<td contenteditable="true" data-key="uraian"></td>`); // editable cell
 
 		if (columns >= 2) {
 			cells.push(`
-				<td>
-					<div class="ui mini floating dropdown icon button doc-type">
-						<i class="bars icon"></i>
-						<div class="menu">
-							<div class="item" data-value="paragraph">Paragraf</div>
-							<div class="item" data-value="list">List</div>
-							<div class="item" data-value="numbered">Numbered</div>
-						</div>
+			<td>
+				<div class="ui mini floating dropdown icon button doc-type">
+					<i class="bars icon"></i>
+					<div class="menu">
+						<div class="item" data-value="paragraph">Paragraf</div>
+						<div class="item" data-value="list">List</div>
+						<div class="item" data-value="numbered">Numbered</div>
 					</div>
-				</td>`);
+				</div>
+			</td>`);
 		}
 
 		cells.push(`
-			<td class="collapsing">
-				<button type="button" class="ui mini red icon button btn-del-row">
-					<i class="trash icon"></i>
-				</button>
-			</td>`);
+		<td class="collapsing">
+			<button type="button" class="ui mini red icon button btn-del-row">
+				<i class="trash icon"></i>
+			</button>
+		</td>`);
 
 		return `<tr>${cells.join("")}</tr>`;
 	}
@@ -269,24 +270,51 @@ class DocumentBuilder {
 		this.container.find(".ui.calendar").calendar({ type: "date" });
 		this.container.find(".ui.checkbox").checkbox();
 	}
+
+	// ======================================================
+	// COLLECT DATA
+	// ======================================================
+
 	collectStructure() {
 		let result = {};
 
-		this.container.find("input, textarea, select").each(function () {
-			let name = $(this).attr("name");
-			if (!name) return;
+		// TABLE → JSON
+		this.container.find("table[name]").each(function () {
+			let tableName = $(this).attr("name");
+			let rows = [];
 
-			let value = $(this).val();
+			$(this)
+				.find("tbody tr")
+				.each(function () {
+					let row = {};
 
-			// array support
-			if (name.endsWith("[]")) {
-				let key = name.replace("[]", "");
-				if (!result[key]) result[key] = [];
-				result[key].push(value);
-			} else {
-				result[name] = value;
-			}
+					$(this)
+						.find("td[data-key]")
+						.each(function () {
+							let key = $(this).data("key");
+							let value = $(this).text().trim();
+
+							row[key] = value;
+						});
+
+					if (Object.keys(row).length) {
+						rows.push(row);
+					}
+				});
+
+			result[tableName] = rows;
 		});
+
+		// FIELD BIASA
+		this.container
+			.find("input, textarea, select")
+			.not("table input, table textarea")
+			.each(function () {
+				let name = $(this).attr("name");
+				if (!name) return;
+
+				result[name] = $(this).val();
+			});
 
 		return result;
 	}
