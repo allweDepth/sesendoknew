@@ -364,17 +364,17 @@ INSERT (FIXED STABLE VERSION v3.1)
 ========================================================= */
   private function insert(string $table, array $request): string
   {
-    /* =========================================
-ANTI DOUBLE SUBMIT
-========================================= */
+    //=========================================
+    // ANTI DOUBLE SUBMIT
+    // =========================================
 
     $this->guardDoubleSubmit($request);
     $columns  = $this->getTableColumns($table);
     $filtered = [];
 
-    /* =====================================================
-    1️⃣ FILTER FIELD SESUAI KOLOM TABEL
-    ===================================================== */
+    // /* =====================================================
+    // 1️⃣ FILTER FIELD SESUAI KOLOM TABEL
+    // ===================================================== */
     foreach ($request as $key => $value) {
 
       // =========================================
@@ -392,11 +392,11 @@ ANTI DOUBLE SUBMIT
       }
     }
 
-    /* =====================================================
-DEBUG JIKA FILTERED KOSONG
-Tujuan:
-Mengetahui kenapa request tidak cocok dengan kolom tabel
-===================================================== */
+    //=====================================================
+    // DEBUG JIKA FILTERED KOSONG
+    // Tujuan:
+    // Mengetahui kenapa request tidak cocok dengan kolom tabel
+    // ===================================================== */
 
     if (empty($filtered)) {
 
@@ -418,9 +418,9 @@ Mengetahui kenapa request tidak cocok dengan kolom tabel
       );
     }
 
-    /* =====================================================
-        2️⃣ NORMALISASI BOOLEAN & DATE
-        ===================================================== */
+    //=====================================================
+    //2️⃣ NORMALISASI BOOLEAN & DATE
+    //=====================================================
     foreach ($filtered as $field => $value) {
 
       // checkbox
@@ -593,7 +593,7 @@ kd_sub_keg → nama_sub_keg
 🔟 FINAL TRANSACTION (SAFE INSERT VERSION)
 ===================================================== */
 
-    return $this->runTransaction(function () use ($table, $filtered) {
+    return $this->runTransaction(function () use ($table, $filtered, $request) {
 
       /* =========================================
     1️⃣ VALIDASI DUPLICATE DALAM TRANSACTION
@@ -608,7 +608,69 @@ kd_sub_keg → nama_sub_keg
 
       // menggunakan safe insert
       $id = $this->insertSafe($table, $filtered);
+      $profile = $this->getProfileByTable($table);
 
+      // =====================================================
+      // RELATIONS
+      // =====================================================
+      if (!empty($profile['write_relations'])) {
+
+        foreach ($profile['write_relations'] as $relTable => $rel) {
+
+          $fk = $rel['fk'];
+
+          if ($rel['type'] === 'json') {
+            $column = 'meta_json';
+            $value  = json_encode($request);
+          } else {
+            $column = $rel['source'];
+            $value  = $request[$rel['source']] ?? null;
+          }
+
+          if ($value !== null) {
+
+            $this->db->insert(
+              $relTable,
+              [$fk => $id, $column => $value]
+            );
+          }
+        }
+      }
+
+      // =====================================================
+      // COUNTER
+      // =====================================================
+      if (!empty($profile['counter'])) {
+
+        $counter = $profile['counter'];
+        $tahun   = date('Y');
+
+        $row = $this->db->query(
+          "SELECT {$counter['value_field']} 
+     FROM {$counter['table']} 
+     WHERE {$counter['tahun_field']} = ?",
+          [$tahun]
+        )->fetch();
+
+        if ($row) {
+
+          $this->db->update(
+            $counter['table'],
+            [$counter['value_field'] => $row[$counter['value_field']] + 1],
+            "WHERE {$counter['tahun_field']} = ?",
+            [$tahun]
+          );
+        } else {
+
+          $this->db->insert(
+            $counter['table'],
+            [
+              $counter['tahun_field'] => $tahun,
+              $counter['value_field'] => 1
+            ]
+          );
+        }
+      }
       /* =========================================
     3️⃣ RESPONSE SUCCESS
     ========================================= */
@@ -794,7 +856,7 @@ IGNORE SYSTEM FIELD
 🔟 FINAL TRANSACTION
 ===================================================== */
 
-    return $this->runTransaction(function () use ($table, $primaryKey, $id, $diff, $oldData) {
+    return $this->runTransaction(function () use ($table, $primaryKey, $id, $diff, $oldData, $request) {
 
       /* =========================================
 UPDATE DATA DENGAN DUPLICATE HANDLER
@@ -808,6 +870,52 @@ UPDATE DATA DENGAN DUPLICATE HANDLER
           "WHERE `$primaryKey` = ?",
           [$id]
         );
+        // =====================================================
+        // TAMBAHAN: WRITE RELATIONS (CONFIG BASED)
+        // =====================================================
+        $profile = $this->getProfileByTable($table);
+
+        if (!empty($profile['write_relations'])) {
+
+          foreach ($profile['write_relations'] as $relTable => $rel) {
+
+            $fk = $rel['fk'];
+
+            // tentukan value
+            if ($rel['type'] === 'json') {
+              $column = 'meta_json';
+              $value  = json_encode($request);
+            } else {
+              $column = $rel['source'];
+              $value  = $request[$rel['source']] ?? null;
+            }
+
+            if ($value !== null) {
+
+              // cek existing
+              $row = $this->db->query(
+                "SELECT 1 FROM `$relTable` WHERE `$fk` = ?",
+                [$id]
+              )->fetch();
+
+              if ($row) {
+
+                $this->db->update(
+                  $relTable,
+                  [$column => $value],
+                  "WHERE `$fk` = ?",
+                  [$id]
+                );
+              } else {
+
+                $this->db->insert(
+                  $relTable,
+                  [$fk => $id, $column => $value]
+                );
+              }
+            }
+          }
+        }
       } catch (PDOException $e) {
 
         // SQLSTATE duplicate
@@ -858,6 +966,24 @@ DELETE (FULL IDENTIK LOGIC ASLI)
           [$id]
         );
       } else {
+        // =====================================================
+        // TAMBAHAN: DELETE RELATIONS
+        // =====================================================
+        if (!empty($profile['write_relations'])) {
+
+          foreach ($profile['write_relations'] as $relTable => $rel) {
+
+            $fk = $rel['fk'];
+
+            $this->db->delete(
+              $relTable,
+              "WHERE `$fk` = ?",
+              [$id]
+            );
+          }
+        }
+        // =====================================================
+
 
         $this->db->delete(
           $table,

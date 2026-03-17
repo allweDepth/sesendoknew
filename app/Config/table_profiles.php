@@ -1454,6 +1454,34 @@ $profiles = [
   'trx_naskah_dinas' => [
     'table' => 'trx_naskah_dinas',
     'primary_key' => 'id',
+
+    // ===================================================
+    // TAMBAHAN RELASI WRITE
+    // ===================================================
+    'write_relations' => [
+      'trx_naskah_struktur' => [
+        'fk' => 'naskah_id',
+        'source' => 'struktur_json',
+        'type' => 'single'
+      ],
+
+      'trx_naskah_meta' => [
+        'fk' => 'naskah_id',
+        'source' => '*', // seluruh request
+        'type' => 'json'
+      ]
+
+    ],
+
+    // ===================================================
+    // COUNTER
+    // ===================================================
+    'counter' => [
+      'table' => 'trx_nomor_counter',
+      'tahun_field' => 'tahun',
+      'value_field' => 'last_number'
+    ],
+
     'modes' => [
       'default' => [
         'select' => [
