@@ -832,47 +832,7 @@ $profiles = [
       ]
     ]
   ],
-  'sk_asn' => [
-    'table' => 'sk_asn_neo',
-    'primary_key' => 'id',
-    'allowed_roles' => ['admin_opd'],
-    'soft_lock' => true,
-    'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
-    'modes' => [
-      'dropdown' => [
-        'select' => ['id', 'nomor', 'tgl_surat_dibuat', 'tentang', 'pemberi_tgs', 'keterangan'],
-        'searchable' => ['kd_opd', 'nomor', 'tentang', 'tgl_surat_dibuat'],
-        'order_by' => 'id ASC',
-        'where' => [
-          'tahun' => 'user'
-        ] // ambil dari user login
-      ],
-      'default' => [
-        'select' => ['*'],
-        'searchable' => ['id', 'kd_opd', 'tgl_surat_dibuat', 'tentang'],
-        'order_by' => 'id ASC',
-        'where' => [
-          'tahun' => 'user'
-        ] // ambil dari user login
-      ],
-      'kepegawaian' => [
-        'select' => ['id', 'nomor', 'tgl_surat_dibuat', 'tentang', 'pemberi_tgs', 'keterangan'],
-        'searchable' => ['kd_opd', 'nomor', 'tentang', 'tgl_surat_dibuat'],
-        'order_by' => 'tgl_surat_dibuat ASC',
-        'where' => [
-          'tahun' => 'user'
-        ] // ambil dari user login
-      ],
-      'edit' => [
-        'select' => ['*'],
-        'searchable' => ['*'],
-        'order_by' => 'id ASC',
-        'where' => [
-          'tahun' => 'user'
-        ] // ambil dari user login
-      ]
-    ]
-  ],
+
   'register_surat' => [
     'table' => 'register_naskah_dinas',
     'primary_key' => 'id',
@@ -911,35 +871,7 @@ $profiles = [
       ]
     ]
   ],
-  'tata_naskah' => [
-    'table' => 'naskah_dinas_neo',
-    'primary_key' => 'id',
-    'allowed_roles' => ['admin_opd'],
-    'soft_lock' => true,
-    'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
-    'modes' => [
-      'dropdown' => [
-        'select' => ['id', 'jenis_naskah_dinas', 'nomor', 'tgl_surat_dibuat', 'klasifikasi_keamanan', 'tentang', 'keterangan'],
-        'searchable' => ['jenis_naskah_dinas', 'klasifikasi_keamanan', 'nomor', 'tgl_surat_dibuat', 'uraian', 'file', 'keterangan'],
-        'order_by' => 'tgl_surat_dibuat ASC'
-      ],
-      'default' => [
-        'select' => ['*'],
-        'searchable' => ['jenis_naskah_dinas', 'klasifikasi_keamanan', 'nomor', 'tanggal', 'uraian', 'file', 'keterangan'],
-        'order_by' => 'tgl_surat_dibuat ASC'
-      ],
-      'kepegawaian' => [
-        'select' => ['id', 'jenis_naskah_dinas', 'klasifikasi_keamanan', 'nomor', 'tgl_surat_dibuat', 'uraian', 'file', 'keterangan'],
-        'searchable' => ['jenis_naskah_dinas', 'klasifikasi_keamanan', 'nomor', 'tgl_surat_dibuat', 'uraian', 'file', 'keterangan'],
-        'order_by' => 'tgl_surat_dibuat ASC'
-      ],
-      'edit' => [
-        'select' => ['*'],
-        'searchable' => ['*'],
-        'order_by' => 'id ASC'
-      ]
-    ]
-  ],
+
   'misi_renstra_neo' => [
     'table' => 'misi_renstra_neo',
     'primary_key' => 'id',
@@ -1472,10 +1404,14 @@ $profiles = [
       ]
 
     ],
+    'versioning' => [
+      'mode' => 'insert_on_change',
+      'fields' => ['nomor', 'tanggal_surat']
+    ],
     // JANGAN DUPLIKAT
     'not_duplicate' => [
       'nomor',
-      'tgl_surat_dibuat',
+      'tanggal_surat',
       'kd_wilayah',
       'tahun',
       'kd_opd'

@@ -285,8 +285,6 @@ class TataNaskahModule {
 					window.dropdownEngine = new DropdownEngine($("#form_modal"), res);
 					window.dropdownEngine.init();
 				}
-
-				window.dropdownEngine.init();
 			},
 		});
 	}

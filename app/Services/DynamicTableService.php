@@ -817,23 +817,19 @@ IGNORE SYSTEM FIELD
     // 🔥 CEK PERUBAHAN NOMOR + TANGGAL
     // ======================================================
 
-    if (
-      isset($filtered['nomor'], $filtered['tgl_surat_dibuat'])
-    ) {
+    $profile = $this->getProfileByTable($table);
 
-      if (
-        $filtered['nomor'] != $oldData['nomor']
-        || $filtered['tgl_surat_dibuat'] != $oldData['tgl_surat_dibuat']
-      ) {
+    $versioningResult = $this->handleVersioning(
+      $table,
+      $profile,
+      $request,
+      $filtered,
+      $oldData,
+      $primaryKey
+    );
 
-        // ==================================================
-        // 🔥 CONVERT UPDATE → INSERT
-        // ==================================================
-
-        unset($filtered[$primaryKey]);
-
-        return $this->insert($table, $filtered);
-      }
+    if ($versioningResult !== null) {
+      return $versioningResult;
     }
     /* =====================================================
 4️⃣ AUTO FIELD RESOLUTION
@@ -3368,6 +3364,13 @@ ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filte
       return $value;
     }
 
+    // 6️⃣ fallback text date (March 18, 2026, dll)
+    $time = strtotime($value);
+
+    if ($time !== false) {
+      return date('Y-m-d 00:00:00', $time);
+    }
+
     return $value;
   }
   // ⚠ Currently unused. Reserved for future date-range validation.
@@ -4607,5 +4610,88 @@ AND is_deleted = 0
       [],
       $rows
     );
+  }
+  private function handleVersioning(
+    string $table,
+    array $profile,
+    array $request,
+    array $filtered,
+    array $oldData,
+    string $primaryKey
+  ) {
+
+    if (empty($profile['versioning'])) {
+      return null;
+    }
+
+    $config = $profile['versioning'];
+
+    if (($config['mode'] ?? '') !== 'insert_on_change') {
+      return null;
+    }
+
+    $fields = $config['fields'] ?? [];
+
+    if (empty($fields)) {
+      return null;
+    }
+
+    $changed = false;
+
+    foreach ($fields as $field) {
+
+      if (!isset($filtered[$field])) {
+        continue;
+      }
+
+      if ($filtered[$field] != ($oldData[$field] ?? null)) {
+        $changed = true;
+        break;
+      }
+    }
+
+    if (!$changed) {
+      return null;
+    }
+
+    // ==================================================
+    // 🔥 CEK DUPLIKAT (PAKAI RULE PROFILE)
+    // ==================================================
+
+    if (!empty($profile['not_duplicate'])) {
+
+      $whereParts = [];
+      $params = [];
+
+      foreach ($profile['not_duplicate'] as $f) {
+
+        $val = $filtered[$f] ?? $oldData[$f] ?? null;
+
+        $whereParts[] = "`$f` = ?";
+        $params[] = $val;
+      }
+
+      $exists = $this->db->query(
+        "SELECT $primaryKey FROM `$table`
+       WHERE " . implode(" AND ", $whereParts) . "
+       LIMIT 1",
+        $params
+      )->fetch();
+
+      if ($exists) {
+        return JsonResponse::error("Data duplicate (versioning)");
+      }
+    }
+
+    // ==================================================
+    // 🔥 INSERT BARU
+    // ==================================================
+
+    $newRequest = array_merge($request, $filtered);
+
+    unset($newRequest['id_row']);
+    unset($newRequest['id']);
+
+    return $this->insert($table, $newRequest);
   }
 }
