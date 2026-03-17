@@ -453,27 +453,83 @@ class TataNaskahController extends Controller
     if (!empty($jenis['auto_generate_nomor'])) {
       $nomor = $this->generateNomorInternal();
     }
+    // ===============================
+    // AMBIL ASN
+    // ===============================
 
-    /* ===============================
-       AMBIL ASN
-    =============================== */
-    /* ===============================
-   AMBIL ASN (db_asn_pemda_neo)
-=============================== */
     $asn = $db->query(
       "SELECT 
-        id, 
-        CONCAT(
-            IFNULL(gelar_depan,''), 
-            IF(gelar_depan IS NULL OR gelar_depan = '', '', ' '),
-            nama,
-            IF(gelar IS NULL OR gelar = '', '', CONCAT(', ', gelar))
-        ) AS uraian
-     FROM db_asn_pemda_neo
-     WHERE disable = 0 
-       AND is_deleted = 0
-     ORDER BY nama ASC"
+    id,
+    nama,
+    gelar_depan,
+    gelar,
+    nip,
+    jabatan,
+    golongan,
+    ruang
+   FROM db_asn_pemda_neo
+   WHERE disable = 0 
+     AND is_deleted = 0
+   ORDER BY nama ASC"
     )->fetchAll();
+
+    // ===============================
+    // FORMAT DATA ASN (FINAL FIX)
+    // ===============================
+
+    foreach ($asn as &$row) {
+
+      // ============================
+      // 1. FORMAT NAMA SAJA (Title Case)
+      // ============================
+
+      $nama = strtolower($row['nama']);
+      $nama = ucwords($nama);
+
+      // ============================
+      // 2. GELAR (JANGAN DIUBAH LOGIKA)
+      // ============================
+
+      $gelarDepan = $row['gelar_depan'] ?? '';
+      $gelar = $row['gelar'] ?? '';
+
+      // optional: rapikan gelar belakang saja
+      $gelar = $gelar ? strtoupper($gelar) : '';
+
+      // ============================
+      // 3. GABUNGKAN (TANPA UBAH FORMAT LAGI)
+      // ============================
+
+      $namaLengkap = trim(
+        ($gelarDepan ? $gelarDepan . ' ' : '') .
+          $nama .
+          ($gelar ? ', ' . $gelar : '')
+      );
+
+      // ============================
+      // 4. PANGKAT
+      // ============================
+
+      // ============================
+      // FORMAT PANGKAT (FULL)
+      // ============================
+
+      $pangkat = $this->convertPangkat(
+        $row['golongan'] ?? '',
+        $row['ruang'] ?? ''
+      );
+
+      // ============================
+      // 5. FINAL ASSIGN
+      // ============================
+
+      $row['nama'] = $namaLengkap;   // untuk tabel
+      $row['uraian'] = $namaLengkap; // untuk dropdown
+      $row['pangkat'] = $pangkat;
+      $row['jabatan_sk'] = '';
+
+      unset($row['gelar_depan'], $row['gelar'], $row['golongan'], $row['ruang']);
+    }
 
     /* ===============================
        AMBIL KLASIFIKASI
@@ -560,5 +616,67 @@ class TataNaskahController extends Controller
       "schema" => $schema
     ]);
     return;
+  }
+  // ==============================
+  // HELPER KONVERSI PANGKAT
+  // ==============================
+
+  private function convertPangkat($golongan, $ruang)
+  {
+    $map = [
+
+      // Golongan I
+      "I/a" => "Juru Muda",
+      "I/b" => "Juru Muda Tingkat I",
+      "I/c" => "Juru",
+      "I/d" => "Juru Tingkat I",
+
+      // Golongan II
+      "II/a" => "Pengatur Muda",
+      "II/b" => "Pengatur Muda Tingkat I",
+      "II/c" => "Pengatur",
+      "II/d" => "Pengatur Tingkat I",
+
+      // Golongan III
+      "III/a" => "Penata Muda",
+      "III/b" => "Penata Muda Tingkat I",
+      "III/c" => "Penata",
+      "III/d" => "Penata Tingkat I",
+
+      // Golongan IV
+      "IV/a" => "Pembina",
+      "IV/b" => "Pembina Tingkat I",
+      "IV/c" => "Pembina Utama Muda",
+      "IV/d" => "Pembina Utama Madya",
+      "IV/e" => "Pembina Utama"
+    ];
+
+    // ==============================
+    // KONVERSI ANGKA → ROMAWI
+    // ==============================
+
+    $romanMap = [
+      1 => "I",
+      2 => "II",
+      3 => "III",
+      4 => "IV"
+    ];
+
+    $gol = strtoupper(trim($golongan));
+    $ru = strtolower(trim($ruang));
+
+    // jika angka → ubah ke romawi
+    if (is_numeric($gol) && isset($romanMap[(int)$gol])) {
+      $gol = $romanMap[(int)$gol];
+    }
+
+    // bentuk key final
+    $key = $gol . '/' . $ru;
+
+    if (isset($map[$key])) {
+      return $map[$key] . ", " . $key;
+    }
+
+    return $key; // fallback
   }
 }
