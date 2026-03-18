@@ -1020,9 +1020,9 @@ DELETE (FULL IDENTIK LOGIC ASLI)
         // =====================================================
         // TAMBAHAN: DELETE RELATIONS
         // =====================================================
+
         $this->deleteRelations($table, $id, $profile);
         // =====================================================
-
 
         $this->db->delete(
           $table,
@@ -1030,9 +1030,9 @@ DELETE (FULL IDENTIK LOGIC ASLI)
           [$id]
         );
       }
-
+      // var_dump($primaryKey);
+      // die();
       $this->logActivity($table, $id, 'delete', $oldData, null);
-
       return JsonResponse::success("Data berhasil dihapus");
     });
   }
@@ -1765,31 +1765,50 @@ UTIL: CHECK ACCESS WITH SCOPE
   }
   private function logActivity(
     string $table,
-    $recordId,
+    int|string $recordId,
     string $action,
     $oldData = null,
     $newData = null
   ): void {
-
-    if (!$this->tableExists('log_activity')) {
-      return;
-    }
-
     try {
 
+      // =====================================
+      // 🔥 SAFE JSON (ANTI CRASH)
+      // =====================================
+      $oldJson = $this->safeJson($oldData);
+      $newJson = $this->safeJson($newData);
+
+      // =====================================
+      // 🔥 LIMIT SIZE (ANTI DB ERROR)
+      // =====================================
+      if ($oldJson && strlen($oldJson) > 10000) {
+        $oldJson = substr($oldJson, 0, 10000) . '...[TRUNCATED]';
+      }
+
+      if ($newJson && strlen($newJson) > 10000) {
+        $newJson = substr($newJson, 0, 10000) . '...[TRUNCATED]';
+      }
+
+      // =====================================
+      // 🔥 INSERT (PASTI AMAN)
+      // =====================================
       $this->db->insert('log_activity', [
         'table_name' => $table,
         'record_id'  => $recordId,
         'action'     => $action,
-        'old_data'   => $oldData ? json_encode($oldData, JSON_UNESCAPED_UNICODE) : null,
-        'new_data'   => $newData ? json_encode($newData, JSON_UNESCAPED_UNICODE) : null,
+        'old_data'   => $oldJson,
+        'new_data'   => $newJson,
         'username'   => $this->user['username'] ?? 'system',
         'ip_address' => $_SERVER['REMOTE_ADDR'] ?? null,
         'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
         'created_at' => date('Y-m-d H:i:s')
       ]);
-    } catch (Exception $e) {
-      // Jangan sampai audit log bikin sistem utama gagal
+    } catch (Throwable $e) {
+
+      // =====================================
+      // 🔥 HARD FAIL-SAFE (JANGAN GANGGU FLOW UTAMA)
+      // =====================================
+      error_log("LOG ACTIVITY ERROR: " . $e->getMessage());
     }
   }
   /* =========================================================
@@ -4844,46 +4863,24 @@ AND is_deleted = 0
     array $profile
   ): void {
 
-    if (empty($profile['write_relations'])) {
-      return;
-    }
+    if (empty($profile['write_relations'])) return;
 
-    if (!$id) return; // // FIX HARD STOP
+    $id = (int)$id;
+    if ($id <= 0) return; // FIX HARD
 
     foreach ($profile['write_relations'] as $relTable => $rel) {
 
       $fk = $rel['fk'] ?? null;
-      if (!$fk) continue;
 
-      // =====================================
-      // 🔥 AUTO DETECT MODE (SAMAKAN DENGAN WRITE)
-      // =====================================
-      $mode = $this->detectRelationMode($relTable); // // FIX
-
-      // =====================================
-      // 🔥 DELETE STRATEGY
-      // =====================================
-
-      // KV → hapus semua key
-      if ($mode === 'kv') {
-
-        $this->db->delete($relTable, "WHERE `$fk` = ?", [$id]);
-        continue;
+      if (!$fk || !is_string($fk) || $fk === '') {
+        continue; // skip relasi rusak
       }
 
-      // JSON → 1 row → hapus row
-      if ($mode === 'json') {
-
-        $this->db->delete($relTable, "WHERE `$fk` = ?", [$id]);
-        continue;
-      }
-
-      // TABLE → multi row → hapus semua relasi
-      if ($mode === 'table') {
-
-        $this->db->delete($relTable, "WHERE `$fk` = ?", [$id]);
-        continue;
-      }
+      $this->db->delete(
+        $relTable,
+        "WHERE `$fk` = ?",
+        [$id]
+      );
     }
   }
   // path: DynamicTableService.php
@@ -4904,5 +4901,61 @@ AND is_deleted = 0
 
     // DEFAULT = TABLE
     return 'table';
+  }
+  private function normalizeForLog($data, $depth = 0)
+  {
+    // batas recursion
+    if ($depth > 5) {
+      return '[MAX_DEPTH]';
+    }
+
+    // null / scalar aman
+    if (is_null($data) || is_scalar($data)) {
+      return $data;
+    }
+
+    // object → convert ke array
+    if (is_object($data)) {
+      $data = (array)$data;
+    }
+
+    // array → recursive sanitize
+    if (is_array($data)) {
+      $clean = [];
+
+      foreach ($data as $key => $value) {
+
+        // skip resource / closure
+        if (is_resource($value) || $value instanceof Closure) {
+          continue;
+        }
+
+        $clean[$key] = $this->normalizeForLog($value, $depth + 1);
+      }
+
+      return $clean;
+    }
+
+    // fallback
+    return (string)$data;
+  }
+  private function safeJson($data)
+  {
+    if (empty($data)) return null;
+
+    try {
+
+      $normalized = $this->normalizeForLog($data);
+
+      $json = json_encode(
+        $normalized,
+        JSON_UNESCAPED_UNICODE |
+          JSON_PARTIAL_OUTPUT_ON_ERROR
+      );
+
+      return $json !== false ? $json : null;
+    } catch (Throwable $e) {
+      return null; // HARD SAFE
+    }
   }
 }
