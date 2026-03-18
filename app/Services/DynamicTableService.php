@@ -54,6 +54,9 @@ require_once __DIR__ . '/JsonResponse.php';
  * Hanya enhancement yang ditambahkan secara isolated.
  * ============================================================
  */
+require_once __DIR__ . '/DynamicTable/DynamicImportHelper.php'; // //
+use App\Services\DynamicTable\DynamicImportHelper;
+
 class DynamicTableService
 {
   private array $cacheSatuan = [];
@@ -73,12 +76,16 @@ INTERNAL CACHE (ANTI DOUBLE QUERY)
   private static array $schemaCache = [];
   private ?array $pengaturanAktifCache = null;
   private ?array $periodeAktifCache = null;
+  // tambahan pemisahan class
+  private DynamicImportHelper $importHelper;
   public function __construct()
   {
     $this->db = DB::getInstance();
     $this->profiles = require __DIR__ . '/../Config/table_profiles.php';
     $this->user = $_SESSION['user'] ?? [];
+    $this->importHelper = new DynamicImportHelper(); // //
   }
+
 
   /* =========================================================
 MAIN HANDLER (ENTRY POINT) — HARDENED VERSION
@@ -2564,7 +2571,7 @@ LIMIT 1",
                 continue;
               }
               // normalisasi header
-              $normalized = $this->normalizeForCompare($h);
+              $normalized = $this->importHelper->normalizeForCompare($h);
               // cek apakah cocok dengan kolom tabel
               if (!isset($columnMap[$normalized])) {
                 throw new Exception(
@@ -2736,7 +2743,7 @@ LIMIT 1",
       // GROUP ERROR
       // ==================================================
 
-      $groupedErrors = $this->groupImportErrors($errorRows);
+      $groupedErrors = $this->importHelper->groupImportErrors($errorRows); // //
 
 
       // ==================================================
@@ -2754,47 +2761,7 @@ LIMIT 1",
       );
     });
   }
-  private function compressRowRanges(array $rows): array
-  {
-    sort($rows);
 
-    $ranges = [];
-    $start = null;
-    $prev  = null;
-
-    foreach ($rows as $row) {
-
-      if ($start === null) {
-        $start = $row;
-        $prev  = $row;
-        continue;
-      }
-
-      if ($row == $prev + 1) {
-        $prev = $row;
-        continue;
-      }
-
-      if ($start == $prev) {
-        $ranges[] = (string)$start;
-      } else {
-        $ranges[] = $start . '-' . $prev;
-      }
-
-      $start = $row;
-      $prev  = $row;
-    }
-
-    if ($start !== null) {
-      if ($start == $prev) {
-        $ranges[] = (string)$start;
-      } else {
-        $ranges[] = $start . '-' . $prev;
-      }
-    }
-
-    return $ranges;
-  }
   private function groupImportErrors(array $errors): array
   {
     $grouped = [];
@@ -2814,7 +2781,7 @@ LIMIT 1",
     }
 
     foreach ($grouped as &$g) {
-      $g['rows'] = $this->compressRowRanges($g['rows']);
+      $g['rows'] = $this->importHelper->compressRowRanges($g['rows']); // //
     }
 
     return array_values($grouped);
