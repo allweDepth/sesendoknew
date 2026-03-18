@@ -15,7 +15,8 @@ class DocumentBuilder {
 		if (!this.schema) return; // stop kalau tidak ada schema
 
 		// FIX: clear semua event sebelum render ulang
-		this.container.off();
+		// FIX: jangan global off
+		this.container.off(".documentBuilder");
 
 		this.container.empty();
 
@@ -186,9 +187,12 @@ class DocumentBuilder {
 		// FIX: scope ke container, bukan document
 		// =====================================
 		// FIX: scope ke container instance
-		this.container.off("dropdown:select.documentBuilder");
+		// =====================================
+		// FIX: HARUS listen dari document
+		// =====================================
+		$(document).off("dropdown:select.documentBuilder");
 
-		this.container.on("dropdown:select.documentBuilder", (e, payload) => {
+		$(document).on("dropdown:select.documentBuilder", (e, payload) => {
 			const { target, data, name } = payload;
 
 			// AUTO HEADER
@@ -199,9 +203,9 @@ class DocumentBuilder {
 
 			// INSERT TABLE
 			// =====================================
-			// FIX: fallback target dari DOM
+			// FIX: hanya gunakan payload + DOM
 			// =====================================
-			let finalTarget = target;
+			let finalTarget = target; // // FIX
 
 			// cari target dari atribut form
 			if (!finalTarget) {
@@ -549,6 +553,11 @@ class DocumentBuilder {
 
 				result[name] = value;
 			});
+
+		// =====================================
+		// FIX: pastikan struktur selalu ikut
+		// =====================================
+		result["struktur_json"] = result;
 
 		return result;
 	}

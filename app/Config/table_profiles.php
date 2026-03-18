@@ -1392,28 +1392,25 @@ $profiles = [
     // ===================================================
     'write_relations' => [
 
-      // 1️⃣ SINGLE (1:1)
-      'kegiatan_detail' => [
-        'type'   => 'single',
-        'fk'     => 'kegiatan_id',
-        'source' => 'deskripsi'
-      ],
-
-      // 2️⃣ JSON (controlled fields)
-      'kegiatan_meta' => [
+      // =====================================
+      // FIX: META NASKAH (JSON)
+      // tabel: trx_naskah_meta
+      // FK: id_naskah
+      // =====================================
+      'trx_naskah_meta' => [
         'type'   => 'json',
-        'fk'     => 'kegiatan_id',
-        'fields' => ['catatan', 'lokasi']
+        'fk'     => 'id_naskah', // // FIX
+        'source' => '*'          // // FIX: ambil semua request
       ],
 
-      // 3️⃣ MULTI (pivot)
-      'kegiatan_akun_map' => [
-        'type'      => 'multi',
-        'fk'        => 'kegiatan_id',
-        'source'    => 'kd_akun',
-        'column'    => 'kd_akun',
-        'delimiter' => ',',
-        'mode'      => 'sync' // sync | append | replace
+      // =====================================
+      // FIX: STRUKTUR NASKAH (JSON)
+      // tabel: trx_naskah_struktur
+      // =====================================
+      'trx_naskah_struktur' => [
+        'type'   => 'json',
+        'fk'     => 'id_naskah', // // FIX
+        'fields' => ['struktur_json'] // // FIX
       ]
 
     ],
@@ -1441,13 +1438,7 @@ $profiles = [
     'modes' => [
       'default' => [
         'select' => [
-          'id',
-          'nomor',
-          'tanggal_surat',
-          'perihal',
-          'status',
-          'file_pdf',
-          'tgl_insert'
+          '*'
         ],
         'searchable' => ['nomor', 'perihal'],
         'order_by' => 'tgl_insert DESC'
