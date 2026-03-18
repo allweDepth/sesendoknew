@@ -87,7 +87,8 @@ class TataNaskahModule {
 	initEngine() {
 		this.tableManager = new TableManager({
 			state: this.state,
-			container: "#table-container",
+			container: "#table-container", // DOM container
+			mode: "modal", // // FIX: pisahkan mode
 		});
 
 		this.formContainer = new FormContainerManager({

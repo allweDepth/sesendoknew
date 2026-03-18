@@ -55,6 +55,15 @@ class TableManager {
 
 		// primary key default
 		this.primaryKey = "id";
+		// FIX: SIMPAN MODE untuk menentukan flyout atau modal yang digunakan
+		// contohnya tata naskah menggunakan
+		// initEngine() {
+		// this.tableManager = new TableManager({
+		// 	state: this.state,
+		// 	container: "#table-container", // DOM container
+		// 	mode: "modal", // // FIX: pisahkan mode
+		// });
+		this.mode = config.mode || "flyout"; //
 	}
 
 	/* =====================================================
@@ -331,7 +340,8 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 							data-action="edit"
 							data-tbl="${this.state.tbl}"
 							${this.state.req ? `data-req="${this.state.req}"` : ``}
-							data-id="${id}">
+							${this.mode === "modal" ? `data-container="modal"` : ""}
+data-id="${id}">
 								<i class="blue edit icon"></i>
 							</button>
 
