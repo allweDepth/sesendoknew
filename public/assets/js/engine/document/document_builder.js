@@ -501,7 +501,16 @@ class DocumentBuilder {
 					return; // // FIX
 				}
 
-				result[name] = $(el).val();
+				let value = $(el).val();
+
+				// =====================================
+				// 🔥 AUTO NORMALIZE DATE → ISO
+				// =====================================
+				if ($(el).closest(".ui.calendar").length) {
+					value = UIComponents.toISODateTime(value);
+				}
+
+				result[name] = value;
 			});
 
 		return result;

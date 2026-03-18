@@ -836,6 +836,48 @@ REQUEST
 			$(this).data("calendar-initialized", true);
 		});
 	}
+	static toISODateTime(value) {
+		if (!value) return "";
+
+		// =====================================
+		// FORMAT: 18 Maret 2026 10:30:00
+		// =====================================
+		const bulan = {
+			januari: "01",
+			februari: "02",
+			maret: "03",
+			april: "04",
+			mei: "05",
+			juni: "06",
+			juli: "07",
+			agustus: "08",
+			september: "09",
+			oktober: "10",
+			november: "11",
+			desember: "12",
+		};
+
+		let parts = value.toLowerCase().split(" ");
+
+		if (parts.length >= 3) {
+			let d = parts[0].padStart(2, "0");
+			let m = bulan[parts[1]];
+			let y = parts[2];
+
+			if (!m) return value;
+
+			let time = parts[3] || "00:00:00";
+
+			// fix kalau hh:mm
+			if (time.length === 5) {
+				time += ":00";
+			}
+
+			return `${y}-${m}-${d} ${time}`;
+		}
+
+		return value;
+	}
 }
 // REGISTER ALL COMPONENTS
 UIComponentRegistry.register("fields", (p) => UIComponents.fields(p.prop));
