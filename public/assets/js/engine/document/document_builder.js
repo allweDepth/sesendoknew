@@ -173,7 +173,17 @@ class DocumentBuilder {
 			let cols = table.data("columns")?.length || 2; // 🔥 pakai schema, bukan DOM
 
 			table.find("tbody").append(self.buildRow(section, cols));
-			self.initFomantic();
+
+			// =====================================
+			// FIX: init hanya elemen baru, bukan semua
+			// =====================================
+			let newRow = table.find("tbody tr:last");
+
+			// init checkbox saja jika ada
+			newRow.find(".ui.checkbox").checkbox();
+
+			// JANGAN re-init dropdown global
+			// self.initFomantic(); ❌ HAPUS
 		});
 
 		// DELETE ROW
@@ -271,6 +281,15 @@ class DocumentBuilder {
 
 	insertToTable(target, data) {
 		let table = this.container.find(`table[name="${target}"]`);
+
+		// =====================================
+		// FIX: fallback cari semua table editable
+		// =====================================
+		if (!table.length) {
+			table = this.container.find(`table[data-type="editable_table"]`);
+		}
+
+		// HARD STOP kalau tetap tidak ada
 		if (!table.length) return;
 
 		let tbody = table.find("tbody");
@@ -555,9 +574,11 @@ class DocumentBuilder {
 			});
 
 		// =====================================
-		// FIX: pastikan struktur selalu ikut
+		// FIX: pisahkan struktur dari root
 		// =====================================
-		result["struktur_json"] = result;
+		let struktur = JSON.parse(JSON.stringify(result));
+
+		result["struktur_json"] = struktur;
 
 		return result;
 	}
