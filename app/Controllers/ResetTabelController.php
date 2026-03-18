@@ -36,6 +36,11 @@ class ResetTabelController extends Controller
     'kegiatan_renstra_neo',
     'cache_schema_naskah',
     'ref_jenis_naskah',
+    'trx_naskah_dinas',
+    'trx_naskah_meta',
+    'trx_naskah_struktur',
+    'trx_nomor_counter',
+    'rekanan_neo',
   ];
 
 
