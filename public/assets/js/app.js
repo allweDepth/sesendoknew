@@ -154,7 +154,13 @@ class App {
 		const firstSegment = "/" + cleanUrl.split("/")[1]; // ambil segment pertama path
 
 		const moduleName = window.appModuleMap ? window.appModuleMap[firstSegment] : null; // cari nama module dari map
-
+		// ============================================
+		// FIX: dashboard tanpa module
+		// ============================================
+		if (firstSegment === "/dashboard") {
+			this.initPage(); // langsung init tanpa module
+			return;
+		}
 		if (!moduleName) {
 			// jika module tidak ditemukan
 			console.warn("Module tidak dikenali:", url); // tampilkan warning
@@ -272,6 +278,7 @@ window.appModuleMap = {
 	"/reset_tabel": "reset_tabel", // module reset tabel
 	"/profil": "profil",
 	"/wallchat": "wallchat",
+	"/dashboard": "dashboard",
 };
 
 // ======================================================

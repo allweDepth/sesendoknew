@@ -14,7 +14,10 @@ class DocumentBuilder {
 	render() {
 		if (!this.schema) return; // stop kalau tidak ada schema
 
-		this.container.empty(); // reset container
+		// FIX: clear semua event sebelum render ulang
+		this.container.off();
+
+		this.container.empty();
 
 		let fields = this.schema.sections || this.schema; // ambil sections
 		let html = [];
@@ -182,9 +185,10 @@ class DocumentBuilder {
 		// =====================================
 		// FIX: scope ke container, bukan document
 		// =====================================
-		$(document).off("dropdown:select.documentBuilder");
+		// FIX: scope ke container instance
+		this.container.off("dropdown:select.documentBuilder");
 
-		$(document).on("dropdown:select.documentBuilder", (e, payload) => {
+		this.container.on("dropdown:select.documentBuilder", (e, payload) => {
 			const { target, data, name } = payload;
 
 			// AUTO HEADER
@@ -273,7 +277,8 @@ class DocumentBuilder {
 		// =====================================
 		// FIX: pastikan id selalu ada
 		// =====================================
-		let id = data.id || data.nip || data.nama || Date.now(); // // FIX
+		let id = data.id; // FIX: HARUS FIX ID DARI DB
+		if (!id) return; // HARD STOP kalau tidak ada id
 
 		if (tbody.find(`tr[data-id="${id}"]`).length > 0) return;
 
@@ -286,7 +291,16 @@ class DocumentBuilder {
 			// =====================================
 			// FIX: fallback mapping
 			// =====================================
-			let value = data[key] ?? data[col] ?? data.nama ?? data.text ?? ""; // // FIX
+			let value;
+
+			// FIX KHUSUS ASN
+			if (target === "nama_ditugaskan") {
+				if (key === "nama") value = data.uraian;
+				else if (key === "pangkat") value = (data.golongan || "") + (data.ruang ? ", " + data.ruang : "");
+				else value = data[key] ?? "";
+			} else {
+				value = data[key] ?? data[col] ?? data.nama ?? data.text ?? "";
+			}
 
 			row += `
 			<td contenteditable="true" data-key="${key}">
