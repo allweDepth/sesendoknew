@@ -220,10 +220,16 @@ PERUBAHAN:
 ===================================================== */
       case 'delete':
         $this->authorize('delete', $table);
+        $id = $request['id_row'] ?? null;
+
+        if (!$id) {
+          return JsonResponse::error("ID tidak valid"); // // FIX HARD STOP
+        }
+
         return $this->delete(
           $table,
           $profile,
-          $request['id_row'] ?? null
+          (int)$id // // FIX
         );
 
 
@@ -314,7 +320,7 @@ GET SINGLE ROW
     )->fetch();
 
     // ======================================================
-    // 🔥 TAMBAHAN: LOAD RELATIONS
+    // 🔥 LOAD RELATIONS (FIXED)
     // ======================================================
 
     $profile = $this->getProfileByTable($table);
@@ -323,26 +329,66 @@ GET SINGLE ROW
 
       foreach ($profile['write_relations'] as $relTable => $rel) {
 
-        $fk = $rel['fk'];
+        $fk = $rel['fk'] ?? null;
+        if (!$fk) continue;
 
-        $relRow = $this->db->query(
-          "SELECT * FROM `$relTable` WHERE `$fk` = ? LIMIT 1",
+        // =====================================
+        // FIX: ambil SEMUA row (hapus LIMIT 1)
+        // =====================================
+        $rows = $this->db->query(
+          "SELECT * FROM `$relTable` WHERE `$fk` = ?",
           [$id]
-        )->fetch();
+        )->fetchAll(); // // FIX
 
-        if (!$relRow) continue;
+        if (!$rows) continue;
 
-        // 🔥 JSON RELATION
-        if ($rel['type'] === 'json' && !empty($relRow['meta_json'])) {
+        // =====================================
+        // FIX: DETECT MODE OTOMATIS
+        // =====================================
+        $mode = $this->detectRelationMode($relTable); // // FIX
 
-          $json = json_decode($relRow['meta_json'], true);
+        // =====================================
+        // JSON RELATION
+        // =====================================
+        if ($mode === 'json') {
 
-          if (is_array($json)) {
-            $row = array_merge($row, $json);
+          // FIX: deteksi field json (struktur_json / meta_json)
+          $columns = $this->getTableColumns($relTable);
+
+          $jsonField = in_array('struktur_json', $columns)
+            ? 'struktur_json'
+            : (in_array('meta_json', $columns) ? 'meta_json' : null);
+
+          if ($jsonField && !empty($rows[0][$jsonField])) {
+
+            $json = json_decode($rows[0][$jsonField], true);
+
+            if (is_array($json)) {
+              $row = array_merge($row, $json); // // FIX
+            }
           }
-        } else {
-          $row = array_merge($row, $relRow);
+
+          continue;
         }
+
+        // =====================================
+        // KV RELATION (meta_key/meta_value)
+        // =====================================
+        if ($mode === 'kv') {
+
+          foreach ($rows as $r) {
+            if (isset($r['meta_key'])) {
+              $row[$r['meta_key']] = $r['meta_value'] ?? null; // // FIX
+            }
+          }
+
+          continue;
+        }
+
+        // =====================================
+        // TABLE RELATION (MULTI ROW)
+        // =====================================
+        $row[$relTable] = $rows; // // FIX
       }
     }
 
@@ -4801,6 +4847,8 @@ AND is_deleted = 0
     if (empty($profile['write_relations'])) {
       return;
     }
+
+    if (!$id) return; // // FIX HARD STOP
 
     foreach ($profile['write_relations'] as $relTable => $rel) {
 
