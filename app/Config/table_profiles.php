@@ -1387,23 +1387,55 @@ $profiles = [
     'table' => 'trx_naskah_dinas',
     'primary_key' => 'id',
 
-    // ===================================================
-    // TAMBAHAN RELASI WRITE
-    // ===================================================
+    'read_relations' => [
+
+      // =====================================
+      // JENIS NASKAH
+      // =====================================
+      'cache_schema_naskah' => [
+        'select' => ['jenis_id', 'schema_json'],
+        'where' => [
+          'jenis_id' => 'jenis_id'
+        ]
+      ],
+
+      // =====================================
+      // ASN (FIX SESUAI PERMINTAAN KAMU)
+      // =====================================
+      'db_asn_pemda_neo' => [
+        'select' => [
+          'id',
+          'nama',
+          'gelar_depan',
+          'gelar',
+          'nip',
+          'jabatan',
+          'golongan',
+          'ruang'
+        ],
+        'where' => [
+          'kd_opd' => 'kd_opd',
+          'kd_wilayah' => 'kd_wilayah',
+          'disable' => ['value' => 0] // // FIX STATIC
+        ]
+      ]
+
+    ],
+
     'write_relations' => [
       'trx_naskah_meta' => [
         'fk' => 'naskah_id'
       ],
-
       'trx_naskah_struktur' => [
         'fk' => 'naskah_id'
       ]
     ],
+
     'versioning' => [
       'mode' => 'insert_on_change',
       'fields' => ['nomor', 'tanggal_surat']
     ],
-    // JANGAN DUPLIKAT
+
     'not_duplicate' => [
       'nomor',
       'tanggal_surat',
@@ -1411,9 +1443,7 @@ $profiles = [
       'tahun',
       'kd_opd'
     ],
-    // ===================================================
-    // COUNTER
-    // ===================================================
+
     'counter' => [
       'table' => 'trx_nomor_counter',
       'tahun_field' => 'tahun',
@@ -1422,9 +1452,7 @@ $profiles = [
 
     'modes' => [
       'default' => [
-        'select' => [
-          '*'
-        ],
+        'select' => ['*'],
         'searchable' => ['nomor', 'perihal'],
         'order_by' => 'tgl_insert DESC'
       ],

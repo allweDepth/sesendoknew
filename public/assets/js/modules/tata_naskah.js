@@ -238,12 +238,81 @@ class TataNaskahModule {
 	 * LOAD SCHEMA FORM
 	 */
 	loadSchema(jenisId, id = null) {
-		// // FIX: tambah param id
+		// =====================================
+		// FIX: EDIT MODE → ambil data dulu
+		// =====================================
+		if (id) {
+			window.Ajax.request({
+				method: "POST",
+				data: {
+					action: "edit",
+					tbl: this.state.tbl,
+					id_row: id,
+				},
+				success: (resData) => {
+					if (!resData.success) return;
 
+					const data = resData.data;
+
+					// =====================================
+					// lalu ambil schema
+					// =====================================
+					this.ajaxSchema.request({
+						data: { jenis_id: data.jenis_id },
+
+						success: (res) => {
+							if (res.error) {
+								Toast.show("error", res.error);
+								return;
+							}
+
+							if (!res.schema) return;
+
+							// tampilkan container
+							this.formContainer.show("");
+
+							const container = $(this.formContainerSelector);
+
+							const type = res.schema.kode_form || "sk";
+
+							window.documentBuilder = new DocumentBuilder($("#form_modal"));
+							window.documentBuilder.schema = res.schema;
+							window.documentBuilder.data = res;
+
+							window.documentBuilder.render();
+
+							// =====================================
+							// FIX: inject DATA ke form (INI KUNCI)
+							// =====================================
+							Object.entries(data).forEach(([key, val]) => {
+								const el = container.find(`[name="${key}"]`);
+
+								if (!el.length) return;
+
+								el.val(val);
+							});
+
+							// trigger dropdown
+							container.find("select").trigger("change");
+
+							// dropdown engine
+							if (!window.dropdownEngine) {
+								window.dropdownEngine = new DropdownEngine($("#form_modal"), res);
+								window.dropdownEngine.init();
+							}
+						},
+					});
+				},
+			});
+
+			return;
+		}
+
+		// =====================================
+		// ADD MODE (TIDAK DIUBAH)
+		// =====================================
 		this.ajaxSchema.request({
-			data: id
-				? { id: id } // // FIX: edit mode
-				: { jenis_id: jenisId }, // // FIX: add mode
+			data: { jenis_id: jenisId },
 
 			success: (res) => {
 				if (res.error) {
@@ -253,59 +322,23 @@ class TataNaskahModule {
 
 				if (!res.schema) return;
 
-				// this.formContainer.render({
-				// 	schema: res.schema,
-				// 	asn: res.asn || [],
-				// 	klasifikasi: res.klasifikasi || [],
-				// 	nomor_auto: res.nomor_auto || null,
-				// });
-				// tampilkan container dulu
-				this.formContainer.show(""); // menampilkan container form
+				this.formContainer.show("");
 
-				// ambil container DOM
-				const container = $(this.formContainerSelector); // ambil element container
+				const container = $(this.formContainerSelector);
 
-				// ambil tipe dokumen
-				const type = res.schema.kode_form || "sk"; // ambil kode form jika ada
+				const type = res.schema.kode_form || "sk";
 
-				// buat builder dokumen
-				// const builder = new DocumentBuilder(container, type); // buat builder
-				// ======================================================
-				// INIT DOCUMENT BUILDER
-				// ======================================================
+				window.documentBuilder = new DocumentBuilder($("#form_modal"));
+				window.documentBuilder.schema = res.schema;
+				window.documentBuilder.data = res;
+				window.documentBuilder.render();
 
-				// sebelum
-				// const builder = new DocumentBuilder($("#form_modal"));
-
-				// sesudah
-				window.documentBuilder = new DocumentBuilder($("#form_modal")); // expose global agar FormEngine bisa akses
-
-				// sebelum
-				// builder.schema = res.schema;
-
-				// sesudah
-				window.documentBuilder.schema = res.schema; // assign schema
-
-				// sebelum
-				// builder.data = res;
-
-				// sesudah
-				window.documentBuilder.data = res; // assign data server
-
-				// sebelum
-				// builder.render();
-
-				// sesudah
-				window.documentBuilder.render(); // render form
-				// =====================================
-				// FIX: inject jenis_id ke form
-				// =====================================
-				if (jenisId && !id) {
-					// hanya add mode
+				// tetap inject jenis_id (punya kamu)
+				if (jenisId) {
 					const hidden = `<input type="hidden" name="jenis_id" value="${jenisId}">`;
 					$("#form_modal").append(hidden);
 				}
-				// 🔥 WAJIB: init dropdown engine setelah render
+
 				if (!window.dropdownEngine) {
 					window.dropdownEngine = new DropdownEngine($("#form_modal"), res);
 					window.dropdownEngine.init();

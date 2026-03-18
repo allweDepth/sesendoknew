@@ -319,12 +319,18 @@ GET SINGLE ROW
       [$id]
     )->fetch();
 
-    // ======================================================
-    // 🔥 LOAD RELATIONS (FIXED)
-    // ======================================================
+    if (!$row) {
+      return JsonResponse::error("Data tidak ditemukan");
+    }
 
+    // ======================================================
+    // LOAD PROFILE (1x saja)
+    // ======================================================
     $profile = $this->getProfileByTable($table);
 
+    // ======================================================
+    // 🔥 WRITE RELATIONS (TIDAK DIUBAH)
+    // ======================================================
     if (!empty($profile['write_relations'])) {
 
       foreach ($profile['write_relations'] as $relTable => $rel) {
@@ -332,27 +338,18 @@ GET SINGLE ROW
         $fk = $rel['fk'] ?? null;
         if (!$fk) continue;
 
-        // =====================================
-        // FIX: ambil SEMUA row (hapus LIMIT 1)
-        // =====================================
         $rows = $this->db->query(
           "SELECT * FROM `$relTable` WHERE `$fk` = ?",
           [$id]
-        )->fetchAll(); // // FIX
+        )->fetchAll();
 
         if (!$rows) continue;
 
-        // =====================================
-        // FIX: DETECT MODE OTOMATIS
-        // =====================================
-        $mode = $this->detectRelationMode($relTable); // // FIX
+        $mode = $this->detectRelationMode($relTable);
 
-        // =====================================
-        // JSON RELATION
-        // =====================================
+        // JSON
         if ($mode === 'json') {
 
-          // FIX: deteksi field json (struktur_json / meta_json)
           $columns = $this->getTableColumns($relTable);
 
           $jsonField = in_array('struktur_json', $columns)
@@ -364,35 +361,134 @@ GET SINGLE ROW
             $json = json_decode($rows[0][$jsonField], true);
 
             if (is_array($json)) {
-              $row = array_merge($row, $json); // // FIX
+              $row = array_merge($row, $json);
             }
           }
 
           continue;
         }
 
-        // =====================================
-        // KV RELATION (meta_key/meta_value)
-        // =====================================
+        // KV
         if ($mode === 'kv') {
 
           foreach ($rows as $r) {
             if (isset($r['meta_key'])) {
-              $row[$r['meta_key']] = $r['meta_value'] ?? null; // // FIX
+              $row[$r['meta_key']] = $r['meta_value'] ?? null;
             }
           }
 
           continue;
         }
 
-        // =====================================
-        // TABLE RELATION (MULTI ROW)
-        // =====================================
-        $row[$relTable] = $rows; // // FIX
+        // TABLE
+        $row[$relTable] = $rows;
       }
     }
 
-    return JsonResponse::success("Data ditemukan", [], $row ?? []);
+    // ======================================================
+    // 🔥 READ RELATIONS (SELECT + STATIC + CALL SUPPORT)
+    // ======================================================
+    if (!empty($profile['read_relations'])) {
+
+      foreach ($profile['read_relations'] as $relTable => $rel) {
+
+        // =====================================
+        // 🔥 MODE: CALL CLASS METHOD
+        // =====================================
+        if (!empty($rel['call'])) {
+
+          $className = $rel['call']['class'] ?? null;
+          $method = $rel['call']['method'] ?? null;
+
+          if (!$className || !$method) continue;
+          if (!class_exists($className)) continue;
+
+          $instance = new $className();
+
+          $paramsCall = [];
+
+          foreach (($rel['params'] ?? []) as $paramKey => $mainCol) {
+
+            if (!isset($row[$mainCol])) continue;
+
+            $paramsCall[$paramKey] = $row[$mainCol];
+          }
+
+          $result = call_user_func([$instance, $method], $paramsCall);
+
+          $row['_read'][$relTable] = $result;
+
+          continue;
+        }
+
+        // =====================================
+        // 🔥 MODE: SQL WHERE
+        // =====================================
+        $whereConfig = $rel['where'] ?? null;
+        if (!$whereConfig || !is_array($whereConfig)) continue;
+
+        $whereSql = [];
+        $params = [];
+
+        foreach ($whereConfig as $relCol => $mainCol) {
+
+          // STATIC VALUE
+          if (is_array($mainCol) && isset($mainCol['value'])) {
+            $whereSql[] = "`$relCol` = ?";
+            $params[] = $mainCol['value'];
+            continue;
+          }
+
+          // NORMAL MAPPING
+          if (!isset($row[$mainCol])) continue;
+
+          $whereSql[] = "`$relCol` = ?";
+          $params[] = $row[$mainCol];
+        }
+
+        if (empty($whereSql)) continue;
+
+        $where = "WHERE " . implode(" AND ", $whereSql);
+
+        // =====================================
+        // 🔥 FIX: SUPPORT SELECT
+        // =====================================
+        $select = $rel['select'] ?? '*';
+
+        if (is_array($select)) {
+          $select = implode(",", $select);
+        }
+
+        $sql = "SELECT {$select} FROM `$relTable` {$where}";
+
+        $relData = $this->db->query(
+          $sql,
+          $params
+        )->fetchAll();
+
+        // =====================================
+        // ISOLASI
+        // =====================================
+        $row['_read'][$relTable] = $relData;
+      }
+    }
+
+    // ======================================================
+    // SCHEMA (OPTIONAL)
+    // ======================================================
+    $schema = null;
+
+    if (!empty($profile['schema'])) {
+      $schema = $profile['schema'];
+    }
+
+    return JsonResponse::success(
+      "Data ditemukan",
+      [
+        'schema' => $schema
+      ],
+      $row
+    );
   }
 
   /* =========================================================
