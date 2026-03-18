@@ -4688,6 +4688,8 @@ AND is_deleted = 0
 
     return $this->insert($table, $newRequest);
   }
+  // path: DynamicTableService.php
+
   private function handleWriteRelations(
     string $table,
     int $id,
@@ -4701,184 +4703,158 @@ AND is_deleted = 0
 
     foreach ($profile['write_relations'] as $relTable => $rel) {
 
-      $type = $rel['type'] ?? 'single';
-      $fk   = $rel['fk'];
+      $fk = $rel['fk'] ?? null;
+      if (!$fk) continue;
 
-      switch ($type) {
+      // =====================================
+      // 🔥 AUTO DETECT MODE
+      // =====================================
+      $mode = $this->detectRelationMode($relTable); // // FIX
 
-        // =========================================
-        // 1️⃣ SINGLE RELATION
-        // =========================================
-        case 'single':
+      // =====================================
+      // 🔥 DELETE EXISTING (SYNC MODE DEFAULT)
+      // =====================================
+      $this->db->delete($relTable, "WHERE `$fk` = ?", [$id]); // // FIX
 
-          $column = $rel['source'] ?? null;
+      // =====================================
+      // 🔥 KV MODE
+      // =====================================
+      if ($mode === 'kv') {
 
-          if (!$column || !isset($request[$column])) {
-            continue 2;
-          }
+        foreach ($request as $key => $val) {
 
-          $value = $request[$column];
+          if (is_array($val)) continue;
+          if (in_array($key, ['action', 'tbl'])) continue;
 
-          $exists = $this->db->query(
-            "SELECT 1 FROM `$relTable` WHERE `$fk` = ?",
-            [$id]
-          )->fetch();
+          $this->db->insert($relTable, [
+            $fk => $id,
+            'meta_key' => $key,
+            'meta_value' => $val
+          ]);
+        }
 
-          if ($exists) {
-            $this->db->update(
-              $relTable,
-              [$column => $value],
-              "WHERE `$fk` = ?",
-              [$id]
-            );
-          } else {
-            $this->db->insert(
-              $relTable,
-              [$fk => $id, $column => $value]
-            );
-          }
+        continue;
+      }
 
-          break;
+      // =====================================
+      // 🔥 JSON MODE
+      // =====================================
+      if ($mode === 'json') {
 
+        $columns = $this->getTableColumns($relTable);
 
-        // =========================================
-        // 2️⃣ JSON RELATION (SAFE)
-        // =========================================
-        case 'json':
+        $jsonField = in_array('struktur_json', $columns)
+          ? 'struktur_json'
+          : 'meta_json';
 
-          // =====================================
-          // FIX: support source = '*'
-          // =====================================
-          if (($rel['source'] ?? null) === '*') {
+        // 🔥 FIX CYCLIC
+        $data = $request;
 
-            $jsonData = $request;
+        unset($data['action'], $data['tbl']);
 
-            // 🔥 buang field sistem
-            unset($jsonData['action'], $jsonData['tbl']);
+        if (isset($data['struktur_json']) && is_array($data['struktur_json'])) {
+          $data = $data['struktur_json']; // // FIX
+        }
 
-            // 🔥 normalize struktur_json (hindari double encode)
-            if (isset($jsonData['struktur_json']) && is_string($jsonData['struktur_json'])) {
-              $decoded = json_decode($jsonData['struktur_json'], true);
-              if ($decoded) {
-                $jsonData['struktur_json'] = $decoded;
-              }
-            }
-          } else {
+        $this->db->insert($relTable, [
+          $fk => $id,
+          $jsonField => json_encode($data)
+        ]);
 
-            $fields = $rel['fields'] ?? [];
+        continue;
+      }
 
-            $jsonData = [];
+      // =====================================
+      // 🔥 TABLE MODE (MULTI ROW)
+      // =====================================
+      $source = $rel['source'] ?? null;
 
-            foreach ($fields as $f) {
-              if (isset($request[$f])) {
-                $jsonData[$f] = $request[$f];
-              }
-            }
-          }
+      if (!$source || empty($request[$source])) {
+        continue;
+      }
 
-          if (empty($jsonData)) {
-            continue 2;
-          }
+      foreach ($request[$source] as $row) {
 
-          $value = json_encode($jsonData);
+        $insert = [$fk => $id];
 
-          $exists = $this->db->query(
-            "SELECT 1 FROM `$relTable` WHERE `$fk` = ?",
-            [$id]
-          )->fetch();
+        $columns = $this->getTableColumns($relTable);
 
-          if ($exists) {
-            $this->db->update(
-              $relTable,
-              ['meta_json' => $value],
-              "WHERE `$fk` = ?",
-              [$id]
-            );
-          } else {
-            $this->db->insert(
-              $relTable,
-              [$fk => $id, 'meta_json' => $value]
-            );
-          }
+        foreach ($columns as $col) {
 
-          break;
+          if ($col === $fk) continue;
 
+          $insert[$col] = $row[$col] ?? null;
+        }
 
-        // =========================================
-        // 3️⃣ MULTI RELATION (PIVOT ENGINE)
-        // =========================================
-        case 'multi':
-
-          $source    = $rel['source'] ?? null;
-          $column    = $rel['column'] ?? null;
-          $delimiter = $rel['delimiter'] ?? ',';
-          $mode      = $rel['mode'] ?? 'sync';
-
-          if (!$source || !$column) {
-            continue 2;
-          }
-
-          $raw = $request[$source] ?? '';
-
-          if ($raw === '') {
-            continue 2;
-          }
-
-          $values = array_filter(array_map('trim', explode($delimiter, $raw)));
-
-          if (empty($values)) {
-            continue 2;
-          }
-
-          // =====================================
-          // MODE: REPLACE / SYNC
-          // =====================================
-          if (in_array($mode, ['replace', 'sync'])) {
-
-            $this->db->delete(
-              $relTable,
-              "WHERE `$fk` = ?",
-              [$id]
-            );
-          }
-
-          foreach ($values as $v) {
-
-            // prevent duplicate insert
-            $exists = $this->db->query(
-              "SELECT 1 FROM `$relTable`
-                         WHERE `$fk` = ? AND `$column` = ?",
-              [$id, $v]
-            )->fetch();
-
-            if ($exists) continue;
-
-            $this->db->insert(
-              $relTable,
-              [
-                $fk => $id,
-                $column => $v
-              ]
-            );
-          }
-
-          break;
+        $this->db->insert($relTable, $insert);
       }
     }
   }
-  private function deleteRelations(string $table, int $id, array $profile): void
-  {
-    if (empty($profile['write_relations'])) return;
+  // path: DynamicTableService.php
+
+  private function deleteRelations(
+    string $table,
+    int $id,
+    array $profile
+  ): void {
+
+    if (empty($profile['write_relations'])) {
+      return;
+    }
 
     foreach ($profile['write_relations'] as $relTable => $rel) {
 
-      $fk = $rel['fk'];
+      $fk = $rel['fk'] ?? null;
+      if (!$fk) continue;
 
-      $this->db->delete(
-        $relTable,
-        "WHERE `$fk` = ?",
-        [$id]
-      );
+      // =====================================
+      // 🔥 AUTO DETECT MODE (SAMAKAN DENGAN WRITE)
+      // =====================================
+      $mode = $this->detectRelationMode($relTable); // // FIX
+
+      // =====================================
+      // 🔥 DELETE STRATEGY
+      // =====================================
+
+      // KV → hapus semua key
+      if ($mode === 'kv') {
+
+        $this->db->delete($relTable, "WHERE `$fk` = ?", [$id]);
+        continue;
+      }
+
+      // JSON → 1 row → hapus row
+      if ($mode === 'json') {
+
+        $this->db->delete($relTable, "WHERE `$fk` = ?", [$id]);
+        continue;
+      }
+
+      // TABLE → multi row → hapus semua relasi
+      if ($mode === 'table') {
+
+        $this->db->delete($relTable, "WHERE `$fk` = ?", [$id]);
+        continue;
+      }
     }
+  }
+  // path: DynamicTableService.php
+
+  private function detectRelationMode(string $table): string
+  {
+    $columns = $this->getTableColumns($table);
+
+    // KV MODE
+    if (in_array('meta_key', $columns) && in_array('meta_value', $columns)) {
+      return 'kv';
+    }
+
+    // JSON MODE
+    if (in_array('meta_json', $columns) || in_array('struktur_json', $columns)) {
+      return 'json';
+    }
+
+    // DEFAULT = TABLE
+    return 'table';
   }
 }

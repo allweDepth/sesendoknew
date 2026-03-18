@@ -1391,28 +1391,13 @@ $profiles = [
     // TAMBAHAN RELASI WRITE
     // ===================================================
     'write_relations' => [
-
-      // =====================================
-      // FIX: META NASKAH (JSON)
-      // tabel: trx_naskah_meta
-      // FK: id_naskah
-      // =====================================
       'trx_naskah_meta' => [
-        'type'   => 'json',
-        'fk'     => 'id_naskah', // // FIX
-        'source' => '*'          // // FIX: ambil semua request
+        'fk' => 'naskah_id'
       ],
 
-      // =====================================
-      // FIX: STRUKTUR NASKAH (JSON)
-      // tabel: trx_naskah_struktur
-      // =====================================
       'trx_naskah_struktur' => [
-        'type'   => 'json',
-        'fk'     => 'id_naskah', // // FIX
-        'fields' => ['struktur_json'] // // FIX
+        'fk' => 'naskah_id'
       ]
-
     ],
     'versioning' => [
       'mode' => 'insert_on_change',
