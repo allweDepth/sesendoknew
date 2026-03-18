@@ -1391,16 +1391,29 @@ $profiles = [
     // TAMBAHAN RELASI WRITE
     // ===================================================
     'write_relations' => [
-      'trx_naskah_struktur' => [
-        'fk' => 'naskah_id',
-        'source' => 'struktur_json',
-        'type' => 'single'
+
+      // 1️⃣ SINGLE (1:1)
+      'kegiatan_detail' => [
+        'type'   => 'single',
+        'fk'     => 'kegiatan_id',
+        'source' => 'deskripsi'
       ],
 
-      'trx_naskah_meta' => [
-        'fk' => 'naskah_id',
-        'source' => '*', // seluruh request
-        'type' => 'json'
+      // 2️⃣ JSON (controlled fields)
+      'kegiatan_meta' => [
+        'type'   => 'json',
+        'fk'     => 'kegiatan_id',
+        'fields' => ['catatan', 'lokasi']
+      ],
+
+      // 3️⃣ MULTI (pivot)
+      'kegiatan_akun_map' => [
+        'type'      => 'multi',
+        'fk'        => 'kegiatan_id',
+        'source'    => 'kd_akun',
+        'column'    => 'kd_akun',
+        'delimiter' => ',',
+        'mode'      => 'sync' // sync | append | replace
       ]
 
     ],

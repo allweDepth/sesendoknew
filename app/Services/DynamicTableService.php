@@ -646,29 +646,15 @@ kd_sub_keg → nama_sub_keg
       // =====================================================
       // RELATIONS
       // =====================================================
-      if (!empty($profile['write_relations'])) {
-
-        foreach ($profile['write_relations'] as $relTable => $rel) {
-
-          $fk = $rel['fk'];
-
-          if ($rel['type'] === 'json') {
-            $column = 'meta_json';
-            $value  = json_encode($request);
-          } else {
-            $column = $rel['source'];
-            $value  = $request[$rel['source']] ?? null;
-          }
-
-          if ($value !== null) {
-
-            $this->db->insert(
-              $relTable,
-              [$fk => $id, $column => $value]
-            );
-          }
-        }
-      }
+      // =====================================================
+      // RELATIONS (FIX: pakai engine terpusat)
+      // =====================================================
+      $this->handleWriteRelations(
+        $table,
+        $id,
+        $request,
+        $profile
+      );
 
       // =====================================================
       // COUNTER
@@ -925,47 +911,15 @@ UPDATE DATA DENGAN DUPLICATE HANDLER
         // =====================================================
         $profile = $this->getProfileByTable($table);
 
-        if (!empty($profile['write_relations'])) {
-
-          foreach ($profile['write_relations'] as $relTable => $rel) {
-
-            $fk = $rel['fk'];
-
-            // tentukan value
-            if ($rel['type'] === 'json') {
-              $column = 'meta_json';
-              $value  = json_encode($request);
-            } else {
-              $column = $rel['source'];
-              $value  = $request[$rel['source']] ?? null;
-            }
-
-            if ($value !== null) {
-
-              // cek existing
-              $row = $this->db->query(
-                "SELECT 1 FROM `$relTable` WHERE `$fk` = ?",
-                [$id]
-              )->fetch();
-
-              if ($row) {
-
-                $this->db->update(
-                  $relTable,
-                  [$column => $value],
-                  "WHERE `$fk` = ?",
-                  [$id]
-                );
-              } else {
-
-                $this->db->insert(
-                  $relTable,
-                  [$fk => $id, $column => $value]
-                );
-              }
-            }
-          }
-        }
+        // =====================================================
+        // WRITE RELATIONS (FIX CENTRAL ENGINE)
+        // =====================================================
+        $this->handleWriteRelations(
+          $table,
+          $id,
+          $request,
+          $profile
+        );
       } catch (PDOException $e) {
 
         // SQLSTATE duplicate
@@ -1000,7 +954,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
       [$id]
     )->fetch();
 
-    return $this->runTransaction(function () use ($table, $primaryKey, $id, $oldData) {
+    return $this->runTransaction(function () use ($table, $primaryKey, $id, $oldData, $profile) {
+      // FIX: tambahkan $profile ke closure
 
       $columns = $this->getTableColumns($table);
 
@@ -1019,19 +974,7 @@ DELETE (FULL IDENTIK LOGIC ASLI)
         // =====================================================
         // TAMBAHAN: DELETE RELATIONS
         // =====================================================
-        if (!empty($profile['write_relations'])) {
-
-          foreach ($profile['write_relations'] as $relTable => $rel) {
-
-            $fk = $rel['fk'];
-
-            $this->db->delete(
-              $relTable,
-              "WHERE `$fk` = ?",
-              [$id]
-            );
-          }
-        }
+        $this->deleteRelations($table, $id, $profile);
         // =====================================================
 
 
@@ -4744,5 +4687,198 @@ AND is_deleted = 0
     unset($newRequest['id']);
 
     return $this->insert($table, $newRequest);
+  }
+  private function handleWriteRelations(
+    string $table,
+    int $id,
+    array $request,
+    array $profile
+  ): void {
+
+    if (empty($profile['write_relations'])) {
+      return;
+    }
+
+    foreach ($profile['write_relations'] as $relTable => $rel) {
+
+      $type = $rel['type'] ?? 'single';
+      $fk   = $rel['fk'];
+
+      switch ($type) {
+
+        // =========================================
+        // 1️⃣ SINGLE RELATION
+        // =========================================
+        case 'single':
+
+          $column = $rel['source'] ?? null;
+
+          if (!$column || !isset($request[$column])) {
+            continue 2;
+          }
+
+          $value = $request[$column];
+
+          $exists = $this->db->query(
+            "SELECT 1 FROM `$relTable` WHERE `$fk` = ?",
+            [$id]
+          )->fetch();
+
+          if ($exists) {
+            $this->db->update(
+              $relTable,
+              [$column => $value],
+              "WHERE `$fk` = ?",
+              [$id]
+            );
+          } else {
+            $this->db->insert(
+              $relTable,
+              [$fk => $id, $column => $value]
+            );
+          }
+
+          break;
+
+
+        // =========================================
+        // 2️⃣ JSON RELATION (SAFE)
+        // =========================================
+        case 'json':
+
+          // =====================================
+          // FIX: support source = '*'
+          // =====================================
+          if (($rel['source'] ?? null) === '*') {
+
+            $jsonData = $request;
+
+            // 🔥 buang field sistem
+            unset($jsonData['action'], $jsonData['tbl']);
+
+            // 🔥 normalize struktur_json (hindari double encode)
+            if (isset($jsonData['struktur_json']) && is_string($jsonData['struktur_json'])) {
+              $decoded = json_decode($jsonData['struktur_json'], true);
+              if ($decoded) {
+                $jsonData['struktur_json'] = $decoded;
+              }
+            }
+          } else {
+
+            $fields = $rel['fields'] ?? [];
+
+            $jsonData = [];
+
+            foreach ($fields as $f) {
+              if (isset($request[$f])) {
+                $jsonData[$f] = $request[$f];
+              }
+            }
+          }
+
+          if (empty($jsonData)) {
+            continue 2;
+          }
+
+          $value = json_encode($jsonData);
+
+          $exists = $this->db->query(
+            "SELECT 1 FROM `$relTable` WHERE `$fk` = ?",
+            [$id]
+          )->fetch();
+
+          if ($exists) {
+            $this->db->update(
+              $relTable,
+              ['meta_json' => $value],
+              "WHERE `$fk` = ?",
+              [$id]
+            );
+          } else {
+            $this->db->insert(
+              $relTable,
+              [$fk => $id, 'meta_json' => $value]
+            );
+          }
+
+          break;
+
+
+        // =========================================
+        // 3️⃣ MULTI RELATION (PIVOT ENGINE)
+        // =========================================
+        case 'multi':
+
+          $source    = $rel['source'] ?? null;
+          $column    = $rel['column'] ?? null;
+          $delimiter = $rel['delimiter'] ?? ',';
+          $mode      = $rel['mode'] ?? 'sync';
+
+          if (!$source || !$column) {
+            continue 2;
+          }
+
+          $raw = $request[$source] ?? '';
+
+          if ($raw === '') {
+            continue 2;
+          }
+
+          $values = array_filter(array_map('trim', explode($delimiter, $raw)));
+
+          if (empty($values)) {
+            continue 2;
+          }
+
+          // =====================================
+          // MODE: REPLACE / SYNC
+          // =====================================
+          if (in_array($mode, ['replace', 'sync'])) {
+
+            $this->db->delete(
+              $relTable,
+              "WHERE `$fk` = ?",
+              [$id]
+            );
+          }
+
+          foreach ($values as $v) {
+
+            // prevent duplicate insert
+            $exists = $this->db->query(
+              "SELECT 1 FROM `$relTable`
+                         WHERE `$fk` = ? AND `$column` = ?",
+              [$id, $v]
+            )->fetch();
+
+            if ($exists) continue;
+
+            $this->db->insert(
+              $relTable,
+              [
+                $fk => $id,
+                $column => $v
+              ]
+            );
+          }
+
+          break;
+      }
+    }
+  }
+  private function deleteRelations(string $table, int $id, array $profile): void
+  {
+    if (empty($profile['write_relations'])) return;
+
+    foreach ($profile['write_relations'] as $relTable => $rel) {
+
+      $fk = $rel['fk'];
+
+      $this->db->delete(
+        $relTable,
+        "WHERE `$fk` = ?",
+        [$id]
+      );
+    }
   }
 }
