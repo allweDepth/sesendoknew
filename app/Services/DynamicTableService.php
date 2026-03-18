@@ -3330,45 +3330,89 @@ ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filte
   }
   private function normalizeToMySQLDateTime(?string $value): string
   {
-    // 1️⃣ dd/mm/yyyy
     if (!is_string($value) || $value === '') {
-      return '';
+      return $value;
     }
 
+    // =====================================
+    // 1. dd/mm/yyyy
+    // =====================================
     if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $value, $m)) {
-      return sprintf(
-        '%04d-%02d-%02d 00:00:00',
-        $m[3],
-        $m[2],
-        $m[1]
-      );
+      return sprintf('%04d-%02d-%02d 00:00:00', $m[3], $m[2], $m[1]);
     }
 
-    // 2️⃣ ISO date
+    // =====================================
+    // 2. ISO date
+    // =====================================
     if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
       return $value . ' 00:00:00';
     }
 
-    // 3️⃣ datetime without seconds
+    // =====================================
+    // 3. datetime tanpa detik
+    // =====================================
     if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/', $value)) {
       return $value . ':00';
     }
 
-    // 4️⃣ ISO T format
+    // =====================================
+    // 4. ISO T format
+    // =====================================
     if (preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/', $value)) {
       return str_replace('T', ' ', $value) . ':00';
     }
 
-    // 5️⃣ full datetime valid
-    if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $value)) {
-      return $value;
+    // =====================================
+    // 5. "March 18, 2026"
+    // =====================================
+    if (preg_match('/^[A-Za-z]+ \d{1,2}, \d{4}$/', $value)) {
+      $time = strtotime($value);
+      if ($time !== false) {
+        return date('Y-m-d 00:00:00', $time);
+      }
     }
 
-    // 6️⃣ fallback text date (March 18, 2026, dll)
-    $time = strtotime($value);
+    // =====================================
+    // 6. "18 Maret 2026 10:30"
+    // =====================================
+    if (preg_match('/^\d{1,2} [A-Za-z]+ \d{4}/', $value)) {
+      $bulan = [
+        'januari' => '01',
+        'februari' => '02',
+        'maret' => '03',
+        'april' => '04',
+        'mei' => '05',
+        'juni' => '06',
+        'juli' => '07',
+        'agustus' => '08',
+        'september' => '09',
+        'oktober' => '10',
+        'november' => '11',
+        'desember' => '12'
+      ];
 
+      $parts = explode(' ', strtolower($value));
+
+      if (count($parts) >= 3) {
+        $d = str_pad($parts[0], 2, '0', STR_PAD_LEFT);
+        $m = $bulan[$parts[1]] ?? null;
+        $y = $parts[2];
+
+        if ($m) {
+          $time = $parts[3] ?? '00:00:00';
+          if (strlen($time) === 5) $time .= ':00';
+
+          return "$y-$m-$d $time";
+        }
+      }
+    }
+
+    // =====================================
+    // 7. fallback universal
+    // =====================================
+    $time = strtotime($value);
     if ($time !== false) {
-      return date('Y-m-d 00:00:00', $time);
+      return date('Y-m-d H:i:s', $time);
     }
 
     return $value;
