@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 17 Mar 2026 pada 07.18
+-- Waktu pembuatan: 18 Mar 2026 pada 14.20
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -8638,7 +8638,7 @@ INSERT INTO `cache_schema_naskah` (`jenis_id`, `schema_version`, `schema_json`, 
 (2, 1, '[{\"type\": \"fields\", \"size\": \"three\", \"fields\": [{\"type\": \"input\", \"label\": \"Nomor\", \"name\": \"nomor\"}, {\"type\": \"calendar\", \"label\": \"Tanggal\", \"name\": \"tgl_surat_dibuat\"}, {\"type\": \"file\", \"label\": \"File\", \"name\": \"file\"}]}, {\"type\": \"textarea\", \"label\": \"Tentang\", \"name\": \"tentang\"}, {\"type\": \"section\", \"label\": \"MEMERINTAHKAN\"}, {\"type\": \"editable_table\", \"name\": \"memerintahkan\", \"columns\": [\"URAIAN\", \"JENIS\"]}]', '2026-03-16 19:32:57'),
 (3, 1, '[{\"type\": \"fields\", \"size\": \"three\", \"fields\": [{\"type\": \"input\", \"label\": \"Nomor\", \"name\": \"nomor\"}, {\"type\": \"calendar\", \"label\": \"Tanggal\", \"name\": \"tgl_surat_dibuat\"}, {\"type\": \"file\", \"label\": \"File\", \"name\": \"file\"}]}, {\"type\": \"textarea\", \"label\": \"Tentang\", \"name\": \"tentang\"}, {\"type\": \"editable_table\", \"name\": \"isi_edaran\", \"columns\": [\"URAIAN\", \"JENIS\"]}]', '2026-03-16 19:32:57'),
 (4, 1, '[{\"type\": \"fields\", \"size\": \"three\", \"fields\": [{\"type\": \"input\", \"label\": \"Nomor\", \"name\": \"nomor\"}, {\"type\": \"calendar\", \"label\": \"Tanggal\", \"name\": \"tgl_surat_dibuat\"}, {\"type\": \"file\", \"label\": \"File\", \"name\": \"file\"}]}, {\"type\": \"textarea\", \"label\": \"Tentang\", \"name\": \"tentang\"}, {\"type\": \"section\", \"label\": \"PROSEDUR\"}, {\"type\": \"editable_table\", \"name\": \"langkah\", \"columns\": [\"URAIAN\", \"JENIS\"]}]', '2026-03-16 19:32:57'),
-(5, 1, '[\n  {\n    \"type\": \"message\",\n    \"variant\": \"positive\",\n    \"icon\": \"exclamation\",\n    \"label\": \"Perhatian\",\n    \"list\": [\n      \"jika mengedit data dan merubah Nomor Surat maka akan dianggap tambah data baru jika di simpan\",\n      \"simpan terlebih dahulu sebelum cetak dokumen\"\n    ]\n  },\n\n  {\n    \"type\": \"fields\",\n    \"size\": \"three\",\n    \"fields\": [\n      {\n        \"type\": \"input\",\n        \"label\": \"Nomor Surat\",\n        \"name\": \"nomor\",\n        \"required\": true\n      },\n      {\n        \"type\": \"calendar\",\n        \"label\": \"Tanggal Surat\",\n        \"name\": \"tgl_surat_dibuat\",\n        \"required\": true\n      },\n      {\n        \"type\": \"file\",\n        \"label\": \"Pilih File Dokumen\",\n        \"name\": \"file\"\n      }\n    ]\n  },\n\n  {\n    \"type\": \"textarea\",\n    \"label\": \"Tentang\",\n    \"name\": \"tentang\",\n    \"required\": true\n  },\n\n  {\n    \"type\": \"fields\",\n    \"size\": \"three\",\n    \"fields\": [\n      {\n        \"type\": \"dropdown_ajax\",\n        \"label\": \"Penandatangan\",\n        \"name\": \"penandatangan\",\n        \"source\": \"penandatangan\",\n        \"required\": true\n      },\n      {\n        \"type\": \"input\",\n        \"label\": \"Jabatan\",\n        \"name\": \"jbt_pemberi_tgs\",\n        \"required\": true\n      },\n      {\n        \"type\": \"input\",\n        \"label\": \"Pangkat\",\n        \"name\": \"pangkat_pemberi_tgs\",\n        \"required\": true\n      }\n    ]\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"MENIMBANG\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menimbang\",\n    \"columns\": [\n      \"URAIAN\",\n      \"JENIS\"\n    ]\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"MENGINGAT\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"mengingat\",\n    \"columns\": [\n      \"URAIAN\",\n      \"JENIS\"\n    ]\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"MENETAPKAN\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_1\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_2\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_3\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_4\"\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"users\",\n    \"label\": \"ASN YANG DITUGASKAN\", \"columns\": [\"nama\", \"pangkat\", \"nip\", \"jabatan\", \"jabatan_sk\"]\n  },\n\n  {\n    \"type\": \"dropdown_ajax\",\n    \"label\": \"Nama ASN ditugaskan\",\n    \"name\": \"asn\",\n    \"source\": \"asn\",\n    \"target\": \"nama_ditugaskan\"\n  },\n\n  {\n    \"type\": \"table\",\n    \"name\": \"nama_ditugaskan\",\n    \"columns\": [\n      \"nama\",\n      \"pangkat\",\n      \"nip\",\n      \"jabatan\",\n      \"jabatan_sk\"\n    ]\n  },\n\n  {\n    \"type\": \"toggle\",\n    \"label\": \"Lampiran SK bentuk Tabel\",\n    \"name\": \"bentuk_lampiran\"\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"TEMBUSAN\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"tembusan\",\n    \"columns\": [\n      \"URAIAN\",\n      \"JENIS\"\n    ]\n  },\n\n  {\n    \"type\": \"textarea\",\n    \"label\": \"Keterangan\",\n    \"name\": \"keterangan\"\n  },\n\n  {\n    \"type\": \"toggle\",\n    \"label\": \"Non Aktif\",\n    \"name\": \"disable\"\n  }\n]', '2026-03-16 19:32:57'),
+(5, 1, '[\n  {\n    \"type\": \"message\",\n    \"variant\": \"positive\",\n    \"icon\": \"exclamation\",\n    \"label\": \"Perhatian\",\n    \"list\": [\n      \"jika mengedit data dan merubah Nomor Surat maka akan dianggap tambah data baru jika di simpan\",\n      \"simpan terlebih dahulu sebelum cetak dokumen\"\n    ]\n  },\n\n  {\n    \"type\": \"fields\",\n    \"size\": \"three\",\n    \"fields\": [\n      {\n        \"type\": \"input\",\n        \"label\": \"Nomor Surat\",\n        \"name\": \"nomor\",\n        \"required\": true\n      },\n      {\n        \"type\": \"calendar\",\n        \"label\": \"Tanggal Surat\",\n        \"name\": \"tanggal_surat\",\n        \"required\": true\n      },\n      {\n        \"type\": \"file\",\n        \"label\": \"Pilih File Dokumen\",\n        \"name\": \"file\"\n      }\n    ]\n  },\n\n  {\n    \"type\": \"textarea\",\n    \"label\": \"Tentang\",\n    \"name\": \"tentang\",\n    \"required\": true\n  },\n\n  {\n    \"type\": \"fields\",\n    \"size\": \"three\",\n    \"fields\": [\n      {\n        \"type\": \"dropdown_ajax\",\n        \"label\": \"Penandatangan\",\n        \"name\": \"penandatangan\",\n        \"source\": \"penandatangan\",\n        \"required\": true\n      },\n      {\n        \"type\": \"input\",\n        \"label\": \"Jabatan\",\n        \"name\": \"jbt_pemberi_tgs\",\n        \"required\": true\n      },\n      {\n        \"type\": \"input\",\n        \"label\": \"Pangkat\",\n        \"name\": \"pangkat_pemberi_tgs\",\n        \"required\": true\n      }\n    ]\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"MENIMBANG\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menimbang\",\n    \"columns\": [\n      \"URAIAN\"\n    ]\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"MENGINGAT\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"mengingat\",\n    \"columns\": [\n      \"URAIAN\"\n    ]\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"MENETAPKAN\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_1\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_2\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_3\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_4\"\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"users\",\n    \"label\": \"ASN YANG DITUGASKAN\", \"columns\": [\"nama\", \"pangkat\", \"nip\", \"jabatan\", \"jabatan_sk\"]\n  },\n\n  {\n    \"type\": \"dropdown_ajax\",\n    \"label\": \"Nama ASN ditugaskan\",\n    \"name\": \"asn\",\n    \"source\": \"asn\",\n    \"target\": \"nama_ditugaskan\"\n  },\n\n  {\n    \"type\": \"table\",\n    \"name\": \"nama_ditugaskan\",\n    \"columns\": [\n      \"nama\",\n      \"pangkat\",\n      \"nip\",\n      \"jabatan\",\n      \"jabatan_sk\"\n    ]\n  },\n\n  {\n    \"type\": \"toggle\",\n    \"label\": \"Lampiran SK bentuk Tabel\",\n    \"name\": \"bentuk_lampiran\"\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"TEMBUSAN\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"tembusan\",\n    \"columns\": [\n      \"URAIAN\"\n    ]\n  },\n\n  {\n    \"type\": \"textarea\",\n    \"label\": \"Keterangan\",\n    \"name\": \"keterangan\"\n  },\n\n  {\n    \"type\": \"toggle\",\n    \"label\": \"Non Aktif\",\n    \"name\": \"disable\"\n  }\n]', '2026-03-16 19:32:57'),
 (6, 1, '[{\"type\": \"fields\", \"size\": \"three\", \"fields\": [{\"type\": \"input\", \"label\": \"Nomor\", \"name\": \"nomor\"}, {\"type\": \"calendar\", \"label\": \"Tanggal\", \"name\": \"tgl_surat_dibuat\"}, {\"type\": \"file\", \"label\": \"File\", \"name\": \"file\"}]}, {\"type\": \"textarea\", \"label\": \"Tentang\", \"name\": \"tentang\"}, {\"type\": \"section\", \"label\": \"MENUGASKAN\"}, {\"type\": \"editable_table\", \"name\": \"menugaskan\", \"columns\": [\"URAIAN\", \"JENIS\"]}, {\"type\": \"section\", \"label\": \"ASN YANG DITUGASKAN\"}, {\"type\": \"dropdown_ajax\", \"label\": \"ASN\", \"name\": \"asn\", \"source\": \"asn\"}, {\"type\": \"table\", \"name\": \"nama_ditugaskan\", \"columns\": [\"nama\", \"pangkat\", \"nip\", \"jabatan\"]}]', '2026-03-16 19:32:57'),
 (7, 1, '[{\"type\": \"fields\", \"size\": \"three\", \"fields\": [{\"type\": \"input\", \"label\": \"Nomor\", \"name\": \"nomor\"}, {\"type\": \"calendar\", \"label\": \"Tanggal\", \"name\": \"tgl_surat_dibuat\"}, {\"type\": \"file\", \"label\": \"File\", \"name\": \"file\"}]}, {\"type\": \"textarea\", \"label\": \"Tentang\", \"name\": \"tentang\"}, {\"type\": \"editable_table\", \"name\": \"isi\", \"columns\": [\"URAIAN\", \"JENIS\"]}]', '2026-03-16 19:32:57'),
 (8, 1, '[{\"type\": \"fields\", \"size\": \"three\", \"fields\": [{\"type\": \"input\", \"label\": \"Nomor\", \"name\": \"nomor\"}, {\"type\": \"calendar\", \"label\": \"Tanggal\", \"name\": \"tgl_surat_dibuat\"}, {\"type\": \"file\", \"label\": \"File\", \"name\": \"file\"}]}, {\"type\": \"textarea\", \"label\": \"Tentang\", \"name\": \"tentang\"}, {\"type\": \"editable_table\", \"name\": \"isi\", \"columns\": [\"URAIAN\", \"JENIS\"]}]', '2026-03-16 19:32:57'),
@@ -11210,7 +11210,10 @@ INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data
 (1857, 'tujuan_renstra_neo', 2, 'delete', '{\"id\":2,\"misi_id\":2,\"kode_tujuan\":null,\"nama_tujuan\":\"tujuan 1\",\"disable\":0,\"keterangan\":\"tujuan 2\",\"tgl_insert\":\"2026-03-08 04:46:05\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-08 12:46:05\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 04:49:37'),
 (1858, 'sasaran_renstra_neo', 2, 'delete', '{\"id\":2,\"tujuan_id\":3,\"kode_sasaran\":null,\"nama_sasaran\":\"sasaran 1\",\"disable\":0,\"keterangan\":\"ket\",\"tgl_insert\":\"2026-03-08 05:06:27\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-08 13:06:27\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 05:11:39'),
 (1859, 'sasaran_renstra_neo', 3, 'delete', '{\"id\":3,\"tujuan_id\":3,\"kode_sasaran\":null,\"nama_sasaran\":\"sasaran 1\",\"disable\":0,\"keterangan\":\"ket\",\"tgl_insert\":\"2026-03-08 05:06:27\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-08 13:06:27\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 05:11:42'),
-(1860, 'tujuan_renstra_neo', 5, 'delete', '{\"id\":5,\"misi_id\":3,\"kode_tujuan\":null,\"nama_tujuan\":\"tujuan 1 misi 2\",\"disable\":0,\"keterangan\":\"ket\",\"tgl_insert\":\"2026-03-08 05:18:34\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-08 13:18:34\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 05:27:37');
+(1860, 'tujuan_renstra_neo', 5, 'delete', '{\"id\":5,\"misi_id\":3,\"kode_tujuan\":null,\"nama_tujuan\":\"tujuan 1 misi 2\",\"disable\":0,\"keterangan\":\"ket\",\"tgl_insert\":\"2026-03-08 05:18:34\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-08 13:18:34\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 05:27:37'),
+(1862, 'trx_naskah_dinas', 5, 'delete', '{\"id\":5,\"uuid\":null,\"jenis_id\":null,\"nomor\":\"4\",\"nomor_urut\":null,\"tahun\":\"2026\",\"klasifikasi_id\":null,\"tanggal_surat\":\"2026-03-18\",\"perihal\":null,\"status\":\"draft\",\"file_pdf\":null,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"username_insert\":\"inayah\",\"tgl_insert\":\"2026-03-18 07:59:13\",\"username_update\":null,\"tgl_update\":null,\"keterangan\":\"\",\"workflow_status\":\"draft\",\"verified_by\":null,\"verified_at\":null,\"signed_by\":null,\"signed_at\":null,\"final_at\":null,\"document_hash\":null}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-18 09:39:19'),
+(1863, 'trx_naskah_dinas', 6, 'delete', '{\"id\":6,\"uuid\":null,\"jenis_id\":null,\"nomor\":\"1\",\"nomor_urut\":null,\"tahun\":\"2026\",\"klasifikasi_id\":null,\"tanggal_surat\":\"2026-03-18\",\"perihal\":null,\"status\":\"draft\",\"file_pdf\":null,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"username_insert\":\"inayah\",\"tgl_insert\":\"2026-03-18 09:44:05\",\"username_update\":null,\"tgl_update\":null,\"keterangan\":\"\",\"workflow_status\":\"draft\",\"verified_by\":null,\"verified_at\":null,\"signed_by\":null,\"signed_at\":null,\"final_at\":null,\"document_hash\":null}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-18 14:16:41'),
+(1864, 'trx_naskah_dinas', 7, 'delete', '{\"id\":7,\"uuid\":null,\"jenis_id\":null,\"nomor\":\"3\",\"nomor_urut\":null,\"tahun\":\"2026\",\"klasifikasi_id\":null,\"tanggal_surat\":\"2026-03-19\",\"perihal\":null,\"status\":\"draft\",\"file_pdf\":null,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"username_insert\":\"inayah\",\"tgl_insert\":\"2026-03-18 13:27:53\",\"username_update\":null,\"tgl_update\":null,\"keterangan\":\"\",\"workflow_status\":\"draft\",\"verified_by\":null,\"verified_at\":null,\"signed_by\":null,\"signed_at\":null,\"final_at\":null,\"document_hash\":null}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-18 14:16:44');
 
 -- --------------------------------------------------------
 
@@ -11287,54 +11290,6 @@ CREATE TABLE `misi_renstra_neo` (
 INSERT INTO `misi_renstra_neo` (`id`, `renstra_id`, `nama_misi`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
 (2, 4, 'misi 1', 0, 'ket', '2026-03-08 04:45:28', 'inayah', '2026-03-08 12:45:28', NULL, 0),
 (3, 4, 'misi 2', 0, 'ket 2', '2026-03-08 05:18:05', 'inayah', '2026-03-08 13:18:05', NULL, 0);
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `naskah_dinas_neo`
---
-
-CREATE TABLE `naskah_dinas_neo` (
-  `id` int(11) NOT NULL,
-  `tahun` year(4) NOT NULL,
-  `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `kd_opd` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `jenis_naskah_dinas` varchar(255) NOT NULL,
-  `nomor` varchar(255) NOT NULL,
-  `tgl_surat_dibuat` date NOT NULL,
-  `tentang` varchar(400) NOT NULL,
-  `klasifikasi_keamanan` varchar(255) NOT NULL,
-  `pemberi_tgs` varchar(18) NOT NULL,
-  `jbt_pemberi_tgs` varchar(150) DEFAULT NULL,
-  `pangkat_pemberi_tgs` varchar(150) DEFAULT NULL,
-  `nama_pemberi_tgs` varchar(255) NOT NULL,
-  `alinea_1` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`alinea_1`)),
-  `alinea_2` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`alinea_2`)),
-  `alinea_3` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`alinea_3`)),
-  `alinea_4` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`alinea_4`)),
-  `alinea_5` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`alinea_5`)),
-  `alinea_6` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`alinea_6`)),
-  `alinea_7` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`alinea_7`)),
-  `alinea_8` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`alinea_8`)),
-  `alinea_9` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`alinea_9`)),
-  `alinea_10` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`alinea_10`)),
-  `alinea_11` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`alinea_11`)),
-  `text_1` text DEFAULT NULL,
-  `text_2` text DEFAULT NULL,
-  `text_3` text DEFAULT NULL,
-  `text_4` text DEFAULT NULL,
-  `text_5` text DEFAULT NULL,
-  `text_6` text DEFAULT NULL,
-  `text_7` text DEFAULT NULL,
-  `file` varchar(255) DEFAULT NULL,
-  `keterangan` varchar(255) DEFAULT NULL,
-  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
-  `username_insert` varchar(100) NOT NULL,
-  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `username_update` varchar(100) DEFAULT NULL,
-  `disable` tinyint(1) NOT NULL DEFAULT 0,
-  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
 
@@ -11643,7 +11598,7 @@ INSERT INTO `ref_jenis_naskah` (`id`, `kelompok_id`, `nama`, `kode_form`, `sub_k
 (2, 1, 'Instruksi', 'sk', 'Pengaturan', 2, '[\r\n{\"type\":\"fields\",\"size\":\"three\",\"fields\":[\r\n{\"type\":\"input\",\"label\":\"Nomor\",\"name\":\"nomor\"},\r\n{\"type\":\"calendar\",\"label\":\"Tanggal\",\"name\":\"tgl_surat_dibuat\"}]},\r\n{\"type\":\"textarea\",\"label\":\"Tentang\",\"name\":\"tentang\"},\r\n{\"type\":\"section\",\"label\":\"MENIMBANG\"},\r\n{\"type\":\"editable_table\",\"name\":\"menimbang\"},\r\n{\"type\":\"section\",\"label\":\"MEMERINTAHKAN\"},\r\n{\"type\":\"editable_table\",\"name\":\"memerintahkan\"}\r\n]', 1, NULL, 1, NULL, NULL, 'system', '2026-03-16 19:47:36', NULL, NULL, NULL),
 (3, 1, 'Surat Edaran', 'sk', 'Pengaturan', 3, '[\r\n{\"type\":\"fields\",\"size\":\"three\",\"fields\":[\r\n{\"type\":\"input\",\"label\":\"Nomor\",\"name\":\"nomor\"},\r\n{\"type\":\"calendar\",\"label\":\"Tanggal\",\"name\":\"tgl_surat_dibuat\"}]},\r\n{\"type\":\"textarea\",\"label\":\"Tentang\",\"name\":\"tentang\"},\r\n{\"type\":\"section\",\"label\":\"ISI EDARAN\"},\r\n{\"type\":\"editable_table\",\"name\":\"isi\"}\r\n]', 1, NULL, 1, NULL, NULL, 'system', '2026-03-16 19:47:36', NULL, NULL, NULL),
 (4, 1, 'Standar Operasional Prosedur Administrasi Pemerintah', 'sk', 'Pengaturan', 4, '[\r\n{\"type\":\"textarea\",\"label\":\"Judul SOP\",\"name\":\"tentang\"},\r\n{\"type\":\"section\",\"label\":\"LANGKAH SOP\"},\r\n{\"type\":\"editable_table\",\"name\":\"langkah\"}\r\n]', 1, NULL, 0, NULL, NULL, 'system', '2026-03-16 19:47:36', NULL, NULL, NULL),
-(5, 1, 'Naskah Dinas Penetapan', 'sk', 'Penetapan', 5, '[\n  {\n    \"type\": \"message\",\n    \"variant\": \"positive\",\n    \"icon\": \"exclamation\",\n    \"label\": \"Perhatian\",\n    \"list\": [\n      \"jika mengedit data dan merubah Nomor Surat maka akan dianggap tambah data baru jika di simpan\",\n      \"simpan terlebih dahulu sebelum cetak dokumen\"\n    ]\n  },\n\n  {\n    \"type\": \"fields\",\n    \"size\": \"three\",\n    \"fields\": [\n      {\n        \"type\": \"input\",\n        \"label\": \"Nomor Surat\",\n        \"name\": \"nomor\",\n        \"required\": true\n      },\n      {\n        \"type\": \"calendar\",\n        \"label\": \"Tanggal Surat\",\n        \"name\": \"tgl_surat_dibuat\",\n        \"required\": true\n      },\n      {\n        \"type\": \"file\",\n        \"label\": \"Pilih File Dokumen\",\n        \"name\": \"file\"\n      }\n    ]\n  },\n\n  {\n    \"type\": \"textarea\",\n    \"label\": \"Tentang\",\n    \"name\": \"tentang\",\n    \"required\": true\n  },\n\n  {\n    \"type\": \"fields\",\n    \"size\": \"three\",\n    \"fields\": [\n      {\n        \"type\": \"dropdown_ajax\",\n        \"label\": \"Penandatangan\",\n        \"name\": \"penandatangan\",\n        \"source\": \"penandatangan\",\n        \"required\": true\n      },\n      {\n        \"type\": \"input\",\n        \"label\": \"Jabatan\",\n        \"name\": \"jbt_pemberi_tgs\",\n        \"required\": true\n      },\n      {\n        \"type\": \"input\",\n        \"label\": \"Pangkat\",\n        \"name\": \"pangkat_pemberi_tgs\",\n        \"required\": true\n      }\n    ]\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"MENIMBANG\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menimbang\",\n    \"columns\": [\n      \"URAIAN\",\n      \"JENIS\"\n    ]\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"MENGINGAT\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"mengingat\",\n    \"columns\": [\n      \"URAIAN\",\n      \"JENIS\"\n    ]\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"MENETAPKAN\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_1\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_2\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_3\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_4\"\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"users\",\n    \"label\": \"ASN YANG DITUGASKAN\", \"columns\": [\"nama\", \"pangkat\", \"nip\", \"jabatan\", \"jabatan_sk\"]\n  },\n\n  {\n    \"type\": \"dropdown_ajax\",\n    \"label\": \"Nama ASN ditugaskan\",\n    \"name\": \"asn\",\n    \"source\": \"asn\",\n    \"target\": \"nama_ditugaskan\"\n  },\n\n  {\n    \"type\": \"table\",\n    \"name\": \"nama_ditugaskan\",\n    \"columns\": [\n      \"nama\",\n      \"pangkat\",\n      \"nip\",\n      \"jabatan\",\n      \"jabatan_sk\"\n    ]\n  },\n\n  {\n    \"type\": \"toggle\",\n    \"label\": \"Lampiran SK bentuk Tabel\",\n    \"name\": \"bentuk_lampiran\"\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"TEMBUSAN\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"tembusan\",\n    \"columns\": [\n      \"URAIAN\",\n      \"JENIS\"\n    ]\n  },\n\n  {\n    \"type\": \"textarea\",\n    \"label\": \"Keterangan\",\n    \"name\": \"keterangan\"\n  },\n\n  {\n    \"type\": \"toggle\",\n    \"label\": \"Non Aktif\",\n    \"name\": \"disable\"\n  }\n]', 1, NULL, 1, NULL, NULL, 'system', '2026-03-16 19:47:36', NULL, NULL, NULL),
+(5, 1, 'Naskah Dinas Penetapan', 'sk', 'Penetapan', 5, '[\n  {\n    \"type\": \"message\",\n    \"variant\": \"positive\",\n    \"icon\": \"exclamation\",\n    \"label\": \"Perhatian\",\n    \"list\": [\n      \"jika mengedit data dan merubah Nomor Surat maka akan dianggap tambah data baru jika di simpan\",\n      \"simpan terlebih dahulu sebelum cetak dokumen\"\n    ]\n  },\n\n  {\n    \"type\": \"fields\",\n    \"size\": \"three\",\n    \"fields\": [\n      {\n        \"type\": \"input\",\n        \"label\": \"Nomor Surat\",\n        \"name\": \"nomor\",\n        \"required\": true\n      },\n      {\n        \"type\": \"calendar\",\n        \"label\": \"Tanggal Surat\",\n        \"name\": \"tanggal_surat\",\n        \"required\": true\n      },\n      {\n        \"type\": \"file\",\n        \"label\": \"Pilih File Dokumen\",\n        \"name\": \"file\"\n      }\n    ]\n  },\n\n  {\n    \"type\": \"textarea\",\n    \"label\": \"Tentang\",\n    \"name\": \"tentang\",\n    \"required\": true\n  },\n\n  {\n    \"type\": \"fields\",\n    \"size\": \"three\",\n    \"fields\": [\n      {\n        \"type\": \"dropdown_ajax\",\n        \"label\": \"Penandatangan\",\n        \"name\": \"penandatangan\",\n        \"source\": \"penandatangan\",\n        \"required\": true\n      },\n      {\n        \"type\": \"input\",\n        \"label\": \"Jabatan\",\n        \"name\": \"jbt_pemberi_tgs\",\n        \"required\": true\n      },\n      {\n        \"type\": \"input\",\n        \"label\": \"Pangkat\",\n        \"name\": \"pangkat_pemberi_tgs\",\n        \"required\": true\n      }\n    ]\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"MENIMBANG\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menimbang\",\n    \"columns\": [\n      \"URAIAN\"\n    ]\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"MENGINGAT\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"mengingat\",\n    \"columns\": [\n      \"URAIAN\"\n    ]\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"MENETAPKAN\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_1\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_2\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_3\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"menetapkan_4\"\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"users\",\n    \"label\": \"ASN YANG DITUGASKAN\", \"columns\": [\"nama\", \"pangkat\", \"nip\", \"jabatan\", \"jabatan_sk\"]\n  },\n\n  {\n    \"type\": \"dropdown_ajax\",\n    \"label\": \"Nama ASN ditugaskan\",\n    \"name\": \"asn\",\n    \"source\": \"asn\",\n    \"target\": \"nama_ditugaskan\"\n  },\n\n  {\n    \"type\": \"table\",\n    \"name\": \"nama_ditugaskan\",\n    \"columns\": [\n      \"nama\",\n      \"pangkat\",\n      \"nip\",\n      \"jabatan\",\n      \"jabatan_sk\"\n    ]\n  },\n\n  {\n    \"type\": \"toggle\",\n    \"label\": \"Lampiran SK bentuk Tabel\",\n    \"name\": \"bentuk_lampiran\"\n  },\n\n  {\n    \"type\": \"section\",\n    \"icon\": \"feather alternate\",\n    \"label\": \"TEMBUSAN\"\n  },\n\n  {\n    \"type\": \"editable_table\",\n    \"name\": \"tembusan\",\n    \"columns\": [\n      \"URAIAN\"\n    ]\n  },\n\n  {\n    \"type\": \"textarea\",\n    \"label\": \"Keterangan\",\n    \"name\": \"keterangan\"\n  },\n\n  {\n    \"type\": \"toggle\",\n    \"label\": \"Non Aktif\",\n    \"name\": \"disable\"\n  }\n]', 1, NULL, 1, NULL, NULL, 'system', '2026-03-16 19:47:36', NULL, NULL, NULL),
 (6, 1, 'Naskah Dinas Penugasan', 'sk', 'Penugasan', 6, '[\r\n{\"type\":\"auto_nomor\",\"label\":\"Nomor\",\"name\":\"nomor\"},\r\n{\"type\":\"date\",\"label\":\"Tanggal\",\"name\":\"tanggal\"},\r\n{\"type\":\"text\",\"label\":\"Kepada\",\"name\":\"kepada\"},\r\n{\"type\":\"text\",\"label\":\"Dari\",\"name\":\"dari\"},\r\n{\"type\":\"text\",\"label\":\"Perihal\",\"name\":\"perihal\"},\r\n{\"type\":\"textarea\",\"label\":\"Isi Telaah\",\"name\":\"isi\"}\r\n]', 1, NULL, 1, NULL, NULL, 'system', '2026-03-16 19:47:36', NULL, NULL, NULL),
 (7, 2, 'Nota Dinas', 'surat_internal', 'Internal', 1, '[\r\n{\"type\":\"input\",\"label\":\"Kepada\",\"name\":\"kepada\"},\r\n{\"type\":\"input\",\"label\":\"Dari\",\"name\":\"dari\"},\r\n{\"type\":\"textarea\",\"label\":\"Isi Nota\",\"name\":\"isi\"}\r\n]', 1, NULL, 1, NULL, NULL, 'system', '2026-03-16 19:47:36', NULL, NULL, NULL),
 (8, 2, 'Memorandum', 'surat_internal', 'Internal', 2, '[\r\n{\"type\":\"input\",\"label\":\"Kepada\",\"name\":\"kepada\"},\r\n{\"type\":\"input\",\"label\":\"Dari\",\"name\":\"dari\"},\r\n{\"type\":\"textarea\",\"label\":\"Isi Memorandum\",\"name\":\"isi\"}\r\n]', 1, NULL, 1, NULL, NULL, 'system', '2026-03-16 19:47:36', NULL, NULL, NULL),
@@ -18299,7 +18254,7 @@ INSERT INTO `sumber_dana_neo` (`id`, `sumber_dana`, `kelompok`, `jenis_akun`, `o
 CREATE TABLE `trx_naskah_dinas` (
   `id` bigint(20) NOT NULL,
   `uuid` varchar(100) DEFAULT NULL,
-  `jenis_id` int(11) DEFAULT NULL,
+  `jenis_id` bigint(20) NOT NULL,
   `nomor` varchar(100) DEFAULT NULL,
   `nomor_urut` int(11) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
@@ -18323,20 +18278,6 @@ CREATE TABLE `trx_naskah_dinas` (
   `final_at` datetime DEFAULT NULL,
   `document_hash` varchar(64) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `trx_naskah_dinas`
---
-
-INSERT INTO `trx_naskah_dinas` (`id`, `uuid`, `jenis_id`, `nomor`, `nomor_urut`, `tahun`, `klasifikasi_id`, `tanggal_surat`, `perihal`, `status`, `file_pdf`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`, `workflow_status`, `verified_by`, `verified_at`, `signed_by`, `signed_at`, `final_at`, `document_hash`) VALUES
-(1, NULL, 5, '01', NULL, '2026', NULL, NULL, NULL, 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-02-24 07:51:25', NULL, NULL, NULL, 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
-(2, NULL, 5, '02', NULL, '2026', NULL, NULL, NULL, 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-02-24 08:06:58', NULL, NULL, NULL, 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
-(3, NULL, 5, '03', NULL, '2026', NULL, NULL, NULL, 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-02-24 08:11:32', NULL, NULL, NULL, 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
-(4, NULL, 5, '05', NULL, '2026', NULL, NULL, NULL, 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-02-24 08:13:24', NULL, NULL, NULL, 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
-(5, NULL, 5, '05', NULL, '2026', NULL, NULL, NULL, 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-02-24 08:18:28', NULL, NULL, NULL, 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
-(6, NULL, 5, '05', NULL, '2026', NULL, NULL, NULL, 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-02-24 08:23:11', NULL, NULL, NULL, 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
-(7, NULL, 5, '10', NULL, '2026', NULL, NULL, NULL, 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-02-24 08:33:35', NULL, NULL, NULL, 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
-(8, '699e93001f6dc', 5, '09', 9, '2026', NULL, NULL, NULL, 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-02-25 06:13:20', NULL, NULL, NULL, 'draft', NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -18374,20 +18315,6 @@ CREATE TABLE `trx_naskah_struktur` (
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data untuk tabel `trx_naskah_struktur`
---
-
-INSERT INTO `trx_naskah_struktur` (`id`, `naskah_id`, `struktur_json`, `kd_wilayah`, `kd_opd`, `tahun`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
-(1, 1, '{\"nomor\":\"01\",\"tgl_surat_dibuat\":\"24\\/2\\/2026\",\"tentang\":\"tentang\",\"pemberi_tgs\":\"3\",\"jbt_pemberi_tgs\":\"pemberi tugas\",\"pangkat_pemberi_tgs\":\"pangkat\",\"asn\":\"4\",\"keterangan\":\"keterangan\",\"struktur_json\":\"{\\\"menimbang\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menimbang\\\"},{\\\"type\\\":\\\"list\\\",\\\"text\\\":\\\"menimbang 1\\\"}],\\\"mengingat\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"mengingat\\\"}],\\\"menetapkan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menetapkan\\\"}],\\\"tembusan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"tembusan\\\"}]}\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-02-24 07:51:25', 'inayah', NULL, NULL),
-(2, 2, '{\"nomor\":\"02\",\"tgl_surat_dibuat\":\"2\\/2\\/2026\",\"tentang\":\"tentang\",\"pemberi_tgs\":\"3\",\"jbt_pemberi_tgs\":\"pemberi tugas\",\"pangkat_pemberi_tgs\":\"pangkat\",\"asn\":\"10\",\"keterangan\":\"keterangan\",\"struktur_json\":\"{\\\"menimbang\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menimbang\\\"},{\\\"type\\\":\\\"list\\\",\\\"text\\\":\\\"menimbang 1\\\"}],\\\"mengingat\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"mengingat\\\"}],\\\"menetapkan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menetapkan\\\"}],\\\"tembusan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"tembusan\\\"}]}\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-02-24 08:06:58', 'inayah', NULL, NULL),
-(3, 3, '{\"nomor\":\"03\",\"tgl_surat_dibuat\":\"25\\/2\\/2026\",\"tentang\":\"tentang\",\"pemberi_tgs\":\"3\",\"jbt_pemberi_tgs\":\"jabatan\",\"pangkat_pemberi_tgs\":\"pembina\",\"asn\":\"22\",\"keterangan\":\"keterangan\",\"struktur_json\":\"{\\\"menimbang\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menimbang\\\"}],\\\"mengingat\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"mengingat\\\"}],\\\"menetapkan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menetapkan\\\"}],\\\"tembusan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"tembusan\\\"}]}\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-02-24 08:11:32', 'inayah', NULL, NULL),
-(4, 4, '{\"nomor\":\"05\",\"tgl_surat_dibuat\":\"25\\/2\\/2026\",\"tentang\":\"tentang\",\"pemberi_tgs\":\"3\",\"jbt_pemberi_tgs\":\"jabatan\",\"pangkat_pemberi_tgs\":\"pembina\",\"asn\":\"22\",\"keterangan\":\"keterangan\",\"struktur_json\":\"{\\\"menimbang\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menimbang\\\"}],\\\"mengingat\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"mengingat\\\"}],\\\"menetapkan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menetapkan\\\"}],\\\"tembusan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"tembusan\\\"}]}\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-02-24 08:13:24', 'inayah', NULL, NULL),
-(5, 5, '{\"nomor\":\"05\",\"tgl_surat_dibuat\":\"25\\/2\\/2026\",\"tentang\":\"tentang\",\"pemberi_tgs\":\"3\",\"jbt_pemberi_tgs\":\"jabatan\",\"pangkat_pemberi_tgs\":\"pembina\",\"asn\":\"22\",\"keterangan\":\"keterangan\",\"struktur_json\":\"{\\\"menimbang\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menimbang\\\"}],\\\"mengingat\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"mengingat\\\"}],\\\"menetapkan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menetapkan\\\"}],\\\"tembusan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"tembusan\\\"}]}\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-02-24 08:18:28', 'inayah', NULL, NULL),
-(6, 6, '{\"nomor\":\"05\",\"tgl_surat_dibuat\":\"25\\/2\\/2026\",\"tentang\":\"tentang\",\"pemberi_tgs\":\"3\",\"jbt_pemberi_tgs\":\"jabatan\",\"pangkat_pemberi_tgs\":\"pembina\",\"asn\":\"22\",\"keterangan\":\"keterangan\",\"struktur_json\":\"{\\\"menimbang\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menimbang\\\"}],\\\"mengingat\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"mengingat\\\"}],\\\"menetapkan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menetapkan\\\"}],\\\"tembusan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"tembusan\\\"}]}\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-02-24 08:23:11', 'inayah', NULL, NULL),
-(7, 7, '{\"nomor\":\"10\",\"tgl_surat_dibuat\":\"11\\/2\\/2026\",\"tentang\":\"tentang\",\"pemberi_tgs\":\"3\",\"jbt_pemberi_tgs\":\"kadis\",\"pangkat_pemberi_tgs\":\"pembina\",\"asn\":\"\",\"keterangan\":\"keterangan\",\"struktur_json\":\"{\\\"menimbang\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menimbang\\\"}],\\\"mengingat\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"mengingat\\\"}],\\\"menetapkan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menetapkan\\\"}],\\\"tembusan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"tembusan\\\"}]}\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-02-24 08:33:35', 'inayah', NULL, NULL),
-(8, 8, '{\"tgl_surat_dibuat\":\"25\\/2\\/2026\",\"tentang\":\"tentang\",\"pemberi_tgs\":\"3\",\"keterangan\":\"ket\",\"struktur_json\":\"{\\\"menimbang\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menimbang\\\"}],\\\"mengingat\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"mengingat\\\"}],\\\"menetapkan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"menetapkan\\\"}],\\\"tembusan\\\":[{\\\"type\\\":\\\"paragraph\\\",\\\"text\\\":\\\"tembusan\\\"}]}\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-02-25 06:13:20', 'inayah', NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -18400,6 +18327,13 @@ CREATE TABLE `trx_nomor_counter` (
   `tahun` int(11) DEFAULT NULL,
   `last_number` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `trx_nomor_counter`
+--
+
+INSERT INTO `trx_nomor_counter` (`id`, `klasifikasi_id`, `tahun`, `last_number`) VALUES
+(1, NULL, 2026, 3);
 
 -- --------------------------------------------------------
 
@@ -18714,12 +18648,6 @@ ALTER TABLE `master_biaya_akun`
 ALTER TABLE `misi_renstra_neo`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uniq_misi` (`renstra_id`,`nama_misi`) USING HASH;
-
---
--- Indeks untuk tabel `naskah_dinas_neo`
---
-ALTER TABLE `naskah_dinas_neo`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indeks untuk tabel `organisasi_neo`
@@ -19071,7 +18999,7 @@ ALTER TABLE `kegiatan_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `log_activity`
 --
 ALTER TABLE `log_activity`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1861;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1865;
 
 --
 -- AUTO_INCREMENT untuk tabel `master_biaya`
@@ -19090,12 +19018,6 @@ ALTER TABLE `master_biaya_akun`
 --
 ALTER TABLE `misi_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT untuk tabel `naskah_dinas_neo`
---
-ALTER TABLE `naskah_dinas_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 
 --
 -- AUTO_INCREMENT untuk tabel `organisasi_neo`
@@ -19263,25 +19185,25 @@ ALTER TABLE `sumber_dana_neo`
 -- AUTO_INCREMENT untuk tabel `trx_naskah_dinas`
 --
 ALTER TABLE `trx_naskah_dinas`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT untuk tabel `trx_naskah_meta`
 --
 ALTER TABLE `trx_naskah_meta`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT untuk tabel `trx_naskah_struktur`
 --
 ALTER TABLE `trx_naskah_struktur`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `trx_nomor_counter`
 --
 ALTER TABLE `trx_nomor_counter`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `tujuan_renstra_neo`

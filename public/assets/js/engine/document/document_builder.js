@@ -551,8 +551,17 @@ class DocumentBuilder {
 				// =====================================
 				// FIX: hanya ambil field yg ada di schema
 				// =====================================
-				const fieldDef = schemaFields.find((f) => f.name === name); // // FIX
-				if (!fieldDef) return;
+				const fieldDef = schemaFields.find((f) => f.name === name);
+
+				// =====================================
+				// FIX: allow hidden/system field
+				// =====================================
+				if (!fieldDef) {
+					if ($(el).attr("type") === "hidden") {
+						result[name] = $(el).val(); // // FIX
+					}
+					return;
+				}
 
 				// =====================================
 				// FIX: skip dropdown_ajax yang punya target

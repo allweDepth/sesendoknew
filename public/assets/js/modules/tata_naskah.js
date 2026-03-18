@@ -297,7 +297,14 @@ class TataNaskahModule {
 
 				// sesudah
 				window.documentBuilder.render(); // render form
-
+				// =====================================
+				// FIX: inject jenis_id ke form
+				// =====================================
+				if (jenisId && !id) {
+					// hanya add mode
+					const hidden = `<input type="hidden" name="jenis_id" value="${jenisId}">`;
+					$("#form_modal").append(hidden);
+				}
 				// 🔥 WAJIB: init dropdown engine setelah render
 				if (!window.dropdownEngine) {
 					window.dropdownEngine = new DropdownEngine($("#form_modal"), res);
