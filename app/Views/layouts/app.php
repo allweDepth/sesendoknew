@@ -93,11 +93,13 @@
 
   /* TOAST */
   #toastContainer {
-    position: absolute;
+    position: fixed;
+    /* FIX: keluar dari stacking context parent */
     top: 5px;
     right: 20px;
     width: 350px;
-    z-index: 9999;
+    z-index: 99999;
+    /* FIX: pastikan di atas dimmer */
   }
 
   /* TABLE WRAPPER */
