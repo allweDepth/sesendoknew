@@ -48,6 +48,7 @@ class TataNaskahModule {
 		// =========================
 
 		if (path === "/tata_naskah/daftar") {
+			this.renderLayout();
 			// halaman daftar naskah
 			this.initEngine();
 		}
@@ -115,7 +116,19 @@ class TataNaskahModule {
 		$(document).off("form:success"); // hapus handler lama
 		$(document).off("click", ".kelompok-card"); // hapus handler lama
 		$(document).off("click", ".btn-open-naskah"); // hapus handler lama
+		$(document).off("click", ".btn-edit-row");
+		// =====================================
+		// FIX: EDIT ROW → MODAL (KHUSUS MODULE)
+		// =====================================
+		$(document).on("click", ".btn-edit-row", (e) => {
+			const row = $(e.currentTarget).closest("tr");
+			const id = row.data("id");
 
+			if (!id) return;
+
+			// reuse schema loader (flow yang sudah ada)
+			this.loadSchema(null, id); // // FIX: kirim id sebagai edit
+		});
 		// ======================================================
 		// BIND EVENT BARU
 		// ======================================================
@@ -223,9 +236,13 @@ class TataNaskahModule {
 	/**
 	 * LOAD SCHEMA FORM
 	 */
-	loadSchema(jenisId) {
+	loadSchema(jenisId, id = null) {
+		// // FIX: tambah param id
+
 		this.ajaxSchema.request({
-			data: { jenis_id: jenisId },
+			data: id
+				? { id: id } // // FIX: edit mode
+				: { jenis_id: jenisId }, // // FIX: add mode
 
 			success: (res) => {
 				if (res.error) {

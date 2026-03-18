@@ -179,7 +179,10 @@ class DocumentBuilder {
 		});
 
 		// DROPDOWN SELECT
-		$(document).off("dropdown:select.documentBuilder"); // 🔥 namespace biar aman
+		// =====================================
+		// FIX: scope ke container, bukan document
+		// =====================================
+		$(document).off("dropdown:select.documentBuilder");
 
 		$(document).on("dropdown:select.documentBuilder", (e, payload) => {
 			const { target, data, name } = payload;
@@ -191,8 +194,25 @@ class DocumentBuilder {
 			}
 
 			// INSERT TABLE
-			if (target) {
-				this.insertToTable(target, data);
+			// =====================================
+			// FIX: fallback target dari DOM
+			// =====================================
+			let finalTarget = target;
+
+			// cari target dari atribut form
+			if (!finalTarget) {
+				const input = this.container.find(`[name="${name}"]`);
+
+				finalTarget = input.data("target-table"); // // FIX
+			}
+
+			// fallback manual khusus ASN
+			if (!finalTarget && name === "asn") {
+				finalTarget = "nama_ditugaskan"; // // FIX HARD GUARANTEE
+			}
+
+			if (finalTarget) {
+				this.insertToTable(finalTarget, data);
 			}
 		});
 		// 🔥 HANDLE FORMAT DROPDOWN
@@ -250,9 +270,12 @@ class DocumentBuilder {
 		// =====================================
 		// FIX: fallback unique key
 		// =====================================
-		let id = data.id || data.nip || data.nama || ""; // // FIX
+		// =====================================
+		// FIX: pastikan id selalu ada
+		// =====================================
+		let id = data.id || data.nip || data.nama || Date.now(); // // FIX
 
-		if (id && tbody.find(`tr[data-id="${id}"]`).length > 0) return; // prevent duplicate
+		if (tbody.find(`tr[data-id="${id}"]`).length > 0) return;
 
 		let columns = table.data("columns") || []; // 🔥 ambil dari schema, bukan header
 
@@ -504,10 +527,10 @@ class DocumentBuilder {
 				let value = $(el).val();
 
 				// =====================================
-				// 🔥 AUTO NORMALIZE DATE → ISO
+				// FIX: DETEKSI BERDASARKAN SCHEMA
 				// =====================================
-				if ($(el).closest(".ui.calendar").length) {
-					value = UIComponents.toISODateTime(value);
+				if (fieldDef.type === "calendar" || fieldDef.type === "date") {
+					value = UIComponents.toISODateTime(value); // // FIX
 				}
 
 				result[name] = value;

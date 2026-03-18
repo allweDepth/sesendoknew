@@ -3303,16 +3303,17 @@ ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filte
 
     foreach ($data as $field => $value) {
 
-      if (!is_string($value) || $value === '') {
-        continue;
-      }
+      if (!is_string($value) || $value === '') continue;
 
-      // cek apakah kolom bertipe date/datetime
-      if (!$this->isDateColumn($table, $field)) {
-        continue;
+      // =====================================
+      // FIX: paksa normalize untuk field tanggal
+      // =====================================
+      if (
+        $this->isDateColumn($table, $field)
+        || in_array($field, ['tanggal', 'tanggal_surat', 'tgl', 'date'])
+      ) {
+        $data[$field] = $this->normalizeToMySQLDateTime($value);
       }
-
-      $data[$field] = $this->normalizeToMySQLDateTime($value);
     }
 
     return $data;
@@ -3326,7 +3327,13 @@ ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filte
 
     if (!$columns) return false;
 
-    return str_contains($columns['Type'], 'date');
+    // FIX: support datetime + timestamp
+    $type = strtolower($columns['Type']);
+
+    // FIX: support semua tipe tanggal
+    return str_contains($type, 'date')
+      || str_contains($type, 'time')
+      || str_contains($type, 'year'); // // FIX
   }
   private function normalizeToMySQLDateTime(?string $value): string
   {
@@ -3375,7 +3382,7 @@ ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filte
     // =====================================
     // 6. "18 Maret 2026 10:30"
     // =====================================
-    if (preg_match('/^\d{1,2} [A-Za-z]+ \d{4}/', $value)) {
+    if (preg_match('/^\d{1,2} [\p{L}]+ \d{4}/u', $value)) {
       $bulan = [
         'januari' => '01',
         'februari' => '02',
