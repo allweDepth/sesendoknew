@@ -105,11 +105,11 @@ mendukung:
 	// SINGLE CALENDAR
 	// ==================================================
 
-	static calendar(label, name) {
+	static calendar(label, name, type = "date") {
 		return `
         <div class="field">
             <label>${label}</label>
-            <div class="ui calendar calendar_${name}">
+            <div class="ui calendar calendar_${name}" data-type="${type}">
                 <div class="ui input left icon">
                     <i class="calendar icon"></i>
                     <input type="text" name="${name}">
@@ -181,6 +181,8 @@ mendukung:
 	// ==================================================
 
 	static rangeCalendar(nameStart, nameEnd, label, calendarType = "datetime") {
+		// let type = prop.calendarType || "date";
+		let type = calendarType || "date";
 		return `
     <div data-calendar-type="${calendarType}"
          data-range-start="${nameStart}"
@@ -192,7 +194,7 @@ mendukung:
             <div class="two fields">
 
                 <div class="field">
-                    <div class="ui calendar start_${nameStart}">
+                    <div class="ui calendar start_${nameStart}" data-type="${type}">
                         <div class="ui input left icon">
                             <i class="calendar icon"></i>
                             <input type="text" name="${nameStart}">
@@ -201,7 +203,7 @@ mendukung:
                 </div>
 
                 <div class="field">
-                    <div class="ui calendar end_${nameEnd}">
+                    <div class="ui calendar end_${nameEnd}" data-type="${type}">
                         <div class="ui input left icon">
                             <i class="calendar icon"></i>
                             <input type="text" name="${nameEnd}">
@@ -763,6 +765,77 @@ REQUEST
 
 		return html;
 	}
+	static initCalendar(container) {
+		container.find(".ui.calendar").each(function () {
+			// cegah double init
+			if ($(this).data("calendar-initialized")) return;
+
+			const type = $(this).data("type") || "date";
+
+			$(this).calendar({
+				type: type,
+
+				formatter: {
+					date: function (date) {
+						if (!date) return "";
+
+						const bulan = [
+							"Januari",
+							"Februari",
+							"Maret",
+							"April",
+							"Mei",
+							"Juni",
+							"Juli",
+							"Agustus",
+							"September",
+							"Oktober",
+							"November",
+							"Desember",
+						];
+
+						let d = date.getDate();
+						let m = bulan[date.getMonth()];
+						let y = date.getFullYear();
+
+						return `${d} ${m} ${y}`;
+					},
+
+					datetime: function (date) {
+						if (!date) return "";
+
+						const bulan = [
+							"Januari",
+							"Februari",
+							"Maret",
+							"April",
+							"Mei",
+							"Juni",
+							"Juli",
+							"Agustus",
+							"September",
+							"Oktober",
+							"November",
+							"Desember",
+						];
+
+						let d = date.getDate();
+						let m = bulan[date.getMonth()];
+						let y = date.getFullYear();
+
+						let h = String(date.getHours()).padStart(2, "0");
+						let i = String(date.getMinutes()).padStart(2, "0");
+						let s = String(date.getSeconds()).padStart(2, "0");
+
+						return `${d} ${m} ${y} ${h}:${i}:${s}`;
+					},
+				},
+			});
+
+			// tandai sudah init
+			$(this).data("calendar-initialized", true);
+		});
+	}
 }
 // REGISTER ALL COMPONENTS
 UIComponentRegistry.register("fields", (p) => UIComponents.fields(p.prop));
@@ -788,7 +861,7 @@ UIComponentRegistry.register("toggle", (p) => UIComponents.toggle(p.prop?.label,
 UIComponentRegistry.register("calendar", (p) => UIComponents.calendar(p.prop?.label, p.prop?.name));
 
 UIComponentRegistry.register("rangeCalendar", (p) =>
-	UIComponents.rangeCalendar(p.nameStart, p.nameEnd, p.label, p.calendarType || "datetime"),
+	UIComponents.rangeCalendar(p.prop?.nameStart, p.prop?.nameEnd, p.prop?.label, p.prop?.calendarType || "datetime"),
 );
 
 UIComponentRegistry.register("dropdown", (p) =>

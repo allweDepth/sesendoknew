@@ -29,7 +29,7 @@ class DocumentBuilder {
 		this.bindEvents(); // FIX: bind dulu
 
 		this.initFomantic();
-
+		UIComponents.initCalendar(this.container);
 		if (window.dropdownEngine) {
 			window.dropdownEngine.init();
 		}
@@ -80,7 +80,7 @@ class DocumentBuilder {
 
 			case "calendar":
 			case "date":
-				return UIComponents.calendar(field.label, field.name);
+				return UIComponents.calendar(field.label, field.name, field.calendarType || field.prop?.calendarType);
 
 			default:
 				return UIComponents.input(field.label, field.name, "text");
@@ -360,7 +360,7 @@ class DocumentBuilder {
 	initFomantic() {
 		this.container.find(".ui.dropdown").dropdown();
 		this.container.find(".doc-type").dropdown();
-		this.container.find(".ui.calendar").calendar({ type: "date" });
+		// this.container.find(".ui.calendar").calendar({ type: "date" });
 		this.container.find(".ui.checkbox").checkbox();
 	}
 
