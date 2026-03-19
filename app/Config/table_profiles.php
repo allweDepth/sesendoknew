@@ -1396,6 +1396,9 @@ $profiles = [
         'select' => ['jenis_id', 'schema_json'],
         'where' => [
           'jenis_id' => 'jenis_id'
+        ],
+        'alias' => [
+          'struktur_json' => 'schema'
         ]
       ],
 
@@ -1417,6 +1420,9 @@ $profiles = [
           'kd_opd' => 'kd_opd',
           'kd_wilayah' => 'kd_wilayah',
           'disable' => ['value' => 0] // // FIX STATIC
+        ],
+        'alias' => [
+          'db_asn_pemda_neo' => 'asn'
         ]
       ]
 

@@ -304,7 +304,21 @@ GET SINGLE ROW
             $json = json_decode($rows[0][$jsonField], true);
 
             if (is_array($json)) {
-              $row = array_merge($row, $json);
+
+              // ==========================================
+              // 🔥 HAPUS FIELD JSON ASLI (STRING)
+              // ==========================================
+              unset($row[$jsonField]); // //
+
+              // ==========================================
+              // 🔥 HAPUS KEY DUPLIKAT DI DALAM JSON
+              // ==========================================
+              unset($json[$jsonField]); // //
+
+              // ==========================================
+              // MERGE AMAN
+              // ==========================================
+              $row = array_merge($row, $json); // //
             }
           }
 
@@ -408,7 +422,18 @@ GET SINGLE ROW
           $sql,
           $params
         )->fetchAll();
+        // ==========================================
+        // 🔥 APPLY ALIAS DI READ_RELATIONS mengganti nama properties
+        // ==========================================
+        if (!empty($rel['alias'])) { // //
 
+          $doc = new \App\Services\DynamicTable\DynamicDoc(); // //
+
+          $relData = $doc->apply(
+            $relData, // //
+            $rel['alias'] // //
+          );
+        }
         // =====================================
         // ISOLASI
         // =====================================
@@ -4601,12 +4626,22 @@ AND is_deleted = 0
           : 'meta_json';
 
         // 🔥 FIX CYCLIC
-        $data = $request;
+        $data = $request; // //
 
-        unset($data['action'], $data['tbl']);
+        unset($data['action'], $data['tbl']); // //
 
-        if (isset($data['struktur_json']) && is_array($data['struktur_json'])) {
-          $data = $data['struktur_json']; // // FIX
+        // ==========================================
+        // 🔥 FIX: HAPUS SELF REFERENCE
+        // ==========================================
+        if (isset($data['struktur_json'])) { // //
+          unset($data['struktur_json']); // //
+        }
+
+        // ==========================================
+        // 🔥 JIKA ADA PAYLOAD KHUSUS
+        // ==========================================
+        if (isset($request['struktur_json']) && is_array($request['struktur_json'])) { // //
+          $data = $request['struktur_json']; // //
         }
 
         $this->db->insert($relTable, [
