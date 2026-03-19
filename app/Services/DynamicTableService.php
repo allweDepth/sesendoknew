@@ -100,33 +100,17 @@ PERUBAHAN:
   {
     try {
 
-      /* =====================================================
-    1️⃣ VALIDASI ACTION
-    ===================================================== */
-
       if (empty($request['action'])) {
         return JsonResponse::error("Action wajib dikirim");
       }
 
       $action = $request['action'];
 
-      $allowedActions = [
-        'add',
-        'edit',
-        'delete',
-        'dropdown',
-        'export',
-        'list',
-        'import'
-      ];
+      $allowedActions = ['add', 'edit', 'delete', 'dropdown', 'export', 'list', 'import'];
 
       if (!in_array($action, $allowedActions)) {
         return JsonResponse::error("Action tidak valid");
       }
-
-      /* =====================================================
-    2️⃣ VALIDASI MENU (TBL)
-    ===================================================== */
 
       $tbl = $request['tbl'] ?? null;
       $req = $request['req'] ?? null;
@@ -135,41 +119,18 @@ PERUBAHAN:
         return JsonResponse::error("Tabel tidak terdaftar");
       }
 
-      /* =====================================================
-    3️⃣ PROFILE MENU
-    ===================================================== */
-
       $profile = $this->profiles[$tbl];
-
-      /* =====================================================
-    4️⃣ RESOLVE TABLE
-    PRIORITAS:
-    req → profile table
-    ===================================================== */
 
       $table = $profile['table'];
 
-      // req hanya override jika profile valid
       if ($req && isset($this->profiles[$req])) {
-
         $reqProfile = $this->profiles[$req];
-
         $table = $reqProfile['table'];
-
         $request['_req_profile'] = $reqProfile;
       }
-      //=====================================================
-      //5️⃣ EKSEKUSI ACTION
-      // ====================================================
-      return $this->executeAction(
-        $action,
-        $tbl,
-        $table,
-        $profile,
-        $request
-      );
-    } catch (\Throwable $e) {
 
+      return $this->executeAction($action, $tbl, $table, $profile, $request);
+    } catch (\Throwable $e) {
       return JsonResponse::error($e->getMessage());
     }
   }
@@ -182,38 +143,20 @@ PERUBAHAN:
   //- Tidak ada default auto listing
   //- Lebih eksplisit & SPA konsisten
   //=========================================================
-  private function executeAction(
-    string $action,
-    string $tbl,
-    string $table,
-    array $profile,
-    array $request
-  ): string {
-
+  private function executeAction(string $action, string $tbl, string $table, array $profile, array $request): string
+  {
     switch ($action) {
 
-      //=====================================================
-      //ADD
-      //=====================================================
       case 'add':
         $this->authorize('add', $table);
         return $this->insert($table, $request);
 
-
-        /* =====================================================
-✏ EDIT
-- Jika hanya id_row → ambil data
-- Jika ada id → update
-===================================================== */
       case 'edit':
-
-        // 🔍 GET SINGLE ROW
         if (!empty($request['id_row']) && count($request) <= 4) {
           $this->authorize('view', $table);
           return $this->getById($table, $request['id_row']);
         }
 
-        // UPDATE DATA
         if (!empty($request['id_row'])) {
           $this->authorize('edit', $table);
           return $this->update($table, $request);
@@ -221,34 +164,21 @@ PERUBAHAN:
 
         return JsonResponse::error("ID tidak ditemukan");
 
-
-        /* =====================================================
-🗑 DELETE
-===================================================== */
       case 'delete':
         $this->authorize('delete', $table);
         $id = $request['id_row'] ?? null;
 
         if (!$id) {
-          return JsonResponse::error("ID tidak valid"); // // FIX HARD STOP
+          return JsonResponse::error("ID tidak valid");
         }
 
-        return $this->delete(
-          $table,
-          $profile,
-          (int)$id // // FIX
-        );
+        return $this->delete($table, $profile, (int)$id);
 
-
-        /* =====================================================
-📥 DROPDOWN
-===================================================== */
       case 'dropdown':
 
         $tbl    = $_POST['tbl'] ?? null;
         $source = $_POST['source'] ?? null;
 
-        // resolve profile key
         $profileKey = $this->resolveProfileKey($tbl, $source);
 
         if (!$profileKey) {
@@ -258,35 +188,16 @@ PERUBAHAN:
         $parentValue = $_POST['parent_value'] ?? null;
         $kdAkun      = $_POST['kd_akun'] ?? null;
 
-        return $this->loadDropdown(
-          $profileKey,
-          $parentValue,
-          $kdAkun
-        );
-        //=====================================================
-        //📤 EXPORT
-        //===================================================== */
+        return $this->loadDropdown($profileKey, $parentValue, $kdAkun);
+
       case 'export':
         $this->authorize('view', $table);
-        return $this->export(
-          $table,
-          $profile,
-          $request,
-          'default'
-        );
+        return $this->export($table, $profile, $request, 'default');
 
-
-        /* =====================================================
-📋 LISTING (WAJIB action = list)
-===================================================== */
       case 'list':
         $this->authorize('view', $table);
-        return $this->listing(
-          $table,
-          $profile,
-          $request,
-          'default'
-        );
+        return $this->listing($table, $profile, $request, 'default');
+
       case 'import':
 
         $this->authorize('add', $table);
@@ -303,9 +214,6 @@ PERUBAHAN:
           (int)$jmlHeader
         );
 
-        /* =====================================================
-❌ NO FALLBACK
-===================================================== */
       default:
         return JsonResponse::error("Action tidak dikenali");
     }
@@ -4895,6 +4803,20 @@ AND is_deleted = 0
       throw new Exception("Pengaturan aktif tidak ditemukan.");
     }
 
+    // FIX: cari profile key dari table fisik
+    $profileKey = null;
+
+    foreach ($this->profiles as $key => $profile) {
+      if (($profile['table'] ?? null) === $table) {
+        $profileKey = $key;
+        break;
+      }
+    }
+
+    if ($profileKey === null) {
+      throw new Exception("Profile tidak ditemukan untuk table $table"); // FIX
+    }
+
     $map = [
       'urusan'       => 'aturan_sub_kegiatan',
       'bidang'       => 'aturan_sub_kegiatan',
@@ -4909,20 +4831,11 @@ AND is_deleted = 0
       'satuan'       => 'aturan_ssh'
     ];
 
-    // //
-    $logicalTable = $table;
-
-    // FIX: normalize table name (hapus _neo)
-    if (str_ends_with($table, '_neo')) {
-      $logicalTable = substr($table, 0, -4);
+    if (!isset($map[$profileKey])) {
+      throw new Exception("Mapping peraturan_id tidak ditemukan untuk table $profileKey"); // FIX
     }
 
-    if (!isset($map[$logicalTable])) {
-      throw new Exception("Mapping peraturan_id tidak ditemukan untuk table $logicalTable");
-    }
-
-    return (int)$pengaturan[$map[$logicalTable]];
-    // //
+    return (int)$pengaturan[$map[$profileKey]];
   }
   // //
 }
