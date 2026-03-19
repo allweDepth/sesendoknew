@@ -12,28 +12,45 @@ class DocumentBuilder {
 	// ======================================================
 
 	render() {
-		if (!this.schema) return; // stop kalau tidak ada schema
+		if (!this.schema) return;
 
-		// FIX: clear semua event sebelum render ulang
-		// FIX: jangan global off
 		this.container.off(".documentBuilder");
-
 		this.container.empty();
 
-		let fields = this.schema.sections || this.schema; // ambil sections
+		// =====================================
+		// FIX: VALIDASI ARRAY (KRITIS)
+		// =====================================
+		let fields = Array.isArray(this.schema) ? this.schema : this.schema.sections || [];
+
+		if (!Array.isArray(fields)) {
+			console.warn("Schema invalid:", this.schema);
+			return;
+		}
+
 		let html = [];
 
 		fields.forEach((field) => {
-			let part = this.renderElement(field); // render per field
+			let part = this.renderElement(field);
 			if (part) html.push(part);
 		});
 
-		this.container.append(html.join(""));
+		// =====================================
+		// FIX: WRAP FORM (WAJIB UNTUK SUBMIT)
+		// =====================================
+		this.container.append(`
+		<form id="dynamic-form" class="ui form">
+			${html.join("")}
+			<div class="ui divider"></div>
+			<button class="ui green button" type="submit">
+				<i class="check icon"></i> Simpan
+			</button>
+		</form>
+	`);
 
-		this.bindEvents(); // FIX: bind dulu
-
+		this.bindEvents();
 		this.initFomantic();
 		UIComponents.initCalendar(this.container);
+
 		if (window.dropdownEngine) {
 			window.dropdownEngine.init();
 		}

@@ -87,73 +87,108 @@ class TataNaskahModule {
 	initEngine() {
 		this.tableManager = new TableManager({
 			state: this.state,
-			container: "#table-container", // DOM container
-			mode: "modal", // // FIX: pisahkan mode
+			container: "#table-container",
+			mode: "modal",
 		});
 
 		this.formContainer = new FormContainerManager({
 			container: this.formContainerSelector,
 		});
 
-		this.formEngine = new FormEngine({
-			state: this.state,
-			formSelector: "#dynamic-form",
-		});
+		// =====================================
+		// FIX: HAPUS FormEngine (CONFLICT SOURCE)
+		// =====================================
+		// this.formEngine = new FormEngine({
+		// 	state: this.state,
+		// 	formSelector: "#dynamic-form",
+		// });
 
 		this.tableManager.init();
 		this.formContainer.init();
-		this.formEngine.init();
+
+		// =====================================
+		// FIX: TIDAK ADA FormEngine.init()
+		// =====================================
 	}
 
 	/**
 	 * BIND EVENTS
 	 */
 	bindEvents() {
-		// ======================================================
-		// FIX: HAPUS EVENT LAMA AGAR TIDAK DUPLIKASI
-		// ======================================================
-
-		$(document).off("click", "#btn-add"); // hapus handler lama
-		$(document).off("form:success"); // hapus handler lama
-		$(document).off("click", ".kelompok-card"); // hapus handler lama
-		$(document).off("click", ".btn-open-naskah"); // hapus handler lama
+		$(document).off("click", "#btn-add");
+		$(document).off("form:success");
+		$(document).off("click", ".kelompok-card");
+		$(document).off("click", ".btn-open-naskah");
 		$(document).off("click", ".btn-edit-row");
+		$(document).off("submit", "#dynamic-form"); // 🔥 FIX
+
 		// =====================================
-		// FIX: EDIT ROW → MODAL (KHUSUS MODULE)
+		// EDIT
 		// =====================================
 		$(document).on("click", ".btn-edit-row", (e) => {
 			const row = $(e.currentTarget).closest("tr");
 			const id = row.data("id");
-
 			if (!id) return;
 
-			// reuse schema loader (flow yang sudah ada)
-			this.loadSchema(null, id); // // FIX: kirim id sebagai edit
+			this.loadSchema(null, id);
 		});
-		// ======================================================
-		// BIND EVENT BARU
-		// ======================================================
 
+		// =====================================
+		// ADD (WAJIB KE JENIS, BUKAN FORM KOSONG)
+		// =====================================
 		$(document).on("click", "#btn-add", () => {
-			this.showAddForm();
+			// =====================================
+			// FIX: JANGAN pakai showAddForm()
+			// =====================================
+			$("#jenis-container").removeClass("hidden");
 		});
 
+		// =====================================
+		// REFRESH TABLE
+		// =====================================
 		$(document).on("form:success", () => {
 			this.tableManager.loadData();
 		});
 
 		$(document).on("click", ".kelompok-card", (e) => {
 			const kelompokId = $(e.currentTarget).data("id");
-
 			this.loadJenis(kelompokId);
 		});
 
 		$(document).on("click", ".btn-open-naskah", (e) => {
 			const jenisId = $(e.currentTarget).data("jenis-id");
-
 			if (!jenisId) return;
 
 			this.loadSchema(jenisId);
+		});
+
+		// =====================================
+		// 🔥 FIX: SUBMIT VIA DocumentBuilder
+		// =====================================
+		$(document).on("submit", "#dynamic-form", (e) => {
+			e.preventDefault();
+
+			const builder = window.documentBuilder;
+			if (!builder) return;
+
+			const payload = builder.collectStructure();
+
+			window.Ajax.request({
+				method: "POST",
+				data: {
+					action: "save",
+					tbl: this.state.tbl,
+					...payload,
+				},
+				success: (res) => {
+					if (res.success) {
+						Toast.show("success", "Data berhasil disimpan");
+						$(document).trigger("form:success");
+					} else {
+						Toast.show("error", res.message || "Gagal");
+					}
+				},
+			});
 		});
 	}
 
@@ -239,7 +274,7 @@ class TataNaskahModule {
 	 */
 	loadSchema(jenisId, id = null) {
 		// =====================================
-		// FIX: EDIT MODE → ambil data dulu
+		// EDIT MODE
 		// =====================================
 		if (id) {
 			window.Ajax.request({
@@ -255,7 +290,7 @@ class TataNaskahModule {
 					const data = resData.data;
 
 					// =====================================
-					// lalu ambil schema
+					// LOAD SCHEMA BERDASARKAN jenis_id
 					// =====================================
 					this.ajaxSchema.request({
 						data: { jenis_id: data.jenis_id },
@@ -266,25 +301,48 @@ class TataNaskahModule {
 								return;
 							}
 
-							if (!res.schema) return;
+							// =====================================
+							// FIX: SCHEMA RESOLVE (MULTI SOURCE)
+							// =====================================
+							let schema = res.schema;
 
-							// tampilkan container
+							// fallback jika tidak ada
+							if (!schema && resData.data?._read?.cache_schema_naskah?.length) {
+								try {
+									schema = JSON.parse(resData.data._read.cache_schema_naskah[0].schema_json);
+								} catch (e) {
+									console.error("Schema parse error", e);
+								}
+							}
+
+							if (!schema) return;
+
+							// =====================================
+							// RENDER FORM
+							// =====================================
 							this.formContainer.show("");
 
 							const container = $(this.formContainerSelector);
 
-							const type = res.schema.kode_form || "sk";
-
 							window.documentBuilder = new DocumentBuilder($("#form_modal"));
-							window.documentBuilder.schema = res.schema;
-							window.documentBuilder.data = res;
+
+							// =====================================
+							// FIX: normalisasi schema agar dikenali builder
+							// =====================================
+							window.documentBuilder.schema = Array.isArray(schema)
+								? { fields: schema } // // FIX
+								: schema;
+							window.documentBuilder.data = data; // FIX (bukan res)
 
 							window.documentBuilder.render();
 
 							// =====================================
-							// FIX: inject DATA ke form (INI KUNCI)
+							// FIX: INJECT DATA FIELD BY FIELD
 							// =====================================
 							Object.entries(data).forEach(([key, val]) => {
+								// skip object kompleks (ditangani builder)
+								if (typeof val === "object") return;
+
 								const el = container.find(`[name="${key}"]`);
 
 								if (!el.length) return;
@@ -292,12 +350,38 @@ class TataNaskahModule {
 								el.val(val);
 							});
 
-							// trigger dropdown
-							container.find("select").trigger("change");
+							// =====================================
+							// FIX: HANDLE JSON FIELD (struktur_json)
+							// =====================================
+							if (data.struktur_json) {
+								try {
+									const json =
+										typeof data.struktur_json === "string" ? JSON.parse(data.struktur_json) : data.struktur_json;
 
-							// dropdown engine
+									// inject ke builder jika dipakai
+									window.documentBuilder.data = {
+										...window.documentBuilder.data,
+										...json,
+									};
+								} catch (e) {
+									console.warn("JSON parse gagal", e);
+								}
+							}
+
+							// =====================================
+							// TRIGGER UI UPDATE
+							// =====================================
+							container.find("select").trigger("change");
+							container.find("input, textarea").trigger("input");
+
+							// =====================================
+							// DROPDOWN ENGINE
+							// =====================================
 							if (!window.dropdownEngine) {
-								window.dropdownEngine = new DropdownEngine($("#form_modal"), res);
+								window.dropdownEngine = new DropdownEngine($("#form_modal"), {
+									...res,
+									data: resData.data, // FIX: agar source dropdown punya data
+								});
 								window.dropdownEngine.init();
 							}
 						},
@@ -309,7 +393,7 @@ class TataNaskahModule {
 		}
 
 		// =====================================
-		// ADD MODE (TIDAK DIUBAH)
+		// ADD MODE (TETAP + DISERAGAMKAN)
 		// =====================================
 		this.ajaxSchema.request({
 			data: { jenis_id: jenisId },
@@ -320,25 +404,32 @@ class TataNaskahModule {
 					return;
 				}
 
-				if (!res.schema) return;
+				let schema = res.schema;
+
+				if (!schema) return;
 
 				this.formContainer.show("");
 
 				const container = $(this.formContainerSelector);
 
-				const type = res.schema.kode_form || "sk";
-
 				window.documentBuilder = new DocumentBuilder($("#form_modal"));
-				window.documentBuilder.schema = res.schema;
-				window.documentBuilder.data = res;
+
+				window.documentBuilder.schema = schema;
+				window.documentBuilder.data = {}; // FIX: kosong
+
 				window.documentBuilder.render();
 
-				// tetap inject jenis_id (punya kamu)
+				// =====================================
+				// FIX: inject jenis_id (hidden)
+				// =====================================
 				if (jenisId) {
 					const hidden = `<input type="hidden" name="jenis_id" value="${jenisId}">`;
 					$("#form_modal").append(hidden);
 				}
 
+				// =====================================
+				// DROPDOWN ENGINE
+				// =====================================
 				if (!window.dropdownEngine) {
 					window.dropdownEngine = new DropdownEngine($("#form_modal"), res);
 					window.dropdownEngine.init();
