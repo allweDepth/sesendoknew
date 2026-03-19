@@ -45,6 +45,7 @@ class DocumentBuilder {
 				<i class="check icon"></i> Simpan
 			</button>
 		</form>
+    
 	`);
 
 		this.bindEvents();
@@ -54,8 +55,54 @@ class DocumentBuilder {
 		if (window.dropdownEngine) {
 			window.dropdownEngine.init();
 		}
+		this.injectStructureData();
 	}
+	injectStructureData() {
+		let self = this;
 
+		Object.entries(this.data || {}).forEach(([section, rows]) => {
+			let table = self.container.find(`table[name="${section}"]`);
+			if (!table.length) return;
+
+			if (!Array.isArray(rows)) return;
+
+			let cols = table.data("columns") || [];
+
+			rows.forEach((rowData) => {
+				let row = $(self.buildRow(section, cols.length));
+
+				// 🔥 TYPE
+				if (rowData.type) {
+					row.attr("data-type", rowData.type);
+				}
+
+				// 🔥 ALIGN
+				if (rowData.align) {
+					row.attr("data-align", rowData.align);
+					row.find(".doc-editor").css("text-align", rowData.align);
+				}
+
+				// 🔥 TEXT (editable_table)
+				if (rowData.text !== undefined) {
+					row.find(".doc-editor").html(rowData.text || "");
+				}
+
+				// 🔥 TABLE NORMAL (nama_ditugaskan)
+				Object.entries(rowData).forEach(([key, val]) => {
+					let cell = row.find(`[data-key="${key}"]`);
+					if (!cell.length) return;
+
+					if (cell.find(".doc-editor").length) {
+						cell.find(".doc-editor").html(val || "");
+					} else {
+						cell.text(val || "");
+					}
+				});
+
+				table.find("tbody").append(row);
+			});
+		});
+	}
 	// ======================================================
 	// ELEMENT ROUTER
 	// ======================================================
