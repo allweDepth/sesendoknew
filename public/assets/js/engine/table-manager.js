@@ -331,7 +331,12 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 				value = this.formatValue(value, col.format);
 				html += `<td>${value}</td>`;
 			});
+			// 🔥 FIX: hanya untuk tata_naskah + edit
+			let customAttr = "";
 
+			if (this.state.tbl === "trx_naskah_dinas") {
+				customAttr = 'data-custom-form="true"'; // hanya edit button (posisi ini memang edit)
+			}
 			html += `
 					<td class="collapsing">
 						<div class="ui mini basic icon buttons">
@@ -339,6 +344,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 							data-ui="open-form"
 							data-action="edit"
 							data-tbl="${this.state.tbl}"
+              ${customAttr}
 							${this.state.req ? `data-req="${this.state.req}"` : ``}
 							${this.mode === "modal" ? `data-container="modal"` : ""}
 data-id="${id}">

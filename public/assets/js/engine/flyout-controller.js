@@ -47,6 +47,23 @@ class FlyoutController {
 		$(document).off("click.openForm");
 
 		$(document).on("click.openForm", '[data-ui="open-form"]', function (e) {
+			// 🔥 FIX: BYPASS CUSTOM MODULE
+			if ($(this).data("custom-form") === true) {
+				// 🔥 FIX: trigger manual ke module
+				const id = $(this).data("id");
+				const moduleName = $(this).data("tbl");
+
+				// khusus tata_naskah
+				if (moduleName === "trx_naskah_dinas" && id) {
+					// cari instance module
+					if (window.app?.modules?.tata_naskah) {
+						window.app.modules.tata_naskah.loadSchema(null, id);
+					}
+				}
+
+				return;
+			}
+
 			e.preventDefault();
 			self.open($(this));
 		});
