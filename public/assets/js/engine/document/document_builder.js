@@ -52,10 +52,22 @@ class DocumentBuilder {
 		this.initFomantic();
 		UIComponents.initCalendar(this.container);
 
+		// 🔥 inject dulu
+		this.injectStructureData();
+
+		// 🔥 baru init dropdown
 		if (window.dropdownEngine) {
 			window.dropdownEngine.init();
+			// 🔥 APPLY VALUE DROPDOWN DARI DATA
+			Object.entries(this.data || {}).forEach(([key, val]) => {
+				let el = this.container.find(`[name="${key}"]`);
+				if (!el.length) return;
+
+				if (el.hasClass("ui dropdown")) {
+					el.dropdown("set selected", val); // .
+				}
+			});
 		}
-		this.injectStructureData();
 	}
 	injectStructureData() {
 		let self = this;
@@ -100,6 +112,10 @@ class DocumentBuilder {
 				});
 
 				table.find("tbody").append(row);
+
+				// 🔥 INIT UI DI ROW BARU
+				row.find(".ui.dropdown").dropdown(); // .
+				row.find(".ui.checkbox").checkbox(); // .
 			});
 		});
 	}

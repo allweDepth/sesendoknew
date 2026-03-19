@@ -421,6 +421,9 @@ class TataNaskahModule {
 			const el = container.find(`[name="${key}"]`);
 			if (!el.length) return;
 
+			// 🔥 JANGAN override dropdown
+			if (el.hasClass("ui dropdown")) return; // .
+
 			el.val(val);
 		});
 
