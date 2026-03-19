@@ -1273,43 +1273,7 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
           // jika field adalah peraturan_id
           elseif ($field === 'peraturan_id') {
-
-            // ambil pengaturan aktif
-            $pengaturan = $this->getPengaturanAktif();
-
-            if (!$pengaturan) {
-              throw new Exception("Pengaturan aktif tidak ditemukan.");
-            }
-
-            /* ==========================================
-                        MAP PERATURAN BERDASARKAN TABEL
-                        ========================================== */
-
-            $map = [
-              'urusan'       => 'aturan_sub_kegiatan',
-              'bidang'       => 'aturan_sub_kegiatan',
-              'program'      => 'aturan_sub_kegiatan',
-              'kegiatan'     => 'aturan_sub_kegiatan',
-              'sub_kegiatan' => 'aturan_sub_kegiatan',
-
-              // TAMBAHAN
-              'rekening_kegiatan' => 'aturan_sub_kegiatan',
-              'ssh'          => 'aturan_ssh',
-              'sbu'          => 'aturan_sbu',
-              'asb'          => 'aturan_asb',
-              'hspk'         => 'aturan_hspk'
-            ];
-
-            // ambil field peraturan dari pengaturan
-            if (isset($map[$table])) {
-
-              $fieldPeraturan = $map[$table];
-
-              $params[] = (int)($pengaturan[$fieldPeraturan] ?? 0);
-            } else {
-
-              $params[] = null;
-            }
+            $params[] = $this->resolvePeraturanId($table);
           } else {
 
             // fallback jika tidak ditemukan
@@ -2028,13 +1992,13 @@ SQLSTATE 23000
     }
 
     $result = $this->db->query("
-SELECT *
-FROM pengaturan_neo
-WHERE kd_wilayah = ?
-AND tahun = ?
-AND disable = 0
-LIMIT 1
-", [$kd_wilayah, $tahun])->fetch();
+      SELECT *
+      FROM pengaturan_neo
+      WHERE kd_wilayah = ?
+      AND tahun = ?
+      AND disable = 0
+      LIMIT 1
+      ", [$kd_wilayah, $tahun])->fetch();
 
     $this->pengaturanAktifCache = $result ?: null;
 
@@ -2437,40 +2401,8 @@ LIMIT 1",
 
     $peraturan_id = null;
 
-    // jika tabel memiliki kolom peraturan
     if (in_array('peraturan_id', $columns)) {
-
-      $pengaturan = $this->getPengaturanAktif();
-
-      if (!$pengaturan) {
-        throw new Exception("Pengaturan aktif belum tersedia.");
-      }
-
-      // ======================================================
-      // MAP PERATURAN BERDASARKAN TABEL
-      // ======================================================
-
-      $map = [
-        'ssh'           => 'aturan_ssh',
-        'sbu'           => 'aturan_sbu',
-        'asb'           => 'aturan_asb',
-        'hspk'          => 'aturan_hspk',
-
-        'satuan'        => 'aturan_ssh',
-
-        'sub_kegiatan'  => 'aturan_sub_kegiatan',
-        'urusan'        => 'aturan_sub_kegiatan',
-        'bidang'        => 'aturan_sub_kegiatan',
-        'program'       => 'aturan_sub_kegiatan',
-        'kegiatan'      => 'aturan_sub_kegiatan',
-
-        // TAMBAHAN
-        'rekening_kegiatan' => 'aturan_sub_kegiatan'
-      ];
-
-      if (isset($map[$tbl])) {
-        $peraturan_id = (int)$pengaturan[$map[$tbl]];
-      }
+      $peraturan_id = $this->resolvePeraturanId($tbl); // //
     }
 
 
@@ -2950,31 +2882,8 @@ LIMIT 1",
 
     if (in_array('peraturan_id', $columns)) {
 
-      $pengaturan = $this->getPengaturanAktif();
-
-      if (!$pengaturan) {
-        throw new Exception("Pengaturan aktif belum tersedia.");
-      }
-
-      $fieldMap = [
-        'urusan'       => 'aturan_sub_kegiatan',
-        'bidang'       => 'aturan_sub_kegiatan',
-        'program'      => 'aturan_sub_kegiatan',
-        'kegiatan'     => 'aturan_sub_kegiatan',
-        'sub_kegiatan' => 'aturan_sub_kegiatan',
-        'ssh_neo'      => 'aturan_ssh',
-        'sbu_neo'      => 'aturan_sbu',
-        'asb_neo'      => 'aturan_asb',
-        'hspk_neo'     => 'aturan_hspk',
-      ];
-
-      if (isset($fieldMap[$table])) {
-
-        $field = $fieldMap[$table];
-
-        $whereParts[] = "`peraturan_id` = ?";
-        $params[] = (int)$pengaturan[$field];
-      }
+      $whereParts[] = "`peraturan_id` = ?";
+      $params[] = $this->resolvePeraturanId($table); // //
     }
 
     $primaryKey = $this->getPrimaryKey($table);
@@ -3033,14 +2942,7 @@ LIMIT 1",
     // 🔥 Scope peraturan
     if (in_array('peraturan_id', $columns)) {
 
-      $pengaturan = $this->getPengaturanAktif();
-
-      if (!$pengaturan || empty($pengaturan['aturan_sub_kegiatan'])) {
-        throw new Exception("Peraturan aktif belum dikonfigurasi.");
-      }
-
-      $filtered['peraturan_id'] =
-        (int)$pengaturan['aturan_sub_kegiatan'];
+      $filtered['peraturan_id'] = $this->resolvePeraturanId($table); // //
 
       $whereParts[] = "`peraturan_id` = ?";
       $params[] = $filtered['peraturan_id'];
@@ -3223,9 +3125,18 @@ ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filte
         if (!in_array($field, $columns)) continue;
 
         $where[] = "`$field` = ?";
-        $params[] = $value === 'user'
-          ? $this->user[$field] ?? null
-          : $value;
+        // //
+        if ($value === 'user') {
+
+          if ($field === 'peraturan_id') {
+            $params[] = $this->resolvePeraturanId($table); // //
+          } else {
+            $params[] = $this->user[$field] ?? null;
+          }
+        } else {
+          $params[] = $value;
+        }
+        // //
       }
     }
 
@@ -3296,53 +3207,7 @@ ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filte
     }
 
 
-
-    $pengaturan = $this->getPengaturanAktif();
-
-    if (!$pengaturan) {
-      throw new Exception("Pengaturan aktif tidak ditemukan.");
-    }
-
-    $map = [
-      'urusan'       => 'aturan_sub_kegiatan',
-      'bidang'       => 'aturan_sub_kegiatan',
-      'program'      => 'aturan_sub_kegiatan',
-      'kegiatan'     => 'aturan_sub_kegiatan',
-      'sub_kegiatan' => 'aturan_sub_kegiatan',
-
-      // TAMBAHAN
-      'rekening_kegiatan' => 'aturan_sub_kegiatan',
-      'satuan'     => 'aturan_ssh',
-      'satuan_neo' => 'aturan_ssh',
-
-      'ssh'        => 'aturan_ssh',
-      'ssh_neo'    => 'aturan_ssh',
-
-      'sbu'        => 'aturan_sbu',
-      'sbu_neo'    => 'aturan_sbu',
-
-      'asb'        => 'aturan_asb',
-      'asb_neo'    => 'aturan_asb',
-
-      'hspk'       => 'aturan_hspk',
-      'hspk_neo'   => 'aturan_hspk',
-
-      'akun'       => 'aturan_akun',
-      'akun_neo'   => 'aturan_akun'
-    ];
-
-    if (!isset($map[$table])) {
-      return $data;
-    }
-
-    $field = $map[$table];
-
-    if (empty($pengaturan[$field])) {
-      throw new Exception("Field {$field} pada pengaturan aktif kosong.");
-    }
-
-    // 🔥 CAST KE INT
-    $data[$colPeraturan] = (int)$pengaturan[$field];
+    $data[$colPeraturan] = $this->resolvePeraturanId($table); // //
 
     return $data;
   }
@@ -5021,4 +4886,43 @@ AND is_deleted = 0
       return null; // HARD SAFE
     }
   }
+  // //
+  private function resolvePeraturanId(string $table): int
+  {
+    $pengaturan = $this->getPengaturanAktif();
+
+    if (!$pengaturan) {
+      throw new Exception("Pengaturan aktif tidak ditemukan.");
+    }
+
+    $map = [
+      'urusan'       => 'aturan_sub_kegiatan',
+      'bidang'       => 'aturan_sub_kegiatan',
+      'program'      => 'aturan_sub_kegiatan',
+      'kegiatan'     => 'aturan_sub_kegiatan',
+      'sub_kegiatan' => 'aturan_sub_kegiatan',
+      'rekening_kegiatan' => 'aturan_sub_kegiatan',
+      'ssh'          => 'aturan_ssh',
+      'sbu'          => 'aturan_sbu',
+      'asb'          => 'aturan_asb',
+      'hspk'         => 'aturan_hspk',
+      'satuan'       => 'aturan_ssh'
+    ];
+
+    // //
+    $logicalTable = $table;
+
+    // FIX: normalize table name (hapus _neo)
+    if (str_ends_with($table, '_neo')) {
+      $logicalTable = substr($table, 0, -4);
+    }
+
+    if (!isset($map[$logicalTable])) {
+      throw new Exception("Mapping peraturan_id tidak ditemukan untuk table $logicalTable");
+    }
+
+    return (int)$pengaturan[$map[$logicalTable]];
+    // //
+  }
+  // //
 }
