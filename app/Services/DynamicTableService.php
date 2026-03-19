@@ -54,16 +54,17 @@ require_once __DIR__ . '/JsonResponse.php';
  * Hanya enhancement yang ditambahkan secara isolated.
  * ============================================================
  */
-require_once __DIR__ . '/DynamicTable/DynamicImportHelper.php'; // //
+require_once __DIR__ . '/DynamicTable/autoload.php';
+
 use App\Services\DynamicTable\DynamicImportHelper;
 
-require_once __DIR__ . '/DynamicTable/DynamicMetadataService.php'; // //
 use App\Services\DynamicTable\DynamicMetadataService; // //
 
-require_once __DIR__ . '/DynamicTable/DynamicConfigService.php'; // //
 use App\Services\DynamicTable\DynamicConfigService; // //
-require_once __DIR__ . '/DynamicTable/DynamicSanitizer.php'; // //
 use App\Services\DynamicTable\DynamicSanitizer; // //
+//segala macam fungsi didalamnya
+use App\Services\DynamicTable\DynamicDoc;
+
 class DynamicTableService
 {
   private array $cacheSatuan = [];
@@ -84,21 +85,35 @@ INTERNAL CACHE (ANTI DOUBLE QUERY)
   private ?array $pengaturanAktifCache = null;
   private ?array $periodeAktifCache = null;
   // tambahan pemisahan class
-  private DynamicImportHelper $importHelper;
-  private DynamicMetadataService $meta;
-  private DynamicConfigService $config;
-  private DynamicSanitizer $sanitizer;
+  private $importHelper; // lazy //
+  private $meta; // lazy //
+  private $config; // lazy //
+  private $sanitizer; // lazy //
   public function __construct()
   {
     $this->db = DB::getInstance();
     $this->profiles = require __DIR__ . '/../Config/table_profiles.php';
     $this->user = $_SESSION['user'] ?? [];
-    $this->importHelper = new DynamicImportHelper(); // //
-    $this->meta = new DynamicMetadataService();
-    $this->config = new DynamicConfigService($this->user);
-    $this->sanitizer = new DynamicSanitizer($this);
+  }
+  private function importHelper() // //
+  {
+    return $this->importHelper ??= new DynamicImportHelper(); // //
   }
 
+  private function meta() // //
+  {
+    return $this->meta ??= new DynamicMetadataService(); // //
+  }
+
+  private function config() // //
+  {
+    return $this->config ??= new DynamicConfigService($this->user); // //
+  }
+
+  private function sanitizer() // //
+  {
+    return $this->sanitizer ??= new DynamicSanitizer($this); // //
+  }
 
   /* =========================================================
 MAIN HANDLER (ENTRY POINT) — HARDENED VERSION
@@ -410,6 +425,18 @@ GET SINGLE ROW
       $schema = $profile['schema'];
     }
 
+    // ==========================================
+    // 🔥 APPLY ALIAS SINGLE ROW
+    // ==========================================
+    $doc = new DynamicDoc(); // //
+
+    $row = $doc->apply(
+      [$row], // bungkus array //
+      $profile['alias'] ?? []
+    )[0] ?? $row;
+
+    // ==========================================
+
     return JsonResponse::success(
       "Data ditemukan",
       [
@@ -679,7 +706,7 @@ kd_sub_keg → nama_sub_keg
     /* =====================================================
         8️⃣ SANITATION & AUDIT
         ===================================================== */
-    $filtered = $this->sanitizer->applySanitization($table, $filtered);
+    $filtered = $this->sanitizer()->applySanitization($table, $filtered);
     $filtered = $this->injectAudit($filtered, 'insert');
 
     /* =====================================================
@@ -912,7 +939,7 @@ IGNORE SYSTEM FIELD
     /* =====================================================
 6️⃣ SANITATION & AUDIT
 ===================================================== */
-    $filtered = $this->sanitizer->applySanitization($table, $filtered);
+    $filtered = $this->sanitizer()->applySanitization($table, $filtered);
     $filtered = $this->injectAudit($filtered, 'update');
 
     /* =====================================================
@@ -2505,7 +2532,7 @@ LIMIT 1",
           // SANITASI DATA
           // ==================================================
 
-          $data = $this->sanitizer->applySanitization($table, $data);
+          $data = $this->sanitizer()->applySanitization($table, $data);
 
 
           // ==================================================
@@ -2858,7 +2885,7 @@ LIMIT 1",
     /* =====================================================
         ENTERPRISE SANITATION
         ===================================================== */
-    $filtered = $this->sanitizer->applySanitization($table, $filtered);
+    $filtered = $this->sanitizer()->applySanitization($table, $filtered);
     $filtered = $this->injectAudit($filtered, 'insert');
 
     $this->db->insert($table, $filtered);
