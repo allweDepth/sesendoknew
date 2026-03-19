@@ -446,7 +446,18 @@ GET SINGLE ROW
     // ======================================================
     $schema = null;
 
-    if (!empty($profile['schema'])) {
+    // ==========================================
+    // 🔥 FIX: ambil schema dari read_relations
+    // ==========================================
+    if (!empty($row['_read']['cache_schema_naskah'][0]['schema_json'])) { // //
+
+      $schema = json_decode(
+        $row['_read']['cache_schema_naskah'][0]['schema_json'],
+        true
+      ); // //
+
+    } elseif (!empty($profile['schema'])) { // fallback lama //
+
       $schema = $profile['schema'];
     }
 
