@@ -57,6 +57,13 @@ require_once __DIR__ . '/JsonResponse.php';
 require_once __DIR__ . '/DynamicTable/DynamicImportHelper.php'; // //
 use App\Services\DynamicTable\DynamicImportHelper;
 
+require_once __DIR__ . '/DynamicTable/DynamicMetadataService.php'; // //
+use App\Services\DynamicTable\DynamicMetadataService; // //
+
+require_once __DIR__ . '/DynamicTable/DynamicConfigService.php'; // //
+use App\Services\DynamicTable\DynamicConfigService; // //
+require_once __DIR__ . '/DynamicTable/DynamicSanitizer.php'; // //
+use App\Services\DynamicTable\DynamicSanitizer; // //
 class DynamicTableService
 {
   private array $cacheSatuan = [];
@@ -78,12 +85,18 @@ INTERNAL CACHE (ANTI DOUBLE QUERY)
   private ?array $periodeAktifCache = null;
   // tambahan pemisahan class
   private DynamicImportHelper $importHelper;
+  private DynamicMetadataService $meta;
+  private DynamicConfigService $config;
+  private DynamicSanitizer $sanitizer;
   public function __construct()
   {
     $this->db = DB::getInstance();
     $this->profiles = require __DIR__ . '/../Config/table_profiles.php';
     $this->user = $_SESSION['user'] ?? [];
     $this->importHelper = new DynamicImportHelper(); // //
+    $this->meta = new DynamicMetadataService();
+    $this->config = new DynamicConfigService($this->user);
+    $this->sanitizer = new DynamicSanitizer($this);
   }
 
 
@@ -666,7 +679,7 @@ kd_sub_keg → nama_sub_keg
     /* =====================================================
         8️⃣ SANITATION & AUDIT
         ===================================================== */
-    $filtered = $this->applySanitization($table, $filtered);
+    $filtered = $this->sanitizer->applySanitization($table, $filtered);
     $filtered = $this->injectAudit($filtered, 'insert');
 
     /* =====================================================
@@ -899,7 +912,7 @@ IGNORE SYSTEM FIELD
     /* =====================================================
 6️⃣ SANITATION & AUDIT
 ===================================================== */
-    $filtered = $this->applySanitization($table, $filtered);
+    $filtered = $this->sanitizer->applySanitization($table, $filtered);
     $filtered = $this->injectAudit($filtered, 'update');
 
     /* =====================================================
@@ -1886,32 +1899,7 @@ SQLSTATE 23000
       throw $e;
     }
   }
-  private function getPengaturanAktif(): ?array
-  {
-    if ($this->pengaturanAktifCache !== null) {
-      return $this->pengaturanAktifCache;
-    }
 
-    $kd_wilayah = $this->user['kd_wilayah'] ?? null;
-    $tahun      = $this->user['tahun'] ?? null;
-
-    if (!$kd_wilayah || !$tahun) {
-      return null;
-    }
-
-    $result = $this->db->query("
-      SELECT *
-      FROM pengaturan_neo
-      WHERE kd_wilayah = ?
-      AND tahun = ?
-      AND disable = 0
-      LIMIT 1
-      ", [$kd_wilayah, $tahun])->fetch();
-
-    $this->pengaturanAktifCache = $result ?: null;
-
-    return $this->pengaturanAktifCache;
-  }
   private function getPeriodeAktif(): ?array
   {
     if ($this->periodeAktifCache !== null) {
@@ -2517,7 +2505,7 @@ LIMIT 1",
           // SANITASI DATA
           // ==================================================
 
-          $data = $this->applySanitization($table, $data);
+          $data = $this->sanitizer->applySanitization($table, $data);
 
 
           // ==================================================
@@ -2870,7 +2858,7 @@ LIMIT 1",
     /* =====================================================
         ENTERPRISE SANITATION
         ===================================================== */
-    $filtered = $this->applySanitization($table, $filtered);
+    $filtered = $this->sanitizer->applySanitization($table, $filtered);
     $filtered = $this->injectAudit($filtered, 'insert');
 
     $this->db->insert($table, $filtered);
@@ -2918,76 +2906,13 @@ LIMIT 1",
 
     foreach ($profile['normalize_space'] as $field) {
       if (isset($data[$field]) && is_string($data[$field])) {
-        $data[$field] = $this->normalizeSpaces($data[$field]);
+        $data[$field] = $this->sanitizer->normalizeSpaces($data[$field]);
       }
     }
 
     return $data;
   }
-  /* =========================================================
-        NORMALISASI SPASI GLOBAL
-        ========================================================= */
-  private function normalizeSpaces(string $value): string
-  {
-    $value = trim((string)$value);
-    return preg_replace('/\s+/u', ' ', $value);
-  }
-  /* =========================================================
-        SANITIZE SINGLE VALUE
-        ========================================================= */
-  private function sanitizeValue(?string $value, ?array $rules = null): string
-  {
-    if ($value === null) {
-      return '';
-    }
 
-    $value = trim((string)$value);
-
-    // Hapus control characters
-    $value = preg_replace('/[\x00-\x1F\x7F]/u', '', $value);
-
-    // Normalize multi space
-    $value = preg_replace('/\s+/u', ' ', $value);
-
-    // Strip HTML
-    $value = strip_tags($value);
-
-    if (!empty($rules['case'])) {
-      switch ($rules['case']) {
-        case 'upper':
-          $value = mb_strtoupper($value);
-          break;
-        case 'lower':
-          $value = mb_strtolower($value);
-          break;
-        case 'title':
-          $value = mb_convert_case($value, MB_CASE_TITLE);
-          break;
-      }
-    }
-
-    return $value;
-  }
-  /* =========================================================
-ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filtered);
-========================================================= */
-  private function applySanitization(string $table, array $data): array
-  {
-    $profile = $this->getProfileByTable($table);
-
-    foreach ($data as $field => $value) {
-
-      if (!is_string($value)) {
-        continue;
-      }
-
-      $rules = $profile['sanitize'][$field] ?? null;
-
-      $data[$field] = $this->sanitizeValue($value, $rules);
-    }
-
-    return $data;
-  }
   private function resolveScope(
     string $table,
     array $profile,
@@ -3131,7 +3056,7 @@ ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filte
       return $data;
     }
 
-    $periode = $this->getPeriodeAktif();
+    $periode = $this->config->getPeriodeAktif();
 
     if (!$periode) {
       throw new Exception("Periode aktif tidak ditemukan.");
@@ -3295,7 +3220,7 @@ ENTERPRISE SANITATION ENGINE $filtered = $this->applySanitization($table, $filte
       return;
     }
 
-    $pengaturan = $this->getPengaturanAktif();
+    $pengaturan = $this->config->getPengaturanAktif();
 
     if (!$pengaturan) {
       throw new Exception("Pengaturan aktif belum tersedia.");
@@ -4797,7 +4722,7 @@ AND is_deleted = 0
   // //
   private function resolvePeraturanId(string $table): int
   {
-    $pengaturan = $this->getPengaturanAktif();
+    $pengaturan = $this->config->getPengaturanAktif();
 
     if (!$pengaturan) {
       throw new Exception("Pengaturan aktif tidak ditemukan.");
