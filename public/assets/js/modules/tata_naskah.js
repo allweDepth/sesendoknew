@@ -23,6 +23,11 @@ class TataNaskahModule {
 		// Ajax khusus endpoint
 		this.ajaxJenis = new AjaxEngine(AppConfig.apiUrl + "tata_naskah/jenis");
 		this.ajaxSchema = new AjaxEngine(AppConfig.apiUrl + "tata_naskah/schema");
+		// 🔥 FIX: REGISTER MODULE GLOBAL
+		if (!window.app.modules) {
+			window.app.modules = {};
+		}
+		window.app.modules.tata_naskah = this;
 	}
 
 	/**
