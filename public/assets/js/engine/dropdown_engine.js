@@ -20,8 +20,16 @@ class DropdownEngine {
 				asn: "asn",
 			};
 
-			const real = self.data[source] ? source : alias[source];
-			const dataset = self.data[real] || [];
+			let dataset = self.data[source];
+
+			if (!dataset && self.data._read?.db_asn_pemda_neo) {
+				dataset = self.data._read.db_asn_pemda_neo; // .
+			}
+
+			if (!dataset) {
+				const real = alias[source];
+				dataset = self.data[real] || [];
+			}
 			if (!dataset.length) return;
 
 			el.data("dataset", dataset);
@@ -32,7 +40,7 @@ class DropdownEngine {
 
 			el.dropdown({
 				values: dataset.map((row) => ({
-					name: row.uraian,
+					name: row.nama || row.uraian || "", // .
 					value: row.id,
 				})),
 

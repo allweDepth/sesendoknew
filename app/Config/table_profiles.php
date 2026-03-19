@@ -1401,7 +1401,12 @@ $profiles = [
           'struktur_json' => 'schema'
         ]
       ],
-
+      'trx_naskah_struktur' => [
+        'select' => ['naskah_id', 'struktur_json'],
+        'where' => [
+          'naskah_id' => 'id'
+        ]
+      ],
       // =====================================
       // ASN (FIX SESUAI PERMINTAAN KAMU)
       // =====================================
