@@ -9,7 +9,7 @@
 class TataNaskahModule {
 	constructor() {
 		this.state = window.app.state; // ambil global state
-
+		this.currentId = null; // // menyimpan id saat edit
 		this.state.setTable("trx_naskah_dinas"); // set tabel agar TableManager tahu tabel yang dipakai
 
 		this.mainContainer = "#form_modal";
@@ -181,7 +181,9 @@ class TataNaskahModule {
 			window.Ajax.request({
 				method: "POST",
 				data: {
-					action: data?.id ? "edit_json" : "add_json",
+					url: AppConfig.apiUrl + "dynamic",
+					action: this.currentId ? "edit_json" : "add_json",
+					id_row: this.currentId, // // kirim id saat edit
 					tbl: this.state.tbl,
 					...payload,
 				},
@@ -359,6 +361,10 @@ class TataNaskahModule {
 		});
 	}
 	renderForm(schema, data = {}, res = {}, jenisId = null, extra = {}) {
+		// ===============================
+		// 🔥 SIMPAN MODE EDIT
+		// ===============================
+		this.currentId = data?.id || null; // // simpan id jika edit
 		this.formContainer.show("");
 
 		// 🔥 FIX KRITIS: delay agar DOM siap (sesuai behavior lama async)
