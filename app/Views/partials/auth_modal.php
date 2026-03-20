@@ -127,7 +127,7 @@
       <!-- WILAYAH -->
       <div class="field">
         <label>Wilayah</label>
-        <div class="ui fluid search selection dropdown" id="dropdownWilayah">
+        <div class="ui fluid search selection dropdown lookup-dropdown" id="dropdownWilayah">
           <input type="hidden" name="kd_wilayah">
           <i class="dropdown icon"></i>
           <div class="default text">Pilih Wilayah</div>
