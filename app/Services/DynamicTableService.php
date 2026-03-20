@@ -134,7 +134,7 @@ PERUBAHAN:
 
       $action = $request['action'];
 
-      $allowedActions = ['add', 'edit', 'delete', 'dropdown', 'export', 'list', 'import'];
+      $allowedActions = ['add', 'add_json', 'edit', 'edit_json', 'delete', 'dropdown', 'export', 'list', 'import'];
 
       if (!in_array($action, $allowedActions)) {
         return JsonResponse::error("Action tidak valid");
@@ -178,7 +178,9 @@ PERUBAHAN:
       case 'add':
         $this->authorize('add', $table);
         return $this->insert($table, $request);
-
+      case 'add_json':
+        $this->authorize('add', $table);
+        return $this->insertJson($table, $request);
       case 'edit':
         if (!empty($request['id_row']) && count($request) <= 4) {
           $this->authorize('view', $table);
@@ -191,7 +193,9 @@ PERUBAHAN:
         }
 
         return JsonResponse::error("ID tidak ditemukan");
-
+      case 'edit_json':
+        $this->authorize('edit', $table);
+        return $this->updateJson($table, $request); // 🔥
       case 'delete':
         $this->authorize('delete', $table);
         $id = $request['id_row'] ?? null;
@@ -4835,5 +4839,93 @@ AND is_deleted = 0
 
     return (int)$pengaturan[$map[$profileKey]];
   }
-  // //
+  private function insertJson(string $table, array $request): string
+  {
+    // =====================================
+    // 🔥 AMBIL struktur_json
+    // =====================================
+    if (empty($request['struktur_json'])) {
+      return JsonResponse::error("struktur_json wajib ada");
+    }
+
+    $json = $request['struktur_json'];
+
+    if (is_string($json)) {
+      $json = json_decode($json, true);
+    }
+
+    // =====================================
+    // 🔥 FIX DOUBLE NESTED (KRITIS)
+    // =====================================
+    if (isset($json['struktur_json'])) {
+      $json = $json['struktur_json'];
+    }
+
+    if (!is_array($json)) {
+      return JsonResponse::error("struktur_json tidak valid");
+    }
+
+    // =====================================
+    // 🔥 INJECT KE REQUEST ROOT
+    // =====================================
+    // supaya semua engine lama tetap jalan
+    $request = [
+      ...$request,
+      ...$json
+    ];
+
+    // =====================================
+    // 🔥 PANGGIL ENGINE LAMA (TANPA DIUBAH)
+    // =====================================
+    return $this->insert($table, $request);
+  }
+  private function updateJson(string $table, array $request): string
+  {
+    // =====================================
+    // 🔥 VALIDASI ID
+    // =====================================
+    if (empty($request['id_row'])) {
+      return JsonResponse::error("id_row wajib ada");
+    }
+
+    // =====================================
+    // 🔥 AMBIL struktur_json
+    // =====================================
+    if (empty($request['struktur_json'])) {
+      return JsonResponse::error("struktur_json wajib ada");
+    }
+
+    $json = $request['struktur_json'];
+
+    // =====================================
+    // 🔥 HANDLE STRING JSON
+    // =====================================
+    if (is_string($json)) {
+      $json = json_decode($json, true);
+    }
+
+    // =====================================
+    // 🔥 FIX DOUBLE NESTED (KRITIS)
+    // =====================================
+    if (isset($json['struktur_json'])) {
+      $json = $json['struktur_json'];
+    }
+
+    if (!is_array($json)) {
+      return JsonResponse::error("struktur_json tidak valid");
+    }
+
+    // =====================================
+    // 🔥 INJECT KE ROOT (BIAR ENGINE LAMA JALAN)
+    // =====================================
+    $request = [
+      ...$request,
+      ...$json
+    ];
+
+    // =====================================
+    // 🔥 PANGGIL ENGINE LAMA
+    // =====================================
+    return $this->update($table, $request);
+  }
 }

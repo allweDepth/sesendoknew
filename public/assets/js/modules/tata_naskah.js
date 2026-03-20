@@ -181,7 +181,7 @@ class TataNaskahModule {
 			window.Ajax.request({
 				method: "POST",
 				data: {
-					action: "save",
+					action: data?.id ? "edit_json" : "add_json",
 					tbl: this.state.tbl,
 					...payload,
 				},
@@ -354,7 +354,7 @@ class TataNaskahModule {
 				// =====================================
 				// 🔥 RENDER ADD
 				// =====================================
-				this.renderForm(schema, {}, res, jenisId);
+				this.renderForm(schema, {}, res, jenisId, res._read);
 			},
 		});
 	}
@@ -363,7 +363,7 @@ class TataNaskahModule {
 
 		// 🔥 FIX KRITIS: delay agar DOM siap (sesuai behavior lama async)
 		setTimeout(() => {
-			$("#mainModal").modal("show"); // 🔥 ini yang hilang efeknya
+			$("#mainModal").modal("show");
 		}, 0);
 
 		const container = $(this.formContainerSelector);
@@ -374,7 +374,7 @@ class TataNaskahModule {
 		// 🔥 FIX: NORMALISASI SCHEMA (KRITIS)
 		// =====================================
 		if (Array.isArray(schema)) {
-			schema = { sections: schema }; // 🔥 BUKAN fields
+			schema = { sections: schema };
 		}
 
 		window.documentBuilder.schema = schema;
@@ -383,23 +383,17 @@ class TataNaskahModule {
 		// =====================================
 		// 🔥 HANDLE struktur_json SEBELUM render
 		// =====================================
-		// =====================================
-		// 🔥 HANDLE struktur_json SEBELUM render
-		// =====================================
 		if (data.struktur_json) {
 			let json = data.struktur_json;
 
-			// STEP 1: parse kalau string
 			if (typeof json === "string") {
 				json = JSON.parse(json);
 			}
 
-			// STEP 2: handle nested struktur_json (INI KUNCI)
 			if (json.struktur_json) {
 				json = json.struktur_json;
 			}
 
-			// STEP 3: merge
 			data = {
 				...data,
 				...json,
@@ -421,8 +415,7 @@ class TataNaskahModule {
 			const el = container.find(`[name="${key}"]`);
 			if (!el.length) return;
 
-			// 🔥 JANGAN override dropdown
-			if (el.hasClass("ui dropdown")) return; // .
+			if (el.hasClass("ui dropdown")) return;
 
 			el.val(val);
 		});
@@ -444,23 +437,36 @@ class TataNaskahModule {
 		// =====================================
 		// 🔥 DROPDOWN ENGINE
 		// =====================================
-		// =====================================
-		// 🔥 DROPDOWN ENGINE
-		// =====================================
+
 		// 🔥 HANCURKAN instance lama (WAJIB)
 		if (window.dropdownEngine) {
-			window.dropdownEngine.destroy?.(); // kalau ada
+			window.dropdownEngine.destroy?.();
 			window.dropdownEngine = null;
 		}
 
-		// 🔥 SELALU INIT ULANG
+		// =====================================
+		// 🔥 FIX UTAMA: NORMALISASI DATA ADD + EDIT
+		// =====================================
+		const asnData =
+			extra?.db_asn_pemda_neo || // EDIT MODE (utama)
+			res?.db_asn_pemda_neo || // fallback lama
+			res?.asn || // ADD MODE (INI YANG HILANG SEBELUMNYA)
+			[];
+
+		// DEBUG (boleh hapus nanti)
+		console.log("ASN FINAL:", asnData?.length);
+
+		// =====================================
+		// 🔥 INIT DROPDOWN ENGINE
+		// =====================================
 		window.dropdownEngine = new DropdownEngine($("#form_modal"), {
 			...res,
 
-			asn: extra?.db_asn_pemda_neo || [],
-			penandatangan: extra?.db_asn_pemda_neo || [],
+			// 🔥 SEMUA SOURCE DISATUKAN
+			asn: asnData,
+			penandatangan: asnData,
+			db_asn_pemda_neo: asnData,
 
-			// 🔥 JANGAN kirim data penuh ke dropdown
 			data: {},
 		});
 

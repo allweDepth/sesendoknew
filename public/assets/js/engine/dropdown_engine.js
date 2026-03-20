@@ -22,8 +22,9 @@ class DropdownEngine {
 
 			let dataset = self.data[source];
 
-			if (!dataset && self.data._read?.db_asn_pemda_neo) {
-				dataset = self.data._read.db_asn_pemda_neo; // .
+			// 🔥 HARD FALLBACK
+			if (!dataset && self.data.db_asn_pemda_neo) {
+				dataset = self.data.db_asn_pemda_neo;
 			}
 
 			if (!dataset) {

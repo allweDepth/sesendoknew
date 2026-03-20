@@ -665,10 +665,15 @@ class DocumentBuilder {
 		// =====================================
 		// FIX: pisahkan struktur dari root
 		// =====================================
-		let struktur = JSON.parse(JSON.stringify(result));
+		// =====================================
+		// FIX: HINDARI NESTED struktur_json
+		// =====================================
 
-		result["struktur_json"] = struktur;
+		// pastikan tidak ada struktur_json di dalam result
+		delete result.struktur_json; // // FIX
 
-		return result;
+		return {
+			struktur_json: result, // // FIX
+		};
 	}
 }
