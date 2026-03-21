@@ -80,7 +80,7 @@ return [
     | 📅 RENJA & DPA
     |--------------------------------------------------------------------------
     */
-  '/renja'           => ['RenjaController', 'index'],
+  '/renja'           => ['AnggaranController', 'renja'],
   '/dpa'             => ['DpaController', 'index'],
   '/renja_perubahan' => ['RenjaPerubahanController', 'index'],
   '/dppa'            => ['DppaController', 'index'],

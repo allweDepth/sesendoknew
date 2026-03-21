@@ -59,7 +59,7 @@
     </div>
 
     <!-- KONTRAK -->
-    <a class="item" href="/kontrak" data-spa="server">
+    <a class="item" href="/kontrak" data-spa="client">
       <i class="file contract icon"></i> Kontrak
     </a>
 
@@ -206,7 +206,7 @@
     </div>
 
     <?php if (($_SESSION['user']['type_user'] ?? '') !== 'viewer'): ?>
-      <a class="item" href="/halaman_berita" data-spa="server">
+      <a class="item" href="/halaman_berita" data-spa="client">
         <i class="newspaper icon"></i> Halaman Berita
       </a>
       <a class="item" href="/reset_tabel" data-spa="client">
