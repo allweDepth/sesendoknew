@@ -4,49 +4,53 @@ class ApiController
 {
   public function handle()
   {
-    ini_set('display_errors', 0); // matikan error display agar response tetap JSON
+    ini_set('display_errors', 0); // // matikan error agar response tetap JSON
 
-    header('Content-Type: application/json'); // set header response JSON
+    header('Content-Type: application/json'); // // set header JSON
 
     // ==============================
-    // START SESSION JIKA BELUM ADA
+    // START SESSION
     // ==============================
     if (session_status() === PHP_SESSION_NONE) {
-      session_start(); // mulai session
+      session_start(); // // mulai session
     }
 
     // ==============================
-    // AMBIL PARAMETER REQUEST
+    // AMBIL PARAMETER
     // ==============================
-    $tbl = $_REQUEST['tbl'] ?? null; // nama resource / tabel
-    $action = $_REQUEST['action'] ?? null; // aksi yang diminta
+    $tbl = $_REQUEST['tbl'] ?? null; // // ambil tbl
+    $action = $_REQUEST['action'] ?? null; // // ambil action
 
     // ==============================
     // VALIDASI PARAMETER
     // ==============================
-    if (!$tbl || !$action) { // jika tbl atau action kosong
-      http_response_code(400); // set HTTP error
+    if (!$tbl || !$action) {
+      http_response_code(400); // // bad request
 
       echo json_encode([
         'success' => false,
-        'message' => 'tbl atau action tidak valid' // pesan error
+        'message' => 'tbl atau action tidak valid'
       ]);
 
-      return; // hentikan eksekusi
+      return;
     }
 
     // ==============================
-    // RESOURCE YANG BOLEH TANPA LOGIN
+    // PUBLIC MODULE
     // ==============================
-    $publicModules = ['public']; // daftar resource publik
+    $publicModules = [
+      'public',          // // existing
+      'tbl_wilayah',     // // wilayah tanpa login
+      'organisasi_neo'   // // organisasi tanpa login
+    ];
 
     // ==============================
-    // CEK SESSION LOGIN
+    // CEK LOGIN
     // ==============================
-    if (!in_array($tbl, $publicModules)) { // jika bukan resource public
-      if (!isset($_SESSION['user'])) { // jika session user tidak ada
+    if (!in_array($tbl, $publicModules)) {
+      if (!isset($_SESSION['user'])) {
 
-        http_response_code(401); // unauthorized
+        http_response_code(401);
 
         echo json_encode([
           'success' => false,
@@ -54,42 +58,95 @@ class ApiController
           'message' => 'Session habis. Silakan login ulang.'
         ]);
 
-        return; // hentikan eksekusi
+        return;
       }
     }
 
     // ==============================
-    // RESOLVE MODEL BERDASARKAN TBL
+    // LOAD DB CLASS
     // ==============================
-    // ==============================
-    // LOAD DYNAMIC TABLE SERVICE
-    // ==============================
-    require_once __DIR__ . '/../Services/DynamicTableService.php'; // load service utama
+    require_once __DIR__ . '/../Core/DB.php';
+
+    $db = DB::getInstance(); // // instance DB
 
     // ==============================
-    // BUAT INSTANCE SERVICE
+    // HANDLE WILAYAH
     // ==============================
-    $service = new DynamicTableService(); // buat instance service
+    if ($tbl === 'tbl_wilayah' && $action === 'get') {
+
+      $data = $db->select(
+        'tbl_wilayah',
+        'kd_wilayah AS kode, nama_wilayah AS uraian',
+        ''
+      );
+
+      echo json_encode([
+        'success' => true,
+        'data' => $data
+      ]);
+
+      return;
+    }
+
+    // ==============================
+    // HANDLE ORGANISASI
+    // ==============================
+    if ($tbl === 'organisasi_neo' && $action === 'get') {
+
+      $kd_wilayah = $_REQUEST['kd_wilayah'] ?? null; // // ambil parameter
+
+      if (!$kd_wilayah) {
+        echo json_encode([
+          'success' => false,
+          'message' => 'kd_wilayah wajib diisi'
+        ]);
+        return;
+      }
+
+      $data = $db->select(
+        'organisasi_neo', // // tabel
+        'kd_organisasi AS kode, nama_organisasi AS uraian', // // kolom
+        'WHERE kd_wilayah = ?', // // kondisi
+        [$kd_wilayah] // // parameter
+      );
+
+      echo json_encode([
+        'success' => true,
+        'data' => $data
+      ]);
+
+      return;
+    }
+
+    // ==============================
+    // FALLBACK KE SERVICE
+    // ==============================
+    require_once __DIR__ . '/../Services/DynamicTableService.php';
+
+    $service = new DynamicTableService();
 
     try {
 
-      // ==============================
-      // EKSEKUSI SERVICE
-      // ==============================
-      $result = $service->handle($_REQUEST); // jalankan handler service
+      $result = $service->handle($_REQUEST); // // jalankan service
 
       // ==============================
-      // RESPONSE BERHASIL
+      // FIX DOUBLE JSON
       // ==============================
+      if (is_string($result)) {
+        $decoded = json_decode($result, true);
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+          echo json_encode($decoded);
+          return;
+        }
+      }
+
       echo json_encode([
         'success' => true,
         'data' => $result
       ]);
     } catch (Exception $e) {
 
-      // ==============================
-      // RESPONSE ERROR SERVER
-      // ==============================
       http_response_code(500);
 
       echo json_encode([

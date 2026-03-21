@@ -20,95 +20,53 @@
 
   <?php require __DIR__ . '/../partials/auth_modal.php'; ?>
 
-<script>
-$(document).ready(function() {
+  <script>
+    $(document).ready(function() {
 
-  /* ================= MODAL ================= */
+      /* ================= MODAL ================= */
 
-  $('#loginModal').modal({
-    autofocus: false,
-    observeChanges: true
-  });
-
-  $('#registerModal').modal({
-    closable: false,
-    autofocus: false,
-    observeChanges: true
-  });
-
-  $('#btnLogin').on('click', function() {
-    $('#loginModal').modal('show');
-  });
-
-  $('#btnRegister').on('click', function() {
-    $('#registerModal').modal('show');
-  });
-
-
-  /* ================= DROPDOWN ================= */
-
-  const $wilayah = $('#dropdownWilayah');
-  const $organisasi = $('#dropdownOrganisasi');
-
-  $('.ui.dropdown').dropdown();
-
-
-  /* ================= LOAD WILAYAH ================= */
-
-  $.ajax({
-    url: '/api',
-    method: 'GET',
-    dataType: 'json',
-    data: {
-      module: 'public',
-      action: 'wilayah'
-    },
-    success: function(res) {
-
-      if (!res.success || !Array.isArray(res.data)) {
-        console.error('Wilayah invalid:', res);
-        return;
-      }
-
-      let menu = '';
-
-      res.data.forEach(function(item) {
-        menu += '<div class="item" data-value="' + item.kode + '">' + item.uraian + '</div>';
+      $('#loginModal').modal({
+        autofocus: false,
+        observeChanges: true
       });
 
-      $wilayah.find('.menu').html(menu);
-      $wilayah.dropdown('refresh');
-    },
-    error: function(xhr) {
-      console.error('Error wilayah:', xhr.responseText);
-    }
-  });
+      $('#registerModal').modal({
+        closable: false,
+        autofocus: false,
+        observeChanges: true
+      });
+
+      $('#btnLogin').on('click', function() {
+        $('#loginModal').modal('show');
+      });
+
+      $('#btnRegister').on('click', function() {
+        $('#registerModal').modal('show');
+      });
 
 
-  /* ================= CHANGE WILAYAH ================= */
+      /* ================= DROPDOWN ================= */
 
-  $wilayah.dropdown({
-    onChange: function(value) {
+      const $wilayah = $('#dropdownWilayah');
+      const $organisasi = $('#dropdownOrganisasi');
 
-      if (!value) return;
+      $('.ui.dropdown').dropdown();
 
-      $organisasi.addClass('disabled');
-      $organisasi.dropdown('clear');
-      $organisasi.find('.menu').html('');
+
+      /* ================= LOAD WILAYAH ================= */
 
       $.ajax({
         url: '/api',
         method: 'GET',
         dataType: 'json',
         data: {
-          module: 'public',
-          action: 'organisasi',
-          kd_wilayah: value
+          tbl: 'tbl_wilayah', // // gunakan langsung nama tabel
+          action: 'get' // // gunakan action standar service
         },
         success: function(res) {
 
           if (!res.success || !Array.isArray(res.data)) {
-            console.error('Organisasi invalid:', res);
+            console.error('Wilayah invalid:', res);
             return;
           }
 
@@ -118,108 +76,201 @@ $(document).ready(function() {
             menu += '<div class="item" data-value="' + item.kode + '">' + item.uraian + '</div>';
           });
 
-          $organisasi.find('.menu').html(menu);
-          $organisasi.removeClass('disabled');
-          $organisasi.dropdown('refresh');
+          $wilayah.find('.menu').html(menu);
+          $wilayah.dropdown('refresh');
         },
         error: function(xhr) {
-          console.error('Error organisasi:', xhr.responseText);
+          console.error('Error wilayah:', xhr.responseText);
         }
       });
 
-    }
-  });
+
+      /* ================= CHANGE WILAYAH ================= */
+
+      $wilayah.dropdown({
+        onChange: function(value) {
+
+          if (!value) return;
+
+          $organisasi.addClass('disabled');
+          $organisasi.dropdown('clear');
+          $organisasi.find('.menu').html('');
+
+          $.ajax({
+            url: '/api',
+            method: 'GET',
+            dataType: 'json',
+            data: {
+              module: 'public',
+              action: 'organisasi',
+              kd_wilayah: value
+            },
+            success: function(res) {
+
+              if (!res.success || !Array.isArray(res.data)) {
+                console.error('Organisasi invalid:', res);
+                return;
+              }
+
+              let menu = '';
+
+              res.data.forEach(function(item) {
+                menu += '<div class="item" data-value="' + item.kode + '">' + item.uraian + '</div>';
+              });
+
+              $organisasi.find('.menu').html(menu);
+              $organisasi.removeClass('disabled');
+              $organisasi.dropdown('refresh');
+            },
+            error: function(xhr) {
+              console.error('Error organisasi:', xhr.responseText);
+            }
+          });
+
+        }
+      });
 
 
-  /* ================= FORM VALIDATION ================= */
+      /* ================= FORM VALIDATION ================= */
 
-  $('#formRegister').form({
+      $('#formRegister').form({
 
-    fields: {
-      username: {
-        rules: [
-          { type: 'empty', prompt: 'Username wajib diisi' },
-          { type: 'minLength[4]', prompt: 'Minimal 4 karakter' }
-        ]
-      },
-      email: {
-        rules: [
-          { type: 'empty', prompt: 'Email wajib diisi' },
-          { type: 'email', prompt: 'Format email tidak valid' }
-        ]
-      },
-      nama: { rules: [{ type: 'empty', prompt: 'Nama wajib diisi' }] },
-      nip: { rules: [{ type: 'empty', prompt: 'NIP wajib diisi' }] },
-      kontak_person: { rules: [{ type: 'empty', prompt: 'Kontak wajib diisi' }] },
-      alamat: { rules: [{ type: 'empty', prompt: 'Alamat wajib diisi' }] },
-      password: {
-        rules: [
-          { type: 'empty', prompt: 'Password wajib diisi' },
-          { type: 'minLength[6]', prompt: 'Minimal 6 karakter' }
-        ]
-      },
-      kd_wilayah: { rules: [{ type: 'empty', prompt: 'Wilayah wajib dipilih' }] },
-      kd_opd: { rules: [{ type: 'empty', prompt: 'Organisasi wajib dipilih' }] },
-      setuju: { rules: [{ type: 'checked', prompt: 'Harus menyetujui ketentuan' }] }
-    },
-
-    onSuccess: function(event) {
-
-      event.preventDefault();
-
-      let $form = $('#formRegister');
-      let $button = $form.find('button[type=submit]');
-
-      $button.addClass('loading');
-      $form.removeClass('error success');
-      $form.find('.error.message').hide();
-
-      $.ajax({
-        url: $form.attr('action'),
-        method: 'POST',
-        data: $form.serialize(),
-        dataType: 'json',
-        success: function(response) {
-
-          $button.removeClass('loading');
-
-          if (response.status === 'success') {
-
-            $('body').toast({
-              class: 'success',
-              message: response.message
-            });
-
-            $form.form('reset');
-            $organisasi.addClass('disabled');
-
-          } else {
-
-            $form
-              .addClass('error')
-              .find('.error.message')
-              .html(response.message)
-              .show();
+        fields: {
+          username: {
+            rules: [{
+                type: 'empty',
+                prompt: 'Username wajib diisi'
+              },
+              {
+                type: 'minLength[4]',
+                prompt: 'Minimal 4 karakter'
+              }
+            ]
+          },
+          email: {
+            rules: [{
+                type: 'empty',
+                prompt: 'Email wajib diisi'
+              },
+              {
+                type: 'email',
+                prompt: 'Format email tidak valid'
+              }
+            ]
+          },
+          nama: {
+            rules: [{
+              type: 'empty',
+              prompt: 'Nama wajib diisi'
+            }]
+          },
+          nip: {
+            rules: [{
+              type: 'empty',
+              prompt: 'NIP wajib diisi'
+            }]
+          },
+          kontak_person: {
+            rules: [{
+              type: 'empty',
+              prompt: 'Kontak wajib diisi'
+            }]
+          },
+          alamat: {
+            rules: [{
+              type: 'empty',
+              prompt: 'Alamat wajib diisi'
+            }]
+          },
+          password: {
+            rules: [{
+                type: 'empty',
+                prompt: 'Password wajib diisi'
+              },
+              {
+                type: 'minLength[6]',
+                prompt: 'Minimal 6 karakter'
+              }
+            ]
+          },
+          kd_wilayah: {
+            rules: [{
+              type: 'empty',
+              prompt: 'Wilayah wajib dipilih'
+            }]
+          },
+          kd_opd: {
+            rules: [{
+              type: 'empty',
+              prompt: 'Organisasi wajib dipilih'
+            }]
+          },
+          setuju: {
+            rules: [{
+              type: 'checked',
+              prompt: 'Harus menyetujui ketentuan'
+            }]
           }
         },
-        error: function() {
 
-          $button.removeClass('loading');
+        onSuccess: function(event) {
 
-          $form
-            .addClass('error')
-            .find('.error.message')
-            .html('Terjadi kesalahan server')
-            .show();
+          event.preventDefault();
+
+          let $form = $('#formRegister');
+          let $button = $form.find('button[type=submit]');
+
+          $button.addClass('loading');
+          $form.removeClass('error success');
+          $form.find('.error.message').hide();
+
+          $.ajax({
+            url: $form.attr('action'),
+            method: 'POST',
+            data: $form.serialize(),
+            dataType: 'json',
+            success: function(response) {
+
+              $button.removeClass('loading');
+
+              if (response.status === 'success') {
+
+                $('body').toast({
+                  class: 'success',
+                  message: response.message
+                });
+
+                $form.form('reset');
+                $organisasi.addClass('disabled');
+
+              } else {
+
+                $form
+                  .addClass('error')
+                  .find('.error.message')
+                  .html(response.message)
+                  .show();
+              }
+            },
+            error: function() {
+
+              $button.removeClass('loading');
+
+              $form
+                .addClass('error')
+                .find('.error.message')
+                .html('Terjadi kesalahan server')
+                .show();
+            }
+          });
+
         }
+
       });
 
-    }
-
-  });
-
-});
-</script>
+    });
+  </script>
 
 </body>
+
 </html>
