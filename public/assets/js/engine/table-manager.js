@@ -334,15 +334,18 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			// 🔥 FIX: hanya untuk tata_naskah + edit
 			let customAttr = "";
 
+			let action = "edit";
+
 			if (this.state.tbl === "trx_naskah_dinas") {
-				customAttr = 'data-custom-form="true"'; // hanya edit button (posisi ini memang edit)
+				customAttr = 'data-custom-form="true"';
+				action = "edit_json"; // 🔥 FIX
 			}
 			html += `
 					<td class="collapsing">
 						<div class="ui mini basic icon buttons">
 							<button class="ui button"
 							data-ui="open-form"
-							data-action="edit"
+							data-action="${action}"
 							data-tbl="${this.state.tbl}"
               ${customAttr}
 							${this.state.req ? `data-req="${this.state.req}"` : ``}
