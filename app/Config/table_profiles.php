@@ -1287,17 +1287,14 @@ $profiles = [
       // khusus urusan
       // ----------------------------------------------
       'urusan' => [
-
         'select' => [
           'id',
           'kode',
           'uraian'
         ],
-
         'where' => [
           'level' => 'urusan'
         ],
-
         'order_by' => 'kode ASC'
       ],
 
