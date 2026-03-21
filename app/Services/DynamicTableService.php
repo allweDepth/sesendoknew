@@ -1778,7 +1778,7 @@ BUILD RULE DARI SCHEMA DATABASE
   /* =========================================================
   UTIL: GET PROFILE BY TABLE
   ========================================================= */
-  private function getProfileByTable(string $table): array
+  public function getProfileByTable(string $table): array
   {
     foreach ($this->profiles as $profile) {
       if (($profile['table'] ?? '') === $table) {
@@ -4658,7 +4658,8 @@ AND is_deleted = 0
         if (isset($request['struktur_json']) && is_array($request['struktur_json'])) { // //
           $data = $request['struktur_json']; // //
         }
-
+        // 🔥 FIX WAJIB DI SINI
+        $data = $this->sanitizeStruktur($data);
         $this->db->insert($relTable, [
           $fk => $id,
           $jsonField => json_encode($data)
@@ -4927,5 +4928,27 @@ AND is_deleted = 0
     // 🔥 PANGGIL ENGINE LAMA
     // =====================================
     return $this->update($table, $request);
+  }
+  private function sanitizeStruktur(array $struktur): array
+  {
+    array_walk_recursive($struktur, function (&$value, $key) {
+
+      // // hanya filter field text
+      if ($key === 'text' && is_string($value)) {
+
+        // // blok string PHP function
+        if (str_contains($value, 'function') || str_contains($value, 'public function')) {
+          $value = ''; // // kosongkan karena terdeteksi code injection
+        }
+
+        // // bersihkan tag HTML berbahaya
+        $value = strip_tags($value);
+
+        // // trim whitespace
+        $value = trim($value);
+      }
+    });
+
+    return $struktur;
   }
 }

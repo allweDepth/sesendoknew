@@ -252,15 +252,15 @@ class TataNaskahModule {
                 <div class="item">
                     <button
                         class="ui fluid basic button btn-open-naskah"
-                        data-ui="open-form" // memanggil UI engine
-                        data-container="modal" // target container modal
-                        data-module="tata_naskah" // module aktif
-                        data-jenis-id="${j.id}" // id jenis
-                        data-kode-form="${j.kode_form}" // tipe dokumen
+                        data-ui="open-form"
+                        data-container="modal"
+                        data-module="tata_naskah"
+                        data-jenis-id="${j.id}"
+                        data-kode-form="${j.kode_form}" 
                         data-tbl="trx_naskah_dinas"
-                        data-action="add"
-                        data-nama="${j.nama}" // nama dokumen
-                        data-kelompok="${j.kelompok_kode}" // kelompok
+                        data-action="add_json"
+                        data-nama="${j.nama}"
+                        data-kelompok="${j.kelompok_kode}"
                         data-kelompok-nama="${j.kelompok_nama}" // label >
                         ${j.nama}
                     </button>
