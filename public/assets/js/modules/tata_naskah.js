@@ -125,7 +125,7 @@ class TataNaskahModule {
 		$(document).off("click", ".kelompok-card");
 		$(document).off("click", ".btn-open-naskah");
 		$(document).off("click", ".btn-edit-row");
-		// $(document).off("submit", "#form_modal"); // 🔥 FIX
+		$(document).off("submit", "#form_modal"); // 🔥 FIX
 
 		// =====================================
 		// EDIT

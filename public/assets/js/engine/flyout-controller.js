@@ -89,9 +89,9 @@ class FlyoutController {
 		$(document).on("click", ".btnFlyoutClose", function () {
 			self.$flyout.sidebar("hide");
 		});
-		/* =====================================================
-LISTENER LIMIT NAVBAR
-===================================================== */
+		//=====================================================
+		// LISTENER LIMIT NAVBAR
+		// =====================================================
 
 		$("#countRow").dropdown({
 			onChange: () => {
@@ -135,9 +135,9 @@ JIKA TIDAK ADA → PERTAHANKAN STATE MENU
 
 		const state = window.app.state;
 
-		/* =========================================
-AMBIL req DARI BUTTON
-========================================= */
+		// =========================================
+		// AMBIL req DARI BUTTON
+		// =========================================
 
 		state.setTable(tbl);
 		state.action = action;
@@ -159,9 +159,9 @@ AMBIL req DARI BUTTON
 		// 	state.req = req; // gunakan req dari tombol
 		// }
 
-		/* =========================================
-UPDATE req HANYA JIKA ADA
-========================================= */
+		//=========================================
+		// UPDATE req HANYA JIKA ADA
+		// ========================================= */
 
 		// gunakan req sebagai module UI jika ada
 		let configKey;
