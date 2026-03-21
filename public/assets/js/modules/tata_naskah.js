@@ -179,9 +179,9 @@ class TataNaskahModule {
 			const payload = builder.collectStructure();
 
 			window.Ajax.request({
+				url: AppConfig.apiUrl + "dynamic",
 				method: "POST",
 				data: {
-					url: AppConfig.apiUrl + "dynamic",
 					action: this.currentId ? "edit_json" : "add_json",
 					id_row: this.currentId, // // kirim id saat edit
 					tbl: this.state.tbl,
@@ -280,11 +280,13 @@ class TataNaskahModule {
 	 * LOAD SCHEMA FORM
 	 */
 	loadSchema(jenisId, id = null) {
+		this.currentId = null;
 		// =====================================
 		// EDIT MODE
 		// =====================================
 		if (id) {
 			window.Ajax.request({
+				url: AppConfig.apiUrl + "dynamic",
 				method: "POST",
 				data: {
 					action: "edit",
@@ -374,7 +376,11 @@ class TataNaskahModule {
 
 		const container = $(this.formContainerSelector);
 
-		window.documentBuilder = new DocumentBuilder($("#form_modal"));
+		if (window.documentBuilder) {
+			window.documentBuilder.destroy?.(); // // hancurkan instance lama
+		}
+
+		window.documentBuilder = new DocumentBuilder($("#form_modal")); // // buat baru
 
 		// =====================================
 		// 🔥 FIX: NORMALISASI SCHEMA (KRITIS)
@@ -436,8 +442,9 @@ class TataNaskahModule {
 		// 🔥 ADD ONLY → inject jenis_id
 		// =====================================
 		if (jenisId) {
+			$("#form_modal").find('input[name="jenis_id"]').remove(); // // hapus lama
 			const hidden = `<input type="hidden" name="jenis_id" value="${jenisId}">`;
-			$("#form_modal").append(hidden);
+			$("#form_modal").append(hidden); // // inject baru
 		}
 
 		// =====================================
