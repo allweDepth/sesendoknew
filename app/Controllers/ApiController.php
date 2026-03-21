@@ -39,9 +39,10 @@ class ApiController
     // PUBLIC MODULE
     // ==============================
     $publicModules = [
-      'public',          // // existing
-      'tbl_wilayah',     // // wilayah tanpa login
-      'organisasi_neo'   // // organisasi tanpa login
+      'public',
+      'wilayah_neo',
+      'organisasi_neo',
+      'tbl_wilayah' // // tambahkan sesuai request frontend
     ];
 
     // ==============================
@@ -72,13 +73,24 @@ class ApiController
     // ==============================
     // HANDLE WILAYAH
     // ==============================
-    if ($tbl === 'tbl_wilayah' && $action === 'get') {
+    if ($tbl === 'wilayah_neo' && $action === 'get') {
 
-      $data = $db->select(
-        'tbl_wilayah',
-        'kd_wilayah AS kode, nama_wilayah AS uraian',
-        ''
-      );
+      try {
+
+        $data = $db->select(
+          'wilayah_neo', // // tabel
+          'kode, uraian', // // kolom
+          '' // // tanpa kondisi
+        );
+      } catch (Exception $e) {
+
+        echo json_encode([
+          'success' => false,
+          'message' => $e->getMessage() // // tampilkan error asli
+        ]);
+
+        return;
+      }
 
       echo json_encode([
         'success' => true,
@@ -105,7 +117,7 @@ class ApiController
 
       $data = $db->select(
         'organisasi_neo', // // tabel
-        'kd_organisasi AS kode, nama_organisasi AS uraian', // // kolom
+        'kode, uraian', // // kolom
         'WHERE kd_wilayah = ?', // // kondisi
         [$kd_wilayah] // // parameter
       );

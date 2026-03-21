@@ -60,7 +60,7 @@
         method: 'GET',
         dataType: 'json',
         data: {
-          tbl: 'tbl_wilayah', // // gunakan langsung nama tabel
+          tbl: 'wilayah_neo', // // gunakan langsung nama tabel
           action: 'get' // // gunakan action standar service
         },
         success: function(res) {
@@ -101,8 +101,8 @@
             method: 'GET',
             dataType: 'json',
             data: {
-              module: 'public',
-              action: 'organisasi',
+              tbl: 'organisasi_neo',
+              action: 'get',
               kd_wilayah: value
             },
             success: function(res) {
