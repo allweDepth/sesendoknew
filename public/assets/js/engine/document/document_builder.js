@@ -38,13 +38,13 @@ class DocumentBuilder {
 		// FIX: WRAP FORM (WAJIB UNTUK SUBMIT)
 		// =====================================
 		this.container.append(`
-		<form id="dynamic-form" class="ui form">
+		
 			${html.join("")}
 			<div class="ui divider"></div>
 			<button class="ui green button" type="submit">
 				<i class="check icon"></i> Simpan
 			</button>
-		</form>
+		
     
 	`);
 

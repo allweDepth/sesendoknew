@@ -105,7 +105,7 @@ class TataNaskahModule {
 		// =====================================
 		// this.formEngine = new FormEngine({
 		// 	state: this.state,
-		// 	formSelector: "#dynamic-form",
+		// 	formSelector: "#form_modal",
 		// });
 
 		this.tableManager.init();
@@ -125,7 +125,7 @@ class TataNaskahModule {
 		$(document).off("click", ".kelompok-card");
 		$(document).off("click", ".btn-open-naskah");
 		$(document).off("click", ".btn-edit-row");
-		$(document).off("submit", "#dynamic-form"); // 🔥 FIX
+		// $(document).off("submit", "#form_modal"); // 🔥 FIX
 
 		// =====================================
 		// EDIT
@@ -170,7 +170,7 @@ class TataNaskahModule {
 		// =====================================
 		// 🔥 FIX: SUBMIT VIA DocumentBuilder
 		// =====================================
-		$(document).on("submit", "#dynamic-form", (e) => {
+		$(document).on("submit", "#form_modal", (e) => {
 			e.preventDefault();
 
 			const builder = window.documentBuilder;
@@ -380,7 +380,10 @@ class TataNaskahModule {
 			window.documentBuilder.destroy?.(); // // hancurkan instance lama
 		}
 
-		window.documentBuilder = new DocumentBuilder($("#form_modal")); // // buat baru
+		// kosongkan container TANPA bikin form baru
+		$("#form_modal").html("");
+		// builder render isi saja (BUKAN form)
+		window.documentBuilder = new DocumentBuilder($("#form_modal"));
 
 		// =====================================
 		// 🔥 FIX: NORMALISASI SCHEMA (KRITIS)
@@ -490,7 +493,7 @@ class TataNaskahModule {
 	 */
 	showAddForm() {
 		const html = `
-        <form id="dynamic-form" class="ui form">
+       
             <div class="field">
                 <label>Judul</label>
                 <input type="text" name="judul">
@@ -498,7 +501,7 @@ class TataNaskahModule {
             <button class="ui green button" type="submit">
                 Simpan
             </button>
-        </form>
+      
         `;
 		this.formContainer.show(html);
 	}
