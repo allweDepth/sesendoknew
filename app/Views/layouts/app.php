@@ -8,255 +8,257 @@
   <link rel="stylesheet" href="/assets/css/fomantic.min.css">
   <link rel="stylesheet" href="/assets/css/dark.css">
   <style>
-  #mainContext {
-    min-height: calc(100vh - 40px);
-  }
+    #mainContext {
+      min-height: calc(100vh - 40px);
+    }
 
-  .pusher .ui .container {
-    padding: 20px !important;
-  }
+    .pusher .ui .container {
+      padding: 20px !important;
+    }
 
-  /* 🔥 FIX GLOBAL SCROLL (JANGAN LOCK TOTAL) */
-  html,
-  body {
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
+    /* 🔥 FIX GLOBAL SCROLL (JANGAN LOCK TOTAL) */
+    html,
+    body {
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
 
-  /* FIX SEGMENT PUSHABLE */
-  #mainContext.ui.segment {
-    height: calc(100vh - 40px);
-    padding: 0 !important;
-    overflow: hidden;
-  }
+    /* FIX SEGMENT PUSHABLE */
+    #mainContext.ui.segment {
+      height: calc(100vh - 40px);
+      padding: 0 !important;
+      overflow: hidden;
+    }
 
-  /* PUSHER */
-  #mainContext .pusher {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+    /* PUSHER */
+    #mainContext .pusher {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
 
-  /* STICKY HEADER */
-  #mainContext .pusher>.ui.sticky {
-    flex: 0 0 auto;
-  }
+    /* STICKY HEADER */
+    #mainContext .pusher>.ui.sticky {
+      flex: 0 0 auto;
+    }
 
-  /* SCROLL AREA */
-  #mainContext .content-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-  }
+    /* SCROLL AREA */
+    #mainContext .content-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
 
-  /* ================================
+    /* ================================
    SIDEBAR KANAN WIDTH CONTROL
 ================================ */
 
-  /* Default (Desktop) */
-  .sidebarkanan {
-    width: 420px !important;
-    display: flex;
-  }
-
-  /* Tablet */
-  @media (max-width: 992px) {
+    /* Default (Desktop) */
     .sidebarkanan {
-      width: 360px !important;
+      width: 420px !important;
+      display: flex;
     }
-  }
 
-  /* Mobile */
-  @media (max-width: 768px) {
-    .sidebarkanan {
-      width: 100% !important;
+    /* Tablet */
+    @media (max-width: 992px) {
+      .sidebarkanan {
+        width: 360px !important;
+      }
     }
-  }
 
-  /* FLYOUT */
-  .flyout-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-  }
+    /* Mobile */
+    @media (max-width: 768px) {
+      .sidebarkanan {
+        width: 100% !important;
+      }
+    }
 
-  .flyout-body {
-    flex: 1;
-    overflow-y: auto;
-  }
+    /* FLYOUT */
+    .flyout-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+    }
 
-  .flyout-footer {
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-  }
+    .flyout-body {
+      flex: 1;
+      overflow-y: auto;
+    }
 
-  /* TOAST */
-  #toastContainer {
-    position: fixed;
-    /* FIX: keluar dari stacking context parent */
-    top: 5px;
-    right: 20px;
-    width: 350px;
-    z-index: 99999;
-    /* FIX: pastikan di atas dimmer */
-  }
+    .flyout-footer {
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
 
-  /* TABLE WRAPPER */
-  .table-wrapper {
-    overflow-x: auto;
-  }
+    /* TOAST */
+    #toastContainer {
+      position: fixed;
+      /* FIX: keluar dari stacking context parent */
+      top: 5px;
+      right: 20px;
+      width: 350px;
+      z-index: 99999;
+      /* FIX: pastikan di atas dimmer */
+    }
 
-  /* ================================
-   DOCUMENT BUILDER (DESKTOP)
-================================ */
-
-  /* container cell */
-  .doc-cell {
-    position: relative;
-    padding-top: 28px !important;
-  }
-
-  /* editor */
-  .doc-editor {
-    min-height: 32px;
-    outline: none;
-  }
-
-  /* toolbar floating */
-  .doc-toolbar {
-    position: absolute;
-    top: 2px;
-    left: 4px;
-
-    display: none;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 4px;
-
-    background: rgba(255, 255, 255, 0.95);
-    padding: 4px 6px;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-
-    z-index: 10;
-  }
-
-  /* tampil saat hover / focus */
-  .doc-cell:hover .doc-toolbar,
-  .doc-editor:focus+.doc-toolbar {
-    display: flex;
-  }
-
-  /* kecilkan button */
-  .doc-toolbar .button {
-    padding: 4px !important;
-  }
-
-  /* group tombol */
-  .doc-toolbar .btn-group {
-    display: flex;
-    gap: 2px;
-  }
-
-  /* divider vertikal */
-  .doc-toolbar .divider {
-    width: 1px;
-    height: 18px;
-    background: rgba(0, 0, 0, 0.15);
-    margin: 0 4px;
-  }
-
-  /* tombol kecil & clean */
-  .doc-toolbar .button {
-    padding: 4px !important;
-    min-width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* aktif */
-  .doc-toolbar .button.active {
-    background: #2185d0 !important;
-    color: #fff !important;
-  }
-
-  /* hover */
-  .doc-toolbar .button:hover {
-    background: rgba(0, 0, 0, 0.05) !important;
-  }
-
-  /* aktif */
-  .doc-toolbar .button.active {
-    background: #2185d0 !important;
-    color: #fff !important;
-  }
-
-  /* editor */
-  .doc-editor {
-    min-height: 32px;
-    outline: none;
-    padding: 4px;
-    line-height: 1.4;
-  }
-
-  /* ================================
-   MOBILE FIX (TIDAK GANGGU DESKTOP)
-================================ */
-
-  @media (max-width: 768px) {
-
-    /* 🔥 table tidak kepotong */
-    .ui.table {
-      display: block;
+    /* TABLE WRAPPER */
+    .table-wrapper {
       overflow-x: auto;
     }
 
-    /* 🔥 cell spacing normal */
+    /* ================================
+   DOCUMENT BUILDER (DESKTOP)
+================================ */
+
+    /* container cell */
     .doc-cell {
-      padding-top: 8px !important;
+      position: relative;
+      padding-top: 20px !important;
+      /* lebih compact */
     }
 
-    /* 🔥 toolbar jadi inline */
+    /* editor */
+    .doc-editor {
+      min-height: 32px;
+      outline: none;
+      padding: 4px;
+      line-height: 1.4;
+    }
+
+    /* ================= TOOLBAR ================= */
 
     .doc-toolbar {
-      position: static !important;
-      display: flex !important;
+      position: absolute;
+      top: 0;
+      left: 2px;
+
+      display: flex;
+      align-items: center;
       flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 6px;
-      background: transparent;
-      box-shadow: none;
-      padding: 0;
+      gap: 2px;
+
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(4px);
+
+      padding: 2px 4px;
+      border-radius: 4px;
+
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: all 0.15s ease;
+
+      pointer-events: auto;
+      z-index: 10;
     }
 
-    /* 🔥 editor lebih besar */
-    .doc-editor {
-      width: 100%;
-      min-height: 60px;
+    /* tampil saat hover / focus */
+    .doc-cell:hover .doc-toolbar,
+    .doc-cell:focus-within .doc-toolbar {
+      opacity: 1;
+      transform: translateY(0);
     }
 
+    /* group tombol */
     .doc-toolbar .btn-group {
       display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
+      gap: 2px;
+      align-items: center;
     }
 
+    /* divider vertikal */
     .doc-toolbar .divider {
-      display: none;
-      /* mobile ga perlu divider */
+      width: 1px;
+      height: 14px;
+      background: rgba(0, 0, 0, 0.12);
+      margin: 0 2px;
     }
 
-    /* 🔥 tombol lebih besar (touch friendly) */
+    /* tombol */
     .doc-toolbar .button {
-      padding: 8px !important;
-      font-size: 14px;
-      min-width: 36px;
-      height: 36px;
+      min-width: 22px;
+      height: 22px;
+      font-size: 11px;
+      padding: 2px !important;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 3px;
     }
-  }
+
+    /* hover */
+    .doc-toolbar .button:hover {
+      background: rgba(0, 0, 0, 0.06) !important;
+    }
+
+    /* aktif */
+    .doc-toolbar .button.active {
+      background: #2185d0 !important;
+      color: #fff !important;
+    }
+
+    /* ================================
+   MOBILE FIX
+================================ */
+
+    @media (max-width: 768px) {
+
+      /* table scroll */
+      .ui.table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      /* spacing */
+      .doc-cell {
+        padding-top: 8px !important;
+      }
+
+      /* toolbar jadi inline */
+      .doc-toolbar {
+        position: static;
+        opacity: 1;
+        transform: none;
+
+        display: flex !important;
+        flex-wrap: wrap;
+        gap: 6px;
+
+        margin-bottom: 6px;
+        padding: 0;
+
+        background: transparent;
+        box-shadow: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      .doc-toolbar .btn-group {
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .doc-toolbar .divider {
+        display: none;
+      }
+
+      /* tombol mobile */
+      .doc-toolbar .button {
+        padding: 8px !important;
+        font-size: 14px;
+        min-width: 36px;
+        height: 36px;
+      }
+
+      /* editor */
+      .doc-editor {
+        width: 100%;
+        min-height: 60px;
+      }
+    }
   </style>
 </head>
 
@@ -304,11 +306,11 @@
 
   <!-- JS -->
   <script>
-  window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
+    window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
   </script>
   <script>
-  window.app = window.app || {};
-  window.app.user = <?= json_encode($_SESSION['user'] ?? []); ?>;
+    window.app = window.app || {};
+    window.app.user = <?= json_encode($_SESSION['user'] ?? []); ?>;
   </script>
   <!-- LIBRARY -->
   <script src="/assets/js/jquery.min.js"></script>
@@ -352,7 +354,7 @@
   <script src="/assets/js/app-init.js"></script>
 
   <script>
-  window.CSRF_TOKEN = "<?= $_SESSION['csrf_token'] ?? '' ?>";
+    window.CSRF_TOKEN = "<?= $_SESSION['csrf_token'] ?? '' ?>";
   </script>
 </body>
 
