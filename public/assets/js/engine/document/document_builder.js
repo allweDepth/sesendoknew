@@ -321,31 +321,64 @@ class DocumentBuilder {
 			let btn = $(this);
 			let tr = btn.closest("tr");
 			let toolbar = btn.closest(".doc-toolbar");
+			let editor = tr.find(".doc-editor");
 
-			// 🔥 tentukan group (type / align / format)
-			let groupKey = btn.data("type") ? "type" : btn.data("align") ? "align" : "format";
+			// =====================================
+			// 🔥 STYLE (BOLD / ITALIC / UNDERLINE)
+			// =====================================
+			let style = btn.data("style");
 
-			// reset active dalam group
-			toolbar.find(`button[data-${groupKey}]`).removeClass("active");
-			btn.addClass("active");
+			if (style) {
+				editor.focus();
 
+				switch (style) {
+					case "bold":
+						document.execCommand("bold");
+						break;
+					case "italic":
+						document.execCommand("italic");
+						break;
+					case "underline":
+						document.execCommand("underline");
+						break;
+				}
+
+				btn.toggleClass("active"); // toggle, bukan reset group
+				return; // 🔥 STOP supaya tidak kena logic bawah
+			}
+
+			// =====================================
+			// 🔥 GROUP LOGIC (TYPE / ALIGN / FORMAT)
+			// =====================================
+			let groupKey = btn.data("type") ? "type" : btn.data("align") ? "align" : btn.data("format") ? "format" : null;
+
+			if (groupKey) {
+				toolbar.find(`button[data-${groupKey}]`).removeClass("active");
+				btn.addClass("active");
+			}
+
+			// =====================================
 			// TYPE
+			// =====================================
 			let type = btn.data("type");
 			if (type) {
 				tr.attr("data-type", type);
 			}
 
+			// =====================================
 			// ALIGN
+			// =====================================
 			let align = btn.data("align");
 			if (align) {
 				tr.attr("data-align", align);
-				tr.find(".doc-editor").css("text-align", align);
+				editor.css("text-align", align);
 			}
 
+			// =====================================
 			// FORMAT LABEL
+			// =====================================
 			let format = btn.data("format");
 			if (format === "label") {
-				let editor = tr.find(".doc-editor");
 				let val = editor.text().trim();
 
 				if (val && !val.includes(":")) {
@@ -440,37 +473,66 @@ class DocumentBuilder {
 				// 🔥 CELL UTAMA + INLINE TOOLBAR
 				cells.push(`
 			<td data-key="${key}" class="doc-cell">
+          <div class="doc-editor" contenteditable="true"></div>
+          <!-- 🔥 TOOLBAR FLOAT -->
+          <div class="doc-toolbar">
 
-	<div class="doc-editor" contenteditable="true"></div>
+          <!-- TYPE -->
+          <div class="btn-group">
+            <button type="button" class="ui icon button" data-type="paragraph">
+              <i class="align left icon"></i>
+            </button>
+            <button type="button" class="ui icon button" data-type="list">
+              <i class="list ul icon"></i>
+            </button>
+            <button type="button" class="ui icon button" data-type="numbered">
+              <i class="list ol icon"></i>
+            </button>
+          </div>
 
-	<!-- 🔥 TOOLBAR FLOAT -->
-	<div class="doc-toolbar">
-		<button type="button" class="ui icon button" data-type="paragraph">
-			<i class="align left icon"></i>
-		</button>
-		<button type="button" class="ui icon button" data-type="list">
-			<i class="list ul icon"></i>
-		</button>
-		<button type="button" class="ui icon button" data-type="numbered">
-			<i class="list ol icon"></i>
-		</button>
+          <div class="divider"></div>
 
-		<button type="button" class="ui icon button" data-align="left">
-			<i class="align left icon"></i>
-		</button>
-		<button type="button" class="ui icon button" data-align="center">
-			<i class="align center icon"></i>
-		</button>
-		<button type="button" class="ui icon button" data-align="right">
-			<i class="align right icon"></i>
-		</button>
-		<button type="button" class="ui icon button" data-align="justify">
-			<i class="align justify icon"></i>
-		</button>
+          <!-- ALIGN -->
+          <div class="btn-group">
+            <button type="button" class="ui icon button" data-align="left">
+              <i class="align left icon"></i>
+            </button>
+            <button type="button" class="ui icon button" data-align="center">
+              <i class="align center icon"></i>
+            </button>
+            <button type="button" class="ui icon button" data-align="right">
+              <i class="align right icon"></i>
+            </button>
+            <button type="button" class="ui icon button" data-align="justify">
+              <i class="align justify icon"></i>
+            </button>
+          </div>
 
-		<button type="button" class="ui icon button" data-format="label">
-			<i class="tag icon"></i>
-		</button>
+          <div class="divider"></div>
+
+          <!-- TEXT FORMAT -->
+          <div class="btn-group">
+            <button type="button" class="ui icon button" data-style="bold">
+              <i class="bold icon"></i>
+            </button>
+            <button type="button" class="ui icon button" data-style="italic">
+              <i class="italic icon"></i>
+            </button>
+            <button type="button" class="ui icon button" data-style="underline">
+              <i class="underline icon"></i>
+            </button>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- SPECIAL -->
+          <div class="btn-group">
+            <button type="button" class="ui icon button" data-format="label">
+              <i class="tag icon"></i>
+            </button>
+          </div>
+
+        </div>
 	</div>
 
 </td>`);

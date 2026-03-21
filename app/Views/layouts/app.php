@@ -128,8 +128,18 @@
     position: absolute;
     top: 2px;
     left: 4px;
+
     display: none;
-    gap: 2px;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+
+    background: rgba(255, 255, 255, 0.95);
+    padding: 4px 6px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+    z-index: 10;
   }
 
   /* tampil saat hover / focus */
@@ -143,10 +153,53 @@
     padding: 4px !important;
   }
 
+  /* group tombol */
+  .doc-toolbar .btn-group {
+    display: flex;
+    gap: 2px;
+  }
+
+  /* divider vertikal */
+  .doc-toolbar .divider {
+    width: 1px;
+    height: 18px;
+    background: rgba(0, 0, 0, 0.15);
+    margin: 0 4px;
+  }
+
+  /* tombol kecil & clean */
+  .doc-toolbar .button {
+    padding: 4px !important;
+    min-width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   /* aktif */
   .doc-toolbar .button.active {
     background: #2185d0 !important;
     color: #fff !important;
+  }
+
+  /* hover */
+  .doc-toolbar .button:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* aktif */
+  .doc-toolbar .button.active {
+    background: #2185d0 !important;
+    color: #fff !important;
+  }
+
+  /* editor */
+  .doc-editor {
+    min-height: 32px;
+    outline: none;
+    padding: 4px;
+    line-height: 1.4;
   }
 
   /* ================================
@@ -167,12 +220,16 @@
     }
 
     /* 🔥 toolbar jadi inline */
+
     .doc-toolbar {
       position: static !important;
-      display: grid !important;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 4px;
+      display: flex !important;
+      flex-wrap: wrap;
+      gap: 6px;
       margin-bottom: 6px;
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
     }
 
     /* 🔥 editor lebih besar */
@@ -181,10 +238,23 @@
       min-height: 60px;
     }
 
+    .doc-toolbar .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .doc-toolbar .divider {
+      display: none;
+      /* mobile ga perlu divider */
+    }
+
     /* 🔥 tombol lebih besar (touch friendly) */
     .doc-toolbar .button {
       padding: 8px !important;
       font-size: 14px;
+      min-width: 36px;
+      height: 36px;
     }
   }
   </style>
