@@ -216,15 +216,15 @@
     <a class="item" href="/halaman_berita" data-spa="client" data-title="Halaman Berita">
       <i class="newspaper icon"></i> Halaman Berita
     </a>
-    <a class="item" href="/reset_tabel" data-spa="client" data-title="Reset Tabel Database">
-      <i class="erase icon"></i> Reset Tabel
-    </a>
+
     <a class="item" href="/pengaturan" data-spa="client" data-title="Pengaturan">
       <i class="toolbox icon"></i> Pengaturan
     </a>
     <?php endif; ?>
     <?php if (($_SESSION['user']['type_user'] ?? '') === 'super_admin'): ?>
-
+    <a class="item" href="/reset_tabel" data-spa="client" data-title="Reset Tabel Database">
+      <i class="erase icon"></i> Reset Tabel
+    </a>
     <a class="item" href="/user_pemda" data-spa="client" data-title="Pengaturan User Pemda">
       <i class="toolbox icon"></i> User Pemda
     </a>
