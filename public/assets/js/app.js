@@ -131,6 +131,9 @@ class App {
 			case "wallchat":
 				if (typeof WallchatModule === "function") new WallchatModule().init();
 				break;
+			case "halaman_berita":
+				if (typeof HalamanBeritaModule === "function") new HalamanBeritaModule().init(); // FIX: tambahkan ini
+				break;
 			default: // jika tidak ada kondisi cocok
 				break; // tidak melakukan apa apa
 		}

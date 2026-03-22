@@ -18,7 +18,7 @@ class HalamanBeritaModule extends BaseCrudModule {
 
 		// FIX: auto load tanpa menu
 		if (!this.currentTable) {
-			this.loadTable("halaman_berita", "halaman_berita");
+			this.loadTable("halaman_berita");
 		}
 	}
 }

@@ -14,6 +14,7 @@ return [
   '/organisasi'    => ['HomeController', 'organisasi'],
   '/pelayanan'     => ['HomeController', 'pelayanan'],
   '/kontrak' => ['KontrakController', 'index'],
+  '/halaman_berita' => ['HalamanBeritaController', 'index'], //Controller hanya return HTML shell BUKAN data tabel
   /*
     |--------------------------------------------------------------------------
     | 🔐 AUTH

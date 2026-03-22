@@ -2033,13 +2033,9 @@ $profiles = [
         'where' => [
           'is_deleted' => 0
         ],
-
         'order_by' => 'tgl_insert DESC'
-
       ]
-
     ]
-
   ],
 ];
 $profiles['akun_neo'] = $profiles['akun'];

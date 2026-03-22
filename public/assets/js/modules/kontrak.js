@@ -19,7 +19,7 @@ class KontrakModule extends BaseCrudModule {
 
 		// // trigger manual tanpa menu & tanpa URL
 		if (!this.currentTable) {
-			this.loadTable("kontrak", "kontrak");
+			this.loadTable("kontrak");
 		}
 	}
 }
