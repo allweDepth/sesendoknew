@@ -1395,17 +1395,6 @@ UIConfig.kontrak = {
 					search: true,
 				},
 			},
-
-			/* AUTO */
-			{
-				tag: "field",
-				prop: {
-					label: "Nama Sub Kegiatan",
-					name: "nama_sub_keg",
-					readonly: true,
-				},
-			},
-
 			{
 				tag: "field",
 				prop: {
@@ -1467,6 +1456,7 @@ UIConfig.kontrak = {
 				prop: {
 					label: "PPK",
 					name: "nama_ppk",
+					table: false,
 				},
 			},
 
@@ -1486,6 +1476,7 @@ UIConfig.kontrak = {
 				prop: {
 					label: "Status",
 					name: "status_kontrak",
+					table: false,
 				},
 			},
 		],
