@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 18 Mar 2026 pada 14.20
+-- Waktu pembuatan: 22 Mar 2026 pada 07.52
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -9177,6 +9177,8 @@ CREATE TABLE `group_sub_kegiatan` (
   `tahap` enum('renja','renja_p','rka','rka_p','dpa','dppa') DEFAULT NULL,
   `total_anggaran` decimal(20,2) DEFAULT NULL,
   `disable` tinyint(4) DEFAULT 0,
+  `setujui` int(11) NOT NULL,
+  `tanggal_setujui` datetime NOT NULL,
   `tgl_insert` datetime DEFAULT NULL,
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_update` datetime DEFAULT NULL,
@@ -9187,8 +9189,8 @@ CREATE TABLE `group_sub_kegiatan` (
 -- Dumping data untuk tabel `group_sub_kegiatan`
 --
 
-INSERT INTO `group_sub_kegiatan` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `nama_sub_keg`, `tahap`, `total_anggaran`, `disable`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
-(1, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.53', NULL, 'renja', NULL, 0, '2026-03-07 17:48:06', 'inayah', NULL, NULL);
+INSERT INTO `group_sub_kegiatan` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `nama_sub_keg`, `tahap`, `total_anggaran`, `disable`, `setujui`, `tanggal_setujui`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+(1, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.53', NULL, 'renja', NULL, 0, 0, '0000-00-00 00:00:00', '2026-03-07 17:48:06', 'inayah', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -11213,7 +11215,8 @@ INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data
 (1860, 'tujuan_renstra_neo', 5, 'delete', '{\"id\":5,\"misi_id\":3,\"kode_tujuan\":null,\"nama_tujuan\":\"tujuan 1 misi 2\",\"disable\":0,\"keterangan\":\"ket\",\"tgl_insert\":\"2026-03-08 05:18:34\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-08 13:18:34\",\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-08 05:27:37'),
 (1862, 'trx_naskah_dinas', 5, 'delete', '{\"id\":5,\"uuid\":null,\"jenis_id\":null,\"nomor\":\"4\",\"nomor_urut\":null,\"tahun\":\"2026\",\"klasifikasi_id\":null,\"tanggal_surat\":\"2026-03-18\",\"perihal\":null,\"status\":\"draft\",\"file_pdf\":null,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"username_insert\":\"inayah\",\"tgl_insert\":\"2026-03-18 07:59:13\",\"username_update\":null,\"tgl_update\":null,\"keterangan\":\"\",\"workflow_status\":\"draft\",\"verified_by\":null,\"verified_at\":null,\"signed_by\":null,\"signed_at\":null,\"final_at\":null,\"document_hash\":null}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-18 09:39:19'),
 (1863, 'trx_naskah_dinas', 6, 'delete', '{\"id\":6,\"uuid\":null,\"jenis_id\":null,\"nomor\":\"1\",\"nomor_urut\":null,\"tahun\":\"2026\",\"klasifikasi_id\":null,\"tanggal_surat\":\"2026-03-18\",\"perihal\":null,\"status\":\"draft\",\"file_pdf\":null,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"username_insert\":\"inayah\",\"tgl_insert\":\"2026-03-18 09:44:05\",\"username_update\":null,\"tgl_update\":null,\"keterangan\":\"\",\"workflow_status\":\"draft\",\"verified_by\":null,\"verified_at\":null,\"signed_by\":null,\"signed_at\":null,\"final_at\":null,\"document_hash\":null}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-18 14:16:41'),
-(1864, 'trx_naskah_dinas', 7, 'delete', '{\"id\":7,\"uuid\":null,\"jenis_id\":null,\"nomor\":\"3\",\"nomor_urut\":null,\"tahun\":\"2026\",\"klasifikasi_id\":null,\"tanggal_surat\":\"2026-03-19\",\"perihal\":null,\"status\":\"draft\",\"file_pdf\":null,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"username_insert\":\"inayah\",\"tgl_insert\":\"2026-03-18 13:27:53\",\"username_update\":null,\"tgl_update\":null,\"keterangan\":\"\",\"workflow_status\":\"draft\",\"verified_by\":null,\"verified_at\":null,\"signed_by\":null,\"signed_at\":null,\"final_at\":null,\"document_hash\":null}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-18 14:16:44');
+(1864, 'trx_naskah_dinas', 7, 'delete', '{\"id\":7,\"uuid\":null,\"jenis_id\":null,\"nomor\":\"3\",\"nomor_urut\":null,\"tahun\":\"2026\",\"klasifikasi_id\":null,\"tanggal_surat\":\"2026-03-19\",\"perihal\":null,\"status\":\"draft\",\"file_pdf\":null,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"username_insert\":\"inayah\",\"tgl_insert\":\"2026-03-18 13:27:53\",\"username_update\":null,\"tgl_update\":null,\"keterangan\":\"\",\"workflow_status\":\"draft\",\"verified_by\":null,\"verified_at\":null,\"signed_by\":null,\"signed_at\":null,\"final_at\":null,\"document_hash\":null}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-18 14:16:44'),
+(1865, 'trx_naskah_dinas', 8, 'delete', '{\"id\":8,\"uuid\":null,\"jenis_id\":5,\"nomor\":\"1\",\"nomor_urut\":null,\"tahun\":\"2026\",\"klasifikasi_id\":null,\"tanggal_surat\":\"2026-03-18\",\"perihal\":null,\"status\":\"draft\",\"file_pdf\":null,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"username_insert\":\"inayah\",\"tgl_insert\":\"2026-03-18 14:22:36\",\"username_update\":null,\"tgl_update\":null,\"keterangan\":\"\",\"workflow_status\":\"draft\",\"verified_by\":null,\"verified_at\":null,\"signed_by\":null,\"signed_at\":null,\"final_at\":null,\"document_hash\":null}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-21 12:25:57');
 
 -- --------------------------------------------------------
 
@@ -18279,6 +18282,14 @@ CREATE TABLE `trx_naskah_dinas` (
   `document_hash` varchar(64) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `trx_naskah_dinas`
+--
+
+INSERT INTO `trx_naskah_dinas` (`id`, `uuid`, `jenis_id`, `nomor`, `nomor_urut`, `tahun`, `klasifikasi_id`, `tanggal_surat`, `perihal`, `status`, `file_pdf`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`, `workflow_status`, `verified_by`, `verified_at`, `signed_by`, `signed_at`, `final_at`, `document_hash`) VALUES
+(9, NULL, 5, '02', NULL, '2026', NULL, '2026-03-14', NULL, 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-03-21 07:17:49', NULL, NULL, 'keterangan', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
+(10, NULL, 5, '03', NULL, '2026', NULL, '2026-03-21', NULL, 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-03-21 08:23:26', NULL, NULL, 'coba', 'draft', NULL, NULL, NULL, NULL, NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -18295,6 +18306,37 @@ CREATE TABLE `trx_naskah_meta` (
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_insert` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `trx_naskah_meta`
+--
+
+INSERT INTO `trx_naskah_meta` (`id`, `naskah_id`, `meta_key`, `meta_value`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`) VALUES
+(62, 9, 'jenis_id', '5', NULL, NULL, NULL, NULL),
+(63, 9, 'struktur_json', '{\"struktur_json\":{\"menimbang\":[{\"type\":\"paragraph\",\"text\":\"coba1\",\"align\":\"left\"}],\"mengingat\":[{\"type\":\"paragraph\",\"text\":\"coba3\",\"align\":\"left\"}],\"menetapkan_1\":[{\"type\":\"paragraph\",\"text\":\"coba4\",\"align\":\"left\"}],\"menetapkan_2\":[{\"type\":\"paragraph\",\"text\":\"coba 5\",\"align\":\"center\"}],\"menetapkan_3\":[{\"type\":\"paragraph\",\"text\":\"public function getProfileByTable(string $table)\",\"align\":\"left\"}],\"menetapkan_4\":[],\"nama_ditugaskan\":[{\"nama\":\"Budiman, S,A.P\",\"pangkat\":\"\",\"nip\":\"828466953145709000\",\"jabatan\":\"\",\"jabatan_sk\":\"\",\"_id\":\"95\"},{\"nama\":\"Kamaruddin, SE\",\"pangkat\":\"\",\"nip\":\"197009302012121003\",\"jabatan\":\"Penyusun Rencana Tata Ruang\",\"jabatan_sk\":\"\",\"_id\":\"29\"}],\"tembusan\":[{\"type\":\"paragraph\",\"text\":\"tembusan\",\"align\":\"left\"}],\"nomor\":\"02\",\"tanggal_surat\":\"2026-03-14 00:00:00\",\"file\":\"\",\"tentang\":\"tentang\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"Pembina, IV/a\",\"bentuk_lampiran\":\"on\",\"keterangan\":\"keterangan\",\"disable\":\"on\",\"jenis_id\":\"5\"}}', NULL, NULL, NULL, NULL),
+(64, 9, 'nomor', '02', NULL, NULL, NULL, NULL),
+(65, 9, 'tanggal_surat', '2026-03-14 00:00:00', NULL, NULL, NULL, NULL),
+(66, 9, 'file', '', NULL, NULL, NULL, NULL),
+(67, 9, 'tentang', 'tentang', NULL, NULL, NULL, NULL),
+(68, 9, 'penandatangan', '3', NULL, NULL, NULL, NULL),
+(69, 9, 'jbt_pemberi_tgs', 'Kepala Dinas', NULL, NULL, NULL, NULL),
+(70, 9, 'pangkat_pemberi_tgs', 'Pembina, IV/a', NULL, NULL, NULL, NULL),
+(71, 9, 'bentuk_lampiran', 'on', NULL, NULL, NULL, NULL),
+(72, 9, 'keterangan', 'keterangan', NULL, NULL, NULL, NULL),
+(73, 9, 'disable', 'on', NULL, NULL, NULL, NULL),
+(74, 10, 'nomor', '03', NULL, NULL, NULL, NULL),
+(75, 10, 'tanggal_surat', '2026-03-21 00:00:00', NULL, NULL, NULL, NULL),
+(76, 10, 'file', '', NULL, NULL, NULL, NULL),
+(77, 10, 'tentang', 'tentang', NULL, NULL, NULL, NULL),
+(78, 10, 'penandatangan', '3', NULL, NULL, NULL, NULL),
+(79, 10, 'jbt_pemberi_tgs', 'Kepala Dinas', NULL, NULL, NULL, NULL),
+(80, 10, 'pangkat_pemberi_tgs', 'Pembina, IV/a', NULL, NULL, NULL, NULL),
+(81, 10, 'asn', '36', NULL, NULL, NULL, NULL),
+(82, 10, 'keterangan', 'coba', NULL, NULL, NULL, NULL),
+(83, 10, 'jenis_id', '5', NULL, NULL, NULL, NULL),
+(84, 10, 'struktur_json', '{\"struktur_json\":{\"menimbang\":[{\"type\":\"paragraph\",\"text\":\"coba\",\"align\":\"left\"}],\"mengingat\":[{\"type\":\"paragraph\",\"text\":\"coba\",\"align\":\"center\"}],\"menetapkan_1\":[{\"type\":\"paragraph\",\"text\":\"coba\",\"align\":\"left\"}],\"menetapkan_2\":[{\"type\":\"paragraph\",\"text\":\"coba\",\"align\":\"left\"}],\"menetapkan_3\":[{\"type\":\"paragraph\",\"text\":\"coba\",\"align\":\"left\"}],\"menetapkan_4\":[],\"nama_ditugaskan\":[{\"nama\":\"Adil Bakry\",\"pangkat\":\"\",\"nip\":\"197408262012121002\",\"jabatan\":\"Pengadministrasi Kepegawaian\",\"jabatan_sk\":\"\",\"_id\":\"58\"},{\"nama\":\"Hertasming, SE\",\"pangkat\":\"\",\"nip\":\"197106222014091001\",\"jabatan\":\"Pengadministrasi Perencanaan dan Program\",\"jabatan_sk\":\"\",\"_id\":\"36\"}],\"tembusan\":[{\"type\":\"paragraph\",\"text\":\"coba\",\"align\":\"left\"}],\"nomor\":\"03\",\"tanggal_surat\":\"2026-03-21 00:00:00\",\"file\":\"\",\"tentang\":\"tentang\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"Pembina, IV/a\",\"bentuk_lampiran\":\"on\",\"keterangan\":\"coba\",\"disable\":\"on\",\"jenis_id\":\"5\"}}', NULL, NULL, NULL, NULL),
+(85, 10, 'bentuk_lampiran', 'on', NULL, NULL, NULL, NULL),
+(86, 10, 'disable', 'on', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -18315,6 +18357,14 @@ CREATE TABLE `trx_naskah_struktur` (
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `trx_naskah_struktur`
+--
+
+INSERT INTO `trx_naskah_struktur` (`id`, `naskah_id`, `struktur_json`, `kd_wilayah`, `kd_opd`, `tahun`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+(5, 9, '{\"jenis_id\":\"5\",\"menimbang\":[{\"type\":\"paragraph\",\"text\":\"coba1\",\"align\":\"left\"}],\"mengingat\":[{\"type\":\"paragraph\",\"text\":\"coba3\",\"align\":\"left\"}],\"menetapkan_1\":[{\"type\":\"paragraph\",\"text\":\"coba4\",\"align\":\"left\"}],\"menetapkan_2\":[{\"type\":\"paragraph\",\"text\":\"coba 5\",\"align\":\"center\"}],\"menetapkan_3\":[{\"type\":\"paragraph\",\"text\":\"opt ini\",\"align\":\"left\"}],\"menetapkan_4\":[],\"nama_ditugaskan\":[{\"nama\":\"Budiman, S,A.P\",\"pangkat\":\"\",\"nip\":\"828466953145709000\",\"jabatan\":\"\",\"jabatan_sk\":\"\",\"_id\":\"95\"},{\"nama\":\"Kamaruddin, SE\",\"pangkat\":\"\",\"nip\":\"197009302012121003\",\"jabatan\":\"Penyusun Rencana Tata Ruang\",\"jabatan_sk\":\"\",\"_id\":\"29\"}],\"tembusan\":[{\"type\":\"paragraph\",\"text\":\"tembusan\",\"align\":\"left\"}],\"nomor\":\"02\",\"tanggal_surat\":\"2026-03-14 00:00:00\",\"file\":\"\",\"tentang\":\"tentang\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"Pembina, IV\\/a\",\"bentuk_lampiran\":\"on\",\"keterangan\":\"keterangan\",\"disable\":\"on\"}', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(6, 10, '{\"nomor\":\"03\",\"tanggal_surat\":\"2026-03-21 00:00:00\",\"file\":\"\",\"tentang\":\"tentang\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"Pembina, IV\\/a\",\"asn\":\"36\",\"keterangan\":\"coba\",\"jenis_id\":\"5\",\"menimbang\":[{\"type\":\"paragraph\",\"text\":\"coba\",\"align\":\"left\"}],\"mengingat\":[{\"type\":\"paragraph\",\"text\":\"coba\",\"align\":\"center\"}],\"menetapkan_1\":[{\"type\":\"paragraph\",\"text\":\"coba\",\"align\":\"left\"}],\"menetapkan_2\":[{\"type\":\"paragraph\",\"text\":\"coba\",\"align\":\"left\"}],\"menetapkan_3\":[{\"type\":\"paragraph\",\"text\":\"coba\",\"align\":\"left\"}],\"menetapkan_4\":[],\"nama_ditugaskan\":[{\"nama\":\"Adil Bakry\",\"pangkat\":\"\",\"nip\":\"197408262012121002\",\"jabatan\":\"Pengadministrasi Kepegawaian\",\"jabatan_sk\":\"\",\"_id\":\"58\"},{\"nama\":\"Hertasming, SE\",\"pangkat\":\"\",\"nip\":\"197106222014091001\",\"jabatan\":\"Pengadministrasi Perencanaan dan Program\",\"jabatan_sk\":\"\",\"_id\":\"36\"}],\"tembusan\":[{\"type\":\"paragraph\",\"text\":\"coba\",\"align\":\"left\"}],\"bentuk_lampiran\":\"on\",\"disable\":\"on\"}', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -18333,7 +18383,7 @@ CREATE TABLE `trx_nomor_counter` (
 --
 
 INSERT INTO `trx_nomor_counter` (`id`, `klasifikasi_id`, `tahun`, `last_number`) VALUES
-(1, NULL, 2026, 3);
+(1, NULL, 2026, 6);
 
 -- --------------------------------------------------------
 
@@ -18999,7 +19049,7 @@ ALTER TABLE `kegiatan_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `log_activity`
 --
 ALTER TABLE `log_activity`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1865;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1866;
 
 --
 -- AUTO_INCREMENT untuk tabel `master_biaya`
@@ -19185,19 +19235,19 @@ ALTER TABLE `sumber_dana_neo`
 -- AUTO_INCREMENT untuk tabel `trx_naskah_dinas`
 --
 ALTER TABLE `trx_naskah_dinas`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT untuk tabel `trx_naskah_meta`
 --
 ALTER TABLE `trx_naskah_meta`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
 
 --
 -- AUTO_INCREMENT untuk tabel `trx_naskah_struktur`
 --
 ALTER TABLE `trx_naskah_struktur`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT untuk tabel `trx_nomor_counter`
