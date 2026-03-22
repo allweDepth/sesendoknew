@@ -225,6 +225,9 @@ class App {
 		switch (
 			moduleName // switch module
 		) {
+			case "kontrak":
+				if (typeof KontrakModule === "function") new KontrakModule().init(); // // init module kontrak
+				break;
 			case "renstra": // module renstra
 				if (typeof RenstraModule === "function") new RenstraModule().init(); // jalankan module
 				break;
@@ -279,6 +282,7 @@ window.appModuleMap = {
 	"/profil": "profil",
 	"/wallchat": "wallchat",
 	"/dashboard": "dashboard",
+	"/kontrak": "kontrak",
 };
 
 // ======================================================
