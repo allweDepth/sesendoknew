@@ -48,7 +48,13 @@ class SpaRouter {
 			const mode = $link.data("spa");
 
 			const req = $link.data("req");
+			// 🔥 TAMBAHAN: ambil title dari menu
+			const title = $link.data("title"); // ambil data-title dari menu
 
+			// 🔥 UPDATE HEADER <a href="/module" data-spa="client" data-title="MODULE NAME">
+			if (title) {
+				$("#dynamicHeaderTitle").text(title); // ubah teks header
+			}
 			if (window.app?.resetState) {
 				window.app.resetState();
 			}
