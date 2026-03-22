@@ -223,7 +223,12 @@
       <i class="toolbox icon"></i> Pengaturan
     </a>
     <?php endif; ?>
+    <?php if (($_SESSION['user']['type_user'] ?? '') === 'super_admin'): ?>
 
+    <a class="item" href="/user_pemda" data-spa="client" data-title="Pengaturan User Pemda">
+      <i class="toolbox icon"></i> User Pemda
+    </a>
+    <?php endif; ?>
     <a class="item" href="/wallchat" data-spa="server" data-title="Wallchat">
       <i class="comments outline icon"></i> Pesan
     </a>
