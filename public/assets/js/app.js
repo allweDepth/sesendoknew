@@ -283,6 +283,7 @@ window.appModuleMap = {
 	"/wallchat": "wallchat",
 	"/dashboard": "dashboard",
 	"/kontrak": "kontrak",
+	"/halaman_berita": "halaman_berita",
 };
 
 // ======================================================

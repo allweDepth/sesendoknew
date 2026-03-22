@@ -1914,6 +1914,133 @@ $profiles = [
     // soft delete sesuai tabel
     'soft_delete' => 'is_deleted'
   ],
+  // FIX: config untuk halaman_berita mengikuti pola kontrak
+
+  'halaman_berita' => [
+
+    // --------------------------------------------------
+    // tabel utama
+    // --------------------------------------------------
+    'table' => 'halaman_berita',
+    'primary_key' => 'id',
+
+    // --------------------------------------------------
+    // auto session
+    // --------------------------------------------------
+    'auto_session' => [
+      'kd_wilayah',
+      'kd_opd'
+    ],
+
+    // --------------------------------------------------
+    // filter default
+    // --------------------------------------------------
+    'where' => [
+      'is_deleted' => 0 // FIX: penting agar tidak tampil data terhapus
+    ],
+
+    // --------------------------------------------------
+    // dropdown
+    // --------------------------------------------------
+    'dropdown' => [
+      'value' => 'id',
+      'label' => 'judul'
+    ],
+
+    // --------------------------------------------------
+    // request filter
+    // --------------------------------------------------
+    'req_filters' => [
+
+      'aktif' => [
+        'where' => ['is_deleted' => 0]
+      ],
+
+      'deleted' => [
+        'where' => ['is_deleted' => 1]
+      ]
+
+    ],
+
+    // --------------------------------------------------
+    // MODES
+    // --------------------------------------------------
+    'modes' => [
+
+      // ----------------------------------------------
+      // default listing
+      // ----------------------------------------------
+      'default' => [
+
+        'select' => [
+          'id',
+          'judul',
+          'slug',
+          'gambar',
+          'kd_wilayah',
+          'kd_opd',
+          'tgl_insert',
+          'username_insert'
+        ],
+
+        'searchable' => [
+          'judul',
+          'slug',
+          'username_insert'
+        ],
+
+        'order_by' => 'id DESC'
+
+      ],
+
+      // ----------------------------------------------
+      // detail (view/edit)
+      // ----------------------------------------------
+      'detail' => [
+
+        'select' => [
+          'id',
+          'kd_wilayah',
+          'kd_opd',
+          'judul',
+          'slug',
+          'konten',
+          'gambar',
+          'keterangan',
+          'tgl_insert',
+          'username_insert',
+          'tgl_update',
+          'username_update',
+          'is_deleted'
+        ]
+
+      ],
+
+      // ----------------------------------------------
+      // publik (opsional untuk frontend berita)
+      // ----------------------------------------------
+      'publik' => [
+
+        'select' => [
+          'id',
+          'judul',
+          'slug',
+          'konten',
+          'gambar',
+          'tgl_insert'
+        ],
+
+        'where' => [
+          'is_deleted' => 0
+        ],
+
+        'order_by' => 'tgl_insert DESC'
+
+      ]
+
+    ]
+
+  ],
 ];
 $profiles['akun_neo'] = $profiles['akun'];
 // $profiles['sub_kegiatan_ref'] = $profiles['sub_kegiatan'];

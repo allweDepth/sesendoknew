@@ -9,7 +9,7 @@ class KontrakModule extends BaseCrudModule {
 			// // tbl default agar bisa dipakai internal
 			defaultTable: {
 				tbl: "kontrak",
-				req: "kontrak_neo",
+				// req: "kontrak_neo",
 			},
 		});
 	}
