@@ -1379,7 +1379,142 @@ $profiles = [
     ]
   ],
 
+  'kontrak' => [
 
+    // --------------------------------------------------
+    // tabel utama
+    // --------------------------------------------------
+    'table' => 'kontrak_neo',
+    'primary_key' => 'id',
+
+    // --------------------------------------------------
+    // auto session (mengikuti pola existing)
+    // --------------------------------------------------
+    'auto_session' => [
+      'kd_wilayah',
+      'kd_opd'
+    ],
+
+    // --------------------------------------------------
+    // filter default (opsional tapi relevan)
+    // --------------------------------------------------
+    'where' => [
+      // kosong → tidak ditemukan constraint di file
+    ],
+
+    // --------------------------------------------------
+    // dropdown (untuk flyout jika dipakai)
+    // --------------------------------------------------
+    'dropdown' => [
+      'value' => 'id',
+      'label' => 'nomor_kontrak'
+    ],
+
+    // --------------------------------------------------
+    // request filter (opsional, mengikuti pola)
+    // --------------------------------------------------
+    'req_filters' => [
+
+      'dpa' => [
+        'where' => ['tahap' => 'dpa']
+      ],
+
+      'dppa' => [
+        'where' => ['tahap' => 'dppa']
+      ]
+
+    ],
+
+    // --------------------------------------------------
+    // MODES (INI YANG WAJIB)
+    // --------------------------------------------------
+    'modes' => [
+
+      // ----------------------------------------------
+      // default listing
+      // ----------------------------------------------
+      'default' => [
+
+        'select' => [
+          'id',
+          'tahun',
+          'nama_sub_keg',
+          'tahap',
+          'total_anggaran',
+          'nilai_kontrak',
+          'nomor_kontrak',
+          'tanggal_kontrak',
+          'nama_ppk',
+          'nama_penyedia',
+          'status_kontrak'
+        ],
+
+        'searchable' => [
+          'nomor_kontrak',
+          'nama_sub_keg',
+          'nama_penyedia'
+        ],
+
+        'order_by' => 'id DESC'
+
+      ],
+
+      // ----------------------------------------------
+      // mode detail (untuk view / edit)
+      // ----------------------------------------------
+      'detail' => [
+
+        'select' => [
+          'id',
+          'kd_wilayah',
+          'kd_opd',
+          'tahun',
+          'kd_sub_keg',
+          'anggaran_id',
+          'nama_sub_keg',
+          'tahap',
+          'total_anggaran',
+          'nilai_kontrak',
+          'nomor_kontrak',
+          'tanggal_kontrak',
+          'uraian_kontrak',
+          'nomor_spmk',
+          'tanggal_spmk',
+          'waktu_pelaksanaan',
+          'tanggal_mulai',
+          'tanggal_selesai',
+          'nama_ppk',
+          'nama_penyedia',
+          'nama_tim_teknis',
+          'tanggal_pho',
+          'tanggal_fho',
+          'tanggal_serah_terima',
+          'status_kontrak'
+        ]
+
+      ],
+
+      // ----------------------------------------------
+      // mode monitoring waktu
+      // ----------------------------------------------
+      'timeline' => [
+
+        'select' => [
+          'id',
+          'nomor_kontrak',
+          'tanggal_mulai',
+          'tanggal_selesai',
+          'tanggal_pho',
+          'tanggal_fho'
+        ],
+
+        'order_by' => 'tanggal_mulai DESC'
+
+      ]
+
+    ]
+
+  ],
   'trx_naskah_dinas' => [
     'table' => 'trx_naskah_dinas',
     'primary_key' => 'id',

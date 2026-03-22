@@ -1381,6 +1381,115 @@ UIConfig.__akunMapFactory = function (entityName) {
 			],
 		},
 	};
+	UIConfig.kontrak = {
+		form: {
+			elements: [
+				/* SUB KEGIATAN */
+				{
+					tag: "fieldDropdown",
+					prop: {
+						label: "Sub Kegiatan",
+						name: "kd_sub_keg",
+						source: "group_sub_kegiatan",
+						search: true,
+					},
+				},
+
+				/* AUTO */
+				{
+					tag: "field",
+					prop: {
+						label: "Nama Sub Kegiatan",
+						name: "nama_sub_keg",
+						readonly: true,
+					},
+				},
+
+				{
+					tag: "field",
+					prop: {
+						label: "Tahap",
+						name: "tahap",
+						readonly: true,
+					},
+				},
+
+				{
+					tag: "field",
+					prop: {
+						label: "Pagu",
+						name: "total_anggaran",
+						readonly: true,
+					},
+				},
+
+				/* RINCIAN */
+				{
+					tag: "search",
+					prop: {
+						label: "Rincian",
+						name: "anggaran_id",
+						source: "anggaran",
+						labelField: "uraian",
+					},
+				},
+
+				/* KONTRAK */
+				{
+					tag: "field",
+					prop: {
+						label: "Nilai Kontrak",
+						name: "nilai_kontrak",
+					},
+				},
+
+				{
+					tag: "field",
+					prop: {
+						label: "Nomor Kontrak",
+						name: "nomor_kontrak",
+					},
+				},
+
+				{
+					tag: "fieldCalendar",
+					prop: {
+						label: "Tanggal Kontrak",
+						name: "tanggal_kontrak",
+						calendarType: "date",
+					},
+				},
+
+				/* PIHAK */
+				{
+					tag: "field",
+					prop: {
+						label: "PPK",
+						name: "nama_ppk",
+					},
+				},
+
+				{
+					tag: "fieldDropdown",
+					prop: {
+						label: "Penyedia",
+						name: "nama_penyedia",
+						source: "rekanan",
+						search: true,
+					},
+				},
+
+				/* STATUS */
+				{
+					tag: "field",
+					prop: {
+						label: "Status",
+						name: "status_kontrak",
+					},
+				},
+			],
+		},
+	};
 };
 UIConfig.sbu_akun_map = UIConfig.__akunMapFactory("sbu");
 UIConfig.ssh_akun_map = UIConfig.__akunMapFactory("ssh");

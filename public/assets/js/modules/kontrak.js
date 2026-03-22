@@ -1,41 +1,17 @@
 class KontrakModule {
 	init() {
-		this.render(); // // render UI awal
-		this.bindEvents(); // // binding event
-	}
+		if (!window.app) return;
 
-	render() {
-		const container = document.querySelector("[data-spa-container]"); // // ambil container SPA
+		// // reset state
+		window.app.resetState();
 
-		if (!container) return; // // prevent crash
+		// // pakai logical name (tanpa _neo)
+		window.app.tbl = "kontrak";
+		window.app.state.tbl = "kontrak";
 
-		container.innerHTML = `
-		<div class="page-kontrak">
-			<h2>Kontrak</h2>
-
-			<button id="btnAddKontrak">Tambah Kontrak</button>
-
-			<div id="tableKontrak"></div>
-		</div>
-	`; // // inject UI
-	}
-
-	bindEvents() {
-		const btn = document.getElementById("btnAddKontrak"); // // ambil tombol
-
-		if (!btn) return; // // prevent null error
-
-		btn.addEventListener("click", () => {
-			this.openFlyout();
-		});
-	}
-
-	openFlyout() {
-		if (typeof FlyoutController !== "undefined") {
-			new FlyoutController().open({
-				module: "kontrak",
-				action: "add",
-			}); // // trigger flyout
+		// // trigger engine table
+		if (typeof TableManager === "function") {
+			new TableManager().init();
 		}
 	}
 }
