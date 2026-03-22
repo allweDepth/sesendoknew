@@ -1506,7 +1506,7 @@ UIConfig.halaman_berita = {
 				prop: {
 					label: "Konten",
 					name: "konten",
-					rows: 10,
+					atribut: `rows="5"`,
 				},
 			},
 
@@ -1523,7 +1523,7 @@ UIConfig.halaman_berita = {
 				prop: {
 					label: "Keterangan",
 					name: "keterangan",
-					rows: 2,
+					atribut: `rows="3"`,
 				},
 			},
 		],
