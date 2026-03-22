@@ -13,7 +13,7 @@ return [
   '/datateknis'    => ['HomeController', 'datateknis'],
   '/organisasi'    => ['HomeController', 'organisasi'],
   '/pelayanan'     => ['HomeController', 'pelayanan'],
-
+  '/kontrak' => ['KontrakController', 'index'],
   /*
     |--------------------------------------------------------------------------
     | 🔐 AUTH

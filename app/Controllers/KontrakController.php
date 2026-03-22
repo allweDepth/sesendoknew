@@ -1,35 +1,22 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| KONTRAK CONTROLLER
-|--------------------------------------------------------------------------
-| Digunakan untuk halaman kontrak
-|--------------------------------------------------------------------------
-*/
-
 class KontrakController
 {
-  /*
-    |--------------------------------------------------------------------------
-    | DEFAULT
-    |--------------------------------------------------------------------------
-    */
-
   public function index()
   {
-    $table = 'kontrak'; // // tabel utama kontrak
-
+    // // jika bukan AJAX → load layout utama
     if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
 
       ob_start();
-      require __DIR__ . '/../Views/kontrak/index.php'; // // load view kontrak
+      // // tidak perlu view khusus
+      echo ""; // // kosong, SPA akan isi
       $content = ob_get_clean();
 
-      require __DIR__ . '/../Views/layouts/app.php'; // // layout utama
+      require __DIR__ . '/../Views/layouts/app.php';
     } else {
 
-      require __DIR__ . '/../Views/kontrak/index.php'; // // SPA load
+      // // SPA request → tidak perlu apa-apa
+      echo "";
     }
   }
 }
