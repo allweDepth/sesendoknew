@@ -64,6 +64,7 @@ use App\Services\DynamicTable\DynamicConfigService; // //
 use App\Services\DynamicTable\DynamicSanitizer; // //
 //segala macam fungsi didalamnya
 use App\Services\DynamicTable\DynamicDoc;
+use App\Services\DynamicTable\DynamicResolver;
 
 class DynamicTableService
 {
@@ -114,7 +115,14 @@ INTERNAL CACHE (ANTI DOUBLE QUERY)
   {
     return $this->sanitizer ??= new DynamicSanitizer($this); // //
   }
-
+  private function resolver()
+  {
+    return $this->resolver ??= new DynamicResolver(
+      $this->config(),
+      $this->profiles,
+      fn($table) => $this->getTableColumns($table) // 🔥 inject dari service
+    );
+  }
   /* =========================================================
 MAIN HANDLER (ENTRY POINT) — HARDENED VERSION
 ---------------------------------------------------------
@@ -689,7 +697,7 @@ INSERT (FIXED STABLE VERSION v3.1)
     }
 
     // 🔥 Auto periode untuk renstra
-    $filtered = $this->resolvePeriode($table, $filtered);
+    $filtered = $this->resolver()->resolvePeriode($table, $filtered);
     $this->validateTimeWindow($table);
 
     // 🔥 Auto generate kode misi
@@ -724,7 +732,7 @@ INSERT (FIXED STABLE VERSION v3.1)
     /* =====================================================
 6️⃣ PERATURAN RESOLUTION (GLOBAL CLEAN)
 ===================================================== */
-    $filtered = $this->resolvePeraturan($table, $filtered);
+    $filtered = $this->resolver()->resolvePeraturan($table, $filtered);
 
     /* =====================================================
 🔥 LOOKUP RESOLUTION
@@ -959,8 +967,8 @@ IGNORE SYSTEM FIELD
 ===================================================== */
     $filtered = $this->resolveAutoFields($table, $filtered);
     $filtered = $this->normalizeDateTimeFields($table, $filtered);
-    $filtered = $this->resolvePeraturan($table, $filtered);
-    $filtered = $this->resolvePeriode($table, $filtered);
+    $filtered = $this->resolver()->resolvePeraturan($table, $filtered);
+    $filtered = $this->resolver()->resolvePeriode($table, $filtered);
 
     /* =====================================================
         🔥 LOOKUP RESOLUTION
@@ -1231,47 +1239,26 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     //     'peraturan_id' => 'user'
     // ]
 
+    // =======================================
+    // AFTER (UPGRADE WHERE ENGINE)
+    // =======================================
+
     if (!empty($modeConfig['where'])) {
 
-      // ambil semua kolom tabel dari database
       $columns = $this->getTableColumns($table);
 
-      // loop semua kondisi where dari profile
-      foreach ($modeConfig['where'] as $field => $value) {
+      list($whereSql, $whereBind) =
+        $this->meta()->buildWhere(
+          $modeConfig['where'],
+          $columns,
+          $table,
+          fn($field, $value, $table) =>
+          $this->resolver()->resolveField($field, $value, $table, $this->user)
+        );
 
-        // jika field tidak ada di tabel maka skip
-        if (!in_array($field, $columns)) {
-          continue;
-        }
-
-        // tambahkan kondisi WHERE
-        $whereParts[] = "`$field` = ?";
-
-        /* ==================================================
-                VALUE RESOLUTION
-                ================================================== */
-
-        if ($value === 'user') {
-
-          // jika field ada di session user
-          if (isset($this->user[$field])) {
-
-            $params[] = $this->user[$field];
-          }
-
-          // jika field adalah peraturan_id
-          elseif ($field === 'peraturan_id') {
-            $params[] = $this->resolvePeraturanId($table);
-          } else {
-
-            // fallback jika tidak ditemukan
-            $params[] = null;
-          }
-        } else {
-
-          // jika value statis
-          $params[] = $value;
-        }
+      if ($whereSql) {
+        $whereParts[] = $whereSql;
+        $params = array_merge($params, $whereBind);
       }
     }
 
@@ -1300,23 +1287,17 @@ DELETE (FULL IDENTIK LOGIC ASLI)
       ? "WHERE " . implode(" AND ", $whereParts)
       : "";
 
-
-
     /* ======================================================
-        8️⃣ SELECT FIELD
-        ====================================================== */
-
-    /* ======================================================
-8️⃣ SELECT FIELD
-====================================================== */
+    8️⃣ SELECT FIELD
+    ====================================================== */
 
     // ambil kolom select dari profile
     $select = implode(',', $modeConfig['select'] ?? ['*']);
 
 
     /* ======================================================
-8️⃣.1 BUILD JOIN QUERY
-====================================================== */
+    8️⃣.1 BUILD JOIN QUERY
+    ====================================================== */
 
     // default join kosong
     $joinSQL = "";
@@ -1429,6 +1410,53 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
       $rows
     );
+  }
+  // =======================================
+  // FUNCTION: APPLY WHERE RECURSIVE
+  // =======================================
+  private function applyWhere($query, $conditions)
+  {
+    foreach ($conditions as $key => $value) {
+
+      // ===============================
+      // CASE 1: LOGIC GROUP (AND / OR)
+      // ===============================
+      if ($key === 'AND' && is_array($value)) {
+
+        $query->where(function ($q) use ($value) {
+          foreach ($value as $cond) {
+            $this->applyWhere($q, $cond); // recursive
+          }
+        });
+      } elseif ($key === 'OR' && is_array($value)) {
+
+        $query->where(function ($q) use ($value) {
+          foreach ($value as $cond) {
+            $q->orWhere(function ($sub) use ($cond) {
+              $this->applyWhere($sub, $cond); // recursive OR
+            });
+          }
+        });
+      }
+
+      // ===============================
+      // CASE 2: OPERATOR CUSTOM
+      // ===============================
+      elseif (strpos($key, ' ') !== false) {
+
+        list($col, $op) = explode(' ', $key, 2);
+
+        $query->where($col, $op, $value); // support > < LIKE
+      }
+
+      // ===============================
+      // CASE 3: NORMAL WHERE
+      // ===============================
+      else {
+
+        $query->where($key, $value); // default AND
+      }
+    }
   }
   /* =========================================================
 GET ALL RAW DATA (UNTUK EXPORT / REPORT)
@@ -2365,7 +2393,7 @@ LIMIT 1",
     $peraturan_id = null;
 
     if (in_array('peraturan_id', $columns)) {
-      $peraturan_id = $this->resolvePeraturanId($tbl); // //
+      $peraturan_id = $this->resolver()->resolvePeraturanId($table);
     }
 
 
@@ -2846,7 +2874,7 @@ LIMIT 1",
     if (in_array('peraturan_id', $columns)) {
 
       $whereParts[] = "`peraturan_id` = ?";
-      $params[] = $this->resolvePeraturanId($table); // //
+      $params[] = $this->resolver()->resolvePeraturanId($table); // //
     }
 
     $primaryKey = $this->getPrimaryKey($table);
@@ -2905,7 +2933,7 @@ LIMIT 1",
     // 🔥 Scope peraturan
     if (in_array('peraturan_id', $columns)) {
 
-      $filtered['peraturan_id'] = $this->resolvePeraturanId($table); // //
+      $filtered['peraturan_id'] = $this->resolver()->resolvePeraturanId($table); // //
 
       $whereParts[] = "`peraturan_id` = ?";
       $params[] = $filtered['peraturan_id'];
@@ -3029,7 +3057,7 @@ LIMIT 1",
         if ($value === 'user') {
 
           if ($field === 'peraturan_id') {
-            $params[] = $this->resolvePeraturanId($table); // //
+            $params[] = $this->resolver()->resolvePeraturanId($table); // //
           } else {
             $params[] = $this->user[$field] ?? null;
           }
@@ -3088,51 +3116,8 @@ LIMIT 1",
 
     return $data;
   }
-  private function resolvePeraturan(string $table, array $data): array
-  {
-    $columns = $this->getTableColumns($table);
-
-    // 🔥 Gunakan peraturan_id sekarang
-    $colPeraturan = null;
-
-    if (in_array('peraturan_id', $columns)) {
-      $colPeraturan = 'peraturan_id';
-    }
-    if (!$colPeraturan) {
-      return $data;
-    }
-
-    if (!empty($data[$colPeraturan])) {
-      return $data;
-    }
 
 
-    $data[$colPeraturan] = $this->resolvePeraturanId($table); // //
-
-    return $data;
-  }
-  private function resolvePeriode(string $table, array $data): array
-  {
-    $columns = $this->getTableColumns($table);
-
-    if (!in_array('periode_id', $columns)) {
-      return $data;
-    }
-
-    if (!empty($data['periode_id'])) {
-      return $data;
-    }
-
-    $periode = $this->config->getPeriodeAktif();
-
-    if (!$periode) {
-      throw new Exception("Periode aktif tidak ditemukan.");
-    }
-
-    $data['periode_id'] = $periode['id'];
-
-    return $data;
-  }
   private function normalizeDateTimeFields(string $table, array $data): array
   {
     $columns = $this->getTableColumns($table);
@@ -4798,48 +4783,7 @@ AND is_deleted = 0
     }
   }
   // //
-  private function resolvePeraturanId(string $table): int
-  {
-    $pengaturan = $this->config->getPengaturanAktif();
 
-    if (!$pengaturan) {
-      throw new Exception("Pengaturan aktif tidak ditemukan.");
-    }
-
-    // FIX: cari profile key dari table fisik
-    $profileKey = null;
-
-    foreach ($this->profiles as $key => $profile) {
-      if (($profile['table'] ?? null) === $table) {
-        $profileKey = $key;
-        break;
-      }
-    }
-
-    if ($profileKey === null) {
-      throw new Exception("Profile tidak ditemukan untuk table $table"); // FIX
-    }
-
-    $map = [
-      'urusan'       => 'aturan_sub_kegiatan',
-      'bidang'       => 'aturan_sub_kegiatan',
-      'program'      => 'aturan_sub_kegiatan',
-      'kegiatan'     => 'aturan_sub_kegiatan',
-      'sub_kegiatan' => 'aturan_sub_kegiatan',
-      'rekening_kegiatan' => 'aturan_sub_kegiatan',
-      'ssh'          => 'aturan_ssh',
-      'sbu'          => 'aturan_sbu',
-      'asb'          => 'aturan_asb',
-      'hspk'         => 'aturan_hspk',
-      'satuan'       => 'aturan_ssh'
-    ];
-
-    if (!isset($map[$profileKey])) {
-      throw new Exception("Mapping peraturan_id tidak ditemukan untuk table $profileKey"); // FIX
-    }
-
-    return (int)$pengaturan[$map[$profileKey]];
-  }
   private function insertJson(string $table, array $request): string
   {
     // =====================================
