@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 22 Mar 2026 pada 07.52
+-- Waktu pembuatan: 22 Mar 2026 pada 08.11
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -4363,6 +4363,34 @@ INSERT INTO `akun_neo` (`id`, `akun`, `kelompok`, `jenis_akun`, `objek`, `rincia
 (4274, 5, 2, 5, 89, 3, 0, '5.2.05.89.03', 'Belanja Modal Aset Tetap Lainnya BOSP-BOP Kesetaraan', NULL, NULL, 4, 0, NULL, '', '2024-04-06 16:16:09', 'nabiila', '2024-04-06 16:16:09', 'nabiila', 0),
 (4275, 5, 2, 5, 89, 3, 1, '5.2.05.89.03.0001', 'Belanja Modal Aset Tetap Lainnya BOSP-BOP Kesetaraan Reguler', NULL, NULL, 4, 0, NULL, 'Digunakan untuk mencatat belanja aset tetap lainnya bantuan operasional satuan pendidikan-bantuan operasional penyelenggaraan pendidikan kesetaraan reguler sesuai dengan ketentuan peraturan perundang- undangan.', '2024-04-06 16:16:09', 'nabiila', '2024-04-06 16:16:09', 'nabiila', 0),
 (4276, 5, 2, 5, 89, 3, 2, '5.2.05.89.03.0002', 'Belanja Modal Aset Tetap Lainnya BOSP-BOP Kesetaraan Kinerja', NULL, NULL, 4, 0, NULL, 'Digunakan untuk mencatat belanja aset tetap lainnya bantuan operasional satuan pendidikan-bantuan operasional penyelenggaraan pendidikan kesetaraan kinerja sesuai dengan ketentuan peraturan perundang-undangan.', '2024-04-06 16:16:09', 'nabiila', '2024-04-06 16:16:09', 'nabiila', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `analisa_rab`
+--
+
+CREATE TABLE `analisa_rab` (
+  `id` bigint(20) NOT NULL,
+  `kontrak_id` bigint(20) DEFAULT NULL,
+  `kode` varchar(100) DEFAULT NULL,
+  `uraian` varchar(500) DEFAULT NULL,
+  `satuan` varchar(50) DEFAULT NULL,
+  `harga_satuan_hps` decimal(20,2) DEFAULT NULL,
+  `harga_satuan_penawaran` decimal(20,2) DEFAULT NULL,
+  `harga_satuan_kontrak` decimal(20,2) DEFAULT NULL,
+  `volume_hps` decimal(20,2) DEFAULT NULL,
+  `volume_penawaran` decimal(20,2) DEFAULT NULL,
+  `volume_kontrak` decimal(20,2) DEFAULT NULL,
+  `jumlah_hps` decimal(20,2) DEFAULT NULL,
+  `jumlah_penawaran` decimal(20,2) DEFAULT NULL,
+  `jumlah_kontrak` decimal(20,2) DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -9313,6 +9341,44 @@ CREATE TABLE `kegiatan_renstra_neo` (
   `username_update` varchar(100) DEFAULT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `kontrak_neo`
+--
+
+CREATE TABLE `kontrak_neo` (
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(60) DEFAULT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
+  `tahun` year(4) DEFAULT NULL,
+  `kd_sub_keg` varchar(50) DEFAULT NULL,
+  `anggaran_id` bigint(20) DEFAULT NULL,
+  `nama_sub_keg` text DEFAULT NULL,
+  `tahap` enum('dpa','dppa') DEFAULT NULL,
+  `total_anggaran` decimal(20,2) DEFAULT NULL,
+  `nilai_kontrak` decimal(20,2) DEFAULT NULL,
+  `nomor_kontrak` varchar(100) DEFAULT NULL,
+  `tanggal_kontrak` date DEFAULT NULL,
+  `uraian_kontrak` text DEFAULT NULL,
+  `nomor_spmk` varchar(100) DEFAULT NULL,
+  `tanggal_spmk` date DEFAULT NULL,
+  `waktu_pelaksanaan` bigint(20) DEFAULT NULL,
+  `tanggal_mulai` date DEFAULT NULL,
+  `tanggal_selesai` date DEFAULT NULL,
+  `nama_ppk` varchar(200) DEFAULT NULL,
+  `nama_penyedia` varchar(200) DEFAULT NULL,
+  `nama_tim_teknis` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`nama_tim_teknis`)),
+  `tanggal_pho` date DEFAULT NULL,
+  `tanggal_fho` date DEFAULT NULL,
+  `tanggal_serah_terima` date DEFAULT NULL,
+  `status_kontrak` varchar(50) DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -18547,6 +18613,12 @@ ALTER TABLE `akun_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `analisa_rab`
+--
+ALTER TABLE `analisa_rab`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indeks untuk tabel `anggaran_copy_log`
 --
 ALTER TABLE `anggaran_copy_log`
@@ -18668,6 +18740,12 @@ ALTER TABLE `kd_wilayah_neo`
 -- Indeks untuk tabel `kegiatan_renstra_neo`
 --
 ALTER TABLE `kegiatan_renstra_neo`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `kontrak_neo`
+--
+ALTER TABLE `kontrak_neo`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -18932,6 +19010,12 @@ ALTER TABLE `akun_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4277;
 
 --
+-- AUTO_INCREMENT untuk tabel `analisa_rab`
+--
+ALTER TABLE `analisa_rab`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `anggaran_copy_log`
 --
 ALTER TABLE `anggaran_copy_log`
@@ -19044,6 +19128,12 @@ ALTER TABLE `kd_wilayah_neo`
 --
 ALTER TABLE `kegiatan_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `kontrak_neo`
+--
+ALTER TABLE `kontrak_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `log_activity`
