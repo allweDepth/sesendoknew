@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 22 Mar 2026 pada 08.11
+-- Waktu pembuatan: 22 Mar 2026 pada 17.47
 -- Versi server: 12.2.2-MariaDB
 -- Versi PHP: 8.5.3
 
@@ -8622,31 +8622,6 @@ INSERT INTO `aset_neo` (`id`, `akun`, `kelompok`, `jenis_akun`, `objek`, `rincia
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `berita_neo`
---
-
-CREATE TABLE `berita_neo` (
-  `id` int(11) NOT NULL,
-  `kd_wilayah` varchar(60) DEFAULT NULL,
-  `judul` varchar(400) NOT NULL,
-  `id_pengenal` varchar(255) NOT NULL,
-  `kelompok` varchar(50) NOT NULL,
-  `uraian_html` text NOT NULL,
-  `uraian_singkat` text DEFAULT NULL,
-  `tanggal` date NOT NULL,
-  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
-  `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `username_insert` varchar(100) NOT NULL,
-  `username_update` varchar(100) DEFAULT NULL,
-  `keterangan` varchar(255) NOT NULL,
-  `urutan` int(11) DEFAULT NULL,
-  `disable` tinyint(1) NOT NULL DEFAULT 0,
-  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Struktur dari tabel `cache_schema_naskah`
 --
 
@@ -9219,6 +9194,28 @@ CREATE TABLE `group_sub_kegiatan` (
 
 INSERT INTO `group_sub_kegiatan` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `nama_sub_keg`, `tahap`, `total_anggaran`, `disable`, `setujui`, `tanggal_setujui`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (1, '76.01', '1.03.0.00.0.00.01.0000', '2026', '1.3.10.2.01.53', NULL, 'renja', NULL, 0, 0, '0000-00-00 00:00:00', '2026-03-07 17:48:06', 'inayah', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `halaman_berita`
+--
+
+CREATE TABLE `halaman_berita` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `kd_wilayah` varchar(50) DEFAULT NULL,
+  `kd_opd` varchar(50) DEFAULT NULL,
+  `judul` varchar(255) NOT NULL,
+  `slug` varchar(255) DEFAULT NULL,
+  `konten` longtext NOT NULL,
+  `gambar` varchar(255) DEFAULT NULL,
+  `keterangan` text DEFAULT NULL,
+  `tgl_insert` timestamp NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -18650,12 +18647,6 @@ ALTER TABLE `aset_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `berita_neo`
---
-ALTER TABLE `berita_neo`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indeks untuk tabel `cache_schema_naskah`
 --
 ALTER TABLE `cache_schema_naskah`
@@ -18708,6 +18699,12 @@ ALTER TABLE `group_rekap_akun`
 -- Indeks untuk tabel `group_sub_kegiatan`
 --
 ALTER TABLE `group_sub_kegiatan`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `halaman_berita`
+--
+ALTER TABLE `halaman_berita`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -19046,12 +19043,6 @@ ALTER TABLE `aset_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4033;
 
 --
--- AUTO_INCREMENT untuk tabel `berita_neo`
---
-ALTER TABLE `berita_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT untuk tabel `daftar_paket_neo`
 --
 ALTER TABLE `daftar_paket_neo`
@@ -19098,6 +19089,12 @@ ALTER TABLE `group_rekap_akun`
 --
 ALTER TABLE `group_sub_kegiatan`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT untuk tabel `halaman_berita`
+--
+ALTER TABLE `halaman_berita`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `import_logs`

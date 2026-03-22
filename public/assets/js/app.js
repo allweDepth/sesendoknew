@@ -268,6 +268,9 @@ class App {
 			case "wallchat":
 				if (typeof WallchatModule === "function") new WallchatModule().init();
 				break;
+			case "halaman_berita":
+				if (typeof HalamanBeritaModule === "function") new HalamanBeritaModule().init(); // // init module kontrak
+				break;
 		}
 	}
 }

@@ -1482,6 +1482,53 @@ UIConfig.kontrak = {
 		],
 	},
 };
+UIConfig.halaman_berita = {
+	form: {
+		elements: [
+			{
+				tag: "field",
+				prop: {
+					label: "Judul",
+					name: "judul",
+				},
+			},
+
+			{
+				tag: "field",
+				prop: {
+					label: "Slug",
+					name: "slug",
+				},
+			},
+
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Konten",
+					name: "konten",
+					rows: 10,
+				},
+			},
+
+			{
+				tag: "field",
+				prop: {
+					label: "Gambar (URL)",
+					name: "gambar",
+				},
+			},
+
+			{
+				tag: "fieldTextarea",
+				prop: {
+					label: "Keterangan",
+					name: "keterangan",
+					rows: 2,
+				},
+			},
+		],
+	},
+};
 UIConfig.sbu_akun_map = UIConfig.__akunMapFactory("sbu");
 UIConfig.ssh_akun_map = UIConfig.__akunMapFactory("ssh");
 UIConfig.asb_akun_map = UIConfig.__akunMapFactory("asb");
