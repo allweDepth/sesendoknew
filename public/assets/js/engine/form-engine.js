@@ -206,48 +206,25 @@ SET VALUE NORMAL
 	bindEvents() {
 		const eventName = `submit.formEngine.${this.state.tbl}`;
 
-		const form = $(this.formSelector);
+		const form = $(this.formSelector); // ambil form langsung
 
-		// =====================================
-		// REMOVE OLD EVENT
-		// =====================================
+		// ======================================================
+		// HAPUS EVENT LAMA
+		// ======================================================
+
 		form.off(eventName);
 
-		// =====================================
-		// SUBMIT FORM (CORE ENGINE)
-		// =====================================
+		// ======================================================
+		// BIND EVENT SUBMIT LANGSUNG KE FORM
+		// ======================================================
+
 		form.on(eventName, (e) => {
-			e.preventDefault(); // // cegah reload
-			e.stopImmediatePropagation(); // // cegah konflik
+			e.preventDefault(); // cegah submit browser
+			e.stopImmediatePropagation(); // cegah handler lain
 
-			this.submit(); // // jalankan engine submit
+			this.submit(); // jalankan engine
 
-			return false;
-		});
-
-		// =====================================
-		// 🔥 FIX: HUBUNGKAN .btnSubmit KE FORM INI
-		// =====================================
-		const clickEvent = `click.formEngine.${this.state.tbl}`;
-
-		$(document).off(clickEvent, ".btnSubmit"); // // cegah double binding
-
-		$(document).on(clickEvent, ".btnSubmit", (e) => {
-			// =====================================
-			// CEK KONTEXT FORM (WAJIB)
-			// =====================================
-			const btn = $(e.currentTarget);
-
-			// ambil form terdekat sesuai selector engine
-			const targetForm = btn.closest(".ui.modal, .ui.sidebar, body").find(this.formSelector).first();
-
-			// jika bukan form engine ini → skip
-			if (!targetForm.length || targetForm[0] !== form[0]) return; // // 🔥 penting
-
-			// =====================================
-			// TRIGGER SUBMIT ENGINE
-			// =====================================
-			targetForm.trigger(eventName); // // pakai namespace engine
+			return false; // jaga-jaga
 		});
 	}
 
