@@ -4839,32 +4839,48 @@ AND is_deleted = 0
   }
   private function updateJson(string $table, array $request): string
   {
-    // =====================================
-    // 🔥 VALIDASI ID
-    // =====================================
     if (empty($request['id_row'])) {
       return JsonResponse::error("id_row wajib ada");
     }
 
-    // =====================================
-    // 🔥 AMBIL struktur_json
-    // =====================================
     if (empty($request['struktur_json'])) {
       return JsonResponse::error("struktur_json wajib ada");
     }
 
+    $profile = $this->getProfileByTable($table);
+
+    if (empty($profile['json_update'])) {
+      return JsonResponse::error("json_update belum dikonfigurasi");
+    }
+
+    $cfg = $profile['json_update'];
+
+    $mode = $cfg['mode'] ?? 'direct';
+    $relTable = $cfg['relation_table'];
+    $fk = $cfg['fk'];
+    $jsonField = $cfg['json_field'];
+    $versionFields = $cfg['versioning_fields'] ?? [];
+
+    $id = $request['id_row'];
+    $primaryKey = $this->getPrimaryKey($table);
+
+    // ambil data lama
+    $old = $this->db->query(
+      "SELECT * FROM `$table` WHERE `$primaryKey` = ?",
+      [$id]
+    )->fetch();
+
+    if (!$old) {
+      return JsonResponse::error("Data tidak ditemukan");
+    }
+
+    // parse json
     $json = $request['struktur_json'];
 
-    // =====================================
-    // 🔥 HANDLE STRING JSON
-    // =====================================
     if (is_string($json)) {
       $json = json_decode($json, true);
     }
 
-    // =====================================
-    // 🔥 FIX DOUBLE NESTED (KRITIS)
-    // =====================================
     if (isset($json['struktur_json'])) {
       $json = $json['struktur_json'];
     }
@@ -4873,18 +4889,115 @@ AND is_deleted = 0
       return JsonResponse::error("struktur_json tidak valid");
     }
 
-    // =====================================
-    // 🔥 INJECT KE ROOT (BIAR ENGINE LAMA JALAN)
-    // =====================================
-    $request = [
-      ...$request,
-      ...$json
-    ];
+    $json = $this->sanitizeStruktur($json);
 
     // =====================================
-    // 🔥 PANGGIL ENGINE LAMA
+    // MODE: DIRECT
     // =====================================
-    return $this->update($table, $request);
+    if ($mode === 'direct') {
+
+      $this->db->delete($relTable, "WHERE `$fk` = ?", [$id]);
+
+      $this->db->insert($relTable, [
+        $fk => $id,
+        $jsonField => json_encode($json)
+      ]);
+
+      return JsonResponse::success("JSON berhasil diupdate");
+    }
+
+    // =====================================
+    // MODE: SMART VERSIONING
+    // =====================================
+    if ($mode === 'smart_versioning') {
+
+      $isChanged = false;
+
+      foreach ($versionFields as $field) {
+
+        $newVal = $request[$field] ?? $old[$field];
+
+        if ($field === 'tanggal_surat') {
+          $newVal = $this->normalizeToMySQLDateTime($newVal);
+        }
+
+        if ($newVal != $old[$field]) {
+          $isChanged = true;
+          break;
+        }
+      }
+
+      // ===============================
+      // TIDAK BERUBAH → UPDATE
+      // ===============================
+      if (!$isChanged) {
+
+        $this->db->delete($relTable, "WHERE `$fk` = ?", [$id]);
+
+        $this->db->insert($relTable, [
+          $fk => $id,
+          $jsonField => json_encode($json)
+        ]);
+
+        return JsonResponse::success("JSON berhasil diupdate");
+      }
+
+      // ===============================
+      // BERUBAH → INSERT BARU
+      // ===============================
+      $newData = $old;
+
+      unset($newData[$primaryKey]);
+
+      foreach ($versionFields as $field) {
+        if (isset($request[$field])) {
+          $newData[$field] = $request[$field];
+        }
+      }
+
+      $newData = $this->injectAudit($newData, 'insert');
+
+      try {
+        $this->validateDuplicate($table, $newData);
+      } catch (\Throwable $e) {
+        return JsonResponse::error($e->getMessage());
+      }
+
+      $newId = $this->insertSafe($table, $newData);
+
+      $this->db->insert($relTable, [
+        $fk => $newId,
+        $jsonField => json_encode($json)
+      ]);
+
+      return JsonResponse::success("Versi baru berhasil dibuat", [
+        'insert_id' => $newId
+      ]);
+    }
+
+    // =====================================
+    // MODE: VERSIONING ONLY
+    // =====================================
+    if ($mode === 'versioning_only') {
+
+      $newData = $old;
+      unset($newData[$primaryKey]);
+
+      $newData = $this->injectAudit($newData, 'insert');
+
+      $newId = $this->insertSafe($table, $newData);
+
+      $this->db->insert($relTable, [
+        $fk => $newId,
+        $jsonField => json_encode($json)
+      ]);
+
+      return JsonResponse::success("Versi baru dibuat", [
+        'insert_id' => $newId
+      ]);
+    }
+
+    return JsonResponse::error("Mode json_update tidak dikenali");
   }
   private function sanitizeStruktur(array $struktur): array
   {

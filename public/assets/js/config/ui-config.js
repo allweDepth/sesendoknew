@@ -955,110 +955,14 @@ UIConfig.trx_naskah_dinas = {
 	form: {
 		elements: [
 			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
+			{ tag: "field", prop: { label: "Perihal", name: "perihal" } },
 			{ tag: "field", prop: { label: "Status", name: "workflow_status" } },
 			{ tag: "field", prop: { label: "OPD", name: "kd_opd" } },
-			{ tag: "field", prop: { label: "Tahun", name: "tahun" } },
 			{ tag: "field", prop: { label: "Tanggal Dibuat", name: "tgl_insert" } },
 		],
 	},
 };
 
-UIConfig.sk = {
-	form: {
-		elements: [
-			{ tag: "field", prop: { label: "Nomor Surat", name: "nomor" } },
-			{
-				tag: "fieldCalendar",
-				prop: {
-					label: "Tanggal Surat",
-					name: "tgl_surat_dibuat",
-					calendarType: "date",
-				},
-			},
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Tentang", name: "tentang", atribut: `rows="2"` },
-			},
-			{
-				tag: "fieldDropdown",
-				prop: { label: "Pemberi Tugas", name: "pemberi_tgs", source: "asn" },
-			},
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
-			},
-		],
-	},
-};
-
-UIConfig.surat_internal = {
-	form: {
-		elements: [
-			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
-			{
-				tag: "fieldCalendar",
-				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
-			},
-			{ tag: "field", prop: { label: "Kepada", name: "kepada" } },
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Perihal", name: "perihal", atribut: `rows="2"` },
-			},
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Isi Surat", name: "isi", atribut: `rows="6"` },
-			},
-		],
-	},
-};
-
-UIConfig.surat_bebas = {
-	form: {
-		elements: [
-			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
-			{
-				tag: "fieldCalendar",
-				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
-			},
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Isi Surat", name: "isi", atribut: `rows="8"` },
-			},
-		],
-	},
-};
-
-UIConfig.telaah_staf = {
-	form: {
-		elements: [
-			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
-			{
-				tag: "fieldCalendar",
-				prop: { label: "Tanggal", name: "tanggal", calendarType: "date" },
-			},
-			{
-				tag: "fieldTextarea",
-				prop: {
-					label: "Permasalahan",
-					name: "permasalahan",
-					atribut: `rows="3"`,
-				},
-			},
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Analisis", name: "analisis", atribut: `rows="5"` },
-			},
-			{
-				tag: "fieldTextarea",
-				prop: {
-					label: "Rekomendasi",
-					name: "rekomendasi",
-					atribut: `rows="3"`,
-				},
-			},
-		],
-	},
-};
 UIConfig.global_print = {
 	layout: { columns: 2 },
 	form: {

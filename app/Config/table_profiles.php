@@ -1538,8 +1538,9 @@ $profiles = [
           'naskah_id' => 'id'
         ]
       ],
+
       // =====================================
-      // ASN (FIX SESUAI PERMINTAAN KAMU)
+      // ASN
       // =====================================
       'db_asn_pemda_neo' => [
         'select' => [
@@ -1555,7 +1556,7 @@ $profiles = [
         'where' => [
           'kd_opd' => 'kd_opd',
           'kd_wilayah' => 'kd_wilayah',
-          'disable' => ['value' => 0] // // FIX STATIC
+          'disable' => ['value' => 0]
         ],
         'alias' => [
           'db_asn_pemda_neo' => 'asn'
@@ -1573,11 +1574,18 @@ $profiles = [
       ]
     ],
 
-    'versioning' => [
-      'mode' => 'insert_on_change',
-      'fields' => ['nomor', 'tanggal_surat']
-    ],
+    // =====================================
+    // 🔥 JSON UPDATE ENGINE (GLOBAL CONTROL)
+    // =====================================
+    'json_update' => [
+      'mode' => 'direct', // direct | versioning_only | smart_versioning
+      'relation_table' => 'trx_naskah_struktur',
+      'fk' => 'naskah_id',
+      'json_field' => 'struktur_json',
 
+      // penentu apakah insert versi baru atau update biasa
+      'versioning_fields' => ['nomor', 'tanggal_surat']
+    ],
     'not_duplicate' => [
       'nomor',
       'tanggal_surat',
