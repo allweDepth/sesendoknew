@@ -85,7 +85,7 @@ class PdfService
     $jenis = $this->db->query(
       "SELECT r.schema_json 
              FROM ref_jenis_naskah r
-             JOIN trx_naskah_dinas t ON t.jenis_naskah_id = r.id
+             JOIN trx_naskah_dinas t ON t.jenis_id = r.id
              WHERE t.id = ?",
       [$id]
     )->fetch();

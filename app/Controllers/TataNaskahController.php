@@ -61,7 +61,42 @@ class TataNaskahController extends Controller
   }
   public function generate_pdf()
   {
-    echo json_encode(['status' => 'not_ready']);
+    // ambil parameter GET
+    $tbl = $_GET['tbl'] ?? null; // ambil nama tabel
+    $id  = $_GET['id'] ?? null;  // ambil id data
+
+    // validasi wajib
+    if (!$tbl || !$id) {
+      echo "Parameter tidak lengkap"; // stop jika kosong
+      return;
+    }
+
+    // load service PDF
+    require_once __DIR__ . '/../Services/PdfService.php'; // load class
+
+    try {
+      $pdfService = new PdfService(); // init service
+
+      // generate PDF (string binary)
+      $pdfContent = $pdfService->generate($tbl, (int)$id); // cast id ke int
+
+      // set header browser → PDF
+      header('Content-Type: application/pdf'); // tipe file PDF
+      header('Content-Disposition: inline; filename="naskah.pdf"'); // tampil di browser
+
+      echo $pdfContent; // output PDF
+    } catch (Exception $e) {
+      // log detail ke server
+      error_log("PDF ERROR: " . $e->getMessage()); // log internal
+
+      http_response_code(500); // status error
+
+      echo json_encode([ // response rapi JSON
+        "status" => "error",
+        "message" => "Dokumen gagal dibuat", // user friendly
+        "code" => "PDF_GENERATE_FAILED" // kode sistem
+      ]);
+    }
   }
   public function generateNomor()
   {
