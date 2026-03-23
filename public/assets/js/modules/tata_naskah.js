@@ -201,7 +201,10 @@ class TataNaskahModule {
 			if (!builder) return;
 
 			const payload = builder.collectStructure();
-
+			// 🔥 WAJIB STRINGIFY DI SINI
+			const finalPayload = {
+				struktur_json: JSON.stringify(payload.struktur_json),
+			};
 			window.Ajax.request({
 				url: AppConfig.apiUrl + "dynamic",
 				method: "POST",
@@ -209,7 +212,7 @@ class TataNaskahModule {
 					action: this.currentId ? "edit_json" : "add_json",
 					id_row: this.currentId, // // kirim id saat edit
 					tbl: this.state.tbl,
-					...payload,
+					...finalPayload,
 				},
 				success: (res) => {
 					if (res.success) {
