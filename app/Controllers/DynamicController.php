@@ -19,6 +19,7 @@ class DynamicController
     // Method wajib POST
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
       http_response_code(405);
+      header('Content-Type: application/json; charset=UTF-8');
       echo JsonResponse::error("Method tidak diizinkan");
       exit;
     }
@@ -26,6 +27,7 @@ class DynamicController
     // Harus login
     if (empty($_SESSION['user'])) {
       http_response_code(401);
+      header('Content-Type: application/json; charset=UTF-8'); // 🔥
       echo JsonResponse::error("Unauthorized");
       exit;
     }
@@ -38,6 +40,7 @@ class DynamicController
       $csrfHeader !== $_SESSION['csrf_token']
     ) {
       http_response_code(403);
+      header('Content-Type: application/json; charset=UTF-8');
       echo JsonResponse::error("CSRF validation gagal");
       exit;
     }
@@ -150,17 +153,19 @@ class DynamicController
     $jmlHeader = (int)($_POST['jml_header'] ?? 1);
 
     if (!$tableKey || !isset($profiles[$tableKey])) {
+      header('Content-Type: application/json; charset=UTF-8');
       echo JsonResponse::error("Tabel tidak diizinkan");
       exit;
     }
 
     if (empty($_FILES['file']['tmp_name'])) {
+      header('Content-Type: application/json; charset=UTF-8');
       echo JsonResponse::error("File tidak ditemukan");
       exit;
     }
 
     $service = new DynamicTableService();
-
+    header('Content-Type: application/json; charset=UTF-8');
     echo $service->importStrict(
       $tableKey,
       $_FILES['file']['tmp_name'],
