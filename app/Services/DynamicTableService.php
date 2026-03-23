@@ -90,6 +90,7 @@ INTERNAL CACHE (ANTI DOUBLE QUERY)
   private $meta; // lazy //
   private $config; // lazy //
   private $sanitizer; // lazy //
+  private $resolver; // 🔥 FIX: declare property untuk PHP 8.2+
   public function __construct()
   {
     $this->db = DB::getInstance();
