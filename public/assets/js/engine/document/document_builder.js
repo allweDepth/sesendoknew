@@ -664,6 +664,9 @@ class DocumentBuilder {
 				let name = $(el).attr("name");
 				if (!name) return;
 
+				// 🔥 FIX: JANGAN IZINKAN FIELD SYSTEM OVERRIDE CORE REQUEST
+				if (name === "action") return; // // cegah override action
+
 				// =====================================
 				// FIX: ambil schema fields
 				// =====================================
