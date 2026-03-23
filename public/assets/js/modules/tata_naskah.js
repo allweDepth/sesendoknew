@@ -128,6 +128,30 @@ class TataNaskahModule {
 		$(document).off("submit", "#form_modal"); // 🔥 FIX
 
 		// =====================================
+		// 🔥 FIX: HUBUNGKAN .btnSubmit KE FORM MODAL
+		// =====================================
+		$(document).off("click", ".btnSubmit"); // // cegah double binding
+
+		$(document).on("click", ".btnSubmit", (e) => {
+			const btn = $(e.currentTarget); // // ambil button
+
+			// =====================================
+			// VALIDASI: HARUS DI DALAM MODAL INI
+			// =====================================
+			const modal = btn.closest("#mainModal"); // // scope modal
+
+			if (!modal.length) return; // // bukan modal ini → skip
+
+			const form = modal.find("#form_modal"); // // ambil form modal
+
+			if (!form.length) return; // // safety
+
+			// =====================================
+			// TRIGGER SUBMIT (INI YANG HILANG)
+			// =====================================
+			form.trigger("submit"); // // panggil handler submit di atas
+		});
+		// =====================================
 		// EDIT
 		// =====================================
 		$(document).on("click", ".btn-edit-row", (e) => {

@@ -206,25 +206,48 @@ SET VALUE NORMAL
 	bindEvents() {
 		const eventName = `submit.formEngine.${this.state.tbl}`;
 
-		const form = $(this.formSelector); // ambil form langsung
+		const form = $(this.formSelector);
 
-		// ======================================================
-		// HAPUS EVENT LAMA
-		// ======================================================
-
+		// =====================================
+		// REMOVE OLD EVENT
+		// =====================================
 		form.off(eventName);
 
-		// ======================================================
-		// BIND EVENT SUBMIT LANGSUNG KE FORM
-		// ======================================================
-
+		// =====================================
+		// SUBMIT FORM (CORE ENGINE)
+		// =====================================
 		form.on(eventName, (e) => {
-			e.preventDefault(); // cegah submit browser
-			e.stopImmediatePropagation(); // cegah handler lain
+			e.preventDefault(); // // cegah reload
+			e.stopImmediatePropagation(); // // cegah konflik
 
-			this.submit(); // jalankan engine
+			this.submit(); // // jalankan engine submit
 
-			return false; // jaga-jaga
+			return false;
+		});
+
+		// =====================================
+		// 🔥 FIX: HUBUNGKAN .btnSubmit KE FORM INI
+		// =====================================
+		const clickEvent = `click.formEngine.${this.state.tbl}`;
+
+		$(document).off(clickEvent, ".btnSubmit"); // // cegah double binding
+
+		$(document).on(clickEvent, ".btnSubmit", (e) => {
+			// =====================================
+			// CEK KONTEXT FORM (WAJIB)
+			// =====================================
+			const btn = $(e.currentTarget);
+
+			// ambil form terdekat sesuai selector engine
+			const targetForm = btn.closest(".ui.modal, .ui.sidebar, body").find(this.formSelector).first();
+
+			// jika bukan form engine ini → skip
+			if (!targetForm.length || targetForm[0] !== form[0]) return; // // 🔥 penting
+
+			// =====================================
+			// TRIGGER SUBMIT ENGINE
+			// =====================================
+			targetForm.trigger(eventName); // // pakai namespace engine
 		});
 	}
 
