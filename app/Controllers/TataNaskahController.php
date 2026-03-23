@@ -264,10 +264,10 @@ class TataNaskahController extends Controller
       "username_insert" => $_SESSION['user']['username']
     ];
   }
-  public function cetak($id)
+  public function cetak($tbl, $id)
   {
-    $service = new TataNaskahPdfService();
-    $file = $service->generate($id);
+    $service = new PdfService();
+    $file = $service->generate($tbl, $id);
 
     echo JsonResponse::success("PDF dibuat", ["file" => $file]);
     return;
