@@ -94,6 +94,8 @@ class TataNaskahModule {
 			state: this.state,
 			container: "#table-container",
 			mode: "modal",
+			// 🔥 override selector pagination
+			pagination: 'div[name="pagination_tata_naskah"]', //override manual agar cocok DOM lama
 		});
 
 		this.formContainer = new FormContainerManager({
