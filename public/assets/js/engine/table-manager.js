@@ -326,11 +326,11 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 					break;
 				case "trx_naskah_dinas":
 					btnExtra += `
-        <button class="ui teal button"
-            data-action="export_pdf"
-            data-tbl="${this.state.tbl}">
-            <i class="file pdf icon"></i>
-        </button>
+        <button type="button" class="ui teal button"
+    data-action="export_pdf"
+    data-tbl="${this.state.tbl}">
+    <i class="file pdf icon"></i>
+</button>
     `;
 					break;
 				default:
@@ -526,7 +526,9 @@ data-id="${id}">
 	/* =====================================================
 			HANDLE ACTION
 		===================================================== */
-	handleAction(action, id) {
+	handleAction(action, id, el = null) {
+		// tambahkan el
+
 		switch (action) {
 			case "delete":
 				this.deleteRow(id);
@@ -535,11 +537,12 @@ data-id="${id}">
 			case "akta":
 				this.openAkta(id);
 				break;
+
 			// =====================================================
 			// EXPORT PDF
 			// =====================================================
 			case "export_pdf":
-				this.exportPdf(id, event.currentTarget); // kirim element
+				this.exportPdf(id, el); // gunakan el dari parameter
 				break;
 		}
 	}
@@ -548,15 +551,23 @@ data-id="${id}">
 	// =====================================================
 	exportPdf(id, el = null) {
 		// =====================================================
+		// VALIDASI ID
+		// =====================================================
+		if (!id) return; // stop jika id kosong
+
+		// =====================================================
 		// PRIORITAS data-tbl dari button
 		// =====================================================
-		let tbl = this.state.tbl;
+		let tbl = this.state.tbl; // default
 
 		if (el) {
-			const btnTbl = $(el).data("tbl"); // baca dari DOM
-			if (btnTbl) tbl = btnTbl;
+			const btnTbl = $(el).data("tbl"); // baca attribute
+			if (btnTbl) tbl = btnTbl; // override jika ada
 		}
 
+		// =====================================================
+		// OPEN PDF
+		// =====================================================
 		window.open(`/tata_naskah/generate_pdf?tbl=${tbl}&id=${id}`, "_blank");
 	}
 	openAkta(id) {
