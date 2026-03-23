@@ -242,79 +242,67 @@ class DocumentBuilder {
 	// EVENTS
 	// ======================================================
 
+	// ======================================================
+	// EVENTS (FINAL FIX - TANPA execCommand)
+	// ======================================================
 	bindEvents() {
 		let self = this;
 
+		// ==============================
 		// ADD ROW
+		// ==============================
 		this.container.off("click", ".btn-add-row");
 		this.container.on("click", ".btn-add-row", function () {
 			let section = $(this).data("section");
 			let table = self.container.find(`table[name="${section}"]`);
-			let cols = table.data("columns")?.length || 2; // 🔥 pakai schema, bukan DOM
+			let cols = table.data("columns")?.length || 2;
 
 			table.find("tbody").append(self.buildRow(section, cols));
 
-			// =====================================
-			// FIX: init hanya elemen baru, bukan semua
-			// =====================================
 			let newRow = table.find("tbody tr:last");
-
-			// init checkbox saja jika ada
 			newRow.find(".ui.checkbox").checkbox();
-
-			// JANGAN re-init dropdown global
-			// self.initFomantic(); ❌ HAPUS
 		});
 
+		// ==============================
 		// DELETE ROW
+		// ==============================
 		this.container.off("click", ".btn-del-row");
 		this.container.on("click", ".btn-del-row", function () {
 			$(this).closest("tr").remove();
 		});
 
+		// ==============================
 		// DROPDOWN SELECT
-		// =====================================
-		// FIX: scope ke container, bukan document
-		// =====================================
-		// FIX: scope ke container instance
-		// =====================================
-		// FIX: HARUS listen dari document
-		// =====================================
+		// ==============================
 		$(document).off("dropdown:select.documentBuilder");
 
 		$(document).on("dropdown:select.documentBuilder", (e, payload) => {
 			const { target, data, name } = payload;
 
-			// AUTO HEADER
 			if (name === "penandatangan") {
 				this.container.find('[name="jbt_pemberi_tgs"]').val(data.jabatan || "");
 				this.container.find('[name="pangkat_pemberi_tgs"]').val(data.pangkat || "");
 			}
 
-			// INSERT TABLE
-			// =====================================
-			// FIX: hanya gunakan payload + DOM
-			// =====================================
-			let finalTarget = target; // // FIX
+			let finalTarget = target;
 
-			// cari target dari atribut form
 			if (!finalTarget) {
 				const input = this.container.find(`[name="${name}"]`);
-
-				finalTarget = input.data("target-table"); // // FIX
+				finalTarget = input.data("target-table");
 			}
 
-			// fallback manual khusus ASN
 			if (!finalTarget && name === "asn") {
-				finalTarget = "nama_ditugaskan"; // // FIX HARD GUARANTEE
+				finalTarget = "nama_ditugaskan";
 			}
 
 			if (finalTarget) {
 				this.insertToTable(finalTarget, data);
 			}
 		});
-		// 🔥 HANDLE FORMAT DROPDOWN
-		// 🔥 INLINE TOOLBAR HANDLER
+
+		// ==============================
+		// TOOLBAR HANDLER (NO execCommand)
+		// ==============================
 		this.container.off("click", ".doc-toolbar button");
 
 		this.container.on("click", ".doc-toolbar button", function () {
@@ -323,32 +311,55 @@ class DocumentBuilder {
 			let toolbar = btn.closest(".doc-toolbar");
 			let editor = tr.find(".doc-editor");
 
+			editor.focus();
+
 			// =====================================
-			// 🔥 STYLE (BOLD / ITALIC / UNDERLINE)
+			// 🔥 HELPER RANGE API
+			// =====================================
+			function wrapSelection(tag) {
+				let sel = window.getSelection();
+				if (!sel.rangeCount) return;
+
+				let range = sel.getRangeAt(0);
+				let content = range.extractContents();
+
+				let el = document.createElement(tag);
+				el.appendChild(content);
+
+				range.insertNode(el);
+
+				sel.removeAllRanges();
+				let newRange = document.createRange();
+				newRange.selectNodeContents(el);
+				sel.addRange(newRange);
+			}
+
+			// =====================================
+			// STYLE (MODERN)
 			// =====================================
 			let style = btn.data("style");
 
 			if (style) {
-				editor.focus();
-
 				switch (style) {
 					case "bold":
-						document.execCommand("bold");
+						wrapSelection("strong"); // ✅
 						break;
+
 					case "italic":
-						document.execCommand("italic");
+						wrapSelection("em"); // ✅
 						break;
+
 					case "underline":
-						document.execCommand("underline");
+						wrapSelection("u"); // ✅
 						break;
 				}
 
-				btn.toggleClass("active"); // toggle, bukan reset group
-				return; // 🔥 STOP supaya tidak kena logic bawah
+				btn.toggleClass("active");
+				return;
 			}
 
 			// =====================================
-			// 🔥 GROUP LOGIC (TYPE / ALIGN / FORMAT)
+			// GROUP BUTTON
 			// =====================================
 			let groupKey = btn.data("type") ? "type" : btn.data("align") ? "align" : btn.data("format") ? "format" : null;
 
@@ -358,32 +369,79 @@ class DocumentBuilder {
 			}
 
 			// =====================================
-			// TYPE
+			// TYPE (REAL RENDER)
 			// =====================================
 			let type = btn.data("type");
+
 			if (type) {
 				tr.attr("data-type", type);
+
+				let html = editor.html().trim();
+
+				if (type === "list") {
+					editor.html(`<ul><li>${html}</li></ul>`);
+				}
+
+				if (type === "numbered") {
+					editor.html(`<ol><li>${html}</li></ol>`);
+				}
+
+				if (type === "paragraph") {
+					editor.html(editor.text());
+				}
 			}
 
 			// =====================================
 			// ALIGN
 			// =====================================
 			let align = btn.data("align");
+
 			if (align) {
 				tr.attr("data-align", align);
 				editor.css("text-align", align);
 			}
 
 			// =====================================
-			// FORMAT LABEL
+			// FORMAT LABEL (MANUAL BUTTON)
 			// =====================================
 			let format = btn.data("format");
+
 			if (format === "label") {
 				let val = editor.text().trim();
 
 				if (val && !val.includes(":")) {
-					editor.text(val + " : ");
+					let parts = val.split(" ");
+
+					if (parts.length >= 2) {
+						let label = parts.shift();
+						let rest = parts.join(" ");
+
+						editor.html(`<strong>${label}</strong> : ${rest}`);
+					} else {
+						editor.html(val + " : ");
+					}
 				}
+			}
+		});
+
+		// =====================================
+		// AUTO FORMAT "NAMA : ISI" (GLOBAL)
+		// =====================================
+		this.container.off("blur", ".doc-editor");
+
+		this.container.on("blur", ".doc-editor", function () {
+			let el = $(this);
+			let text = el.text().trim();
+
+			if (text.includes(":")) return;
+
+			let parts = text.split(" ");
+
+			if (parts.length >= 2) {
+				let label = parts.shift();
+				let rest = parts.join(" ");
+
+				el.html(`<strong>${label}</strong> : ${rest}`);
 			}
 		});
 	}
@@ -459,90 +517,84 @@ class DocumentBuilder {
 	// LEGACY ROW
 	// ======================================================
 
+	// ======================================================
+	// BUILD ROW (FINAL FIX TATA NASKAH)
+	// ======================================================
 	buildRow(section, columns) {
 		let table = this.container.find(`table[name="${section}"]`);
 		let cols = table.data("columns") || [];
 
-		let row = `<tr data-type="paragraph" data-align="left">`; // default
+		let row = `<tr data-type="paragraph" data-align="justify">`; // ✅ default resmi
 		let cells = [];
 
 		cols.forEach((col, i) => {
 			let key = col.toLowerCase().replace(/\s+/g, "_");
 
 			if (i === 0) {
-				// 🔥 CELL UTAMA + INLINE TOOLBAR
 				cells.push(`
 			<td data-key="${key}" class="doc-cell">
-          <div class="doc-editor" contenteditable="true"></div>
-          <!-- 🔥 TOOLBAR FLOAT -->
-          <div class="doc-toolbar">
+				<div class="doc-editor" contenteditable="true" style="text-align: justify;"></div>
+				<div class="doc-toolbar">
 
-          <!-- TYPE -->
-          <div class="btn-group">
-            <button type="button" class="ui icon button" data-type="paragraph">
-              <i class="align left icon"></i>
-            </button>
-            <button type="button" class="ui icon button" data-type="list">
-              <i class="list ul icon"></i>
-            </button>
-            <button type="button" class="ui icon button" data-type="numbered">
-              <i class="list ol icon"></i>
-            </button>
-          </div>
+					<div class="btn-group">
+						<button type="button" class="ui icon button" data-type="paragraph">
+							<i class="align left icon"></i>
+						</button>
+						<button type="button" class="ui icon button" data-type="list">
+							<i class="list ul icon"></i>
+						</button>
+						<button type="button" class="ui icon button" data-type="numbered">
+							<i class="list ol icon"></i>
+						</button>
+					</div>
 
-          <div class="divider"></div>
+					<div class="divider"></div>
 
-          <!-- ALIGN -->
-          <div class="btn-group">
-            <button type="button" class="ui icon button" data-align="left">
-              <i class="align left icon"></i>
-            </button>
-            <button type="button" class="ui icon button" data-align="center">
-              <i class="align center icon"></i>
-            </button>
-            <button type="button" class="ui icon button" data-align="right">
-              <i class="align right icon"></i>
-            </button>
-            <button type="button" class="ui icon button" data-align="justify">
-              <i class="align justify icon"></i>
-            </button>
-          </div>
+					<div class="btn-group">
+	<button type="button" class="ui icon button" data-align="left">
+		<i class="align left icon"></i>
+	</button>
+	<button type="button" class="ui icon button" data-align="center">
+		<i class="align center icon"></i>
+	</button>
+	<button type="button" class="ui icon button" data-align="right">
+		<i class="align right icon"></i>
+	</button>
+	<button type="button" class="ui icon button" data-align="justify">
+		<i class="align justify icon"></i>
+	</button>
+</div>
 
-          <div class="divider"></div>
+					<div class="divider"></div>
 
-          <!-- TEXT FORMAT -->
-          <div class="btn-group">
-            <button type="button" class="ui icon button" data-style="bold">
-              <i class="bold icon"></i>
-            </button>
-            <button type="button" class="ui icon button" data-style="italic">
-              <i class="italic icon"></i>
-            </button>
-            <button type="button" class="ui icon button" data-style="underline">
-              <i class="underline icon"></i>
-            </button>
-          </div>
+					<div class="btn-group">
+	<button type="button" class="ui icon button" data-style="bold">
+		<i class="bold icon"></i>
+	</button>
+	<button type="button" class="ui icon button" data-style="italic">
+		<i class="italic icon"></i>
+	</button>
+	<button type="button" class="ui icon button" data-style="underline">
+		<i class="underline icon"></i>
+	</button>
+</div>
 
-          <div class="divider"></div>
+					<div class="divider"></div>
 
-          <!-- SPECIAL -->
-          <div class="btn-group">
-            <button type="button" class="ui icon button" data-format="label">
-              <i class="tag icon"></i>
-            </button>
-          </div>
+					<div class="btn-group">
+	<button type="button" class="ui icon button" data-format="label">
+		<i class="tag icon"></i>
+	</button>
+</div>
 
-        </div>
-	</div>
-
-</td>`);
+				</div>
+			</td>
+			`);
 			} else {
-				// kolom lain tetap editable biasa
 				cells.push(`<td contenteditable="true" data-key="${key}"></td>`);
 			}
 		});
 
-		// tombol delete
 		cells.push(`
 	<td class="collapsing">
 		<button type="button" class="ui mini red icon button btn-del-row">
@@ -567,18 +619,14 @@ class DocumentBuilder {
 	}
 
 	// ======================================================
-	// COLLECT DATA
+	// COLLECT DATA (FIX FINAL - PRESERVE FORMAT)
 	// ======================================================
-
 	collectStructure() {
 		let result = {};
 
-		// =========================
-		// TABLE → JSON (DINAMIS)
-		// =========================
 		this.container.find("table[name]").each(function () {
-			let tableName = $(this).attr("name"); // nama tabel dari schema
-			let type = $(this).data("type"); // 🔥 FIX: ambil tipe tabel
+			let tableName = $(this).attr("name");
+			let type = $(this).data("type");
 			let rows = [];
 
 			$(this)
@@ -587,7 +635,6 @@ class DocumentBuilder {
 					let row = {};
 					let tr = $(this);
 
-					// 🔥 ambil metadata row (dari dropdown)
 					let rowType = tr.attr("data-type");
 					let rowAlign = tr.attr("data-align");
 
@@ -597,55 +644,47 @@ class DocumentBuilder {
 							let key = $(this).data("key");
 							let value;
 
-							// 🔥 FIX: ambil dari editor kalau ada
 							let editor = $(this).find(".doc-editor");
 
 							if (editor.length) {
-								value = editor.text().trim();
+								value = editor.html().trim(); // ✅ FIX: preserve HTML
 							} else {
 								value = $(this).text().trim();
 							}
 
 							if (type === "editable_table") {
 								if (key === "uraian") {
-									row.text = value; // isi utama
+									row.text = value;
 								} else {
-									row[key] = value; // fallback (future-proof)
+									row[key] = value;
 								}
 							} else {
 								row[key] = value;
 							}
 						});
 
-					// 🔥 FINALIZE editable_table
 					if (type === "editable_table") {
-						row.type = rowType || row.type || "paragraph"; // prioritas dropdown
+						row.type = rowType || "paragraph";
 						row.text = row.text || "";
 
 						if (rowAlign) {
-							row.align = rowAlign; // simpan align
+							row.align = rowAlign;
 						}
 					}
-					// =====================================
-					// FIX: simpan identity row
-					// =====================================
-					let rowId = tr.attr("data-id"); // // FIX
+
+					let rowId = tr.attr("data-id");
 					if (rowId) {
-						row._id = rowId; // // FIX
+						row._id = rowId;
 					}
+
 					if (Object.keys(row).length) {
 						rows.push(row);
 					}
 				});
 
-			// 🔥 NORMALISASI OUTPUT
 			if (type === "editable_table") {
 				result[tableName] = rows.map((r) => ({
-					// =====================================
-					// FIX: preserve identity
-					// =====================================
-					...(r._id ? { _id: r._id } : {}), // // FIX
-
+					...(r._id ? { _id: r._id } : {}),
 					type: r.type || "paragraph",
 					text: r.text || "",
 					...(r.align ? { align: r.align } : {}),
@@ -654,88 +693,7 @@ class DocumentBuilder {
 				result[tableName] = rows;
 			}
 		});
-		// =========================
-		// FIELD BIASA (SCHEMA DRIVEN)
-		// =========================
-		this.container
-			.find("input, textarea, select")
-			.not("table input, table textarea")
-			.each((i, el) => {
-				let name = $(el).attr("name");
-				if (!name) return;
 
-				// 🔥 FIX: JANGAN IZINKAN FIELD SYSTEM OVERRIDE CORE REQUEST
-				if (name === "action") return; // // cegah override action
-
-				// =====================================
-				// FIX: ambil schema fields
-				// =====================================
-				let schemaFields = [];
-
-				// =====================================
-				// FIX: flatten semua field schema
-				// =====================================
-				const extractFields = (items) => {
-					items.forEach((f) => {
-						if (f.name) {
-							schemaFields.push(f); // // FIX
-						}
-						if (Array.isArray(f.fields)) {
-							extractFields(f.fields); // // FIX recursive
-						}
-					});
-				};
-
-				if (this.schema) {
-					let root = this.schema.sections || this.schema;
-					if (Array.isArray(root)) {
-						extractFields(root); // // FIX
-					}
-				}
-
-				// =====================================
-				// FIX: hanya ambil field yg ada di schema
-				// =====================================
-				const fieldDef = schemaFields.find((f) => f.name === name);
-
-				// =====================================
-				// FIX: allow hidden/system field
-				// =====================================
-				if (!fieldDef) {
-					if ($(el).attr("type") === "hidden") {
-						result[name] = $(el).val(); // // FIX
-					}
-					return;
-				}
-
-				// =====================================
-				// FIX: skip dropdown_ajax yang punya target
-				// =====================================
-				if (fieldDef.type === "dropdown_ajax" && fieldDef.target) {
-					return; // // FIX
-				}
-
-				let value = $(el).val();
-
-				// =====================================
-				// FIX: DETEKSI BERDASARKAN SCHEMA
-				// =====================================
-				if (fieldDef.type === "calendar" || fieldDef.type === "date") {
-					value = UIComponents.toISODateTime(value); // // FIX
-				}
-
-				result[name] = value;
-			});
-
-		// =====================================
-		// FIX: pisahkan struktur dari root
-		// =====================================
-		// =====================================
-		// FIX: HINDARI NESTED struktur_json
-		// =====================================
-
-		// pastikan tidak ada struktur_json di dalam result
-		// 🔥 AMBIL LANGSUNG ROOT TANPA WRAP LAGI
 		return result;
 	}
 }
