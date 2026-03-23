@@ -878,6 +878,10 @@ UPDATE (FIXED STABLE VERSION v3.1)
 
     $id = $request['id_row'] ?? null;
 
+    // // 🔥 inject primary key ke filtered agar validateDuplicate bisa exclude self
+    $primaryKey = $this->getPrimaryKey($table); // // ambil pk tabel
+    $request[$primaryKey] = $id; // // inject ke request supaya masuk filtered
+
     if (!$id) {
       return JsonResponse::error("ID tidak ditemukan");
     }
@@ -902,6 +906,9 @@ IGNORE SYSTEM FIELD
       if (in_array($key, $columns)) {
         $filtered[$key] = $value;
       }
+      // // 🔥 inject primary key manual
+      $primaryKey = $this->getPrimaryKey($table); // //
+      $filtered[$primaryKey] = $id; // //
     }
 
     if (empty($filtered)) {
@@ -2111,22 +2118,25 @@ VALIDASI IMPORT PERMISSION
     // tidak dapat melewati validasi duplicate secara bersamaan
     // ==========================================================
 
+    // // jika ada id_row (edit mode), exclude row itu sendiri
+    if (!empty($data[$primaryKey])) {
+
+      $whereParts[] = "`$primaryKey` != ?"; // // exclude current row
+      $params[] = $data[$primaryKey]; // // ambil id dari request
+    }
+
+    // // jalankan query duplicate
     $exists = $this->db->query(
-
       "SELECT `$primaryKey`
-                FROM `$table`
-                WHERE " . implode(" AND ", $whereParts) . "
-                LIMIT 1
-                FOR UPDATE",
-
+   FROM `$table`
+   WHERE " . implode(" AND ", $whereParts) . "
+   LIMIT 1
+   FOR UPDATE",
       $params
-
     )->fetch();
 
-    // jika data ditemukan
+    // // hanya error jika benar-benar row lain
     if ($exists) {
-
-      // lempar error duplicate
       throw new Exception(
         "Duplicate data terdeteksi pada kombinasi: "
           . implode(', ', $fields)
@@ -4543,7 +4553,9 @@ AND is_deleted = 0
         $whereParts[] = "`$f` = ?";
         $params[] = $val;
       }
-
+      // // tambahkan pengecualian ID aktif
+      $whereParts[] = "`$primaryKey` != ?"; // // exclude current row
+      $params[] = $oldData[$primaryKey]; // // ambil id existing
       $exists = $this->db->query(
         "SELECT $primaryKey FROM `$table`
        WHERE " . implode(" AND ", $whereParts) . "

@@ -32,7 +32,7 @@
           <i class="purple sitemap icon"></i> RENSTRA
         </a>
 
-        <a class="item" href="/renja" data-spa="server" data-title="Anggaran/Rnja">
+        <a class="item" href="/renja" data-spa="server" data-title="Anggaran/Renja">
           <i class="violet tasks icon"></i> RENJA
         </a>
 

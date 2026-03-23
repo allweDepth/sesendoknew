@@ -1976,6 +1976,7 @@ $profiles = [
           'id',
           'judul',
           'slug',
+          'konten',
           'gambar',
           'kd_wilayah',
           'kd_opd',
@@ -1986,6 +1987,7 @@ $profiles = [
         'searchable' => [
           'judul',
           'slug',
+          'konten',
           'username_insert'
         ],
 
