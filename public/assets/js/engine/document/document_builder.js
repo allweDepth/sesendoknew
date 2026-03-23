@@ -735,10 +735,7 @@ class DocumentBuilder {
 		// =====================================
 
 		// pastikan tidak ada struktur_json di dalam result
-		delete result.struktur_json; // // FIX
-
-		return {
-			struktur_json: result, // // FIX
-		};
+		// 🔥 AMBIL LANGSUNG ROOT TANPA WRAP LAGI
+		return result;
 	}
 }

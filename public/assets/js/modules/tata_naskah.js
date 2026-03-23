@@ -203,7 +203,7 @@ class TataNaskahModule {
 			const payload = builder.collectStructure();
 			// 🔥 WAJIB STRINGIFY DI SINI
 			const finalPayload = {
-				struktur_json: JSON.stringify(payload.struktur_json),
+				struktur_json: JSON.stringify(payload),
 			};
 			window.Ajax.request({
 				url: AppConfig.apiUrl + "dynamic",
