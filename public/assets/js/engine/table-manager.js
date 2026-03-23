@@ -310,7 +310,10 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			html += `<tr data-id="${id}"${extra}>`;
 
 			let btnExtra = "";
-
+			// =====================================================
+			// DEFAULT HARDCODE (TETAP ADA)
+			// =====================================================
+			console.log("tbl pembentuk rows : " + this.state.tbl);
 			switch (this.state.tbl) {
 				case "rekanan":
 				case "rekanan_neo":
@@ -321,11 +324,31 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 						</button>
 					`;
 					break;
-
+				case "trx_naskah_dinas":
+					btnExtra += `
+        <button class="ui teal button"
+            data-action="export_pdf"
+            data-tbl="${this.state.tbl}">
+            <i class="file pdf icon"></i>
+        </button>
+    `;
+					break;
 				default:
 					break;
 			}
-
+			// =====================================================
+			// 🔥 NEW: GLOBAL INJECTION HOOK
+			// =====================================================
+			// cek apakah ada injector global
+			if (window.TableRowInjector && typeof window.TableRowInjector === "function") {
+				btnExtra +=
+					window.TableRowInjector({
+						row: row, // data row
+						tbl: this.state.tbl, // nama tabel
+						id: id, // primary key
+						state: this.state, // state global
+					}) || "";
+			}
 			columns.forEach((col) => {
 				let value = row[col.key] ?? "";
 				value = this.formatValue(value, col.format);
@@ -469,7 +492,7 @@ data-id="${id}">
 
 			const id = $(e.currentTarget).closest("tr").data("id");
 
-			this.handleAction(action, id);
+			this.handleAction(action, id, e.currentTarget);
 		});
 
 		// =====================================================
@@ -512,7 +535,29 @@ data-id="${id}">
 			case "akta":
 				this.openAkta(id);
 				break;
+			// =====================================================
+			// EXPORT PDF
+			// =====================================================
+			case "export_pdf":
+				this.exportPdf(id, event.currentTarget); // kirim element
+				break;
 		}
+	}
+	// =====================================================
+	// EXPORT PDF
+	// =====================================================
+	exportPdf(id, el = null) {
+		// =====================================================
+		// PRIORITAS data-tbl dari button
+		// =====================================================
+		let tbl = this.state.tbl;
+
+		if (el) {
+			const btnTbl = $(el).data("tbl"); // baca dari DOM
+			if (btnTbl) tbl = btnTbl;
+		}
+
+		window.open(`/tata_naskah/generate_pdf?tbl=${tbl}&id=${id}`, "_blank");
 	}
 	openAkta(id) {
 		const form = new FormEngine({

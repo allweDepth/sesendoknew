@@ -204,6 +204,10 @@ PERUBAHAN:
         return JsonResponse::error("ID tidak ditemukan");
       case 'edit_json':
         $this->authorize('edit', $table);
+        // // DEBUG GUARD
+        if (empty($request['struktur_json'])) {
+          return JsonResponse::error("struktur_json tidak terkirim"); // // pastikan request benar
+        }
         return $this->updateJson($table, $request); // 🔥
       case 'delete':
         $this->authorize('delete', $table);
