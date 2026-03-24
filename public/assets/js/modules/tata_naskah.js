@@ -409,34 +409,39 @@ class TataNaskahModule {
 		this.currentId = data?.id || null; // // simpan id jika edit
 		this.formContainer.show("");
 
-		// 🔥 FIX KRITIS: delay agar DOM siap (sesuai behavior lama async)
+		// 🔥 delay agar DOM siap
 		setTimeout(() => {
 			$("#mainModal").modal("show");
 		}, 0);
 
 		const container = $(this.formContainerSelector);
 
+		// =====================================
+		// 🔥 DESTROY BUILDER LAMA
+		// =====================================
 		if (window.documentBuilder) {
 			window.documentBuilder.destroy?.(); // // hancurkan instance lama
 		}
 
-		// kosongkan container TANPA bikin form baru
+		// =====================================
+		// 🔥 RESET CONTAINER
+		// =====================================
 		$("#form_modal").html("");
-		// builder render isi saja (BUKAN form)
+
+		// =====================================
+		// 🔥 INIT DOCUMENT BUILDER
+		// =====================================
 		window.documentBuilder = new DocumentBuilder($("#form_modal"));
 
 		// =====================================
-		// 🔥 FIX: NORMALISASI SCHEMA (KRITIS)
+		// 🔥 NORMALISASI SCHEMA
 		// =====================================
 		if (Array.isArray(schema)) {
 			schema = { sections: schema };
 		}
 
-		window.documentBuilder.schema = schema;
-		window.documentBuilder.data = data;
-
 		// =====================================
-		// 🔥 HANDLE struktur_json SEBELUM render
+		// 🔥 HANDLE struktur_json
 		// =====================================
 		if (data.struktur_json) {
 			let json = data.struktur_json;
@@ -455,78 +460,87 @@ class TataNaskahModule {
 			};
 		}
 
-		// 🔥 SET DATA SEKALI
+		// =====================================
+		// 🔥 SET BUILDER
+		// =====================================
+		window.documentBuilder.schema = schema;
 		window.documentBuilder.data = data;
 
-		// 🔥 RENDER SEKALI SAJA
+		// =====================================
+		// 🔥 RENDER
+		// =====================================
 		window.documentBuilder.render();
 
 		// =====================================
-		// 🔥 INJECT DATA (EDIT ONLY)
+		// 🔥 NORMALISASI ASN DATA (SATU SUMBER)
+		// =====================================
+		const asnData =
+			extra?.db_asn_pemda_neo || // // EDIT MODE (utama)
+			res?.db_asn_pemda_neo || // // fallback
+			res?.asn || // // ADD MODE
+			res?.data_asn || // // fallback lama
+			[];
+
+		// =====================================
+		// 🔥 DESTROY DROPDOWN LAMA
+		// =====================================
+		if (window.dropdownEngine) {
+			window.dropdownEngine.destroy?.(); // // hapus instance lama
+			window.dropdownEngine = null;
+		}
+
+		// =====================================
+		// 🔥 INIT DROPDOWN ENGINE (WAJIB SEBELUM SET VALUE)
+		// =====================================
+		window.dropdownEngine = new DropdownEngine($("#form_modal"), {
+			...res,
+			asn: asnData,
+			penandatangan: asnData,
+			db_asn_pemda_neo: asnData,
+			data: {},
+		});
+
+		window.dropdownEngine.init(); // // penting: bikin .dropdown() + values
+
+		// =====================================
+		// 🔥 SET VALUE (SETELAH INIT)
 		// =====================================
 		Object.entries(data).forEach(([key, val]) => {
-			if (typeof val === "object") return;
+			if (typeof val === "object") return; // skip list/editor
 
-			const el = container.find(`[name="${key}"]`);
-			if (!el.length) return;
+			// =====================================
+			// 🔥 LANGSUNG TARGET DROPDOWN DARI WRAPPER
+			// =====================================
+			const dropdown = container.find(`.ui.dropdown:has(input[name="${key}"])`);
 
-			if (el.hasClass("ui dropdown")) return;
+			if (dropdown.length) {
+				dropdown.dropdown("set selected", val); // langsung ke wrapper
+				return;
+			}
 
-			el.val(val);
+			// =====================================
+			// INPUT BIASA
+			// =====================================
+			const input = container.find(`[name="${key}"]`);
+			if (!input.length) return;
+
+			input.val(val);
 		});
 
 		// =====================================
-		// 🔥 TRIGGER UI
+		// 🔥 TRIGGER UI SYNC
 		// =====================================
 		container.find("select").trigger("change");
 		container.find("input, textarea").trigger("input");
 
 		// =====================================
-		// 🔥 ADD ONLY → inject jenis_id
+		// 🔥 ADD MODE → inject jenis_id
 		// =====================================
 		if (jenisId) {
 			$("#form_modal").find('input[name="jenis_id"]').remove(); // // hapus lama
 			const hidden = `<input type="hidden" name="jenis_id" value="${jenisId}">`;
 			$("#form_modal").append(hidden); // // inject baru
 		}
-
-		// =====================================
-		// 🔥 DROPDOWN ENGINE
-		// =====================================
-
-		// 🔥 HANCURKAN instance lama (WAJIB)
-		if (window.dropdownEngine) {
-			window.dropdownEngine.destroy?.();
-			window.dropdownEngine = null;
-		}
-
-		// =====================================
-		// 🔥 FIX UTAMA: NORMALISASI DATA ADD + EDIT
-		// =====================================
-		const asnData =
-			extra?.db_asn_pemda_neo || // EDIT MODE (utama)
-			res?.db_asn_pemda_neo || // fallback lama
-			res?.asn || // ADD MODE (INI YANG HILANG SEBELUMNYA)
-			[];
-
-		// DEBUG (boleh hapus nanti)
-		console.log("ASN FINAL:", asnData?.length);
-
-		// =====================================
-		// 🔥 INIT DROPDOWN ENGINE
-		// =====================================
-		window.dropdownEngine = new DropdownEngine($("#form_modal"), {
-			...res,
-
-			// 🔥 SEMUA SOURCE DISATUKAN
-			asn: asnData,
-			penandatangan: asnData,
-			db_asn_pemda_neo: asnData,
-
-			data: {},
-		});
-
-		window.dropdownEngine.init();
 	}
 	/**
 	 * SHOW FORM TAMBAH
