@@ -217,8 +217,22 @@ class DocumentBuilder {
 		let columns = field.columns || ["URAIAN"];
 
 		let showAction = this.hasActionColumn(key);
-
+		// 🔥 ambil label jika ada, fallback ke name
+		let label = field.label || key; // tampil ke user
 		return `
+<div class="doc-table-block"> <!-- // wrapper supaya jelas section -->
+
+	<div class="doc-table-title" 
+	style="
+		display:flex; 
+		justify-content:flex-end; 
+		align-items:center;
+		margin-top:10px; // // kasih jarak dari atas
+		margin-bottom:2px; // // rapat ke tabel
+	">
+	<span style="font-size:11px; opacity:.5;">${label}</span>
+</div>
+
 	<table class="ui celled structured table" 
 		name="${key}" 
 		data-type="editable_table"
@@ -235,7 +249,7 @@ class DocumentBuilder {
 			</tr>
 		</thead>
 		<tbody></tbody>
-	</table>`;
+	</table></div>`;
 	}
 
 	// ======================================================
