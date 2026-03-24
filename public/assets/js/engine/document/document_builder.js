@@ -221,14 +221,12 @@ class DocumentBuilder {
 		let label = field.label || key; // tampil ke user
 		return `
 <div class="doc-table-block"> <!-- // wrapper supaya jelas section -->
-
 	<div class="doc-table-title" 
 	style="
 		display:flex; 
 		justify-content:flex-end; 
 		align-items:center;
-		margin-top:10px; // // kasih jarak dari atas
-		margin-bottom:2px; // // rapat ke tabel
+		margin-top:12px; // // jarak dari atas
 	">
 	<span style="font-size:11px; opacity:.5;">${label}</span>
 </div>
@@ -236,7 +234,7 @@ class DocumentBuilder {
 	<table class="ui celled structured table" 
 		name="${key}" 
 		data-type="editable_table"
-		data-columns='${JSON.stringify(columns)}'>
+		data-columns='${JSON.stringify(columns)}' style="margin-top:0;">
 		<thead>
 			<tr>
 				${columns.map((c) => `<th>${c}</th>`).join("")}
