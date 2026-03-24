@@ -178,7 +178,7 @@ class TataNaskahModule {
 		// REFRESH TABLE
 		// =====================================
 		$(document).on("form:success", () => {
-			this.tableManager.loadData();
+			this.tableManager.fetchData();
 		});
 
 		$(document).on("click", ".kelompok-card", (e) => {
