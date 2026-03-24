@@ -12,7 +12,7 @@ class TataNaskahModule {
 		this.currentId = null; // // menyimpan id saat edit
 		this.state.setTable("trx_naskah_dinas"); // set tabel agar TableManager tahu tabel yang dipakai
 
-		this.mainContainer = "#form_modal";
+		this.mainContainer = '[name="tabel_trx_naskah_dinas"]';
 
 		this.formContainerSelector = "#form_modal";
 
@@ -153,6 +153,7 @@ class TataNaskahModule {
 			// =====================================
 			form.trigger("submit"); // // panggil handler submit di atas
 		});
+
 		// =====================================
 		// EDIT
 		// =====================================
@@ -177,7 +178,7 @@ class TataNaskahModule {
 		// =====================================
 		// REFRESH TABLE
 		// =====================================
-		$(document).on("form:success", () => {
+		$(document).on(`form:success.${this.state.tbl}.table`, () => {
 			this.tableManager.fetchData();
 		});
 
@@ -197,12 +198,18 @@ class TataNaskahModule {
 		// 🔥 FIX: SUBMIT VIA DocumentBuilder
 		// =====================================
 		$(document).on("submit", "#form_modal", (e) => {
-			e.preventDefault();
+			e.preventDefault(); // // cegah reload
 
-			const builder = window.documentBuilder;
-			if (!builder) return;
+			console.log("SUBMIT TRIGGERED"); // // TRACE WAJIB
 
-			const payload = builder.collectStructure();
+			const builder = window.documentBuilder; // // ambil instance builder global
+
+			if (!builder) {
+				console.error("documentBuilder tidak ditemukan"); // // logging jelas
+				return; // // stop karena memang wajib
+			}
+
+			const payload = builder.collectStructure(); // // ambil struktur form
 			// 🔥 WAJIB STRINGIFY DI SINI
 			const finalPayload = {
 				struktur_json: JSON.stringify(payload),
@@ -219,7 +226,7 @@ class TataNaskahModule {
 				success: (res) => {
 					if (res.success) {
 						Toast.show("success", "Data berhasil disimpan");
-						$(document).trigger("form:success");
+						$(document).trigger(`form:success.${this.state.tbl}.table`); // // sesuai TableManager listener
 					} else {
 						Toast.show("error", res.message || "Gagal");
 					}
@@ -531,9 +538,7 @@ class TataNaskahModule {
                 <label>Judul</label>
                 <input type="text" name="judul">
             </div>
-            <button class="ui green button" type="submit">
-                Simpan
-            </button>
+           
       
         `;
 		this.formContainer.show(html);
