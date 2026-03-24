@@ -211,8 +211,8 @@ class TataNaskahModule {
 				url: AppConfig.apiUrl + "dynamic",
 				method: "POST",
 				data: {
-					action: this.currentId ? "edit_json" : "add_json",
-					id_row: this.currentId, // // kirim id saat edit
+					action: this.currentId !== null ? "edit_json" : "add_json", // // STRICT CHECK
+					id_row: this.currentId !== null ? this.currentId : "", // // hindari null
 					tbl: this.state.tbl,
 					...finalPayload,
 				},
@@ -309,7 +309,11 @@ class TataNaskahModule {
 	 * LOAD SCHEMA FORM
 	 */
 	loadSchema(jenisId, id = null) {
-		this.currentId = null;
+		if (id) {
+			this.currentId = id; // // SET LANGSUNG JIKA EDIT
+		} else {
+			this.currentId = null; // // hanya reset saat add
+		}
 		// =====================================
 		// EDIT MODE
 		// =====================================

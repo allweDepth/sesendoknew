@@ -352,6 +352,16 @@ class DocumentBuilder {
 			let style = btn.data("style");
 
 			if (style) {
+				let current = tr.attr("data-style") || ""; // // ambil existing
+				let arr = current ? current.split(",") : []; // // jadi array
+
+				if (arr.includes(style)) {
+					arr = arr.filter((s) => s !== style); // // toggle OFF
+				} else {
+					arr.push(style); // // toggle ON
+				}
+
+				tr.attr("data-style", arr.join(",")); // // simpan ke TR
 				switch (style) {
 					case "bold":
 						wrapSelection("strong"); // ✅
@@ -388,19 +398,19 @@ class DocumentBuilder {
 			if (type) {
 				tr.attr("data-type", type);
 
-				let html = editor.html().trim();
+				// let html = editor.html().trim();
 
-				if (type === "list") {
-					editor.html(`<ul><li>${html}</li></ul>`);
-				}
+				// if (type === "list") {
+				// 	editor.html(`<ul><li>${html}</li></ul>`);
+				// }
 
-				if (type === "numbered") {
-					editor.html(`<ol><li>${html}</li></ol>`);
-				}
+				// if (type === "numbered") {
+				// 	editor.html(`<ol><li>${html}</li></ol>`);
+				// }
 
-				if (type === "paragraph") {
-					editor.html(editor.text());
-				}
+				// if (type === "paragraph") {
+				// 	editor.html(editor.text());
+				// }
 			}
 
 			// =====================================
@@ -420,7 +430,7 @@ class DocumentBuilder {
 
 			if (format === "label") {
 				let val = editor.text().trim();
-
+				tr.attr("data-format", "label"); // // SIMPAN KE TR
 				if (val && !val.includes(":")) {
 					let parts = val.split(" ");
 
@@ -647,8 +657,10 @@ class DocumentBuilder {
 					let row = {};
 					let tr = $(this);
 
-					let rowType = tr.attr("data-type");
-					let rowAlign = tr.attr("data-align");
+					let rowType = tr.attr("data-type"); // // ambil type
+					let rowAlign = tr.attr("data-align"); // // ambil align
+					let rowStyle = tr.attr("data-style"); // // ambil style
+					let rowFormat = tr.attr("data-format"); // // ambil format
 
 					$(this)
 						.find("td[data-key]")
@@ -676,11 +688,22 @@ class DocumentBuilder {
 						});
 
 					if (type === "editable_table") {
+						let rowStyle = tr.attr("data-style"); // // AMBIL STYLE
+						let rowFormat = tr.attr("data-format"); // // AMBIL FORMAT
+
 						row.type = rowType || "paragraph";
 						row.text = row.text || "";
 
 						if (rowAlign) {
 							row.align = rowAlign;
+						}
+
+						if (rowStyle) {
+							row.style = rowStyle.split(","); // // jadi array
+						}
+
+						if (rowFormat) {
+							row.format = rowFormat;
 						}
 					}
 
@@ -696,10 +719,12 @@ class DocumentBuilder {
 
 			if (type === "editable_table") {
 				result[tableName] = rows.map((r) => ({
-					...(r._id ? { _id: r._id } : {}),
-					type: r.type || "paragraph",
-					text: r.text || "",
-					...(r.align ? { align: r.align } : {}),
+					...(r._id ? { _id: r._id } : {}), // // id tetap
+					type: r.type || "paragraph", // // type tetap
+					text: r.text || "", // // text tetap
+					...(r.align ? { align: r.align } : {}), // // align tetap
+					...(r.style ? { style: r.style } : {}), // // TAMBAH STYLE
+					...(r.format ? { format: r.format } : {}), // // TAMBAH FORMAT
 				}));
 			} else {
 				result[tableName] = rows;
