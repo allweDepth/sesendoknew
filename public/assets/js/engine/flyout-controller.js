@@ -177,7 +177,12 @@ JIKA TIDAK ADA → PERTAHANKAN STATE MENU
 			return;
 		}
 
-		const id = $btn.data("id") || null;
+		let id = $btn.data("id") || null; // // ambil dari button
+
+		if (!id) {
+			// // jika tidak ada di button
+			id = $btn.closest("tr").data("id") || null; // // fallback ke <tr>
+		}
 
 		const container = $btn.data("container") || "flyout";
 
@@ -221,7 +226,8 @@ ISI FIELD TIPE UNTUK MODULE MAPPING
    agar submit edit memiliki primary key
 ========================================================= */
 
-		if (action === "edit" && id) {
+		if ((action === "edit" || action === "edit_json") && id) {
+			// // include edit_json
 			const $form = $(formSelector);
 
 			// cek apakah field id_row sudah ada
