@@ -464,8 +464,8 @@ class TataNaskahModule {
 		// 🔥 FIX WAJIB: TAMBAHKAN ERROR MESSAGE CONTAINER
 		// ======================================================
 		if (!$("#form_modal").find(".ui.error.message").length) {
-			$("#form_modal").prepend(`
-			<div class="ui error message"></div> // wajib agar error tampil
+			$("#form_modal").append(`
+			<div class="ui error message"></div> 
 		`);
 		}
 
@@ -511,48 +511,77 @@ class TataNaskahModule {
 			<input type="hidden" name="jenis_id" value="${jenisId}">
 		`);
 		}
-
 		// ======================================================
-		// 🔥 INIT FOMANTIC VALIDATION (FIX TOTAL)
+		// 🔥 INIT FOMANTIC VALIDATION (FINAL STABLE)
 		// ======================================================
 		const form = $("#form_modal");
 
+		// =====================================
+		// 🔥 DESTROY DULU (WAJIB BIAR TIDAK DOUBLE)
+		// =====================================
+		form.form("destroy");
+
+		// =====================================
+		// AMBIL CONFIG
+		// =====================================
 		const config = UIConfig[this.state.req] || UIConfig[this.state.tbl] || {};
 		const validationConfig = config.validation || {};
 
 		const fields = {};
 
 		// =====================================
-		// dari UIConfig
+		// 🔥 LOOP UIConfig → FILTER DOM NYATA
 		// =====================================
 		Object.keys(validationConfig).forEach((name) => {
-			const label = form.find(`[name="${name}"]`).closest(".field").find("label").text() || name;
+			const input = form.find(`[name="${name}"]`);
+
+			// ❗ WAJIB: skip jika tidak ada di DOM
+			if (!input.length) return;
+
+			const fieldWrapper = input.closest(".field");
+			const label = fieldWrapper.find("label").text() || name;
+
+			const rules = [];
+
+			// required
+			if (validationConfig[name].required) {
+				rules.push({
+					type: "empty",
+					prompt: `${label} wajib diisi`,
+				});
+			}
+
+			// OPTIONAL: extend rule lain kalau ada
+			if (validationConfig[name].type === "number") {
+				rules.push({
+					type: "number",
+					prompt: `${label} harus angka`,
+				});
+			}
+
+			if (validationConfig[name].type === "email") {
+				rules.push({
+					type: "email",
+					prompt: `${label} tidak valid`,
+				});
+			}
 
 			fields[name] = {
 				identifier: name,
-				rules: [
-					...(validationConfig[name].required
-						? [
-								{
-									type: "empty",
-									prompt: `${label} wajib diisi`,
-								},
-							]
-						: []),
-				],
+				rules: rules,
 			};
 		});
 
 		// =====================================
-		// 🔥 FIX: fallback jika kosong
+		// 🔥 JIKA KOSONG → JANGAN INIT
 		// =====================================
-		if (Object.keys(fields).length === 0) {
-			console.error("VALIDATION TIDAK TERPASANG - UIConfig kosong"); // // TRACE
-			return; // // tidak ada validation → biarkan submit lanjut
+		if (!Object.keys(fields).length) {
+			console.warn("VALIDATION SKIP: tidak ada field cocok di DOM");
+			return;
 		}
 
 		// =====================================
-		// 🔥 WAJIB: INIT FORM
+		// 🔥 INIT FOMANTIC
 		// =====================================
 		form.form({
 			inline: true,
