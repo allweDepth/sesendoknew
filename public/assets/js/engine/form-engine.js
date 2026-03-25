@@ -228,186 +228,147 @@ SET VALUE NORMAL
 		});
 	}
 
-	/**
-	 * ============================================================
-	 * SUBMIT FORM
-	 * ============================================================
-	 */
-	/**
-	 * ============================================================
-	 * SUBMIT FORM
-	 * ============================================================
-	 */
+	//  * ============================================================
+	//  * SUBMIT FORM
+	//  * ============================================================
+
 	submit(e) {
 		if (e) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
+			e.preventDefault(); // // cegah submit default browser
+			e.stopImmediatePropagation(); // // cegah event lain
 		}
+
+		// ======================================================
+		// BLOK JIKA VALIDATION TIDAK TERDEFINISI
+		// ======================================================
+		if (this.validationDisabled === true) {
+			Toast.error("Validation belum dikonfigurasi pada UIConfig"); // // tampilkan toast error
+
+			this.isSubmitting = false; // // reset flag submit
+			return; // // hentikan submit
+		}
+
 		// ======================================================
 		// CEGAH DOUBLE SUBMIT GLOBAL
 		// ======================================================
 		if (this.isSubmitting === true) {
-			return;
+			return; // // jika sedang submit, hentikan
 		}
 
 		// ======================================================
 		// AKTIFKAN LOCK SEBELUM VALIDASI
 		// ======================================================
-		this.isSubmitting = true;
+		this.isSubmitting = true; // // kunci submit
 
-		const form = $(this.formSelector);
+		const form = $(this.formSelector); // // ambil form
+
 		// ======================================================
 		// GUARD FORM SELECTOR (WAJIB)
 		// ======================================================
 		if (!form.length) {
-			console.error("Form selector tidak ditemukan:", this.formSelector); // ← TRACE
-			this.isSubmitting = false;
+			console.error("Form selector tidak ditemukan:", this.formSelector); // // debug
+			this.isSubmitting = false; // // reset flag
 			return;
 		}
 
 		// ======================================================
 		// VALIDASI FOMANTIC (SINGLE ENGINE)
 		// ======================================================
-		form.form("validate form");
+		form.form("validate form"); // // trigger validasi
 
 		if (!form.form("is valid")) {
-			this.isSubmitting = false;
-			return;
-		}
-		// ======================================================
-		// VALIDASI FORM FOMANTIC
-		// ======================================================
-		form.form("validate form");
-
-		if (!form.form("is valid")) {
-			this.isSubmitting = false;
-			return;
+			this.isSubmitting = false; // // reset jika tidak valid
+			return; // // stop submit
 		}
 
 		// ======================================================
 		// NORMALISASI CALENDAR KOSONG
 		// ======================================================
-		// ======================================================
-		// NORMALISASI CALENDAR KOSONG
-		// ======================================================
-		const disabledCalendars = [];
+		const disabledCalendars = []; // // simpan input calendar kosong
 
 		form.find(".ui.calendar input").each(function () {
 			if ($(this).val() === "") {
-				$(this).prop("disabled", true);
-
-				// simpan referensi untuk diaktifkan kembali
-				disabledCalendars.push(this);
+				$(this).prop("disabled", true); // // disable agar tidak ikut submit
+				disabledCalendars.push(this); // // simpan untuk restore
 			}
 		});
 
 		// ======================================================
-		// CEK INPUT FILE
+		// GUNAKAN FORM DATA UNTUK SEMUA MODE
 		// ======================================================
-		const hasFileInput = form.find('input[type="file"]').length > 0;
-
-		// ======================================================
-		// MODE IMPORT FILE
-		// ======================================================
-		if (hasFileInput) {
-			const formElement = document.querySelector(this.formSelector);
-
-			const formData = new FormData(formElement);
-
-			formData.append("action", this.state.action);
-			formData.append("tbl", this.state.tbl);
-
-			this.ajax.request({
-				data: formData,
-
-				processData: false,
-
-				contentType: false,
-
-				success: () => {
-					this.isSubmitting = false;
-
-					// ==================================================
-					// AKTIFKAN KEMBALI CALENDAR YANG TADI DISABLE
-					// ==================================================
-					disabledCalendars.forEach((el) => {
-						$(el).prop("disabled", false);
-					});
-
-					const reloadTable = this.state.reloadTable || this.state.tbl;
-
-					$(document).trigger(`form:success.${reloadTable}.table`);
-				},
-
-				error: () => {
-					this.isSubmitting = false;
-
-					disabledCalendars.forEach((el) => {
-						$(el).prop("disabled", false);
-					});
-				},
-			});
-
-			return;
-		}
+		const formElement = document.querySelector(this.formSelector); // // ambil DOM form
+		const formData = new FormData(formElement); // // selalu FormData
 
 		// ======================================================
-		// MODE NORMAL SUBMIT
+		// TAMBAH STRUKTUR JSON (DOCUMENT BUILDER)
 		// ======================================================
-
-		/* =====================================================
-AMBIL STATE GLOBAL
-===================================================== */
-
-		let formData = form.serialize(); // data normal form
-
-		// ======================================================
-		// TAMBAH STRUKTUR JSON DARI DOCUMENT BUILDER untuk tata naskah
-		// ======================================================
-
 		if (window.documentBuilder) {
-			// cek builder ada
-
-			const struktur = window.documentBuilder.collectStructure(); // ambil struktur table
+			const struktur = window.documentBuilder.collectStructure(); // // ambil struktur
 
 			if (Object.keys(struktur).length) {
-				formData += "&struktur_json=" + encodeURIComponent(JSON.stringify(struktur)); // kirim json
+				formData.append("struktur_json", JSON.stringify(struktur)); // // append JSON
 			}
 		}
 
-		formData += `&action=${this.state.action}`;
-		formData += `&tbl=${this.state.tbl}`;
+		// ======================================================
+		// TAMBAH PARAM CORE
+		// ======================================================
+		formData.append("action", this.state.action); // // action backend
+		formData.append("tbl", this.state.tbl); // // nama tabel
 
-		// ambil req hanya dari state
+		// ======================================================
+		// TAMBAH REQ JIKA ADA
+		// ======================================================
 		if (this.state.req !== null && this.state.req !== undefined) {
-			formData += `&req=${encodeURIComponent(this.state.req)}`;
+			formData.append("req", this.state.req); // // request tambahan
 		}
 
-		// =====================================
-		// FIX GLOBAL: forward semua state tambahan
-		// =====================================
+		// ======================================================
+		// FORWARD SEMUA STATE TAMBAHAN
+		// ======================================================
 		Object.keys(this.state).forEach((key) => {
-			if (["action", "tbl", "req"].includes(key)) return; // skip core
+			if (["action", "tbl", "req"].includes(key)) return; // // skip core
 
 			const val = this.state[key];
 
 			if (val !== null && val !== undefined && typeof val !== "function") {
-				formData.append(key, val); // // FIX GLOBAL
+				formData.append(key, val); // // append state tambahan
 			}
 		});
+
+		// ======================================================
+		// AJAX REQUEST
+		// ======================================================
 		this.ajax.request({
-			data: formData,
+			data: formData, // // kirim FormData
+
+			processData: false, // // WAJIB untuk FormData
+			contentType: false, // // WAJIB untuk FormData
 
 			success: () => {
-				this.isSubmitting = false;
+				this.isSubmitting = false; // // reset flag submit
 
-				const reloadTable = this.state.reloadTable || this.state.tbl;
+				// ==================================================
+				// AKTIFKAN KEMBALI CALENDAR YANG TADI DISABLE
+				// ==================================================
+				disabledCalendars.forEach((el) => {
+					$(el).prop("disabled", false); // // restore input
+				});
 
-				$(document).trigger(`form:success.${reloadTable}.table`);
+				const reloadTable = this.state.reloadTable || this.state.tbl; // // tentukan table reload
+
+				$(document).trigger(`form:success.${reloadTable}.table`); // // trigger refresh table
 			},
 
 			error: () => {
-				this.isSubmitting = false;
+				this.isSubmitting = false; // // reset flag submit
+
+				// ==================================================
+				// RESTORE CALENDAR JUGA SAAT ERROR
+				// ==================================================
+				disabledCalendars.forEach((el) => {
+					$(el).prop("disabled", false); // // restore input
+				});
 			},
 		});
 	}
@@ -1114,7 +1075,16 @@ SEARCH FIELD (FOMANTIC SEARCH)
 			{};
 
 		// jika tidak ada schema validation → hentikan
-		if (!config?.validation) return;
+		// ============================================================
+		// VALIDATION WAJIB ADA
+		// ============================================================
+		if (!config?.validation) {
+			Toast.error(`Validation tidak ditemukan untuk ${configKey}`); // // tampilkan error ke user
+
+			this.validationDisabled = true; // // blok submit
+
+			return; // // hentikan init
+		}
 
 		// ============================================================
 		// BANGUN RULE VALIDATION
