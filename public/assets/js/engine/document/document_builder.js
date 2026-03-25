@@ -83,6 +83,13 @@ class DocumentBuilder {
 			rows.forEach((rowData) => {
 				let row = $(self.buildRow(section, cols.length));
 
+				// 🔥 FIX FINAL: paksa ID jika tidak ada
+				let forcedId = rowData.id ?? rowData._id ?? rowData.nip;
+
+				if (forcedId) {
+					row.attr("data-id", forcedId);
+				}
+
 				// 🔥 TYPE
 				if (rowData.type) {
 					row.attr("data-type", rowData.type);
@@ -493,7 +500,7 @@ class DocumentBuilder {
 		// =====================================
 		// FIX: pastikan id selalu ada
 		// =====================================
-		let id = data.id; // FIX: HARUS FIX ID DARI DB
+		let id = data.nip ?? data.id ?? data._id; // FIX: HARUS FIX ID DARI DB
 		if (!id) return; // HARD STOP kalau tidak ada id
 
 		if (tbody.find(`tr[data-id="${id}"]`).length > 0) return;
