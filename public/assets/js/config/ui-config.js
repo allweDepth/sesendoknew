@@ -21,7 +21,10 @@ const UIConfig = {};
 
 UIConfig.pengaturan = {
 	layout: { columns: 2 },
-
+	validation: {
+		tahun: { required: true },
+		tahun_renstra: { required: true },
+	},
 	form: {
 		elements: [
 			// ================= IDENTITAS =================
@@ -107,6 +110,10 @@ UIConfig.periode_rpjmd = {
 ====================================================== */
 
 UIConfig.renstra_neo = {
+	validation: {
+		periode_id: { required: true },
+		visi: { required: true },
+	},
 	layout: { columns: 1 },
 	form: {
 		elements: [
@@ -134,6 +141,10 @@ UIConfig.renstra_neo = {
 };
 
 UIConfig.misi_renstra_neo = {
+	validation: {
+		renstra_id: { required: true },
+		nama_misi: { required: true },
+	},
 	form: {
 		elements: [
 			{
@@ -157,6 +168,10 @@ UIConfig.misi_renstra_neo = {
 };
 
 UIConfig.tujuan_renstra_neo = {
+	validation: {
+		misi_id: { required: true },
+		nama_tujuan: { required: true },
+	},
 	form: {
 		elements: [
 			{
@@ -180,6 +195,10 @@ UIConfig.tujuan_renstra_neo = {
 };
 
 UIConfig.sasaran_renstra_neo = {
+	validation: {
+		tujuan_id: { required: true },
+		nama_sasaran: { required: true },
+	},
 	form: {
 		elements: [
 			{
@@ -207,6 +226,11 @@ UIConfig.sasaran_renstra_neo = {
 };
 
 UIConfig.indikator_sasaran_renstra_neo = {
+	validation: {
+		sasaran_id: { required: true },
+		nama_indikator: { required: true },
+		target_akhir: { required: true },
+	},
 	layout: { columns: 2 },
 	form: {
 		elements: [
@@ -240,6 +264,10 @@ UIConfig.indikator_sasaran_renstra_neo = {
 };
 
 UIConfig.program_renstra_neo = {
+	validation: {
+		sasaran_id: { required: true },
+		kode_program: { required: true },
+	},
 	form: {
 		elements: [
 			{
@@ -269,6 +297,11 @@ UIConfig.program_renstra_neo = {
 };
 
 UIConfig.indikator_program_renstra_neo = {
+	validation: {
+		program_id: { required: true },
+		nama_indikator: { required: true },
+		target_akhir: { required: true },
+	},
 	layout: { columns: 2 },
 	form: {
 		elements: [
@@ -302,6 +335,11 @@ UIConfig.indikator_program_renstra_neo = {
 };
 
 UIConfig.kegiatan_renstra_neo = {
+	validation: {
+		program_id: { required: true },
+		kode_kegiatan: { required: true },
+		nama_kegiatan: { required: true },
+	},
 	form: {
 		elements: [
 			{
@@ -331,6 +369,10 @@ UIConfig.kegiatan_renstra_neo = {
 };
 
 UIConfig.sub_kegiatan_renstra_neo = {
+	validation: {
+		kegiatan_renstra_id: { required: true },
+		master_sub_kegiatan_id: { required: true },
+	},
 	layout: { columns: 2 },
 	form: {
 		elements: [
@@ -411,6 +453,11 @@ UIConfig.urusan = {
 ====================================================== */
 
 UIConfig.bidang = {
+	validation: {
+		kode_urusan: { required: true },
+		kode: { required: true },
+		uraian: { required: true },
+	},
 	form: {
 		elements: [
 			{
@@ -433,6 +480,11 @@ UIConfig.bidang = {
 ====================================================== */
 
 UIConfig.program = {
+	validation: {
+		kode_bidang: { required: true },
+		kode: { required: true },
+		uraian: { required: true },
+	},
 	form: {
 		elements: [
 			{
@@ -456,6 +508,11 @@ UIConfig.program = {
 ====================================================== */
 
 UIConfig.kegiatan = {
+	validation: {
+		kode_program: { required: true },
+		kode: { required: true },
+		uraian: { required: true },
+	},
 	form: {
 		elements: [
 			{
@@ -479,6 +536,12 @@ UIConfig.kegiatan = {
 ====================================================== */
 
 UIConfig.sub_kegiatan = {
+	validation: {
+		kode_kegiatan: { required: true },
+		kode: { required: true },
+		uraian: { required: true },
+		satuan: { required: true },
+	},
 	form: {
 		elements: [
 			{
@@ -524,6 +587,9 @@ UIConfig.sub_kegiatan = {
 ====================================================== */
 
 UIConfig.sub_kegiatan_anggaran = {
+	validation: {
+		kd_sub_keg: { required: true },
+	},
 	title: "Sub Kegiatan",
 	table: "sub_kegiatan",
 
@@ -543,6 +609,10 @@ UIConfig.sub_kegiatan_anggaran = {
 };
 
 UIConfig.akun = {
+	validation: {
+		kode: { required: true },
+		uraian: { required: true },
+	},
 	form: {
 		elements: [
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
@@ -558,7 +628,10 @@ UIConfig.akun = {
 
 UIConfig.satuan = {
 	layout: { columns: 1 },
-
+	validation: {
+		value: { required: true },
+		item: { required: true },
+	},
 	form: {
 		elements: [
 			{ tag: "field", prop: { label: "Value", name: "value" } },
