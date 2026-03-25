@@ -119,12 +119,45 @@ class DocumentBuilder {
 				});
 
 				table.find("tbody").append(row);
+				// 🔥 SYNC TOOLBAR STATE (INI KUNCI)
+				this.syncToolbarState(row, rowData);
 
 				// 🔥 INIT UI DI ROW BARU
 				row.find(".ui.dropdown").dropdown(); // .
 				row.find(".ui.checkbox").checkbox(); // .
 			});
 		});
+	}
+	syncToolbarState(row, rowData) {
+		// =========================
+		// TYPE
+		// =========================
+		let type = rowData.type || "paragraph";
+
+		row.find(`[data-type="${type}"]`).addClass("active");
+
+		// =========================
+		// ALIGN
+		// =========================
+		let align = rowData.align || "justify";
+
+		row.find(`[data-align="${align}"]`).addClass("active");
+
+		// =========================
+		// STYLE (ARRAY)
+		// =========================
+		if (Array.isArray(rowData.style)) {
+			rowData.style.forEach((s) => {
+				row.find(`[data-style="${s}"]`).addClass("active");
+			});
+		}
+
+		// =========================
+		// FORMAT
+		// =========================
+		if (rowData.format) {
+			row.find(`[data-format="${rowData.format}"]`).addClass("active");
+		}
 	}
 	// ======================================================
 	// ELEMENT ROUTER
