@@ -20,8 +20,8 @@
   html,
   body {
     height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
+    /* 🔥 KUNCI UTAMA */
   }
 
   /* FIX SEGMENT PUSHABLE */

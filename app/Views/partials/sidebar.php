@@ -1,7 +1,7 @@
 <!-- SIDEBAR WRAPPER -->
 <div class="ui bottom attached segment pushable" id="mainContext">
 
-  <div class="ui inverted vertical sidebar menu left sidebarutama">
+  <div class="ui inverted vertical sidebar menu left sidebarutama ui accordion">
 
     <!-- HEADER -->
     <div class="item">
@@ -23,7 +23,7 @@
     </a>
 
     <!-- ANGGARAN -->
-    <div class="ui accordion inverted item">
+    <div class="item">
       <div class="title item">
         <i class="dropdown icon"></i> Anggaran
       </div>
@@ -64,7 +64,7 @@
     </a>
 
     <!-- REFERENSI -->
-    <div class="ui accordion inverted item">
+    <div class="item">
       <div class="title item">
         <i class="dropdown icon"></i> Referensi
       </div>
@@ -133,7 +133,7 @@
     </div>
 
     <!-- STANDAR HARGA -->
-    <div class="ui accordion inverted item">
+    <div class="item">
       <div class="title item">
         <i class="dropdown icon"></i> Standar Harga Satuan
       </div>
@@ -157,7 +157,7 @@
     </div>
 
     <!-- KEPEGAWAIAN -->
-    <div class="ui accordion inverted item">
+    <div class="item">
       <div class="title item">
         <i class="dropdown icon"></i>
         <i class="users icon"></i>
@@ -193,7 +193,7 @@
     </div>
 
     <!-- TATA NASKAH -->
-    <div class="ui accordion inverted item">
+    <div class="item">
       <div class="title item">
         <i class="dropdown icon"></i> Tata Naskah
       </div>

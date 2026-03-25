@@ -18,6 +18,17 @@ $(document).ready(function () {
 	});
 
 	$("#toggleSidebar").on("click", function () {
+		// =====================================
+		// FIX 1: tutup sidebar kanan jika terbuka
+		// =====================================
+		if ($sidebarKanan.hasClass("visible")) {
+			// cek state fomantic
+			$sidebarKanan.sidebar("hide"); // tutup flyout kanan
+		}
+
+		// =====================================
+		// FIX 2: toggle sidebar kiri
+		// =====================================
 		$sidebarUtama.sidebar("toggle");
 	});
 
@@ -33,10 +44,17 @@ $(document).ready(function () {
 		closable: true,
 	});
 
-	// ===============================
-	// COMPONENT INIT
-	// ===============================
-	$(".ui.accordion").accordion();
+	// =====================================
+	// FIX: destroy instance lama dulu
+	// =====================================
+	$(".ui.accordion").accordion("destroy"); // reset instance lama
+
+	// =====================================
+	// INIT ulang dengan config benar
+	// =====================================
+	$(".ui.accordion").accordion({
+		exclusive: true, // hanya satu terbuka
+	});
 	$(".ui.dropdown").dropdown();
 	$(".ui.sticky").sticky({
 		context: $context,
