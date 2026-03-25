@@ -258,15 +258,28 @@ SET VALUE NORMAL
 		const form = $(this.formSelector);
 
 		// ======================================================
+		// VALIDASI CUSTOM ENGINE (validation-engine.js)
+		// ======================================================
+		const configKey = this.state.req || this.state.tbl;
+		const config = UIConfig[configKey];
+
+		// jalankan validation-engine
+		if (config?.validation) {
+			const isValidCustom = ValidationEngine.validate(this.formSelector, config.validation); // ← tambah ini
+
+			if (!isValidCustom) {
+				this.isSubmitting = false;
+				return;
+			}
+		}
+
+		// ======================================================
 		// VALIDASI FORM FOMANTIC
 		// ======================================================
 		form.form("validate form");
 
-		// jika tidak valid
 		if (!form.form("is valid")) {
-			// reset lock
 			this.isSubmitting = false;
-
 			return;
 		}
 

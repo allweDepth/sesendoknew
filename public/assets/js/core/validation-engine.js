@@ -9,50 +9,70 @@
  */
 
 class ValidationEngine {
+	/**
+	 * Validasi berdasarkan schema
+	 * @param {string} formSelector - selector form
+	 * @param {object} schema - schema validation dari UIConfig
+	 */
+	static validate(formSelector, schema = {}) {
+		let isValid = true;
 
-    /**
-     * Validasi berdasarkan schema
-     * @param {string} formSelector - selector form
-     * @param {object} schema - schema validation dari UIConfig
-     */
-    static validate(formSelector, schema = {}) {
+		// Loop semua field yang punya aturan
+		Object.keys(schema).forEach((fieldName) => {
+			const rules = schema[fieldName];
 
-        let isValid = true;
+			const input = $(`${formSelector} [name="${fieldName}"]`);
 
-        // Loop semua field yang punya aturan
-        Object.keys(schema).forEach(fieldName => {
+			// ======================================================
+			// GUARD: FIELD TIDAK DITEMUKAN
+			// ======================================================
+			if (!input.length) return;
 
-            const rules = schema[fieldName];
+			// ======================================================
+			// HANDLE DROPDOWN & KOMPONEN KHUSUS
+			// ======================================================
+			let field = input;
 
-            const field = $(`${formSelector} [name="${fieldName}"]`);
-            const value = field.val();
+			if (input.closest(".ui.dropdown").length) {
+				field = input.closest(".ui.dropdown");
+			}
 
-            // Bersihkan error sebelumnya
-            field.closest('.field').removeClass('error');
+			// ======================================================
+			// AMBIL CONTAINER FIELD YANG VALID
+			// ======================================================
+			const fieldContainer = field.closest(".field");
 
-            // REQUIRED
-            if (rules.required && !value) {
-                field.closest('.field').addClass('error');
-                isValid = false;
-            }
+			// ======================================================
+			// AMBIL VALUE YANG BENAR
+			// ======================================================
+			const value = input.val() ?? "";
 
-            // MIN LENGTH
-            if (rules.minLength && value.length < rules.minLength) {
-                field.closest('.field').addClass('error');
-                isValid = false;
-            }
+			// ======================================================
+			// CLEAR ERROR
+			// ======================================================
+			fieldContainer.removeClass("error");
 
-            // REGEX PATTERN
-            if (rules.pattern && !rules.pattern.test(value)) {
-                field.closest('.field').addClass('error');
-                isValid = false;
-            }
+			// REQUIRED
+			if (rules.required && !value) {
+				fieldContainer.addClass("error"); // FIX
+				isValid = false;
+			}
 
-        });
+			// MIN LENGTH
+			if (rules.minLength && value.length < rules.minLength) {
+				fieldContainer.addClass("error"); // FIX
+				isValid = false;
+			}
 
-        return isValid;
-    }
+			// REGEX PATTERN
+			if (rules.pattern && !rules.pattern.test(value)) {
+				fieldContainer.addClass("error"); // FIX
+				isValid = false;
+			}
+		});
 
+		return isValid;
+	}
 }
 
 window.ValidationEngine = ValidationEngine;
