@@ -43,18 +43,6 @@ $(document).ready(function () {
 		dimPage: true,
 		closable: true,
 	});
-
-	// =====================================
-	// FIX: destroy instance lama dulu
-	// =====================================
-	$(".ui.accordion").accordion("destroy"); // reset instance lama
-
-	// =====================================
-	// INIT ulang dengan config benar
-	// =====================================
-	$(".ui.accordion").accordion({
-		exclusive: true, // hanya satu terbuka
-	});
 	$(".ui.dropdown").dropdown();
 	$(".ui.sticky").sticky({
 		context: $context,
@@ -88,4 +76,20 @@ $(document).ready(function () {
 	// FLYOUT CONTROLLER
 	// ===============================
 	window.Flyout = new FlyoutController();
+	// =====================================
+	// SIMPLE ACCORDION TANPA FOMANTIC
+	// =====================================
+	$(".sidebarutama .title")
+		.off("click")
+		.on("click", function () {
+			const $content = $(this).next(".content");
+
+			// tutup semua kecuali ini
+			$(".sidebarutama .content").not($content).slideUp(150);
+			$(".sidebarutama .title").not(this).removeClass("active");
+
+			// toggle current
+			$content.stop(true, true).slideToggle(150);
+			$(this).toggleClass("active");
+		});
 });

@@ -5,8 +5,8 @@
 
     <!-- HEADER -->
     <div class="item">
-      <h2 class="ui inverted center aligned icon header dash_header">
-        <i class="circular blue building icon"></i>
+      <h2 class="ui inverted header dash_header">
+        <i class="circular inverted blue building icon"></i>
         <div class="content">
           seSendok
           <div class="sub header">Pemerintahan</div>
@@ -24,7 +24,7 @@
 
     <!-- ANGGARAN -->
     <div class="item">
-      <div class="title item">
+      <div class="title">
         <i class="dropdown icon"></i> Anggaran
       </div>
       <div class="content">
@@ -65,7 +65,7 @@
 
     <!-- REFERENSI -->
     <div class="item">
-      <div class="title item">
+      <div class="title">
         <i class="dropdown icon"></i> Referensi
       </div>
       <div class="content">
@@ -134,7 +134,7 @@
 
     <!-- STANDAR HARGA -->
     <div class="item">
-      <div class="title item">
+      <div class="title">
         <i class="dropdown icon"></i> Standar Harga Satuan
       </div>
       <div class="content">
@@ -158,7 +158,7 @@
 
     <!-- KEPEGAWAIAN -->
     <div class="item">
-      <div class="title item">
+      <div class="title">
         <i class="dropdown icon"></i>
         <i class="users icon"></i>
         Kepegawaian
@@ -194,7 +194,7 @@
 
     <!-- TATA NASKAH -->
     <div class="item">
-      <div class="title item">
+      <div class="title">
         <i class="dropdown icon"></i> Tata Naskah
       </div>
       <div class="content">
