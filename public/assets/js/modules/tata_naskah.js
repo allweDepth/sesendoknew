@@ -151,7 +151,7 @@ class TataNaskahModule {
 			// =====================================
 			// TRIGGER SUBMIT (INI YANG HILANG)
 			// =====================================
-			form.trigger("submit"); // // panggil handler submit di atas
+			form.trigger("submit"); // // gunakan jQuery event agar tidak double
 		});
 
 		// =====================================
@@ -605,6 +605,16 @@ class TataNaskahModule {
 				},
 			});
 		}
+		// ======================================================
+		// LOCK ACTION KE FORM (ANTI NULL)
+		// ======================================================
+		// 		const action = this.currentId !== null ? "edit_json" : "add_json";
+
+		// 		$("#form_modal").find('input[name="action"]').remove();
+
+		// 		$("#form_modal").append(`
+		//     <input type="hidden" name="action" value="${action}">
+		// `);
 	}
 
 	/**
