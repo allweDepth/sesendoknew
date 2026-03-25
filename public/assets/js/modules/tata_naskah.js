@@ -201,6 +201,14 @@ class TataNaskahModule {
 			e.preventDefault(); // // cegah reload
 
 			console.log("SUBMIT TRIGGERED"); // // TRACE WAJIB
+			// =====================================
+			// TAMBAH VALIDATION ENGINE (MANUAL)
+			// =====================================
+			const isValid = ValidationEngine.validate("#form_modal"); // // FIX: panggil langsung
+
+			if (!isValid) {
+				return; // // stop submit kalau tidak valid
+			}
 
 			const builder = window.documentBuilder; // // ambil instance builder global
 
