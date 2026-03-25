@@ -431,18 +431,18 @@ class DocumentBuilder {
 			if (format === "label") {
 				let val = editor.text().trim();
 				tr.attr("data-format", "label"); // // SIMPAN KE TR
-				if (val && !val.includes(":")) {
-					let parts = val.split(" ");
+				// if (val && !val.includes(":")) {
+				// 	let parts = val.split(" ");
 
-					if (parts.length >= 2) {
-						let label = parts.shift();
-						let rest = parts.join(" ");
+				// 	if (parts.length >= 2) {
+				// 		let label = parts.shift();
+				// 		let rest = parts.join(" ");
 
-						editor.html(`<strong>${label}</strong> : ${rest}`);
-					} else {
-						editor.html(val + " : ");
-					}
-				}
+				// 		editor.html(`<strong>${label}</strong> : ${rest}`);
+				// 	} else {
+				// 		editor.html(val + " : ");
+				// 	}
+				// }
 			}
 		});
 
@@ -511,9 +511,22 @@ class DocumentBuilder {
 
 			// FIX KHUSUS ASN
 			if (target === "nama_ditugaskan") {
-				if (key === "nama") value = data.uraian;
-				else if (key === "pangkat") value = (data.golongan || "") + (data.ruang ? ", " + data.ruang : "");
-				else value = data[key] ?? "";
+				if (key === "nama") {
+					// 🔥 jika masih ada field pecahan → paksa rakit ulang
+					if (data.gelar_depan || data.gelar) {
+						const depan = data.gelar_depan ? data.gelar_depan + " " : "";
+						const nama = data.nama ?? data.uraian ?? "";
+						const belakang = data.gelar ? ", " + data.gelar : "";
+						value = (depan + nama + belakang).trim();
+					} else {
+						value = data.nama ?? data.uraian ?? "";
+					}
+				} else if (key === "pangkat") {
+					value = this.convertPangkat(data.golongan, data.ruang);
+				} else {
+					// 🔥 INI YANG HILANG → PENYEBAB UNDEFINED
+					value = data[key] ?? data[col] ?? data.text ?? "";
+				}
 			} else {
 				value = data[key] ?? data[col] ?? data.nama ?? data.text ?? "";
 			}
@@ -732,5 +745,61 @@ class DocumentBuilder {
 		});
 
 		return result;
+	}
+	// helper konversi pangkat ASN (mirror backend PHP)
+	convertPangkat(golongan, ruang) {
+		const map = {
+			// Golongan I
+			"I/a": "Juru Muda",
+			"I/b": "Juru Muda Tingkat I",
+			"I/c": "Juru",
+			"I/d": "Juru Tingkat I",
+
+			// Golongan II
+			"II/a": "Pengatur Muda",
+			"II/b": "Pengatur Muda Tingkat I",
+			"II/c": "Pengatur",
+			"II/d": "Pengatur Tingkat I",
+
+			// Golongan III
+			"III/a": "Penata Muda",
+			"III/b": "Penata Muda Tingkat I",
+			"III/c": "Penata",
+			"III/d": "Penata Tingkat I",
+
+			// Golongan IV
+			"IV/a": "Pembina",
+			"IV/b": "Pembina Tingkat I",
+			"IV/c": "Pembina Utama Muda",
+			"IV/d": "Pembina Utama Madya",
+			"IV/e": "Pembina Utama",
+		};
+
+		const romanMap = {
+			1: "I",
+			2: "II",
+			3: "III",
+			4: "IV",
+		};
+
+		let gol = String(golongan || "")
+			.trim()
+			.toUpperCase();
+		let ru = String(ruang || "")
+			.trim()
+			.toLowerCase();
+
+		// angka → romawi
+		if (!isNaN(gol) && romanMap[parseInt(gol)]) {
+			gol = romanMap[parseInt(gol)];
+		}
+
+		const key = gol + "/" + ru;
+
+		if (map[key]) {
+			return map[key] + ", " + key;
+		}
+
+		return key;
 	}
 }
