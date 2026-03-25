@@ -394,6 +394,10 @@ UIConfig.sub_kegiatan_renstra_neo = {
 ====================================================== */
 
 UIConfig.urusan = {
+	validation: {
+		kode: { required: true },
+		uraian: { required: true },
+	},
 	form: {
 		elements: [
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },

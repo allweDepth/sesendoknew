@@ -256,7 +256,14 @@ SET VALUE NORMAL
 		this.isSubmitting = true;
 
 		const form = $(this.formSelector);
-
+		// ======================================================
+		// GUARD FORM SELECTOR (WAJIB)
+		// ======================================================
+		if (!form.length) {
+			console.error("Form selector tidak ditemukan:", this.formSelector); // ← TRACE
+			this.isSubmitting = false;
+			return;
+		}
 		// ======================================================
 		// VALIDASI CUSTOM ENGINE (validation-engine.js)
 		// ======================================================
@@ -264,13 +271,38 @@ SET VALUE NORMAL
 		const config = UIConfig[configKey];
 
 		// jalankan validation-engine
-		if (config?.validation) {
-			const isValidCustom = ValidationEngine.validate(this.formSelector, config.validation); // ← tambah ini
+		// ======================================================
+		// VALIDASI CUSTOM ENGINE (GLOBAL SAFE)
+		// ======================================================
+		let validationSchema = {};
 
-			if (!isValidCustom) {
-				this.isSubmitting = false;
-				return;
+		// ambil dari UIConfig jika ada
+		if (config?.validation) {
+			validationSchema = config.validation;
+		}
+
+		// fallback: scan semua input required (GLOBAL)
+		$(`${this.formSelector} [required]`).each(function () {
+			const name = $(this).attr("name");
+			if (!name) return;
+
+			if (!validationSchema[name]) {
+				validationSchema[name] = { required: true };
 			}
+		});
+
+		// jalankan validation selalu
+		let isValidCustom = true; // ← FIX: declare di luar
+
+		if (typeof ValidationEngine === "undefined") {
+			console.error("ValidationEngine belum ter-load");
+		} else {
+			isValidCustom = ValidationEngine.validate(this.formSelector, validationSchema); // ← assign
+		}
+
+		if (!isValidCustom) {
+			this.isSubmitting = false;
+			return;
 		}
 
 		// ======================================================
@@ -465,7 +497,7 @@ AMBIL STATE GLOBAL
 		const columnClass = columnMap[columns] || "one";
 
 		// html awal grid
-		let html = `<div class="ui form"><div class="ui ${columnClass} column grid">`;
+		let html = `<div class="ui ${columnClass} column grid">`; // ✅ hilangkan wrapper
 
 		// loop setiap element UIConfig
 		elements.forEach((el) => {
@@ -491,7 +523,7 @@ AMBIL STATE GLOBAL
 		});
 
 		// tutup grid + error message fomantic
-		html += `</div><div class="ui error message"></div></div>`;
+		html += `</div><div class="ui error message"></div>`; // ✅ tanpa wrapper form
 
 		// render ke DOM
 		$(target).html(html);
@@ -1104,7 +1136,9 @@ SEARCH FIELD (FOMANTIC SEARCH)
 		// ============================================================
 
 		const configKey = this.state.req || this.state.tbl;
-		const config = UIConfig[configKey];
+
+		// fallback jika tidak ada config
+		const config = UIConfig[configKey] || UIConfig[this.state.tbl] || {}; // ← FIX
 
 		// jika tidak ada schema validation → hentikan
 		if (!config?.validation) return;
