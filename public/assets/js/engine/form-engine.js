@@ -301,6 +301,9 @@ SET VALUE NORMAL
 		}
 
 		if (!isValidCustom) {
+			// tetap lanjut ke fomantic agar error message muncul
+			form.form("validate form"); // ← PAKSA trigger
+
 			this.isSubmitting = false;
 			return;
 		}
