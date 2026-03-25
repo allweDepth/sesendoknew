@@ -41,12 +41,7 @@ class DocumentBuilder {
 		
 			${html.join("")}
 			<div class="ui divider"></div>
-			<button class="ui green button" type="submit">
-				<i class="check icon"></i> Simpan
-			</button>
-		
-    
-	`);
+			`);
 
 		this.bindEvents();
 		this.initFomantic();
