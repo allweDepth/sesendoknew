@@ -562,7 +562,12 @@ class DocumentBuilder {
 						value = data.nama ?? data.uraian ?? "";
 					}
 				} else if (key === "pangkat") {
-					value = this.convertPangkat(data.golongan, data.ruang);
+					// 🔥 PRIORITAS DATA SERVER
+					if (data.pangkat) {
+						value = data.pangkat;
+					} else {
+						value = this.convertPangkat(data.golongan, data.ruang);
+					}
 				} else {
 					// 🔥 INI YANG HILANG → PENYEBAB UNDEFINED
 					value = data[key] ?? data[col] ?? data.text ?? "";
