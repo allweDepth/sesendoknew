@@ -416,46 +416,28 @@ class TataNaskahModule {
 		});
 	}
 	renderForm(schema, data = {}, res = {}, jenisId = null, extra = {}) {
-		// ===============================
-		// 🔥 SIMPAN MODE EDIT
-		// ===============================
-		this.currentId = data?.id || null; // // simpan id jika edit
+		this.currentId = data?.id || null;
+
 		this.formContainer.show("");
 
-		// 🔥 delay agar DOM siap
 		setTimeout(() => {
 			$("#mainModal").modal("show");
 		}, 0);
 
 		const container = $(this.formContainerSelector);
 
-		// =====================================
-		// 🔥 DESTROY BUILDER LAMA
-		// =====================================
 		if (window.documentBuilder) {
-			window.documentBuilder.destroy?.(); // // hancurkan instance lama
+			window.documentBuilder.destroy?.();
 		}
 
-		// =====================================
-		// 🔥 RESET CONTAINER
-		// =====================================
 		$("#form_modal").html("");
 
-		// =====================================
-		// 🔥 INIT DOCUMENT BUILDER
-		// =====================================
 		window.documentBuilder = new DocumentBuilder($("#form_modal"));
 
-		// =====================================
-		// 🔥 NORMALISASI SCHEMA
-		// =====================================
 		if (Array.isArray(schema)) {
 			schema = { sections: schema };
 		}
 
-		// =====================================
-		// 🔥 HANDLE struktur_json
-		// =====================================
 		if (data.struktur_json) {
 			let json = data.struktur_json;
 
@@ -473,38 +455,27 @@ class TataNaskahModule {
 			};
 		}
 
-		// =====================================
-		// 🔥 SET BUILDER
-		// =====================================
 		window.documentBuilder.schema = schema;
 		window.documentBuilder.data = data;
 
-		// =====================================
-		// 🔥 RENDER
-		// =====================================
 		window.documentBuilder.render();
 
-		// =====================================
-		// 🔥 NORMALISASI ASN DATA (SATU SUMBER)
-		// =====================================
-		const asnData =
-			extra?.db_asn_pemda_neo || // // EDIT MODE (utama)
-			res?.db_asn_pemda_neo || // // fallback
-			res?.asn || // // ADD MODE
-			res?.data_asn || // // fallback lama
-			[];
+		// ======================================================
+		// 🔥 FIX WAJIB: TAMBAHKAN ERROR MESSAGE CONTAINER
+		// ======================================================
+		if (!$("#form_modal").find(".ui.error.message").length) {
+			$("#form_modal").prepend(`
+			<div class="ui error message"></div> // wajib agar error tampil
+		`);
+		}
 
-		// =====================================
-		// 🔥 DESTROY DROPDOWN LAMA
-		// =====================================
+		const asnData = extra?.db_asn_pemda_neo || res?.db_asn_pemda_neo || res?.asn || res?.data_asn || [];
+
 		if (window.dropdownEngine) {
-			window.dropdownEngine.destroy?.(); // // hapus instance lama
+			window.dropdownEngine.destroy?.();
 			window.dropdownEngine = null;
 		}
 
-		// =====================================
-		// 🔥 INIT DROPDOWN ENGINE (WAJIB SEBELUM SET VALUE)
-		// =====================================
 		window.dropdownEngine = new DropdownEngine($("#form_modal"), {
 			...res,
 			asn: asnData,
@@ -513,60 +484,70 @@ class TataNaskahModule {
 			data: {},
 		});
 
-		window.dropdownEngine.init(); // // penting: bikin .dropdown() + values
+		window.dropdownEngine.init();
 
-		// =====================================
-		// 🔥 SET VALUE (SETELAH INIT)
-		// =====================================
 		Object.entries(data).forEach(([key, val]) => {
-			if (typeof val === "object") return; // skip list/editor
+			if (typeof val === "object") return;
 
-			// =====================================
-			// 🔥 LANGSUNG TARGET DROPDOWN DARI WRAPPER
-			// =====================================
 			const dropdown = container.find(`.ui.dropdown:has(input[name="${key}"])`);
 
 			if (dropdown.length) {
-				dropdown.dropdown("set selected", val); // langsung ke wrapper
+				dropdown.dropdown("set selected", val);
 				return;
 			}
 
-			// =====================================
-			// INPUT BIASA
-			// =====================================
 			const input = container.find(`[name="${key}"]`);
 			if (!input.length) return;
 
 			input.val(val);
 		});
 
-		// =====================================
-		// 🔥 TRIGGER UI SYNC
-		// =====================================
 		container.find("select").trigger("change");
 		container.find("input, textarea").trigger("input");
 
-		// =====================================
-		// 🔥 ADD MODE → inject jenis_id
-		// =====================================
 		if (jenisId) {
-			$("#form_modal").find('input[name="jenis_id"]').remove(); // // hapus lama
-			const hidden = `<input type="hidden" name="jenis_id" value="${jenisId}">`;
-			$("#form_modal").append(hidden); // // inject baru
+			$("#form_modal").find('input[name="jenis_id"]').remove();
+			$("#form_modal").append(`
+			<input type="hidden" name="jenis_id" value="${jenisId}">
+		`);
 		}
+
 		// ======================================================
-		// INIT FOMANTIC VALIDATION (WAJIB)
+		// 🔥 INIT FOMANTIC VALIDATION (FIX TOTAL)
 		// ======================================================
 		const form = $("#form_modal");
 
-		// ambil validation dari UIConfig jika ada
 		const config = UIConfig[this.state.req] || UIConfig[this.state.tbl] || {};
+		const validationConfig = config.validation || {};
 
-		if (config.validation) {
-			const fields = {};
+		const fields = {};
 
-			Object.keys(config.validation).forEach((name) => {
-				const label = form.find(`[name="${name}"]`).closest(".field").find("label").text() || name;
+		// =====================================
+		// dari UIConfig
+		// =====================================
+		Object.keys(validationConfig).forEach((name) => {
+			const label = form.find(`[name="${name}"]`).closest(".field").find("label").text() || name;
+
+			fields[name] = {
+				identifier: name,
+				rules: [
+					{
+						type: "empty",
+						prompt: `${label} wajib diisi`,
+					},
+				],
+			};
+		});
+
+		// =====================================
+		// 🔥 FIX: fallback jika kosong
+		// =====================================
+		if (Object.keys(fields).length === 0) {
+			form.find("[name]").each(function () {
+				const name = $(this).attr("name");
+				if (!name) return;
+
+				const label = $(this).closest(".field").find("label").text() || name;
 
 				fields[name] = {
 					identifier: name,
@@ -578,43 +559,36 @@ class TataNaskahModule {
 					],
 				};
 			});
-
-			form.form({
-				inline: true,
-				on: "blur",
-				fields: fields,
-
-				onFailure: function (errors) {
-					const box = form.find(".ui.error.message");
-
-					let html = '<ul class="list">';
-					errors.forEach((e) => {
-						html += `<li>${e}</li>`;
-					});
-					html += "</ul>";
-
-					box.html(html).show();
-
-					return false;
-				},
-
-				onSuccess: function (event) {
-					event.preventDefault();
-					form.find(".ui.error.message").hide().empty();
-					return false;
-				},
-			});
 		}
-		// ======================================================
-		// LOCK ACTION KE FORM (ANTI NULL)
-		// ======================================================
-		// 		const action = this.currentId !== null ? "edit_json" : "add_json";
 
-		// 		$("#form_modal").find('input[name="action"]').remove();
+		// =====================================
+		// 🔥 WAJIB: INIT FORM
+		// =====================================
+		form.form({
+			inline: true,
+			on: "blur",
+			fields: fields,
 
-		// 		$("#form_modal").append(`
-		//     <input type="hidden" name="action" value="${action}">
-		// `);
+			onFailure: function (errors) {
+				const box = form.find(".ui.error.message");
+
+				let html = "<ul class='list'>";
+				errors.forEach((e) => {
+					html += `<li>${e}</li>`;
+				});
+				html += "</ul>";
+
+				box.html(html).show();
+
+				return false;
+			},
+
+			onSuccess: function (event) {
+				event.preventDefault();
+				form.find(".ui.error.message").hide().empty();
+				return false;
+			},
+		});
 	}
 
 	/**
