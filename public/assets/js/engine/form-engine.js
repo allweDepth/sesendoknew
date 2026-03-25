@@ -127,14 +127,16 @@ class FormEngine {
 
 				const value = data[key];
 
-				// set hidden value langsung
-				dropdown.find("input[type=hidden]").val(value); //
+				const hiddenInput = dropdown.find("input[type=hidden]"); // // ambil hidden input
 
-				// hanya set dropdown jika item sudah ada
-				if (dropdown.find(`.item[data-value="${value}"]`).length) {
-					//
-					dropdown.dropdown("set selected", value); //
-				}
+				hiddenInput.val(value); // // set value awal
+
+				// ==================================================
+				// FORCE SYNC SET SELECTED (WAJIB)
+				// ==================================================
+				setTimeout(() => {
+					dropdown.dropdown("set selected", value); // // paksa sync setelah item tersedia
+				}, 0);
 
 				// hapus flag setelah populate selesai
 				setTimeout(() => {
@@ -288,8 +290,12 @@ SET VALUE NORMAL
 
 		form.find(".ui.calendar input").each(function () {
 			if ($(this).val() === "") {
-				$(this).prop("disabled", true); // // disable agar tidak ikut submit
-				disabledCalendars.push(this); // // simpan untuk restore
+				// ==================================================
+				// JANGAN DISABLE → BIAR VALIDATION KONSISTEN
+				// ==================================================
+				// $(this).prop("disabled", true); // ❌ hapus ini
+
+				$(this).val(""); // // pastikan tetap kosong tapi terkirim
 			}
 		});
 
@@ -998,36 +1004,72 @@ SEARCH FIELD (FOMANTIC SEARCH)
 	 * - fallback dari name jika label tidak ada
 	 */
 	buildFomanticRules(schema = {}) {
-		const fields = {};
+		const fields = {}; // // container rule fomantic
 
 		Object.keys(schema).forEach((name) => {
-			const cfg = schema[name] || {};
-			const rules = [];
+			const cfg = schema[name] || {}; // // config field
+			const rules = []; // // list rule
 
-			// cari field di DOM
-			const field = $(`${this.formSelector} [name="${name}"]`);
+			// ======================================================
+			// AMBIL FIELD DOM
+			// ======================================================
+			const field = $(`${this.formSelector} [name="${name}"]`); // // cari input berdasarkan name
 
-			// cari label jika ada
-			const labelElement = field.closest(".field").find("label");
+			if (!field.length) return; // // skip jika tidak ada di DOM
+
+			// ======================================================
+			// AMBIL LABEL
+			// ======================================================
+			const labelElement = field.closest(".field").find("label"); // // cari label terdekat
 
 			let label;
 
 			if (labelElement.length) {
-				label = labelElement.text().trim();
+				label = labelElement.text().trim(); // // gunakan label asli
 			} else {
-				// fallback dari name field
-				label = name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+				label = name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()); // // fallback
 			}
 
-			// required rule
+			// ======================================================
+			// DETEKSI TIPE FIELD
+			// ======================================================
+			const isDropdown = field.closest(".ui.dropdown").length > 0; // // dropdown fomantic
+			const isCalendar = field.closest(".ui.calendar").length > 0; // // calendar fomantic
+
+			// ======================================================
+			// REQUIRED RULE (PERBAIKAN DROPDOWN & CALENDAR)
+			// ======================================================
 			if (cfg.required) {
-				rules.push({
-					type: "empty",
-					prompt: `${label} wajib diisi`,
-				});
+				if (isDropdown) {
+					// ==================================================
+					// DROPDOWN → VALIDASI HARUS CEK HIDDEN INPUT VALUE
+					// ==================================================
+					rules.push({
+						type: "empty",
+						prompt: `${label} wajib dipilih`,
+					});
+				} else if (isCalendar) {
+					// ==================================================
+					// CALENDAR → PAKAI REGEX AGAR TIDAK LOLOS STRING KOSONG
+					// ==================================================
+					rules.push({
+						type: "regExp[/^.+$/]",
+						prompt: `${label} wajib diisi`,
+					});
+				} else {
+					// ==================================================
+					// FIELD NORMAL
+					// ==================================================
+					rules.push({
+						type: "empty",
+						prompt: `${label} wajib diisi`,
+					});
+				}
 			}
 
-			// email rule
+			// ======================================================
+			// EMAIL RULE
+			// ======================================================
 			if (cfg.email) {
 				rules.push({
 					type: "email",
@@ -1035,7 +1077,9 @@ SEARCH FIELD (FOMANTIC SEARCH)
 				});
 			}
 
-			// number rule
+			// ======================================================
+			// NUMBER RULE
+			// ======================================================
 			if (cfg.number) {
 				rules.push({
 					type: "number",
@@ -1043,13 +1087,16 @@ SEARCH FIELD (FOMANTIC SEARCH)
 				});
 			}
 
+			// ======================================================
+			// FINAL ASSIGN
+			// ======================================================
 			fields[name] = {
-				identifier: name,
-				rules: rules,
+				identifier: name, // // mapping ke name input
+				rules: rules, // // daftar rule
 			};
 		});
 
-		return fields;
+		return fields; // // return ke fomantic form()
 	}
 	/**
 	 * ============================================================
