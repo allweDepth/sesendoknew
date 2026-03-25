@@ -6,7 +6,7 @@
     <!-- HEADER -->
     <div class="item">
       <h2 class="ui inverted header dash_header">
-        <i class="circular inverted blue building icon"></i>
+        <i class="circular blue building icon"></i>
         <div class="content">
           seSendok
           <div class="sub header">Pemerintahan</div>

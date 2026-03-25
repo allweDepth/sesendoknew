@@ -79,17 +79,24 @@ $(document).ready(function () {
 	// =====================================
 	// SIMPLE ACCORDION TANPA FOMANTIC
 	// =====================================
-	$(".sidebarutama .title")
+	// =====================================
+	// SIMPLE ACCORDION (FIX FINAL STABIL)
+	// =====================================
+	$(".sidebarutama > .item > .title")
 		.off("click")
 		.on("click", function () {
-			const $content = $(this).next(".content");
+			const $title = $(this);
+			const $item = $title.parent(); // item induk
+			const $content = $item.children(".content");
 
-			// tutup semua kecuali ini
-			$(".sidebarutama .content").not($content).slideUp(150);
-			$(".sidebarutama .title").not(this).removeClass("active");
+			const $allItem = $(".sidebarutama > .item");
+
+			// tutup semua selain ini
+			$allItem.not($item).children(".content").slideUp(150);
+			$allItem.not($item).children(".title").removeClass("active");
 
 			// toggle current
 			$content.stop(true, true).slideToggle(150);
-			$(this).toggleClass("active");
+			$title.toggleClass("active");
 		});
 });
