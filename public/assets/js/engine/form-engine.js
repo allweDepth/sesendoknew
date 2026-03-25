@@ -264,50 +264,16 @@ SET VALUE NORMAL
 			this.isSubmitting = false;
 			return;
 		}
+
 		// ======================================================
-		// VALIDASI CUSTOM ENGINE (validation-engine.js)
+		// VALIDASI FOMANTIC (SINGLE ENGINE)
 		// ======================================================
-		const configKey = this.state.req || this.state.tbl;
-		const config = UIConfig[configKey];
+		form.form("validate form");
 
-		// jalankan validation-engine
-		// ======================================================
-		// VALIDASI CUSTOM ENGINE (GLOBAL SAFE)
-		// ======================================================
-		let validationSchema = {};
-
-		// ambil dari UIConfig jika ada
-		if (config?.validation) {
-			validationSchema = config.validation;
-		}
-
-		// fallback: scan semua input required (GLOBAL)
-		$(`${this.formSelector} [required]`).each(function () {
-			const name = $(this).attr("name");
-			if (!name) return;
-
-			if (!validationSchema[name]) {
-				validationSchema[name] = { required: true };
-			}
-		});
-
-		// jalankan validation selalu
-		let isValidCustom = true; // ← FIX: declare di luar
-
-		if (typeof ValidationEngine === "undefined") {
-			console.error("ValidationEngine belum ter-load");
-		} else {
-			isValidCustom = ValidationEngine.validate(this.formSelector, validationSchema); // ← assign
-		}
-
-		if (!isValidCustom) {
-			// tetap lanjut ke fomantic agar error message muncul
-			form.form("validate form"); // ← PAKSA trigger
-
+		if (!form.form("is valid")) {
 			this.isSubmitting = false;
 			return;
 		}
-
 		// ======================================================
 		// VALIDASI FORM FOMANTIC
 		// ======================================================
@@ -1141,7 +1107,11 @@ SEARCH FIELD (FOMANTIC SEARCH)
 		const configKey = this.state.req || this.state.tbl;
 
 		// fallback jika tidak ada config
-		const config = UIConfig[configKey] || UIConfig[this.state.tbl] || {}; // ← FIX
+		const config =
+			UIConfig[configKey] ||
+			UIConfig[this.state.tbl] ||
+			UIConfig[this.state.req] || // ← TAMBAHAN WAJIB
+			{};
 
 		// jika tidak ada schema validation → hentikan
 		if (!config?.validation) return;

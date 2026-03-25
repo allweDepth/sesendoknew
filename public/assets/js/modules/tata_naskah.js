@@ -204,10 +204,15 @@ class TataNaskahModule {
 			// =====================================
 			// TAMBAH VALIDATION ENGINE (MANUAL)
 			// =====================================
-			const isValid = ValidationEngine.validate("#form_modal"); // // FIX: panggil langsung
+			const form = $("#form_modal");
 
-			if (!isValid) {
-				return; // // stop submit kalau tidak valid
+			// ======================================================
+			// TRIGGER FOMANTIC VALIDATION
+			// ======================================================
+			form.form("validate form");
+
+			if (!form.form("is valid")) {
+				return; // stop submit
 			}
 
 			const builder = window.documentBuilder; // // ambil instance builder global
@@ -549,7 +554,59 @@ class TataNaskahModule {
 			const hidden = `<input type="hidden" name="jenis_id" value="${jenisId}">`;
 			$("#form_modal").append(hidden); // // inject baru
 		}
+		// ======================================================
+		// INIT FOMANTIC VALIDATION (WAJIB)
+		// ======================================================
+		const form = $("#form_modal");
+
+		// ambil validation dari UIConfig jika ada
+		const config = UIConfig[this.state.req] || UIConfig[this.state.tbl] || {};
+
+		if (config.validation) {
+			const fields = {};
+
+			Object.keys(config.validation).forEach((name) => {
+				const label = form.find(`[name="${name}"]`).closest(".field").find("label").text() || name;
+
+				fields[name] = {
+					identifier: name,
+					rules: [
+						{
+							type: "empty",
+							prompt: `${label} wajib diisi`,
+						},
+					],
+				};
+			});
+
+			form.form({
+				inline: true,
+				on: "blur",
+				fields: fields,
+
+				onFailure: function (errors) {
+					const box = form.find(".ui.error.message");
+
+					let html = '<ul class="list">';
+					errors.forEach((e) => {
+						html += `<li>${e}</li>`;
+					});
+					html += "</ul>";
+
+					box.html(html).show();
+
+					return false;
+				},
+
+				onSuccess: function (event) {
+					event.preventDefault();
+					form.find(".ui.error.message").hide().empty();
+					return false;
+				},
+			});
+		}
 	}
+
 	/**
 	 * SHOW FORM TAMBAH
 	 */
