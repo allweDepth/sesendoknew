@@ -607,6 +607,29 @@ UIConfig.peraturan = {
 		],
 	},
 };
+// ======================================================
+// 🔥 TATA NASKAH VALIDATION
+// ======================================================
+UIConfig.trx_naskah_dinas = {
+	validation: {
+		nomor: { required: true },
+		tanggal_surat: { required: true },
+		perihal: { required: true },
+		penandatangan: { required: true },
+		jbt_pemberi_tgs: { required: true },
+		pangkat_pemberi_tgs: { required: true },
+		asn: { required: true },
+	},
+	form: {
+		elements: [
+			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
+			{ tag: "field", prop: { label: "Perihal", name: "perihal" } },
+			{ tag: "field", prop: { label: "Status", name: "workflow_status" } },
+			{ tag: "field", prop: { label: "OPD", name: "kd_opd" } },
+			{ tag: "field", prop: { label: "Tanggal Dibuat", name: "tgl_insert" } },
+		],
+	},
+};
 UIConfig.rekanan = {
 	validation: {
 		nama_perusahaan: { required: true },
@@ -952,17 +975,6 @@ UIConfig.asn = {
 				prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` },
 			},
 			{ tag: "fieldCheckbox", prop: { label: "Non Aktif", name: "disable" } },
-		],
-	},
-};
-UIConfig.trx_naskah_dinas = {
-	form: {
-		elements: [
-			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
-			{ tag: "field", prop: { label: "Perihal", name: "perihal" } },
-			{ tag: "field", prop: { label: "Status", name: "workflow_status" } },
-			{ tag: "field", prop: { label: "OPD", name: "kd_opd" } },
-			{ tag: "field", prop: { label: "Tanggal Dibuat", name: "tgl_insert" } },
 		],
 	},
 };

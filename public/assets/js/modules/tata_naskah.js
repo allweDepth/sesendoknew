@@ -531,10 +531,14 @@ class TataNaskahModule {
 			fields[name] = {
 				identifier: name,
 				rules: [
-					{
-						type: "empty",
-						prompt: `${label} wajib diisi`,
-					},
+					...(validationConfig[name].required
+						? [
+								{
+									type: "empty",
+									prompt: `${label} wajib diisi`,
+								},
+							]
+						: []),
 				],
 			};
 		});
@@ -543,22 +547,8 @@ class TataNaskahModule {
 		// 🔥 FIX: fallback jika kosong
 		// =====================================
 		if (Object.keys(fields).length === 0) {
-			form.find("[name]").each(function () {
-				const name = $(this).attr("name");
-				if (!name) return;
-
-				const label = $(this).closest(".field").find("label").text() || name;
-
-				fields[name] = {
-					identifier: name,
-					rules: [
-						{
-							type: "empty",
-							prompt: `${label} wajib diisi`,
-						},
-					],
-				};
-			});
+			console.error("VALIDATION TIDAK TERPASANG - UIConfig kosong"); // // TRACE
+			return; // // tidak ada validation → biarkan submit lanjut
 		}
 
 		// =====================================
