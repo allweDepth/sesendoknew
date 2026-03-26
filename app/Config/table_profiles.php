@@ -1217,7 +1217,8 @@ $profiles = [
     // --------------------------------------------------
     'relations' => [
       [
-        'local_key' => 'parent_kode'
+        'local_key' => 'parent_kode',   // // relasi tetap
+        'constraint' => 'level'         // // TAMBAHAN: enforce level (butuh dukungan service)
       ]
     ],
 
