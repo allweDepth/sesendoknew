@@ -65,7 +65,7 @@ class FormEngine {
 				if (!res || !res.data) return;
 
 				this.populateForm(res.data);
-				this.loadDropdownSources();
+				// this.loadDropdownSources(); // // ❌ HAPUS (sudah dilakukan di init)
 			},
 		});
 	}
@@ -91,6 +91,62 @@ class FormEngine {
 		// =========================================================
 		// LOOP SEMUA FIELD DATA
 		// =========================================================
+		const orderedKeys = ["urusan", "bidang", "program", "kegiatan", "sub_kegiatan"]; // // urutan chain
+
+		const processField = (key) => {
+			// // bungkus logic lama jadi function
+			const field = $(`${this.formSelector} [name="${key}"]`);
+			if (!field.length) return;
+
+			if (field.attr("type") === "checkbox") {
+				field.prop("checked", data[key] == 1);
+				return;
+			}
+
+			if (field.closest(".ui.dropdown").length) {
+				const dropdown = field.closest(".ui.dropdown");
+				dropdown.data("skip-cascade", true);
+
+				const value = data[key];
+				const hiddenInput = dropdown.find("input[type=hidden]");
+				hiddenInput.val(value);
+
+				setTimeout(() => {
+					const exists = dropdown.find(`.item[data-value="${value}"]`).length;
+
+					if (exists) {
+						dropdown.dropdown("set selected", value);
+						dropdown.find("input[type=hidden]").trigger("change");
+					}
+				}, 200);
+
+				setTimeout(() => {
+					dropdown.removeData("skip-cascade");
+				}, 100);
+
+				return;
+			}
+
+			field.val(data[key]);
+		};
+
+		// ===================================================
+		// JALANKAN ORDERED
+		// ===================================================
+		orderedKeys.forEach((key) => {
+			if (data[key] !== undefined) processField(key);
+		});
+
+		// ===================================================
+		// SISANYA
+		// ===================================================
+		Object.keys(data).forEach((key) => {
+			if (!orderedKeys.includes(key)) {
+				processField(key);
+			}
+		});
+
+		// field lain tetap diproses
 		Object.keys(data).forEach((key) => {
 			// cari field berdasarkan name
 			const field = $(`${this.formSelector} [name="${key}"]`);
@@ -135,8 +191,14 @@ class FormEngine {
 				// FORCE SYNC SET SELECTED (WAJIB)
 				// ==================================================
 				setTimeout(() => {
-					dropdown.dropdown("set selected", value); // // paksa sync setelah item tersedia
-				}, 0);
+					const exists = dropdown.find(`.item[data-value="${value}"]`).length; // //
+
+					if (exists) {
+						// //
+						dropdown.dropdown("set selected", value); // //
+						dropdown.find("input[type=hidden]").trigger("change"); // // WAJIB trigger cascade
+					}
+				}, 200);
 
 				// hapus flag setelah populate selesai
 				setTimeout(() => {
@@ -720,9 +782,10 @@ SEARCH FIELD (FOMANTIC SEARCH)
 		 */
 		return `
 		<div class="ui ${searchClass} selection dropdown ${prop.classInput || ""}"
-			 data-source="${prop.source || ""}"
-			 data-parent="${prop.parent || ""}"
-			 data-parent-field="${prop.parent_field || ""}">
+     data-source="${prop.source || ""}"
+     data-parent="${prop.parent || ""}"
+     data-parent-field="${prop.parent_field || ""}"
+     data-field="${prop.name}"> <!--TAMBAHAN: agar cascade tahu nama field  -->
 
 			<!-- VALUE YANG DIKIRIM KE SERVER -->
 			<input type="hidden" name="${prop.name}">
@@ -851,6 +914,11 @@ SEARCH FIELD (FOMANTIC SEARCH)
 
 				if (!parentValue && !self.isPopulating) {
 					return;
+				}
+
+				// TAMBAHAN: saat populate tetap load
+				if (!parentValue && self.isPopulating) {
+					// lanjutkan load agar chain terbentuk
 				}
 			}
 
@@ -1297,14 +1365,17 @@ SEARCH FIELD (FOMANTIC SEARCH)
 			// ==================================================
 			// GUARD POPULATE MODE
 			// ==================================================
-			if (self.isPopulating) return;
+			const $parentDropdown = $(this).closest(".ui.dropdown"); // // WAJIB di atas
 
-			const $parentDropdown = $(this).closest(".ui.dropdown");
+			if (self.isPopulating && $parentDropdown.data("skip-cascade") !== true) return;
+			// // sekarang aman karena sudah ada objeknya
 
 			// ==================================================
 			// CEK SKIP CASCADE FLAG
 			// ==================================================
-			if ($parentDropdown.data("skip-cascade") === true) return;
+			// HANYA skip kalau bukan dari populate
+			if (!self.isPopulating && $parentDropdown.data("skip-cascade") === true) return;
+			// // saat populate tetap boleh jalan
 			// // hindari undefined/false ambigu
 
 			// ==================================================
