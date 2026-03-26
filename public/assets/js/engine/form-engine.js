@@ -845,7 +845,7 @@ SEARCH FIELD (FOMANTIC SEARCH)
 			// child dropdown hanya skip jika parent belum dipilih
 			// tetapi tetap boleh load saat ADD untuk root dropdown
 
-			if (parent) {
+			if (parent && parent !== "") {
 				const parentField = `${self.formSelector} [name="${parent}"]`;
 				const parentValue = $(parentField).val();
 
@@ -858,7 +858,7 @@ SEARCH FIELD (FOMANTIC SEARCH)
 			// GUARD SUDAH LOAD
 			// ======================================================
 
-			if ($dropdown.data("loaded") === true && !self.isPopulating) return; // sudah load
+			if ($dropdown.data("loaded") === true && !self.isPopulating && !$dropdown.data("force-reload")) return; // // beri opsi reload
 
 			// ======================================================
 			// GUARD SEDANG LOADING
@@ -874,7 +874,8 @@ SEARCH FIELD (FOMANTIC SEARCH)
 
 			const source = $dropdown.data("source"); // nama tabel dropdown
 
-			if (!source) {
+			if (!source || source === "") {
+				// // validasi eksplisit
 				$dropdown.data("loading", false); // reset loading
 				return;
 			}
@@ -882,7 +883,7 @@ SEARCH FIELD (FOMANTIC SEARCH)
 			const currentValue = $dropdown.find("input[type='hidden']").val();
 
 			let requestValue = currentValue; // ambil value edit
-			if (parent) {
+			if (parent && parent !== "") {
 				const parentField = `${self.formSelector} [name="${parent}"]`;
 				requestValue = $(parentField).val();
 			}
@@ -905,13 +906,14 @@ SEARCH FIELD (FOMANTIC SEARCH)
 
 					$menu.empty(); // kosongkan menu
 
-					if (res && res.success && res.data) {
+					if (res && res.success && Array.isArray(res.data)) {
+						// // pastikan array
 						res.data.forEach((item) => {
 							$menu.append(`
-							<div class="item" data-value="${item.value}">
-								${item.text}
-							</div>
-						`);
+	<div class="item" data-value="${item.value ?? item.id}"> 
+		${item.text ?? item.nama ?? item.label} 
+	</div>
+`);
 						});
 					}
 
@@ -1302,12 +1304,13 @@ SEARCH FIELD (FOMANTIC SEARCH)
 			// ==================================================
 			// CEK SKIP CASCADE FLAG
 			// ==================================================
-			if ($parentDropdown.data("skip-cascade")) return;
+			if ($parentDropdown.data("skip-cascade") === true) return;
+			// // hindari undefined/false ambigu
 
 			// ==================================================
 			// AMBIL FIELD NAME
 			// ==================================================
-			const parentName = $parentDropdown.find("input[type=hidden]").attr("name");
+			const parentName = $parentDropdown.data("field"); // // gunakan field mapping eksplisit dari config
 
 			if (!parentName) return;
 
@@ -1316,7 +1319,8 @@ SEARCH FIELD (FOMANTIC SEARCH)
 			// ==================================================
 			const parentValue = $parentDropdown.find("input[type=hidden]").val();
 
-			if (!parentValue) return;
+			if (parentValue === null || parentValue === undefined) return;
+			// // tetap izinkan 0 atau string "0"
 
 			// ==================================================
 			// CARI DROPDOWN CHILD
@@ -1355,10 +1359,10 @@ SEARCH FIELD (FOMANTIC SEARCH)
 
 						res.data.forEach((item) => {
 							$menu.append(`
-								<div class="item" data-value="${item.value}">
-									${item.text}
-								</div>
-							`);
+	<div class="item" data-value="${item.value ?? item.id}"> 
+		${item.text ?? item.nama ?? item.label} 
+	</div>
+`);
 						});
 
 						// ==================================================
