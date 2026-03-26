@@ -159,7 +159,11 @@ RESET SEARCH FIELD SAAT TAB MENU BERUBAH
 	loadTable(tbl, req = null) {
 		this.state.setTable(tbl);
 
-		this.state.req = req ?? null;
+		// JANGAN override jika req undefined
+		if (req !== undefined) {
+			// // cek explicit undefined
+			this.state.req = req; // // hanya set jika ada nilai
+		}
 
 		window.app = window.app || {};
 		window.app.state = this.state;
