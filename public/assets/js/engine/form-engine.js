@@ -35,15 +35,59 @@ class FormEngine {
 
 		this.initFomanticValidation();
 
-		this.loadDropdownSources();
-		this.initCascadeDropdown(); // ← aktifkan cascade dropdown
-		/* re-init komponen UI setelah render form */
+		this.initDropdownRoot(); // ✅ REFACTOR (bukan hapus)
+		this.initCascadeDropdown(); // tetap
+
 		UIComponents.initSearch();
 		UIComponents.initLookupDropdown();
-		// GLOBAL HEADER FLYOUT
+
 		this.setFlyoutHeader(this.state.tbl);
 	}
+	initDropdownRoot() {
+		const self = this;
 
+		$(`${this.formSelector} .ui.dropdown[data-source]`).each(function () {
+			const $dropdown = $(this);
+
+			const parent = $dropdown.data("parent");
+
+			if (parent) return; // ❗ hanya root
+
+			self.loadDropdown($dropdown, {});
+		});
+	}
+	loadDropdown($dropdown, params = {}) {
+		const source = $dropdown.data("source"); // // ambil tabel
+		const filter = $dropdown.data("filter") || {}; // // ambil filter JSON
+		if (!source) return;
+
+		const $menu = $dropdown.find(".menu");
+
+		this.ajax.request({
+			data: {
+				action: "dropdown", // // endpoint dropdown
+				tbl: source, // // nama tabel
+				filters: JSON.stringify(filter), // // 🔥 kirim filter sebagai JSON
+				...params, // // parent jika cascade
+			},
+
+			success: (res) => {
+				$menu.empty();
+
+				if (res.success && Array.isArray(res.data)) {
+					res.data.forEach((item) => {
+						$menu.append(`
+            <div class="item" data-value="${item.value ?? item.id}">
+              ${item.text ?? item.nama ?? item.label}
+            </div>
+          `);
+					});
+				}
+
+				$dropdown.dropdown("refresh");
+			},
+		});
+	}
 	/**
 	 * ============================================================
 	 * LOAD DATA EDIT
@@ -193,11 +237,9 @@ class FormEngine {
 				setTimeout(() => {
 					const exists = dropdown.find(`.item[data-value="${value}"]`).length; // //
 
-					if (exists) {
-						// //
-						dropdown.dropdown("set selected", value); // //
-						dropdown.find("input[type=hidden]").trigger("change"); // // WAJIB trigger cascade
-					}
+					// //
+					dropdown.dropdown("set selected", value); // //
+					dropdown.find("input[type=hidden]").trigger("change"); // // WAJIB trigger cascade
 				}, 200);
 
 				// hapus flag setelah populate selesai
@@ -782,7 +824,8 @@ SEARCH FIELD (FOMANTIC SEARCH)
 		 */
 		return `
 		<div class="ui ${searchClass} selection dropdown ${prop.classInput || ""}"
-     data-source="${prop.source || ""}"
+     data-source="${prop.source || ""}" // sumber tabel
+data-filter='${JSON.stringify(prop.filter || {})}' // // 🔥 filter server
      data-parent="${prop.parent || ""}"
      data-parent-field="${prop.parent_field || ""}"
      data-field="${prop.name}"> <!--TAMBAHAN: agar cascade tahu nama field  -->
@@ -894,116 +937,7 @@ SEARCH FIELD (FOMANTIC SEARCH)
 	 * - mencegah duplicate AJAX
 	 * - aman untuk SPA
 	 */
-	loadDropdownSources() {
-		const self = this; // simpan referensi instance
 
-		$(`${self.formSelector} .ui.dropdown[data-source]`).each(function () {
-			const $dropdown = $(this); // dropdown saat ini
-
-			const parent = $dropdown.data("parent"); // ambil parent dropdown
-
-			// ======================================================
-			// PERBAIKAN ENGINE
-			// ======================================================
-			// child dropdown hanya skip jika parent belum dipilih
-			// tetapi tetap boleh load saat ADD untuk root dropdown
-
-			if (parent && parent !== "") {
-				const parentField = `${self.formSelector} [name="${parent}"]`;
-				const parentValue = $(parentField).val();
-
-				if (!parentValue && !self.isPopulating) {
-					return;
-				}
-
-				// TAMBAHAN: saat populate tetap load
-				if (!parentValue && self.isPopulating) {
-					// lanjutkan load agar chain terbentuk
-				}
-			}
-
-			// ======================================================
-			// GUARD SUDAH LOAD
-			// ======================================================
-
-			if ($dropdown.data("loaded") === true && !self.isPopulating && !$dropdown.data("force-reload")) return; // // beri opsi reload
-
-			// ======================================================
-			// GUARD SEDANG LOADING
-			// ======================================================
-
-			if ($dropdown.data("loading") === true) return; // sedang loading
-
-			// ======================================================
-			// SET STATUS LOADING
-			// ======================================================
-
-			$dropdown.data("loading", true); // tandai loading
-
-			const source = $dropdown.data("source"); // nama tabel dropdown
-
-			if (!source || source === "") {
-				// // validasi eksplisit
-				$dropdown.data("loading", false); // reset loading
-				return;
-			}
-
-			const currentValue = $dropdown.find("input[type='hidden']").val();
-
-			let requestValue = currentValue; // ambil value edit
-			if (parent && parent !== "") {
-				const parentField = `${self.formSelector} [name="${parent}"]`;
-				requestValue = $(parentField).val();
-			}
-
-			// ======================================================
-			// REQUEST DROPDOWN
-			// ======================================================
-
-			self.ajax.request({
-				data: {
-					action: "dropdown", // action backend
-
-					tbl: source, // nama tabel
-
-					value: requestValue, // value edit
-				},
-
-				success: (res) => {
-					const $menu = $dropdown.find(".menu"); // menu dropdown
-
-					$menu.empty(); // kosongkan menu
-
-					if (res && res.success && Array.isArray(res.data)) {
-						// // pastikan array
-						res.data.forEach((item) => {
-							$menu.append(`
-	<div class="item" data-value="${item.value ?? item.id}"> 
-		${item.text ?? item.nama ?? item.label} 
-	</div>
-`);
-						});
-					}
-
-					$dropdown.dropdown("refresh");
-
-					if (currentValue) {
-						setTimeout(() => {
-							$dropdown.dropdown("set selected", currentValue);
-						}, 0);
-					}
-
-					$dropdown.data("loaded", true); // tandai loaded
-
-					$dropdown.data("loading", false); // reset loading
-				},
-
-				error: () => {
-					$dropdown.data("loading", false); // reset loading
-				},
-			});
-		});
-	}
 	renderConfig(config) {
 		let html = "";
 
@@ -1348,101 +1282,34 @@ SEARCH FIELD (FOMANTIC SEARCH)
 	initCascadeDropdown() {
 		const self = this;
 
-		// ======================================================
-		// EVENT NAMESPACE UNIK PER TABLE
-		// ======================================================
-		const eventName = `change.formCascade.${this.state.tbl}`;
+		$(document).on(
+			`change.formCascade.${this.state.tbl}`,
+			`${this.formSelector} .ui.dropdown input[type=hidden]`,
+			function () {
+				const $parent = $(this).closest(".ui.dropdown");
 
-		// ======================================================
-		// HAPUS EVENT LAMA
-		// ======================================================
-		$(document).off(eventName, `${this.formSelector} .ui.dropdown[data-source]`);
+				const parentName = $parent.data("field");
+				const parentValue = $(this).val();
 
-		// ======================================================
-		// BIND EVENT BARU
-		// ======================================================
-		$(document).on(eventName, `${this.formSelector} .ui.dropdown[data-source] input[type=hidden]`, function () {
-			// ==================================================
-			// GUARD POPULATE MODE
-			// ==================================================
-			const $parentDropdown = $(this).closest(".ui.dropdown"); // // WAJIB di atas
+				if (!parentName) return;
 
-			if (self.isPopulating && $parentDropdown.data("skip-cascade") !== true) return;
-			// // sekarang aman karena sudah ada objeknya
+				const $children = $(`${self.formSelector} .ui.dropdown[data-parent="${parentName}"]`);
 
-			// ==================================================
-			// CEK SKIP CASCADE FLAG
-			// ==================================================
-			// HANYA skip kalau bukan dari populate
-			if (!self.isPopulating && $parentDropdown.data("skip-cascade") === true) return;
-			// // saat populate tetap boleh jalan
-			// // hindari undefined/false ambigu
+				$children.each(function () {
+					const $child = $(this);
 
-			// ==================================================
-			// AMBIL FIELD NAME
-			// ==================================================
-			const parentName = $parentDropdown.data("field"); // // gunakan field mapping eksplisit dari config
+					// reset child
+					$child.dropdown("clear");
+					$child.find(".menu").empty();
 
-			if (!parentName) return;
-
-			// ==================================================
-			// AMBIL VALUE PARENT
-			// ==================================================
-			const parentValue = $parentDropdown.find("input[type=hidden]").val();
-
-			if (parentValue === null || parentValue === undefined) return;
-			// // tetap izinkan 0 atau string "0"
-
-			// ==================================================
-			// CARI DROPDOWN CHILD
-			// ==================================================
-			$(`${self.formSelector} .ui.dropdown[data-parent="${parentName}"]`).each(function () {
-				const $child = $(this);
-
-				const source = $child.data("source");
-
-				if (!source) return;
-
-				const $menu = $child.find(".menu");
-
-				// ==================================================
-				// RESET CHILD
-				// ==================================================
-				$menu.empty();
-
-				$child.dropdown("clear");
-				$child.data("loaded", false);
-				$child.data("loading", false);
-				// ==================================================
-				// REQUEST DATA CHILD
-				// ==================================================
-				self.ajax.request({
-					data: {
-						action: "dropdown",
-						tbl: source,
+					// load child dari parent
+					self.loadDropdown($child, {
 						parent: parentName,
 						parent_field: $child.data("parent-field"),
 						parent_value: parentValue,
-					},
-
-					success: (res) => {
-						if (!res.success || !res.data) return;
-
-						res.data.forEach((item) => {
-							$menu.append(`
-	<div class="item" data-value="${item.value ?? item.id}"> 
-		${item.text ?? item.nama ?? item.label} 
-	</div>
-`);
-						});
-
-						// ==================================================
-						// REFRESH DROPDOWN
-						// ==================================================
-						$child.dropdown("refresh");
-					},
+					});
 				});
-			});
-		});
+			},
+		);
 	}
 }

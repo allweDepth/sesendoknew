@@ -550,7 +550,9 @@ UIConfig.sub_kegiatan = {
 					label: "Kegiatan",
 					name: "kode_kegiatan",
 					source: "rekening_kegiatan",
-					parent: "kode_kegiatan",
+					filter: {
+						level: "kegiatan",
+					},
 					search: true,
 				},
 			},

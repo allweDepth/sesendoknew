@@ -1803,11 +1803,28 @@ BUILD RULE DARI SCHEMA DATABASE
     // HIERARCHY ENGINE UNTUK SIPD
     // =====================================================
     $req = $_POST['req'] ?? null; // // ambil req dari frontend
+    // ==========================================
+    // 🔥 TAMBAHAN: SUPPORT filters[level]
+    // ==========================================
+    if ($req === null && isset($_POST['filters'])) { // //
 
-    if ($profileKey === 'rekening_kegiatan') {
-      return $this->loadDropdownHierarchy($parentValue, $req); // // kirim req
+      $filters = json_decode($_POST['filters'], true); // //
+
+      if (isset($filters['level'])) { // //
+        $req = $filters['level']; // // mapping level → req
+      }
+    }
+    $filters     = $_POST['filters'] ?? null;
+    $parentValue = $_POST['parent_value'] ?? null;
+    $req         = $_POST['req'] ?? null;
+
+    if ($filters) {
+      return $this->loadDropdownGeneric($profileKey, null, $filters);
     }
 
+    if ($parentValue !== null && $parentValue !== '') {
+      return $this->loadDropdownHierarchy($parentValue, $req);
+    }
 
     // =====================================================
     // GENERIC DROPDOWN ENGINE
