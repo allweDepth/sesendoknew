@@ -1802,9 +1802,10 @@ BUILD RULE DARI SCHEMA DATABASE
     // =====================================================
     // HIERARCHY ENGINE UNTUK SIPD
     // =====================================================
+    $req = $_POST['req'] ?? null; // // ambil req dari frontend
+
     if ($profileKey === 'rekening_kegiatan') {
-      // panggil engine hierarchy dengan parent
-      return $this->loadDropdownHierarchy($parentValue);
+      return $this->loadDropdownHierarchy($parentValue, $req); // // kirim req
     }
 
 
@@ -4100,93 +4101,90 @@ AND is_deleted = 0
   // DROPDOWN HIERARCHY SIPD
   // ======================================================
 
-  private function loadDropdownHierarchy($parentValue = null)
+  private function loadDropdownHierarchy($parentValue = null, $req = null)
   {
+    $table = 'rekening_kegiatan'; // // tabel tetap
 
-    // ----------------------------------------------------
-    // nama tabel hierarchy SIPD
-    // ----------------------------------------------------
+    $columns = $this->getTableColumns($table); // // ambil kolom
 
-    $table = 'rekening_kegiatan';
+    $mandatoryWhere = []; // // kondisi query
+    $params = []; // // bind param
 
+    // =====================================================
+    // 🔥 FIX 1: DEFAULT REQ (ROOT WAJIB ADA LEVEL)
+    // =====================================================
+    if ($req === null && ($parentValue === null || $parentValue === '')) {
+      $req = 'urusan'; // // default root
+    }
 
-    // ----------------------------------------------------
-    // ambil struktur kolom tabel
-    // ----------------------------------------------------
-
-    $columns = $this->getTableColumns($table);
-
-
-    // ----------------------------------------------------
-    // array kondisi query
-    // ----------------------------------------------------
-
-    $mandatoryWhere = [];
-    $params = [];
-
-
-    // ----------------------------------------------------
-    // gunakan engine scope yang sudah ada
-    // filter:
-    // status
-    // tahun
-    // kd_wilayah
-    // kd_opd
-    // peraturan_id
-    // ----------------------------------------------------
-
+    // =====================================================
+    // 🔥 APPLY SCOPE (TIDAK DIUBAH)
+    // =====================================================
     if (method_exists($this, 'resolveScope')) {
 
       list($scopeWhere, $scopeParams) =
-        $this->resolveScope($table, $this->profiles['rekening_kegiatan'], 'dropdown');
+        $this->resolveScope($table, $this->profiles['rekening_kegiatan'], 'default'); // //
 
-      $mandatoryWhere = array_merge($mandatoryWhere, $scopeWhere);
-      $params = array_merge($params, $scopeParams);
+      $mandatoryWhere = array_merge($mandatoryWhere, $scopeWhere); // //
+      $params = array_merge($params, $scopeParams); // //
     }
 
-
-    // ----------------------------------------------------
-    // filter hierarchy parent
-    // ----------------------------------------------------
-
+    // =====================================================
+    // 🔥 ROOT MODE
+    // =====================================================
     if ($parentValue === null || $parentValue === '') {
 
-      // mode EDIT: jika value ada
+      // =============================================
+      // 🔥 EDIT MODE (HARUS ISOLATED)
+      // =============================================
       if (!empty($_POST['value'])) {
 
-        $mandatoryWhere[] = "`$table`.`kode` = ?";
-        $params[] = $_POST['value'];
+        $mandatoryWhere = []; // // RESET SEMUA FILTER
+        $params = []; // // RESET PARAM
+
+        $mandatoryWhere[] = "`$table`.`kode` = ?"; // // ambil value saja
+        $params[] = $_POST['value']; // //
+
       } else {
-        // root level (urusan)
+
         $mandatoryWhere[] =
           "(`$table`.`parent_kode` IS NULL
-              OR `$table`.`parent_kode`=''
-              OR `$table`.`parent_kode`='0')";
-      }
-    } else {
+                OR `$table`.`parent_kode`=''
+                OR `$table`.`parent_kode`='0')"; // // root
 
-      // cascade normal
-      $mandatoryWhere[] = "`$table`.`parent_kode` = ?";
-      $params[] = $parentValue;
+        if ($req !== null) { // //
+          $mandatoryWhere[] = "`$table`.`level` = ?"; // // enforce level
+          $params[] = $req; // //
+        }
+      }
     }
 
+    // =====================================================
+    // 🔥 CASCADE MODE
+    // =====================================================
+    else {
 
-    // ----------------------------------------------------
-    // build where clause
-    // ----------------------------------------------------
+      $mandatoryWhere[] = "`$table`.`parent_kode` = ?"; // // parent filter
+      $params[] = $parentValue; // //
 
+      if ($req !== null) { // //
+        $mandatoryWhere[] = "`$table`.`level` = ?"; // // enforce level
+        $params[] = $req; // //
+      }
+    }
+
+    // =====================================================
+    // BUILD WHERE
+    // =====================================================
     $where = '';
 
     if (!empty($mandatoryWhere)) {
-
-      $where = "WHERE " . implode(" AND ", $mandatoryWhere);
+      $where = "WHERE " . implode(" AND ", $mandatoryWhere); // //
     }
 
-
-    // ----------------------------------------------------
-    // query dropdown
-    // ----------------------------------------------------
-
+    // =====================================================
+    // QUERY
+    // =====================================================
     $sql = "
         SELECT
             `$table`.`kode` AS value,
@@ -4196,17 +4194,7 @@ AND is_deleted = 0
         ORDER BY `$table`.`kode` ASC
     ";
 
-
-    // ----------------------------------------------------
-    // eksekusi query
-    // ----------------------------------------------------
-
-    $rows = $this->db->query($sql, $params)->fetchAll();
-
-
-    // ----------------------------------------------------
-    // response dropdown
-    // ----------------------------------------------------
+    $rows = $this->db->query($sql, $params)->fetchAll(); // //
 
     return JsonResponse::success(
       "Dropdown loaded",
@@ -4385,9 +4373,25 @@ AND is_deleted = 0
 
       if ($localKey && in_array($localKey, $columns)) {
 
-        $mandatoryWhere[] = "`$table`.`$localKey` = ?";
+        $req = $_POST['req'] ?? null; // //
 
-        $params[] = $parentValue;
+        if ($req === null && $parentValue === null) { // // root tanpa req
+          $req = 'urusan'; // // default root
+        }
+
+        $expectedLevel = null; // // init
+
+        if ($req && isset($profile['req_filters'][$req])) { // // ambil dari config
+          $expectedLevel = $profile['req_filters'][$req]['where']['level'] ?? null;
+        }
+
+        $mandatoryWhere[] = "`$table`.`$localKey` = ?"; // // parent filter
+        $params[] = $parentValue; // // bind parent
+
+        if ($expectedLevel !== null) { // // enforce level
+          $mandatoryWhere[] = "`$table`.`level` = ?";
+          $params[] = $expectedLevel;
+        }
       }
     }
 
