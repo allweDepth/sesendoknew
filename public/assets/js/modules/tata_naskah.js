@@ -603,9 +603,14 @@ class TataNaskahModule {
 			},
 
 			onSuccess: function (event) {
-				event.preventDefault();
-				form.find(".ui.error.message").hide().empty();
-				return false;
+				// CEK event karena bisa undefined saat dipanggil via form.form("validate form")
+				if (event) {
+					event.preventDefault(); // hanya jalan jika event ada
+				}
+
+				form.find(".ui.error.message").hide().empty(); // bersihkan error UI
+
+				return false; // tetap cegah submit default
 			},
 		});
 	}
