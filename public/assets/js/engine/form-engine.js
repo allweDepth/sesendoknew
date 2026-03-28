@@ -53,7 +53,8 @@ class FormEngine {
 
 			if (parent) return; // ❗ hanya root
 
-			if (self.state?.id) return; // // 🔥 gunakan self
+			// // 🔥 hanya skip jika populate sedang berjalan
+			if (self.isPopulating) return;
 			self.loadDropdown($dropdown, {});
 		});
 	}
@@ -125,7 +126,7 @@ class FormEngine {
 				// ==================================================
 				// 🔥 ACTION HARUS EDIT (BUKAN DROPDOWN)
 				// ==================================================
-				action: "edit", // // FIX: ini ambil data row
+				action: "get", // // 🔥 ubah jadi ambil data
 
 				// ==================================================
 				// 🔥 IDENTITAS DATA
@@ -145,7 +146,7 @@ class FormEngine {
 			},
 
 			success: async (res) => {
-				if (!res || !res.data) return;
+				if (!res || !res.data || Object.keys(res.data).length === 0) return; // // 🔥 handle empty object
 
 				// ==================================================
 				// 🔥 POPULATE FORM
@@ -197,15 +198,30 @@ class FormEngine {
 				dropdown.data("skip-cascade", true);
 
 				// 🔥 load dulu
-				await this.loadDropdown(dropdown);
+				// // 🔥 ambil parent jika ada
+				const parentName = dropdown.data("parent");
+				const parentField = dropdown.data("parent-field");
+
+				let params = {};
+
+				if (parentName) {
+					const parentValue = $(`${this.formSelector} [name="${parentName}"]`).val();
+
+					params = {
+						parent: parentName,
+						parent_field: parentField,
+						parent_value: parentValue,
+					};
+				}
+
+				await this.loadDropdown(dropdown, params);
 
 				// 🔥 set value
 				dropdown.dropdown("set selected", value);
 
 				// 🔥 trigger cascade manual
-				if (!this.isPopulating) {
-					dropdown.find("input[type=hidden]").trigger("change");
-				}
+				// // 🔥 paksa trigger setelah set
+				dropdown.find("input[type=hidden]").trigger("change");
 
 				dropdown.removeData("skip-cascade");
 

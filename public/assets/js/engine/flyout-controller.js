@@ -193,7 +193,7 @@ JIKA TIDAK ADA → PERTAHANKAN STATE MENU
 		// ==============================
 		// DISINI INSTANCE FORM DIBUAT
 		// ==============================
-
+		// state.id = id; // // 🔥 MASUKKAN ID KE STATE GLOBAL
 		this.formEngine = new FormEngine({
 			state: state,
 
