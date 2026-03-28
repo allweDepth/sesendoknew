@@ -66,7 +66,7 @@ class FormEngine {
 		const $menu = $dropdown.find(".menu");
 		const id = this.state?.id || null;
 		const mode = id ? "edit" : "add";
-
+		const globalLimit = $("#countRow").dropdown("get value") || 20;
 		return new Promise((resolve) => {
 			const requestId = Date.now();
 			$dropdown.data("req-id", requestId); // //
@@ -80,7 +80,7 @@ class FormEngine {
 					mode: mode,
 					id: id,
 					search: params.search || "",
-					limit: 20,
+					limit: globalLimit,
 					...params,
 				},
 
@@ -126,7 +126,7 @@ class FormEngine {
 				// ==================================================
 				// 🔥 ACTION HARUS EDIT (BUKAN DROPDOWN)
 				// ==================================================
-				action: "get", // // 🔥 ubah jadi ambil data
+				action: "edit", // // 🔥 ubah jadi ambil data
 
 				// ==================================================
 				// 🔥 IDENTITAS DATA
@@ -142,7 +142,6 @@ class FormEngine {
 				// ==================================================
 				// 🔥 CSRF
 				// ==================================================
-				csrf_token: window.CSRF_TOKEN, // //
 			},
 
 			success: async (res) => {

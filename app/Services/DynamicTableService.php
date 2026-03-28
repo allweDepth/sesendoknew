@@ -191,12 +191,14 @@ PERUBAHAN:
         $this->authorize('add', $table);
         return $this->insertJson($table, $request);
       case 'edit':
-        if (!empty($request['id_row']) && count($request) <= 4) {
+        $mode = $request['mode'] ?? 'get'; // // 🔥 fallback aman
+
+        if (!empty($request['id_row']) && $mode === 'get') {
           $this->authorize('view', $table);
           return $this->getById($table, $request['id_row']);
         }
 
-        if (!empty($request['id_row'])) {
+        if (!empty($request['id_row']) && ($request['mode'] ?? '') === 'update') {
           $this->authorize('edit', $table);
           return $this->update($table, $request);
         }
