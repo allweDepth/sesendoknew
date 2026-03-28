@@ -1812,14 +1812,19 @@ BUILD RULE DARI SCHEMA DATABASE
     // ======================================================
     // 🔥 TAMBAHAN MODE + ID + SEARCH
     // ======================================================
-    $mode   = $_POST['mode'] ?? 'add'; // // default add
-    $id     = $_POST['id'] ?? null; // // id edit
+    $mode = $_POST['mode'] ?? null;
+    $id   = $_POST['id'] ?? null;
+
+    // 🔥 NORMALISASI
+    if (!$id) {
+      $mode = null;
+    }
     $search = $_POST['search'] ?? null; // // keyword search
     $limit  = $_POST['limit'] ?? 20; // // default limit
     // ======================================================
     // 🔥 MODE EDIT → AMBIL WINDOW DATA BERDASARKAN ID
     // ======================================================
-    if ($mode === 'edit' && $id) {
+    if (!empty($id)) {
 
       $primaryKey = $this->getPrimaryKey($profileKey);
 

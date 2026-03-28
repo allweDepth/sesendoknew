@@ -70,20 +70,33 @@ class FormEngine {
 		return new Promise((resolve) => {
 			const requestId = Date.now();
 			$dropdown.data("req-id", requestId); // //
+			const payload = {
+				action: "dropdown",
+				tbl: source,
+				...params,
+			};
 
-			// // 🔥 PROMISE
+			// 🔥 filter hanya jika ada isi
+			if (filter && Object.keys(filter).length) {
+				payload.filters = JSON.stringify(filter);
+			}
+
+			// 🔥 search hanya jika ada
+			if (params.search) {
+				payload.search = params.search;
+			}
+
+			// 🔥 limit
+			payload.limit = globalLimit || 20;
+
+			// 🔥 MODE EDIT ONLY
+			if (this.state?.id) {
+				payload.id = this.state.id;
+				payload.mode = "edit";
+			}
+
 			this.ajax.request({
-				data: {
-					action: "dropdown",
-					tbl: source,
-					filters: JSON.stringify(filter),
-					mode: mode,
-					id: id,
-					search: params.search || "",
-					limit: globalLimit,
-					...params,
-				},
-
+				data: payload,
 				success: (res) => {
 					if ($dropdown.data("req-id") !== requestId) return; // // 🔥 WAJIB
 					$menu.empty();
@@ -416,9 +429,9 @@ class FormEngine {
 			if (["action", "tbl", "req"].includes(key)) return; // // skip core
 
 			const val = this.state[key];
-
-			if (val !== null && val !== undefined && typeof val !== "function") {
-				formData.append(key, val); // // append state tambahan
+			// 🔥 HANYA KIRIM JIKA VALID
+			if (val !== null && val !== undefined && val !== "") {
+				formData.append(key, val);
 			}
 		});
 
