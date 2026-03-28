@@ -53,39 +53,55 @@ class FormEngine {
 
 			if (parent) return; // ❗ hanya root
 
+			if (self.state?.id) return; // // 🔥 gunakan self
 			self.loadDropdown($dropdown, {});
 		});
 	}
 	loadDropdown($dropdown, params = {}) {
-		const source = $dropdown.data("source"); // // ambil tabel
-		const filter = $dropdown.data("filter") || {}; // // ambil filter JSON
-		if (!source) return;
+		const source = $dropdown.data("source");
+		const filter = $dropdown.data("filter") || {};
+		if (!source) return Promise.resolve();
 
 		const $menu = $dropdown.find(".menu");
+		const id = this.state?.id || null;
+		const mode = id ? "edit" : "add";
 
-		this.ajax.request({
-			data: {
-				action: "dropdown", // // endpoint dropdown
-				tbl: source, // // nama tabel
-				filters: JSON.stringify(filter), // // 🔥 kirim filter sebagai JSON
-				...params, // // parent jika cascade
-			},
+		return new Promise((resolve) => {
+			const requestId = Date.now();
+			$dropdown.data("req-id", requestId); // //
 
-			success: (res) => {
-				$menu.empty();
+			// // 🔥 PROMISE
+			this.ajax.request({
+				data: {
+					action: "dropdown",
+					tbl: source,
+					filters: JSON.stringify(filter),
+					mode: mode,
+					id: id,
+					search: params.search || "",
+					limit: 20,
+					...params,
+				},
 
-				if (res.success && Array.isArray(res.data)) {
-					res.data.forEach((item) => {
-						$menu.append(`
-            <div class="item" data-value="${item.value ?? item.id}">
-              ${item.text ?? item.nama ?? item.label}
-            </div>
-          `);
-					});
-				}
+				success: (res) => {
+					if ($dropdown.data("req-id") !== requestId) return; // // 🔥 WAJIB
+					$menu.empty();
 
-				$dropdown.dropdown("refresh");
-			},
+					if (res.success && Array.isArray(res.data)) {
+						res.data.forEach((item) => {
+							$menu.append(`
+							<div class="item" data-value="${item.value ?? item.id}">
+								${item.text ?? item.nama ?? item.label}
+							</div>
+						`);
+						});
+					}
+
+					$dropdown.dropdown("refresh");
+
+					resolve(); // // 🔥 selesai
+				},
+			});
 		});
 	}
 	/**
@@ -97,19 +113,48 @@ class FormEngine {
 	 */
 	loadData(id) {
 		console.log("LOAD DATA", id);
+		this.state.id = id; // // 🔥 WAJIB: SET ID KE STATE
+		// ==================================================
+		// 🔥 AMBIL STATE (SUMBER RESMI)
+		// ==================================================
+		const tbl = this.state.tbl; // // ambil tabel utama
+		const req = this.state.req || null; // // optional request tambahan
+
 		this.ajax.request({
 			data: {
-				action: "edit",
-				tbl: this.state.tbl,
-				id_row: id,
-				req: this.state.req,
+				// ==================================================
+				// 🔥 ACTION HARUS EDIT (BUKAN DROPDOWN)
+				// ==================================================
+				action: "edit", // // FIX: ini ambil data row
+
+				// ==================================================
+				// 🔥 IDENTITAS DATA
+				// ==================================================
+				tbl: tbl, // // nama tabel
+				req: req, // // optional
+
+				// ==================================================
+				// 🔥 PRIMARY KEY
+				// ==================================================
+				id_row: id, // // FIX: sesuai backend DynamicTableService
+
+				// ==================================================
+				// 🔥 CSRF
+				// ==================================================
+				csrf_token: window.CSRF_TOKEN, // //
 			},
 
-			success: (res) => {
+			success: async (res) => {
 				if (!res || !res.data) return;
 
-				this.populateForm(res.data);
-				// this.loadDropdownSources(); // // ❌ HAPUS (sudah dilakukan di init)
+				// ==================================================
+				// 🔥 POPULATE FORM
+				// ==================================================
+				await this.populateForm(res.data); // 🔥 WAJIB
+
+				// ==================================================
+				// 🔥 TRIGGER DROPDOWN RELOAD (EDIT MODE)
+				// ==================================================
 			},
 		});
 	}
@@ -125,179 +170,95 @@ class FormEngine {
 	 * - mendukung calendar
 	 * - mencegah cascade dropdown saat populate
 	 */
-	populateForm(data) {
-		// =========================================================
-		// AKTIFKAN MODE POPULATE
-		// =========================================================
-		// selama populate berlangsung cascade dropdown dimatikan
+	async populateForm(data) {
 		this.isPopulating = true;
 
-		// =========================================================
-		// LOOP SEMUA FIELD DATA
-		// =========================================================
-		const orderedKeys = ["urusan", "bidang", "program", "kegiatan", "sub_kegiatan"]; // // urutan chain
+		const orderedKeys = ["urusan", "bidang", "program", "kegiatan", "sub_kegiatan"];
 
-		const processField = (key) => {
-			// // bungkus logic lama jadi function
+		const processField = async (key) => {
 			const field = $(`${this.formSelector} [name="${key}"]`);
 			if (!field.length) return;
 
+			// =========================
+			// CHECKBOX
+			// =========================
 			if (field.attr("type") === "checkbox") {
 				field.prop("checked", data[key] == 1);
 				return;
 			}
 
+			// =========================
+			// DROPDOWN (FIX RACE)
+			// =========================
 			if (field.closest(".ui.dropdown").length) {
 				const dropdown = field.closest(".ui.dropdown");
+				const value = data[key];
+
 				dropdown.data("skip-cascade", true);
 
-				const value = data[key];
-				const hiddenInput = dropdown.find("input[type=hidden]");
-				hiddenInput.val(value);
+				// 🔥 load dulu
+				await this.loadDropdown(dropdown);
 
-				setTimeout(() => {
-					const exists = dropdown.find(`.item[data-value="${value}"]`).length;
+				// 🔥 set value
+				dropdown.dropdown("set selected", value);
 
-					if (exists) {
-						dropdown.dropdown("set selected", value);
-						dropdown.find("input[type=hidden]").trigger("change");
-					}
-				}, 200);
+				// 🔥 trigger cascade manual
+				if (!this.isPopulating) {
+					dropdown.find("input[type=hidden]").trigger("change");
+				}
 
-				setTimeout(() => {
-					dropdown.removeData("skip-cascade");
-				}, 100);
+				dropdown.removeData("skip-cascade");
 
+				return;
+			}
+
+			// =========================
+			// CALENDAR
+			// =========================
+			if (field.closest(".ui.calendar").length) {
+				const calendar = field.closest(".ui.calendar");
+				let value = data[key];
+
+				const type = calendar.calendar("get type");
+
+				if (type === "year" && /^\d{4}$/.test(value)) {
+					value = new Date(value, 0, 1);
+				}
+
+				calendar.calendar("set date", value);
+				return;
+			}
+
+			// =========================
+			// READONLY
+			// =========================
+			if (field.is("[readonly]")) {
+				field.val(data[key]);
 				return;
 			}
 
 			field.val(data[key]);
 		};
 
-		// ===================================================
-		// JALANKAN ORDERED
-		// ===================================================
-		orderedKeys.forEach((key) => {
-			if (data[key] !== undefined) processField(key);
-		});
+		// =========================
+		// HIRARKI (WAJIB)
+		// =========================
+		for (const key of orderedKeys) {
+			if (data[key] !== undefined) {
+				await processField(key);
+			}
+		}
 
-		// ===================================================
+		// =========================
 		// SISANYA
-		// ===================================================
-		Object.keys(data).forEach((key) => {
+		// =========================
+		for (const key of Object.keys(data)) {
 			if (!orderedKeys.includes(key)) {
-				processField(key);
+				await processField(key);
 			}
-		});
+		}
 
-		// field lain tetap diproses
-		Object.keys(data).forEach((key) => {
-			// cari field berdasarkan name
-			const field = $(`${this.formSelector} [name="${key}"]`);
-
-			// jika field tidak ada di form maka skip
-			if (!field.length) return;
-
-			/**
-			 * =====================================================
-			 * HANDLE CHECKBOX
-			 * =====================================================
-			 */
-			if (field.attr("type") === "checkbox") {
-				// jika nilai 1 maka checkbox checked
-				field.prop("checked", data[key] == 1);
-
-				return;
-			}
-
-			/**
-			 * =====================================================
-			 * HANDLE DROPDOWN FOMANTIC UI
-			 * =====================================================
-			 */
-			if (field.closest(".ui.dropdown").length) {
-				// ambil container dropdown
-				const dropdown = field.closest(".ui.dropdown");
-
-				// ==================================================
-				// AKTIFKAN FLAG SKIP CASCADE
-				// ==================================================
-				// aktifkan flag skip cascade
-				dropdown.data("skip-cascade", true);
-
-				const value = data[key];
-
-				const hiddenInput = dropdown.find("input[type=hidden]"); // // ambil hidden input
-
-				hiddenInput.val(value); // // set value awal
-
-				// ==================================================
-				// FORCE SYNC SET SELECTED (WAJIB)
-				// ==================================================
-				setTimeout(() => {
-					const exists = dropdown.find(`.item[data-value="${value}"]`).length; // //
-
-					// //
-					dropdown.dropdown("set selected", value); // //
-					dropdown.find("input[type=hidden]").trigger("change"); // // WAJIB trigger cascade
-				}, 200);
-
-				// hapus flag setelah populate selesai
-				setTimeout(() => {
-					//
-					dropdown.removeData("skip-cascade"); //
-				}, 100);
-
-				return;
-			}
-
-			/**
-			 * =====================================================
-			 * HANDLE CALENDAR FOMANTIC UI
-			 * =====================================================
-			 */
-			if (field.closest(".ui.calendar").length) {
-				const calendar = field.closest(".ui.calendar");
-
-				const type = calendar.calendar("get type");
-
-				let value = data[key];
-
-				// ==================================================
-				// KONVERSI YEAR KE DATE
-				// ==================================================
-				if (type === "year" && /^\d{4}$/.test(value)) {
-					value = new Date(value, 0, 1);
-				}
-
-				calendar.calendar("set date", value);
-
-				return;
-			}
-
-			/* =====================================================
-CEK FIELD READONLY
-agar tidak diubah saat populate
-===================================================== */
-			// jika readonly tetap isi value tetapi jangan ubah readonly
-			if (field.is("[readonly]")) {
-				field.val(data[key]); // isi data dari server
-				return; // tidak perlu proses lain
-			}
-
-			/* =====================================================
-SET VALUE NORMAL
-===================================================== */
-			field.val(data[key]);
-		});
-
-		// =========================================================
-		// MATIKAN MODE POPULATE
-		// =========================================================
-		// setelah populate selesai cascade dropdown boleh aktif lagi
-		setTimeout(() => {
-			this.isPopulating = false;
-		}, 200);
+		this.isPopulating = false;
 	}
 
 	/**
@@ -1286,6 +1247,7 @@ data-filter='${JSON.stringify(prop.filter || {})}' // // 🔥 filter server
 			`change.formCascade.${this.state.tbl}`,
 			`${this.formSelector} .ui.dropdown input[type=hidden]`,
 			function () {
+				if (self.isPopulating) return; // // 🔥 WAJIB
 				const $parent = $(this).closest(".ui.dropdown");
 
 				const parentName = $parent.data("field");

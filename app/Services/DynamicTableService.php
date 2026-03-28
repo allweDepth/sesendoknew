@@ -1777,16 +1777,6 @@ BUILD RULE DARI SCHEMA DATABASE
 
   private function loadDropdown($profileKey, $parentValue = null, $kdAkun = null)
   {
-    // =====================================================
-    // PATCH: ambil parent_value dari request
-    // =====================================================
-    // karena router tidak meneruskan parameter cascade
-    // maka diambil langsung dari POST
-    // =====================================================
-    //=================================================
-    //CASCADE PARENT VALUE (FIX)
-    // =================================================
-
     if ($parentValue === null) {
 
       if (isset($_POST['parent_value'])) {
@@ -1817,8 +1807,34 @@ BUILD RULE DARI SCHEMA DATABASE
     $filters     = $_POST['filters'] ?? null;
     $parentValue = $_POST['parent_value'] ?? null;
     $req         = $_POST['req'] ?? null;
+    // ======================================================
+    // 🔥 TAMBAHAN MODE + ID + SEARCH
+    // ======================================================
+    $mode   = $_POST['mode'] ?? 'add'; // // default add
+    $id     = $_POST['id'] ?? null; // // id edit
+    $search = $_POST['search'] ?? null; // // keyword search
+    $limit  = $_POST['limit'] ?? 20; // // default limit
+    // ======================================================
+    // 🔥 MODE EDIT → AMBIL WINDOW DATA BERDASARKAN ID
+    // ======================================================
+    if ($mode === 'edit' && $id) {
 
-    if ($filters) {
+      $primaryKey = $this->getPrimaryKey($profileKey);
+
+      $rows = $this->db->query(
+        "SELECT * FROM `$profileKey`
+     WHERE `$primaryKey` BETWEEN ? AND ?
+     ORDER BY `$primaryKey` ASC",
+        [$id - 2, $id + 2]
+      )->fetchAll();
+
+      return JsonResponse::success(
+        "Dropdown loaded (edit window)",
+        [],
+        $rows
+      );
+    }
+    if ($filters && $mode !== 'edit') { // // edit tidak boleh bypass
       return $this->loadDropdownGeneric($profileKey, null, $filters);
     }
 
@@ -4289,12 +4305,23 @@ AND is_deleted = 0
 
 
 
+    if (!empty($_POST['filters'])) {
+      $filters = json_decode($_POST['filters'], true);
 
+      if (is_array($filters)) {
+        foreach ($filters as $col => $val) {
+          if (in_array($col, $columns)) {
+            $mandatoryWhere[] = "`$table`.`$col` = ?";
+            $params[] = $val;
+          }
+        }
+      }
+    }
     // --------------------------------------------------
     // parameter request
     // --------------------------------------------------
+    $cari  = $_POST['search'] ?? null;
 
-    $cari  = $_POST['cari'] ?? null; // keyword search
 
     $limit = min((int)($_POST['limit'] ?? 20), 100); // limit dropdown
 
@@ -4456,14 +4483,6 @@ AND is_deleted = 0
       $params[] = $currentValue;
     }
 
-
-    /*
-    -----------------------------------------------------
-    BUILD WHERE
-    -----------------------------------------------------
-    */
-
-    $where = '';
 
     if ($mandatoryWhere) {
 
