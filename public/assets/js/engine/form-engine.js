@@ -19,6 +19,9 @@ class FormEngine {
 		this.isInitialized = false;
 
 		this.isPopulating = false; // flag global untuk populate mode
+		this.isPopulating = false;
+		this.isSubmitting = false;
+		this.validationDisabled = false;
 	}
 
 	/**
@@ -78,32 +81,46 @@ class FormEngine {
 				tbl: source,
 			};
 
-			// 🔥 inject params hanya jika valid
+			// 🔥 inject params valid saja
 			Object.keys(params).forEach((k) => {
 				if (params[k] !== undefined && params[k] !== null && params[k] !== "") {
 					payload[k] = params[k];
 				}
 			});
 
+			// ==================================================
+			// 🔥 PEMBEDA ADD vs EDIT (INI KUNCI)
+			// ==================================================
+			const id = this.state?.id || null;
+			if (id) {
+				payload.mode = "edit"; // // tandai edit
+				payload.id_row = id; // // 🔥 kirim primary key
+			} else {
+				payload.mode = "add"; // // tandai add
+			}
+			// 🔥 inject params hanya jika valid
+			Object.keys(params).forEach((k) => {
+				if (params[k] !== undefined && params[k] !== null && params[k] !== "") {
+					payload[k] = params[k];
+				}
+			});
 			// 🔥 filter hanya jika ada isi
 			if (filter && Object.keys(filter).length) {
 				payload.filters = JSON.stringify(filter);
 			}
-
 			// 🔥 search hanya jika ada
 			if (params.search) {
 				payload.search = params.search;
 			}
-
 			// 🔥 limit
 			payload.limit = globalLimit || 20;
-
 			// 🔥 MODE EDIT ONLY
 			// 🔥 HANYA KIRIM id & mode JIKA BENAR-BENAR DIPERLUKAN
 			// 🔥 HANYA UNTUK EDIT MODE (populateForm)
-			if (this.isPopulating && params.value !== undefined && params.value !== null) {
-				payload.id = params.value;
+			// Menjadi lebih jelas:
+			if (this.isPopulating && params.value != null) {
 				payload.mode = "edit";
+				payload.value = params.value; // kirim sebagai 'value', bukan 'id'
 			}
 
 			this.ajax.request({
@@ -196,113 +213,116 @@ class FormEngine {
 	 */
 	async populateForm(data) {
 		this.isPopulating = true;
+		try {
+			const orderedKeys = ["urusan", "bidang", "program", "kegiatan", "sub_kegiatan"];
 
-		const orderedKeys = ["urusan", "bidang", "program", "kegiatan", "sub_kegiatan"];
+			const processField = async (key) => {
+				const field = $(`${this.formSelector} [name="${key}"]`);
+				if (!field.length) return;
 
-		const processField = async (key) => {
-			const field = $(`${this.formSelector} [name="${key}"]`);
-			if (!field.length) return;
-
-			// =========================
-			// CHECKBOX
-			// =========================
-			if (field.attr("type") === "checkbox") {
-				field.prop("checked", data[key] == 1);
-				return;
-			}
-
-			// =========================
-			// DROPDOWN (FIX RACE)
-			// =========================
-			if (field.closest(".ui.dropdown").length) {
-				const dropdown = field.closest(".ui.dropdown");
-				const value = data[key];
-
-				dropdown.data("skip-cascade", true);
-
-				// 🔥 load dulu
-				// // 🔥 ambil parent jika ada
-				const parentName = dropdown.data("parent");
-				const parentField = dropdown.data("parent-field");
-
-				let params = {};
-
-				if (parentName) {
-					const parentValue = $(`${this.formSelector} [name="${parentName}"]`).val();
-
-					params = {
-						parent: parentName,
-						parent_field: parentField,
-						parent_value: parentValue,
-					};
+				// =========================
+				// CHECKBOX
+				// =========================
+				if (field.attr("type") === "checkbox") {
+					field.prop("checked", data[key] == 1);
+					return;
 				}
 
-				await this.loadDropdown(dropdown, {
-					...params,
-					value: value, // 🔥 kirim value saja, bukan state.id
-				});
+				// =========================
+				// DROPDOWN (FIX RACE)
+				// =========================
+				if (field.closest(".ui.dropdown").length) {
+					const dropdown = field.closest(".ui.dropdown");
+					const value = data[key];
 
-				// 🔥 set value
-				dropdown.dropdown("set selected", value);
+					dropdown.data("skip-cascade", true);
 
-				// 🔥 trigger cascade manual
-				// // 🔥 paksa trigger setelah set
-				if (!this.isPopulating) {
-					dropdown.find("input[type=hidden]").trigger("change");
+					// 🔥 load dulu
+					// // 🔥 ambil parent jika ada
+					const parentName = dropdown.data("parent");
+					const parentField = dropdown.data("parent-field");
+
+					let params = {};
+
+					if (parentName) {
+						const parentValue = $(`${this.formSelector} [name="${parentName}"]`).val();
+
+						params = {
+							parent: parentName,
+							parent_field: parentField,
+							parent_value: parentValue,
+						};
+					}
+
+					await this.loadDropdown(dropdown, {
+						...params,
+						value: value, // 🔥 kirim value saja, bukan state.id
+					});
+
+					// 🔥 set value
+					dropdown.dropdown("set selected", value);
+
+					// 🔥 trigger cascade manual
+					// // 🔥 paksa trigger setelah set
+					if (!this.isPopulating) {
+						dropdown.find("input[type=hidden]").trigger("change");
+					}
+
+					dropdown.removeData("skip-cascade");
+
+					return;
 				}
 
-				dropdown.removeData("skip-cascade");
+				// =========================
+				// CALENDAR
+				// =========================
+				if (field.closest(".ui.calendar").length) {
+					const calendar = field.closest(".ui.calendar");
+					let value = data[key];
 
-				return;
-			}
+					const type = calendar.calendar("get type");
 
-			// =========================
-			// CALENDAR
-			// =========================
-			if (field.closest(".ui.calendar").length) {
-				const calendar = field.closest(".ui.calendar");
-				let value = data[key];
+					if (type === "year" && /^\d{4}$/.test(value)) {
+						value = new Date(value, 0, 1);
+					}
 
-				const type = calendar.calendar("get type");
-
-				if (type === "year" && /^\d{4}$/.test(value)) {
-					value = new Date(value, 0, 1);
+					calendar.calendar("set date", value);
+					return;
 				}
 
-				calendar.calendar("set date", value);
-				return;
-			}
+				// =========================
+				// READONLY
+				// =========================
+				if (field.is("[readonly]")) {
+					field.val(data[key]);
+					return;
+				}
 
-			// =========================
-			// READONLY
-			// =========================
-			if (field.is("[readonly]")) {
 				field.val(data[key]);
-				return;
+			};
+
+			// =========================
+			// HIRARKI (WAJIB)
+			// =========================
+			for (const key of orderedKeys) {
+				if (data[key] !== undefined) {
+					await processField(key);
+				}
 			}
 
-			field.val(data[key]);
-		};
-
-		// =========================
-		// HIRARKI (WAJIB)
-		// =========================
-		for (const key of orderedKeys) {
-			if (data[key] !== undefined) {
-				await processField(key);
+			// =========================
+			// SISANYA
+			// =========================
+			for (const key of Object.keys(data)) {
+				if (!orderedKeys.includes(key)) {
+					await processField(key);
+				}
 			}
+
+			this.isPopulating = false;
+		} finally {
+			this.isPopulating = false;
 		}
-
-		// =========================
-		// SISANYA
-		// =========================
-		for (const key of Object.keys(data)) {
-			if (!orderedKeys.includes(key)) {
-				await processField(key);
-			}
-		}
-
-		this.isPopulating = false;
 	}
 
 	/**

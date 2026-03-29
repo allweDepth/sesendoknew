@@ -1807,6 +1807,7 @@ BUILD RULE DARI SCHEMA DATABASE
         $req = $decoded['level'];
       }
     }
+
     $filters = $_POST['filters'] ?? null; // ✅ WAJIB // // jangan overwrite
     $req     = $_POST['req'] ?? $req;         // //
     // ======================================================
@@ -2515,7 +2516,7 @@ LIMIT 1",
       &$errorRows
 
     ) {
-
+      $duplicateMemory = [];   // tambahkan baris ini
       $rowNumber = 0;
 
       // ==================================================
@@ -2636,7 +2637,6 @@ LIMIT 1",
               5 => 'kegiatan',
               6 => 'sub_kegiatan'
             ];
-
             if (!isset($levelMap[$count])) {
               continue;
             }
@@ -3328,7 +3328,7 @@ LIMIT 1",
       return;
     }
 
-    $pengaturan = $this->config->getPengaturanAktif();
+    $pengaturan = $this->config()->getPengaturanAktif();
 
     if (!$pengaturan) {
       throw new Exception("Pengaturan aktif belum tersedia.");
