@@ -1924,7 +1924,7 @@ BUILD RULE DARI SCHEMA DATABASE
         $rows
       );
     }
-    if ($filters && $mode !== 'edit') { // // edit tidak boleh bypass
+    if ($filters && $mode !== 'edit') { //edit tidak boleh bypass
       return $this->loadDropdownGeneric($profileKey, null, $filters);
     }
 
