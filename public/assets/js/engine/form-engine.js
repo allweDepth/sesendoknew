@@ -38,11 +38,19 @@ class FormEngine {
 
 		this.initFomanticValidation();
 
-		this.initDropdownRoot(); // ✅ REFACTOR (bukan hapus)
+		// 🔥 RESET SEMUA STATE DROPDOWN (WAJIB)
+		$(`${this.formSelector} .ui.dropdown`).each(function () {
+			$(this).removeData("loading"); // // reset lock
+			$(this).removeData("req-id"); // // reset request id
+		});
+
+		this.initDropdownRoot();
 		this.initCascadeDropdown(); // tetap
 
 		UIComponents.initSearch();
 		UIComponents.initLookupDropdown();
+
+		this.initDropdownSearch(); // 🔥 WAJIB
 
 		this.setFlyoutHeader(this.state.tbl);
 	}
@@ -56,18 +64,23 @@ class FormEngine {
 
 			if (parent) return; // ❗ hanya root
 
+			// 🔥 JANGAN LOAD ROOT SAAT EDIT
+			// 🔥 HANYA SKIP JIKA POPULATE, BUKAN EDIT
 			if (self.isPopulating) return;
-
-			// 🔥 JIKA EDIT → JANGAN LOAD DI INIT
-			if (self.state?.id) return; // // WAJIB
 
 			self.loadDropdown($dropdown, {});
 		});
 	}
 	loadDropdown($dropdown, params = {}) {
+		// 🔥 CEGAH REQUEST GANDA
+		if ($dropdown.data("loading")) return Promise.resolve(); // // jika sedang load → skip
+		$dropdown.data("loading", true); // // tandai sedang load
 		const source = $dropdown.data("source");
 		const filter = $dropdown.data("filter") || {};
-		if (!source) return Promise.resolve();
+		if (!source) {
+			$dropdown.data("loading", false); // 🔥 WAJIB reset
+			return Promise.resolve();
+		}
 
 		const $menu = $dropdown.find(".menu");
 		const id = this.state?.id || null;
@@ -98,12 +111,7 @@ class FormEngine {
 			} else {
 				payload.mode = "add"; // // tandai add
 			}
-			// 🔥 inject params hanya jika valid
-			Object.keys(params).forEach((k) => {
-				if (params[k] !== undefined && params[k] !== null && params[k] !== "") {
-					payload[k] = params[k];
-				}
-			});
+
 			// 🔥 filter hanya jika ada isi
 			if (filter && Object.keys(filter).length) {
 				payload.filters = JSON.stringify(filter);
@@ -125,26 +133,70 @@ class FormEngine {
 
 			this.ajax.request({
 				data: payload,
+
 				success: (res) => {
-					if ($dropdown.data("req-id") !== requestId) return; // // 🔥 WAJIB
+					$dropdown.data("loading", false); // // reset normal
+
+					if ($dropdown.data("req-id") !== requestId) return;
+
 					$menu.empty();
 
 					if (res.success && Array.isArray(res.data)) {
 						res.data.forEach((item) => {
 							$menu.append(`
-							<div class="item" data-value="${item.value ?? item.id}">
-								${item.text ?? item.nama ?? item.label}
-							</div>
-						`);
+				<div class="item" data-value="${item.value ?? item.id}">
+					${item.text ?? item.nama ?? item.label}
+				</div>
+			`);
 						});
 					}
 
 					$dropdown.dropdown("refresh");
 
-					resolve(); // // 🔥 selesai
+					resolve();
+				},
+
+				// 🔥 INI YANG KAMU TANYA — TARUH DI SINI
+				error: () => {
+					$dropdown.data("loading", false); // // 🔥 WAJIB reset kalau gagal
+					resolve(); // // biar promise tidak menggantung
 				},
 			});
 		});
+	}
+	initDropdownSearch() {
+		const self = this;
+
+		$(document).on(
+			`keyup.formSearch.${this.state.tbl}`,
+			`${this.formSelector} .ui.search.dropdown input.search`,
+			function () {
+				const $input = $(this);
+				const keyword = $input.val();
+
+				const $dropdown = $input.closest(".ui.dropdown");
+
+				const source = $dropdown.data("source");
+				if (!source) return;
+
+				// 🔥 hanya dropdown yang punya source
+				clearTimeout($dropdown.data("search-timer"));
+
+				// 🔥 skip jika populate
+				if (self.isPopulating) return;
+
+				// 🔥 skip jika dropdown belum dibuka user
+				if (!$dropdown.hasClass("active")) return;
+
+				const timer = setTimeout(() => {
+					self.loadDropdown($dropdown, {
+						search: keyword,
+					});
+				}, 300);
+
+				$dropdown.data("search-timer", timer);
+			},
+		);
 	}
 	/**
 	 * ============================================================
@@ -254,10 +306,13 @@ class FormEngine {
 						};
 					}
 
-					await this.loadDropdown(dropdown, {
-						...params,
-						value: value, // 🔥 kirim value saja, bukan state.id
-					});
+					// 🔥 jika sudah ada item → jangan load ulang
+					if (dropdown.find(".menu .item").length === 0) {
+						await this.loadDropdown(dropdown, {
+							...params,
+							value: value,
+						});
+					}
 
 					// 🔥 set value
 					dropdown.dropdown("set selected", value);
@@ -837,7 +892,8 @@ SEARCH FIELD (FOMANTIC SEARCH)
 		 * Jika prop.search = true
 		 * maka aktifkan Fomantic search dropdown
 		 */
-		const searchClass = prop.search ? "search" : "";
+		// 🔥 AUTO SEARCH JIKA ADA SOURCE
+		const searchClass = prop.search || prop.source ? "search" : "";
 
 		/**
 		 * ======================================================
