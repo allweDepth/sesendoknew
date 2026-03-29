@@ -53,8 +53,11 @@ class FormEngine {
 
 			if (parent) return; // ❗ hanya root
 
-			// // 🔥 hanya skip jika populate sedang berjalan
 			if (self.isPopulating) return;
+
+			// 🔥 JIKA EDIT → JANGAN LOAD DI INIT
+			if (self.state?.id) return; // // WAJIB
+
 			self.loadDropdown($dropdown, {});
 		});
 	}
@@ -73,8 +76,14 @@ class FormEngine {
 			const payload = {
 				action: "dropdown",
 				tbl: source,
-				...params,
 			};
+
+			// 🔥 inject params hanya jika valid
+			Object.keys(params).forEach((k) => {
+				if (params[k] !== undefined && params[k] !== null && params[k] !== "") {
+					payload[k] = params[k];
+				}
+			});
 
 			// 🔥 filter hanya jika ada isi
 			if (filter && Object.keys(filter).length) {
@@ -91,9 +100,10 @@ class FormEngine {
 
 			// 🔥 MODE EDIT ONLY
 			// 🔥 HANYA KIRIM id & mode JIKA BENAR-BENAR DIPERLUKAN
-			if (params.value !== undefined && params.value !== null) {
-				payload.id = params.value; // // gunakan value field
-				payload.mode = "edit"; // // .seharusnya actionnya tetap edit tapi mode nya get
+			// 🔥 HANYA UNTUK EDIT MODE (populateForm)
+			if (this.isPopulating && params.value !== undefined && params.value !== null) {
+				payload.id = params.value;
+				payload.mode = "edit";
 			}
 
 			this.ajax.request({
@@ -237,7 +247,9 @@ class FormEngine {
 
 				// 🔥 trigger cascade manual
 				// // 🔥 paksa trigger setelah set
-				dropdown.find("input[type=hidden]").trigger("change");
+				if (!this.isPopulating) {
+					dropdown.find("input[type=hidden]").trigger("change");
+				}
 
 				dropdown.removeData("skip-cascade");
 

@@ -638,7 +638,7 @@ UIConfig.satuan = {
 		elements: [
 			{ tag: "field", prop: { label: "Value", name: "value" } },
 
-			{ tag: "field", prop: { label: "Item", name: "item" } },
+			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
 
 			{
 				tag: "fieldTextarea",

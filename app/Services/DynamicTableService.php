@@ -1797,19 +1797,17 @@ BUILD RULE DARI SCHEMA DATABASE
     // =====================================================
     // HIERARCHY ENGINE UNTUK SIPD
     // =====================================================
-    $req = $_POST['req'] ?? null; // // ambil req dari frontend
-    // ==========================================
-    // 🔥 TAMBAHAN: SUPPORT filters[level]
-    // ==========================================
-    if ($req === null && isset($_POST['filters'])) { // //
+    $req = $_POST['req'] ?? null;
 
-      $filters = json_decode($_POST['filters'], true); // //
+    // 🔥 FIX AMAN
+    if ($req === null && isset($_POST['filters'])) {
+      $decoded = json_decode($_POST['filters'], true);
 
-      if (isset($filters['level'])) { // //
-        $req = $filters['level']; // // mapping level → req
+      if (isset($decoded['level'])) {
+        $req = $decoded['level'];
       }
     }
-    $filters = $_POST['filters'] ?? $filters; // // jangan overwrite
+    $filters = $_POST['filters'] ?? null; // ✅ WAJIB // // jangan overwrite
     $req     = $_POST['req'] ?? $req;         // //
     // ======================================================
     // 🔥 TAMBAHAN MODE + ID + SEARCH
