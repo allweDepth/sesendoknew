@@ -1814,11 +1814,11 @@ BUILD RULE DARI SCHEMA DATABASE
     // 🔥 TAMBAHAN MODE + ID + SEARCH
     // ======================================================
     $mode = $_POST['mode'] ?? null;
-    $id   = $_POST['id'] ?? null;
+    $id   = $_POST['id'] ?? $_POST['id_row'] ?? null; // // 🔥 FIX: ambil dari id_row juga
 
     // 🔥 NORMALISASI
     if (!$id) {
-      $mode = null;
+      $mode = null; // // tetap sama
     }
     $search = $_POST['search'] ?? null; // // keyword search
     $limit  = $_POST['limit'] ?? 20; // // default limit
