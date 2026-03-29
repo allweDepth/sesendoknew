@@ -140,7 +140,10 @@ PERUBAHAN:
       if (empty($request['action'])) {
         return JsonResponse::error("Action wajib dikirim");
       }
-
+      // 🔥 CLEAN REQUEST (WAJIB)
+      $request = array_filter($request, function ($v) {
+        return $v !== null && $v !== '';
+      });
       $action = $request['action'];
 
       $allowedActions = ['add', 'add_json', 'edit', 'edit_json', 'delete', 'dropdown', 'export', 'list', 'import'];
@@ -1806,9 +1809,8 @@ BUILD RULE DARI SCHEMA DATABASE
         $req = $filters['level']; // // mapping level → req
       }
     }
-    $filters     = $_POST['filters'] ?? null;
-    $parentValue = $_POST['parent_value'] ?? null;
-    $req         = $_POST['req'] ?? null;
+    $filters = $_POST['filters'] ?? $filters; // // jangan overwrite
+    $req     = $_POST['req'] ?? $req;         // //
     // ======================================================
     // 🔥 TAMBAHAN MODE + ID + SEARCH
     // ======================================================
@@ -1824,7 +1826,7 @@ BUILD RULE DARI SCHEMA DATABASE
     // ======================================================
     // 🔥 MODE EDIT → AMBIL WINDOW DATA BERDASARKAN ID
     // ======================================================
-    if (!empty($id)) {
+    if ($mode === 'edit' && !empty($id)) { // // 🔥 hanya edit mode yang boleh masuk
 
       $primaryKey = $this->getPrimaryKey($profileKey);
 

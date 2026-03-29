@@ -90,9 +90,10 @@ class FormEngine {
 			payload.limit = globalLimit || 20;
 
 			// 🔥 MODE EDIT ONLY
-			if (this.state?.id) {
-				payload.id = this.state.id;
-				payload.mode = "edit";
+			// 🔥 HANYA KIRIM id & mode JIKA BENAR-BENAR DIPERLUKAN
+			if (params.value !== undefined && params.value !== null) {
+				payload.id = params.value; // // gunakan value field
+				payload.mode = "edit"; // // .seharusnya actionnya tetap edit tapi mode nya get
 			}
 
 			this.ajax.request({
@@ -226,7 +227,10 @@ class FormEngine {
 					};
 				}
 
-				await this.loadDropdown(dropdown, params);
+				await this.loadDropdown(dropdown, {
+					...params,
+					value: value, // 🔥 kirim value saja, bukan state.id
+				});
 
 				// 🔥 set value
 				dropdown.dropdown("set selected", value);
