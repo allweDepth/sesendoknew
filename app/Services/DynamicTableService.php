@@ -1825,16 +1825,98 @@ BUILD RULE DARI SCHEMA DATABASE
     // ======================================================
     // 🔥 MODE EDIT → AMBIL WINDOW DATA BERDASARKAN ID
     // ======================================================
-    if ($mode === 'edit' && !empty($id)) { // // 🔥 hanya edit mode yang boleh masuk
+    if ($mode === 'edit' && !empty($id)) {
 
-      $primaryKey = $this->getPrimaryKey($profileKey);
+      // ==========================================
+      // 🔥 AMBIL PROFILE & TABLE NYATA
+      // ==========================================
+      $profile = $this->profiles[$profileKey]; // //
+      $table   = $profile['table']; // //
 
-      $rows = $this->db->query(
-        "SELECT * FROM `$profileKey`
-     WHERE `$primaryKey` BETWEEN ? AND ?
-     ORDER BY `$primaryKey` ASC",
-        [$id - 2, $id + 2]
-      )->fetchAll();
+      $primaryKey = $this->getPrimaryKey($table); // //
+
+      // ==========================================
+      // 🔥 AMBIL DATA CURRENT (ID → KODE)
+      // ==========================================
+      $current = $this->db->query(
+        "SELECT * FROM `$table`
+     WHERE `$primaryKey` = ?
+     LIMIT 1",
+        [$id]
+      )->fetch(); // //
+
+      if (!$current) {
+        return JsonResponse::success("Dropdown kosong", [], []);
+      }
+
+      // ==========================================
+      // 🔥 FIELD DROPDOWN
+      // ==========================================
+      $valueField = $profile['dropdown']['value'] ?? $primaryKey; // //
+
+      $currentValue = $current[$valueField] ?? null; // //
+
+      // ==========================================
+      // 🔥 HITUNG WINDOW
+      // ==========================================
+      $limit = (int)($_POST['limit'] ?? 5); // //
+      $a = $limit - 1; // //
+      $b = (int)floor($a / 2); // //
+
+      // ==========================================
+      // 🔥 APPLY SCOPE (WAJIB)
+      // ==========================================
+      list($scopeWhere, $scopeParams) =
+        $this->resolveScope($table, $profile, 'dropdown'); // //
+
+      $whereBase = $scopeWhere; // //
+      $paramsBase = $scopeParams; // //
+
+      // ==========================================
+      // 🔥 LEVEL FILTER (JIKA ADA)
+      // ==========================================
+      if (isset($current['level'])) {
+        $whereBase[] = "`level` = ?"; // //
+        $paramsBase[] = $current['level']; // //
+      }
+
+      // ==========================================
+      // 🔥 BEFORE
+      // ==========================================
+      $before = $this->db->query(
+        "SELECT `$valueField` AS value, `$valueField` AS text
+     FROM `$table`
+     WHERE `$valueField` < ?
+     " . (!empty($whereBase) ? " AND " . implode(" AND ", $whereBase) : "") . "
+     ORDER BY `$valueField` DESC
+     LIMIT $b",
+        array_merge([$currentValue], $paramsBase)
+      )->fetchAll(); // //
+
+      // ==========================================
+      // 🔥 AFTER
+      // ==========================================
+      $after = $this->db->query(
+        "SELECT `$valueField` AS value, `$valueField` AS text
+     FROM `$table`
+     WHERE `$valueField` > ?
+     " . (!empty($whereBase) ? " AND " . implode(" AND ", $whereBase) : "") . "
+     ORDER BY `$valueField` ASC
+     LIMIT $b",
+        array_merge([$currentValue], $paramsBase)
+      )->fetchAll(); // //
+
+      // ==========================================
+      // 🔥 FINAL MERGE
+      // ==========================================
+      $rows = array_merge(
+        array_reverse($before),
+        [[
+          'value' => $currentValue,
+          'text'  => $current[$profile['dropdown']['label'] ?? 'nama'] ?? $currentValue
+        ]],
+        $after
+      );
 
       return JsonResponse::success(
         "Dropdown loaded (edit window)",
