@@ -88,7 +88,7 @@ class FormEngine {
 		const globalLimit = $("#countRow").dropdown("get value") || 20;
 		return new Promise((resolve) => {
 			const requestId = Date.now();
-			$dropdown.data("req-id", requestId); // //
+			$dropdown.data("req-id", requestId); //
 			const payload = {
 				action: "dropdown",
 				tbl: source,
@@ -104,7 +104,6 @@ class FormEngine {
 			// ==================================================
 			// 🔥 PEMBEDA ADD vs EDIT (INI KUNCI)
 			// ==================================================
-			const id = this.state?.id || null;
 			if (id) {
 				payload.mode = "edit"; // // tandai edit
 				payload.id_row = id; // // 🔥 kirim primary key
@@ -128,6 +127,7 @@ class FormEngine {
 			// Menjadi lebih jelas:
 			if (this.isPopulating && params.value != null) {
 				payload.mode = "edit";
+				delete payload.id_row; // // 🔥 pastikan tidak konflik
 				payload.value = params.value; // kirim sebagai 'value', bukan 'id'
 			}
 
