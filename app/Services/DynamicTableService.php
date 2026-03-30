@@ -1898,13 +1898,13 @@ BUILD RULE DARI SCHEMA DATABASE
       // ==========================================
       $after = $this->db->query(
         "SELECT `$valueField` AS value, `$valueField` AS text
-     FROM `$table`
-     WHERE `$valueField` > ?
-     " . (!empty($whereBase) ? " AND " . implode(" AND ", $whereBase) : "") . "
-     ORDER BY `$valueField` ASC
-     LIMIT $b",
+          FROM `$table`
+          WHERE `$valueField` > ?
+          " . (!empty($whereBase) ? " AND " . implode(" AND ", $whereBase) : "") . "
+          ORDER BY `$valueField` ASC
+          LIMIT $b",
         array_merge([$currentValue], $paramsBase)
-      )->fetchAll(); // //
+      )->fetchAll(); //
 
       // ==========================================
       // 🔥 FINAL MERGE

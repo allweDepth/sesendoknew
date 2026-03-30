@@ -17,9 +17,7 @@ class FormEngine {
 		this.formSelector = config.formSelector;
 
 		this.isInitialized = false;
-
 		this.isPopulating = false; // flag global untuk populate mode
-		this.isPopulating = false;
 		this.isSubmitting = false;
 		this.validationDisabled = false;
 	}
@@ -32,6 +30,7 @@ class FormEngine {
 	 */
 	init() {
 		console.log("FORM INIT");
+		this.state.id = null; // // 🔥 FIX: reset mode ke ADD setiap buka flyout
 		this.isInitialized = true;
 
 		this.bindEvents();
@@ -104,11 +103,12 @@ class FormEngine {
 			// ==================================================
 			// 🔥 PEMBEDA ADD vs EDIT (INI KUNCI)
 			// ==================================================
-			if (id) {
-				payload.mode = "edit"; // // tandai edit
-				payload.id_row = id; // // 🔥 kirim primary key
-			} else {
-				payload.mode = "add"; // // tandai add
+			// 🔥 jika bukan populate → paksa ADD
+			if (!this.isPopulating) {
+				payload.mode = "add"; // //
+			} else if (id) {
+				payload.mode = "edit"; // //
+				payload.id_row = id; // //
 			}
 
 			// 🔥 filter hanya jika ada isi
