@@ -1145,6 +1145,22 @@ UIConfig.__importFactory = function (tbl, templateFile) {
 		},
 	};
 };
+UIConfig.dokumen = {
+	validation: {
+		uraian: { required: true },
+	},
+	form: {
+		elements: [
+			{ tag: "textarea", prop: { name: "uraian", label: "Uraian" } },
+
+			{ tag: "input", prop: { name: "file", type: "file", label: "File" } },
+
+			{ tag: "toggle", prop: { name: "disable", label: "Disable" } },
+
+			{ tag: "textarea", prop: { name: "keterangan", label: "Keterangan" } },
+		],
+	},
+};
 UIConfig.satuan.import = UIConfig.__importFactory("satuan", "9. Satuan 1 Header.xlsx");
 UIConfig.rekening_kegiatan = UIConfig.rekening_kegiatan || {
 	form: { elements: [] },
@@ -1524,6 +1540,7 @@ UIConfig.halaman_berita = {
 		],
 	},
 };
+
 UIConfig.sbu_akun_map = UIConfig.__akunMapFactory("sbu");
 UIConfig.ssh_akun_map = UIConfig.__akunMapFactory("ssh");
 UIConfig.asb_akun_map = UIConfig.__akunMapFactory("asb");
