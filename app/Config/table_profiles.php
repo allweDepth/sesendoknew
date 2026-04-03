@@ -408,7 +408,7 @@ $profiles = [
       ]
     ]
   ],
-  'mapping' => [
+  'mapping' => [ 
 
     'table' => 'master_biaya_akun',
     'dropdown_sources' => [

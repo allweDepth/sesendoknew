@@ -198,7 +198,7 @@
         <i class="dropdown icon"></i> Tata Naskah
       </div>
       <div class="content">
-        <a class="item" href="/tata_naskah/dashboard" data-spa="client" data-title="Tata Naskah/Dasboard">
+        <a class="item" href="/tata_naskah/dokumen" data-spa="client" data-title="Tata Naskah/Dokumen">
           <i class="blue chart pie icon"></i> Dashboard
         </a>
 

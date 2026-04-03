@@ -125,7 +125,6 @@ return [
     | 📝 TATA NASKAH
     |--------------------------------------------------------------------------
     */
-  '/tata_naskah/dashboard'      => ['TataNaskahController', 'dashboard'],
   '/tata_naskah/buat'           => ['TataNaskahController', 'buat'],
   '/tata_naskah/jenis'     => ['TataNaskahController', 'Jenis'],
   '/tata_naskah/form'      => ['TataNaskahController', 'Form'],

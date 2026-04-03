@@ -1924,8 +1924,13 @@ BUILD RULE DARI SCHEMA DATABASE
         $rows
       );
     }
-    if ($filters && $mode !== 'edit') { //edit tidak boleh bypass
-      return $this->loadDropdownGeneric($profileKey, null, $filters);
+    if ($filters && $mode !== 'edit') {
+
+      $decoded = json_decode($filters, true);
+
+
+
+      return $this->loadDropdownGeneric($profileKey, $parentValue, $filters);
     }
 
     if ($parentValue !== null && $parentValue !== '') {
@@ -4335,120 +4340,91 @@ AND is_deleted = 0
     $kdAkun = null
   ): string {
 
-    // --------------------------------------------------
-    // cek profile
-    // --------------------------------------------------
+    // =====================================================
+    // 🔥 INIT WAJIB (HARUS PALING ATAS)
+    // =====================================================
+    $mandatoryWhere = []; // kondisi WHERE utama
+    $optionalWhere  = []; // kondisi OR (search, current)
+    $params = [];         // parameter binding
+    $where  = '';         // final WHERE
 
     // =====================================================
     // PROFILE RESOLUTION
     // =====================================================
 
-    // cek apakah profile ada
     if (!isset($this->profiles[$profileKey])) {
 
-      // ---------------------------------------------
-      // fallback gunakan nama tabel langsung
-      // ---------------------------------------------
+      $table = $profileKey;
+      $columns = $this->getTableColumns($table);
 
-      $table = $profileKey; // gunakan tbl sebagai nama tabel
+      $valueField = 'id';
+      $labelField = 'nama';
 
-      // ambil kolom tabel
-      $columns = $this->getTableColumns($table); // deteksi kolom tabel
-
-      // field default
-      $valueField = 'id'; // default value
-      $labelField = 'nama'; // default label
-
-      // deteksi kolom kode
       if (in_array('kode', $columns)) {
-
-        $valueField = 'kode'; // gunakan kode sebagai value
-
+        $valueField = 'kode';
       }
 
-      // deteksi uraian
       if (in_array('uraian', $columns)) {
-
-        $labelField = 'uraian'; // gunakan uraian sebagai label
-
+        $labelField = 'uraian';
       }
+
+      $profile = []; // 🔥 FIX: agar tidak undefined
+
     } else {
 
-      // ---------------------------------------------
-      // profile normal
-      // ---------------------------------------------
+      $profile = $this->profiles[$profileKey];
+      $table   = $profile['table'];
 
-      $profile = $this->profiles[$profileKey]; // ambil profile
+      $primaryKey = $profile['primary_key'] ?? 'id';
 
-      $table   = $profile['table']; // tabel dari profile
+      $valueField = $profile['dropdown']['value'] ?? $primaryKey;
+      $labelField = $profile['dropdown']['label'] ?? 'nama';
 
-      $primaryKey = $profile['primary_key'] ?? 'id'; // primary key
-
-      $valueField = $profile['dropdown']['value'] ?? $primaryKey; // value dropdown
-
-      $labelField = $profile['dropdown']['label'] ?? 'nama'; // label dropdown
-
-      $columns = $this->getTableColumns($table); // ambil kolom tabel
-
+      $columns = $this->getTableColumns($table);
     }
 
-
-
+    // =====================================================
+    // 🔥 APPLY FILTERS (LEVEL DLL)
+    // =====================================================
     if (!empty($_POST['filters'])) {
+
       $filters = json_decode($_POST['filters'], true);
 
       if (is_array($filters)) {
+
         foreach ($filters as $col => $val) {
+
           if (in_array($col, $columns)) {
+
             $mandatoryWhere[] = "`$table`.`$col` = ?";
             $params[] = $val;
           }
         }
       }
     }
-    // --------------------------------------------------
-    // parameter request
-    // --------------------------------------------------
+
+    // =====================================================
+    // PARAMETER REQUEST
+    // =====================================================
     $cari  = $_POST['search'] ?? null;
+    $limit = min((int)($_POST['limit'] ?? 20), 100);
+    $currentValue = $_POST['value'] ?? null;
 
-
-    $limit = min((int)($_POST['limit'] ?? 20), 100); // limit dropdown
-
-    $currentValue = $_POST['value'] ?? null; // current edit value
-
-
-    // --------------------------------------------------
-    // kondisi where
-    // --------------------------------------------------
-
-    $mandatoryWhere = []; // kondisi wajib
-
-    $params = []; // parameter query
-
-
-    /*
-    -----------------------------------------------------
-    APPLY USER SCOPE ENGINE
-    -----------------------------------------------------
-    */
-
+    // =====================================================
+    // USER SCOPE
+    // =====================================================
     if (method_exists($this, 'resolveScope')) {
 
       list($scopeWhere, $scopeParams) =
-        $this->resolveScope($table, $profile, 'dropdown'); // gunakan scope engine
+        $this->resolveScope($table, $profile, 'dropdown');
 
       $mandatoryWhere = array_merge($mandatoryWhere, $scopeWhere);
-
       $params = array_merge($params, $scopeParams);
     }
 
-
-    /*
-    -----------------------------------------------------
-    PROFILE WHERE
-    -----------------------------------------------------
-    */
-
+    // =====================================================
+    // PROFILE WHERE
+    // =====================================================
     if (!empty($profile['where'])) {
 
       foreach ($profile['where'] as $col => $val) {
@@ -4458,127 +4434,94 @@ AND is_deleted = 0
         $mandatoryWhere[] = "`$table`.`$col` = ?";
 
         if ($val === 'user') {
-
           $params[] = $this->user[$col] ?? null;
         } else {
-
           $params[] = $val;
         }
       }
     }
 
-
-    /*
-    -----------------------------------------------------
-    FILTER DISABLE
-    -----------------------------------------------------
-    */
-
+    // =====================================================
+    // FILTER DISABLE
+    // =====================================================
     if (in_array('disable', $columns)) {
-
       $mandatoryWhere[] = "`$table`.`disable` = 0";
     }
 
-
-    /*
-    -----------------------------------------------------
-    FILTER STATUS
-    -----------------------------------------------------
-    */
-
+    // =====================================================
+    // FILTER STATUS
+    // =====================================================
     if (in_array('status', $columns)) {
-
       $mandatoryWhere[] = "`$table`.`status` = 1";
     }
 
-
-    /*
-    -----------------------------------------------------
-    RELATION PARENT
-    -----------------------------------------------------
-    */
-
-    if ($parentValue !== null && !empty($profile['relations'])) {
+    // =====================================================
+    // RELATION PARENT
+    // =====================================================
+    if ($parentValue !== null && $parentValue !== '' && !empty($profile['relations'])) {
 
       $relation = reset($profile['relations']);
-
       $localKey = $relation['local_key'] ?? null;
 
       if ($localKey && in_array($localKey, $columns)) {
 
-        $req = $_POST['req'] ?? null; // //
+        $req = $_POST['req'] ?? null;
 
-        if ($req === null && $parentValue === null) { // // root tanpa req
-          $req = 'urusan'; // // default root
+        if ($req === null && $parentValue === null) {
+          $req = 'urusan';
         }
 
-        $expectedLevel = null; // // init
+        $expectedLevel = null;
 
-        if ($req && isset($profile['req_filters'][$req])) { // // ambil dari config
+        if ($req && isset($profile['req_filters'][$req])) {
           $expectedLevel = $profile['req_filters'][$req]['where']['level'] ?? null;
         }
 
-        $mandatoryWhere[] = "`$table`.`$localKey` = ?"; // // parent filter
-        $params[] = $parentValue; // // bind parent
+        $mandatoryWhere[] = "`$table`.`$localKey` = ?";
+        $params[] = $parentValue;
 
-        if ($expectedLevel !== null) { // // enforce level
+        if ($expectedLevel !== null) {
           $mandatoryWhere[] = "`$table`.`level` = ?";
           $params[] = $expectedLevel;
         }
       }
     }
 
-
-    /*
-    -----------------------------------------------------
-    FILTER AKUN
-    -----------------------------------------------------
-    */
-
+    // =====================================================
+    // FILTER AKUN
+    // =====================================================
     if ($kdAkun !== null && in_array('kd_akun', $columns)) {
 
       $mandatoryWhere[] = "`$table`.`kd_akun` = ?";
-
       $params[] = $kdAkun;
     }
 
-
-    /*
-    -----------------------------------------------------
-    SEARCH
-    -----------------------------------------------------
-    */
-
-    $optionalWhere = [];
-
+    // =====================================================
+    // SEARCH
+    // =====================================================
     if ($cari) {
 
       $optionalWhere[] = "`$table`.`$labelField` LIKE ?";
-
       $params[] = "%$cari%";
     }
 
-
-    /*
-    -----------------------------------------------------
-    CURRENT VALUE (EDIT MODE)
-    -----------------------------------------------------
-    */
-
+    // =====================================================
+    // CURRENT VALUE (EDIT)
+    // =====================================================
     if ($currentValue !== null && is_numeric($currentValue)) {
 
       $optionalWhere[] = "`$table`.`$valueField` = ?";
-
       $params[] = $currentValue;
     }
 
-
+    // =====================================================
+    // BUILD WHERE
+    // =====================================================
     if ($mandatoryWhere) {
 
       $where = "WHERE " . implode(" AND ", $mandatoryWhere);
 
       if ($optionalWhere) {
-
         $where .= " AND (" . implode(" OR ", $optionalWhere) . ")";
       }
     } elseif ($optionalWhere) {
@@ -4586,41 +4529,26 @@ AND is_deleted = 0
       $where = "WHERE (" . implode(" OR ", $optionalWhere) . ")";
     }
 
-
-    /*
-    -----------------------------------------------------
-    QUERY DROPDOWN
-    -----------------------------------------------------
-    */
-
+    // =====================================================
+    // QUERY
+    // =====================================================
     $query = "
-
-        SELECT
-            `$table`.`$valueField` AS value,
-            `$table`.`$labelField` AS text
-
-        FROM `$table`
-
-        $where
-
-        ORDER BY `$table`.`$labelField` ASC
-
-        LIMIT $limit
-
-    ";
-    // --------------------------------------------------
-    // eksekusi query
-    // --------------------------------------------------
+    SELECT
+      `$table`.`$valueField` AS value,
+      `$table`.`$labelField` AS text
+    FROM `$table`
+    $where
+    ORDER BY `$table`.`$labelField` ASC
+    LIMIT $limit
+  ";
 
     $rows = $this->db
       ->query($query, $params)
       ->fetchAll();
 
-
-    // --------------------------------------------------
-    // response
-    // --------------------------------------------------
-
+    // =====================================================
+    // RESPONSE
+    // =====================================================
     return JsonResponse::success(
       "Dropdown loaded",
       [],
