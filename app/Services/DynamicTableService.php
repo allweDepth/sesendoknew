@@ -1936,8 +1936,6 @@ BUILD RULE DARI SCHEMA DATABASE
 
       /* fallback untuk sistem SPA yang kirim value */ elseif (isset($_POST['parent'])) {
         $parentValue = $_POST['parent'];
-      } elseif (isset($_POST['value']) && $_POST['value'] !== '') {
-        $parentValue = $_POST['value'];
       }
     }
     // =====================================================
@@ -1963,7 +1961,7 @@ BUILD RULE DARI SCHEMA DATABASE
     $id   = $_POST['id'] ?? $_POST['id_row'] ?? null; // // 🔥 FIX: ambil dari id_row juga
 
     // 🔥 NORMALISASI
-    if (!$id) {
+    if (!$id && empty($_POST['value'])) {
       $mode = null; // // tetap sama
     }
     $search = $_POST['search'] ?? null; // // keyword search

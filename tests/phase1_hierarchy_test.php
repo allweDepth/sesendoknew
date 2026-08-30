@@ -38,6 +38,24 @@ function hierarchyAssert(bool $condition, string $message): void
     echo "PASS: {$message}\n";
 }
 
+function hierarchyDropdownCall(DynamicTableService $service, string $source, array $params): array
+{
+    $request = array_merge(['action' => 'dropdown', 'tbl' => $source], $params);
+    $_POST = $request;
+    $response = json_decode($service->handle($request), true);
+    $_POST = [];
+    if (!is_array($response)) throw new RuntimeException('Response dropdown bukan JSON valid');
+    return $response;
+}
+
+function hierarchyDropdownHasValue(array $response, string $value): bool
+{
+    foreach ($response['data'] ?? [] as $option) {
+        if ((string)($option['value'] ?? '') === $value) return true;
+    }
+    return false;
+}
+
 try {
     $db->query("DELETE FROM rekening_kegiatan WHERE kode LIKE 'TRACEH%' ORDER BY LENGTH(kode) DESC");
 
@@ -74,6 +92,34 @@ try {
         $edit = hierarchyCall($service, $editRequest);
         hierarchyAssert($edit['success'] === true, "EDIT {$level} berhasil");
     }
+
+    $parentLevels = [
+        'bidang' => 'urusan',
+        'program' => 'bidang',
+        'kegiatan' => 'program',
+        'sub_kegiatan' => 'kegiatan',
+    ];
+    foreach ($parentLevels as $childLevel => $parentLevel) {
+        $parentCode = $levels[$childLevel]['parent'];
+        $dropdown = hierarchyDropdownCall($service, 'rekening_kegiatan', [
+            'mode' => 'edit',
+            'value' => $parentCode,
+            'filters' => json_encode(['level' => $parentLevel]),
+            'limit' => 20,
+        ]);
+        hierarchyAssert(
+            $dropdown['success'] === true && hierarchyDropdownHasValue($dropdown, $parentCode),
+            "dropdown parent terpilih tampil saat EDIT {$childLevel}"
+        );
+    }
+
+    $satuanDropdown = hierarchyDropdownCall($service, 'satuan_teks', [
+        'mode' => 'edit', 'value' => 'Dokumen', 'limit' => 20,
+    ]);
+    hierarchyAssert(
+        $satuanDropdown['success'] === true && hierarchyDropdownHasValue($satuanDropdown, 'Dokumen'),
+        'dropdown Satuan terpilih tampil saat EDIT sub_kegiatan'
+    );
 
     $blocked = hierarchyCall($service, [
         'action' => 'delete', 'tbl' => 'rekening_kegiatan', 'req' => 'urusan',
