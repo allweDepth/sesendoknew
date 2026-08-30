@@ -1,5 +1,22 @@
 <?php
-ob_start(); // 🔥 FIX: tahan semua output awal
+$scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '/index.php');
+$basePath = preg_replace('#/public/index\.php$#', '', $scriptName);
+if ($basePath === $scriptName) {
+  $basePath = rtrim(dirname($scriptName), '/.');
+}
+$basePath = $basePath === '/' ? '' : rtrim($basePath, '/');
+define('APP_BASE_PATH', $basePath);
+
+function app_url(string $path = '/'): string
+{
+  $path = '/' . ltrim($path, '/');
+  return APP_BASE_PATH . ($path === '/' ? '/' : $path);
+}
+
+ob_start(function ($output) {
+  if (APP_BASE_PATH === '') return $output;
+  return preg_replace('#(href|src|action)=([\'\"])/(?!/)#i', '$1=$2' . APP_BASE_PATH . '/', $output);
+});
 session_start();
 
 require_once '../app/Core/DB.php';
@@ -8,6 +25,10 @@ require_once '../app/Core/Controller.php';
 require_once '../app/Core/Router.php';
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+if (APP_BASE_PATH !== '' && ($uri === APP_BASE_PATH || str_starts_with($uri, APP_BASE_PATH . '/'))) {
+  $uri = substr($uri, strlen(APP_BASE_PATH)) ?: '/';
+}
 
 // Hapus index.php jika ada
 $uri = str_replace('/index.php', '', $uri);
@@ -61,7 +82,7 @@ if (!in_array($uri, $publicRoutes)) {
     }
 
     // Jika normal request → redirect login
-    header("Location: /");
+    header('Location: ' . app_url('/'));
     exit;
   }
 }

@@ -1,3 +1,7 @@
+<?php
+$loginError = $_SESSION['login_error'] ?? null;
+unset($_SESSION['login_error']);
+?>
 <!-- ================= LOGIN MODAL ================= -->
 <div class="ui small modal" id="loginModal">
 
@@ -9,13 +13,19 @@
 
   <!-- CONTENT -->
   <div class="content">
-    <form class="ui form" id="formLogin" method="POST" action="/login/proses">
+    <form class="ui form<?= $loginError ? ' error' : '' ?>" id="formLogin" method="POST" action="/login/proses">
+
+      <?php if ($loginError): ?>
+        <div class="ui error message" role="alert">
+          <?= htmlspecialchars($loginError, ENT_QUOTES, 'UTF-8') ?>
+        </div>
+      <?php endif; ?>
 
       <div class="field">
         <label>Username</label>
         <div class="ui left icon input">
           <i class="user icon"></i>
-          <input type="text" name="username" placeholder="Username">
+          <input type="text" name="username" placeholder="Username atau email" autocomplete="username" required>
         </div>
       </div>
 
@@ -23,7 +33,7 @@
         <label>Password</label>
         <div class="ui left icon input">
           <i class="lock icon"></i>
-          <input type="password" name="password" placeholder="Password">
+          <input type="password" name="password" placeholder="Password" autocomplete="current-password" required>
         </div>
       </div>
 

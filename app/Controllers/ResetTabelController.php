@@ -8,7 +8,7 @@ class ResetTabelController extends Controller
   private function checkAuth()
   {
     if (!Auth::check()) {
-      header("Location: /");
+      header('Location: ' . app_url('/'));
       exit;
     }
   }

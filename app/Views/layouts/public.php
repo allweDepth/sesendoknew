@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/assets/css/fomantic.min.css">
   <script src="/assets/js/jquery.min.js"></script>
   <script src="/assets/js/fomantic.min.js"></script>
+  <script>window.APP_BASE_PATH = <?= json_encode(APP_BASE_PATH) ?>;</script>
 </head>
 
 <body>
@@ -30,6 +31,10 @@
         observeChanges: true
       });
 
+      <?php if (!empty($loginError)): ?>
+      $('#loginModal').modal('show');
+      <?php endif; ?>
+
       $('#registerModal').modal({
         closable: false,
         autofocus: false,
@@ -49,6 +54,12 @@
 
       const $wilayah = $('#dropdownWilayah');
       const $organisasi = $('#dropdownOrganisasi');
+
+      $.ajaxPrefilter(function(options) {
+        if (options.url && options.url.startsWith('/') && !options.url.startsWith('//')) {
+          options.url = window.APP_BASE_PATH + options.url;
+        }
+      });
 
       $('.ui.dropdown').dropdown();
 

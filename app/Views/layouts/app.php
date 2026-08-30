@@ -265,7 +265,7 @@
 <body>
 
   <?php if (!isset($_SESSION['user'])) {
-    header("Location: /");
+    header('Location: ' . app_url('/'));
     exit;
   } ?>
   <!-- NAVBAR (DI LUAR PUSHABLE) @note navbar -->
@@ -315,6 +315,19 @@
   <!-- LIBRARY -->
   <script src="/assets/js/jquery.min.js"></script>
   <script src="/assets/js/fomantic.min.js"></script>
+  <script>
+  window.APP_BASE_PATH = <?= json_encode(APP_BASE_PATH) ?>;
+  window.appUrl = function(path) {
+    if (!path || !path.startsWith('/') || path.startsWith('//')) return path;
+    if (window.APP_BASE_PATH && (path === window.APP_BASE_PATH || path.startsWith(window.APP_BASE_PATH + '/'))) return path;
+    return window.APP_BASE_PATH + path;
+  };
+  $.ajaxPrefilter(function(options) { options.url = window.appUrl(options.url); });
+  const nativeFetch = window.fetch.bind(window);
+  window.fetch = function(resource, options) {
+    return nativeFetch(typeof resource === 'string' ? window.appUrl(resource) : resource, options);
+  };
+  </script>
 
   <!-- ================= CORE ================= -->
   <script src="/assets/js/core/config.js"></script>

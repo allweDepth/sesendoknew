@@ -43,7 +43,8 @@ class Auth
             'admin_wilayah',
             'admin_opd',
             'editor',
-            'viewer'
+            'viewer',
+            'user'
         ];
     }
 

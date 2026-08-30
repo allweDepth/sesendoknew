@@ -25,7 +25,7 @@ class ReferensiController extends Controller
     public function index()
     {
         if (!Auth::check()) {
-            header("Location: /");
+            header('Location: ' . app_url('/'));
             exit;
         }
 

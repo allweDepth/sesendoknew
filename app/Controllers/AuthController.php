@@ -13,19 +13,19 @@ class AuthController extends Controller
 
         if (!Auth::login($username, $password)) {
             $_SESSION['login_error'] = "Username atau password salah";
-            header("Location: /");
+            header('Location: ' . app_url('/'));
             exit;
         }
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         // LOGIN BERHASIL
-        header("Location: /dashboard");
+        header('Location: ' . app_url('/dashboard'));
         exit;
     }
 
     public function logout()
     {
         Auth::logout();
-        header("Location: /");
+        header('Location: ' . app_url('/'));
         exit;
     }
     public function register()

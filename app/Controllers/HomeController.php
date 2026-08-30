@@ -6,7 +6,7 @@ class HomeController extends Controller
   public function spa()
 {
     if (!isset($_SESSION['user'])) {
-        header('Location: /login');
+        header('Location: ' . app_url('/'));
         exit;
     }
 

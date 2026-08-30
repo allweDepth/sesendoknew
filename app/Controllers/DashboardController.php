@@ -6,7 +6,7 @@ class DashboardController extends Controller
     public function index()
     {
         if (!Auth::check()) {
-            header("Location: /login");
+            header('Location: ' . app_url('/'));
             exit;
         }
 

@@ -18,7 +18,7 @@ const PageLoader = (function () {
 
 	function loadFromUrl() {
 
-		const currentPath = window.location.pathname.replace(/^\/+/g, "");
+		const currentPath = window.location.pathname.replace(window.APP_BASE_PATH || "", "").replace(/^\/+/g, "");
 
 		AppState.page = currentPath;
 
