@@ -1242,6 +1242,12 @@ $profiles = [
       'status' => 1
     ],
 
+    'soft_delete' => [
+      'field' => 'status',
+      'value_active' => 1,
+      'value_deleted' => 0
+    ],
+
     // --------------------------------------------------
     // request filter berdasarkan level
     // --------------------------------------------------

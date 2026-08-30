@@ -242,11 +242,15 @@ PERUBAHAN:
 
       case 'export':
         $this->authorize('view', $table);
-        return $this->export($table, $profile, $request, 'default');
+        $mode = $request['req'] ?? 'default';
+        if (!isset($profile['modes'][$mode])) $mode = 'default';
+        return $this->export($table, $profile, $request, $mode);
 
       case 'list':
         $this->authorize('view', $table);
-        return $this->listing($table, $profile, $request, 'default');
+        $mode = $request['req'] ?? 'default';
+        if (!isset($profile['modes'][$mode])) $mode = 'default';
+        return $this->listing($table, $profile, $request, $mode);
 
       case 'import':
 
@@ -1128,8 +1132,31 @@ DELETE (FULL IDENTIK LOGIC ASLI)
       // FIX: tambahkan $profile ke closure
 
       $columns = $this->getTableColumns($table);
+      $softDelete = $profile['soft_delete'] ?? null;
+      $softDeleteField = is_array($softDelete)
+        ? ($softDelete['field'] ?? null)
+        : (is_string($softDelete) ? $softDelete : null);
+      $softDeleteValue = is_array($softDelete)
+        ? ($softDelete['value_deleted'] ?? 1)
+        : 1;
 
-      if (in_array('deleted_at', $columns)) {
+      if ($softDeleteField && in_array($softDeleteField, $columns)) {
+        $data = [$softDeleteField => $softDeleteValue];
+
+        if (in_array('tgl_update', $columns)) {
+          $data['tgl_update'] = date('Y-m-d H:i:s');
+        }
+        if (in_array('username_update', $columns)) {
+          $data['username_update'] = $this->user['username'] ?? 'system';
+        }
+
+        $this->db->update(
+          $table,
+          $data,
+          "WHERE `$primaryKey` = ?",
+          [$id]
+        );
+      } elseif (in_array('deleted_at', $columns)) {
 
         $this->db->update(
           $table,
@@ -1177,9 +1204,11 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
     // Ambil konfigurasi mode dari profile
     // Jika mode tidak ada gunakan 'default'
-    $modeConfig = $profile['modes'][$mode]
-      ?? $profile['modes']['default']
-      ?? [];
+    $defaultModeConfig = $profile['modes']['default'] ?? [];
+    $modeConfig = array_replace(
+      $defaultModeConfig,
+      $profile['modes'][$mode] ?? []
+    );
 
 
 
@@ -1275,6 +1304,26 @@ DELETE (FULL IDENTIK LOGIC ASLI)
       list($whereSql, $whereBind) =
         $this->meta()->buildWhere(
           $modeConfig['where'],
+          $columns,
+          $table,
+          fn($field, $value, $table) =>
+          $this->resolver()->resolveField($field, $value, $table, $this->user)
+        );
+
+      if ($whereSql) {
+        $whereParts[] = $whereSql;
+        $params = array_merge($params, $whereBind);
+      }
+    }
+
+    // Filter global profile (mis. status aktif / soft delete) harus selalu
+    // berlaku pada listing, tidak hanya pada dropdown.
+    if (!empty($profile['where'])) {
+      $columns = $columns ?? $this->getTableColumns($table);
+
+      list($whereSql, $whereBind) =
+        $this->meta()->buildWhere(
+          $profile['where'],
           $columns,
           $table,
           fn($field, $value, $table) =>
@@ -2049,7 +2098,11 @@ UTIL: CEK APAKAH TABEL ADA
   private function tableExists(string $table): bool
   {
     $result = $this->db->query(
-      "SHOW TABLES LIKE ?",
+      "SELECT 1
+       FROM information_schema.tables
+       WHERE table_schema = DATABASE()
+         AND table_name = ?
+       LIMIT 1",
       [$table]
     )->fetch();
 
@@ -2302,7 +2355,7 @@ Tujuan:
       'sub_kegiatan' => 'kegiatan'
     ];
 
-    if (!isset($parents[$level])) {
+    if (!array_key_exists($level, $parents)) {
       return JsonResponse::error('Jenis nomenklatur referensi tidak valid');
     }
 
@@ -3340,8 +3393,13 @@ LIMIT 1",
   private function isDateColumn(string $table, string $field): bool
   {
     $columns = $this->db->query(
-      "SHOW COLUMNS FROM `$table` WHERE Field = ?",
-      [$field]
+      "SELECT data_type AS Type
+       FROM information_schema.columns
+       WHERE table_schema = DATABASE()
+         AND table_name = ?
+         AND column_name = ?
+       LIMIT 1",
+      [$table, $field]
     )->fetch();
 
     if (!$columns) return false;

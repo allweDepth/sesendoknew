@@ -6,6 +6,8 @@ class ProfileValidator
 {
     private DB $db;
     private array $profiles;
+    private int $errors = 0;
+    private int $profileErrors = 0;
 
     public function __construct()
     {
@@ -13,18 +15,19 @@ class ProfileValidator
         $this->profiles = require __DIR__ . '/../Config/table_profiles.php';
     }
 
-    public function run(): void
+    public function run(): int
     {
         echo "=== PROFILE VALIDATION START ===\n\n";
 
         foreach ($this->profiles as $key => $profile) {
 
             echo "Checking: {$key}\n";
+            $this->profileErrors = 0;
 
             $table = $profile['table'] ?? null;
 
             if (!$this->tableExists($table)) {
-                echo "  ❌ Table not found: {$table}\n";
+                $this->error("Table not found: {$table}");
                 continue;
             }
 
@@ -36,16 +39,28 @@ class ProfileValidator
             $this->validateRelations($profile, $columns);
             $this->validatePivot($profile);
 
-            echo "  ✔ OK\n\n";
+            echo $this->profileErrors === 0
+                ? "  ✔ OK\n\n"
+                : "  ✘ {$this->profileErrors} error(s)\n\n";
         }
 
-        echo "=== VALIDATION END ===\n";
+        echo "=== VALIDATION END: {$this->errors} ERROR(S) ===\n";
+
+        return $this->errors;
     }
 
     private function tableExists(string $table): bool
     {
+        if ($table === '') {
+            return false;
+        }
+
         return (bool)$this->db->query(
-            "SHOW TABLES LIKE ?",
+            "SELECT 1
+             FROM information_schema.tables
+             WHERE table_schema = DATABASE()
+               AND table_name = ?
+             LIMIT 1",
             [$table]
         )->fetch();
     }
@@ -53,8 +68,15 @@ class ProfileValidator
     private function getColumns(string $table): array
     {
         return array_column(
-            $this->db->query("SHOW COLUMNS FROM `$table`")->fetchAll(),
-            'Field'
+            $this->db->query(
+                "SELECT column_name
+                 FROM information_schema.columns
+                 WHERE table_schema = DATABASE()
+                   AND table_name = ?
+                 ORDER BY ordinal_position",
+                [$table]
+            )->fetchAll(),
+            'column_name'
         );
     }
 
@@ -63,7 +85,7 @@ class ProfileValidator
         $pk = $profile['primary_key'] ?? 'id';
 
         if (!in_array($pk, $columns)) {
-            echo "  ❌ Primary key '{$pk}' not found\n";
+            $this->error("Primary key '{$pk}' not found");
         }
     }
 
@@ -81,8 +103,14 @@ class ProfileValidator
 
                     if ($field === '*') continue;
 
+                    // Qualified fields and SQL aliases are validated by the query/join
+                    // layer, not against the physical columns of the base table.
+                    if (str_contains($field, '.') || preg_match('/\s+AS\s+/i', $field)) {
+                        continue;
+                    }
+
                     if (!in_array($field, $columns)) {
-                        echo "  ❌ {$mode}->{$fieldType}: '{$field}' not found\n";
+                        $this->error("{$mode}->{$fieldType}: '{$field}' not found");
                     }
                 }
             }
@@ -92,7 +120,7 @@ class ProfileValidator
                 foreach ($config['where'] as $field => $value) {
 
                     if (!in_array($field, $columns)) {
-                        echo "  ❌ {$mode}->where: '{$field}' not found\n";
+                        $this->error("{$mode}->where: '{$field}' not found");
                     }
                 }
             }
@@ -106,7 +134,7 @@ class ProfileValidator
         foreach ($profile['auto_session'] as $field) {
 
             if (!in_array($field, $columns)) {
-                echo "  ❌ auto_session: '{$field}' not found\n";
+                $this->error("auto_session: '{$field}' not found");
             }
         }
     }
@@ -120,7 +148,7 @@ class ProfileValidator
             $local = $relation['local_key'] ?? null;
 
             if ($local && !in_array($local, $columns)) {
-                echo "  ❌ relation local_key '{$local}' not found\n";
+                $this->error("relation local_key '{$local}' not found");
             }
         }
     }
@@ -132,7 +160,14 @@ class ProfileValidator
         $pivotTable = $profile['pivot']['table'] ?? null;
 
         if (!$this->tableExists($pivotTable)) {
-            echo "  ❌ Pivot table '{$pivotTable}' not found\n";
+            $this->error("Pivot table '{$pivotTable}' not found");
         }
+    }
+
+    private function error(string $message): void
+    {
+        $this->errors++;
+        $this->profileErrors++;
+        echo "  ❌ {$message}\n";
     }
 }

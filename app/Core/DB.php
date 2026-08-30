@@ -178,7 +178,9 @@ Perbaikan:
             mencegah memory leak saat import besar
             ========================================= */
 
-      if (stripos(trim($sql), 'select') !== 0) {
+      // Tutup cursor hanya untuk statement tanpa result set. SHOW/DESCRIBE
+      // juga menghasilkan rows walaupun tidak diawali kata SELECT.
+      if ($stmt->columnCount() === 0) {
         $stmt->closeCursor();
       }
 

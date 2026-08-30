@@ -19,10 +19,10 @@ ob_start(function ($output) {
 });
 session_start();
 
-require_once '../app/Core/DB.php';
-require_once '../app/Core/Auth.php';
-require_once '../app/Core/Controller.php';
-require_once '../app/Core/Router.php';
+require_once __DIR__ . '/../app/Core/DB.php';
+require_once __DIR__ . '/../app/Core/Auth.php';
+require_once __DIR__ . '/../app/Core/Controller.php';
+require_once __DIR__ . '/../app/Core/Router.php';
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
@@ -92,7 +92,7 @@ if (!in_array($uri, $publicRoutes)) {
 // ==============================
 if ($route) {
 
-  require_once "../app/Controllers/" . $route[0] . ".php";
+  require_once __DIR__ . "/../app/Controllers/" . $route[0] . ".php";
 
   $controller = new $route[0];
   $method = $route[1];
