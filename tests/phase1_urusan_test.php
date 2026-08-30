@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../app/Core/DB.php';
 require_once __DIR__ . '/../app/Services/DynamicTableService.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 ob_start();
 
@@ -16,7 +17,9 @@ $_SESSION['user'] = [
 $service = new DynamicTableService();
 $db = DB::getInstance();
 $code = 'TRACE_TEST_URUSAN';
+$importCode = 'TRACE_TEST_IMPORT';
 $id = null;
+$importFile = sys_get_temp_dir() . '/sesendok_trace_urusan_import.xlsx';
 
 function callService(DynamicTableService $service, array $request): array
 {
@@ -37,6 +40,23 @@ function assertTrue(bool $condition, string $message): void
 
 try {
     $db->query("DELETE FROM rekening_kegiatan WHERE kode = ?", [$code]);
+    $db->query("DELETE FROM rekening_kegiatan WHERE kode = ?", [$importCode]);
+
+    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load(
+        __DIR__ . '/../public/assets/template_import/11. Referensi Hierarki.xlsx'
+    );
+    $importSheet = $spreadsheet->getSheetByName('Import Referensi');
+    $importSheet->setCellValue('A2', $importCode);
+    $importSheet->setCellValue('B2', 'TRACE_TEST URUSAN IMPORT');
+    (new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet))->save($importFile);
+
+    $import = json_decode($service->importStrict('rekening_kegiatan', $importFile, 1), true);
+    assertTrue($import['success'] === true, 'IMPORT XLSX Urusan berhasil');
+    assertTrue((int)($import['meta']['berhasil'] ?? 0) === 1, 'IMPORT mencatat satu baris berhasil');
+    $imported = $db->query("SELECT level, kd_wilayah, peraturan_id FROM rekening_kegiatan WHERE kode = ?", [$importCode])->fetch();
+    assertTrue(($imported['level'] ?? null) === 'urusan', 'IMPORT mendeteksi level Urusan');
+    assertTrue(($imported['kd_wilayah'] ?? null) === '76.01', 'IMPORT menerapkan scope wilayah');
+    assertTrue((int)($imported['peraturan_id'] ?? 0) === 4, 'IMPORT menerapkan peraturan aktif');
 
     $list = callService($service, [
         'action' => 'list', 'tbl' => 'rekening_kegiatan', 'req' => 'urusan',
@@ -113,4 +133,6 @@ try {
     exit(1);
 } finally {
     $db->query("DELETE FROM rekening_kegiatan WHERE kode = ?", [$code]);
+    $db->query("DELETE FROM rekening_kegiatan WHERE kode = ?", [$importCode]);
+    if (is_file($importFile)) unlink($importFile);
 }

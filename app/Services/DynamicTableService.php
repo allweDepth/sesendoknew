@@ -163,7 +163,7 @@ PERUBAHAN:
 
       $table = $profile['table'];
 
-      if ($req && isset($this->profiles[$req])) {
+      if ($req && $tbl !== 'mapping' && isset($this->profiles[$req])) {
         $reqProfile = $this->profiles[$req];
         $table = $reqProfile['table'];
         $request['_req_profile'] = $reqProfile;
@@ -747,6 +747,10 @@ INSERT (FIXED STABLE VERSION v3.1)
       $filtered['is_deleted'] = 0;
     }
 
+    if ($table === 'master_biaya_akun') {
+      $filtered = $this->inheritMasterBiayaScope($filtered);
+    }
+
     /* =====================================================
 6️⃣ PERATURAN RESOLUTION (GLOBAL CLEAN)
 ===================================================== */
@@ -996,6 +1000,9 @@ IGNORE SYSTEM FIELD
       if ($hierarchyError !== null) return $hierarchyError;
     }
     $filtered = $this->normalizeDateTimeFields($table, $filtered);
+    if ($table === 'master_biaya_akun') {
+      $filtered = $this->inheritMasterBiayaScope($filtered);
+    }
     $filtered = $this->resolver()->resolvePeraturan($table, $filtered);
     $filtered = $this->resolver()->resolvePeriode($table, $filtered);
 
@@ -1127,6 +1134,21 @@ DELETE (FULL IDENTIK LOGIC ASLI)
       "SELECT * FROM `$table` WHERE `$primaryKey` = ?",
       [$id]
     )->fetch();
+
+    if ($table === 'rekening_kegiatan' && !empty($oldData['kode'])) {
+      $activeChild = $this->db->query(
+        "SELECT id
+         FROM rekening_kegiatan
+         WHERE parent_kode = ?
+           AND status = 1
+         LIMIT 1",
+        [$oldData['kode']]
+      )->fetch();
+
+      if ($activeChild) {
+        return JsonResponse::error('Data masih mempunyai nomenklatur turunan aktif');
+      }
+    }
 
     return $this->runTransaction(function () use ($table, $primaryKey, $id, $oldData, $profile) {
       // FIX: tambahkan $profile ke closure
@@ -1282,6 +1304,14 @@ DELETE (FULL IDENTIK LOGIC ASLI)
       }
     }
 
+    if ($req && $table === 'master_biaya_akun' && in_array($req, ['ssh', 'sbu', 'asb', 'hspk'], true)) {
+      $whereParts[] = "master_biaya.tipe = ?";
+      $params[] = $req;
+    }
+    if ($table === 'master_biaya_akun') {
+      $whereParts[] = "master_biaya_akun.is_deleted = 0";
+    }
+
 
     /* ======================================================
         6️⃣ APPLY PROFILE WHERE
@@ -1424,7 +1454,13 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     $orderColumn = $match[1] ?? $primaryKey;
 
     // jika kolom tidak ada di tabel maka fallback
-    if (!in_array($orderColumn, $columns)) {
+    $knownJoinTables = array_column($profile['join'] ?? [], 'table');
+    $qualifiedJoinOrder = false;
+    if (preg_match('/^`?([a-zA-Z0-9_]+)`?\.`?([a-zA-Z0-9_]+)`?\s+(ASC|DESC)$/i', trim($orderBy), $orderMatch)) {
+      $qualifiedJoinOrder = in_array($orderMatch[1], $knownJoinTables, true);
+    }
+
+    if (!in_array($orderColumn, $columns) && !$qualifiedJoinOrder) {
 
       $orderBy = "`$primaryKey` DESC";
     }
@@ -1488,6 +1524,31 @@ DELETE (FULL IDENTIK LOGIC ASLI)
   // =======================================
   // FUNCTION: APPLY WHERE RECURSIVE
   // =======================================
+  private function inheritMasterBiayaScope(array $data): array
+  {
+    $masterId = (int)($data['master_biaya_id'] ?? 0);
+    if ($masterId <= 0) {
+      throw new Exception('Standar biaya wajib dipilih');
+    }
+
+    $master = $this->db->query(
+      "SELECT kd_wilayah, peraturan_id
+       FROM master_biaya
+       WHERE id = ? AND is_deleted = 0
+       LIMIT 1",
+      [$masterId]
+    )->fetch();
+
+    if (!$master) {
+      throw new Exception('Standar biaya tidak ditemukan atau sudah dihapus');
+    }
+
+    $data['kd_wilayah'] = $master['kd_wilayah'];
+    $data['peraturan_id'] = $master['peraturan_id'];
+
+    return $data;
+  }
+
   private function applyWhere($query, $conditions)
   {
     foreach ($conditions as $key => $value) {
@@ -1548,6 +1609,34 @@ GET ALL RAW DATA (UNTUK EXPORT / REPORT)
 
     $select = $modeConfig['select'] ?? ['*'];
     $selectClause = implode(',', $select);
+
+    if ($table === 'master_biaya_akun') {
+      $whereParts = ['master_biaya_akun.is_deleted = 0'];
+      $params = [];
+      $req = $request['req'] ?? null;
+
+      if (in_array($req, ['ssh', 'sbu', 'asb', 'hspk'], true)) {
+        $whereParts[] = 'master_biaya.tipe = ?';
+        $params[] = $req;
+      }
+
+      if (($this->user['type_user'] ?? null) === 'admin_wilayah') {
+        $whereParts[] = 'master_biaya_akun.kd_wilayah = ?';
+        $params[] = $this->user['kd_wilayah'] ?? null;
+      }
+
+      $orderBy = $modeConfig['order_by'] ?? 'master_biaya_akun.id DESC';
+      $query = "
+        SELECT $selectClause
+        FROM master_biaya_akun
+        LEFT JOIN master_biaya ON master_biaya.id = master_biaya_akun.master_biaya_id
+        LEFT JOIN akun_neo ON akun_neo.kode = master_biaya_akun.kd_akun
+        WHERE " . implode(' AND ', $whereParts) . "
+        ORDER BY $orderBy
+      ";
+
+      return $this->db->query($query, $params)->fetchAll();
+    }
 
     list($userWhere, $userParams) = $this->applyUserScope($table);
 
@@ -2746,7 +2835,7 @@ LIMIT 1",
                 continue;
               }
               // normalisasi header
-              $normalized = $this->importHelper->normalizeForCompare($h);
+              $normalized = $this->importHelper()->normalizeForCompare($h);
               // cek apakah cocok dengan kolom tabel
               if (!isset($columnMap[$normalized])) {
                 throw new Exception(
@@ -2778,6 +2867,14 @@ LIMIT 1",
 
           $data[$headers[$k]] = $v;
         }
+
+        // Jangan mengirim string kosong untuk kolom opsional. Pada MySQL
+        // strict mode nilai tersebut tidak valid untuk DATE/DATETIME dan
+        // beberapa tipe numerik; dengan menghapusnya, default schema (NULL
+        // atau nilai default kolom) tetap berlaku.
+        $data = array_filter($data, static function ($value) {
+          return $value !== '';
+        });
         try {
           // ==================================================
           // INJECT SCOPE
@@ -2845,6 +2942,12 @@ LIMIT 1",
                 0,
                 strrpos($data['kode'], '.')
               );
+            }
+
+            $hierarchyError = $this->applyRekeningHierarchy($data, $data['level']);
+            if ($hierarchyError !== null) {
+              $decodedError = json_decode($hierarchyError, true);
+              throw new Exception($decodedError['message'] ?? 'Hierarki nomenklatur import tidak valid');
             }
           }
           // ==================================================
@@ -2917,7 +3020,7 @@ LIMIT 1",
       // GROUP ERROR
       // ==================================================
 
-      $groupedErrors = $this->importHelper->groupImportErrors($errorRows); // //
+      $groupedErrors = $this->importHelper()->groupImportErrors($errorRows); // //
 
 
       // ==================================================
@@ -2955,7 +3058,7 @@ LIMIT 1",
     }
 
     foreach ($grouped as &$g) {
-      $g['rows'] = $this->importHelper->compressRowRanges($g['rows']); // //
+      $g['rows'] = $this->importHelper()->compressRowRanges($g['rows']); // //
     }
 
     return array_values($grouped);
@@ -3337,10 +3440,19 @@ LIMIT 1",
 
     $where = [];
     $params = [];
+    $escapedSearch = strtr($search, [
+      '\\' => '\\\\',
+      '%' => '\\%',
+      '_' => '\\_'
+    ]);
 
     foreach ($columns as $col) {
-      $where[] = "`$col` LIKE ?";
-      $params[] = "%$search%";
+      if (preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $col, $qualified)) {
+        $where[] = "`{$qualified[1]}`.`{$qualified[2]}` LIKE ?";
+      } else {
+        $where[] = "`$col` LIKE ?";
+      }
+      $params[] = "%$escapedSearch%";
     }
 
     return [

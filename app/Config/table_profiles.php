@@ -411,6 +411,13 @@ $profiles = [
   'mapping' => [ 
 
     'table' => 'master_biaya_akun',
+    'auto_session' => ['kd_wilayah', 'peraturan_id'],
+    'soft_delete' => [
+      'field' => 'is_deleted',
+      'value_active' => 0,
+      'value_deleted' => 1
+    ],
+    'not_duplicate' => ['master_biaya_id', 'kd_akun', 'peraturan_id'],
     'dropdown_sources' => [
 
       'master_biaya' => [
@@ -419,7 +426,7 @@ $profiles = [
 
         'value' => 'id',
 
-        'label' => 'uraian_barang'
+        'label' => 'uraian'
 
       ]
 
@@ -535,6 +542,14 @@ $profiles = [
     'table' => 'satuan_neo',
     'not_duplicate' => ['uraian', 'peraturan_id'],
     'primary_key' => 'id',
+    'where' => [
+      'is_deleted' => 0
+    ],
+    'soft_delete' => [
+      'field' => 'is_deleted',
+      'value_active' => 0,
+      'value_deleted' => 1
+    ],
     'import' => [
       'enabled' => true,
       'allowed_roles' => ['super_admin', 'admin_wilayah'],
@@ -567,11 +582,12 @@ $profiles = [
       'referensi' => [
         'select' => ['id', 'value', 'uraian', 'keterangan'],
         'searchable' => ['uraian', 'value'],
-        'order_by' => 'uraian ASC'
+        'order_by' => 'uraian ASC',
+        'where' => ['is_deleted' => 0]
       ],
       'default' => [
         'select' => ['*'],
-        'searchable' => ['uraian'],
+        'searchable' => ['value', 'uraian'],
         'order_by' => 'uraian ASC',
         'scope' => [
           'peraturan_id' => 'user' // otomatis ambil dari session user
@@ -688,7 +704,15 @@ $profiles = [
     'primary_key' => 'id',
     'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
     'soft_lock' => true,
-    'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
+    'auto_session' => ['kd_wilayah'],
+    'where' => [
+      'is_deleted' => 0
+    ],
+    'soft_delete' => [
+      'field' => 'is_deleted',
+      'value_active' => 0,
+      'value_deleted' => 1
+    ],
     'import' => [
       'enabled' => true
     ],

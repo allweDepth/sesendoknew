@@ -239,16 +239,8 @@ INISIALISASI TABLE
 		// memulai load tabel
 	}
 	buildActionButtons(tbl) {
-		let importType = "import";
-		let importIcon = "upload";
-		// gunakan tbl langsung tanpa module
-		const strukturList = ["urusan", "bidang", "program", "kegiatan", "sub_kegiatan"]; // daftar tabel struktur
-
-		if (strukturList.includes(tbl)) {
-			// cek apakah tabel termasuk struktur
-			importType = "import_struktur"; // ubah jenis import
-			importIcon = "sitemap"; // ubah icon
-		}
+		const importType = "import";
+		const importIcon = "upload";
 		// ambil req dari state
 		const req = this.state.req;
 

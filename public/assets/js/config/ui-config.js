@@ -633,7 +633,7 @@ UIConfig.satuan = {
 	layout: { columns: 1 },
 	validation: {
 		value: { required: true },
-		item: { required: true },
+		uraian: { required: true },
 	},
 	form: {
 		elements: [
@@ -798,12 +798,6 @@ UIConfig.rekanan = {
 				},
 			},
 
-			// TAMBAHAN
-			{
-				tag: "fieldTextarea",
-				prop: { label: "Data Lain", name: "data_lain", atribut: `rows="2"` },
-			},
-
 			{ tag: "fieldFile", prop: { label: "Upload Dokumen", name: "file" } },
 
 			{
@@ -883,6 +877,10 @@ UIConfig.sumber_dana = {
 
 UIConfig.mapping = {
 	layout: { columns: 1 },
+	validation: {
+		master_biaya_id: { required: true },
+		kd_akun: { required: true },
+	},
 
 	form: {
 		elements: [
@@ -939,18 +937,6 @@ AKUN BELANJA
 				},
 			},
 
-			/* =====================================
-KETERANGAN
-===================================== */
-
-			{
-				tag: "fieldTextarea",
-				prop: {
-					label: "Keterangan",
-					name: "keterangan",
-					atribut: `rows="2"`,
-				},
-			},
 		],
 	},
 };
@@ -1163,10 +1149,11 @@ UIConfig.dokumen = {
 	},
 };
 UIConfig.satuan.import = UIConfig.__importFactory("satuan", "9. Satuan 1 Header.xlsx");
+UIConfig.rekanan.import = UIConfig.__importFactory("rekanan", "10. rekanan.xlsx");
 UIConfig.rekening_kegiatan = UIConfig.rekening_kegiatan || {
 	form: { elements: [] },
 };
-UIConfig.rekening_kegiatan.import = UIConfig.__importFactory("rekening_kegiatan", "9. Satuan 1 Header.xlsx");
+UIConfig.rekening_kegiatan.import = UIConfig.__importFactory("rekening_kegiatan", "11. Referensi Hierarki.xlsx");
 UIConfig.sbu.import = UIConfig.__importFactory("sbu_neo", "17. sbu 2024.xlsx");
 
 UIConfig.ssh.import = UIConfig.__importFactory("ssh_neo", "12. ssh 2024.xlsx");
