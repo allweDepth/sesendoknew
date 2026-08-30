@@ -306,13 +306,11 @@ class FormEngine {
 						};
 					}
 
-					// 🔥 jika sudah ada item → jangan load ulang
-					if (dropdown.find(".menu .item").length === 0) {
-						await this.loadDropdown(dropdown, {
-							...params,
-							value: value,
-						});
-					}
+					// Edit harus memuat ulang opsi beserta nilai aktif. Opsi add
+					// yang sudah terlanjur dimuat belum tentu memuat nilai tersebut.
+					dropdown.find(".menu").empty();
+					dropdown.removeData("loading");
+					await this.loadDropdown(dropdown, { ...params, value: value });
 
 					// 🔥 set value
 					dropdown.dropdown("set selected", value);
@@ -504,6 +502,9 @@ class FormEngine {
 		// TAMBAH PARAM CORE
 		// ======================================================
 		formData.append("action", this.state.action); // // action backend
+		if (this.state.action === "edit") {
+			formData.append("mode", "update");
+		}
 		formData.append("tbl", this.state.tbl); // // nama tabel
 
 		// ======================================================

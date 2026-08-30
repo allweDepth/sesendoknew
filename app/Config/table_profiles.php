@@ -580,6 +580,19 @@ $profiles = [
     ]
   ],
 
+  // rekening_kegiatan menyimpan satuan sebagai nomenklatur teks, bukan id.
+  'satuan_teks' => [
+    'table' => 'satuan_neo',
+    'primary_key' => 'id',
+    'dropdown' => [
+      'value' => 'uraian',
+      'label' => 'uraian',
+      'searchable' => ['uraian', 'value'],
+      'order_by' => 'uraian ASC'
+    ],
+    'where' => ['disable' => 0]
+  ],
+
 
 
   'sumber_dana' => [

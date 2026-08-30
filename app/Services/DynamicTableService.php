@@ -638,6 +638,10 @@ INSERT (FIXED STABLE VERSION v3.1)
 3️⃣ AUTO FIELD RESOLUTION (SCOPE)
 ===================================================== */
     $filtered = $this->resolveAutoFields($table, $filtered);
+    if ($table === 'rekening_kegiatan') {
+      $hierarchyError = $this->applyRekeningHierarchy($filtered, $request['req'] ?? null);
+      if ($hierarchyError !== null) return $hierarchyError;
+    }
     //date time
     $filtered = $this->normalizeDateTimeFields($table, $filtered);
     /* =====================================================
@@ -983,6 +987,10 @@ IGNORE SYSTEM FIELD
 4️⃣ AUTO FIELD RESOLUTION
 ===================================================== */
     $filtered = $this->resolveAutoFields($table, $filtered);
+    if ($table === 'rekening_kegiatan') {
+      $hierarchyError = $this->applyRekeningHierarchy($filtered, $request['req'] ?? ($oldData['level'] ?? null));
+      if ($hierarchyError !== null) return $hierarchyError;
+    }
     $filtered = $this->normalizeDateTimeFields($table, $filtered);
     $filtered = $this->resolver()->resolvePeraturan($table, $filtered);
     $filtered = $this->resolver()->resolvePeriode($table, $filtered);
@@ -2284,6 +2292,53 @@ Tujuan:
 - Mencegah orphan record
 - Memastikan scope wilayah + peraturan konsisten
 ========================================================= */
+  private function applyRekeningHierarchy(array &$data, ?string $level): ?string
+  {
+    $parents = [
+      'urusan' => null,
+      'bidang' => 'urusan',
+      'program' => 'bidang',
+      'kegiatan' => 'program',
+      'sub_kegiatan' => 'kegiatan'
+    ];
+
+    if (!isset($parents[$level])) {
+      return JsonResponse::error('Jenis nomenklatur referensi tidak valid');
+    }
+
+    $data['level'] = $level;
+    $kode = trim((string)($data['kode'] ?? ''));
+    if ($kode === '') return JsonResponse::error('Kode nomenklatur wajib diisi');
+
+    if ($level === 'urusan') {
+      $data['parent_kode'] = null;
+      return null;
+    }
+
+    $parentKode = trim((string)($data['parent_kode'] ?? ''));
+    if ($parentKode === '') return JsonResponse::error('Nomenklatur induk wajib dipilih');
+
+    $parent = $this->db->query(
+      "SELECT kode, level, peraturan_id FROM rekening_kegiatan WHERE kode = ? AND level = ? AND status = 1 LIMIT 1",
+      [$parentKode, $parents[$level]]
+    )->fetch();
+
+    if (!$parent) {
+      return JsonResponse::error('Nomenklatur induk tidak sesuai dengan tingkat ' . $parents[$level]);
+    }
+
+    if (!str_starts_with($kode, $parentKode . '.')) {
+      return JsonResponse::error('Kode harus merupakan turunan dari kode induk ' . $parentKode);
+    }
+
+    if (!empty($data['peraturan_id']) && !empty($parent['peraturan_id']) &&
+        (int)$data['peraturan_id'] !== (int)$parent['peraturan_id']) {
+      return JsonResponse::error('Induk dan turunan harus berasal dari peraturan yang sama');
+    }
+
+    return null;
+  }
+
   private function validateHierarchy(string $table, array $data): void
   {
     /* ======================================================
@@ -4508,7 +4563,7 @@ AND is_deleted = 0
     // =====================================================
     // CURRENT VALUE (EDIT)
     // =====================================================
-    if ($currentValue !== null && is_numeric($currentValue)) {
+    if ($currentValue !== null && $currentValue !== '') {
 
       $optionalWhere[] = "`$table`.`$valueField` = ?";
       $params[] = $currentValue;

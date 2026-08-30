@@ -454,7 +454,7 @@ UIConfig.urusan = {
 
 UIConfig.bidang = {
 	validation: {
-		kode_urusan: { required: true },
+		parent_kode: { required: true },
 		kode: { required: true },
 		uraian: { required: true },
 	},
@@ -464,8 +464,9 @@ UIConfig.bidang = {
 				tag: "fieldDropdown",
 				prop: {
 					label: "Urusan",
-					name: "kode_urusan",
+					name: "parent_kode",
 					source: "rekening_kegiatan",
+					filter: { level: "urusan" },
 					search: true,
 				},
 			},
@@ -481,7 +482,7 @@ UIConfig.bidang = {
 
 UIConfig.program = {
 	validation: {
-		kode_bidang: { required: true },
+		parent_kode: { required: true },
 		kode: { required: true },
 		uraian: { required: true },
 	},
@@ -491,9 +492,9 @@ UIConfig.program = {
 				tag: "fieldDropdown",
 				prop: {
 					label: "Bidang",
-					name: "kode_bidang",
+					name: "parent_kode",
 					source: "rekening_kegiatan",
-					parent: "kode_urusan",
+					filter: { level: "bidang" },
 					search: true,
 				},
 			},
@@ -509,7 +510,7 @@ UIConfig.program = {
 
 UIConfig.kegiatan = {
 	validation: {
-		kode_program: { required: true },
+		parent_kode: { required: true },
 		kode: { required: true },
 		uraian: { required: true },
 	},
@@ -519,9 +520,9 @@ UIConfig.kegiatan = {
 				tag: "fieldDropdown",
 				prop: {
 					label: "Program",
-					name: "kode_program",
+					name: "parent_kode",
 					source: "rekening_kegiatan",
-					parent: "kode_program",
+					filter: { level: "program" },
 					search: true,
 				},
 			},
@@ -537,7 +538,7 @@ UIConfig.kegiatan = {
 
 UIConfig.sub_kegiatan = {
 	validation: {
-		kode_kegiatan: { required: true },
+		parent_kode: { required: true },
 		kode: { required: true },
 		uraian: { required: true },
 		satuan: { required: true },
@@ -548,7 +549,7 @@ UIConfig.sub_kegiatan = {
 				tag: "fieldDropdown",
 				prop: {
 					label: "Kegiatan",
-					name: "kode_kegiatan",
+					name: "parent_kode",
 					source: "rekening_kegiatan",
 					filter: {
 						level: "kegiatan",
@@ -565,7 +566,7 @@ UIConfig.sub_kegiatan = {
 				prop: {
 					label: "Satuan",
 					name: "satuan",
-					source: "satuan",
+					source: "satuan_teks",
 					search: true,
 				},
 			},
