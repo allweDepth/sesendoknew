@@ -62,7 +62,7 @@ $(document).ready(function () {
 			cancelText: "Batal",
 			onApprove: () => {
 				return new Promise((resolve) => {
-					window.location.href = "/logout";
+					window.location.href = window.appUrl ? window.appUrl("/logout") : "/logout";
 					resolve();
 				});
 			},

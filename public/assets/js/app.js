@@ -9,7 +9,7 @@ class App {
 		this.toast = Toast; // mengambil engine toast notification
 		this.dialog = window.DialogEngine || null; // engine dialog jika tersedia
 		this.loader = window.PageLoader || null; // engine loader jika tersedia
-		this.router = new SpaRouter(); // router SPA wajib ada
+		this.router = null; // dibuat setelah singleton global siap
 		this.user = window.app.user; // mengambil data user dari global sebelumnya
 
 		this.tbl = null; // logical table aktif
@@ -22,6 +22,7 @@ class App {
 		// fungsi inisialisasi aplikasi
 
 		window.app = this; // menjadikan instance App sebagai singleton global
+		this.router = new SpaRouter(); // initial route kini dapat memanggil window.app
 		console.log("App initialized."); // log bahwa app berhasil diinisialisasi
 	}
 
@@ -113,14 +114,14 @@ class App {
 				}
 				break; // keluar dari switch
 
-			case window.location.pathname.startsWith("/tata_naskah"): // jika halaman tata naskah
+			case (window.appRoutePath ? window.appRoutePath(window.location.pathname) : window.location.pathname).startsWith("/tata_naskah"): // jika halaman tata naskah
 				if (typeof TataNaskahModule === "function") {
 					// cek module
 					new TataNaskahModule().init(); // jalankan module
 				}
 				break; // keluar dari switch
 
-			case window.location.pathname === "/reset_tabel": // perbaikan kondisi reset tabel
+			case (window.appRoutePath ? window.appRoutePath(window.location.pathname) : window.location.pathname) === "/reset_tabel": // perbaikan kondisi reset tabel
 				if (typeof ResetTabelModule === "function")
 					// cek module
 					new ResetTabelModule().init(); // jalankan module
@@ -151,7 +152,7 @@ class App {
 		// Normalisasi URL (hapus query string)
 		// ============================================
 
-		const cleanUrl = url.split("?")[0]; // hapus query string
+		const cleanUrl = (window.appRoutePath ? window.appRoutePath(url) : url).split("?")[0]; // hapus query string
 
 		// Ambil segment pertama
 		const firstSegment = "/" + cleanUrl.split("/")[1]; // ambil segment pertama path
@@ -186,7 +187,7 @@ class App {
 				// cek schema belum dimuat
 
 				const schemaScript = document.createElement("script"); // buat element script
-				schemaScript.src = "/assets/js/engine/document/document_schema.js"; // path schema
+				schemaScript.src = window.appUrl("/assets/js/engine/document/document_schema.js"); // path schema
 				document.body.appendChild(schemaScript); // inject script
 				this.loadedModules.push("document_schema"); // tandai sudah dimuat
 			}
@@ -195,7 +196,7 @@ class App {
 				// cek builder belum dimuat
 
 				const builderScript = document.createElement("script"); // buat element script
-				builderScript.src = "/assets/js/engine/document/document_builder.js"; // path builder
+				builderScript.src = window.appUrl("/assets/js/engine/document/document_builder.js"); // path builder
 				document.body.appendChild(builderScript); // inject script
 				this.loadedModules.push("document_builder"); // tandai sudah dimuat
 			}
@@ -203,7 +204,7 @@ class App {
 
 		const script = document.createElement("script"); // buat script module
 
-		script.src = `/assets/js/modules/${moduleName}.js`; // set path module
+		script.src = window.appUrl(`/assets/js/modules/${moduleName}.js`); // set path module
 
 		script.defer = true; // gunakan defer
 

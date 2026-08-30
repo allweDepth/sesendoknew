@@ -34,7 +34,7 @@ class TataNaskahModule {
 	 * INIT MODULE
 	 */
 	init() {
-		const path = window.location.pathname;
+		const path = window.appRoutePath ? window.appRoutePath(window.location.pathname) : window.location.pathname;
 
 		this.bindEvents();
 

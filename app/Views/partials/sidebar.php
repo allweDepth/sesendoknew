@@ -69,27 +69,27 @@
         <i class="dropdown icon"></i> Referensi
       </div>
       <div class="content">
-        <a class="item" href="/referensi?tbl=rekening_kegiatan" data-req="urusan" data-spa="client"
+        <a class="item" href="/referensi?tbl=rekening_kegiatan&amp;req=urusan" data-req="urusan" data-spa="client"
           data-title="Referensi/Urusan">
           <i class="blue briefcase icon"></i> Urusan
         </a>
 
-        <a class="item" href="/referensi?tbl=rekening_kegiatan" data-req="bidang" data-spa="client"
+        <a class="item" href="/referensi?tbl=rekening_kegiatan&amp;req=bidang" data-req="bidang" data-spa="client"
           data-title="Referensi/Bidang">
           <i class="teal layer group icon"></i> Bidang
         </a>
 
-        <a class="item" href="/referensi?tbl=rekening_kegiatan" data-req="program" data-spa="client"
+        <a class="item" href="/referensi?tbl=rekening_kegiatan&amp;req=program" data-req="program" data-spa="client"
           data-title="Referensi/Program">
           <i class="green project diagram icon"></i> Program
         </a>
 
-        <a class="item" href="/referensi?tbl=rekening_kegiatan" data-req="kegiatan" data-spa="client"
+        <a class="item" href="/referensi?tbl=rekening_kegiatan&amp;req=kegiatan" data-req="kegiatan" data-spa="client"
           data-title="Referensi/Kegiatan">
           <i class="olive clipboard list icon"></i> Kegiatan
         </a>
 
-        <a class="item" href="/referensi?tbl=rekening_kegiatan" data-req="sub_kegiatan" data-spa="client"
+        <a class="item" href="/referensi?tbl=rekening_kegiatan&amp;req=sub_kegiatan" data-req="sub_kegiatan" data-spa="client"
           data-title="Referensi/Sub Kegiatan">
           <i class="grey list alternate icon"></i> Sub Kegiatan
         </a>

@@ -322,6 +322,13 @@
     if (window.APP_BASE_PATH && (path === window.APP_BASE_PATH || path.startsWith(window.APP_BASE_PATH + '/'))) return path;
     return window.APP_BASE_PATH + path;
   };
+  window.appRoutePath = function(path) {
+    path = path || '/';
+    if (window.APP_BASE_PATH && (path === window.APP_BASE_PATH || path.startsWith(window.APP_BASE_PATH + '/'))) {
+      path = path.slice(window.APP_BASE_PATH.length) || '/';
+    }
+    return path;
+  };
   $.ajaxPrefilter(function(options) { options.url = window.appUrl(options.url); });
   const nativeFetch = window.fetch.bind(window);
   window.fetch = function(resource, options) {

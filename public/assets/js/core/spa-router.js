@@ -9,7 +9,8 @@ class SpaRouter {
 	// Tentukan mode berdasarkan URL
 	// ================================
 	resolveMode(url) {
-		const firstSegment = "/" + url.split("/")[1];
+		const routeUrl = window.appRoutePath ? window.appRoutePath(url) : url;
+		const firstSegment = "/" + routeUrl.split("/")[1];
 
 		// Jika ada module JS untuk segment ini → client
 		if (window.appModuleMap && window.appModuleMap[firstSegment]) {
@@ -23,7 +24,8 @@ class SpaRouter {
 	// INITIAL LOAD (REFRESH)
 	// ================================
 	handleInitialLoad() {
-		const url = window.location.pathname;
+		const url = window.appRoutePath ? window.appRoutePath(window.location.pathname) : window.location.pathname;
+		this.updateHeaderFromCurrentUrl();
 		const mode = this.resolveMode(url);
 
 		if (mode === "client") {
@@ -33,6 +35,22 @@ class SpaRouter {
 				window.app.initPage();
 			}
 		}
+	}
+
+	updateHeaderFromCurrentUrl() {
+		const currentPath = window.location.pathname;
+		const currentParams = new URLSearchParams(window.location.search);
+		let bestMatch = null;
+
+		document.querySelectorAll("[data-spa][data-title]").forEach((link) => {
+			const target = new URL(link.href, window.location.origin);
+			if (target.pathname !== currentPath) return;
+			const matches = [...target.searchParams].every(([key, value]) => currentParams.get(key) === value);
+			if (matches && (!bestMatch || target.searchParams.size > bestMatch.searchParams.size)) bestMatch = target;
+			if (matches && target.searchParams.size === currentParams.size) {
+				$("#dynamicHeaderTitle").text(link.dataset.title);
+			}
+		});
 	}
 
 	// ================================
@@ -137,7 +155,7 @@ class SpaRouter {
 	// ================================
 	bindPopState() {
 		window.addEventListener("popstate", (event) => {
-			const url = window.location.pathname;
+			const url = window.appRoutePath ? window.appRoutePath(window.location.pathname) : window.location.pathname;
 			const mode = event.state?.mode || this.resolveMode(url);
 
 			if (mode === "client") {
