@@ -25,6 +25,7 @@ class BaseCrudModule {
 		// RENDER LAYOUT
 		// ====================================================
 		this.renderLayout(); // tampilkan layout modul
+		this.bindExport();
 
 		// ====================================================
 		// INISIALISASI MENU
@@ -72,6 +73,31 @@ class BaseCrudModule {
 			// load tabel default
 			this.loadTable(tbl, req);
 		}
+	}
+
+	bindExport() {
+		const eventName = `click.${this.moduleName}Export`;
+
+		$(document)
+			.off(eventName, "#crud-table-container [data-action='export']")
+			.on(eventName, "#crud-table-container [data-action='export']", (e) => {
+				e.preventDefault();
+
+				const $button = $(e.currentTarget);
+				const tbl = $button.data("tbl") || this.state.tbl;
+				const req = $button.data("req") || this.state.req;
+
+				if (!tbl) {
+					Toast.error("Tabel export tidak ditemukan");
+					return;
+				}
+
+				const params = new URLSearchParams({ tabel: tbl });
+				if (req) params.set("req", req);
+
+				const exportUrl = `/export?${params.toString()}`;
+				window.location.href = window.appUrl ? window.appUrl(exportUrl) : exportUrl;
+			});
 	}
 
 	/**

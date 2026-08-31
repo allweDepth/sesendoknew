@@ -79,6 +79,7 @@ class DynamicController
     }
 
     $tableKey = $_GET['tabel'] ?? null;
+    $req = $_GET['req'] ?? null;
 
     if (!$tableKey) {
       http_response_code(400);
@@ -87,10 +88,16 @@ class DynamicController
 
     $service = new DynamicTableService();
 
-    $response = $service->handle([
+    $exportRequest = [
       'action' => 'export',
       'tbl'    => $tableKey
-    ]);
+    ];
+
+    if ($req !== null && $req !== '') {
+      $exportRequest['req'] = $req;
+    }
+
+    $response = $service->handle($exportRequest);
 
     $decoded = json_decode($response, true);
 
@@ -134,7 +141,9 @@ class DynamicController
     if (ob_get_length()) ob_end_clean();
 
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="' . $tableKey . '.xlsx"');
+    $safeSuffix = $req ? '-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $req) : '';
+    $fileName = preg_replace('/[^a-zA-Z0-9_-]/', '', $tableKey) . $safeSuffix . '.xlsx';
+    header('Content-Disposition: attachment; filename="' . $fileName . '"');
     header('Cache-Control: max-age=0');
 
     $writer = new Xlsx($spreadsheet);

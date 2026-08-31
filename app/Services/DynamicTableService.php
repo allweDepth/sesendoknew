@@ -1263,6 +1263,15 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     list($scopeWhere, $scopeParams) =
       $this->resolveScope($table, $profile, $mode);
 
+    // Kolom scope milik tabel utama wajib diberi alias ketika query memakai JOIN.
+    // Tanpa kualifikasi ini, kolom umum seperti kd_wilayah menjadi ambigu.
+    if (!empty($profile['join'])) {
+      $scopeWhere = array_map(
+        fn($condition) => $this->qualifyBaseTableColumns($condition, $table),
+        $scopeWhere
+      );
+    }
+
 
 
     /* ======================================================
@@ -1341,6 +1350,9 @@ DELETE (FULL IDENTIK LOGIC ASLI)
         );
 
       if ($whereSql) {
+        if (!empty($profile['join'])) {
+          $whereSql = $this->qualifyBaseTableColumns($whereSql, $table);
+        }
         $whereParts[] = $whereSql;
         $params = array_merge($params, $whereBind);
       }
@@ -1361,6 +1373,9 @@ DELETE (FULL IDENTIK LOGIC ASLI)
         );
 
       if ($whereSql) {
+        if (!empty($profile['join'])) {
+          $whereSql = $this->qualifyBaseTableColumns($whereSql, $table);
+        }
         $whereParts[] = $whereSql;
         $params = array_merge($params, $whereBind);
       }
@@ -3421,6 +3436,19 @@ LIMIT 1",
     }
 
     return [$where, $params];
+  }
+
+  /**
+   * Kualifikasi kolom bertanda backtick agar selalu menunjuk tabel utama.
+   * Kolom yang sudah qualified (mis. `tabel`.`kolom`) tidak diubah.
+   */
+  private function qualifyBaseTableColumns(string $sql, string $table): string
+  {
+    return preg_replace(
+      '/(?<!\.)`([a-zA-Z0-9_]+)`(?!\s*\.)/',
+      "`{$table}`.`$1`",
+      $sql
+    );
   }
   private function resolveSearch(
     string $table,
