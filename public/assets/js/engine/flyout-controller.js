@@ -210,6 +210,14 @@ ISI FIELD TIPE UNTUK MODULE MAPPING
 
 		FormEngine.render($(formSelector), config.elements, this.formEngine, config.layout || {});
 
+		// Form rincian anggaran yang dibuka dari sebuah sub kegiatan harus
+		// membawa konteks sub kegiatan tersebut, bukan meminta pengguna
+		// mengetik ulang kode yang rawan salah.
+		const budgetCode = $btn.attr("data-budget-code");
+		if (action === "add" && budgetCode) {
+			$(formSelector).find('[name="kd_sub_keg"]').val(budgetCode).prop("readonly", true);
+		}
+
 		/* isi tipe dari state menu */
 
 		/* =========================================================

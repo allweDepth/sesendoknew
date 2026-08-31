@@ -4789,7 +4789,10 @@ AND is_deleted = 0
     // =====================================================
     // FILTER STATUS
     // =====================================================
-    if (in_array('status', $columns)) {
+    // Tidak semua kolom bernama `status` merupakan flag aktif. Contohnya
+    // db_asn_pemda_neo memakai kolom tersebut untuk status perkawinan.
+    // Profile dapat mematikan konvensi legacy ini agar dropdown tidak kosong.
+    if (($profile['dropdown_status_filter'] ?? true) && in_array('status', $columns)) {
       $mandatoryWhere[] = "`$table`.`status` = 1";
     }
 

@@ -153,6 +153,14 @@ class FormEngine {
 
 					$dropdown.dropdown("refresh");
 
+					// Nilai edit/default harus dipasang sesudah menu AJAX tersedia.
+					// Fomantic menghapus nilai yang belum ada di menu ketika refresh.
+					const selectedValue = params.value ?? $dropdown.data("pending-value");
+					if (selectedValue !== undefined && selectedValue !== null && String(selectedValue) !== "") {
+						$dropdown.dropdown("set selected", String(selectedValue));
+						$dropdown.removeData("pending-value");
+					}
+
 					resolve();
 				},
 
@@ -286,8 +294,10 @@ class FormEngine {
 				if (field.closest(".ui.dropdown").length) {
 					const dropdown = field.closest(".ui.dropdown");
 					const value = data[key];
+					if (value === undefined || value === null) return;
 
 					dropdown.data("skip-cascade", true);
+					dropdown.data("pending-value", value);
 
 					// 🔥 load dulu
 					// // 🔥 ambil parent jika ada

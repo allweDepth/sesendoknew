@@ -846,6 +846,8 @@ $profiles = [
     'soft_lock' => true,
     'auto_session' => ['kd_wilayah', 'kd_opd'],
     'dropdown' => ['value' => 'id', 'label' => 'nama'],
+    // Kolom status pada master ASN berisi status perkawinan, bukan flag aktif.
+    'dropdown_status_filter' => false,
     'validation' => [
       'nip' => ['required', 'unique']
     ],

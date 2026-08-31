@@ -1233,14 +1233,28 @@ UIConfig.rkpd = {
 	] }
 };
 UIConfig.rkpd_p = UIConfig.rkpd;
-const phase3BudgetForm = { validation:{kd_sub_keg:{required:true},uraian:{required:true},jumlah:{required:true,number:true}}, form: { elements: [
+const phase3BudgetForm = { layout:{columns:1}, validation:{kd_sub_keg:{required:true},uraian:{required:true},jumlah:{required:true,number:true}}, form: { elements: [
 	{ tag: "input", prop: { label: "Kode Sub Kegiatan", name: "kd_sub_keg" } },
-	{ tag: "input", prop: { label: "Kode Akun", name: "kd_akun" } },
-	{ tag: "fieldTextarea", prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` } },
-	{ tag: "input", prop: { label: "Volume", name: "volume", type: "number" } },
+	{ tag: "fieldDropdown", prop: { label: "Rekening / Akun", name: "kd_akun", source: "akun", search: true } },
+	{ tag: "fieldDropdown", prop: { label: "Objek Belanja", name: "objek_belanja", options:[{value:"belanja_operasi",text:"Belanja Operasi"},{value:"belanja_modal",text:"Belanja Modal"},{value:"belanja_tidak_terduga",text:"Belanja Tidak Terduga"}] } },
+	{ tag: "fieldDropdown", prop: { label: "Pengelompokan Belanja / Paket Pekerjaan", name: "jenis_kelompok", options:[{value:"pemaketan",text:"Pemaketan Kerja"},{value:"non_paket",text:"Non Paket"}] } },
+	{ tag: "input", prop: { label: "Uraian Paket Pekerjaan", name: "kelompok" } },
+	{ tag: "fieldTextarea", prop: { label: "Uraian Rincian Belanja", name: "uraian", atribut: `rows="2"` } },
+	{ tag: "fieldDropdown", prop: { label: "Jenis Standar Harga", name: "jenis_standar_harga", options:[{value:"SSH",text:"SSH"},{value:"HSPK",text:"HSPK"},{value:"ASB",text:"ASB"},{value:"SBU",text:"SBU"}] } },
+	{ tag: "input", prop: { label: "ID Standar Harga", name: "id_standar_harga", type:"number" } },
+	{ tag: "input", prop: { label: "Komponen", name: "komponen" } },
+	{ tag: "fieldTextarea", prop: { label: "Spesifikasi Komponen", name: "spesifikasi", atribut:`rows="2"` } },
+	{ tag: "input", prop: { label: "TKDN (%)", name: "tkdn", type:"number" } },
+	{ tag: "fieldCheckbox", prop: { label: "Tambahkan Pajak", name: "pajak" } },
+	{ tag: "input", prop: { label: "Koefisien 1", name: "vol_1", type:"number" } },
+	{ tag: "input", prop: { label: "Satuan 1", name: "sat_1" } },
+	{ tag: "input", prop: { label: "Koefisien 2", name: "vol_2", type:"number" } },
+	{ tag: "input", prop: { label: "Satuan 2", name: "sat_2" } },
+	{ tag: "input", prop: { label: "Volume Total", name: "volume", type: "number" } },
 	{ tag: "input", prop: { label: "Harga Satuan", name: "harga_satuan", type: "number" } },
-	{ tag: "input", prop: { label: "Jumlah", name: "jumlah", type: "number" } },
+	{ tag: "input", prop: { label: "Total Belanja", name: "jumlah", type: "number" } },
 	{ tag: "fieldDropdown", prop: { label: "Sumber Dana", name: "sumber_dana_id", source: "sumber_dana" } },
+	{ tag: "fieldTextarea", prop: { label: "Keterangan", name: "keterangan", atribut:`rows="2"` } },
 	...phase3Flags,
 ] } };
 ["renja", "rka", "dpa", "renja_p", "rka_p", "dppa"].forEach((key) => { UIConfig[key] = phase3BudgetForm; });

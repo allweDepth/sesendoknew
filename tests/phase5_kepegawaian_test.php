@@ -16,7 +16,8 @@ $asn=$call(['action'=>'list','tbl'=>'asn','req'=>'kepegawaian','halaman'=>1,'row
 $assert(($asn['success']??false)===true,'Data ASN dapat dibaca tanpa kolom uraian yang salah');
 $_POST=['action'=>'dropdown','tbl'=>'asn','source'=>'asn'];
 $dropdown=$call($_POST);
-$assert(($dropdown['success']??false)===true,'Dropdown pegawai memakai nama ASN');
+$assert(($dropdown['success']??false)===true && !empty($dropdown['data']),'Dropdown pegawai memakai nama ASN dan berisi opsi');
+$assert(!empty($dropdown['data'][0]['text']) && !empty($dropdown['data'][0]['value']),'Opsi pegawai memiliki nama dan ID');
 foreach(['pppk','riwayat_jabatan','riwayat_pangkat','cuti','sk_pegawai'] as $logical){
  $result=$call(['action'=>'list','tbl'=>$logical,'req'=>'kepegawaian','halaman'=>1,'rows'=>5]);
  $assert(($result['success']??false)===true,"subtab $logical terhubung backend");
