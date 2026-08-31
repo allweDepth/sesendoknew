@@ -177,6 +177,20 @@ class DynamicController
     exit;
   }
 
+  public function template()
+  {
+    if (empty($_SESSION['user'])) { http_response_code(401); die('Unauthorized'); }
+    $key=(string)($_GET['tabel']??''); $profiles=require __DIR__.'/../Config/table_profiles.php';
+    if(!$key||empty($profiles[$key]['table'])){http_response_code(400);die('Template tabel tidak tersedia');}
+    $table=$profiles[$key]['table']; $db=DB::getInstance();
+    $skip=['id','kd_wilayah','kd_opd','tahun','tgl_insert','tgl_update','username_insert','username_update','is_deleted','disable','kunci','setujui'];
+    $columns=array_values(array_filter(array_column($db->query("SHOW COLUMNS FROM `$table`")->fetchAll(),'Field'),fn($c)=>!in_array($c,$skip,true)));
+    $book=new Spreadsheet();$sheet=$book->getActiveSheet();$sheet->setTitle(substr('Template-'.$key,0,31));
+    foreach($columns as $i=>$column){$cell=Coordinate::stringFromColumnIndex($i+1).'1';$sheet->setCellValue($cell,strtoupper($column));$sheet->getColumnDimension(Coordinate::stringFromColumnIndex($i+1))->setWidth(max(14,min(32,strlen($column)+5)));}
+    $last=Coordinate::stringFromColumnIndex(max(1,count($columns)));$sheet->getStyle("A1:{$last}1")->getFont()->setBold(true);$sheet->freezePane('A2');$sheet->setAutoFilter("A1:{$last}1");
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');header('Content-Disposition: attachment; filename="template-'.preg_replace('/[^a-z0-9_-]/i','',$key).'.xlsx"');(new Xlsx($book))->save('php://output');exit;
+  }
+
   /* ==========================================================
        IMPORT (STRICT + PROTECTED)
     ========================================================== */

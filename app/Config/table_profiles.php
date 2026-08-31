@@ -2298,6 +2298,7 @@ $profiles['realisasi'] = [
   ],
   'join'=>[['table'=>'kontrak_neo','on'=>'kontrak_neo.id = daftar_realisasi_neo.kontrak_id']]
 ];
+$profiles['rab_kontrak']=['table'=>'rab_paket_neo','primary_key'=>'id','dropdown'=>['value'=>'id','label'=>'uraian','searchable'=>['nomor','uraian'],'order_by'=>'nomor ASC'],'modes'=>['dropdown'=>['select'=>['id','kontrak_id','nomor','uraian','satuan','jumlah_negoisasi','bobot'],'searchable'=>['nomor','uraian'],'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0],'order_by'=>'nomor ASC']]];
 foreach (['dpa','dppa'] as $budgetDropdown) {
   $profiles[$budgetDropdown]['dropdown']=['value'=>'id','label'=>'uraian','searchable'=>['kd_sub_keg','uraian'],'order_by'=>'id DESC'];
 }
@@ -2316,6 +2317,28 @@ $officialDropdown = static function(string $type): array {
 };
 $profiles['pejabat_ppk']=$officialDropdown('PPK');
 $profiles['pejabat_pptk']=$officialDropdown('PPTK');
+
+$profiles['absensi']=[
+  'table'=>'absensi_pegawai_neo','primary_key'=>'id','allowed_roles'=>['super_admin','admin_wilayah','admin_opd','kepala_opd'],
+  'auto_session'=>['kd_wilayah','kd_opd','tahun'],'where'=>['is_deleted'=>0],
+  'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
+  'validation'=>['pegawai_id'=>['required','numeric'],'tanggal'=>['required'],'status'=>['required']],
+  'import'=>['enabled'=>true,'allowed_roles'=>['super_admin','admin_wilayah','admin_opd']],
+  'modes'=>['default'=>['select'=>['absensi_pegawai_neo.id','db_asn_pemda_neo.nama AS pegawai','absensi_pegawai_neo.tanggal','absensi_pegawai_neo.jam_masuk','absensi_pegawai_neo.jam_pulang','absensi_pegawai_neo.status','absensi_pegawai_neo.keterangan'],'searchable'=>['db_asn_pemda_neo.nama','absensi_pegawai_neo.status'],'where'=>['absensi_pegawai_neo.kd_wilayah'=>'user','absensi_pegawai_neo.kd_opd'=>'user','absensi_pegawai_neo.tahun'=>'user','absensi_pegawai_neo.is_deleted'=>0],'order_by'=>'absensi_pegawai_neo.tanggal DESC'],'edit'=>['select'=>['absensi_pegawai_neo.*'],'searchable'=>['absensi_pegawai_neo.status'],'order_by'=>'absensi_pegawai_neo.id DESC']],
+  'join'=>[['table'=>'db_asn_pemda_neo','on'=>'db_asn_pemda_neo.id=absensi_pegawai_neo.pegawai_id']]
+];
+$profiles['penugasan_subkegiatan']=[
+  'table'=>'user_subkegiatan_neo','primary_key'=>'id','allowed_roles'=>['super_admin','admin_wilayah','admin_opd','kepala_opd'],
+  'auto_session'=>['kd_wilayah','kd_opd','tahun'],'where'=>['is_deleted'=>0],
+  'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
+  'validation'=>['user_id'=>['required','numeric'],'kd_sub_keg'=>['required'],'peran'=>['required'],'berlaku_mulai'=>['required'],'berlaku_sampai'=>['required']],
+  'modes'=>['default'=>['select'=>['*'],'searchable'=>['kd_sub_keg','peran','keterangan'],'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0],'order_by'=>'id DESC']]
+];
+$profiles['kop_surat']=['table'=>'kop_surat_neo','primary_key'=>'id','allowed_roles'=>['super_admin','admin_wilayah','admin_opd','kepala_opd'],'auto_session'=>['kd_wilayah','kd_opd','tahun'],'where'=>['is_deleted'=>0],'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],'validation'=>['nama_pemerintah'=>['required'],'nama_opd'=>['required']],'modes'=>['default'=>['select'=>['*'],'searchable'=>['nama_pemerintah','nama_opd','alamat'],'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0],'order_by'=>'id DESC']]];
+
+foreach (['urusan','bidang','program','kegiatan','sub_kegiatan','satuan','rekening_kegiatan','sbu','ssh','hspk','asb','rkpd','renja','rka','dpa','rkpd_p','renja_p','rka_p','dppa','kontrak','realisasi','asn','pppk','riwayat_jabatan','riwayat_pangkat','cuti','sk_pegawai','pejabat_tahunan','absensi'] as $importKey) {
+  if(isset($profiles[$importKey]))$profiles[$importKey]['import']=['enabled'=>true,'allowed_roles'=>['super_admin','admin_wilayah','admin_opd']];
+}
 
 /* Correct legacy Renstra dropdown fields that referenced non-existent columns. */
 $profiles['program_renstra_neo']['modes']['dropdown']['order_by'] = 'uraian ASC';

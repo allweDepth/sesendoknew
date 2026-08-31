@@ -16,11 +16,20 @@ return [
   '/kontrak' => ['KontrakController', 'index'],
   '/kontrak/summary' => ['KontrakController', 'summary'],
   '/kontrak/available-items' => ['KontrakController', 'availableItems'],
+  '/kontrak/available-subactivities' => ['KontrakController', 'availableSubActivities'],
   '/kontrak/items' => ['KontrakController', 'items'],
   '/kontrak/items/save' => ['KontrakController', 'saveItems'],
+  '/kontrak/delivery' => ['KontrakController', 'delivery'],
+  '/kontrak/rab/save' => ['KontrakController', 'saveRab'],
+  '/kontrak/schedule/save' => ['KontrakController', 'saveSchedule'],
+  '/kontrak/rab_excel' => ['KontrakController', 'rabExcel'],
+  '/kontrak/document/upload' => ['KontrakController', 'uploadDocument'],
+  '/kontrak/document/download' => ['KontrakController', 'downloadDocument'],
   '/kontrak/pdf' => ['KontrakController', 'pdf'],
   '/kontrak/laporan_pdf' => ['KontrakController', 'reportPdf'],
   '/kontrak/laporan_excel' => ['KontrakController', 'reportExcel'],
+  '/kontrak/financial_excel' => ['KontrakController', 'financialExcel'],
+  '/kontrak/financial_pdf' => ['KontrakController', 'financialPdf'],
   '/halaman_berita' => ['HalamanBeritaController', 'index'], //Controller hanya return HTML shell BUKAN data tabel
   /*
     |--------------------------------------------------------------------------
@@ -53,6 +62,7 @@ return [
     |--------------------------------------------------------------------------
     */
   '/export' => ['DynamicController', 'export'],
+  '/template_import' => ['DynamicController', 'template'],
   '/import' => ['DynamicController', 'import'],
 
   /*

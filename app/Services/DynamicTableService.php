@@ -585,16 +585,10 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
   {
     $role = $this->user['type_user'] ?? 'viewer';
 
-    $permissions = [
-      'super_admin'   => ['add', 'edit', 'delete', 'view'],
-      'admin_wilayah' => ['add', 'edit', 'delete', 'view'],
-      'admin_opd'     => ['add', 'edit', 'delete', 'view'],
-      'editor'        => ['add', 'edit', 'view'],
-      'viewer'        => ['view']
-    ];
-
-    if (!in_array($action, $permissions[$role] ?? [])) {
-      throw new Exception("Tidak memiliki hak akses");
+    $matrix=require __DIR__.'/../Config/role_matrix.php';
+    if($role==='editor')$role='staf_opd';
+    if (!in_array($action, $matrix[$role]['actions'] ?? [],true)) {
+      throw new Exception("Role ".($matrix[$role]['label']??$role)." tidak diizinkan melakukan aksi $action. Lingkup akses: ".($matrix[$role]['scope']??'tidak ditentukan'));
     }
   }
 
@@ -1873,7 +1867,7 @@ HANYA PERIODE AKTIF DI-CACHE
       }
     }
 
-    if ($role === 'admin_opd') {
+    if (in_array($role,['admin_opd','kepala_opd','pa_kpa','ppk','pptk','ppk_skpd','bendahara','pejabat_pengadaan','staf_opd'],true)) {
 
       if (in_array('kd_opd', $columns)) {
         $whereParts[] = "`kd_opd` = ?";
@@ -1898,6 +1892,11 @@ HANYA PERIODE AKTIF DI-CACHE
           $whereParts[] = "`periode_id` = ?";
           $params[] = $periodeAktif['id'];
         }
+      }
+
+      if (in_array($role,['ppk','pptk','staf_opd','viewer'],true) && in_array('kd_sub_keg',$columns,true)) {
+        $assignments=$this->db->query('SELECT kd_sub_keg FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND dapat_lihat=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0',[(int)($this->user['id']??0),$this->user['kd_wilayah']??'', $this->user['kd_opd']??'', $this->user['tahun']??date('Y')])->fetchAll(PDO::FETCH_COLUMN);
+        if(!$assignments){$whereParts[]='1=0';}else{$whereParts[]='`kd_sub_keg` IN ('.implode(',',array_fill(0,count($assignments),'?')).')';array_push($params,...$assignments);}
       }
     }
 
@@ -3494,7 +3493,8 @@ LIMIT 1",
 
     $role = $this->user['type_user'] ?? 'viewer';
 
-    if (!in_array($role, $config['allowed_roles'] ?? [])) {
+    $effectiveRole=in_array($role,['kepala_opd','pa_kpa'],true)?'admin_opd':$role;
+    if (!in_array($effectiveRole, $config['allowed_roles'] ?? [])) {
       throw new Exception("Role tidak diizinkan untuk import.");
     }
 

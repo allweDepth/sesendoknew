@@ -185,6 +185,12 @@
         <a class="item" href="/kepegawaian?tbl=pejabat_tahunan" data-spa="client" data-title="Kepegawaian/Pejabat Tahunan">
           <i class="violet user shield icon"></i> Pejabat Wajib Tahunan
         </a>
+        <a class="item" href="/kepegawaian?tbl=absensi" data-spa="client" data-title="Kepegawaian/Absensi">
+          <i class="teal calendar check icon"></i> Absensi Pegawai
+        </a>
+        <a class="item" href="/kepegawaian?tbl=penugasan_subkegiatan" data-spa="client" data-title="Kepegawaian/Penugasan Sub Kegiatan">
+          <i class="blue sitemap icon"></i> Role &amp; Sub Kegiatan
+        </a>
       </div>
     </div>
 
@@ -205,6 +211,7 @@
         <a class="item" href="/tata_naskah/daftar" data-spa="client" data-title="Tata Naskah/Daftar Naskah">
           <i class="violet folder icon"></i> Daftar Naskah
         </a>
+        <a class="item" href="/referensi?tbl=kop_surat" data-spa="client" data-title="Tata Naskah/Kop Surat"><i class="image outline icon"></i> Kop Surat Resmi</a>
       </div>
     </div>
 

@@ -1142,7 +1142,7 @@ UIConfig.__importFactory = function (tbl, templateFile) {
 		? `<a href="/assets/template_import/${templateFile}" target="_blank">
                 Download Template ${tbl}
            </a>`
-		: `<span class="red">Template tidak tersedia</span>`;
+		: `<a href="/template_import?tabel=${encodeURIComponent(tbl)}" target="_blank">Download Template ${tbl}</a>`;
 
 	return {
 		layout: { columns: 1 },
@@ -1524,6 +1524,7 @@ UIConfig.kontrak_dpa = UIConfig.kontrak;
 UIConfig.kontrak_dppa = UIConfig.kontrak;
 UIConfig.realisasi = { validation:{kontrak_id:{required:true},tanggal:{required:true},jumlah:{required:true,number:true},progress_fisik:{required:true,number:true}}, form:{elements:[
 	{tag:"fieldDropdown",prop:{label:"Kontrak",name:"kontrak_id",source:"kontrak",search:true}},
+	{tag:"fieldDropdown",prop:{label:"Uraian RAB",name:"rab_id",source:"rab_kontrak",search:true}},
 	{tag:"input",prop:{label:"ID Paket",name:"id_paket",type:"number"}},
 	{tag:"input",prop:{label:"ID Uraian Paket",name:"id_uraian_paket",type:"number"}},
 	{tag:"input",prop:{label:"ID Dokumen Anggaran",name:"id_dok_anggaran",type:"number"}},
@@ -1535,6 +1536,9 @@ UIConfig.realisasi = { validation:{kontrak_id:{required:true},tanggal:{required:
 	{tag:"input",prop:{label:"Volume",name:"vol",type:"number"}},
 	{tag:"input",prop:{label:"Realisasi Keuangan",name:"jumlah",type:"number"}},
 	{tag:"input",prop:{label:"Progress Fisik (%)",name:"progress_fisik",type:"number"}},
+	{tag:"input",prop:{label:"Progress Keuangan (%)",name:"progress_keuangan",type:"number"}},
+	{tag:"fieldTextarea",prop:{label:"Uraian Progress",name:"uraian_progress",atribut:`rows="2"`}},
+	{tag:"input",prop:{label:"Path Dokumen Bukti",name:"file"}},
 	{tag:"input",prop:{label:"Nomor Bukti",name:"nomor_bukti"}},
 	{tag:"fieldTextarea",prop:{label:"Keterangan Paket",name:"ket_paket",atribut:`rows="2"`}},
 	{tag:"fieldTextarea",prop:{label:"Uraian Realisasi",name:"ket_uraian_paket",atribut:`rows="2"`}},
@@ -1587,6 +1591,23 @@ UIConfig.halaman_berita = {
 		],
 	},
 };
+UIConfig.absensi={validation:{pegawai_id:{required:true},tanggal:{required:true},status:{required:true}},form:{elements:[
+	{tag:"fieldDropdown",prop:{label:"Pegawai",name:"pegawai_id",source:"pegawai",search:true}},
+	{tag:"fieldCalendar",prop:{label:"Tanggal",name:"tanggal",calendarType:"date"}},
+	{tag:"input",prop:{label:"Jam Masuk",name:"jam_masuk",type:"time"}},{tag:"input",prop:{label:"Jam Pulang",name:"jam_pulang",type:"time"}},
+	{tag:"fieldDropdown",prop:{label:"Status",name:"status",options:["HADIR","DINAS_LUAR","IZIN","SAKIT","CUTI","ALPA","WFH"].map(x=>({value:x,text:x.replace('_',' ')}))}},
+	{tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan",atribut:'rows="3"'}}
+]}};
+UIConfig.penugasan_subkegiatan={form:{elements:[
+	{tag:"input",prop:{label:"ID User",name:"user_id",type:"number"}},{tag:"input",prop:{label:"Kode Sub Kegiatan",name:"kd_sub_keg"}},
+	{tag:"fieldDropdown",prop:{label:"Peran",name:"peran",options:["KEPALA_OPD","PA_KPA","PPK","PPTK","PPK_SKPD","BENDAHARA","PEJABAT_PENGADAAN","STAF","VIEWER"].map(x=>({value:x,text:x.replaceAll('_',' ')}))}},
+	{tag:"fieldCheckbox",prop:{label:"Dapat melihat",name:"dapat_lihat"}},{tag:"fieldCheckbox",prop:{label:"Dapat input",name:"dapat_input"}},{tag:"fieldCheckbox",prop:{label:"Dapat menyetujui",name:"dapat_setujui"}},{tag:"fieldCheckbox",prop:{label:"Dapat menghapus",name:"dapat_hapus"}},
+	{tag:"fieldCalendar",prop:{label:"Berlaku Mulai",name:"berlaku_mulai",calendarType:"date"}},{tag:"fieldCalendar",prop:{label:"Berlaku Sampai",name:"berlaku_sampai",calendarType:"date"}}
+]}};
+UIConfig.kop_surat={form:{elements:[{tag:"input",prop:{label:"Nama Pemerintah",name:"nama_pemerintah"}},{tag:"input",prop:{label:"Nama OPD",name:"nama_opd"}},{tag:"fieldTextarea",prop:{label:"Alamat",name:"alamat",atribut:'rows="2"'}},{tag:"input",prop:{label:"Telepon",name:"telepon"}},{tag:"input",prop:{label:"Email",name:"email"}},{tag:"input",prop:{label:"Website",name:"website"}},{tag:"input",prop:{label:"Path Logo Kiri",name:"logo_kiri"}},{tag:"input",prop:{label:"Path/Gambar Kop Penuh",name:"gambar_kop"}},{tag:"fieldCheckbox",prop:{label:"Gunakan gambar kop penuh",name:"gunakan_gambar_kop"}},{tag:"fieldCheckbox",prop:{label:"Aktif",name:"aktif"}}]}};
+[
+	"urusan","bidang","program","kegiatan","sub_kegiatan","satuan","rekening_kegiatan","sbu","ssh","hspk","asb","rkpd","renja","rka","dpa","rkpd_p","renja_p","rka_p","dppa","kontrak","realisasi","asn","pppk","riwayat_jabatan","riwayat_pangkat","cuti","sk_pegawai","pejabat_tahunan","absensi"
+].forEach(tbl=>{if(UIConfig[tbl])UIConfig[tbl].import=UIConfig.__importFactory(tbl,null);});
 
 UIConfig.sbu_akun_map = UIConfig.__akunMapFactory("sbu");
 UIConfig.ssh_akun_map = UIConfig.__akunMapFactory("ssh");

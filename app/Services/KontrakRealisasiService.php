@@ -35,13 +35,23 @@ class KontrakRealisasiService
         return ['totals'=>$totals,'monthly'=>array_values($monthly),'status'=>$status];
     }
 
-    public function availableItems(string $search='', int $contractId=0): array
+    public function availableSubActivities(int $contractId=0): array
+    {
+        [$w,$o,$y]=$this->scope(); $params=[$w,$y]; $opd='';
+        if($o&&$o!=='0'){$opd=' AND b.kd_opd=?';$params[]=$o;}
+        $sql="SELECT b.kd_sub_keg,COUNT(*) jumlah_uraian,SUM(b.jumlah) pagu FROM dpa_neo b WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.is_deleted=0 GROUP BY b.kd_sub_keg
+              UNION ALL SELECT b.kd_sub_keg,COUNT(*),SUM(b.jumlah) FROM dppa_neo b WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.is_deleted=0 GROUP BY b.kd_sub_keg";
+        $rows=$this->db->query("SELECT kd_sub_keg,SUM(jumlah_uraian) jumlah_uraian,SUM(pagu) pagu FROM ($sql) x GROUP BY kd_sub_keg ORDER BY kd_sub_keg",array_merge($params,$params))->fetchAll();
+        return $rows;
+    }
+
+    public function availableItems(string $search='', int $contractId=0, string $subActivity='', int $limit=50): array
     {
         [$w,$o,$y]=$this->scope();
         $params=[]; $scope='b.kd_wilayah=? AND b.tahun=? AND b.setujui=1 AND b.is_deleted=0';
         $params[]=$w; $params[]=$y;
         if($o&&$o!=='0'){ $scope.=' AND b.kd_opd=?'; $params[]=$o; }
-        $needle='%'.trim($search).'%';
+        $needle='%'.trim($search).'%'; $limit=max(10,min($limit,100));
         $sql=function(string $table,string $stage) use($scope,$contractId): string {
             return "SELECT '$stage' tahap,b.id anggaran_id,b.kd_sub_keg,b.kd_akun,b.uraian,b.jumlah pagu,
                     COALESCE(ci.nilai_terpakai,0) nilai_terpakai,
@@ -50,15 +60,59 @@ class KontrakRealisasiService
               LEFT JOIN (SELECT tahap,anggaran_id,SUM(nilai_kontrak) nilai_terpakai
                          FROM kontrak_item_neo WHERE is_deleted=0".($contractId>0?' AND kontrak_id<>'.(int)$contractId:'')."
                          GROUP BY tahap,anggaran_id) ci ON ci.tahap='$stage' AND ci.anggaran_id=b.id
-             WHERE $scope AND (b.kd_sub_keg LIKE ? OR b.kd_akun LIKE ? OR b.uraian LIKE ?)
+             WHERE $scope AND (?='' OR b.kd_sub_keg=?) AND (b.kd_sub_keg LIKE ? OR b.kd_akun LIKE ? OR b.uraian LIKE ? OR CAST(b.jumlah AS CHAR) LIKE ?)
                AND ci.nilai_terpakai IS NULL";
         };
-        $dpaParams=array_merge($params,[$needle,$needle,$needle]);
-        $dppaParams=array_merge($params,[$needle,$needle,$needle]);
-        $rows=$this->db->query('('.$sql('dpa_neo','dpa').') UNION ALL ('.$sql('dppa_neo','dppa').') ORDER BY kd_sub_keg,kd_akun,uraian LIMIT 300',array_merge($dpaParams,$dppaParams))->fetchAll();
+        $dpaParams=array_merge($params,[$subActivity,$subActivity,$needle,$needle,$needle,$needle]);
+        $dppaParams=array_merge($params,[$subActivity,$subActivity,$needle,$needle,$needle,$needle]);
+        $rows=$this->db->query('('.$sql('dpa_neo','dpa').') UNION ALL ('.$sql('dppa_neo','dppa').') ORDER BY kd_sub_keg,kd_akun,uraian LIMIT '.$limit,array_merge($dpaParams,$dppaParams))->fetchAll();
         return array_map(static function(array $row): array {
             $row['pagu']=(float)$row['pagu']; $row['nilai_terpakai']=(float)$row['nilai_terpakai']; $row['pagu_tersedia']=(float)$row['pagu_tersedia']; return $row;
         },$rows);
+    }
+
+    public function delivery(int $contractId): array
+    {
+        $header=$this->contractHeader($contractId);
+        $rab=$this->db->query('SELECT * FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY nomor,id',[$contractId])->fetchAll();
+        $schedule=$this->db->query('SELECT * FROM kontrak_jadwal_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY minggu_ke',[$contractId])->fetchAll();
+        $documents=$this->db->query('SELECT id,jenis_dokumen,nomor_dokumen,tanggal_dokumen,judul,nama_file_asli,path_file,mime_type,ukuran,versi,keterangan,tgl_insert FROM kontrak_dokumen_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY jenis_dokumen,versi DESC',[$contractId])->fetchAll();
+        return ['contract'=>$header,'rab'=>$rab,'schedule'=>$schedule,'documents'=>$documents];
+    }
+
+    public function saveRab(int $contractId,array $items): array
+    {
+        $header=$this->contractHeader($contractId); if(!$items)throw new InvalidArgumentException('RAB minimal memiliki satu uraian');
+        $total=0.0; foreach($items as $i=>&$row){$row['uraian']=trim((string)($row['uraian']??''));$row['satuan']=trim((string)($row['satuan']??''));$row['vol_negoisasi']=(float)($row['volume']??$row['vol_negoisasi']??0);$row['harga_sat_negoisasi']=(float)($row['harga_satuan']??$row['harga_sat_negoisasi']??0);$row['jumlah_negoisasi']=$row['vol_negoisasi']*$row['harga_sat_negoisasi'];if(!$row['uraian']||!$row['satuan']||$row['jumlah_negoisasi']<=0)throw new InvalidArgumentException('Uraian RAB ke-'.($i+1).' belum lengkap');$total+=$row['jumlah_negoisasi'];}
+        if($total>(float)$header['nilai_kontrak']+0.01)throw new InvalidArgumentException('Total RAB Rp '.number_format($total,0,',','.').' melebihi nilai kontrak Rp '.number_format((float)$header['nilai_kontrak'],0,',','.'));
+        $this->db->begin();try{$this->db->query('DELETE FROM rab_paket_neo WHERE kontrak_id=?',[$contractId]);foreach($items as $i=>$row)$this->db->insert('rab_paket_neo',['kontrak_id'=>$contractId,'kontrak_item_id'=>!empty($row['kontrak_item_id'])?(int)$row['kontrak_item_id']:null,'tahun'=>$header['tahun'],'kd_wilayah'=>$header['kd_wilayah'],'kd_opd'=>$header['kd_opd'],'id_renja_p'=>0,'id_dpa'=>0,'id_dppa'=>0,'nomor'=>(string)($row['nomor']??($i+1)),'uraian'=>$row['uraian'],'satuan'=>$row['satuan'],'type'=>(string)($row['type']??'PEKERJAAN'),'vol_negoisasi'=>$row['vol_negoisasi'],'harga_sat_negoisasi'=>$row['harga_sat_negoisasi'],'jumlah_negoisasi'=>$row['jumlah_negoisasi'],'bobot'=>$total>0?($row['jumlah_negoisasi']/$total*100):0,'keterangan'=>(string)($row['keterangan']??''),'username_insert'=>$this->user['username']??'system','tgl_insert'=>date('Y-m-d H:i:s'),'is_deleted'=>0]);$this->db->commit();}catch(Throwable $e){$this->db->rollback();throw $e;}
+        return ['total'=>$total,'items'=>$this->delivery($contractId)['rab']];
+    }
+
+    public function saveSchedule(int $contractId,array $weeks): array
+    {
+        $header=$this->contractHeader($contractId); if(!$weeks)throw new InvalidArgumentException('Time schedule minimal satu minggu');
+        $planned=0.0;$actual=0.0;$this->db->begin();try{$this->db->query('DELETE FROM kontrak_jadwal_neo WHERE kontrak_id=?',[$contractId]);foreach($weeks as $i=>$week){$p=(float)($week['bobot_rencana']??0);$a=(float)($week['bobot_realisasi']??0);$planned+=$p;$actual+=$a;if($planned>100.01||$actual>100.01)throw new InvalidArgumentException('Bobot kumulatif Kurva S tidak boleh melebihi 100%');$this->db->insert('kontrak_jadwal_neo',['kontrak_id'=>$contractId,'minggu_ke'=>(int)($week['minggu_ke']??($i+1)),'tanggal_mulai'=>$week['tanggal_mulai'],'tanggal_selesai'=>$week['tanggal_selesai'],'bobot_rencana'=>$p,'bobot_realisasi'=>$a,'rencana_kumulatif'=>$planned,'realisasi_kumulatif'=>$actual,'keterangan'=>(string)($week['keterangan']??''),'kd_wilayah'=>$header['kd_wilayah'],'kd_opd'=>$header['kd_opd'],'tahun'=>$header['tahun'],'username_insert'=>$this->user['username']??'system']);}$this->db->commit();}catch(Throwable $e){$this->db->rollback();throw $e;}return $this->delivery($contractId)['schedule'];
+    }
+
+    public function rabExcel(int $contractId): string
+    {
+        $data=$this->delivery($contractId);$book=new Spreadsheet();$s=$book->getActiveSheet();$s->setTitle('RAB dan Kurva S');$s->fromArray(['NO','URAIAN','SATUAN','VOLUME','HARGA SATUAN','JUMLAH','BOBOT %'],null,'A1');$r=2;foreach($data['rab'] as $i=>$x)$s->fromArray([$x['nomor']?:$i+1,$x['uraian'],$x['satuan'],(float)$x['vol_negoisasi'],(float)$x['harga_sat_negoisasi'],(float)$x['jumlah_negoisasi'],(float)$x['bobot']],null,'A'.$r++);$r+=2;$s->fromArray(['MINGGU','MULAI','SELESAI','RENCANA %','REALISASI %','RENCANA KUMULATIF','REALISASI KUMULATIF'],null,'A'.$r++);foreach($data['schedule'] as $x)$s->fromArray([$x['minggu_ke'],$x['tanggal_mulai'],$x['tanggal_selesai'],(float)$x['bobot_rencana'],(float)$x['bobot_realisasi'],(float)$x['rencana_kumulatif'],(float)$x['realisasi_kumulatif']],null,'A'.$r++);foreach(range('A','G') as $c)$s->getColumnDimension($c)->setAutoSize(true);$s->getStyle('A1:G1')->getFont()->setBold(true);$tmp=tempnam(sys_get_temp_dir(),'rab_').'.xlsx';(new Xlsx($book))->save($tmp);return $tmp;
+    }
+
+    public function uploadDocument(int $contractId,array $meta,array $file): array
+    {
+        $header=$this->contractHeader($contractId);$types=['KONTRAK','SPK','SPMK','SSKK','SSUK','RAB','JADWAL','KURVA_S','GAMBAR','BAST','PHO','FHO','ADENDUM','JAMINAN','LAPORAN','LAINNYA'];$type=strtoupper((string)($meta['jenis_dokumen']??''));
+        if(!in_array($type,$types,true))throw new InvalidArgumentException('Jenis dokumen kontrak tidak valid');if(($file['error']??UPLOAD_ERR_NO_FILE)!==UPLOAD_ERR_OK)throw new InvalidArgumentException('File dokumen belum dipilih atau gagal diunggah');if(($file['size']??0)>25*1024*1024)throw new InvalidArgumentException('Ukuran file maksimal 25 MB');
+        $allowed=['application/pdf','image/jpeg','image/png','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/zip'];$mime=(new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);if(!in_array($mime,$allowed,true))throw new InvalidArgumentException('Format file harus PDF, JPG, PNG, XLSX, DOCX, atau ZIP');
+        $safeScope=preg_replace('/[^A-Za-z0-9._-]/','_',($header['kd_wilayah']??'wilayah').'-'.($header['kd_opd']??'opd'));$relative='storage/uploads/'.$safeScope.'/'.$header['tahun'].'/kontrak/'.$contractId.'/'.strtolower($type);$directory=dirname(__DIR__,2).'/'.$relative;if(!is_dir($directory)&&!mkdir($directory,0775,true))throw new RuntimeException('Folder dokumen kontrak tidak dapat dibuat');
+        $extension=strtolower(pathinfo((string)$file['name'],PATHINFO_EXTENSION));$stored=date('YmdHis').'-'.bin2hex(random_bytes(5)).($extension?'.'.$extension:'');if(!move_uploaded_file($file['tmp_name'],$directory.'/'.$stored))throw new RuntimeException('File gagal dipindahkan ke penyimpanan kontrak');
+        $version=(int)($this->db->query('SELECT COALESCE(MAX(versi),0)+1 versi FROM kontrak_dokumen_neo WHERE kontrak_id=? AND jenis_dokumen=?',[$contractId,$type])->fetch()['versi']??1);$id=$this->db->insert('kontrak_dokumen_neo',['kontrak_id'=>$contractId,'jenis_dokumen'=>$type,'nomor_dokumen'=>$meta['nomor_dokumen']??null,'tanggal_dokumen'=>$meta['tanggal_dokumen']??null,'judul'=>trim((string)($meta['judul']??$type)),'nama_file_asli'=>basename((string)$file['name']),'path_file'=>$relative.'/'.$stored,'mime_type'=>$mime,'ukuran'=>(int)$file['size'],'versi'=>$version,'keterangan'=>$meta['keterangan']??null,'kd_wilayah'=>$header['kd_wilayah'],'kd_opd'=>$header['kd_opd'],'tahun'=>$header['tahun'],'username_insert'=>$this->user['username']??'system']);return ['id'=>$id,'versi'=>$version,'path'=>$relative.'/'.$stored];
+    }
+
+    public function document(int $id): array
+    {
+        [$w,$o,$y]=$this->scope();$sql='SELECT d.* FROM kontrak_dokumen_neo d JOIN kontrak_neo k ON k.id=d.kontrak_id WHERE d.id=? AND d.is_deleted=0 AND k.kd_wilayah=? AND k.tahun=? AND k.is_deleted=0';$p=[$id,$w,$y];if($o&&$o!=='0'){$sql.=' AND k.kd_opd=?';$p[]=$o;}$row=$this->db->query($sql.' LIMIT 1',$p)->fetch();if(!$row)throw new RuntimeException('Dokumen tidak ditemukan');return $row;
     }
 
     public function contractItems(int $contractId): array
@@ -143,5 +197,20 @@ class KontrakRealisasiService
         $sheet->getStyle('A1:K1')->getFont()->setBold(true); $sheet->getStyle('G2:K'.$row)->getNumberFormat()->setFormatCode('#,##0.00'); foreach(range('A','K') as $c)$sheet->getColumnDimension($c)->setAutoSize(true);
         if($rows){$labels=[new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING,"'Kontrak dan Realisasi'!\$H\$1",null,1),new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING,"'Kontrak dan Realisasi'!\$I\$1",null,1)];$cats=[new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING,"'Kontrak dan Realisasi'!\$D\$2:\$D\$".($row-1),null,count($rows))];$vals=[new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER,"'Kontrak dan Realisasi'!\$H\$2:\$H\$".($row-1),null,count($rows)),new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER,"'Kontrak dan Realisasi'!\$I\$2:\$I\$".($row-1),null,count($rows))];$series=new DataSeries(DataSeries::TYPE_BARCHART,DataSeries::GROUPING_CLUSTERED,range(0,count($vals)-1),$labels,$cats,$vals);$chart=new Chart('realisasi',new Title('Nilai Kontrak vs Realisasi'),new Legend(Legend::POSITION_RIGHT),new PlotArea(null,[$series]));$chart->setTopLeftPosition('M2');$chart->setBottomRightPosition('U18');$sheet->addChart($chart);}
         $tmp=tempnam(sys_get_temp_dir(),'phase4_').'.xlsx'; (new Xlsx($book))->setIncludeCharts(true)->save($tmp); return $tmp;
+    }
+
+    public function financialRows(): array
+    {
+        [$w,$o,$y]=$this->scope();$sql="SELECT dr.tanggal,dr.periode,dr.nomor_bukti,k.nomor_kontrak,k.kd_sub_keg,dr.kd_akun,COALESCE(dr.uraian_progress,dr.ket_uraian_paket) uraian,dr.vol,dr.jumlah,dr.progress_fisik,dr.progress_keuangan,COALESCE(r.nama_perusahaan,k.nama_penyedia) penyedia FROM daftar_realisasi_neo dr JOIN kontrak_neo k ON k.id=dr.kontrak_id LEFT JOIN rekanan_neo r ON r.id=k.rekanan_id WHERE dr.is_deleted=0 AND k.is_deleted=0 AND k.kd_wilayah=? AND k.tahun=?";$p=[$w,$y];if($o&&$o!=='0'){$sql.=' AND k.kd_opd=?';$p[]=$o;}return $this->db->query($sql.' ORDER BY dr.tanggal,dr.id',$p)->fetchAll();
+    }
+
+    public function financialExcel(string $format): string
+    {
+        $format=in_array($format,['spj','lra','bulanan_fisik_keuangan'],true)?$format:'lra';$rows=$this->financialRows();$book=new Spreadsheet();$s=$book->getActiveSheet();$titles=['spj'=>'SPJ Bendahara','lra'=>'Laporan Realisasi Anggaran','bulanan_fisik_keuangan'=>'Laporan Bulanan Fisik Keuangan'];$s->setTitle(substr($titles[$format],0,31));$headers=$format==='spj'?['NO','TANGGAL','NOMOR BUKTI','KONTRAK','PENYEDIA','URAIAN','KODE AKUN','JUMLAH']:['NO','BULAN','SUB KEGIATAN','KODE AKUN','KONTRAK','URAIAN','ANGGARAN/REALISASI','FISIK %','KEUANGAN %'];$s->fromArray($headers,null,'A1');$r=2;foreach($rows as $i=>$x){$data=$format==='spj'?[$i+1,$x['tanggal'],$x['nomor_bukti'],$x['nomor_kontrak'],$x['penyedia'],$x['uraian'],$x['kd_akun'],(float)$x['jumlah']]:[$i+1,$x['periode']?:date('n',strtotime($x['tanggal'])),$x['kd_sub_keg'],$x['kd_akun'],$x['nomor_kontrak'],$x['uraian'],(float)$x['jumlah'],(float)$x['progress_fisik'],(float)$x['progress_keuangan']];$s->fromArray($data,null,'A'.$r++);}$last=$format==='spj'?'H':'I';$s->getStyle("A1:{$last}1")->getFont()->setBold(true);foreach(range('A',$last) as $c)$s->getColumnDimension($c)->setAutoSize(true);$tmp=tempnam(sys_get_temp_dir(),'finance_').'.xlsx';(new Xlsx($book))->save($tmp);return $tmp;
+    }
+
+    public function financialPdf(string $format): string
+    {
+        $format=in_array($format,['spj','lra','bulanan_fisik_keuangan'],true)?$format:'lra';$rows=$this->financialRows();$title=['spj'=>'FORMAT SPJ BENDAHARA','lra'=>'LAPORAN REALISASI ANGGARAN','bulanan_fisik_keuangan'=>'LAPORAN BULANAN FISIK DAN KEUANGAN'][$format];$pdf=new TCPDF('L','mm','A4',true,'UTF-8');$pdf->SetMargins(8,10,8);$pdf->AddPage();$pdf->SetFont('helvetica','B',13);$pdf->Cell(0,8,$title,0,1,'C');$pdf->SetFont('helvetica','',7);$html='<table border="1" cellpadding="3"><tr style="font-weight:bold;background-color:#e8f1fb"><th>No</th><th>Tanggal</th><th>Bukti</th><th>Kontrak</th><th>Sub Kegiatan</th><th>Akun</th><th>Uraian</th><th>Penyedia</th><th>Jumlah</th><th>Fisik</th><th>Keuangan</th></tr>';foreach($rows as $i=>$x)$html.='<tr><td>'.($i+1).'</td><td>'.htmlspecialchars($x['tanggal']).'</td><td>'.htmlspecialchars((string)$x['nomor_bukti']).'</td><td>'.htmlspecialchars((string)$x['nomor_kontrak']).'</td><td>'.htmlspecialchars((string)$x['kd_sub_keg']).'</td><td>'.htmlspecialchars((string)$x['kd_akun']).'</td><td>'.htmlspecialchars((string)$x['uraian']).'</td><td>'.htmlspecialchars((string)$x['penyedia']).'</td><td align="right">'.number_format((float)$x['jumlah'],0,',','.').'</td><td>'.number_format((float)$x['progress_fisik'],2).'%</td><td>'.number_format((float)$x['progress_keuangan'],2).'%</td></tr>';$pdf->writeHTML($html.'</table>',true,false,true,false,'');return $pdf->Output('','S');
     }
 }
