@@ -75,7 +75,7 @@
     <h3 class="ui dividing header"><i class="lock icon"></i> Pesan Pribadi</h3>
     <div class="ui relaxed divided list">
       <?php foreach (($messages??[]) as $message): ?>
-      <div class="item"><i class="envelope outline icon"></i><div class="content"><div class="header"><?= htmlspecialchars($message['pengirim']) ?> → <?= htmlspecialchars($message['penerima']) ?></div><div class="description"><?= nl2br(htmlspecialchars($message['content'])) ?></div></div></div>
+      <div class="item private-message-card" data-message-id="<?= (int)$message['id'] ?>"><i class="<?= !empty($message['read_at'])?'envelope open outline':'envelope outline' ?> icon"></i><div class="content"><div class="header"><?= htmlspecialchars($message['pengirim']) ?> → <?= htmlspecialchars($message['penerima']) ?> <?php if(!empty($message['is_ephemeral'])):?><span class="ui mini orange label">sementara</span><?php endif;?></div><div class="description"><?= nl2br(htmlspecialchars($message['content'])) ?></div><?php if(!empty($message['attachment_path'])):?><a class="ui mini basic button" href="<?= app_url('/wallchat/private/file?id='.(int)$message['id']) ?>"><i class="paperclip icon"></i><?= htmlspecialchars($message['attachment_name']) ?></a><?php endif;?><button class="ui mini basic green button btnReadPrivate" data-id="<?= (int)$message['id'] ?>"><i class="check icon"></i>Sudah dibaca</button><button class="ui mini basic red button btnDeletePrivate" data-id="<?= (int)$message['id'] ?>"><i class="trash icon"></i>Hapus dari saya</button></div></div>
       <?php endforeach; ?>
       <?php if(empty($messages)): ?><div class="ui message">Belum ada pesan pribadi.</div><?php endif; ?>
     </div>
@@ -95,7 +95,7 @@
   </div>
 
   <div class="content">
-    <form class="ui form" id="formPrivateMessage">
+    <form class="ui form" id="formPrivateMessage" enctype="multipart/form-data">
 
       <div class="field">
         <label>Pilih Penerima</label>
@@ -117,6 +117,8 @@
           </div>
         </div>
       </div>
+
+      <div class="two fields"><div class="field"><label>Lampiran (maks. 3 MB)</label><input type="file" name="file" accept=".jpg,.jpeg,.png,.webp,.pdf,.docx,.xlsx"></div><div class="field"><label>Privasi</label><div class="ui toggle checkbox"><input type="checkbox" name="is_ephemeral" value="1"><label>Pesan sementara—hilang setelah penerima membaca</label></div></div></div>
 
       <div class="field">
         <label>Pesan</label>

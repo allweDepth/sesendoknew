@@ -126,6 +126,9 @@ return [
   '/wallchat/store'    => ['WallchatController', 'store'],
   '/wallchat/comment'  => ['WallchatController', 'comment'],
   '/wallchat/private'  => ['WallchatController', 'privateMessage'],
+  '/wallchat/private/read' => ['WallchatController', 'readPrivate'],
+  '/wallchat/private/delete' => ['WallchatController', 'deletePrivate'],
+  '/wallchat/private/file' => ['WallchatController', 'privateFile'],
   '/wallchat/delete'   => ['WallchatController', 'delete'],
 
   /*

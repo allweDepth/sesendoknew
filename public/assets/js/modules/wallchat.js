@@ -68,14 +68,10 @@ class WallchatModule {
 		$(document).on("submit", "#formPrivateMessage", (e) => {
 			e.preventDefault();
 
-			const receiver = $('input[name="receiver_id"]').val();
-			const content = $('#formPrivateMessage textarea[name="content"]').val();
+			const formData = new FormData(e.currentTarget);
 
 			window.Ajax.request({url:"/wallchat/private",method:"POST",
-				data: {
-					receiver_id: receiver,
-					content: content,
-				},
+				data: formData, processData:false, contentType:false,
 
 				success: () => {
 					$("#modalPrivateMessage").modal("hide");
@@ -84,6 +80,8 @@ class WallchatModule {
 				},
 			});
 		});
+		$(document).off("click", ".btnReadPrivate").on("click", ".btnReadPrivate", e=>window.Ajax.request({url:"/wallchat/private/read",method:"POST",data:{id:$(e.currentTarget).data("id")},success:()=>$(e.currentTarget).closest(".private-message-card").fadeOut()}));
+		$(document).off("click", ".btnDeletePrivate").on("click", ".btnDeletePrivate", e=>window.Ajax.request({url:"/wallchat/private/delete",method:"POST",data:{id:$(e.currentTarget).data("id")},success:()=>$(e.currentTarget).closest(".private-message-card").fadeOut()}));
 		// delete feed
 		$(document).off("click", ".btnDeleteFeed");
 
@@ -106,7 +104,7 @@ class WallchatModule {
 	reloadFeed() {
 		if (!$("#feedContainer").length) return; // FIX SPA guard
 
-		fetch("/wallchat/feed", {
+		fetch(window.appUrl ? window.appUrl("/wallchat/feed") : "/wallchat/feed", {
 			headers: { "X-Requested-With": "XMLHttpRequest" },
 		})
 			.then((res) => res.text())

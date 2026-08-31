@@ -3,20 +3,13 @@ class Router
 {
     public static function route($uri)
     {
-        if (
-            str_contains($uri, '/load') ||
-            str_contains($uri, '/store') ||
-            str_contains($uri, '/update') ||
-            str_contains($uri, '/delete')
-        ) {
-            http_response_code(403);
-            die("Legacy endpoint dinonaktifkan (Strict Mode)");
-        }
         $routes = require __DIR__ . '/../../routes/web.php';
 
         // POTONG QUERY STRING
         $uri = parse_url($uri, PHP_URL_PATH);
 
+        // The route map is the allow-list. Blocking URLs by words such as
+        // "store" or "delete" also blocked legitimate authenticated routes.
         return $routes[$uri] ?? null;
     }
 }

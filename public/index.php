@@ -19,6 +19,17 @@ ob_start(function ($output) {
 });
 session_start();
 
+// Baseline browser hardening. TLS is terminated by the web server/proxy; HSTS
+// is emitted only when the current request is known to be HTTPS.
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: SAMEORIGIN');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+header("Permissions-Policy: camera=(), microphone=(), geolocation=(self)");
+header("Content-Security-Policy: default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
+if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https') {
+  header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+}
+
 require_once __DIR__ . '/../app/Core/DB.php';
 require_once __DIR__ . '/../app/Core/Auth.php';
 require_once __DIR__ . '/../app/Core/Controller.php';
@@ -83,6 +94,18 @@ if (!in_array($uri, $publicRoutes)) {
 
     // Jika normal request → redirect login
     header('Location: ' . app_url('/'));
+    exit;
+  }
+}
+
+// One CSRF gate for every authenticated state-changing endpoint. Controllers
+// may retain their local checks as defence in depth.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !in_array($uri, ['/login/proses', '/register/proses'], true)) {
+  $sent = (string)($_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_POST['_csrf'] ?? '');
+  if (empty($_SESSION['csrf_token']) || !hash_equals((string)$_SESSION['csrf_token'], $sent)) {
+    http_response_code(403);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['success' => false, 'message' => 'Sesi keamanan tidak valid. Muat ulang halaman lalu coba lagi.']);
     exit;
   }
 }

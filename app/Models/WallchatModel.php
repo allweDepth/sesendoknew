@@ -3,10 +3,13 @@
 class WallchatModel
 {
     private $db;
+    private MessageCryptoService $crypto;
 
     public function __construct()
     {
         $this->db = DB::getInstance();
+        require_once __DIR__ . '/../Services/MessageCryptoService.php';
+        $this->crypto = new MessageCryptoService();
     }
 
     /* ==========================================
@@ -23,7 +26,7 @@ class WallchatModel
         ->where('w.is_deleted = 0')
         ->orderBy('w.created_at DESC')
         ->qbGet();
-    foreach($feeds as &$feed)$feed['comments']=$this->getComments((int)$feed['id']);
+    foreach($feeds as &$feed){$feed['content']=$this->crypto->decrypt($feed['content_ciphertext']??null,$feed['content_nonce']??null,$feed['content']??'');$feed['comments']=$this->getComments((int)$feed['id']);}
     return $feeds;
 }
 
@@ -32,7 +35,7 @@ class WallchatModel
     ========================================== */
     public function getComments($parent_id)
     {
-        return $this->db
+        $rows=$this->db
             ->table('wallchat w')
             ->selectQB('w.*, u.username AS nama')
             ->join('user_sesendok_biila u', 'u.id = w.user_id')
@@ -41,19 +44,30 @@ class WallchatModel
             ->where('w.is_deleted = 0')
             ->orderBy('w.created_at ASC')
             ->qbGet();
+        foreach($rows as &$row)$row['content']=$this->crypto->decrypt($row['content_ciphertext']??null,$row['content_nonce']??null,$row['content']??'');
+        return $rows;
     }
 
     /* ==========================================
        INSERT POST / COMMENT
     ========================================== */
-    public function store($data)
+public function store($data)
 {
+    $encrypted = $this->crypto->encrypt((string)$data['content']);
     return $this->db->insert('wallchat', [
         'user_id'    => $data['user_id'],
         'parent_id'  => $data['parent_id'] ?? null,
         'receiver_id'=> $data['receiver_id'] ?? null,
         'type'       => $data['type'] ?? 'status',
-        'content'    => $data['content'],
+        // New records never keep readable message text in the database.
+        'content'    => '',
+        'content_ciphertext' => $encrypted['ciphertext'],
+        'content_nonce' => $encrypted['nonce'],
+        'is_ephemeral' => !empty($data['is_ephemeral']) ? 1 : 0,
+        'attachment_name' => $data['attachment_name'] ?? null,
+        'attachment_path' => $data['attachment_path'] ?? null,
+        'attachment_mime' => $data['attachment_mime'] ?? null,
+        'attachment_size' => (int)($data['attachment_size'] ?? 0),
         'created_at' => date('Y-m-d H:i:s'),
         'updated_at' => null,
         'is_deleted' => 0,
@@ -66,10 +80,13 @@ class WallchatModel
     ========================================== */
     public function update($id, $content)
     {
+        $encrypted = $this->crypto->encrypt((string)$content);
         return $this->db->update(
             'wallchat',
             [
-                'content'    => $content,
+                'content'    => '',
+                'content_ciphertext' => $encrypted['ciphertext'],
+                'content_nonce' => $encrypted['nonce'],
                 'updated_at' => date('Y-m-d H:i:s')
             ],
             'WHERE id = ?',
@@ -92,7 +109,37 @@ class WallchatModel
 
     public function getPrivateMessages(int $userId): array
     {
-        return $this->db->query("SELECT w.*,s.username pengirim,r.username penerima FROM wallchat w JOIN user_sesendok_biila s ON s.id=w.user_id JOIN user_sesendok_biila r ON r.id=w.receiver_id WHERE w.type='private' AND w.is_deleted=0 AND (w.user_id=? OR w.receiver_id=?) ORDER BY w.created_at DESC LIMIT 50",[$userId,$userId])->fetchAll();
+        $rows=$this->db->query("SELECT w.*,s.username pengirim,r.username penerima FROM wallchat w JOIN user_sesendok_biila s ON s.id=w.user_id JOIN user_sesendok_biila r ON r.id=w.receiver_id WHERE w.type='private' AND w.is_deleted=0 AND ((w.user_id=? AND w.deleted_by_sender=0) OR (w.receiver_id=? AND w.deleted_by_receiver=0)) ORDER BY w.created_at DESC LIMIT 50",[$userId,$userId])->fetchAll();
+        foreach($rows as &$row)$row['content']=$this->crypto->decrypt($row['content_ciphertext']??null,$row['content_nonce']??null,$row['content']??'');
+        return $rows;
+    }
+
+    public function markRead(int $id, int $userId): bool
+    {
+        $row=$this->db->query("SELECT id,is_ephemeral FROM wallchat WHERE id=? AND receiver_id=? AND type='private' AND is_deleted=0",[$id,$userId])->fetch();
+        if(!$row)return false;
+        $this->db->update('wallchat',['read_at'=>date('Y-m-d H:i:s')],'WHERE id=?',[$id]);
+        // Ephemeral messages disappear for the recipient after the first read;
+        // the encrypted audit row remains until both parties delete it.
+        if((int)$row['is_ephemeral']===1)$this->db->update('wallchat',['deleted_by_receiver'=>1],'WHERE id=?',[$id]);
+        return true;
+    }
+
+    public function deletePrivate(int $id,int $userId): bool
+    {
+        $row=$this->db->query("SELECT user_id,receiver_id FROM wallchat WHERE id=? AND type='private' AND is_deleted=0",[$id])->fetch();
+        if(!$row)return false;
+        if((int)$row['user_id']===$userId)$this->db->update('wallchat',['deleted_by_sender'=>1],'WHERE id=?',[$id]);
+        elseif((int)$row['receiver_id']===$userId)$this->db->update('wallchat',['deleted_by_receiver'=>1],'WHERE id=?',[$id]);
+        else return false;
+        $this->db->query('UPDATE wallchat SET is_deleted=1,content_ciphertext=NULL,content_nonce=NULL,content=\'\' WHERE id=? AND deleted_by_sender=1 AND deleted_by_receiver=1',[$id]);
+        return true;
+    }
+
+    public function privateFile(int $id,int $userId): ?array
+    {
+        $row=$this->db->query("SELECT * FROM wallchat WHERE id=? AND type='private' AND is_deleted=0 AND (user_id=? OR receiver_id=?)",[$id,$userId,$userId])->fetch();
+        return $row?:null;
     }
 
     /* ==========================================
