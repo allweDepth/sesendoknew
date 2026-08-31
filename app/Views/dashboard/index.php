@@ -16,7 +16,7 @@
 
         <div class="main ui intro container">
 
-            <h2 class="ui dividing header">Pengantar untuk user </h2>
+            <h2 class="ui dividing header">Ruang Kerja <?= htmlspecialchars($_SESSION['user']['nama_org'] ?? 'Perangkat Daerah') ?></h2>
 
             <div class="ui large info message">
                 <h2 class="ui header dash_header">
@@ -30,6 +30,19 @@
                         </div>
                     </div>
                 </h2>
+            </div>
+
+            <?php $roleMatrix=require __DIR__.'/../../Config/role_matrix.php';$currentRole=$_SESSION['user']['type_user']??'viewer';$current=$roleMatrix[$currentRole]??$roleMatrix['viewer']; ?>
+            <div class="ui raised segment">
+              <div class="ui ribbon blue label">Role &amp; Kewenangan</div>
+              <h3 class="ui header"><i class="user shield icon"></i><div class="content"><?= htmlspecialchars($current['label']) ?><div class="sub header">Lingkup: <?= htmlspecialchars($current['scope']) ?></div></div></h3>
+              <div class="ui small labels"><?php foreach($current['actions'] as $action):?><span class="ui teal label"><i class="check icon"></i><?= htmlspecialchars(str_replace('_',' ',$action)) ?></span><?php endforeach;?></div>
+              <div class="ui warning message"><b>Batas akses:</b> data di luar wilayah, OPD, tahun, atau subkegiatan penugasan Anda tidak dapat dibaca maupun diubah. Hak melihat tombol tidak menggantikan pemeriksaan izin di server.</div>
+            </div>
+
+            <h2 class="ui dividing header">Panduan Tingkat Kewenangan</h2>
+            <div class="ui three stackable cards">
+              <?php foreach($roleMatrix as $key=>$role):?><div class="<?= $key===$currentRole?'blue':'' ?> card"><div class="content"><div class="header"><?= htmlspecialchars($role['label']) ?></div><div class="meta"><?= htmlspecialchars($role['scope']) ?></div><div class="description"><?= htmlspecialchars(implode(', ',array_map(fn($x)=>str_replace('_',' ',$x),$role['actions']))) ?></div></div></div><?php endforeach;?>
             </div>
 
             <div class="ui info message">

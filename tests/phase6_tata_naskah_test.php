@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__.'/../app/Core/DB.php';
 require_once __DIR__.'/../app/Services/PdfService.php';
+require_once __DIR__.'/../app/Services/DynamicTableService.php';
 
 $_SESSION['user']=['username'=>'TRACE_TEST','type_user'=>'admin_opd','kd_wilayah'=>'76.01','kd_opd'=>'1.03.0.00.0.00.01.0000','tahun'=>2026,'nama_pemda'=>'PEMERINTAH KABUPATEN PASANGKAYU','nama_opd'=>'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG'];
 $db=DB::getInstance();
@@ -30,6 +31,12 @@ $assert($n2===$n1+1,"counter nomor atomik dan berurutan ($n1 -> $n2)");
 $row=$db->query("SELECT t.id FROM trx_naskah_dinas t JOIN trx_naskah_struktur s ON s.naskah_id=t.id WHERE t.uuid='TRACE_TEST_PHASE6' LIMIT 1")->fetch();
 $assert((bool)$row,'data naskah dengan struktur tersedia');
 $assert((int)$db->query('SELECT COUNT(*) total FROM trx_naskah_meta WHERE naskah_id=?',[$row['id']])->fetch()['total']>=3,'metadata pengendalian naskah tersimpan');
+$oldStructure=$db->query('SELECT struktur_json FROM trx_naskah_struktur WHERE naskah_id=?',[$row['id']])->fetch()['struktur_json'];
+$payload=json_decode($oldStructure,true)?:[];$payload['perihal']='TRACE EDIT TATA NASKAH TERSIMPAN';
+$service=new DynamicTableService();$edited=json_decode($service->handle(['action'=>'edit_json','tbl'=>'trx_naskah_dinas','id_row'=>$row['id'],'struktur_json'=>json_encode($payload)]),true);
+$assert(($edited['success']??false)===true,'edit Tata Naskah mengembalikan sukses');
+$saved=$db->query('SELECT struktur_json FROM trx_naskah_struktur WHERE naskah_id=?',[$row['id']])->fetch();$assert(str_contains($saved['struktur_json'],'TRACE EDIT TATA NASKAH TERSIMPAN'),'hasil edit Tata Naskah tersimpan');
+$db->update('trx_naskah_struktur',['struktur_json'=>$oldStructure],'WHERE naskah_id=?',[$row['id']]);
 $pdf=(new PdfService())->generate('trx_naskah_dinas',(int)$row['id']);
 $assert(str_starts_with($pdf,'%PDF-'),'PDF Tata Naskah valid');
 $out='/private/tmp/phase6-tata-naskah.pdf';file_put_contents($out,$pdf);

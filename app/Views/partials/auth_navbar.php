@@ -28,9 +28,9 @@
             <div class="right menu">
                 <div class="ui dropdown item"><span><i class="user icon"></i></span><i class="dropdown icon"></i>
                     <div class="menu">
-                        <a class="item" data-tab="wallchat"><i class="circular comments outline icon"></i>Pesan</a>
+                        <a class="item" href="/wallchat" data-spa="server"><i class="circular comments outline icon"></i>Pesan</a>
                         <a class="item" id="darkToggle"><i class="circular moon icon"></i>Change Themes</a>
-                        <a class="item" data-tab="profil"><i class="circular qrcode icon"></i>Pengaturan</a>
+                        <a class="item" href="/profil" data-spa="server"><i class="circular qrcode icon"></i>Profil &amp; Pengaturan</a>
                         <a class="item" href="/logout" id="btnLogout"><i class="circular sign out alternate icon"></i>Log Out</a>
                       
                     </div>

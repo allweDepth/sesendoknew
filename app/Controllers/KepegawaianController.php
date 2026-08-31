@@ -10,7 +10,11 @@ class KepegawaianController extends Controller
         'riwayat_jabatan',
         'riwayat_pangkat',
         'cuti',
-        'sk_pegawai'
+        'sk_pegawai',
+        'pejabat_tahunan',
+        'absensi',
+        'penugasan_subkegiatan',
+        'dokumen_pegawai'
     ];
 
     public function index()

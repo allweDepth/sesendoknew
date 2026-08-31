@@ -44,7 +44,15 @@ class Auth
             'admin_opd',
             'editor',
             'viewer',
-            'user'
+            'user',
+            'kepala_opd',
+            'pa_kpa',
+            'ppk',
+            'pptk',
+            'ppk_skpd',
+            'bendahara',
+            'pejabat_pengadaan',
+            'staf_opd'
         ];
     }
 

@@ -8,7 +8,7 @@ class StandarHargaModule extends BaseCrudModule {
                 { label: "ASB", tbl: "asb" },
                 { label: "SBU", tbl: "sbu" }
             ],
-            useMenu: true
+            useMenu: false
         });
     }
 

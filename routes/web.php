@@ -23,6 +23,8 @@ return [
   '/kontrak/rab/save' => ['KontrakController', 'saveRab'],
   '/kontrak/schedule/save' => ['KontrakController', 'saveSchedule'],
   '/kontrak/rab_excel' => ['KontrakController', 'rabExcel'],
+  '/kontrak/rab_pdf' => ['KontrakController', 'rabPdf'],
+  '/kontrak/rab/import' => ['KontrakController', 'importRab'],
   '/kontrak/document/upload' => ['KontrakController', 'uploadDocument'],
   '/kontrak/document/download' => ['KontrakController', 'downloadDocument'],
   '/kontrak/pdf' => ['KontrakController', 'pdf'],

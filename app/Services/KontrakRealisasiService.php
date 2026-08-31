@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Chart\Chart;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
@@ -98,6 +99,25 @@ class KontrakRealisasiService
     public function rabExcel(int $contractId): string
     {
         $data=$this->delivery($contractId);$book=new Spreadsheet();$s=$book->getActiveSheet();$s->setTitle('RAB dan Kurva S');$s->fromArray(['NO','URAIAN','SATUAN','VOLUME','HARGA SATUAN','JUMLAH','BOBOT %'],null,'A1');$r=2;foreach($data['rab'] as $i=>$x)$s->fromArray([$x['nomor']?:$i+1,$x['uraian'],$x['satuan'],(float)$x['vol_negoisasi'],(float)$x['harga_sat_negoisasi'],(float)$x['jumlah_negoisasi'],(float)$x['bobot']],null,'A'.$r++);$r+=2;$s->fromArray(['MINGGU','MULAI','SELESAI','RENCANA %','REALISASI %','RENCANA KUMULATIF','REALISASI KUMULATIF'],null,'A'.$r++);foreach($data['schedule'] as $x)$s->fromArray([$x['minggu_ke'],$x['tanggal_mulai'],$x['tanggal_selesai'],(float)$x['bobot_rencana'],(float)$x['bobot_realisasi'],(float)$x['rencana_kumulatif'],(float)$x['realisasi_kumulatif']],null,'A'.$r++);foreach(range('A','G') as $c)$s->getColumnDimension($c)->setAutoSize(true);$s->getStyle('A1:G1')->getFont()->setBold(true);$tmp=tempnam(sys_get_temp_dir(),'rab_').'.xlsx';(new Xlsx($book))->save($tmp);return $tmp;
+    }
+
+    public function importRab(int $contractId,string $filePath): array
+    {
+        if(!is_file($filePath))throw new InvalidArgumentException('File RAB tidak ditemukan');
+        $sheet=IOFactory::load($filePath)->getActiveSheet();$rows=$sheet->toArray(null,true,true,true);$items=[];
+        foreach($rows as $index=>$row){if($index===1)continue;if(strtoupper(trim((string)($row['A']??'')))==='MINGGU')break;$description=trim((string)($row['B']??''));$unit=trim((string)($row['C']??''));$volume=$row['D']??null;$price=$row['E']??null;if($description===''||preg_match('/^\d{4}-\d{2}-\d{2}$/',$description)||$unit===''||!is_numeric($volume)||!is_numeric($price)||(float)$volume<=0||(float)$price<=0)continue;$items[]=['nomor'=>$row['A']??count($items)+1,'uraian'=>$description,'satuan'=>$unit,'volume'=>(float)$volume,'harga_satuan'=>(float)$price,'keterangan'=>trim((string)($row['H']??''))];}
+        if(!$items)throw new InvalidArgumentException('Tidak ada baris RAB yang dapat diimpor. Gunakan template resmi.');
+        $result=$this->saveRab($contractId,$items);$result['imported']=count($items);return $result;
+    }
+
+    public function rabPdf(int $contractId): string
+    {
+        $data=$this->delivery($contractId);$d=$data['contract'];$pdf=new TCPDF('L','mm','A4',true,'UTF-8');$pdf->SetMargins(10,10,10);$pdf->AddPage();$pdf->SetFont('helvetica','B',13);$pdf->Cell(0,7,'RENCANA ANGGARAN BIAYA (RAB)',0,1,'C');$pdf->SetFont('helvetica','',9);$pdf->Cell(0,6,'Kontrak: '.($d['nomor_kontrak']??'-').' — '.($d['uraian_kontrak']??'-'),0,1,'C');
+        $html='<br><table border="1" cellpadding="4"><tr style="font-weight:bold;background-color:#dcecff"><th width="6%">No</th><th width="38%">Uraian</th><th width="10%">Satuan</th><th width="10%">Volume</th><th width="14%">Harga Satuan</th><th width="14%">Jumlah</th><th width="8%">Bobot</th></tr>';$total=0;
+        foreach($data['rab'] as $x){$total+=(float)$x['jumlah_negoisasi'];$html.='<tr><td>'.htmlspecialchars((string)$x['nomor']).'</td><td>'.htmlspecialchars((string)$x['uraian']).'</td><td>'.htmlspecialchars((string)$x['satuan']).'</td><td align="right">'.number_format((float)$x['vol_negoisasi'],2,',','.').'</td><td align="right">'.number_format((float)$x['harga_sat_negoisasi'],0,',','.').'</td><td align="right">'.number_format((float)$x['jumlah_negoisasi'],0,',','.').'</td><td align="right">'.number_format((float)$x['bobot'],2,',','.').'%</td></tr>';}
+        $html.='<tr style="font-weight:bold;background-color:#eef6ff"><td colspan="5" align="right">TOTAL</td><td align="right">'.number_format($total,0,',','.').'</td><td align="right">100,00%</td></tr></table>';$pdf->writeHTML($html,true,false,true,false,'');
+        if($data['schedule']){$pdf->Ln(4);$pdf->SetFont('helvetica','B',10);$pdf->Cell(0,6,'TIME SCHEDULE / KURVA S',0,1);$pdf->SetFont('helvetica','',7);$chart='<table border="1" cellpadding="3"><tr style="font-weight:bold;background-color:#dff5ec"><th>Minggu</th><th>Mulai</th><th>Selesai</th><th>Rencana</th><th>Realisasi</th><th>Rencana Kumulatif</th><th>Realisasi Kumulatif</th></tr>';foreach($data['schedule'] as $x)$chart.='<tr><td>'.$x['minggu_ke'].'</td><td>'.$x['tanggal_mulai'].'</td><td>'.$x['tanggal_selesai'].'</td><td>'.$x['bobot_rencana'].'%</td><td>'.$x['bobot_realisasi'].'%</td><td>'.$x['rencana_kumulatif'].'%</td><td>'.$x['realisasi_kumulatif'].'%</td></tr>';$pdf->writeHTML($chart.'</table>',true,false,true,false,'');}
+        return $pdf->Output('','S');
     }
 
     public function uploadDocument(int $contractId,array $meta,array $file): array

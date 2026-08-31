@@ -556,6 +556,9 @@ GET SINGLE ROW
 
       $schema = $profile['schema'];
     }
+    if ($table === 'trx_naskah_dinas' && !empty($row['_read']['trx_naskah_struktur'][0]['struktur_json'])) {
+      $row['struktur_json'] = $row['_read']['trx_naskah_struktur'][0]['struktur_json'];
+    }
 
     // ==========================================
     // 🔥 APPLY ALIAS SINGLE ROW
@@ -587,6 +590,7 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
 
     $matrix=require __DIR__.'/../Config/role_matrix.php';
     if($role==='editor')$role='staf_opd';
+    if($role==='user')$role='viewer';
     if (!in_array($action, $matrix[$role]['actions'] ?? [],true)) {
       throw new Exception("Role ".($matrix[$role]['label']??$role)." tidak diizinkan melakukan aksi $action. Lingkup akses: ".($matrix[$role]['scope']??'tidak ditentukan'));
     }
@@ -1867,7 +1871,7 @@ HANYA PERIODE AKTIF DI-CACHE
       }
     }
 
-    if (in_array($role,['admin_opd','kepala_opd','pa_kpa','ppk','pptk','ppk_skpd','bendahara','pejabat_pengadaan','staf_opd'],true)) {
+    if (in_array($role,['admin_opd','kepala_opd','pa_kpa','ppk','pptk','ppk_skpd','bendahara','pejabat_pengadaan','staf_opd','viewer','user'],true)) {
 
       if (in_array('kd_opd', $columns)) {
         $whereParts[] = "`kd_opd` = ?";
@@ -1894,7 +1898,7 @@ HANYA PERIODE AKTIF DI-CACHE
         }
       }
 
-      if (in_array($role,['ppk','pptk','staf_opd','viewer'],true) && in_array('kd_sub_keg',$columns,true)) {
+      if (in_array($role,['ppk','pptk','staf_opd','viewer','user'],true) && in_array('kd_sub_keg',$columns,true)) {
         $assignments=$this->db->query('SELECT kd_sub_keg FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND dapat_lihat=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0',[(int)($this->user['id']??0),$this->user['kd_wilayah']??'', $this->user['kd_opd']??'', $this->user['tahun']??date('Y')])->fetchAll(PDO::FETCH_COLUMN);
         if(!$assignments){$whereParts[]='1=0';}else{$whereParts[]='`kd_sub_keg` IN ('.implode(',',array_fill(0,count($assignments),'?')).')';array_push($params,...$assignments);}
       }
@@ -5417,15 +5421,18 @@ AND is_deleted = 0
     // MODE: DIRECT
     // =====================================
     if ($mode === 'direct') {
-
-      $this->db->delete($relTable, "WHERE `$fk` = ?", [$id]);
-
-      $this->db->insert($relTable, [
-        $fk => $id,
-        $jsonField => json_encode($json)
-      ]);
-
-      return JsonResponse::success("JSON berhasil diupdate");
+      $this->db->begin();
+      try {
+        $this->db->delete($relTable, "WHERE `$fk` = ?", [$id]);
+        $relation=['naskah_id'=>$id,$jsonField=>json_encode($json,JSON_UNESCAPED_UNICODE),'kd_wilayah'=>$old['kd_wilayah']??null,'kd_opd'=>$old['kd_opd']??null,'tahun'=>$old['tahun']??null,'tgl_insert'=>date('Y-m-d H:i:s'),'username_insert'=>$this->user['username']??'system'];
+        $relationColumns=$this->getTableColumns($relTable);$relation=array_intersect_key($relation,array_flip($relationColumns));
+        $this->db->insert($relTable,$relation);
+        $header=[];foreach(['jenis_id','nomor','klasifikasi_id','tanggal_surat','perihal'] as $field)if(array_key_exists($field,$json)&&in_array($field,$this->getTableColumns($table),true))$header[$field]=$json[$field];
+        if(isset($header['tanggal_surat'])){$parsed=strtotime((string)$header['tanggal_surat']);if($parsed===false)unset($header['tanggal_surat']);else$header['tanggal_surat']=date('Y-m-d',$parsed);}
+        if($header){$header['tgl_update']=date('Y-m-d H:i:s');$header['username_update']=$this->user['username']??'system';$header=array_intersect_key($header,array_flip($this->getTableColumns($table)));$this->db->update($table,$header,"WHERE `$primaryKey` = ?",[$id]);}
+        $this->db->commit();
+      } catch(Throwable $e) {$this->db->rollback();throw $e;}
+      return JsonResponse::success("Perubahan naskah berhasil disimpan",['id'=>$id]);
     }
 
     // =====================================

@@ -168,6 +168,11 @@ class DynamicController
 
     $sheet->setAutoFilter("A1:{$lastColumn}1");
     $sheet->freezePane('A2');
+    $sheet->getStyle("A1:{$lastColumn}1")->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');
+    $sheet->getStyle("A1:{$lastColumn}1")->getFill()->setFillType('solid')->getStartColor()->setARGB('FF176B87');
+    $sheet->getStyle("A1:{$lastColumn}".max(1,$row-1))->getBorders()->getAllBorders()->setBorderStyle('thin')->getColor()->setARGB('FFB7C9D3');
+    $sheet->getStyle("A1:{$lastColumn}".max(1,$row-1))->getAlignment()->setVertical('top')->setWrapText(true);
+    for($stripe=2;$stripe<$row;$stripe+=2)$sheet->getStyle("A{$stripe}:{$lastColumn}{$stripe}")->getFill()->setFillType('solid')->getStartColor()->setARGB('FFF0F7FA');
     foreach (range(1, $totalColumns) as $columnIndex) {
       $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($columnIndex))->setAutoSize(true);
     }
@@ -187,7 +192,7 @@ class DynamicController
     $columns=array_values(array_filter(array_column($db->query("SHOW COLUMNS FROM `$table`")->fetchAll(),'Field'),fn($c)=>!in_array($c,$skip,true)));
     $book=new Spreadsheet();$sheet=$book->getActiveSheet();$sheet->setTitle(substr('Template-'.$key,0,31));
     foreach($columns as $i=>$column){$cell=Coordinate::stringFromColumnIndex($i+1).'1';$sheet->setCellValue($cell,strtoupper($column));$sheet->getColumnDimension(Coordinate::stringFromColumnIndex($i+1))->setWidth(max(14,min(32,strlen($column)+5)));}
-    $last=Coordinate::stringFromColumnIndex(max(1,count($columns)));$sheet->getStyle("A1:{$last}1")->getFont()->setBold(true);$sheet->freezePane('A2');$sheet->setAutoFilter("A1:{$last}1");
+    $last=Coordinate::stringFromColumnIndex(max(1,count($columns)));$sheet->getStyle("A1:{$last}1")->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');$sheet->getStyle("A1:{$last}1")->getFill()->setFillType('solid')->getStartColor()->setARGB('FF176B87');$sheet->getStyle("A1:{$last}50")->getBorders()->getAllBorders()->setBorderStyle('hair')->getColor()->setARGB('FFD5E1E8');$sheet->freezePane('A2');$sheet->setAutoFilter("A1:{$last}1");
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');header('Content-Disposition: attachment; filename="template-'.preg_replace('/[^a-z0-9_-]/i','',$key).'.xlsx"');(new Xlsx($book))->save('php://output');exit;
   }
 

@@ -2336,7 +2336,7 @@ $profiles['penugasan_subkegiatan']=[
 ];
 $profiles['kop_surat']=['table'=>'kop_surat_neo','primary_key'=>'id','allowed_roles'=>['super_admin','admin_wilayah','admin_opd','kepala_opd'],'auto_session'=>['kd_wilayah','kd_opd','tahun'],'where'=>['is_deleted'=>0],'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],'validation'=>['nama_pemerintah'=>['required'],'nama_opd'=>['required']],'modes'=>['default'=>['select'=>['*'],'searchable'=>['nama_pemerintah','nama_opd','alamat'],'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0],'order_by'=>'id DESC']]];
 
-foreach (['urusan','bidang','program','kegiatan','sub_kegiatan','satuan','rekening_kegiatan','sbu','ssh','hspk','asb','rkpd','renja','rka','dpa','rkpd_p','renja_p','rka_p','dppa','kontrak','realisasi','asn','pppk','riwayat_jabatan','riwayat_pangkat','cuti','sk_pegawai','pejabat_tahunan','absensi'] as $importKey) {
+foreach (['akun','mapping','aset','organisasi','satuan','satuan_teks','sumber_dana','wilayah','peraturan','rekanan','rekening_kegiatan','sbu','ssh','hspk','asb','periode_rpjmd','misi_renstra_neo','tujuan_renstra_neo','sasaran_renstra_neo','indikator_sasaran_renstra_neo','program_renstra_neo','indikator_program_renstra_neo','kegiatan_renstra_neo','sub_kegiatan_renstra_neo','renstra_neo','rkpd','renja','rka','dpa','rkpd_p','renja_p','rka_p','dppa','kontrak','rab_kontrak','realisasi','asn','pppk','riwayat_jabatan','riwayat_pangkat','cuti','sk_pegawai','pejabat_tahunan','absensi'] as $importKey) {
   if(isset($profiles[$importKey]))$profiles[$importKey]['import']=['enabled'=>true,'allowed_roles'=>['super_admin','admin_wilayah','admin_opd']];
 }
 

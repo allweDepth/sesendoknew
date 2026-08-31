@@ -133,6 +133,8 @@
     z-index: 99999;
     /* FIX: pastikan di atas dimmer */
   }
+  #toastContainer:empty { display:none !important; width:0 !important; }
+  .ui.toast-container:empty,.ui.notifications:empty { display:none !important; border:0 !important; box-shadow:none !important; }
 
   /* TABLE WRAPPER */
   .table-wrapper {
