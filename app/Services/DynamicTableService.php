@@ -802,6 +802,19 @@ kd_sub_keg → nama_sub_keg
 
     return $this->runTransaction(function () use ($table, $filtered, $request) {
 
+      // Tata Naskah memakai counter atomik per klasifikasi dan tahun.
+      if ($table === 'trx_naskah_dinas' && empty($filtered['nomor'])) {
+        $klasifikasiId = (int)($filtered['klasifikasi_id'] ?? 0);
+        $tahun = (int)($filtered['tahun'] ?? ($_SESSION['user']['tahun'] ?? date('Y')));
+        if (!$klasifikasiId) throw new InvalidArgumentException('Klasifikasi keamanan wajib dipilih');
+        $klasifikasi = $this->db->query('SELECT kode FROM ref_klasifikasi_keamanan WHERE id=?', [$klasifikasiId])->fetch();
+        if (!$klasifikasi) throw new InvalidArgumentException('Klasifikasi keamanan tidak ditemukan');
+        $this->db->query('INSERT INTO trx_nomor_counter (klasifikasi_id,tahun,last_number) VALUES (?,?,LAST_INSERT_ID(1)) ON DUPLICATE KEY UPDATE last_number=LAST_INSERT_ID(last_number+1)', [$klasifikasiId,$tahun]);
+        $number = (int)$this->db->query('SELECT LAST_INSERT_ID() number')->fetch()['number'];
+        $filtered['nomor_urut'] = $number;
+        $filtered['nomor'] = sprintf('%s/%03d/%s/%d', $klasifikasi['kode'], $number, $_SESSION['user']['kd_opd'], $tahun);
+      }
+
       /* =========================================
     1️⃣ VALIDASI DUPLICATE DALAM TRANSACTION
     ========================================= */
@@ -833,7 +846,7 @@ kd_sub_keg → nama_sub_keg
       // =====================================================
       // COUNTER
       // =====================================================
-      if (!empty($profile['counter'])) {
+      if ($table !== 'trx_naskah_dinas' && !empty($profile['counter'])) {
 
         $counter = $profile['counter'];
         $tahun   = date('Y');

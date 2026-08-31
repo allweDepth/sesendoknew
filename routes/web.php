@@ -121,6 +121,8 @@ return [
     | 📝 TATA NASKAH
     |--------------------------------------------------------------------------
     */
+  '/tata_naskah'                => ['TataNaskahController', 'dashboard'],
+  '/tata_naskah/dokumen'        => ['TataNaskahController', 'dashboard'],
   '/tata_naskah/buat'           => ['TataNaskahController', 'buat'],
   '/tata_naskah/jenis'     => ['TataNaskahController', 'Jenis'],
   '/tata_naskah/form'      => ['TataNaskahController', 'Form'],
@@ -130,6 +132,8 @@ return [
   '/tata_naskah/simpan'         => ['TataNaskahController', 'simpan'],
   '/tata_naskah/daftar'         => ['TataNaskahController', 'daftar'],
   '/tata_naskah/get_kelompok'   => ['TataNaskahController', 'get_kelompok'],
+  '/tata_naskah/update_status'  => ['TataNaskahController', 'updateStatus'],
+  '/tata_naskah/upload_signature' => ['TataNaskahController', 'uploadSignature'],
 
   /*
     |--------------------------------------------------------------------------

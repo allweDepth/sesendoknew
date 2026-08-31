@@ -14,7 +14,9 @@ class TataNaskahController extends Controller
 
   public function dashboard()
   {
-    $this->view('tata_naskah/dashboard');
+    $db = DB::getInstance();
+    $summary = $db->query("SELECT COUNT(*) total, SUM(workflow_status='draft') draft, SUM(workflow_status='verifikasi') verifikasi, SUM(workflow_status IN ('ttd','final')) selesai FROM trx_naskah_dinas WHERE kd_wilayah=? AND kd_opd=? AND tahun=?", [$_SESSION['user']['kd_wilayah'],$_SESSION['user']['kd_opd'],$_SESSION['user']['tahun']])->fetch();
+    $this->view('tata_naskah/dashboard', ['summary'=>$summary?:[]]);
   }
 
   public function buat()
@@ -109,7 +111,7 @@ class TataNaskahController extends Controller
       return;
     }
 
-    $tahun = date('Y');
+    $tahun = (int)($_SESSION['user']['tahun'] ?? date('Y'));
 
     /* ==============================
        Ambil data klasifikasi
@@ -129,32 +131,7 @@ class TataNaskahController extends Controller
     /* ==============================
        Ambil / update counter
     ============================== */
-    $counter = $db->query(
-      "SELECT * FROM trx_nomor_counter 
-         WHERE klasifikasi_id = ? AND tahun = ?",
-      [$klasifikasiId, $tahun]
-    )->fetch();
-
-    if (!$counter) {
-
-      $number = 1;
-
-      $db->insert("trx_nomor_counter", [
-        "klasifikasi_id" => $klasifikasiId,
-        "tahun" => $tahun,
-        "last_number" => 1
-      ]);
-    } else {
-
-      $number = $counter['last_number'] + 1;
-
-      $db->update(
-        "trx_nomor_counter",
-        ["last_number" => $number],
-        "WHERE id = ?",
-        [$counter['id']]
-      );
-    }
+    $number = $this->reserveNumber((int)$klasifikasiId, $tahun);
 
     /* ==============================
        Format nomor
@@ -162,7 +139,7 @@ class TataNaskahController extends Controller
     $kodeOpd = $_SESSION['user']['kd_opd'];
     $nomorUrut = sprintf("%03d", $number);
 
-    $nomorFinal = "$nomorUrut/$kodeKlasifikasi/$kodeOpd/$tahun";
+    $nomorFinal = "$kodeKlasifikasi/$nomorUrut/$kodeOpd/$tahun";
 
     echo JsonResponse::success("Nomor dibuat", [
       "nomor" => $nomorFinal
@@ -258,17 +235,12 @@ class TataNaskahController extends Controller
       ];
     }
 
-    // AUTO GENERATE
-    $last = $db->query(
-      "SELECT MAX(nomor_urut) as max_nomor 
-         FROM trx_naskah_dinas 
-         WHERE tahun = ?",
-      [$tahun]
-    )->fetch();
-
-    $next = ($last['max_nomor'] ?? 0) + 1;
-
-    $nomorFormat = sprintf("%03d/TN/%s", $next, $tahun);
+    $klasifikasiId=(int)($post['klasifikasi_id']??0);
+    if(!$klasifikasiId) throw new InvalidArgumentException('Klasifikasi keamanan wajib dipilih');
+    $klasifikasi=$db->query('SELECT kode FROM ref_klasifikasi_keamanan WHERE id=?',[$klasifikasiId])->fetch();
+    if(!$klasifikasi) throw new InvalidArgumentException('Klasifikasi keamanan tidak ditemukan');
+    $next=$this->reserveNumber($klasifikasiId,(int)$tahun);
+    $nomorFormat=sprintf('%s/%03d/%s/%s',$klasifikasi['kode'],$next,$_SESSION['user']['kd_opd'],$tahun);
 
     return [
       "nomor" => $nomorFormat,
@@ -313,22 +285,6 @@ class TataNaskahController extends Controller
 
     $id = $_POST['id'] ?? null;
     $status = $_POST['status'] ?? null;
-    $update = [
-      "workflow_status" => $status
-    ];
-
-    if ($status === 'final') {
-
-      $struktur = $db->query(
-        "SELECT struktur_json FROM trx_naskah_struktur WHERE naskah_id = ?",
-        [$id]
-      )->fetch();
-
-      $hash = hash('sha256', $struktur['struktur_json']);
-
-      $update['document_hash'] = $hash;
-      $update['final_at'] = date("Y-m-d H:i:s");
-    }
     if (!$id || !$status) {
       echo JsonResponse::error("Data tidak lengkap");
       return;
@@ -356,10 +312,24 @@ class TataNaskahController extends Controller
     }
 
     if ($status === 'final') {
+      $struktur=$db->query('SELECT struktur_json FROM trx_naskah_struktur WHERE naskah_id=?',[$id])->fetch();
+      if(!$struktur){echo JsonResponse::error('Struktur naskah tidak ditemukan');return;}
+      $update['document_hash']=hash('sha256',$struktur['struktur_json']);
       $update['final_at'] = date("Y-m-d H:i:s");
     }
 
-    $db->update("trx_naskah_dinas", $update, "WHERE id = ?", [$id]);
+    $db->query('START TRANSACTION');
+    try {
+      $old=$db->query('SELECT workflow_status FROM trx_naskah_dinas WHERE id=? FOR UPDATE',[$id])->fetch();
+      if(!$old) throw new RuntimeException('Naskah tidak ditemukan');
+      $db->update('trx_naskah_dinas',$update,'WHERE id = ?',[$id]);
+      $db->insert('trx_naskah_status_history',['naskah_id'=>$id,'status_dari'=>$old['workflow_status'],'status_ke'=>$status,'username'=>$_SESSION['user']['username'],'created_at'=>date('Y-m-d H:i:s')]);
+      $db->query('COMMIT');
+    } catch(Throwable $e) {
+      $db->query('ROLLBACK');
+      echo JsonResponse::error($e->getMessage());
+      return;
+    }
 
     echo JsonResponse::success("Status diperbarui");
     return;
@@ -592,15 +562,15 @@ class TataNaskahController extends Controller
 
     $db = DB::getInstance();
 
-    $count = $db->query(
-      "SELECT COUNT(*) as total FROM trx_naskah_dinas 
-         WHERE tahun = ?",
-      [$tahun]
-    )->fetch()['total'];
+    $last=$db->query('SELECT COALESCE(MAX(last_number),0) number FROM trx_nomor_counter WHERE tahun=?',[$tahun])->fetch();
+    return sprintf("%03d/TN/%s",((int)$last['number'])+1,$tahun);
+  }
 
-    $number = $count + 1;
-
-    return sprintf("%03d/TN/%s", $number, $tahun);
+  private function reserveNumber(int $klasifikasiId,int $tahun):int
+  {
+    $db=DB::getInstance();
+    $db->query('INSERT INTO trx_nomor_counter (klasifikasi_id,tahun,last_number) VALUES (?,?,LAST_INSERT_ID(1)) ON DUPLICATE KEY UPDATE last_number=LAST_INSERT_ID(last_number+1)',[$klasifikasiId,$tahun]);
+    return (int)$db->query('SELECT LAST_INSERT_ID() number')->fetch()['number'];
   }
   public function daftar()
   {

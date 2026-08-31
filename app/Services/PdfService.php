@@ -67,7 +67,7 @@ class PdfService
     // ambil data utama
     // =====================================================
     $naskah = $this->db->query(
-      "SELECT * FROM trx_naskah_dinas WHERE id = ?",
+      "SELECT t.*,j.nama jenis_naskah,k.kode kode_keamanan,k.nama klasifikasi_keamanan FROM trx_naskah_dinas t LEFT JOIN ref_jenis_naskah j ON j.id=t.jenis_id LEFT JOIN ref_klasifikasi_keamanan k ON k.id=t.klasifikasi_id WHERE t.id = ?",
       [$id]
     )->fetch();
 
@@ -96,6 +96,10 @@ class PdfService
 
     $strukturData = json_decode($struktur['struktur_json'], true); // isi
     $schemaData   = json_decode($jenis['schema_json'], true); // template
+    if(!empty($strukturData['penandatangan']) && ctype_digit((string)$strukturData['penandatangan'])){
+      $pegawai=$this->db->query('SELECT CONCAT_WS(" ",gelar_depan,nama) nama FROM db_asn_pemda_neo WHERE id=?',[(int)$strukturData['penandatangan']])->fetch();
+      if($pegawai)$strukturData['nama_penandatangan']=$pegawai['nama'];
+    }
 
     // =====================================================
     // FALLBACK TEMPLATE
@@ -116,14 +120,21 @@ class PdfService
     // =====================================================
     // INIT PDF
     // =====================================================
-    $pdf = new TCPDF();
+    $pdf = new TCPDF('P', 'mm', 'F4', true, 'UTF-8', false);
+    $pdf->SetCreator('seSendok Tata Naskah');
+    $pdf->SetTitle(($naskah['jenis_naskah'] ?? 'Naskah Dinas').' '.$naskah['nomor']);
+    $pdf->SetMargins(25, 18, 20);
+    $pdf->SetAutoPageBreak(true, 22);
+    $pdf->setPrintHeader(false);
+    $pdf->setPrintFooter(false);
     $pdf->AddPage();
 
     // =====================================================
     // RENDER TEMPLATE
     // =====================================================
     $tpl = new PdfTemplateService();
-    $tpl->render($pdf, $schemaData, $strukturData);
+    $logo = __DIR__.'/../../public/assets/img/umum/logo.png';
+    $tpl->renderOfficial($pdf, $naskah, $schemaData, $strukturData, is_file($logo)?$logo:null);
 
     return $pdf->Output('', 'S');
   }

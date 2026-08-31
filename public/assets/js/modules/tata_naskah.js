@@ -42,10 +42,8 @@ class TataNaskahModule {
 		// HALAMAN DAFTAR
 		// =========================
 
-		if (path === "/tata_naskah") {
-			this.renderLayout();
-
-			this.initTableEngine();
+		if (path === "/tata_naskah" || path === "/tata_naskah/dokumen") {
+			return;
 		}
 
 		// =========================
