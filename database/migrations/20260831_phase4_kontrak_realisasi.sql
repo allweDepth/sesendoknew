@@ -44,6 +44,42 @@ BEGIN
 END$$
 DELIMITER ;
 
+DROP TRIGGER IF EXISTS trg_dpa_protect_contract_update;
+DELIMITER $$
+CREATE TRIGGER trg_dpa_protect_contract_update BEFORE UPDATE ON dpa_neo FOR EACH ROW
+BEGIN
+  DECLARE contract_total DECIMAL(20,2) DEFAULT 0; DECLARE contract_count INT DEFAULT 0;
+  SELECT COALESCE(SUM(nilai_kontrak),0),COUNT(*) INTO contract_total,contract_count FROM kontrak_neo WHERE tahap='dpa' AND anggaran_id=OLD.id AND is_deleted=0;
+  IF contract_count>0 AND NEW.is_deleted=1 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPA sudah berkontrak dan tidak dapat dihapus'; END IF;
+  IF contract_count>0 AND NEW.jumlah<contract_total THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Nilai DPA tidak boleh lebih kecil dari nilai kontrak'; END IF;
+END$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS trg_dpa_protect_contract_delete;
+DELIMITER $$
+CREATE TRIGGER trg_dpa_protect_contract_delete BEFORE DELETE ON dpa_neo FOR EACH ROW
+BEGIN
+  IF EXISTS(SELECT 1 FROM kontrak_neo WHERE tahap='dpa' AND anggaran_id=OLD.id AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPA sudah berkontrak dan tidak dapat dihapus'; END IF;
+END$$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS trg_dppa_protect_contract_update;
+DELIMITER $$
+CREATE TRIGGER trg_dppa_protect_contract_update BEFORE UPDATE ON dppa_neo FOR EACH ROW
+BEGIN
+  DECLARE contract_total DECIMAL(20,2) DEFAULT 0; DECLARE contract_count INT DEFAULT 0;
+  SELECT COALESCE(SUM(nilai_kontrak),0),COUNT(*) INTO contract_total,contract_count FROM kontrak_neo WHERE tahap='dppa' AND anggaran_id=OLD.id AND is_deleted=0;
+  IF contract_count>0 AND NEW.is_deleted=1 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPPA sudah berkontrak dan tidak dapat dihapus'; END IF;
+  IF contract_count>0 AND NEW.jumlah<contract_total THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Nilai DPPA tidak boleh lebih kecil dari nilai kontrak'; END IF;
+END$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS trg_dppa_protect_contract_delete;
+DELIMITER $$
+CREATE TRIGGER trg_dppa_protect_contract_delete BEFORE DELETE ON dppa_neo FOR EACH ROW
+BEGIN
+  IF EXISTS(SELECT 1 FROM kontrak_neo WHERE tahap='dppa' AND anggaran_id=OLD.id AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPPA sudah berkontrak dan tidak dapat dihapus'; END IF;
+END$$
+DELIMITER ;
+
 DROP TRIGGER IF EXISTS trg_kontrak_validate_update;
 DELIMITER $$
 CREATE TRIGGER trg_kontrak_validate_update BEFORE UPDATE ON kontrak_neo FOR EACH ROW

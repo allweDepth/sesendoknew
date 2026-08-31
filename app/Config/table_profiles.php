@@ -616,6 +616,7 @@ $profiles = [
     'primary_key' => 'id',
     'allowed_roles' => ['super_admin', 'admin_wilayah'],
     'soft_lock' => true,
+    'dropdown' => ['value'=>'id','label'=>'uraian','searchable'=>['kode','uraian'],'order_by'=>'kode ASC'],
     'import' => [
       'enabled' => true
     ],
@@ -704,6 +705,7 @@ $profiles = [
     'primary_key' => 'id',
     'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
     'soft_lock' => true,
+    'dropdown' => ['value'=>'id','label'=>'nama_perusahaan','searchable'=>['nama_perusahaan','npwp'],'order_by'=>'nama_perusahaan ASC'],
     'auto_session' => ['kd_wilayah'],
     'where' => [
       'is_deleted' => 0

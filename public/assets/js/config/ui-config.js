@@ -1192,7 +1192,7 @@ UIConfig.rkpd = {
 	] }
 };
 UIConfig.rkpd_p = UIConfig.rkpd;
-const phase3BudgetForm = { form: { elements: [
+const phase3BudgetForm = { validation:{kd_sub_keg:{required:true},uraian:{required:true},jumlah:{required:true,number:true}}, form: { elements: [
 	{ tag: "input", prop: { label: "Kode Sub Kegiatan", name: "kd_sub_keg" } },
 	{ tag: "input", prop: { label: "Kode Akun", name: "kd_akun" } },
 	{ tag: "fieldTextarea", prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` } },
@@ -1427,10 +1427,11 @@ UIConfig.__akunMapFactory = function (entityName) {
 	};
 };
 UIConfig.kontrak = {
+	validation: { tahap:{required:true},anggaran_id:{required:true},rekanan_id:{required:true},nomor_spk:{required:true},nomor_spmk:{required:true},nomor_kontrak:{required:true},nilai_kontrak:{required:true,number:true} },
 	form: {
 		elements: [
-			{ tag:"fieldDropdown", prop:{label:"Sumber DPA/DPPA",name:"anggaran_id",source:"dpa",search:true} },
 			{ tag:"fieldDropdown", prop:{label:"Tahap",name:"tahap",options:[{value:"dpa",text:"DPA"},{value:"dppa",text:"DPPA"}]} },
+			{ tag:"fieldDropdown", prop:{label:"Sumber DPA/DPPA",name:"anggaran_id",source:"dpa",search:true} },
 			{ tag:"input", prop:{label:"Kode Sub Kegiatan",name:"kd_sub_keg"} },
 			{ tag:"fieldTextarea", prop:{label:"Nama/Ruang Lingkup Pekerjaan",name:"uraian_kontrak",atribut:`rows="2"`} },
 			{ tag:"input", prop:{label:"Total Anggaran",name:"total_anggaran",type:"number"} },
@@ -1454,7 +1455,7 @@ UIConfig.kontrak = {
 };
 UIConfig.kontrak_dpa = UIConfig.kontrak;
 UIConfig.kontrak_dppa = UIConfig.kontrak;
-UIConfig.realisasi = { form:{elements:[
+UIConfig.realisasi = { validation:{kontrak_id:{required:true},tanggal:{required:true},jumlah:{required:true,number:true},progress_fisik:{required:true,number:true}}, form:{elements:[
 	{tag:"fieldDropdown",prop:{label:"Kontrak",name:"kontrak_id",source:"kontrak",search:true}},
 	{tag:"input",prop:{label:"ID Paket",name:"id_paket",type:"number"}},
 	{tag:"input",prop:{label:"ID Uraian Paket",name:"id_uraian_paket",type:"number"}},

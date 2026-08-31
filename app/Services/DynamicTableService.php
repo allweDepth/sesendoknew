@@ -1042,6 +1042,17 @@ IGNORE SYSTEM FIELD
       }
     }
 
+    if (in_array($table, ['dpa_neo', 'dppa_neo'], true)) {
+      $stage = $table === 'dpa_neo' ? 'dpa' : 'dppa';
+      $contractTotal = (float)($this->db->query(
+        "SELECT COALESCE(SUM(nilai_kontrak),0) total FROM kontrak_neo WHERE tahap=? AND anggaran_id=? AND is_deleted=0",
+        [$stage, $id]
+      )->fetch()['total'] ?? 0);
+      if ($contractTotal > 0 && (float)($filtered['jumlah'] ?? 0) < $contractTotal) {
+        return JsonResponse::error('Nilai anggaran tidak boleh lebih kecil dari total kontrak Rp ' . number_format($contractTotal, 0, ',', '.'));
+      }
+    }
+
     /* =====================================================
 8️⃣ VALIDATION HYBRID
 ===================================================== */
@@ -1141,6 +1152,17 @@ DELETE (FULL IDENTIK LOGIC ASLI)
       "SELECT * FROM `$table` WHERE `$primaryKey` = ?",
       [$id]
     )->fetch();
+
+    if (in_array($table, ['dpa_neo', 'dppa_neo'], true)) {
+      $stage = $table === 'dpa_neo' ? 'dpa' : 'dppa';
+      $contract = $this->db->query(
+        "SELECT nomor_kontrak FROM kontrak_neo WHERE tahap=? AND anggaran_id=? AND is_deleted=0 LIMIT 1",
+        [$stage, $id]
+      )->fetch();
+      if ($contract) {
+        return JsonResponse::error('Uraian tidak dapat dihapus karena sudah terikat kontrak ' . $contract['nomor_kontrak']);
+      }
+    }
 
     if ($table === 'rekening_kegiatan' && !empty($oldData['kode'])) {
       $activeChild = $this->db->query(

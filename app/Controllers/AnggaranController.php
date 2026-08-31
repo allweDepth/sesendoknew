@@ -3,6 +3,7 @@ require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../Services/AnggaranCopyService.php';
 require_once __DIR__ . '/../Services/JsonResponse.php';
+require_once __DIR__ . '/../Services/AnggaranDocumentService.php';
 
 class AnggaranController extends Controller
 {
@@ -31,6 +32,15 @@ class AnggaranController extends Controller
             $result = (new AnggaranCopyService($_SESSION['user'] ?? []))->copy($_POST['from'] ?? '', $_POST['to'] ?? '', (int)($_POST['tahun'] ?? 0), !empty($_POST['source_id']) ? (int)$_POST['source_id'] : null);
             echo JsonResponse::success('Dokumen berhasil diproses', $result);
         } catch (Throwable $e) { echo JsonResponse::error($e->getMessage(), 400); }
+    }
+
+    public function groups(): void { $this->documentJson('groups'); }
+    public function details(): void { $this->documentJson('details'); }
+    private function documentJson(string $action): void
+    {
+        header('Content-Type: application/json;charset=UTF-8');
+        if(!Auth::check()){echo JsonResponse::error('Unauthorized',401);return;}
+        try{$service=new AnggaranDocumentService($_SESSION['user']??[]);$data=$action==='groups'?$service->groups($_GET['tbl']??''):$service->details($_GET['tbl']??'',$_GET['kd_sub_keg']??'');echo JsonResponse::success('Data dokumen berhasil dimuat',[],$data);}catch(Throwable $e){echo JsonResponse::error($e->getMessage(),400);}
     }
 
     public function exportPdf(): void

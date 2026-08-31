@@ -189,4 +189,6 @@ return [
 
   '/anggaran/advance'      => ['AnggaranController', 'advance'],
   '/anggaran/export_pdf'   => ['AnggaranController', 'exportPdf'],
+  '/anggaran/groups'       => ['AnggaranController', 'groups'],
+  '/anggaran/details'      => ['AnggaranController', 'details'],
 ];
