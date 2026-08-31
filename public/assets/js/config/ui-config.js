@@ -1172,6 +1172,37 @@ UIConfig.ssh.import = UIConfig.__importFactory("ssh", null);
 UIConfig.hspk.import = UIConfig.__importFactory("hspk", null);
 UIConfig.asb.import = UIConfig.__importFactory("asb", null);
 UIConfig.aset.import = UIConfig.__importFactory("aset_neo", null); //DEFAULT GLOBAL TANPA TEMPLATE
+
+const phase3Flags = [
+	{ tag: "fieldCheckbox", prop: { label: "Kunci", name: "kunci" } },
+	{ tag: "fieldCheckbox", prop: { label: "Setujui", name: "setujui" } },
+	{ tag: "fieldTextarea", prop: { label: "Keterangan", name: "keterangan", atribut: `rows="2"` } },
+];
+UIConfig.rkpd = {
+	validation: { kd_sub_keg: { required: true }, target: { required: true }, pagu: { required: true } },
+	form: { elements: [
+		{ tag: "fieldDropdown", prop: { label: "Sub Kegiatan", name: "kd_sub_keg", source: "sub_kegiatan" } },
+		{ tag: "fieldTextarea", prop: { label: "Indikator", name: "indikator", atribut: `rows="2"` } },
+		{ tag: "input", prop: { label: "Target", name: "target", type: "number" } },
+		{ tag: "input", prop: { label: "Pagu", name: "pagu", type: "number" } },
+		{ tag: "fieldDropdown", prop: { label: "Sumber Dana", name: "sumber_dana_id", source: "sumber_dana" } },
+		{ tag: "input", prop: { label: "Lokasi", name: "lokasi" } },
+		{ tag: "input", prop: { label: "Kelompok Sasaran", name: "kelompok_sasaran" } },
+		...phase3Flags,
+	] }
+};
+UIConfig.rkpd_p = UIConfig.rkpd;
+const phase3BudgetForm = { form: { elements: [
+	{ tag: "input", prop: { label: "Kode Sub Kegiatan", name: "kd_sub_keg" } },
+	{ tag: "input", prop: { label: "Kode Akun", name: "kd_akun" } },
+	{ tag: "fieldTextarea", prop: { label: "Uraian", name: "uraian", atribut: `rows="2"` } },
+	{ tag: "input", prop: { label: "Volume", name: "volume", type: "number" } },
+	{ tag: "input", prop: { label: "Harga Satuan", name: "harga_satuan", type: "number" } },
+	{ tag: "input", prop: { label: "Jumlah", name: "jumlah", type: "number" } },
+	{ tag: "fieldDropdown", prop: { label: "Sumber Dana", name: "sumber_dana_id", source: "sumber_dana" } },
+	...phase3Flags,
+] } };
+["renja", "rka", "dpa", "renja_p", "rka_p", "dppa"].forEach((key) => { UIConfig[key] = phase3BudgetForm; });
 /*
 |--------------------------------------------------------------------------
 | SUB KEGIATAN - ADD

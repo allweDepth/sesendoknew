@@ -78,16 +78,6 @@ return [
 
   /*
     |--------------------------------------------------------------------------
-    | 📅 RENJA & DPA
-    |--------------------------------------------------------------------------
-    */
-  '/renja'           => ['AnggaranController', 'renja'],
-  '/dpa'             => ['DpaController', 'index'],
-  '/renja_perubahan' => ['RenjaPerubahanController', 'index'],
-  '/dppa'            => ['DppaController', 'index'],
-
-  /*
-    |--------------------------------------------------------------------------
     | 👥 KEPEGAWAIAN
     |--------------------------------------------------------------------------
     */
@@ -160,7 +150,6 @@ return [
     |--------------------------------------------------------------------------
     */
   '/api' => ['ApiController', 'handle'],
-  /*
 /*
 |--------------------------------------------------------------------------
 | ANGGARAN MODULE (RENJA → DPPA)
@@ -168,8 +157,9 @@ return [
 | Semua dokumen memakai engine yang sama
 | Controller menentukan tabel yang digunakan
 |
+| rkpd           → rkpd_neo
 | renja          → renja_neo
-| renja_perubahan→ renja_perubahan_neo
+| renja_perubahan→ renja_p_neo
 | rka            → rka_neo
 | rka_perubahan  → rka_perubahan_neo
 | dpa            → dpa_neo
@@ -177,11 +167,13 @@ return [
 |--------------------------------------------------------------------------
 */
 
+  '/rkpd'             => ['AnggaranController', 'rkpd'],
   '/renja'            => ['AnggaranController', 'renja'],
-  '/renja_perubahan'  => ['AnggaranController', 'renjaPerubahan'],
   '/rka'              => ['AnggaranController', 'rka'],
-  '/rka_perubahan'    => ['AnggaranController', 'rkaPerubahan'],
   '/dpa'              => ['AnggaranController', 'dpa'],
+  '/rkpd_perubahan'   => ['AnggaranController', 'rkpdPerubahan'],
+  '/renja_perubahan'  => ['AnggaranController', 'renjaPerubahan'],
+  '/rka_perubahan'    => ['AnggaranController', 'rkaPerubahan'],
   '/dppa'             => ['AnggaranController', 'dppa'],
 
 
@@ -191,9 +183,6 @@ return [
 |--------------------------------------------------------------------------
 */
 
-  '/anggaran/sub_kegiatan' => ['AnggaranController', 'subKegiatan'],
-
-  '/anggaran/rekap_akun'   => ['AnggaranController', 'rekapAkun'],
-
-  '/anggaran/rincian'      => ['AnggaranController', 'rincian'],
+  '/anggaran/advance'      => ['AnggaranController', 'advance'],
+  '/anggaran/export_pdf'   => ['AnggaranController', 'exportPdf'],
 ];

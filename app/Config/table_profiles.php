@@ -2167,6 +2167,39 @@ foreach (['ssh', 'hspk', 'asb', 'sbu'] as $standarHargaType) {
 }
 
 $profiles['akun_neo'] = $profiles['akun'];
+
+/* Phase 3: canonical planning and budgeting document profiles. */
+$documentProfile = static function (string $table, array $searchable = ['kd_sub_keg', 'uraian']): array {
+  return [
+    'table' => $table,
+    'primary_key' => 'id',
+    'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
+    'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
+    'where' => ['is_deleted' => 0],
+    'soft_delete' => ['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
+    'import' => ['enabled'=>true,'allowed_roles'=>['super_admin','admin_wilayah','admin_opd']],
+    'modes' => [
+      'default' => [
+        'select' => ['*'], 'searchable' => $searchable, 'order_by' => 'id DESC',
+        'where' => ['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0]
+      ],
+      'edit' => ['select'=>['*'],'searchable'=>$searchable,'order_by'=>'id ASC']
+    ]
+  ];
+};
+$profiles['rkpd'] = $documentProfile('rkpd_neo', ['kd_program','kd_kegiatan','kd_sub_keg','indikator','lokasi']);
+$profiles['rkpd']['validation'] = ['kd_sub_keg'=>['required'],'target'=>['required','numeric'],'pagu'=>['required','numeric']];
+$profiles['rkpd_p'] = $documentProfile('rkpd_p_neo', ['kd_program','kd_kegiatan','kd_sub_keg','indikator','lokasi']);
+$profiles['renja'] = $documentProfile('renja_neo');
+$profiles['rka'] = $documentProfile('rka_neo');
+$profiles['dpa'] = $documentProfile('dpa_neo');
+$profiles['renja_p'] = $documentProfile('renja_p_neo');
+$profiles['rka_p'] = $documentProfile('rka_p_neo');
+$profiles['dppa'] = $documentProfile('dppa_neo');
+
+/* Correct legacy Renstra dropdown fields that referenced non-existent columns. */
+$profiles['program_renstra_neo']['modes']['dropdown']['order_by'] = 'uraian ASC';
+unset($profiles['indikator_program_renstra_neo']['modes']['dropdown']);
 // $profiles['sub_kegiatan_ref'] = $profiles['sub_kegiatan'];
 // $profiles['sub_kegiatan_ref']['module_alias'] = 'sub_kegiatan_ref';
 return $profiles;

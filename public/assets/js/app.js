@@ -247,6 +247,9 @@ class App {
 			case "standar-harga": // module standar harga
 				if (typeof StandarHargaModule === "function") new StandarHargaModule().init(); // jalankan module
 				break;
+			case "anggaran-document":
+				if (typeof AnggaranDocumentModule === "function") new AnggaranDocumentModule().init();
+				break;
 
 			case "pengaturan": // module pengaturan
 				if (typeof PengaturanModule === "function") new PengaturanModule().init(); // jalankan module
@@ -279,6 +282,14 @@ class App {
 // mapping path ke module
 window.appModuleMap = {
 	"/renstra": "renstra", // module renstra
+	"/rkpd": "anggaran-document",
+	"/renja": "anggaran-document",
+	"/rka": "anggaran-document",
+	"/dpa": "anggaran-document",
+	"/rkpd_perubahan": "anggaran-document",
+	"/renja_perubahan": "anggaran-document",
+	"/rka_perubahan": "anggaran-document",
+	"/dppa": "anggaran-document",
 	"/referensi": "referensi", // module referensi
 	"/kepegawaian": "kepegawaian", // module kepegawaian
 	"/standar_harga": "standar-harga", // module standar harga

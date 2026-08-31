@@ -22,47 +22,6 @@
       <i class="home icon"></i> Dashboard
     </a>
 
-    <!-- ANGGARAN -->
-    <div class="item">
-      <div class="title">
-        <i class="dropdown icon"></i> Anggaran
-      </div>
-      <div class="content">
-        <a class="item" href="/renstra" data-spa="client" data-title="Anggaran/Renstra">
-          <i class="purple sitemap icon"></i> RENSTRA
-        </a>
-
-        <a class="item" href="/renja" data-spa="server" data-title="Anggaran/Renja">
-          <i class="violet tasks icon"></i> RENJA
-        </a>
-
-        <a class="item" href="/renja_perubahan" data-spa="server" data-title="Anggaran/Renja Perubahan">
-          <i class="orange sync alternate icon"></i> RENJA Perubahan
-        </a>
-
-        <a class="item" href="/rka" data-spa="server" data-title="Anggaran/RKA">
-          <i class="violet tasks icon"></i> RKA
-        </a>
-
-        <a class="item" href="/rka_perubahan" data-spa="server" data-title="Anggaran/RKA Perubahan">
-          <i class="orange sync alternate icon"></i> RKA Perubahan
-        </a>
-
-        <a class="item" href="/dpa" data-spa="server" data-title="Anggaran/DPA">
-          <i class="yellow file alternate icon"></i> DPA
-        </a>
-
-        <a class="item" href="/dppa" data-spa="server" data-title="Anggaran/DPPA">
-          <i class="brown folder open icon"></i> DPPA
-        </a>
-      </div>
-    </div>
-
-    <!-- KONTRAK -->
-    <a class="item" href="/kontrak" data-spa="client" data-title="Kontrak">
-      <i class="file contract icon"></i> Kontrak
-    </a>
-
     <!-- REFERENSI -->
     <div class="item">
       <div class="title">
@@ -155,6 +114,26 @@
         </a>
       </div>
     </div>
+
+    <!-- PERENCANAAN DAN ANGGARAN (urutan dokumen resmi) -->
+    <div class="item">
+      <div class="title"><i class="dropdown icon"></i> Perencanaan &amp; Anggaran</div>
+      <div class="content">
+        <a class="item" href="/renstra" data-spa="client" data-title="Anggaran/Renstra"><i class="purple sitemap icon"></i> RENSTRA</a>
+        <a class="item" href="/rkpd" data-spa="client" data-title="Anggaran/RKPD"><i class="blue calendar check icon"></i> RKPD</a>
+        <a class="item" href="/renja" data-spa="client" data-title="Anggaran/Renja"><i class="violet tasks icon"></i> RENJA</a>
+        <a class="item" href="/rka" data-spa="client" data-title="Anggaran/RKA"><i class="calculator icon"></i> RKA</a>
+        <a class="item" href="/dpa" data-spa="client" data-title="Anggaran/DPA"><i class="yellow file alternate icon"></i> DPA</a>
+        <a class="item" href="/rkpd_perubahan" data-spa="client" data-title="Anggaran/RKPD Perubahan"><i class="orange sync icon"></i> RKPD Perubahan</a>
+        <a class="item" href="/renja_perubahan" data-spa="client" data-title="Anggaran/Renja Perubahan"><i class="orange sync alternate icon"></i> RENJA Perubahan</a>
+        <a class="item" href="/rka_perubahan" data-spa="client" data-title="Anggaran/RKA Perubahan"><i class="orange edit icon"></i> RKA Perubahan</a>
+        <a class="item" href="/dppa" data-spa="client" data-title="Anggaran/DPPA"><i class="brown folder open icon"></i> DPPA</a>
+      </div>
+    </div>
+
+    <a class="item" href="/kontrak" data-spa="client" data-title="Kontrak">
+      <i class="file contract icon"></i> Kontrak
+    </a>
 
     <!-- KEPEGAWAIAN -->
     <div class="item">
