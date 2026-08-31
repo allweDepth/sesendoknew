@@ -298,11 +298,8 @@ class PengaturanModule {
 	// ==================================================
 	loadData(callback) {
 		this.ajax.request({
-			data: {
-				action: "edit",
-				tbl: "pengaturan",
-				id_row: 1,
-			},
+			url: "/pengaturan/current",
+			method: "GET",
 			success: (res) => {
 				if (res.success && res.data) {
 					this.data = res.data;
@@ -327,6 +324,22 @@ class PengaturanModule {
 				field.val(this.data[key]);
 			}
 		});
+		this.renderScheduleStatus();
+	}
+
+	renderScheduleStatus() {
+		const stages = [["rkpd","RKPD"],["renja","Renja"],["rka","RKA"],["dpa","DPA"],["rkpd_perubahan","RKPD Perubahan"],["renja_p","Renja Perubahan"],["dppa","DPPA"]];
+		const now = Date.now();
+		const html = stages.map(([key,label]) => {
+			const start = this.data[`awal_${key}`], end = this.data[`akhir_${key}`];
+			const lockedKey = ["rka"].includes(key) ? "kunci_renja" : key === "rkpd_perubahan" ? "kunci_renja_p" : `kunci_${key}`;
+			const locked = Number(this.data[lockedKey] || this.data.kunci || 0) === 1;
+			const active = start && end && now >= new Date(start).getTime() && now <= new Date(end).getTime() && !locked;
+			const color = active ? "green" : locked ? "red" : "orange";
+			const status = active ? "Dibuka" : locked ? "Dikunci" : (!start || !end ? "Belum diatur" : "Di luar jadwal");
+			return `<div class="${color} card"><div class="content"><div class="right floated ui ${color} label">${status}</div><div class="header">${label}</div><div class="meta">${start || "-"}</div><div class="description">s.d. ${end || "-"}</div></div></div>`;
+		}).join("");
+		$("#schedule-status-cards").html(html);
 	}
 
 	bindSubmit() {
@@ -350,7 +363,8 @@ class PengaturanModule {
 				data: {
 					action: "edit",
 					tbl: "pengaturan",
-					id: this.data.id,
+					id_row: this.data.id,
+					mode: "update",
 					...formData,
 				},
 				success: (res) => {

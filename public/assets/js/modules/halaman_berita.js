@@ -1,27 +1,10 @@
 class HalamanBeritaModule extends BaseCrudModule {
-	constructor() {
-		super({
-			moduleName: "halaman_berita",
-			menuItems: [],
-			useMenu: false,
-
-			// FIX: sesuaikan dengan backend endpoint
-			defaultTable: {
-				tbl: "halaman_berita",
-				// req: "halaman_berita", // pastikan sesuai service
-			},
-		});
-	}
-
-	init() {
-		super.init();
-
-		// FIX: auto load tanpa menu
-		if (!this.currentTable) {
-			this.loadTable("halaman_berita");
-		}
-	}
+	constructor(){super({moduleName:"halaman berita",menuItems:[],useMenu:false});}
+	init(){this.injectStyles();super.init();this.loadTable("halaman_berita");this.bindEditor();}
+	bindEditor(){$(document).off("click.newsEditor",'[data-ui="open-form"][data-tbl="halaman_berita"]').on("click.newsEditor",'[data-ui="open-form"][data-tbl="halaman_berita"]',()=>setTimeout(()=>this.mountEditor(),80));$(document).off("form:populated.newsEditor").on("form:populated.newsEditor",(e,tbl)=>{if(tbl==="halaman_berita")this.mountEditor(true);});$(document).off("click.newsToolbar","[data-news-command]").on("click.newsToolbar","[data-news-command]",e=>this.command($(e.currentTarget).data("news-command")));$(document).off("input.newsEditor",".news-rich-editor").on("input.newsEditor",".news-rich-editor",()=>this.sync());$(document).off("submit.newsEditor","#form_flyout").on("submit.newsEditor","#form_flyout",()=>this.sync());}
+	mountEditor(refresh=false){const textarea=$('#form_flyout textarea[name="konten"]');if(!textarea.length)return;let editor=$("#newsRichEditor");if(!editor.length){textarea.hide().after(`<div class="news-editor-shell"><div class="ui mini compact buttons news-toolbar"><button type="button" class="ui button" data-news-command="bold"><i class="bold icon"></i></button><button type="button" class="ui button" data-news-command="italic"><i class="italic icon"></i></button><button type="button" class="ui button" data-news-command="insertUnorderedList"><i class="list ul icon"></i></button><button type="button" class="ui button" data-news-command="link"><i class="linkify icon"></i></button><button type="button" class="ui button" data-news-command="image"><i class="image icon"></i> Gambar</button><button type="button" class="ui button" data-news-command="table"><i class="table icon"></i> Tabel</button><button type="button" class="ui button" data-news-command="chart"><i class="chart bar icon"></i> Grafik</button></div><div id="newsRichEditor" class="news-rich-editor" contenteditable="true" data-placeholder="Tulis berita seperti dokumen biasa..."></div><small>Gunakan toolbar untuk gambar, tabel, dan grafik—tidak perlu menulis HTML.</small></div>`);editor=$("#newsRichEditor");}if(refresh||!editor.html())editor.html(textarea.val()||"");}
+	sync(){$('#form_flyout textarea[name="konten"]').val($("#newsRichEditor").html()||"");}
+	command(command){const editor=document.getElementById("newsRichEditor");editor?.focus();if(["bold","italic","insertUnorderedList"].includes(command)){document.execCommand(command,false,null);this.sync();return;}if(command==="link"){const url=window.prompt("Alamat tautan (https://...):");if(url)document.execCommand("createLink",false,url);}if(command==="image"){const url=window.prompt("Alamat gambar (URL):");if(url)document.execCommand("insertHTML",false,`<figure><img src="${this.esc(url)}" alt="Gambar berita"><figcaption>Keterangan gambar</figcaption></figure>`);}if(command==="table")document.execCommand("insertHTML",false,'<table class="ui celled table"><thead><tr><th>Kolom 1</th><th>Kolom 2</th></tr></thead><tbody><tr><td>Data</td><td>Data</td></tr></tbody></table><p><br></p>');if(command==="chart"){const raw=window.prompt("Masukkan angka grafik dipisahkan koma (contoh: 20,35,60,45):","20,35,60,45");const values=(raw||"").split(",").map(Number).filter(Number.isFinite);if(values.length){const max=Math.max(...values,1);document.execCommand("insertHTML",false,`<div class="news-inline-chart">${values.map((v,i)=>`<span style="height:${Math.max(8,v/max*140)}px"><b>${v}</b><small>${i+1}</small></span>`).join("")}</div><p><br></p>`);}}this.sync();}
+	esc(v){return String(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
+	injectStyles(){if(document.getElementById("newsEditorStyles"))return;$("head").append(`<style id="newsEditorStyles">.news-editor-shell{border:1px solid #dce5ee;border-radius:9px;overflow:hidden}.news-toolbar{padding:8px;background:#f5f8fb;width:100%;overflow:auto}.news-rich-editor{min-height:340px;padding:18px;line-height:1.65;outline:none;background:#fff}.news-rich-editor:empty:before{content:attr(data-placeholder);color:#98a6b5}.news-rich-editor img{max-width:100%;height:auto}.news-rich-editor table{width:100%}.news-inline-chart{height:180px;display:flex;align-items:flex-end;gap:12px;padding:20px;border:1px solid #dfe8f0;border-radius:8px}.news-inline-chart span{flex:1;min-width:24px;background:linear-gradient(#54c8ff,#2185d0);border-radius:5px 5px 0 0;text-align:center;color:#fff;position:relative}.news-inline-chart small{position:absolute;bottom:-20px;left:0;right:0;color:#555}</style>`);}
 }
-
-// FIX: WAJIB instance, karena app.js tidak new otomatis
-// export default new HalamanBeritaModule();

@@ -1094,6 +1094,14 @@ UIConfig.sk_pegawai = { layout: { columns: 1 }, validation: { pegawai_id:{requir
 	{tag:"fieldTextarea",prop:{label:"Tentang",name:"tentang"}}, {tag:"fieldFile",prop:{label:"Dokumen SK (PDF)",name:"file",accept:".pdf"}},
 	{tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan"}}
 ]}};
+UIConfig.pejabat_tahunan = {layout:{columns:1},validation:{jenis_pejabat:{required:true},pegawai_id:{required:true},nomor_sk:{required:true},berlaku_mulai:{required:true},berlaku_sampai:{required:true}},form:{elements:[
+	{tag:"fieldDropdown",prop:{label:"Jenis Pejabat",name:"jenis_pejabat",options:[{value:"PA_KPA",text:"Pengguna Anggaran / KPA"},{value:"PPK",text:"Pejabat Pembuat Komitmen (per Sub Kegiatan)"},{value:"PPTK",text:"PPTK (per Sub Kegiatan)"},{value:"PPK_SKPD",text:"Pejabat Penatausahaan Keuangan"},{value:"BENDAHARA",text:"Bendahara"},{value:"PEJABAT_PENGADAAN",text:"Pejabat Pengadaan"},{value:"PEJABAT_LAINNYA",text:"Pejabat Lainnya"}]}},
+	{tag:"fieldDropdown",prop:{label:"Nama Pegawai",name:"pegawai_id",...pegawaiDropdown}},
+	{tag:"field",prop:{label:"Nomor SK",name:"nomor_sk"}},{tag:"fieldCalendar",prop:{label:"Tanggal SK",name:"tanggal_sk",calendarType:"date"}},
+	{tag:"fieldCalendar",prop:{label:"Berlaku Mulai",name:"berlaku_mulai",calendarType:"date"}},{tag:"fieldCalendar",prop:{label:"Berlaku Sampai",name:"berlaku_sampai",calendarType:"date"}},
+	{tag:"fieldDropdown",prop:{label:"Sub Kegiatan (wajib untuk PPK/PPTK)",name:"kd_sub_keg",source:"rekening_kegiatan.sub_kegiatan",search:true}},
+	{tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan"}}
+]}};
 
 UIConfig.global_print = {
 	layout: { columns: 2 },
@@ -1488,15 +1496,12 @@ UIConfig.__akunMapFactory = function (entityName) {
 	};
 };
 UIConfig.kontrak = {
-	validation: { tahap:{required:true},anggaran_id:{required:true},rekanan_id:{required:true},nomor_spk:{required:true},nomor_spmk:{required:true},nomor_kontrak:{required:true},nilai_kontrak:{required:true,number:true} },
+	validation: { rekanan_id:{required:true},nomor_spk:{required:true},nomor_spmk:{required:true},nomor_kontrak:{required:true} },
 	form: {
 		elements: [
-			{ tag:"fieldDropdown", prop:{label:"Tahap",name:"tahap",options:[{value:"dpa",text:"DPA"},{value:"dppa",text:"DPPA"}]} },
-			{ tag:"fieldDropdown", prop:{label:"Sumber DPA/DPPA",name:"anggaran_id",source:"dpa",search:true} },
-			{ tag:"input", prop:{label:"Kode Sub Kegiatan",name:"kd_sub_keg"} },
 			{ tag:"fieldTextarea", prop:{label:"Nama/Ruang Lingkup Pekerjaan",name:"uraian_kontrak",atribut:`rows="2"`} },
-			{ tag:"input", prop:{label:"Total Anggaran",name:"total_anggaran",type:"number"} },
-			{ tag:"input", prop:{label:"Nilai Kontrak",name:"nilai_kontrak",type:"number"} },
+			{ tag:"input", prop:{label:"Total Pagu Terpilih (otomatis dari rincian)",name:"total_anggaran",type:"number",atribut:"readonly"} },
+			{ tag:"input", prop:{label:"Nilai Kontrak (otomatis dari rincian)",name:"nilai_kontrak",type:"number",atribut:"readonly"} },
 			{ tag:"input", prop:{label:"Nomor SPK",name:"nomor_spk"} },
 			{ tag:"fieldCalendar", prop:{label:"Tanggal SPK",name:"tanggal_spk",calendarType:"date"} },
 			{ tag:"input", prop:{label:"Nomor Kontrak",name:"nomor_kontrak"} },
@@ -1506,7 +1511,8 @@ UIConfig.kontrak = {
 			{ tag:"fieldCalendar", prop:{label:"Tanggal Mulai",name:"tanggal_mulai",calendarType:"date"} },
 			{ tag:"fieldCalendar", prop:{label:"Tanggal Selesai",name:"tanggal_selesai",calendarType:"date"} },
 			{ tag:"input", prop:{label:"Waktu Pelaksanaan (hari)",name:"waktu_pelaksanaan",type:"number"} },
-			{ tag:"input", prop:{label:"Nama PPK",name:"nama_ppk"} },
+			{ tag:"fieldDropdown", prop:{label:"PPK aktif",name:"ppk_id",source:"pejabat_ppk",search:true} },
+			{ tag:"fieldDropdown", prop:{label:"PPTK aktif (jika ada)",name:"pptk_id",source:"pejabat_pptk",search:true} },
 			{ tag:"fieldDropdown", prop:{label:"Penyedia dari Referensi",name:"rekanan_id",source:"rekanan",search:true} },
 			{ tag:"input", prop:{label:"Status Kontrak",name:"status_kontrak"} },
 			{ tag:"fieldCheckbox", prop:{label:"Setujui",name:"setujui"} },

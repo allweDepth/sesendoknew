@@ -42,7 +42,7 @@ class PdfTemplateService
     if($type==='message')return;
     if($type==='fields'){foreach(($item['fields']??[]) as $child)$this->renderItem($pdf,$child,$data);return;}
     $field=$item['field']??$item['name']??'';$label=$item['label']??strtoupper((string)$field);
-    if(in_array($field,['nomor','tanggal_surat','perihal','file','penandatangan','asn','bentuk_lampiran','disable','keterangan','jbt_pemberi_tgs','nama_penandatangan'],true))return;
+    if(in_array($field,['nomor','tanggal_surat','perihal','file','penandatangan','penanda_tangan','nama_penandatangan','jabatan_penandatangan','jabatan_pejabat','nama_pejabat','nama_pemberi_tugas','asn','bentuk_lampiran','disable','keterangan','jbt_pemberi_tgs'],true))return;
     if($type==='section'){$pdf->Ln(3);$pdf->SetFont('times','B',11);$pdf->MultiCell(0,6,strtoupper((string)$label),0,'C');return;}
     $raw=$field!==''?($data[$field]??''):($item['value']??$item['text']??'');
     if(in_array($type,['editable_table','table'],true)){$this->renderCollection($pdf,(string)$label,$raw,$item['columns']??[]);return;}

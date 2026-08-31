@@ -15,6 +15,9 @@ return [
   '/pelayanan'     => ['HomeController', 'pelayanan'],
   '/kontrak' => ['KontrakController', 'index'],
   '/kontrak/summary' => ['KontrakController', 'summary'],
+  '/kontrak/available-items' => ['KontrakController', 'availableItems'],
+  '/kontrak/items' => ['KontrakController', 'items'],
+  '/kontrak/items/save' => ['KontrakController', 'saveItems'],
   '/kontrak/pdf' => ['KontrakController', 'pdf'],
   '/kontrak/laporan_pdf' => ['KontrakController', 'reportPdf'],
   '/kontrak/laporan_excel' => ['KontrakController', 'reportExcel'],
@@ -102,6 +105,7 @@ return [
     */
   '/pengaturan'        => ['PengaturanController', 'index'],
   '/pengaturan/fragment' => ['PengaturanController', 'fragment'],
+  '/pengaturan/current' => ['PengaturanController', 'current'],
   /*
     |--------------------------------------------------------------------------
     | 💬 WALLCHAT

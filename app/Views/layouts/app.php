@@ -50,6 +50,38 @@
     padding: 20px;
   }
 
+  /* Sidebar kiri tetap dapat digulir, tetapi identitas aplikasi/tahun tidak ikut hilang. */
+  #mainContext .sidebarutama {
+    overflow-y: auto !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(84, 200, 255, .65) transparent;
+    background: linear-gradient(180deg, #14283b 0%, #0c1722 100%) !important;
+  }
+  #mainContext .sidebarutama > .item:first-child {
+    position: sticky;
+    top: 0;
+    z-index: 12;
+    background: linear-gradient(135deg, #173a58, #10283c) !important;
+    box-shadow: 0 8px 22px rgba(0,0,0,.28);
+  }
+  #mainContext .sidebarutama .content .item {
+    margin: 3px 8px !important;
+    border-radius: 8px !important;
+    transition: background .18s ease, transform .18s ease;
+  }
+  #mainContext .sidebarutama .content .item:hover,
+  #mainContext .sidebarutama .content .item.active {
+    background: rgba(84,200,255,.16) !important;
+    transform: translateX(3px);
+  }
+  #crudMenu.ui.pointing.menu {
+    background: #fff;
+    border: 1px solid #e3ebf3;
+    border-radius: 12px;
+    padding: 5px;
+    box-shadow: 0 8px 25px rgba(20,52,80,.06);
+  }
+
   /* ================================
    SIDEBAR KANAN WIDTH CONTROL
 ================================ */

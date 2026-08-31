@@ -33,7 +33,7 @@
 
           // Ambil gambar dari uraian_html jika ada
           preg_match('/<img.*?src=["\'](.*?)["\']/', $item['uraian_html'] ?? '', $matches);
-          $gambar = $matches[1] ?? "https://source.unsplash.com/600x400/?" . urlencode($kelompok);
+          $gambar = $item['gambar'] ?: ($matches[1] ?? '/assets/img/umum/bg.jpeg');
         ?>
 
         <div class="column">
@@ -67,6 +67,7 @@
               <div class="description berita-desc">
                 <?= $ringkas ?>
               </div>
+              <div class="berita-full-content" style="display:none"><?= $item['uraian_html'] ?? '' ?></div>
 
             </div>
 
@@ -75,9 +76,9 @@
                 <?= $tahun ?>
               </span>
 
-              <div class="ui right floated tiny primary basic button">
+              <button type="button" class="ui right floated tiny primary basic button berita-more">
                 Selengkapnya
-              </div>
+              </button>
             </div>
 
           </div>
@@ -139,3 +140,6 @@
   line-height: 1.6;
 }
 </style>
+<script>
+document.addEventListener('click',function(e){const button=e.target.closest('.berita-more');if(!button)return;const card=button.closest('.berita-card');const content=card.querySelector('.berita-full-content');content.style.display=content.style.display==='none'?'block':'none';button.textContent=content.style.display==='none'?'Selengkapnya':'Tutup';});
+</script>

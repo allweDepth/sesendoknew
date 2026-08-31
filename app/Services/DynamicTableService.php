@@ -240,6 +240,7 @@ PERUBAHAN:
 
       case 'add':
         $this->authorize('add', $table);
+        $this->enforceBudgetSchedule($table);
         return $this->insert($table, $request);
       case 'add_json':
         $this->authorize('add', $table);
@@ -254,6 +255,7 @@ PERUBAHAN:
 
         if (!empty($request['id_row']) && ($request['mode'] ?? '') === 'update') {
           $this->authorize('edit', $table);
+          $this->enforceBudgetSchedule($table);
           return $this->update($table, $request);
         }
 
@@ -267,6 +269,7 @@ PERUBAHAN:
         return $this->updateJson($table, $request); // 🔥
       case 'delete':
         $this->authorize('delete', $table);
+        $this->enforceBudgetSchedule($table);
         $id = $request['id_row'] ?? null;
 
         if (!$id) {
@@ -322,6 +325,22 @@ PERUBAHAN:
       default:
         return JsonResponse::error("Action tidak dikenali");
     }
+  }
+
+  private function enforceBudgetSchedule(string $table): void
+  {
+    $role=strtolower(str_replace(' ','_', (string)($this->user['type_user']??'')));
+    if($role!=='admin_opd')return;
+    $map=['rkpd_neo'=>'rkpd','renja_neo'=>'renja','rka_neo'=>'rka','dpa_neo'=>'dpa','rkpd_p_neo'=>'rkpd_perubahan','renja_p_neo'=>'renja_p','rka_p_neo'=>'renja_p','dppa_neo'=>'dppa'];
+    $stage=$map[$table]??null;if(!$stage)return;
+    $columns=$this->getTableColumns('pengaturan_neo');$start='awal_'.$stage;$end='akhir_'.$stage;
+    if(!in_array($start,$columns,true)||!in_array($end,$columns,true))throw new RuntimeException('Jadwal '.$stage.' belum dikonfigurasi oleh administrator wilayah');
+    $lockMap=['renja'=>'kunci_renja','rka'=>'kunci_renja','dpa'=>'kunci_dpa','rkpd_perubahan'=>'kunci_renja_p','renja_p'=>'kunci_renja_p','dppa'=>'kunci_dppa'];
+    $lock=$lockMap[$stage]??'kunci';
+    $row=$this->db->query("SELECT `$start` mulai,`$end` selesai,COALESCE(`$lock`,0) dikunci FROM pengaturan_neo WHERE kd_wilayah=? AND tahun=? AND is_deleted=0 ORDER BY id DESC LIMIT 1",[$this->user['kd_wilayah']??'',(int)($this->user['tahun']??date('Y'))])->fetch();
+    if(!$row||empty($row['mulai'])||empty($row['selesai']))throw new RuntimeException('Jadwal '.strtoupper($stage).' belum ditetapkan. Hubungi admin wilayah.');
+    if((int)$row['dikunci']===1)throw new RuntimeException('Input '.strtoupper($stage).' sedang dikunci oleh admin wilayah.');
+    $now=time();if($now<strtotime($row['mulai'])||$now>strtotime($row['selesai']))throw new RuntimeException('Periode input '.strtoupper($stage).' hanya dibuka '.date('d-m-Y H:i',strtotime($row['mulai'])).' s.d. '.date('d-m-Y H:i',strtotime($row['selesai'])).'.');
   }
   /* =========================================================
 GET SINGLE ROW
@@ -1105,10 +1124,10 @@ IGNORE SYSTEM FIELD
 
     if (in_array($table, ['dpa_neo', 'dppa_neo'], true)) {
       $stage = $table === 'dpa_neo' ? 'dpa' : 'dppa';
-      $contractTotal = (float)($this->db->query(
-        "SELECT COALESCE(SUM(nilai_kontrak),0) total FROM kontrak_neo WHERE tahap=? AND anggaran_id=? AND is_deleted=0",
-        [$stage, $id]
-      )->fetch()['total'] ?? 0);
+      $contractSql = $this->tableExists('kontrak_item_neo')
+        ? "SELECT COALESCE(SUM(nilai_kontrak),0) total FROM kontrak_item_neo WHERE tahap=? AND anggaran_id=? AND is_deleted=0"
+        : "SELECT COALESCE(SUM(nilai_kontrak),0) total FROM kontrak_neo WHERE tahap=? AND anggaran_id=? AND is_deleted=0";
+      $contractTotal = (float)($this->db->query($contractSql, [$stage, $id])->fetch()['total'] ?? 0);
       if ($contractTotal > 0 && (float)($filtered['jumlah'] ?? 0) < $contractTotal) {
         return JsonResponse::error('Nilai anggaran tidak boleh lebih kecil dari total kontrak Rp ' . number_format($contractTotal, 0, ',', '.'));
       }
@@ -1216,10 +1235,10 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
     if (in_array($table, ['dpa_neo', 'dppa_neo'], true)) {
       $stage = $table === 'dpa_neo' ? 'dpa' : 'dppa';
-      $contract = $this->db->query(
-        "SELECT nomor_kontrak FROM kontrak_neo WHERE tahap=? AND anggaran_id=? AND is_deleted=0 LIMIT 1",
-        [$stage, $id]
-      )->fetch();
+      $contractSql = $this->tableExists('kontrak_item_neo')
+        ? "SELECT k.nomor_kontrak FROM kontrak_item_neo i JOIN kontrak_neo k ON k.id=i.kontrak_id AND k.is_deleted=0 WHERE i.tahap=? AND i.anggaran_id=? AND i.is_deleted=0 LIMIT 1"
+        : "SELECT nomor_kontrak FROM kontrak_neo WHERE tahap=? AND anggaran_id=? AND is_deleted=0 LIMIT 1";
+      $contract = $this->db->query($contractSql, [$stage, $id])->fetch();
       if ($contract) {
         return JsonResponse::error('Uraian tidak dapat dihapus karena sudah terikat kontrak ' . $contract['nomor_kontrak']);
       }

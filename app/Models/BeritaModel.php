@@ -17,23 +17,14 @@ class BeritaModel
     public function getAll($kdWilayah = null)
     {
         $sql = "
-            SELECT 
-                id,
-                kd_wilayah,
-                judul,
-                id_pengenal,
-                kelompok,
-                uraian_html,
-                uraian_singkat,
-                tanggal,
-                tgl_insert,
-                tgl_update,
-                username_insert,
-                username_update,
-                keterangan,
-                urutan
-            FROM berita_neo
-            WHERE disable = 0
+            SELECT id,kd_wilayah,judul,slug AS id_pengenal,
+                   COALESCE(NULLIF(keterangan,''),'Informasi') AS kelompok,
+                   konten AS uraian_html,
+                   LEFT(TRIM(REGEXP_REPLACE(konten,'<[^>]*>',' ')),220) AS uraian_singkat,
+                   COALESCE(tgl_update,tgl_insert) AS tanggal,
+                   gambar,tgl_insert,tgl_update,username_insert,username_update,keterangan,0 AS urutan
+            FROM halaman_berita
+            WHERE is_deleted = 0
         ";
 
         $params = [];
@@ -57,9 +48,9 @@ class BeritaModel
     {
         return $this->db->query("
             SELECT *
-            FROM berita_neo
+            FROM halaman_berita
             WHERE id = ?
-              AND disable = 0
+              AND is_deleted = 0
             LIMIT 1
         ", [$id])->fetch(PDO::FETCH_ASSOC);
     }
@@ -73,12 +64,12 @@ class BeritaModel
             SELECT 
                 id,
                 judul,
-                kelompok,
-                uraian_singkat,
-                tanggal
-            FROM berita_neo
-            WHERE disable = 0
-            ORDER BY tanggal DESC
+                COALESCE(NULLIF(keterangan,''),'Informasi') kelompok,
+                LEFT(TRIM(REGEXP_REPLACE(konten,'<[^>]*>',' ')),220) uraian_singkat,
+                COALESCE(tgl_update,tgl_insert) tanggal
+            FROM halaman_berita
+            WHERE is_deleted = 0
+            ORDER BY COALESCE(tgl_update,tgl_insert) DESC
             LIMIT $limit
         ")->fetchAll(PDO::FETCH_ASSOC);
     }

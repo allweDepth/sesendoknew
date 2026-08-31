@@ -129,10 +129,10 @@ class App {
 			case !!document.getElementById("profilPage"):
 				if (typeof ProfilModule === "function") new ProfilModule().init();
 				break;
-			case "wallchat":
+			case (window.appRoutePath ? window.appRoutePath(window.location.pathname) : window.location.pathname) === "/wallchat":
 				if (typeof WallchatModule === "function") new WallchatModule().init();
 				break;
-			case "halaman_berita":
+			case (window.appRoutePath ? window.appRoutePath(window.location.pathname) : window.location.pathname) === "/halaman_berita":
 				if (typeof HalamanBeritaModule === "function") new HalamanBeritaModule().init(); // FIX: tambahkan ini
 				break;
 			default: // jika tidak ada kondisi cocok

@@ -927,6 +927,18 @@ $profiles = [
     ]
   ],
 
+  'pejabat_tahunan' => [
+    'table'=>'pejabat_tahunan_neo','primary_key'=>'id','auto_session'=>['kd_wilayah','kd_opd','tahun'],
+    'where'=>['is_deleted'=>0],'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
+    'validation'=>['jenis_pejabat'=>['required'],'pegawai_id'=>['required','numeric'],'nomor_sk'=>['required'],'berlaku_mulai'=>['required'],'berlaku_sampai'=>['required']],
+    'dropdown'=>['value'=>'id','label'=>'nama_pegawai','searchable'=>['nama_pegawai','nip','jenis_pejabat','kd_sub_keg'],'order_by'=>'nama_pegawai ASC'],
+    'modes'=>[
+      'default'=>['select'=>['id','jenis_pejabat','nama_pegawai','nip','nomor_sk','berlaku_mulai','berlaku_sampai','kd_sub_keg','keterangan'],'searchable'=>['jenis_pejabat','nama_pegawai','nip','nomor_sk','kd_sub_keg'],'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0],'order_by'=>'berlaku_mulai DESC'],
+      'dropdown'=>['select'=>['id','nama_pegawai','nip','jenis_pejabat','kd_sub_keg'],'searchable'=>['nama_pegawai','nip','jenis_pejabat','kd_sub_keg'],'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0],'order_by'=>'nama_pegawai ASC'],
+      'edit'=>['select'=>['*'],'searchable'=>['nama_pegawai','nip'],'order_by'=>'id ASC']
+    ]
+  ],
+
   'register_surat' => [
     'table' => 'register_naskah_dinas',
     'primary_key' => 'id',
@@ -2260,7 +2272,8 @@ $profiles['kontrak'] = [
   'where'=>['is_deleted'=>0],
   'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
   'not_duplicate'=>['kd_wilayah','kd_opd','tahun','nomor_kontrak'],
-  'validation'=>['tahap'=>['required'],'anggaran_id'=>['required','numeric'],'rekanan_id'=>['required','numeric'],'nomor_spk'=>['required'],'nomor_spmk'=>['required'],'nomor_kontrak'=>['required'],'nilai_kontrak'=>['required','numeric']],
+  'lookup'=>['nama_ppk'=>['table'=>'pejabat_tahunan_neo','value_field'=>'nama_pegawai','match'=>['id'=>'ppk_id']]],
+  'validation'=>['rekanan_id'=>['required','numeric'],'nomor_spk'=>['required'],'nomor_spmk'=>['required'],'nomor_kontrak'=>['required']],
   'req_filters'=>['kontrak_dpa'=>['where'=>['tahap'=>'dpa']],'kontrak_dppa'=>['where'=>['tahap'=>'dppa']]],
   'dropdown'=>['value'=>'id','label'=>'nomor_kontrak'],
   'modes'=>[
@@ -2288,6 +2301,21 @@ $profiles['realisasi'] = [
 foreach (['dpa','dppa'] as $budgetDropdown) {
   $profiles[$budgetDropdown]['dropdown']=['value'=>'id','label'=>'uraian','searchable'=>['kd_sub_keg','uraian'],'order_by'=>'id DESC'];
 }
+
+$officialDropdown = static function(string $type): array {
+  return [
+    'table'=>'pejabat_tahunan_neo','primary_key'=>'id',
+    'dropdown'=>['value'=>'id','label'=>'nama_pegawai','searchable'=>['nama_pegawai','nip','kd_sub_keg'],'order_by'=>'nama_pegawai ASC'],
+    'modes'=>['dropdown'=>[
+      'select'=>['id','nama_pegawai','nip','jenis_pejabat','kd_sub_keg'],
+      'searchable'=>['nama_pegawai','nip','kd_sub_keg'],
+      'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','jenis_pejabat'=>$type,'berlaku_mulai <='=>date('Y-m-d'),'berlaku_sampai >='=>date('Y-m-d'),'is_deleted'=>0],
+      'order_by'=>'nama_pegawai ASC'
+    ]]
+  ];
+};
+$profiles['pejabat_ppk']=$officialDropdown('PPK');
+$profiles['pejabat_pptk']=$officialDropdown('PPTK');
 
 /* Correct legacy Renstra dropdown fields that referenced non-existent columns. */
 $profiles['program_renstra_neo']['modes']['dropdown']['order_by'] = 'uraian ASC';

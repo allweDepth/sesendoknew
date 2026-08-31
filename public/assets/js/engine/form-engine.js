@@ -274,6 +274,7 @@ class FormEngine {
 				// 🔥 POPULATE FORM
 				// ==================================================
 				await this.populateForm(res.data); // 🔥 WAJIB
+				$(document).trigger("form:populated", [this.state.tbl, res.data, this.formSelector]);
 
 				// ==================================================
 				// 🔥 TRIGGER DROPDOWN RELOAD (EDIT MODE)

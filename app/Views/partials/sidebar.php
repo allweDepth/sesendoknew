@@ -182,6 +182,9 @@
         <a class="item" href="/kepegawaian?tbl=sk_pegawai" data-spa="client" data-title="Kepegawaian/SK Pegawai">
           <i class="green file signature icon"></i> SK Pegawai
         </a>
+        <a class="item" href="/kepegawaian?tbl=pejabat_tahunan" data-spa="client" data-title="Kepegawaian/Pejabat Tahunan">
+          <i class="violet user shield icon"></i> Pejabat Wajib Tahunan
+        </a>
       </div>
     </div>
 

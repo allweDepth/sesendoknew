@@ -92,6 +92,12 @@ $tahunLabel = $user['tahun'] ?? '-';
 
             <!-- ================= PERIODE DOKUMEN ================= -->
             <h4 class="ui dividing header">Periode Dokumen</h4>
+            <div class="ui blue icon message">
+                <i class="calendar check outline icon"></i>
+                <div class="content"><div class="header">Jadwal ini mengendalikan CRUD OPD secara otomatis</div>
+                <p>Di luar rentang waktu atau saat modul dikunci, pengguna OPD tidak dapat menambah, mengubah, maupun menghapus data. Pesan penolakan akan menyebutkan jadwal yang benar.</p></div>
+            </div>
+            <div id="schedule-status-cards" class="ui four stackable cards"></div>
 
             <div class="ui stackable two column grid">
 
@@ -115,7 +121,7 @@ $tahunLabel = $user['tahun'] ?? '-';
                 foreach ($ranges as $name => $label): ?>
                     <div class="eight wide column">
                         <div class="field">
-                            <label><?= $label ?></label>
+                            <label><i class="clock outline icon"></i><?= $label ?></label>
                             <div class="two fields">
                                 <div class="field">
                                     <div class="ui calendar start_<?= $name ?>">
