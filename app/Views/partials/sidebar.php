@@ -131,9 +131,15 @@
       </div>
     </div>
 
-    <a class="item" href="/kontrak" data-spa="client" data-title="Kontrak">
-      <i class="file contract icon"></i> Kontrak
-    </a>
+    <div class="item">
+      <div class="title"><i class="dropdown icon"></i> Kontrak &amp; Realisasi</div>
+      <div class="content">
+        <a class="item" href="/kontrak?tbl=kontrak&amp;req=kontrak_dpa" data-spa="client" data-title="Kontrak/DPA"><i class="file signature icon"></i> SPK/SPMK &amp; Kontrak DPA</a>
+        <a class="item" href="/kontrak?tbl=kontrak&amp;req=kontrak_dppa" data-spa="client" data-title="Kontrak/DPPA"><i class="sync icon"></i> Kontrak DPPA</a>
+        <a class="item" href="/kontrak?tbl=realisasi" data-spa="client" data-title="Kontrak/Realisasi"><i class="chart line icon"></i> Realisasi</a>
+        <a class="item" href="/kontrak?tbl=__laporan" data-spa="client" data-title="Kontrak/Laporan"><i class="chart bar icon"></i> Laporan &amp; Grafik</a>
+      </div>
+    </div>
 
     <!-- KEPEGAWAIAN -->
     <div class="item">

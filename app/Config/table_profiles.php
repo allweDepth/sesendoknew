@@ -2197,6 +2197,41 @@ $profiles['renja_p'] = $documentProfile('renja_p_neo');
 $profiles['rka_p'] = $documentProfile('rka_p_neo');
 $profiles['dppa'] = $documentProfile('dppa_neo');
 
+$profiles['kontrak'] = [
+  'table'=>'kontrak_neo','primary_key'=>'id','allowed_roles'=>['super_admin','admin_wilayah','admin_opd'],
+  'auto_session'=>['kd_wilayah','kd_opd','tahun'],
+  'where'=>['is_deleted'=>0],
+  'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
+  'not_duplicate'=>['kd_wilayah','kd_opd','tahun','nomor_kontrak'],
+  'validation'=>['tahap'=>['required'],'anggaran_id'=>['required','numeric'],'rekanan_id'=>['required','numeric'],'nomor_spk'=>['required'],'nomor_spmk'=>['required'],'nomor_kontrak'=>['required'],'nilai_kontrak'=>['required','numeric']],
+  'req_filters'=>['kontrak_dpa'=>['where'=>['tahap'=>'dpa']],'kontrak_dppa'=>['where'=>['tahap'=>'dppa']]],
+  'dropdown'=>['value'=>'id','label'=>'nomor_kontrak'],
+  'modes'=>[
+    'default'=>[
+      'select'=>['kontrak_neo.id','kontrak_neo.tahap','kontrak_neo.kd_sub_keg','kontrak_neo.nomor_spk','kontrak_neo.nomor_spmk','kontrak_neo.nomor_kontrak','kontrak_neo.uraian_kontrak','rekanan_neo.nama_perusahaan AS penyedia','kontrak_neo.total_anggaran','kontrak_neo.nilai_kontrak','kontrak_neo.tanggal_mulai','kontrak_neo.tanggal_selesai','kontrak_neo.status_kontrak'],
+      'searchable'=>['kontrak_neo.nomor_spk','kontrak_neo.nomor_spmk','kontrak_neo.nomor_kontrak','kontrak_neo.uraian_kontrak','rekanan_neo.nama_perusahaan'],
+      'where'=>['kontrak_neo.kd_wilayah'=>'user','kontrak_neo.kd_opd'=>'user','kontrak_neo.tahun'=>'user','kontrak_neo.is_deleted'=>0],
+      'order_by'=>'kontrak_neo.id DESC'
+    ],
+    'edit'=>['select'=>['kontrak_neo.*'],'searchable'=>['kontrak_neo.nomor_kontrak'],'order_by'=>'kontrak_neo.id ASC']
+  ],
+  'join'=>[['table'=>'rekanan_neo','on'=>'rekanan_neo.id = kontrak_neo.rekanan_id']]
+];
+$profiles['realisasi'] = [
+  'table'=>'daftar_realisasi_neo','primary_key'=>'id','allowed_roles'=>['super_admin','admin_wilayah','admin_opd'],
+  'auto_session'=>['kd_wilayah','kd_opd','tahun'],'where'=>['is_deleted'=>0],
+  'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
+  'validation'=>['kontrak_id'=>['required','numeric'],'tanggal'=>['required'],'jumlah'=>['required','numeric'],'progress_fisik'=>['required','numeric']],
+  'modes'=>[
+    'default'=>['select'=>['daftar_realisasi_neo.id','kontrak_neo.nomor_kontrak','daftar_realisasi_neo.tanggal','daftar_realisasi_neo.periode','daftar_realisasi_neo.kd_sub_keg','daftar_realisasi_neo.kd_akun','daftar_realisasi_neo.jumlah','daftar_realisasi_neo.progress_fisik','daftar_realisasi_neo.nomor_bukti','daftar_realisasi_neo.keterangan'],'searchable'=>['kontrak_neo.nomor_kontrak','daftar_realisasi_neo.kd_sub_keg','daftar_realisasi_neo.nomor_bukti','daftar_realisasi_neo.keterangan'],'where'=>['daftar_realisasi_neo.kd_wilayah'=>'user','daftar_realisasi_neo.kd_opd'=>'user','daftar_realisasi_neo.tahun'=>'user','daftar_realisasi_neo.is_deleted'=>0],'order_by'=>'daftar_realisasi_neo.tanggal DESC'],
+    'edit'=>['select'=>['daftar_realisasi_neo.*'],'searchable'=>['daftar_realisasi_neo.keterangan'],'order_by'=>'daftar_realisasi_neo.id ASC']
+  ],
+  'join'=>[['table'=>'kontrak_neo','on'=>'kontrak_neo.id = daftar_realisasi_neo.kontrak_id']]
+];
+foreach (['dpa','dppa'] as $budgetDropdown) {
+  $profiles[$budgetDropdown]['dropdown']=['value'=>'id','label'=>'uraian','searchable'=>['kd_sub_keg','uraian'],'order_by'=>'id DESC'];
+}
+
 /* Correct legacy Renstra dropdown fields that referenced non-existent columns. */
 $profiles['program_renstra_neo']['modes']['dropdown']['order_by'] = 'uraian ASC';
 unset($profiles['indikator_program_renstra_neo']['modes']['dropdown']);

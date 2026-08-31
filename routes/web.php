@@ -14,6 +14,10 @@ return [
   '/organisasi'    => ['HomeController', 'organisasi'],
   '/pelayanan'     => ['HomeController', 'pelayanan'],
   '/kontrak' => ['KontrakController', 'index'],
+  '/kontrak/summary' => ['KontrakController', 'summary'],
+  '/kontrak/pdf' => ['KontrakController', 'pdf'],
+  '/kontrak/laporan_pdf' => ['KontrakController', 'reportPdf'],
+  '/kontrak/laporan_excel' => ['KontrakController', 'reportExcel'],
   '/halaman_berita' => ['HalamanBeritaController', 'index'], //Controller hanya return HTML shell BUKAN data tabel
   /*
     |--------------------------------------------------------------------------

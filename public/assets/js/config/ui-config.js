@@ -1429,103 +1429,49 @@ UIConfig.__akunMapFactory = function (entityName) {
 UIConfig.kontrak = {
 	form: {
 		elements: [
-			/* SUB KEGIATAN */
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Sub Kegiatan",
-					name: "kd_sub_keg",
-					source: "group_sub_kegiatan",
-					search: true,
-				},
-			},
-			{
-				tag: "field",
-				prop: {
-					label: "Tahap",
-					name: "tahap",
-					readonly: true,
-				},
-			},
-
-			{
-				tag: "field",
-				prop: {
-					label: "Pagu",
-					name: "total_anggaran",
-					readonly: true,
-				},
-			},
-
-			/* RINCIAN */
-			{
-				tag: "search",
-				prop: {
-					label: "Rincian",
-					name: "anggaran_id",
-					source: "anggaran",
-					labelField: "uraian",
-				},
-			},
-
-			/* KONTRAK */
-			{
-				tag: "field",
-				prop: {
-					label: "Nilai Kontrak",
-					name: "nilai_kontrak",
-				},
-			},
-
-			{
-				tag: "field",
-				prop: {
-					label: "Nomor Kontrak",
-					name: "nomor_kontrak",
-				},
-			},
-
-			{
-				tag: "fieldCalendar",
-				prop: {
-					label: "Tanggal Kontrak",
-					name: "tanggal_kontrak",
-					calendarType: "date",
-				},
-			},
-
-			/* PIHAK */
-			{
-				tag: "field",
-				prop: {
-					label: "PPK",
-					name: "nama_ppk",
-					table: false,
-				},
-			},
-
-			{
-				tag: "fieldDropdown",
-				prop: {
-					label: "Penyedia",
-					name: "nama_penyedia",
-					source: "rekanan",
-					search: true,
-				},
-			},
-
-			/* STATUS */
-			{
-				tag: "field",
-				prop: {
-					label: "Status",
-					name: "status_kontrak",
-					table: false,
-				},
-			},
+			{ tag:"fieldDropdown", prop:{label:"Sumber DPA/DPPA",name:"anggaran_id",source:"dpa",search:true} },
+			{ tag:"fieldDropdown", prop:{label:"Tahap",name:"tahap",options:[{value:"dpa",text:"DPA"},{value:"dppa",text:"DPPA"}]} },
+			{ tag:"input", prop:{label:"Kode Sub Kegiatan",name:"kd_sub_keg"} },
+			{ tag:"fieldTextarea", prop:{label:"Nama/Ruang Lingkup Pekerjaan",name:"uraian_kontrak",atribut:`rows="2"`} },
+			{ tag:"input", prop:{label:"Total Anggaran",name:"total_anggaran",type:"number"} },
+			{ tag:"input", prop:{label:"Nilai Kontrak",name:"nilai_kontrak",type:"number"} },
+			{ tag:"input", prop:{label:"Nomor SPK",name:"nomor_spk"} },
+			{ tag:"fieldCalendar", prop:{label:"Tanggal SPK",name:"tanggal_spk",calendarType:"date"} },
+			{ tag:"input", prop:{label:"Nomor Kontrak",name:"nomor_kontrak"} },
+			{ tag:"fieldCalendar", prop:{label:"Tanggal Kontrak",name:"tanggal_kontrak",calendarType:"date"} },
+			{ tag:"input", prop:{label:"Nomor SPMK",name:"nomor_spmk"} },
+			{ tag:"fieldCalendar", prop:{label:"Tanggal SPMK",name:"tanggal_spmk",calendarType:"date"} },
+			{ tag:"fieldCalendar", prop:{label:"Tanggal Mulai",name:"tanggal_mulai",calendarType:"date"} },
+			{ tag:"fieldCalendar", prop:{label:"Tanggal Selesai",name:"tanggal_selesai",calendarType:"date"} },
+			{ tag:"input", prop:{label:"Waktu Pelaksanaan (hari)",name:"waktu_pelaksanaan",type:"number"} },
+			{ tag:"input", prop:{label:"Nama PPK",name:"nama_ppk"} },
+			{ tag:"fieldDropdown", prop:{label:"Penyedia dari Referensi",name:"rekanan_id",source:"rekanan",search:true} },
+			{ tag:"input", prop:{label:"Status Kontrak",name:"status_kontrak"} },
+			{ tag:"fieldCheckbox", prop:{label:"Setujui",name:"setujui"} },
+			{ tag:"fieldTextarea", prop:{label:"Keterangan",name:"keterangan",atribut:`rows="2"`} },
 		],
 	},
 };
+UIConfig.kontrak_dpa = UIConfig.kontrak;
+UIConfig.kontrak_dppa = UIConfig.kontrak;
+UIConfig.realisasi = { form:{elements:[
+	{tag:"fieldDropdown",prop:{label:"Kontrak",name:"kontrak_id",source:"kontrak",search:true}},
+	{tag:"input",prop:{label:"ID Paket",name:"id_paket",type:"number"}},
+	{tag:"input",prop:{label:"ID Uraian Paket",name:"id_uraian_paket",type:"number"}},
+	{tag:"input",prop:{label:"ID Dokumen Anggaran",name:"id_dok_anggaran",type:"number"}},
+	{tag:"input",prop:{label:"Tahap DPA/DPPA",name:"dok"}},
+	{tag:"input",prop:{label:"Kode Sub Kegiatan",name:"kd_sub_keg"}},
+	{tag:"input",prop:{label:"Kode Akun",name:"kd_akun"}},
+	{tag:"input",prop:{label:"Periode/Bulan",name:"periode",type:"number"}},
+	{tag:"fieldCalendar",prop:{label:"Tanggal Realisasi",name:"tanggal",calendarType:"date"}},
+	{tag:"input",prop:{label:"Volume",name:"vol",type:"number"}},
+	{tag:"input",prop:{label:"Realisasi Keuangan",name:"jumlah",type:"number"}},
+	{tag:"input",prop:{label:"Progress Fisik (%)",name:"progress_fisik",type:"number"}},
+	{tag:"input",prop:{label:"Nomor Bukti",name:"nomor_bukti"}},
+	{tag:"fieldTextarea",prop:{label:"Keterangan Paket",name:"ket_paket",atribut:`rows="2"`}},
+	{tag:"fieldTextarea",prop:{label:"Uraian Realisasi",name:"ket_uraian_paket",atribut:`rows="2"`}},
+	{tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan",atribut:`rows="2"`}},
+]}};
 UIConfig.halaman_berita = {
 	form: {
 		elements: [

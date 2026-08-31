@@ -1,25 +1,11 @@
 class KontrakModule extends BaseCrudModule {
-	// // WAJIB extend BaseCrudModule
-	constructor() {
-		super({
-			moduleName: "kontrak",
-			menuItems: [],
-			useMenu: false,
-
-			// // tbl default agar bisa dipakai internal
-			defaultTable: {
-				tbl: "kontrak",
-				// req: "kontrak_neo",
-			},
-		});
-	}
-
-	init() {
-		super.init();
-
-		// // trigger manual tanpa menu & tanpa URL
-		if (!this.currentTable) {
-			this.loadTable("kontrak");
-		}
-	}
+	constructor(){super({moduleName:"kontrak & realisasi",menuItems:[{label:"Kontrak DPA",tbl:"kontrak",req:"kontrak_dpa"},{label:"Kontrak DPPA",tbl:"kontrak",req:"kontrak_dppa"},{label:"Realisasi",tbl:"realisasi"},{label:"Laporan Realisasi & Grafik",tbl:"__laporan"}],useMenu:true});}
+	init(){this.injectStyles();super.init();this.bindPhase4();}
+	loadTable(tbl,req=null){if(tbl==="__laporan"){this.state.tbl=tbl;this.state.req=null;this.renderReport();return;}super.loadTable(tbl,req);}
+	buildActionButtons(tbl){return `${super.buildActionButtons(tbl)}<div class="ui right floated basic icon buttons" style="margin-top:10px;margin-right:8px">${tbl==="kontrak"?'<button class="ui button" data-p4="contract-pdf" title="PDF kontrak"><i class="file pdf icon"></i></button>':''}<button class="ui button" data-p4="report-excel" title="Laporan Excel"><i class="file excel icon"></i></button><button class="ui button" data-p4="report-pdf" title="Laporan PDF"><i class="chart bar icon"></i></button></div>`;}
+	bindPhase4(){$(document).off("click.phase4","[data-p4]").on("click.phase4","[data-p4]",e=>{const action=$(e.currentTarget).data("p4");if(action==="contract-pdf"){const id=window.prompt("ID kontrak yang akan dicetak:");if(!id)return;this.download(`/kontrak/pdf?id=${encodeURIComponent(id)}`);return;}this.download(action==="report-excel"?"/kontrak/laporan_excel":"/kontrak/laporan_pdf");});}
+	download(path){window.location.href=window.appUrl?window.appUrl(path):path;}
+	renderReport(){window.history.replaceState(null,"",window.appUrl?window.appUrl("/kontrak?tab=laporan"):"/kontrak?tab=laporan");$("#crud-table-container").html(`<div class="p4-loading ui active centered inline loader"></div>`);window.Ajax.request({url:"/kontrak/summary",method:"GET",success:r=>{if(r?.success)this.drawDashboard(r.data);}});}
+	drawDashboard(data){const t=data.totals||{};const format=v=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(v||0));const max=Math.max(...(data.monthly||[0]),1);const bars=(data.monthly||[]).map((v,i)=>`<div class="p4-bar-wrap"><div class="p4-bar" style="height:${Math.max(4,(v/max)*150)}px" title="${format(v)}"></div><small>${["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"][i]}</small></div>`).join("");const statuses=(data.status||[]).map((s,i)=>`<div class="p4-status"><span style="background:${["#2185d0","#21ba45","#f2711c","#a333c8"][i%4]}"></span>${s.label}<b>${s.jumlah}</b></div>`).join("");$("#crud-table-container").html(`<div class="p4-hero"><div><small>MONITORING PELAKSANAAN</small><h2>Kontrak & Realisasi</h2><p>Ringkasan DPA/DPPA, SPK, SPMK, kontrak, dan kemajuan pekerjaan.</p></div><div class="ui buttons"><button class="ui green button" data-p4="report-excel"><i class="file excel icon"></i> Excel + Grafik</button><button class="ui red button" data-p4="report-pdf"><i class="file pdf icon"></i> PDF</button></div></div><div class="p4-cards"><div><i class="file signature icon"></i><small>Kontrak</small><strong>${t.jumlah_kontrak||0}</strong></div><div><i class="landmark icon"></i><small>Total Anggaran</small><strong>${format(t.total_anggaran)}</strong></div><div><i class="handshake icon"></i><small>Nilai Kontrak</small><strong>${format(t.nilai_kontrak)}</strong></div><div><i class="chart line icon"></i><small>Realisasi</small><strong>${format(t.realisasi)}</strong></div></div><div class="p4-grid"><section><h3>Realisasi Keuangan per Bulan</h3><div class="p4-chart">${bars}</div></section><section><h3>Status Kontrak</h3>${statuses||'<div class="ui message">Belum ada status kontrak.</div>'}</section></div>`);}
+	injectStyles(){if(document.getElementById("phase4Style"))return;$("head").append(`<style id="phase4Style">.p4-hero{background:linear-gradient(135deg,#112c46,#2185d0);color:#fff;padding:24px;border-radius:14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.p4-hero h2{margin:3px 0}.p4-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.p4-cards>div,.p4-grid section{background:#fff;border:1px solid #e6edf5;border-radius:12px;padding:18px;box-shadow:0 8px 24px rgba(20,52,80,.07)}.p4-cards i{font-size:24px;color:#2185d0}.p4-cards small,.p4-cards strong{display:block;margin-top:8px}.p4-cards strong{font-size:18px}.p4-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-top:14px}.p4-chart{height:190px;display:flex;align-items:flex-end;gap:8px;border-bottom:1px solid #ccd8e5;padding:12px}.p4-bar-wrap{height:170px;flex:1;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}.p4-bar{background:linear-gradient(#54c8ff,#2185d0);border-radius:5px 5px 0 0;min-width:8px}.p4-status{padding:12px 0;border-bottom:1px solid #eee}.p4-status span{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}.p4-status b{float:right}@media(max-width:800px){.p4-cards,.p4-grid{grid-template-columns:1fr}.p4-hero{display:block}.p4-hero .buttons{margin-top:12px}}</style>`);}
 }
