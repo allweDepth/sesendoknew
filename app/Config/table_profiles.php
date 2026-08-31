@@ -2000,7 +2000,7 @@ $profiles = [
 
     'table' => 'wallchat',
 
-    'primary' => 'id',
+    'primary_key' => 'id',
 
     'fields' => [
       'user_id',

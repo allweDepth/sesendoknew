@@ -18,10 +18,12 @@ class WallchatController extends Controller
 
     // FIX: ambil user melalui model
     $users = $this->getUsers(); // FIX: panggil method controller
+    $messages = $model->getPrivateMessages((int)$_SESSION['user']['id']);
 
     $this->view('wallchat/index', [
       'feeds' => $feeds,
-      'users' => $users
+      'users' => $users,
+      'messages' => $messages
     ], 'app');
   }
 
@@ -58,6 +60,7 @@ class WallchatController extends Controller
       'user_id' => $_SESSION['user']['id'],
       'content' => $content,
       'type' => 'status'
+      ,'username' => $_SESSION['user']['username']
     ]);
 
     echo json_encode(['success' => true]);
@@ -69,11 +72,15 @@ class WallchatController extends Controller
 
     $model = new WallchatModel();
 
+    $content=trim($_POST['content']??'');$feedId=(int)($_POST['feed_id']??0);
+    $parent=$model->find($feedId);
+    if($content===''||!$parent||$parent['type']!=='status'){echo json_encode(['success'=>false,'message'=>'Status atau komentar tidak valid']);return;}
     $model->store([
       'user_id' => $_SESSION['user']['id'],
-      'content' => $_POST['content'],
-      'parent_id' => $_POST['feed_id'],
-      'type' => 'comment'
+      'content' => $content,
+      'parent_id' => $feedId,
+      'type' => 'comment',
+      'username' => $_SESSION['user']['username']
     ]);
 
     echo json_encode(['success' => true]);
@@ -85,11 +92,14 @@ class WallchatController extends Controller
 
     $model = new WallchatModel();
 
+    $receiver=(int)($_POST['receiver_id']??0);$content=trim($_POST['content']??'');
+    if(!$receiver||$receiver===(int)$_SESSION['user']['id']||$content===''){echo json_encode(['success'=>false,'message'=>'Penerima atau pesan tidak valid']);return;}
     $model->store([
       'user_id' => $_SESSION['user']['id'],
-      'receiver_id' => $_POST['receiver_id'],
-      'content' => $_POST['content'],
-      'type' => 'private'
+      'receiver_id' => $receiver,
+      'content' => $content,
+      'type' => 'private',
+      'username' => $_SESSION['user']['username']
     ]);
 
     echo json_encode(['success' => true]);
@@ -100,10 +110,10 @@ class WallchatController extends Controller
 
     $model = new WallchatModel();
 
-    $id = $_POST['id'];
-
-    $model->delete($id);
-
+    $id = (int)($_POST['id']??0);
+    $row=$model->find($id);
+    if(!$row||((int)$row['user_id']!==(int)$_SESSION['user']['id']&&($_SESSION['user']['type_user']??'')!=='super_admin')){http_response_code(403);echo json_encode(['success'=>false,'message'=>'Tidak berhak menghapus pesan']);return;}
+    $model->delete($id,(int)$row['user_id']);
     echo json_encode(['success' => true]);
   }
   // =====================================================

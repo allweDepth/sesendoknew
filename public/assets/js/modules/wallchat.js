@@ -26,12 +26,9 @@ class WallchatModule {
 
 			const content = $('#formPost textarea[name="content"]').val();
 			const token = $("#csrf_token").val();
-			this.ajax.request({
+			window.Ajax.request({url:"/wallchat/store",method:"POST",
 				data: {
-					action: "add",
-					tbl: "wallchat",
 					content: content,
-					type: "status",
 				},
 
 				success: () => {
@@ -53,17 +50,15 @@ class WallchatModule {
 
 			const content = form.find('input[name="content"]').val();
 
-			this.ajax.request({
+			window.Ajax.request({url:"/wallchat/comment",method:"POST",
 				data: {
-					action: "add",
-					tbl: "wallchat",
-					parent_id: feedId,
+					feed_id: feedId,
 					content: content,
-					type: "comment",
 				},
 
-				success: () => {
+					success: () => {
 					form.find("input").val("");
+					this.reloadFeed();
 				},
 			});
 		});
@@ -76,13 +71,10 @@ class WallchatModule {
 			const receiver = $('input[name="receiver_id"]').val();
 			const content = $('#formPrivateMessage textarea[name="content"]').val();
 
-			this.ajax.request({
+			window.Ajax.request({url:"/wallchat/private",method:"POST",
 				data: {
-					action: "add",
-					tbl: "wallchat",
 					receiver_id: receiver,
 					content: content,
-					type: "private",
 				},
 
 				success: () => {
@@ -100,10 +92,8 @@ class WallchatModule {
 
 			if (!confirm("Hapus status ini?")) return;
 
-			this.ajax.request({
+			window.Ajax.request({url:"/wallchat/delete",method:"POST",
 				data: {
-					action: "delete",
-					tbl: "wallchat",
 					id: id,
 				},
 

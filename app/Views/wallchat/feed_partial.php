@@ -34,6 +34,10 @@
     <div class="extra text">
       <?= nl2br(htmlspecialchars($feed['content'])); ?>
     </div>
+    <?php foreach (($feed['comments']??[]) as $comment): ?>
+      <div class="ui small comments"><div class="comment"><div class="content"><b><?= htmlspecialchars($comment['nama']) ?></b><div class="text"><?= nl2br(htmlspecialchars($comment['content'])) ?></div></div></div></div>
+    <?php endforeach; ?>
+    <form class="ui reply form formComment" data-id="<?= $feed['id'] ?>"><div class="field"><input type="text" name="content" placeholder="Tulis komentar..."></div></form>
 
   </div>
 </div>

@@ -49,6 +49,9 @@
         <div class="extra text">
           <?= nl2br(htmlspecialchars($feed['content'])); ?>
         </div>
+        <?php foreach (($feed['comments']??[]) as $comment): ?>
+          <div class="ui small comments"><div class="comment"><div class="content"><b><?= htmlspecialchars($comment['nama']) ?></b><div class="text"><?= nl2br(htmlspecialchars($comment['content'])) ?></div></div></div></div>
+        <?php endforeach; ?>
 
         <!-- KOMENTAR -->
         <div class="extra">
@@ -66,6 +69,16 @@
 
     <?php endforeach; ?>
 
+  </div>
+
+  <div class="ui segment">
+    <h3 class="ui dividing header"><i class="lock icon"></i> Pesan Pribadi</h3>
+    <div class="ui relaxed divided list">
+      <?php foreach (($messages??[]) as $message): ?>
+      <div class="item"><i class="envelope outline icon"></i><div class="content"><div class="header"><?= htmlspecialchars($message['pengirim']) ?> → <?= htmlspecialchars($message['penerima']) ?></div><div class="description"><?= nl2br(htmlspecialchars($message['content'])) ?></div></div></div>
+      <?php endforeach; ?>
+      <?php if(empty($messages)): ?><div class="ui message">Belum ada pesan pribadi.</div><?php endif; ?>
+    </div>
   </div>
 
 </div>

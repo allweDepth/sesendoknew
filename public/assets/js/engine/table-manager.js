@@ -568,7 +568,8 @@ data-id="${id}">
 		// =====================================================
 		// OPEN PDF
 		// =====================================================
-		window.open(`/tata_naskah/generate_pdf?tbl=${tbl}&id=${id}`, "_blank");
+		const path = `/tata_naskah/generate_pdf?tbl=${encodeURIComponent(tbl)}&id=${encodeURIComponent(id)}`;
+		window.open(window.appUrl ? window.appUrl(path) : path, "_blank");
 	}
 	openAkta(id) {
 		const form = new FormEngine({

@@ -108,6 +108,11 @@ return [
     |--------------------------------------------------------------------------
     */
   '/wallchat'          => ['WallchatController', 'index'],
+  '/wallchat/feed'     => ['WallchatController', 'feed'],
+  '/wallchat/store'    => ['WallchatController', 'store'],
+  '/wallchat/comment'  => ['WallchatController', 'comment'],
+  '/wallchat/private'  => ['WallchatController', 'privateMessage'],
+  '/wallchat/delete'   => ['WallchatController', 'delete'],
 
   /*
     |--------------------------------------------------------------------------
