@@ -95,7 +95,9 @@ class BaseCrudModule {
 				const params = new URLSearchParams({ tabel: tbl });
 				if (req) params.set("req", req);
 
-				const exportUrl = `/export?${params.toString()}`;
+				const exportUrl = this.moduleName === "anggaran"
+					? `/anggaran/export_excel?tbl=${encodeURIComponent(tbl)}`
+					: `/export?${params.toString()}`;
 				window.location.href = window.appUrl ? window.appUrl(exportUrl) : exportUrl;
 			});
 	}

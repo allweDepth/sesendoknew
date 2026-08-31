@@ -16,6 +16,10 @@ class Auth
         );
 
         if (!$user) return false;
+        if ((int)($user['disable'] ?? 0) === 1) {
+            $_SESSION['login_error'] = 'Akun dinonaktifkan. Hubungi pengelola OPD.';
+            return false;
+        }
         if (!password_verify($passwordInput, $user['password'])) return false;
 
         if (!in_array($user['type_user'], self::allowedRoles())) {

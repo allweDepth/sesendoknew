@@ -64,4 +64,6 @@ class AnggaranController extends Controller
         } catch (Throwable $e) { http_response_code(400); echo $e->getMessage(); }
         exit;
     }
+    public function exportExcel(): void
+    {try{if(!Auth::check())throw new RuntimeException('Sesi login tidak valid');$logical=(string)($_GET['tbl']??'');$file=(new AnggaranDocumentService($_SESSION['user']??[]))->exportExcel($logical);header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');header('Content-Disposition: attachment; filename="'.$logical.'-per-sub-kegiatan.xlsx"');readfile($file);unlink($file);}catch(Throwable $e){http_response_code(400);echo $e->getMessage();}exit;}
 }

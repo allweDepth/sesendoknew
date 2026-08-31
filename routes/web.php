@@ -24,6 +24,7 @@ return [
   '/kontrak/schedule/save' => ['KontrakController', 'saveSchedule'],
   '/kontrak/rab_excel' => ['KontrakController', 'rabExcel'],
   '/kontrak/rab_pdf' => ['KontrakController', 'rabPdf'],
+  '/kontrak/terms_pdf' => ['KontrakController', 'termsPdf'],
   '/kontrak/rab/import' => ['KontrakController', 'importRab'],
   '/kontrak/document/upload' => ['KontrakController', 'uploadDocument'],
   '/kontrak/document/download' => ['KontrakController', 'downloadDocument'],
@@ -118,6 +119,10 @@ return [
   '/pengaturan'        => ['PengaturanController', 'index'],
   '/pengaturan/fragment' => ['PengaturanController', 'fragment'],
   '/pengaturan/current' => ['PengaturanController', 'current'],
+  '/user_opd' => ['UserOpdController', 'index'],
+  '/user_opd/list' => ['UserOpdController', 'list'],
+  '/user_opd/save' => ['UserOpdController', 'save'],
+  '/user_opd/delete' => ['UserOpdController', 'delete'],
   /*
     |--------------------------------------------------------------------------
     | 💬 WALLCHAT
@@ -158,6 +163,8 @@ return [
   '/tata_naskah/get_kelompok'   => ['TataNaskahController', 'get_kelompok'],
   '/tata_naskah/update_status'  => ['TataNaskahController', 'updateStatus'],
   '/tata_naskah/upload_signature' => ['TataNaskahController', 'uploadSignature'],
+  '/kop_surat' => ['KopSuratController', 'index'],
+  '/kop_surat/save' => ['KopSuratController', 'save'],
 
   /*
     |--------------------------------------------------------------------------
@@ -217,6 +224,7 @@ return [
 
   '/anggaran/advance'      => ['AnggaranController', 'advance'],
   '/anggaran/export_pdf'   => ['AnggaranController', 'exportPdf'],
+  '/anggaran/export_excel' => ['AnggaranController', 'exportExcel'],
   '/anggaran/groups'       => ['AnggaranController', 'groups'],
   '/anggaran/details'      => ['AnggaranController', 'details'],
 ];
