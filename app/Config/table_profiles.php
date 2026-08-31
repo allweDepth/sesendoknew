@@ -505,6 +505,12 @@ $profiles = [
     'primary_key' => 'id',
     'allowed_roles' => ['super_admin', 'admin_wilayah'],
     'soft_lock' => true,
+    'dropdown' => [
+      'value' => 'kode',
+      'label' => 'uraian',
+      'label_fields' => ['kode', 'uraian'],
+      'searchable' => ['kode', 'uraian'],
+    ],
     'modes' => [
       'default' => [
         'select' => ['*'],

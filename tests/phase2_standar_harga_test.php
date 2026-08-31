@@ -35,6 +35,8 @@ try {
         "SELECT id, uraian FROM satuan_neo WHERE peraturan_id = 4 AND is_deleted = 0 LIMIT 1"
     )->fetch();
     phase2Assert((bool)$satuan, 'referensi satuan aktual tersedia');
+    $aset = $db->query("SELECT kode FROM aset_neo WHERE disable = 0 AND is_deleted = 0 ORDER BY kode LIMIT 1")->fetch();
+    phase2Assert((bool)$aset, 'referensi kode aset aktual tersedia');
 
     foreach (['ssh', 'hspk', 'asb', 'sbu'] as $type) {
         $service = new DynamicTableService();
@@ -47,7 +49,7 @@ try {
 
         $add = phase2Call($service, [
             'action' => 'add', 'tbl' => $type, 'kode' => $code,
-            'kode_aset' => '01.02.03', 'kelompok_barang' => 'TRACE_TEST',
+            'kode_aset' => $aset['kode'], 'kelompok_barang' => 'TRACE_TEST',
             'uraian' => "TRACE TEST {$type}", 'spesifikasi' => 'Spesifikasi uji',
             'satuan_id' => $satuan['id'], 'harga' => 125000.50, 'tkdn' => 40
         ]);
@@ -86,8 +88,8 @@ try {
 
     $spreadsheet = new PhpOffice\PhpSpreadsheet\Spreadsheet();
     $spreadsheet->getActiveSheet()->fromArray([
-        ['kode', 'uraian', 'spesifikasi', 'satuan', 'harga', 'tkdn'],
-        ['TRACE_TEST_PHASE2_IMPORT', 'TRACE TEST IMPORT', 'Import XLSX', $satuan['uraian'], 99000, 25]
+        ['kode', 'kode_aset', 'uraian', 'spesifikasi', 'satuan', 'harga', 'tkdn'],
+        ['TRACE_TEST_PHASE2_IMPORT', $aset['kode'], 'TRACE TEST IMPORT', 'Import XLSX', $satuan['uraian'], 99000, 25]
     ]);
     $importFile = tempnam(sys_get_temp_dir(), 'phase2_') . '.xlsx';
     (new PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet))->save($importFile);

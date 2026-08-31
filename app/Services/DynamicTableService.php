@@ -724,6 +724,13 @@ INSERT (FIXED STABLE VERSION v3.1)
 3️⃣ AUTO FIELD RESOLUTION (SCOPE)
 ===================================================== */
     $filtered = $this->resolveAutoFields($table, $filtered);
+    if ($table === 'master_biaya') {
+      try {
+        $filtered['kode_aset'] = $this->validateAssetCode($filtered['kode_aset'] ?? null);
+      } catch (Throwable $exception) {
+        return JsonResponse::error($exception->getMessage());
+      }
+    }
     if ($table === 'rekening_kegiatan') {
       $hierarchyError = $this->applyRekeningHierarchy($filtered, $request['req'] ?? null);
       if ($hierarchyError !== null) return $hierarchyError;
@@ -1090,6 +1097,13 @@ IGNORE SYSTEM FIELD
 4️⃣ AUTO FIELD RESOLUTION
 ===================================================== */
     $filtered = $this->resolveAutoFields($table, $filtered);
+    if ($table === 'master_biaya') {
+      try {
+        $filtered['kode_aset'] = $this->validateAssetCode($filtered['kode_aset'] ?? ($oldData['kode_aset'] ?? null));
+      } catch (Throwable $exception) {
+        return JsonResponse::error($exception->getMessage());
+      }
+    }
     if ($table === 'rekening_kegiatan') {
       $hierarchyError = $this->applyRekeningHierarchy($filtered, $request['req'] ?? ($oldData['level'] ?? null));
       if ($hierarchyError !== null) return $hierarchyError;
@@ -3076,6 +3090,7 @@ LIMIT 1",
 
           if ($table === 'master_biaya' && in_array($tbl, ['ssh', 'hspk', 'asb', 'sbu'], true)) {
             $data['tipe'] = $tbl;
+            $data['kode_aset'] = $this->validateAssetCode($data['kode_aset'] ?? null, $rowNumber);
           }
 
           $relations = $profile['import_relations'] ?? [];
@@ -4191,6 +4206,36 @@ WHERE is_deleted = 0
     array $data
   ): void {
 
+    $budgetTables = ['renja_neo', 'rka_neo', 'dpa_neo', 'renja_p_neo', 'rka_p_neo', 'dppa_neo'];
+    if (in_array($table, $budgetTables, true) && !empty($data['id_standar_harga'])) {
+      $standardType = strtolower((string)($data['jenis_standar_harga'] ?? ''));
+      $account = trim((string)($data['kd_akun'] ?? ''));
+      if (!in_array($standardType, ['ssh', 'sbu', 'asb', 'hspk'], true) || $account === '') {
+        throw new InvalidArgumentException('Jenis standar harga dan rekening belanja wajib dipilih.');
+      }
+      $mapping = $this->db->query(
+        "SELECT mb.id
+           FROM master_biaya mb
+           JOIN master_biaya_akun mba ON mba.master_biaya_id = mb.id
+           JOIN aset_neo aset ON aset.kode = mb.kode_aset
+          WHERE mb.id = ? AND mb.tipe = ? AND mb.kd_wilayah = ? AND mb.tahun = ?
+            AND mb.is_deleted = 0 AND mb.disable = 0
+            AND mba.kd_akun = ? AND mba.is_deleted = 0 AND mba.disable = 0
+            AND aset.is_deleted = 0 AND aset.disable = 0
+          LIMIT 1",
+        [
+          (int)$data['id_standar_harga'],
+          $standardType,
+          $data['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? '',
+          (int)($data['tahun'] ?? $this->user['tahun'] ?? date('Y')),
+          $account,
+        ]
+      )->fetch();
+      if (!$mapping) {
+        throw new InvalidArgumentException('Komponen standar harga tidak dipetakan ke rekening belanja dan kode aset aktif yang dipilih.');
+      }
+    }
+
     // Mapping foreign key → pivot table
     $map = [
       'sbu_id'  => ['pivot' => 'sbu_akun_map',  'fk' => 'sbu_id'],
@@ -4239,6 +4284,23 @@ WHERE is_deleted = 0
         );
       }
     }
+  }
+
+  private function validateAssetCode(mixed $code, ?int $rowNumber = null): string
+  {
+    $kodeAset = trim((string)$code);
+    $prefix = $rowNumber ? "Baris {$rowNumber}: " : '';
+    if ($kodeAset === '') {
+      throw new InvalidArgumentException($prefix . 'Kode aset/barang wajib dipilih dari referensi aset.');
+    }
+    $aset = $this->db->query(
+      'SELECT kode FROM aset_neo WHERE kode = ? AND disable = 0 AND is_deleted = 0 LIMIT 1',
+      [$kodeAset]
+    )->fetch();
+    if (!$aset) {
+      throw new InvalidArgumentException($prefix . 'Kode aset/barang tidak valid atau sudah tidak aktif.');
+    }
+    return (string)$aset['kode'];
   }
   /**
    * ============================================================
@@ -4926,9 +4988,12 @@ AND is_deleted = 0
     // SEARCH
     // =====================================================
     if ($cari) {
-
-      $optionalWhere[] = "`$table`.`$labelField` LIKE ?";
-      $params[] = "%$cari%";
+      $searchFields = $profile['dropdown']['searchable'] ?? [$labelField];
+      foreach ($searchFields as $searchField) {
+        if (!in_array($searchField, $columns, true)) continue;
+        $optionalWhere[] = "`$table`.`$searchField` LIKE ?";
+        $params[] = "%$cari%";
+      }
     }
 
     // =====================================================
@@ -4958,10 +5023,20 @@ AND is_deleted = 0
     // =====================================================
     // QUERY
     // =====================================================
+    $labelFields = array_values(array_filter(
+      $profile['dropdown']['label_fields'] ?? [],
+      static fn($field) => in_array($field, $columns, true)
+    ));
+    $textExpression = "`$table`.`$labelField`";
+    if (count($labelFields) > 1) {
+      $quotedLabelFields = array_map(static fn($field) => "`$table`.`$field`", $labelFields);
+      $textExpression = "CONCAT_WS(' — ', " . implode(', ', $quotedLabelFields) . ')';
+    }
+
     $query = "
     SELECT
       `$table`.`$valueField` AS value,
-      `$table`.`$labelField` AS text
+      $textExpression AS text
     FROM `$table`
     $where
     ORDER BY `$table`.`$labelField` ASC

@@ -438,6 +438,7 @@ UIConfig.sub_kegiatan_renstra_neo = {
 UIConfig.urusan = {
 	validation: {
 		kode: { required: true },
+		kode_aset: { required: true },
 		uraian: { required: true },
 	},
 	form: {
@@ -979,7 +980,15 @@ UIConfig.sbu = {
 	form: {
 		elements: [
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
-			{ tag: "field", prop: { label: "Kode Aset", name: "kode_aset" } },
+			{
+				tag: "fieldDropdown",
+				prop: {
+					label: "Kode Aset / Barang (kode dan uraian)",
+					name: "kode_aset",
+					source: "aset",
+					search: true,
+				},
+			},
 			{ tag: "field", prop: { label: "Kelompok Barang", name: "kelompok_barang" } },
 			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
 			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
