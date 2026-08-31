@@ -121,6 +121,27 @@ try {
         'dropdown Satuan terpilih tampil saat EDIT sub_kegiatan'
     );
 
+    // Dataset lama dapat memiliki kegiatan yang parent program-nya belum
+    // dimigrasikan sebagai baris tersendiri. Kode parent tetap wajib tampil.
+    $legacyChild = $db->query(
+        "SELECT parent_kode FROM rekening_kegiatan child
+          WHERE child.level='kegiatan' AND child.status=1
+            AND child.parent_kode IS NOT NULL
+            AND NOT EXISTS (SELECT 1 FROM rekening_kegiatan parent
+                             WHERE parent.kode=child.parent_kode AND parent.status=1)
+          LIMIT 1"
+    )->fetch();
+    if ($legacyChild) {
+        $legacyDropdown = hierarchyDropdownCall($service, 'rekening_kegiatan', [
+            'mode'=>'edit', 'value'=>$legacyChild['parent_kode'],
+            'filters'=>json_encode(['level'=>'program']), 'limit'=>20,
+        ]);
+        hierarchyAssert(
+            hierarchyDropdownHasValue($legacyDropdown, (string)$legacyChild['parent_kode']),
+            'dropdown edit mempertahankan parent nomenklatur lama yang belum memiliki master'
+        );
+    }
+
     $blocked = hierarchyCall($service, [
         'action' => 'delete', 'tbl' => 'rekening_kegiatan', 'req' => 'urusan',
         'id_row' => $ids['urusan'],

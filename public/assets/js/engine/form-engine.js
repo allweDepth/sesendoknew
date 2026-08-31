@@ -157,7 +157,7 @@ class FormEngine {
 					// Fomantic menghapus nilai yang belum ada di menu ketika refresh.
 					const selectedValue = params.value ?? $dropdown.data("pending-value");
 					if (selectedValue !== undefined && selectedValue !== null && String(selectedValue) !== "") {
-						$dropdown.dropdown("set selected", String(selectedValue));
+						this.applyDropdownSelection($dropdown, selectedValue);
 						$dropdown.removeData("pending-value");
 					}
 
@@ -171,6 +171,28 @@ class FormEngine {
 				},
 			});
 		});
+	}
+	applyDropdownSelection($dropdown, value) {
+		const normalized = String(value);
+		let $item = $dropdown.find(".menu .item").filter(function () {
+			return String($(this).attr("data-value")) === normalized;
+		}).first();
+
+		if (!$item.length) {
+			$dropdown.find(".menu").append(
+				$("<div>", { class: "item", "data-value": normalized, text: normalized }),
+			);
+			$dropdown.dropdown("refresh");
+			$item = $dropdown.find(".menu .item").filter(function () {
+				return String($(this).attr("data-value")) === normalized;
+			}).first();
+		}
+
+		$dropdown.dropdown("set value", normalized);
+		$dropdown.dropdown("set text", $.trim($item.text()) || normalized);
+		$dropdown.find(".menu .item").removeClass("active selected");
+		$item.addClass("active selected");
+		$dropdown.find('input[type="hidden"]').val(normalized);
 	}
 	initDropdownSearch() {
 		const self = this;
@@ -323,7 +345,7 @@ class FormEngine {
 					await this.loadDropdown(dropdown, { ...params, value: value });
 
 					// 🔥 set value
-					dropdown.dropdown("set selected", value);
+					this.applyDropdownSelection(dropdown, value);
 
 					// 🔥 trigger cascade manual
 					// // 🔥 paksa trigger setelah set

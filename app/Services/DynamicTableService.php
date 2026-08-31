@@ -4724,6 +4724,7 @@ AND is_deleted = 0
     // =====================================================
     // 🔥 APPLY FILTERS (LEVEL DLL)
     // =====================================================
+    $requestedHierarchyLevel = null;
     if (!empty($_POST['filters'])) {
 
       $filters = json_decode($_POST['filters'], true);
@@ -4736,6 +4737,9 @@ AND is_deleted = 0
 
             $mandatoryWhere[] = "`$table`.`$col` = ?";
             $params[] = $val;
+            if ($profileKey === 'rekening_kegiatan' && $col === 'level') {
+              $requestedHierarchyLevel = (string)$val;
+            }
           }
         }
       }
@@ -4886,6 +4890,55 @@ AND is_deleted = 0
     $rows = $this->db
       ->query($query, $params)
       ->fetchAll();
+
+    // Data nomenklatur lama tidak selalu mempunyai baris parent lengkap.
+    // Parent tetap harus dapat dipilih pada form edit/add, sehingga kode parent
+    // yang nyata dipakai oleh child disajikan sebagai opsi virtual. Ketika
+    // master parent sudah tersedia, uraian master tetap diprioritaskan.
+    if ($profileKey === 'rekening_kegiatan' && $requestedHierarchyLevel) {
+      $childLevelMap = [
+        'urusan' => 'bidang',
+        'bidang' => 'program',
+        'program' => 'kegiatan',
+        'kegiatan' => 'sub_kegiatan',
+      ];
+      $childLevel = $childLevelMap[$requestedHierarchyLevel] ?? null;
+      if ($childLevel) {
+        $inferred = $this->db->query(
+          "SELECT DISTINCT child.parent_kode AS value,
+                  COALESCE(parent.uraian, CONCAT(child.parent_kode, ' — induk nomenklatur')) AS text
+             FROM rekening_kegiatan child
+             LEFT JOIN rekening_kegiatan parent
+               ON parent.kode = child.parent_kode AND parent.status = 1
+            WHERE child.level = ? AND child.status = 1
+              AND child.parent_kode IS NOT NULL AND child.parent_kode <> ''
+            ORDER BY child.parent_kode ASC
+            LIMIT $limit",
+          [$childLevel]
+        )->fetchAll();
+
+        $byValue = [];
+        foreach (array_merge($rows, $inferred) as $option) {
+          $byValue[(string)$option['value']] = $option;
+        }
+        $rows = array_values($byValue);
+      }
+    }
+
+    // Edit record orphan tetap memperlihatkan nilai tersimpan agar pengguna
+    // tidak melihat "Pilih" dan tidak tanpa sengaja menghapus relasinya.
+    if ($currentValue !== null && $currentValue !== '') {
+      $hasCurrent = false;
+      foreach ($rows as $option) {
+        if ((string)$option['value'] === (string)$currentValue) {
+          $hasCurrent = true;
+          break;
+        }
+      }
+      if (!$hasCurrent) {
+        $rows[] = ['value' => $currentValue, 'text' => $currentValue . ' — induk nomenklatur'];
+      }
+    }
 
     // =====================================================
     // RESPONSE
