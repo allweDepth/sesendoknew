@@ -15,6 +15,8 @@
 */
 
 $tbl = isset($table) ? $table : '';
+$role = $_SESSION['user']['type_user'] ?? 'viewer';
+$canManageSubKegiatan = in_array($role, ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd', 'pa_kpa'], true);
 
 ?>
 
@@ -24,6 +26,7 @@ $tbl = isset($table) ? $table : '';
   <div class="ui right floated basic icon buttons" style="margin-top:10px;">
 
     <!-- ADD SUB KEGIATAN -->
+    <?php if ($canManageSubKegiatan): ?>
     <button class="ui button" data-ui="open-form" data-container="flyout" data-jns="add"
       data-config="sub_kegiatan_anggaran" data-tbl="<?= $tbl ?>" data-req="group_sub_kegiatan">
 
@@ -36,6 +39,7 @@ $tbl = isset($table) ? $table : '';
 
       <i class="upload icon"></i>
     </button>
+    <?php endif; ?>
 
     <!-- EXPORT -->
     <button class="ui icon button" data-action="export" data-tbl="<?= $tbl ?>" data-req="group_sub_kegiatan">
@@ -63,6 +67,8 @@ $tbl = isset($table) ? $table : '';
         <tr>
           <th style="width:70px">Aksi</th>
           <th>Sub Kegiatan</th>
+          <th>Output / Satuan</th>
+          <th style="width:150px">Batas Anggaran</th>
           <th style="width:120px">Status</th>
           <th style="width:140px">Status Rincian</th>
           <th style="width:140px">Sebelum Perubahan</th>
@@ -75,7 +81,7 @@ $tbl = isset($table) ? $table : '';
       <tbody>
 
         <tr>
-          <td colspan="8" class="center aligned">
+          <td colspan="10" class="center aligned">
             <div class="ui info message">
               Tidak ada data
             </div>

@@ -592,6 +592,9 @@ UIConfig.sub_kegiatan = {
 UIConfig.sub_kegiatan_anggaran = {
 	validation: {
 		kd_sub_keg: { required: true },
+		output: { required: true },
+		satuan_output: { required: true },
+		batas_anggaran: { required: true },
 	},
 	title: "Sub Kegiatan",
 	table: "sub_kegiatan",
@@ -606,6 +609,18 @@ UIConfig.sub_kegiatan_anggaran = {
 					source: "rekening_kegiatan",
 					search: true,
 				},
+			},
+			{
+				tag: "fieldTextarea",
+				prop: { label: "Output Sub Kegiatan", name: "output", atribut: `rows="2"` },
+			},
+			{
+				tag: "fieldDropdown",
+				prop: { label: "Satuan Output", name: "satuan_output", source: "satuan_teks", search: true },
+			},
+			{
+				tag: "field",
+				prop: { label: "Batas/Pagu Anggaran", name: "batas_anggaran", type: "number", atribut: `min="0" step="0.01"` },
 			},
 		],
 	},

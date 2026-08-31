@@ -56,14 +56,21 @@ class WallchatController extends Controller
       return;
     }
 
+    $attachment=$this->messageAttachment('wall');
     $model->store([
       'user_id' => $_SESSION['user']['id'],
       'content' => $content,
       'type' => 'status'
-      ,'username' => $_SESSION['user']['username']
+      ,'username' => $_SESSION['user']['username'],
+      'theme'=>$_POST['theme']??'default',
+      ...$attachment
     ]);
 
     echo json_encode(['success' => true]);
+  }
+  public function update()
+  {
+    if(!Auth::check())exit;$content=trim((string)($_POST['content']??''));if($content===''){echo json_encode(['success'=>false,'message'=>'Isi tidak boleh kosong']);return;}$ok=(new WallchatModel())->updateOwned((int)($_POST['id']??0),(int)$_SESSION['user']['id'],$content,$_POST['theme']??null);echo json_encode(['success'=>$ok,'message'=>$ok?'Posting berhasil diperbarui':'Tidak berhak mengubah posting']);
   }
   // komentar feed
   public function comment()
@@ -94,7 +101,7 @@ class WallchatController extends Controller
 
     $receiver=(int)($_POST['receiver_id']??0);$content=trim($_POST['content']??'');
     if(!$receiver||$receiver===(int)$_SESSION['user']['id']||$content===''){echo json_encode(['success'=>false,'message'=>'Penerima atau pesan tidak valid']);return;}
-    $attachment=$this->privateAttachment();
+    $attachment=$this->messageAttachment('private');
     $model->store([
       'user_id' => $_SESSION['user']['id'],
       'receiver_id' => $receiver,
@@ -129,17 +136,21 @@ class WallchatController extends Controller
     header('Content-Type: '.$row['attachment_mime']);header('Content-Length: '.filesize($file));header('Content-Disposition: attachment; filename="'.rawurlencode($row['attachment_name']).'"');readfile($file);exit;
   }
 
-  private function privateAttachment(): array
+  private function messageAttachment(string $channel): array
   {
     $file=$_FILES['file']??null;if(!$file||($file['error']??UPLOAD_ERR_NO_FILE)===UPLOAD_ERR_NO_FILE)return [];
     if(($file['error']??UPLOAD_ERR_OK)!==UPLOAD_ERR_OK)throw new RuntimeException('Lampiran gagal diunggah');
     if((int)$file['size']>3*1024*1024)throw new InvalidArgumentException('Lampiran pesan maksimal 3 MB');
     $mime=(new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
-    $allowed=['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp','application/pdf'=>'pdf','application/vnd.openxmlformats-officedocument.wordprocessingml.document'=>'docx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'=>'xlsx'];
-    if(!isset($allowed[$mime]))throw new InvalidArgumentException('Lampiran harus JPG, PNG, WebP, PDF, DOCX, atau XLSX');
-    $relative='storage/uploads/messages/'.date('Y/m');$dir=dirname(__DIR__,2).'/'.$relative;if(!is_dir($dir)&&!mkdir($dir,0770,true))throw new RuntimeException('Folder pesan tidak dapat dibuat');
+    $allowed=['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp','video/mp4'=>'mp4','video/webm'=>'webm','application/pdf'=>'pdf','application/vnd.openxmlformats-officedocument.wordprocessingml.document'=>'docx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'=>'xlsx'];
+    if(!isset($allowed[$mime]))throw new InvalidArgumentException('Lampiran harus JPG, PNG, WebP, MP4, WebM, PDF, DOCX, atau XLSX');
+    $relative='storage/uploads/messages/'.$channel.'/'.date('Y/m');$dir=dirname(__DIR__,2).'/'.$relative;if(!is_dir($dir)&&!mkdir($dir,0770,true))throw new RuntimeException('Folder pesan tidak dapat dibuat');
     $name=bin2hex(random_bytes(16)).'.'.$allowed[$mime];if(!move_uploaded_file($file['tmp_name'],$dir.'/'.$name))throw new RuntimeException('Lampiran gagal disimpan');
     return ['attachment_name'=>basename((string)$file['name']),'attachment_path'=>$relative.'/'.$name,'attachment_mime'=>$mime,'attachment_size'=>(int)$file['size']];
+  }
+  public function mediaFile()
+  {
+    if(!Auth::check())exit;$id=(int)($_GET['id']??0);$row=(new WallchatModel())->privateFile($id,(int)$_SESSION['user']['id']);if(!$row)$row=DB::getInstance()->query("SELECT * FROM wallchat WHERE id=? AND type IN ('status','comment') AND is_deleted=0",[$id])->fetch();if(!$row||empty($row['attachment_path'])){http_response_code(404);exit('Media tidak ditemukan');}$root=realpath(dirname(__DIR__,2));$file=realpath($root.'/'.$row['attachment_path']);$allowed=realpath($root.'/storage/uploads/messages');if(!$file||!$allowed||!str_starts_with($file,$allowed.DIRECTORY_SEPARATOR)){http_response_code(403);exit('Akses ditolak');}header('Content-Type: '.$row['attachment_mime']);header('Content-Length: '.filesize($file));header('Content-Disposition: inline; filename="'.rawurlencode($row['attachment_name']).'"');readfile($file);exit;
   }
   public function delete()
   {

@@ -15,20 +15,59 @@ class WallchatModel
     /* ==========================================
        GET FEEDS (POST UTAMA)
     ========================================== */
-    public function getFeeds()
-{
-    $feeds = $this->db
-        ->table('wallchat w')
-        ->selectQB('w.*, u.username AS nama')
-        ->join('user_sesendok_biila u', 'u.id = w.user_id')
-        ->where('w.parent_id IS NULL')
-        ->where("w.type = 'status'")
-        ->where('w.is_deleted = 0')
-        ->orderBy('w.created_at DESC')
-        ->qbGet();
-    foreach($feeds as &$feed){$feed['content']=$this->crypto->decrypt($feed['content_ciphertext']??null,$feed['content_nonce']??null,$feed['content']??'');$feed['comments']=$this->getComments((int)$feed['id']);}
-    return $feeds;
-}
+    public function getFeeds(int $limit = 30): array
+    {
+        $limit = max(1, min($limit, 50));
+        $feeds = $this->db->query(
+            "SELECT w.*, u.username AS nama
+             FROM wallchat w
+             JOIN user_sesendok_biila u ON u.id = w.user_id
+             WHERE w.parent_id IS NULL
+               AND w.type = 'status'
+               AND w.is_deleted = 0
+             ORDER BY w.created_at DESC
+             LIMIT {$limit}"
+        )->fetchAll();
+
+        if (!$feeds) {
+            return [];
+        }
+
+        $postIds = array_map(static fn(array $feed): int => (int)$feed['id'], $feeds);
+        $placeholders = implode(',', array_fill(0, count($postIds), '?'));
+        $comments = $this->db->query(
+            "SELECT w.*, u.username AS nama
+             FROM wallchat w
+             JOIN user_sesendok_biila u ON u.id = w.user_id
+             WHERE w.parent_id IN ({$placeholders})
+               AND w.type = 'comment'
+               AND w.is_deleted = 0
+             ORDER BY w.created_at ASC",
+            $postIds
+        )->fetchAll();
+
+        $commentsByPost = [];
+        foreach ($comments as $comment) {
+            $comment['content'] = $this->crypto->decrypt(
+                $comment['content_ciphertext'] ?? null,
+                $comment['content_nonce'] ?? null,
+                $comment['content'] ?? ''
+            );
+            $commentsByPost[(int)$comment['parent_id']][] = $comment;
+        }
+
+        foreach ($feeds as &$feed) {
+            $feed['content'] = $this->crypto->decrypt(
+                $feed['content_ciphertext'] ?? null,
+                $feed['content_nonce'] ?? null,
+                $feed['content'] ?? ''
+            );
+            $feed['comments'] = $commentsByPost[(int)$feed['id']] ?? [];
+        }
+        unset($feed);
+
+        return $feeds;
+    }
 
     /* ==========================================
        GET COMMENTS BY POST
@@ -54,6 +93,10 @@ class WallchatModel
 public function store($data)
 {
     $encrypted = $this->crypto->encrypt((string)$data['content']);
+    $theme = (string)($data['theme'] ?? 'default');
+    if (!in_array($theme, ['default', 'ocean', 'sunset', 'forest', 'midnight'], true)) {
+        $theme = 'default';
+    }
     return $this->db->insert('wallchat', [
         'user_id'    => $data['user_id'],
         'parent_id'  => $data['parent_id'] ?? null,
@@ -68,6 +111,7 @@ public function store($data)
         'attachment_path' => $data['attachment_path'] ?? null,
         'attachment_mime' => $data['attachment_mime'] ?? null,
         'attachment_size' => (int)($data['attachment_size'] ?? 0),
+        'theme' => $theme,
         'created_at' => date('Y-m-d H:i:s'),
         'updated_at' => null,
         'is_deleted' => 0,
@@ -92,6 +136,11 @@ public function store($data)
             'WHERE id = ?',
             [$id]
         );
+    }
+
+    public function updateOwned(int $id,int $userId,string $content,?string $theme=null): bool
+    {
+        $row=$this->db->query("SELECT id FROM wallchat WHERE id=? AND user_id=? AND is_deleted=0 AND type IN ('status','comment')",[$id,$userId])->fetch();if(!$row)return false;$encrypted=$this->crypto->encrypt($content);$data=['content'=>'','content_ciphertext'=>$encrypted['ciphertext'],'content_nonce'=>$encrypted['nonce'],'updated_at'=>date('Y-m-d H:i:s')];if($theme!==null&&in_array($theme,['default','ocean','sunset','forest','midnight'],true))$data['theme']=$theme;$this->db->update('wallchat',$data,'WHERE id=?',[$id]);return true;
     }
 
     /* ==========================================

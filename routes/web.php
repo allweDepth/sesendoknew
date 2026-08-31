@@ -131,11 +131,13 @@ return [
   '/wallchat'          => ['WallchatController', 'index'],
   '/wallchat/feed'     => ['WallchatController', 'feed'],
   '/wallchat/store'    => ['WallchatController', 'store'],
+  '/wallchat/update'   => ['WallchatController', 'update'],
   '/wallchat/comment'  => ['WallchatController', 'comment'],
   '/wallchat/private'  => ['WallchatController', 'privateMessage'],
   '/wallchat/private/read' => ['WallchatController', 'readPrivate'],
   '/wallchat/private/delete' => ['WallchatController', 'deletePrivate'],
   '/wallchat/private/file' => ['WallchatController', 'privateFile'],
+  '/wallchat/media' => ['WallchatController', 'mediaFile'],
   '/wallchat/delete'   => ['WallchatController', 'delete'],
 
   /*

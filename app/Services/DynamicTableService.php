@@ -594,6 +594,16 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
     if (!in_array($action, $matrix[$role]['actions'] ?? [],true)) {
       throw new Exception("Role ".($matrix[$role]['label']??$role)." tidak diizinkan melakukan aksi $action. Lingkup akses: ".($matrix[$role]['scope']??'tidak ditentukan'));
     }
+
+    // Membuat/mengubah daftar subkegiatan adalah kewenangan PA/KPA atau
+    // Kepala OPD. PPTK/PPK/staf tetap dapat mengelola rincian anggaran pada
+    // subkegiatan yang ditugaskan, tetapi tidak dapat mengubah master ini.
+    if ($table === 'group_sub_kegiatan' && in_array($action, ['add', 'edit', 'delete'], true)) {
+      $managers = ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd', 'pa_kpa'];
+      if (!in_array($role, $managers, true)) {
+        throw new Exception('Hanya Kepala OPD/PA/KPA yang dapat mengelola daftar subkegiatan.');
+      }
+    }
   }
 
   /* =========================================================

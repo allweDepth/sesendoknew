@@ -22,14 +22,14 @@ selesai.
 | 13 | Dropdown jumlah row dan search global | PASS | Navbar global terhubung `TableManager`, rows/search diteruskan ke seluruh tabel dinamis |
 | 14 | Dropdown sidebar kanan | PARTIAL | Pesan, Profil/Pengaturan, tema, dan logout kini mempunyai handler/link; acceptance visual tersisa |
 | 15 | Edit Tata Naskah tersimpan | PASS | Struktur dan header disimpan transaksional, load edit dipulihkan; lulus phase6 |
-| 16 | Pesan sementara, file, hapus kedua pihak, UI profesional | PARTIAL | Enkripsi, ephemeral, file 3 MB, per-party delete lulus phase11; polish UI masih berjalan |
+| 16 | Pesan sementara, file, hapus kedua pihak, UI profesional | PASS | Enkripsi, pesan sementara, file privat 3 MB, read state, per-party delete, modal kirim dan inbox profesional lulus phase11/16 |
 | 17 | Enkripsi pesan browser–server dan database | PARTIAL | TLS + CSP/HSTS dan libsodium authenticated encryption at rest tersedia; E2E browser key ownership belum diterapkan |
-| 18 | Performa online/server | PARTIAL | Query limit/index tersedia; profiling beban dan konfigurasi produksi masih OPEN |
-| 19 | Wallchat CRUD, gambar/video 2–3 MB, tema, UI medsos | PARTIAL | CRUD dasar ada; tema, video, editor/media wall dan UI final masih OPEN |
+| 18 | Performa online/server | PARTIAL | Feed dibatasi 30, pesan privat 50, komentar diambil batch tanpa N+1, dan index tersedia; profiling beban serta konfigurasi produksi masih OPEN |
+| 19 | Wallchat CRUD, gambar/video 2–3 MB, tema, UI medsos | PASS | Feed sosial, composer ringkas, CRUD berbasis pemilik, gambar/video 3 MB, lima tema, komentar dan media terproteksi lulus phase7/16 |
 | 20 | Dashboard/UI Referensi, Kepegawaian, Tata Naskah dan submenu datar | PARTIAL | Beberapa dashboard modern tersedia; audit visual semua submenu belum selesai |
 | 21 | Export resmi Renstra/Renja/RKA/DPA/perubahan/SPT/LRA, warna, sheet per subkegiatan | PARTIAL | Renja/RKA/DPA/perubahan kini berwarna dan satu sheet per subkegiatan; Renstra dan seluruh varian SPT/LRA resmi masih perlu finalisasi |
 | 22 | Dummy SSH/SBU/ASB/HSPK, 5 subkegiatan, alur Renja–RKPD–DPPA–kontrak–laporan | PARTIAL | ≥10 data tiap standar dan 5 rantai RKPD–DPPA lulus phase15; kontrak/RAB/laporan untuk tiga rantai tambahan belum dibuat |
-| 23 | Kepala OPD menambah subkegiatan; user hanya CRUD uraian/belanja; output/satuan/pagu | OPEN | Role dan workflow perlu enforcement serta UI khusus |
+| 23 | Kepala OPD menambah subkegiatan; user hanya CRUD uraian/belanja; output/satuan/pagu | PASS | Mutasi master hanya Kepala OPD/PA/KPA dan administrator terkait; PPTK/PPK/staf dibatasi penugasan, form memuat output/satuan/batas pagu; phase17 |
 | 24 | Pengetahuan role/kewenangan pada Home OPD | PASS | Dashboard menampilkan role aktif, lingkup, aksi, batas akses, dan panduan semua role; phase12 |
 | 25 | Hardening hacking/database/online | PARTIAL | Prepared statements, CSRF global, CSP, HSTS, nosniff, same-origin frame dan upload allow-list tersedia; pentest/deployment hardening masih OPEN |
 

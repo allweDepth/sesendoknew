@@ -1,47 +1,9 @@
-<?php foreach ($feeds as $feed): ?>
-
-<div class="event">
-  <div class="label">
-    <i class="user circle icon big"></i>
-  </div>
-
-  <div class="content">
-
-    <div class="summary">
-
-      <strong><?= $feed['nama'] ?></strong>
-
-      <div class="date">
-        <?= date('d M Y H:i', strtotime($feed['created_at'])) ?>
-      </div>
-
-      <?php if ($feed['user_id'] == $_SESSION['user']['id']): ?>
-
-      <!-- tombol edit -->
-      <a class="ui mini icon button btnEditFeed" data-id="<?= $feed['id'] ?>">
-        <i class="edit icon"></i>
-      </a>
-
-      <!-- tombol delete -->
-      <a class="ui mini red icon button btnDeleteFeed" data-id="<?= $feed['id'] ?>">
-        <i class="trash icon"></i>
-      </a>
-
-      <?php endif; ?>
-
-    </div>
-
-    <div class="extra text">
-      <?= nl2br(htmlspecialchars($feed['content'])); ?>
-    </div>
-    <?php foreach (($feed['comments']??[]) as $comment): ?>
-      <div class="ui small comments"><div class="comment"><div class="content"><b><?= htmlspecialchars($comment['nama']) ?></b><div class="text"><?= nl2br(htmlspecialchars($comment['content'])) ?></div></div></div></div>
-    <?php endforeach; ?>
-    <form class="ui reply form formComment" data-id="<?= $feed['id'] ?>"><div class="field"><input type="text" name="content" placeholder="Tulis komentar..."></div></form>
-
-  </div>
-</div>
-
-<div class="ui divider"></div>
-
-<?php endforeach; ?>
+<?php foreach($feeds as $feed):$theme=in_array($feed['theme']??'default',['default','ocean','sunset','forest','midnight'],true)?$feed['theme']:'default';?>
+<article class="social-post theme-<?= $theme ?>" data-id="<?= (int)$feed['id'] ?>">
+ <header><div class="social-avatar"><?= strtoupper(substr($feed['nama']??'U',0,1)) ?></div><div><b><?= htmlspecialchars($feed['nama']??'User') ?></b><small><?= date('d M Y · H:i',strtotime($feed['created_at'])) ?><?= !empty($feed['updated_at'])?' · diedit':'' ?></small></div><?php if((int)$feed['user_id']===(int)($_SESSION['user']['id']??0)):?><div class="post-actions"><button class="ui mini circular icon button btnEditFeed" data-id="<?= (int)$feed['id'] ?>" data-content="<?= htmlspecialchars($feed['content'],ENT_QUOTES) ?>" data-theme="<?= $theme ?>"><i class="edit icon"></i></button><button class="ui mini circular red icon button btnDeleteFeed" data-id="<?= (int)$feed['id'] ?>"><i class="trash icon"></i></button></div><?php endif;?></header>
+ <div class="post-copy"><?= nl2br(htmlspecialchars($feed['content'])) ?></div>
+ <?php if(!empty($feed['attachment_path'])):$media=app_url('/wallchat/media?id='.(int)$feed['id']);?><div class="post-media"><?php if(str_starts_with($feed['attachment_mime']??'','image/')):?><img src="<?= $media ?>" loading="lazy" alt="Media posting"><?php elseif(str_starts_with($feed['attachment_mime']??'','video/')):?><video src="<?= $media ?>" controls preload="metadata"></video><?php else:?><a class="ui basic button" href="<?= $media ?>"><i class="paperclip icon"></i><?= htmlspecialchars($feed['attachment_name']) ?></a><?php endif;?></div><?php endif;?>
+ <div class="post-meta"><span><i class="comment outline icon"></i><?= count($feed['comments']??[]) ?> komentar</span></div><div class="social-comments"><?php foreach(($feed['comments']??[]) as $comment):?><div class="social-comment"><div class="mini-avatar"><?= strtoupper(substr($comment['nama']??'U',0,1)) ?></div><div><b><?= htmlspecialchars($comment['nama']) ?></b><p><?= nl2br(htmlspecialchars($comment['content'])) ?></p></div></div><?php endforeach;?></div>
+ <form class="ui form formComment" data-id="<?= (int)$feed['id'] ?>"><div class="ui fluid icon input"><input name="content" maxlength="1000" placeholder="Tulis komentar…"><i class="paper plane link icon"></i></div></form>
+</article>
+<?php endforeach;?><?php if(empty($feeds)):?><div class="ui placeholder segment"><div class="ui icon header"><i class="comments outline icon"></i>Belum ada posting. Mulai percakapan pertama.</div></div><?php endif;?>

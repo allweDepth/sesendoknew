@@ -16,6 +16,7 @@ class WallchatModule {
 	init() {
 		this.bindEvents();
 		this.initDropdown();
+		$(document).off("click.wallComposer", "#openComposer").on("click.wallComposer", "#openComposer", ()=>$("#formPost").slideToggle(180).find("textarea").trigger("focus"));
 	}
 
 	bindEvents() {
@@ -25,19 +26,19 @@ class WallchatModule {
 			e.preventDefault();
 
 			const content = $('#formPost textarea[name="content"]').val();
-			const token = $("#csrf_token").val();
+			const data = new FormData(e.currentTarget);
 			window.Ajax.request({url:"/wallchat/store",method:"POST",
-				data: {
-					content: content,
-				},
+				data, processData:false, contentType:false,
 
 				success: () => {
-					$("#formPost textarea").val("");
+					e.currentTarget.reset();$("#formPost").slideUp(150);
 
 					this.reloadFeed();
 				},
 			});
 		});
+		$(document).off("click", ".btnEditFeed").on("click", ".btnEditFeed", e=>{const b=$(e.currentTarget);$("#editPostForm [name=id]").val(b.data("id"));$("#editPostForm [name=content]").val(b.attr("data-content"));$("#editPostForm [name=theme]").dropdown("set selected",b.data("theme")||"default");$("#editPostModal").modal("show");});
+		$(document).off("click", "#savePostEdit").on("click", "#savePostEdit", ()=>window.Ajax.request({url:"/wallchat/update",method:"POST",data:$("#editPostForm").serialize(),success:()=>{$("#editPostModal").modal("hide");this.reloadFeed();}}));
 		// komentar feed
 		$(document).off("submit", ".formComment");
 
