@@ -174,8 +174,56 @@ PERUBAHAN:
 
       return $this->executeAction($action, $tbl, $table, $profile, $request);
     } catch (\Throwable $e) {
-      return JsonResponse::error($e->getMessage());
+      return JsonResponse::error(
+        $this->explainThrowable($e, (string)($request['action'] ?? ''), (string)($request['tbl'] ?? '')),
+        $e instanceof InvalidArgumentException ? 422 : 400
+      );
     }
+  }
+
+  private function explainThrowable(\Throwable $e, string $action, string $profileKey): string
+  {
+    $operation = [
+      'add' => 'menambah', 'add_json' => 'menambah',
+      'edit' => 'mengubah', 'edit_json' => 'mengubah',
+      'delete' => 'menghapus', 'list' => 'memuat',
+      'dropdown' => 'memuat pilihan', 'import' => 'mengimpor',
+      'export' => 'mengekspor',
+    ][$action] ?? 'memproses';
+    $target = $profileKey !== '' ? " pada modul {$profileKey}" : '';
+
+    if ($e instanceof PDOException) {
+      $sqlState = (string)$e->getCode();
+      $driverCode = (int)($e->errorInfo[1] ?? 0);
+      if ($sqlState === '23000' || in_array($driverCode, [1062, 1451, 1452], true)) {
+        if ($driverCode === 1062) {
+          return "Gagal {$operation}{$target}: data dengan kode/nomor yang sama sudah tersedia.";
+        }
+        if ($driverCode === 1451) {
+          return "Gagal {$operation}{$target}: data masih dipakai oleh data lain dan tidak boleh dihapus.";
+        }
+        if ($driverCode === 1452) {
+          return "Gagal {$operation}{$target}: referensi induk yang dipilih tidak ditemukan atau sudah tidak aktif.";
+        }
+        return "Gagal {$operation}{$target}: relasi atau nilai unik database tidak terpenuhi.";
+      }
+      if ($sqlState === '22001' || $driverCode === 1406) {
+        return "Gagal {$operation}{$target}: salah satu isian melebihi panjang maksimum kolom database.";
+      }
+      if ($sqlState === '22007' || in_array($driverCode, [1292, 1366], true)) {
+        return "Gagal {$operation}{$target}: format tanggal, angka, atau tipe nilai tidak sesuai.";
+      }
+      if ($sqlState === '42S22' || $driverCode === 1054) {
+        return "Gagal {$operation}{$target}: konfigurasi aplikasi merujuk kolom database yang tidak tersedia.";
+      }
+      if ($sqlState === '42S02' || $driverCode === 1146) {
+        return "Gagal {$operation}{$target}: tabel database yang dibutuhkan belum tersedia.";
+      }
+      return "Gagal {$operation}{$target}: database menolak operasi (SQLSTATE {$sqlState}).";
+    }
+
+    $message = trim($e->getMessage());
+    return $message !== '' ? "Gagal {$operation}{$target}: {$message}" : "Gagal {$operation}{$target} tanpa keterangan dari sistem.";
   }
 
   //=========================================================

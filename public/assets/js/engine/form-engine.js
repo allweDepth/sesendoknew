@@ -483,6 +483,7 @@ class FormEngine {
 		// ======================================================
 		if (!form.length) {
 			console.error("Form selector tidak ditemukan:", this.formSelector); // // debug
+			Toast.error("Form tidak ditemukan. Tutup panel, muat ulang halaman, lalu coba kembali.");
 			this.isSubmitting = false; // // reset flag
 			return;
 		}
@@ -496,6 +497,9 @@ class FormEngine {
 			this.isSubmitting = false; // // reset jika tidak valid
 			return; // // stop submit
 		}
+
+		const submitButtons = form.closest('.sidebar, .modal').find('.btnSubmit');
+		submitButtons.addClass('loading disabled').prop('disabled', true);
 
 		// ======================================================
 		// NORMALISASI CALENDAR KOSONG
@@ -568,7 +572,8 @@ class FormEngine {
 			processData: false, // // WAJIB untuk FormData
 			contentType: false, // // WAJIB untuk FormData
 
-			success: () => {
+			success: (res) => {
+				if (!res || res.success !== true) return;
 				this.isSubmitting = false; // // reset flag submit
 
 				// ==================================================
@@ -583,8 +588,9 @@ class FormEngine {
 				$(document).trigger(`form:success.${reloadTable}.table`); // // trigger refresh table
 			},
 
-			error: () => {
+			error: (response) => {
 				this.isSubmitting = false; // // reset flag submit
+				this.renderBackendErrors(form, response);
 
 				// ==================================================
 				// RESTORE CALENDAR JUGA SAAT ERROR
@@ -593,7 +599,31 @@ class FormEngine {
 					$(el).prop("disabled", false); // // restore input
 				});
 			},
+			complete: () => {
+				this.isSubmitting = false;
+				submitButtons.removeClass('loading disabled').prop('disabled', false);
+			},
 		});
+	}
+
+	renderBackendErrors(form, response = {}) {
+		const errors = response?.errors || {};
+		const messages = [];
+		form.find('.field').removeClass('error');
+		if (errors && typeof errors === 'object') {
+			Object.entries(errors).forEach(([name, value]) => {
+				const items = Array.isArray(value) ? value : [value];
+				items.forEach(item => item && messages.push(`${name}: ${item}`));
+				form.find(`[name="${name}"]`).closest('.field').addClass('error');
+			});
+		}
+		if (!messages.length && response?.message) messages.push(response.message);
+		const box = form.find('.ui.error.message');
+		if (box.length && messages.length) {
+			box.html(`<div class="header">Data tidak dapat disimpan</div><ul class="list">${messages.map(message => `<li>${$('<div>').text(message).html()}</li>`).join('')}</ul>`).show();
+		}
+		const firstError = form.find('.field.error').first();
+		if (firstError.length) firstError[0].scrollIntoView({behavior:'smooth', block:'center'});
 	}
 
 	/**
@@ -1272,7 +1302,7 @@ data-filter='${JSON.stringify(prop.filter || {})}' // // 🔥 filter server
 			// ========================================================
 			// VALIDATION FAILED
 			// ========================================================
-			onFailure: function (errors) {
+				onFailure: function (errors) {
 				const form = $(this);
 
 				const errorBox = form.find(".ui.error.message");
@@ -1288,6 +1318,7 @@ data-filter='${JSON.stringify(prop.filter || {})}' // // 🔥 filter server
 
 					errorBox.html(html).show();
 				}
+				Toast.error(`Data belum lengkap: ${errors.join("; ")}`);
 
 				// scroll ke field error pertama
 				const firstError = form.find(".field.error").first();
