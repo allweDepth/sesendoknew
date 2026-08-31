@@ -1006,6 +1006,7 @@ UIConfig.hspk = {
 };
 UIConfig.asn = {
 	layout: { columns: 1 },
+	validation: { nama: { required: true }, nip: { required: true } },
 	form: {
 		elements: [
 			{ tag: "field", prop: { label: "Nama Lengkap", name: "nama" } },
@@ -1053,6 +1054,46 @@ UIConfig.asn = {
 		],
 	},
 };
+
+UIConfig.pppk = {
+	layout: { columns: 1 }, validation: { nama: { required: true }, nip: { required: true } },
+	form: { elements: [
+		{ tag: "field", prop: { label: "Nama Lengkap", name: "nama" } },
+		{ tag: "fieldAction", prop: { label: "Nomor Induk PPPK", name: "nip" } },
+		{ tag: "field", prop: { label: "Jabatan", name: "jabatan" } },
+		{ tag: "field", prop: { label: "Unit Kerja", name: "unit_kerja" } },
+		{ tag: "field", prop: { label: "Status Kepegawaian", name: "status_kepeg" } },
+		{ tag: "fieldHidden", prop: { name: "jenis_kepeg", default: "PPPK" } },
+		{ tag: "fieldTextarea", prop: { label: "Keterangan", name: "keterangan" } }
+	] }
+};
+
+const pegawaiDropdown = { source: "asn", valueField: "id", textField: "nama", search: true };
+UIConfig.riwayat_jabatan = { layout: { columns: 1 }, validation: { pegawai_id:{required:true},jabatan:{required:true},tmt:{required:true} }, form:{elements:[
+	{tag:"fieldDropdown",prop:{label:"Pegawai",name:"pegawai_id",...pegawaiDropdown}}, {tag:"field",prop:{label:"Nomor SK",name:"nomor_sk"}},
+	{tag:"field",prop:{label:"Jabatan",name:"jabatan"}}, {tag:"field",prop:{label:"Unit Kerja",name:"unit_kerja"}},
+	{tag:"fieldCalendar",prop:{label:"TMT",name:"tmt",calendarType:"date"}}, {tag:"fieldCalendar",prop:{label:"Tanggal Selesai",name:"tanggal_selesai",calendarType:"date"}},
+	{tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan"}}
+]}};
+UIConfig.riwayat_pangkat = { layout: { columns: 1 }, validation: { pegawai_id:{required:true},golongan:{required:true},tmt:{required:true} }, form:{elements:[
+	{tag:"fieldDropdown",prop:{label:"Pegawai",name:"pegawai_id",...pegawaiDropdown}}, {tag:"field",prop:{label:"Nomor SK",name:"nomor_sk"}},
+	{tag:"field",prop:{label:"Golongan",name:"golongan"}}, {tag:"field",prop:{label:"Ruang",name:"ruang"}},
+	{tag:"fieldCalendar",prop:{label:"TMT",name:"tmt",calendarType:"date"}}, {tag:"field",prop:{label:"Masa Kerja (tahun)",name:"masa_kerja_tahun",type:"number"}},
+	{tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan"}}
+]}};
+UIConfig.cuti = { layout: { columns: 1 }, validation: { pegawai_id:{required:true},jenis_cuti:{required:true},tanggal_mulai:{required:true},tanggal_selesai:{required:true} }, form:{elements:[
+	{tag:"fieldDropdown",prop:{label:"Pegawai",name:"pegawai_id",...pegawaiDropdown}}, {tag:"field",prop:{label:"Nomor Surat",name:"nomor_surat"}},
+	{tag:"fieldDropdown",prop:{label:"Jenis Cuti",name:"jenis_cuti",options:[{value:"tahunan",text:"Cuti Tahunan"},{value:"sakit",text:"Cuti Sakit"},{value:"melahirkan",text:"Cuti Melahirkan"},{value:"alasan_penting",text:"Alasan Penting"}]}},
+	{tag:"fieldCalendar",prop:{label:"Tanggal Mulai",name:"tanggal_mulai",calendarType:"date"}}, {tag:"fieldCalendar",prop:{label:"Tanggal Selesai",name:"tanggal_selesai",calendarType:"date"}},
+	{tag:"field",prop:{label:"Jumlah Hari",name:"jumlah_hari",type:"number"}}, {tag:"fieldDropdown",prop:{label:"Status",name:"status",options:[{value:"diajukan",text:"Diajukan"},{value:"disetujui",text:"Disetujui"},{value:"ditolak",text:"Ditolak"},{value:"selesai",text:"Selesai"}]}},
+	{tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan"}}
+]}};
+UIConfig.sk_pegawai = { layout: { columns: 1 }, validation: { pegawai_id:{required:true},nomor_sk:{required:true},jenis_sk:{required:true} }, form:{elements:[
+	{tag:"fieldDropdown",prop:{label:"Pegawai",name:"pegawai_id",...pegawaiDropdown}}, {tag:"field",prop:{label:"Nomor SK",name:"nomor_sk"}},
+	{tag:"fieldCalendar",prop:{label:"Tanggal SK",name:"tanggal_sk",calendarType:"date"}}, {tag:"field",prop:{label:"Jenis SK",name:"jenis_sk"}},
+	{tag:"fieldTextarea",prop:{label:"Tentang",name:"tentang"}}, {tag:"fieldFile",prop:{label:"Dokumen SK (PDF)",name:"file",accept:".pdf"}},
+	{tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan"}}
+]}};
 
 UIConfig.global_print = {
 	layout: { columns: 2 },

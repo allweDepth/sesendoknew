@@ -6,9 +6,11 @@ class KepegawaianController extends Controller
 {
     private $allowedTables = [
         'asn',
-        'sk_asn',
-        'register_surat',
-        'tata_naskah'
+        'pppk',
+        'riwayat_jabatan',
+        'riwayat_pangkat',
+        'cuti',
+        'sk_pegawai'
     ];
 
     public function index()

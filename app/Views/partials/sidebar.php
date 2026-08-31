@@ -115,13 +115,22 @@
       </div>
     </div>
 
-    <!-- PERENCANAAN DAN ANGGARAN (urutan dokumen resmi) -->
+    <!-- PERENCANAAN (dokumen sumber) -->
     <div class="item">
-      <div class="title"><i class="dropdown icon"></i> Perencanaan &amp; Anggaran</div>
+      <div class="title"><i class="dropdown icon"></i> <i class="project diagram icon"></i> Perencanaan</div>
       <div class="content">
         <a class="item" href="/renstra" data-spa="client" data-title="Anggaran/Renstra"><i class="purple sitemap icon"></i> RENSTRA</a>
         <a class="item" href="/rkpd" data-spa="client" data-title="Anggaran/RKPD"><i class="blue calendar check icon"></i> RKPD</a>
         <a class="item" href="/renja" data-spa="client" data-title="Anggaran/Renja"><i class="violet tasks icon"></i> RENJA</a>
+      </div>
+    </div>
+
+    <!-- PENGANGGARAN (dimulai dari daftar sub kegiatan) -->
+    <div class="item">
+      <div class="title"><i class="dropdown icon"></i> <i class="shopping cart icon"></i> Penganggaran</div>
+      <div class="content">
+        <a class="item" href="/pengaturan" data-spa="client" data-title="Penganggaran/Jadwal"><i class="clock outline icon"></i> Jadwal Penganggaran</a>
+        <div class="item"><strong><i class="list alternate outline icon"></i> Sub Kegiatan Belanja</strong></div>
         <a class="item" href="/rka" data-spa="client" data-title="Anggaran/RKA"><i class="calculator icon"></i> RKA</a>
         <a class="item" href="/dpa" data-spa="client" data-title="Anggaran/DPA"><i class="yellow file alternate icon"></i> DPA</a>
         <a class="item" href="/rkpd_perubahan" data-spa="client" data-title="Anggaran/RKPD Perubahan"><i class="orange sync icon"></i> RKPD Perubahan</a>
