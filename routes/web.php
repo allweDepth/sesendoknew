@@ -98,6 +98,8 @@ return [
     |--------------------------------------------------------------------------
     */
   '/standar_harga'        => ['StandarHargaController', 'index'],
+  '/standar_harga/export_pdf' => ['StandarHargaController', 'exportPdf'],
+  '/standar_harga/copy_year' => ['StandarHargaController', 'copyYear'],
 
   /*
     |--------------------------------------------------------------------------

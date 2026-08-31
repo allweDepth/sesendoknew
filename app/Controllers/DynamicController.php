@@ -8,6 +8,8 @@ require_once __DIR__ . '/../Services/JsonResponse.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Shared\Date as SpreadsheetDate;
 
 class DynamicController
 {
@@ -110,6 +112,7 @@ class DynamicController
 
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setTitle(substr(preg_replace('/[\\\\\/?*\[\]:]/', '-', $req ?: $tableKey), 0, 31));
 
     if (!empty($data)) {
       $headers = array_keys($data[0]);
@@ -130,9 +133,26 @@ class DynamicController
     $row = 2;
     foreach ($data as $item) {
       $colIndex = 1;
-      foreach ($item as $value) {
+      foreach ($item as $field => $value) {
         $col = Coordinate::stringFromColumnIndex($colIndex);
-        $sheet->setCellValue($col . $row, $value);
+        $cell = $col . $row;
+        $fieldName = strtolower((string)$field);
+
+        if (preg_match('/(^kode$|^kd_|_kode$|^nip$|^npwp$|nomor)/', $fieldName)) {
+          $sheet->setCellValueExplicit($cell, (string)$value, DataType::TYPE_STRING);
+        } elseif ($value !== null && $value !== '' && is_numeric($value)) {
+          $sheet->setCellValue($cell, (float)$value);
+          if (preg_match('/harga|nilai|pagu|anggaran|total|jumlah/', $fieldName)) {
+            $sheet->getStyle($cell)->getNumberFormat()->setFormatCode('#,##0.00');
+          }
+        } elseif ($value && preg_match('/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}:\d{2})?$/', (string)$value)) {
+          $sheet->setCellValue($cell, SpreadsheetDate::PHPToExcel(new DateTime((string)$value)));
+          $sheet->getStyle($cell)->getNumberFormat()->setFormatCode(
+            str_contains((string)$value, ' ') ? 'dd/mm/yyyy hh:mm' : 'dd/mm/yyyy'
+          );
+        } else {
+          $sheet->setCellValue($cell, $value);
+        }
         $colIndex++;
       }
       $row++;
@@ -145,6 +165,12 @@ class DynamicController
     $fileName = preg_replace('/[^a-zA-Z0-9_-]/', '', $tableKey) . $safeSuffix . '.xlsx';
     header('Content-Disposition: attachment; filename="' . $fileName . '"');
     header('Cache-Control: max-age=0');
+
+    $sheet->setAutoFilter("A1:{$lastColumn}1");
+    $sheet->freezePane('A2');
+    foreach (range(1, $totalColumns) as $columnIndex) {
+      $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($columnIndex))->setAutoSize(true);
+    }
 
     $writer = new Xlsx($spreadsheet);
     $writer->save('php://output');

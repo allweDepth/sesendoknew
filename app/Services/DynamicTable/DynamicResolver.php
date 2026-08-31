@@ -46,7 +46,7 @@ class DynamicResolver
   // =======================================
   // RESOLVE PERATURAN (TABLE AWARE)
   // =======================================
-  public function resolvePeraturan(string $table, array $data): array
+  public function resolvePeraturan(string $table, array $data, ?string $profileKey = null): array
   {
     $columns = $this->getTableColumns($table);
 
@@ -58,7 +58,7 @@ class DynamicResolver
       return $data;
     }
 
-    $data['peraturan_id'] = $this->resolvePeraturanId($table);
+    $data['peraturan_id'] = $this->resolvePeraturanId($table, $profileKey);
 
     return $data;
   }
@@ -66,7 +66,7 @@ class DynamicResolver
   // =======================================
   // CORE: PERATURAN ID (PINDAH KE SINI 🔥)
   // =======================================
-  public function resolvePeraturanId(string $table): int
+  public function resolvePeraturanId(string $table, ?string $profileKey = null): int
   {
     $pengaturan = $this->config->getPengaturanAktif();
 
@@ -75,12 +75,12 @@ class DynamicResolver
     }
 
     // cari profileKey dari table
-    $profileKey = null;
-
-    foreach ($this->profiles as $key => $profile) {
-      if (($profile['table'] ?? null) === $table) {
-        $profileKey = $key;
-        break;
+    if ($profileKey === null) {
+      foreach ($this->profiles as $key => $profile) {
+        if (($profile['table'] ?? null) === $table) {
+          $profileKey = $key;
+          break;
+        }
       }
     }
 
@@ -112,7 +112,7 @@ class DynamicResolver
   // =======================================
   // RESOLVE FIELD (WHERE ENGINE)
   // =======================================
-  public function resolveField(string $field, $value, string $table, array $user = [])
+  public function resolveField(string $field, $value, string $table, array $user = [], ?string $profileKey = null)
   {
     if ($value === 'user') {
 
@@ -121,7 +121,7 @@ class DynamicResolver
       }
 
       if ($field === 'peraturan_id') {
-        return $this->resolvePeraturanId($table);
+        return $this->resolvePeraturanId($table, $profileKey);
       }
 
       if ($field === 'periode_id') {

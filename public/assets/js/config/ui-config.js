@@ -955,40 +955,53 @@ UIConfig.aset = {
 
 UIConfig.sbu = {
 	layout: { columns: 1 },
+	validation: {
+		kode: { required: true },
+		uraian: { required: true },
+		satuan_id: { required: true },
+		harga: { required: true },
+	},
 	form: {
 		elements: [
-			{ tag: "field", prop: { label: "Kode Aset", name: "kd_aset" } },
-			{ tag: "field", prop: { label: "Kode Akun", name: "kd_akun" } },
-			{ tag: "field", prop: { label: "Uraian Barang", name: "uraian_barang" } },
+			{ tag: "field", prop: { label: "Kode", name: "kode" } },
+			{ tag: "field", prop: { label: "Kode Aset", name: "kode_aset" } },
+			{ tag: "field", prop: { label: "Kelompok Barang", name: "kelompok_barang" } },
+			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
 			{ tag: "field", prop: { label: "Spesifikasi", name: "spesifikasi" } },
 			{
 				tag: "fieldDropdown",
-				prop: { label: "Satuan", name: "satuan", source: "satuan" },
+				prop: { label: "Satuan", name: "satuan_id", source: "satuan", table: false },
 			},
+			{ tag: "field", prop: { label: "Satuan", name: "satuan", readonly: true } },
 			{
 				tag: "field",
 				prop: {
 					label: "Harga Satuan",
-					name: "harga_satuan",
+					name: "harga",
 					format: "currency",
 				},
 			},
+			{ tag: "field", prop: { label: "TKDN (%)", name: "tkdn", type: "number" } },
+			{ tag: "fieldTextarea", prop: { label: "Keterangan", name: "keterangan" } },
 		],
 	},
 };
 
 UIConfig.ssh = {
 	layout: { columns: 1 },
+	validation: { ...UIConfig.sbu.validation },
 	form: { elements: [...UIConfig.sbu.form.elements] },
 };
 
 UIConfig.asb = {
 	layout: { columns: 1 },
+	validation: { ...UIConfig.sbu.validation },
 	form: { elements: [...UIConfig.sbu.form.elements] },
 };
 
 UIConfig.hspk = {
 	layout: { columns: 1 },
+	validation: { ...UIConfig.sbu.validation },
 	form: { elements: [...UIConfig.sbu.form.elements] },
 };
 UIConfig.asn = {
@@ -1154,9 +1167,10 @@ UIConfig.rekening_kegiatan = UIConfig.rekening_kegiatan || {
 	form: { elements: [] },
 };
 UIConfig.rekening_kegiatan.import = UIConfig.__importFactory("rekening_kegiatan", "11. Referensi Hierarki.xlsx");
-UIConfig.sbu.import = UIConfig.__importFactory("sbu_neo", "17. sbu 2024.xlsx");
-
-UIConfig.ssh.import = UIConfig.__importFactory("ssh_neo", "12. ssh 2024.xlsx");
+UIConfig.sbu.import = UIConfig.__importFactory("sbu", null);
+UIConfig.ssh.import = UIConfig.__importFactory("ssh", null);
+UIConfig.hspk.import = UIConfig.__importFactory("hspk", null);
+UIConfig.asb.import = UIConfig.__importFactory("asb", null);
 UIConfig.aset.import = UIConfig.__importFactory("aset_neo", null); //DEFAULT GLOBAL TANPA TEMPLATE
 /*
 |--------------------------------------------------------------------------

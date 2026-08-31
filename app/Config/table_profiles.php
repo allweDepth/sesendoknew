@@ -2092,6 +2092,80 @@ $profiles = [
     ]
   ],
 ];
+
+/* Canonical unified Standar Harga profiles (master_biaya). */
+$standarHargaProfile = static function (string $tipe): array {
+  return [
+    'table' => 'master_biaya',
+    'primary_key' => 'id',
+    'allowed_roles' => ['super_admin', 'admin_wilayah'],
+    'auto_session' => ['kd_wilayah', 'tahun', 'peraturan_id'],
+    'where' => ['tipe' => $tipe, 'is_deleted' => 0],
+    'soft_delete' => [
+      'field' => 'is_deleted',
+      'value_active' => 0,
+      'value_deleted' => 1
+    ],
+    'not_duplicate' => ['tipe', 'kode', 'kd_wilayah', 'tahun', 'peraturan_id'],
+    'validation' => [
+      'kode' => ['required'],
+      'uraian' => ['required'],
+      'satuan_id' => ['required', 'numeric'],
+      'harga' => ['required', 'numeric']
+    ],
+    'dropdown' => [
+      'value' => 'id',
+      'label' => 'uraian',
+      'searchable' => ['kode', 'uraian'],
+      'order_by' => 'uraian ASC'
+    ],
+    'join' => [[
+      'table' => 'satuan_neo',
+      'on' => 'satuan_neo.id = master_biaya.satuan_id'
+    ]],
+    'import' => [
+      'enabled' => true,
+      'allowed_roles' => ['super_admin', 'admin_wilayah']
+    ],
+    'import_header_map' => ['satuan' => 'satuan'],
+    'import_relations' => [
+      'satuan' => [
+        'table' => 'satuan_neo',
+        'lookup' => 'uraian',
+        'id' => 'id',
+        'store' => 'satuan_id',
+        'scope' => ['peraturan_id' => 'user']
+      ]
+    ],
+    'modes' => [
+      'default' => [
+        'select' => [
+          'master_biaya.id', 'master_biaya.kode', 'master_biaya.kode_aset',
+          'master_biaya.kelompok_barang', 'master_biaya.uraian',
+          'master_biaya.spesifikasi', 'satuan_neo.uraian AS satuan',
+          'master_biaya.harga', 'master_biaya.tkdn', 'master_biaya.keterangan'
+        ],
+        'searchable' => [
+          'master_biaya.kode', 'master_biaya.kode_aset',
+          'master_biaya.kelompok_barang', 'master_biaya.uraian',
+          'master_biaya.spesifikasi'
+        ],
+        'order_by' => 'master_biaya.kode ASC',
+        'where' => ['tahun' => 'user', 'peraturan_id' => 'user']
+      ],
+      'edit' => [
+        'select' => ['master_biaya.*'],
+        'searchable' => ['master_biaya.kode', 'master_biaya.uraian'],
+        'order_by' => 'master_biaya.id ASC'
+      ]
+    ]
+  ];
+};
+
+foreach (['ssh', 'hspk', 'asb', 'sbu'] as $standarHargaType) {
+  $profiles[$standarHargaType] = $standarHargaProfile($standarHargaType);
+}
+
 $profiles['akun_neo'] = $profiles['akun'];
 // $profiles['sub_kegiatan_ref'] = $profiles['sub_kegiatan'];
 // $profiles['sub_kegiatan_ref']['module_alias'] = 'sub_kegiatan_ref';

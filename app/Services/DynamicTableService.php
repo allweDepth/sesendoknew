@@ -85,6 +85,7 @@ INTERNAL CACHE (ANTI DOUBLE QUERY)
   private static array $schemaCache = [];
   private ?array $pengaturanAktifCache = null;
   private ?array $periodeAktifCache = null;
+  private ?string $activeProfileKey = null;
   // tambahan pemisahan class
   private $importHelper; // lazy //
   private $meta; // lazy //
@@ -158,6 +159,8 @@ PERUBAHAN:
       if (!$tbl || !isset($this->profiles[$tbl])) {
         return JsonResponse::error("Tabel tidak terdaftar");
       }
+
+      $this->activeProfileKey = $tbl;
 
       $profile = $this->profiles[$tbl];
 
@@ -584,6 +587,10 @@ INSERT (FIXED STABLE VERSION v3.1)
       }
     }
 
+    if ($table === 'master_biaya' && in_array($this->activeProfileKey, ['ssh', 'hspk', 'asb', 'sbu'], true)) {
+      $filtered['tipe'] = $this->activeProfileKey;
+    }
+
     //=====================================================
     // DEBUG JIKA FILTERED KOSONG
     // Tujuan:
@@ -754,7 +761,7 @@ INSERT (FIXED STABLE VERSION v3.1)
     /* =====================================================
 6️⃣ PERATURAN RESOLUTION (GLOBAL CLEAN)
 ===================================================== */
-    $filtered = $this->resolver()->resolvePeraturan($table, $filtered);
+    $filtered = $this->resolver()->resolvePeraturan($table, $filtered, $this->activeProfileKey);
 
     /* =====================================================
 🔥 LOOKUP RESOLUTION
@@ -1003,7 +1010,7 @@ IGNORE SYSTEM FIELD
     if ($table === 'master_biaya_akun') {
       $filtered = $this->inheritMasterBiayaScope($filtered);
     }
-    $filtered = $this->resolver()->resolvePeraturan($table, $filtered);
+    $filtered = $this->resolver()->resolvePeraturan($table, $filtered, $this->activeProfileKey);
     $filtered = $this->resolver()->resolvePeriode($table, $filtered);
 
     /* =====================================================
@@ -1346,7 +1353,7 @@ DELETE (FULL IDENTIK LOGIC ASLI)
           $columns,
           $table,
           fn($field, $value, $table) =>
-          $this->resolver()->resolveField($field, $value, $table, $this->user)
+          $this->resolver()->resolveField($field, $value, $table, $this->user, $this->activeProfileKey)
         );
 
       if ($whereSql) {
@@ -1369,7 +1376,7 @@ DELETE (FULL IDENTIK LOGIC ASLI)
           $columns,
           $table,
           fn($field, $value, $table) =>
-          $this->resolver()->resolveField($field, $value, $table, $this->user)
+          $this->resolver()->resolveField($field, $value, $table, $this->user, $this->activeProfileKey)
         );
 
       if ($whereSql) {
@@ -1655,6 +1662,36 @@ GET ALL RAW DATA (UNTUK EXPORT / REPORT)
 
     list($userWhere, $userParams) = $this->applyUserScope($table);
 
+    $joinSql = '';
+    if (!empty($profile['join'])) {
+      foreach ($profile['join'] as $join) {
+        if (!empty($join['table']) && !empty($join['on'])) {
+          $joinSql .= " LEFT JOIN `{$join['table']}` ON {$join['on']} ";
+        }
+      }
+      $userWhere = array_map(
+        fn($condition) => $this->qualifyBaseTableColumns($condition, $table),
+        $userWhere
+      );
+    }
+
+    $profileWhere = array_merge($profile['where'] ?? [], $modeConfig['where'] ?? []);
+    if ($profileWhere) {
+      list($extraWhere, $extraParams) = $this->meta()->buildWhere(
+        $profileWhere,
+        $this->getTableColumns($table),
+        $table,
+        fn($field, $value, $targetTable) =>
+          $this->resolver()->resolveField($field, $value, $targetTable, $this->user, $this->activeProfileKey)
+      );
+      if ($extraWhere) {
+        $userWhere[] = !empty($profile['join'])
+          ? $this->qualifyBaseTableColumns($extraWhere, $table)
+          : $extraWhere;
+        $userParams = array_merge($userParams, $extraParams);
+      }
+    }
+
     $where = !empty($userWhere)
       ? 'WHERE ' . implode(' AND ', $userWhere)
       : '';
@@ -1664,8 +1701,9 @@ GET ALL RAW DATA (UNTUK EXPORT / REPORT)
     $query = "
         SELECT $selectClause
         FROM `$table`
+        $joinSql
         $where
-        ORDER BY `$primaryKey` DESC
+        ORDER BY `$table`.`$primaryKey` DESC
     ";
 
     return $this->db->query($query, $userParams)->fetchAll();
@@ -2108,6 +2146,11 @@ BUILD RULE DARI SCHEMA DATABASE
   ========================================================= */
   public function getProfileByTable(string $table): array
   {
+    if ($this->activeProfileKey !== null
+      && isset($this->profiles[$this->activeProfileKey])
+      && ($this->profiles[$this->activeProfileKey]['table'] ?? null) === $table) {
+      return $this->profiles[$this->activeProfileKey];
+    }
     foreach ($this->profiles as $profile) {
       if (($profile['table'] ?? '') === $table) {
         return $profile;
@@ -2747,7 +2790,7 @@ LIMIT 1",
     $peraturan_id = null;
 
     if (in_array('peraturan_id', $columns)) {
-      $peraturan_id = $this->resolver()->resolvePeraturanId($table);
+      $peraturan_id = $this->resolver()->resolvePeraturanId($table, $tbl);
     }
 
 
@@ -2776,7 +2819,7 @@ LIMIT 1",
     // ======================================================
 
     // mapping header Excel → kolom SQL
-    $columnMap = $this->buildColumnMap($table);
+    $columnMap = $this->buildColumnMap($table, $profile);
 
 
     // ======================================================
@@ -2803,6 +2846,7 @@ LIMIT 1",
       $columnMap,
       $columns,
       $table,
+      $tbl,
       $kd_wilayah,
       $tahun,
       $peraturan_id,
@@ -2913,7 +2957,11 @@ LIMIT 1",
           // RESOLVE RELATIONS
           // ==================================================
 
-          $profile = $this->profiles[$table] ?? [];
+          $profile = $this->profiles[$tbl] ?? [];
+
+          if ($table === 'master_biaya' && in_array($tbl, ['ssh', 'hspk', 'asb', 'sbu'], true)) {
+            $data['tipe'] = $tbl;
+          }
 
           $relations = $profile['import_relations'] ?? [];
 
@@ -3807,7 +3855,7 @@ LIMIT 1",
   // ======================================================
   // BUILD COLUMN MAP BERDASARKAN KOLOM TABEL
   // ======================================================
-  private function buildColumnMap(string $table): array
+  private function buildColumnMap(string $table, array $profile = []): array
   {
     // ambil semua kolom tabel dari database
     $columns = $this->getTableColumns($table);
@@ -3824,6 +3872,10 @@ LIMIT 1",
 
       // mapping normalisasi → nama kolom asli
       $map[$normalized] = $col;
+    }
+
+    foreach (($profile['import_header_map'] ?? []) as $header => $field) {
+      $map[$this->normalizeForCompare($header)] = $field;
     }
 
     // return mapping
@@ -3915,11 +3967,11 @@ WHERE is_deleted = 0
         // APPLY SCOPE (contoh: peraturan_id)
         // ==================================================
 
-        foreach ($scope as $s) {
-
-          $sql .= " AND $s = :$s";
-
-          $params[$s] = $data[$s] ?? null;
+        foreach ($scope as $field => $source) {
+          $sql .= " AND `$field` = ?";
+          $params[] = $source === 'user'
+            ? ($data[$field] ?? $this->user[$field] ?? null)
+            : $source;
         }
 
         // jalankan query
