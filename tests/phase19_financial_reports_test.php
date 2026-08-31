@@ -1,0 +1,7 @@
+<?php
+require_once __DIR__.'/../app/Core/DB.php';require_once __DIR__.'/../app/Services/KontrakRealisasiService.php';
+$db=DB::getInstance();$user=$db->query("SELECT * FROM user_sesendok_biila WHERE kd_wilayah='76.01' AND tahun=2026 AND disable=0 ORDER BY id LIMIT 1")->fetch();if(!$user)$user=['kd_wilayah'=>'76.01','kd_opd'=>'0','tahun'=>2026];$service=new KontrakRealisasiService($user);$ok=static function($v,$m){if(!$v)throw new RuntimeException('FAIL: '.$m);echo "PASS: $m\n";};
+$ok(count($service->monthlyFinancialRows())===12,'laporan bulanan selalu memuat 12 bulan');
+foreach(['spj','lra','bulanan_fisik_keuangan'] as $format){$file=$service->financialExcel($format);$reader=PhpOffice\PhpSpreadsheet\IOFactory::createReader('Xlsx');$reader->setIncludeCharts(true);$book=$reader->load($file);$sheet=$book->getActiveSheet();$ok($sheet->getCell('A1')->getValue()!==null,"Excel $format memiliki judul resmi");$ok($sheet->getCell('A4')->getValue()==='NO',"Excel $format memiliki header dan total");if($format!=='spj')$ok(count($sheet->getChartCollection())>=1,"Excel $format memiliki chart");unlink($file);$ok(str_starts_with($service->financialPdf($format),'%PDF'),"PDF $format valid");}
+$lra=$service->lraRows();if($lra){$ok(array_key_exists('pagu',$lra[0])&&array_key_exists('realisasi',$lra[0])&&array_key_exists('sisa',$lra[0]),'LRA memisahkan pagu, realisasi, dan sisa');}
+echo "PHASE 19 TESTS COMPLETE\n";

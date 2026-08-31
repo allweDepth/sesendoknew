@@ -10,7 +10,7 @@ selesai.
 | 1 | Kontrak–RAB, realisasi terpadu, schedule, Kurva S, bobot, dokumen | PASS | Phase 4/10; `KontrakRealisasiService`, tes phase4/10 |
 | 2 | Import/export RAB Excel dan PDF | PASS | Import Excel, export Excel+Kurva S, dan PDF RAB+jadwal lulus phase10 |
 | 3 | Template import seluruh Referensi, standar harga, perencanaan, anggaran, kontrak/RAB, realisasi, absensi | PASS | 33 profile wajib dan tabel fisiknya lulus phase12; template dibuat dari schema aktual |
-| 4 | SPJ, LRA, laporan bulanan fisik/keuangan Excel/PDF/chart | PARTIAL | SPJ dan LRA awal lulus phase10; seluruh varian resmi dan laporan bulanan belum lengkap |
+| 4 | SPJ, LRA, laporan bulanan fisik/keuangan Excel/PDF/chart | PASS | SPJ berbasis bukti, LRA pagu–realisasi–sisa, rekap fisik/keuangan 12 bulan, total, format berwarna, PDF, dan chart Excel lulus phase19 |
 | 5 | Modal multi-uraian difilter subkegiatan, search, limit | PASS | Wajib pilih subkegiatan, pencarian uraian/rekening/nilai, limit 50 |
 | 6 | Kop surat default OPD dan gambar upload | PASS | Form resmi, default OPD, logo kiri/kanan, gambar penuh, warna garis, MIME/size validation, dan render PDF lulus phase13 |
 | 7 | Tata naskah rapi dan mudah | PARTIAL | 25 jenis, workflow dan PDF lulus phase6/9; audit UX seluruh jenis masih diperlukan |
