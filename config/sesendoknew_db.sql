@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 25 Mar 2026 pada 13.51
--- Versi server: 12.2.2-MariaDB
--- Versi PHP: 8.5.4
+-- Waktu pembuatan: 31 Agu 2026 pada 03.48
+-- Versi server: 12.3.2-MariaDB
+-- Versi PHP: 8.5.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -4539,6 +4539,32 @@ CREATE TABLE `anggaran_template` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `anggaran_workflow_log`
+--
+
+CREATE TABLE `anggaran_workflow_log` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `source_table` varchar(30) NOT NULL,
+  `target_table` varchar(30) NOT NULL,
+  `tahun` year(4) NOT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
+  `jumlah_data` int(11) NOT NULL DEFAULT 0,
+  `username` varchar(100) NOT NULL,
+  `tgl_copy` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data untuk tabel `anggaran_workflow_log`
+--
+
+INSERT INTO `anggaran_workflow_log` (`id`, `source_table`, `target_table`, `tahun`, `kd_wilayah`, `kd_opd`, `jumlah_data`, `username`, `tgl_copy`) VALUES
+(1, 'rkpd_neo', 'renja_neo', '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 'phase3_test', '2026-08-31 03:11:11'),
+(2, 'rkpd_neo', 'renja_neo', '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 'phase3_test', '2026-08-31 03:25:37');
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `aset_neo`
 --
 
@@ -8675,6 +8701,8 @@ CREATE TABLE `daftar_paket_neo` (
   `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `kd_opd` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tahun` year(4) NOT NULL,
+  `sumber_tahap` enum('dpa','dppa') DEFAULT NULL,
+  `anggaran_id` bigint(20) DEFAULT NULL,
   `uraian` text NOT NULL,
   `id_uraian` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`id_uraian`)),
   `kd_sub_keg` text NOT NULL,
@@ -8736,6 +8764,14 @@ CREATE TABLE `daftar_paket_neo` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
+--
+-- Dumping data untuk tabel `daftar_paket_neo`
+--
+
+INSERT INTO `daftar_paket_neo` (`id`, `kd_rup`, `kd_paket`, `kd_wilayah`, `kd_opd`, `tahun`, `sumber_tahap`, `anggaran_id`, `uraian`, `id_uraian`, `kd_sub_keg`, `volume`, `satuan`, `harga_satuan`, `jumlah`, `pagu`, `metode_pengadaan`, `metode_pemilihan`, `pengadaan_penyedia`, `jns_kontrak`, `renc_output`, `output`, `id_rekanan`, `nama_rekanan`, `nama_ppk`, `nip_ppk`, `nama_pptk`, `waktu_pelaksanaan`, `waktu_pemeliharaan`, `nip_pptk`, `tgl_kontrak`, `no_kontrak`, `tgl_persiapan_kont`, `no_persiapan_kont`, `tgl_spmk`, `no_spmk`, `addendum`, `tgl_undangan`, `no_undangan`, `tgl_penawaran`, `no_penawaran`, `tgl_nego`, `no_nego`, `tgl_sppbj`, `no_sppbj`, `tgl_pho`, `no_pho`, `tgl_fho`, `no_fho`, `username_insert`, `tgl_insert`, `tgl_update`, `username_update`, `keterangan`, `file_kontrak`, `file_addendum`, `file_pho`, `file_fho`, `file`, `file_laporan`, `file_dokumentasi0`, `file_dokumentasi50`, `file_dokumentasi100`, `disable`, `setujui`, `kunci`, `is_deleted`) VALUES
+(1, 'RUP-P4-A', 'PAKET-P4-A', '76.01', '1.03.0.00.0.00.01.0000', '2026', 'dpa', 2, 'TRACE_TEST Paket A dari DPA', '[]', 'X.XX.1.2.01.1', 1, 'Paket', 225000000.000000000000, 225000000.000000000000, 240000000.000000000000, 'Pengadaan Barang/Jasa', 'Tender', 'Penyedia', 'Harga Satuan', NULL, NULL, 190, 'TRACE_TEST PT Infrastruktur Maju', 'PPK TRACE TEST', NULL, NULL, 120, NULL, NULL, '2026-02-01', 'KONTRAK/P4/A', NULL, NULL, '2026-02-05 00:00:00', 'SPMK/P4/A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TRACE_TEST_PHASE4', '2026-08-31 11:24:56', '2026-08-31 11:24:56', NULL, 'TRACE_TEST Phase 4 Paket A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 1, 1, 0),
+(2, 'RUP-P4-B', 'PAKET-P4-B', '76.01', '1.03.0.00.0.00.01.0000', '2026', 'dppa', 3, 'TRACE_TEST Paket B dari DPPA', '[]', 'X.XX.1.2.01.2', 1, 'Paket', 175000000.000000000000, 175000000.000000000000, 190000000.000000000000, 'Pengadaan Langsung', 'Pengadaan Langsung', 'Penyedia', 'Lumsum', NULL, NULL, 191, 'TRACE_TEST CV Karya Mandiri', 'PPK TRACE TEST', NULL, NULL, 90, NULL, NULL, '2026-03-01', 'KONTRAK/P4/B', NULL, NULL, '2026-03-05 00:00:00', 'SPMK/P4/B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TRACE_TEST_PHASE4', '2026-08-31 11:24:56', '2026-08-31 11:24:56', NULL, 'TRACE_TEST Phase 4 Paket B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 1, 1, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -8750,6 +8786,7 @@ CREATE TABLE `daftar_realisasi_neo` (
   `kd_sub_keg` varchar(100) NOT NULL,
   `kd_akun` varchar(100) NOT NULL,
   `id_paket` int(11) NOT NULL,
+  `kontrak_id` bigint(20) DEFAULT NULL,
   `ket_paket` text NOT NULL,
   `id_uraian_paket` int(11) NOT NULL,
   `ket_uraian_paket` varchar(400) NOT NULL,
@@ -8758,6 +8795,9 @@ CREATE TABLE `daftar_realisasi_neo` (
   `vol` decimal(36,12) NOT NULL,
   `jumlah` decimal(36,12) NOT NULL,
   `tanggal` date NOT NULL,
+  `periode` tinyint(4) DEFAULT NULL,
+  `progress_fisik` decimal(7,2) NOT NULL DEFAULT 0.00,
+  `nomor_bukti` varchar(100) DEFAULT NULL,
   `file` varchar(400) DEFAULT NULL,
   `username_insert` varchar(100) NOT NULL,
   `username_update` varchar(100) DEFAULT NULL,
@@ -8765,8 +8805,45 @@ CREATE TABLE `daftar_realisasi_neo` (
   `tgl_update` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `keterangan` varchar(400) NOT NULL,
   `disable` tinyint(1) NOT NULL DEFAULT 0,
-  `is_deleted` tinyint(1) NOT NULL DEFAULT 0
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
+  `setujui` tinyint(4) NOT NULL DEFAULT 0,
+  `kunci` tinyint(4) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `daftar_realisasi_neo`
+--
+
+INSERT INTO `daftar_realisasi_neo` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `kd_sub_keg`, `kd_akun`, `id_paket`, `kontrak_id`, `ket_paket`, `id_uraian_paket`, `ket_uraian_paket`, `id_dok_anggaran`, `dok`, `vol`, `jumlah`, `tanggal`, `periode`, `progress_fisik`, `nomor_bukti`, `file`, `username_insert`, `username_update`, `tgl_insert`, `tgl_update`, `keterangan`, `disable`, `is_deleted`, `setujui`, `kunci`) VALUES
+(1, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 1, 1, 'TRACE_TEST Paket A', 1, 'Termin I', 2, 'dpa', 0.350000000000, 78750000.000000000000, '2026-03-31', 3, 35.00, 'BUKTI/P4/A/1', NULL, 'TRACE_TEST_PHASE4', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 4 Paket A Termin I', 0, 0, 1, 1),
+(2, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 1, 1, 'TRACE_TEST Paket A', 1, 'Termin II', 2, 'dpa', 0.300000000000, 67500000.000000000000, '2026-04-30', 4, 65.00, 'BUKTI/P4/A/2', NULL, 'TRACE_TEST_PHASE4', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 4 Paket A Termin II', 0, 0, 1, 1),
+(3, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', 2, 2, 'TRACE_TEST Paket B', 2, 'Termin I', 3, 'dppa', 0.500000000000, 87500000.000000000000, '2026-04-15', 4, 50.00, 'BUKTI/P4/B/1', NULL, 'TRACE_TEST_PHASE4', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 4 Paket B Termin I', 0, 0, 1, 1),
+(4, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', 2, 2, 'TRACE_TEST Paket B', 2, 'Termin II', 3, 'dppa', 0.500000000000, 87500000.000000000000, '2026-05-31', 5, 100.00, 'BUKTI/P4/B/2', NULL, 'TRACE_TEST_PHASE4', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 4 Paket B Termin II', 0, 0, 1, 1);
+
+--
+-- Trigger `daftar_realisasi_neo`
+--
+DELIMITER $$
+CREATE TRIGGER `trg_realisasi_validate_insert` BEFORE INSERT ON `daftar_realisasi_neo` FOR EACH ROW BEGIN
+  DECLARE contract_value DECIMAL(20,2) DEFAULT NULL; DECLARE realized DECIMAL(20,2) DEFAULT 0;
+  SELECT nilai_kontrak INTO contract_value FROM kontrak_neo WHERE id=NEW.kontrak_id AND kd_wilayah=NEW.kd_wilayah AND kd_opd=NEW.kd_opd AND tahun=NEW.tahun AND is_deleted=0 LIMIT 1;
+  IF contract_value IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Kontrak realisasi tidak valid'; END IF;
+  SELECT COALESCE(SUM(jumlah),0) INTO realized FROM daftar_realisasi_neo WHERE kontrak_id=NEW.kontrak_id AND is_deleted=0;
+  IF realized+NEW.jumlah>contract_value THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Realisasi melebihi nilai kontrak'; END IF;
+  IF NEW.progress_fisik<0 OR NEW.progress_fisik>100 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Progress fisik harus 0 sampai 100'; END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `trg_realisasi_validate_update` BEFORE UPDATE ON `daftar_realisasi_neo` FOR EACH ROW BEGIN
+  DECLARE contract_value DECIMAL(20,2) DEFAULT NULL; DECLARE realized DECIMAL(20,2) DEFAULT 0;
+  SELECT nilai_kontrak INTO contract_value FROM kontrak_neo WHERE id=NEW.kontrak_id AND kd_wilayah=NEW.kd_wilayah AND kd_opd=NEW.kd_opd AND tahun=NEW.tahun AND is_deleted=0 LIMIT 1;
+  SELECT COALESCE(SUM(jumlah),0) INTO realized FROM daftar_realisasi_neo WHERE kontrak_id=NEW.kontrak_id AND id<>OLD.id AND is_deleted=0;
+  IF contract_value IS NULL OR realized+NEW.jumlah>contract_value THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Realisasi melebihi nilai kontrak atau kontrak tidak valid'; END IF;
+  IF NEW.progress_fisik<0 OR NEW.progress_fisik>100 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Progress fisik harus 0 sampai 100'; END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -8797,6 +8874,14 @@ CREATE TABLE `daftar_uraian_paket` (
   `tgl_update` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+--
+-- Dumping data untuk tabel `daftar_uraian_paket`
+--
+
+INSERT INTO `daftar_uraian_paket` (`id`, `id_paket`, `id_dok_anggaran`, `dok`, `tahun`, `kd_wilayah`, `kd_opd`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `jumlah_pagu`, `jumlah_kontrak`, `vol_kontrak`, `sat_kontrak`, `realisasi_vol`, `realisasi_jumlah`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+(1, 1, 2, 'dpa', '2026', '76.01', '1.03.0.00.0.00.01.0000', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'Belanja', 240000000.000000000000, 225000000.000000000000, 1.000000000000, 'Paket', 0.000000000000, 0.000000000000, 'TRACE_TEST Phase 4 Paket A', '2026-08-31 11:24:56', 'TRACE_TEST_PHASE4', NULL, NULL),
+(2, 2, 3, 'dppa', '2026', '76.01', '1.03.0.00.0.00.01.0000', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', 'Belanja', 190000000.000000000000, 175000000.000000000000, 1.000000000000, 'Paket', 0.000000000000, 0.000000000000, 'TRACE_TEST Phase 4 Paket B', '2026-08-31 11:24:56', 'TRACE_TEST_PHASE4', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -9044,6 +9129,8 @@ INSERT INTO `db_asn_pemda_neo` (`id`, `kd_wilayah`, `kd_opd`, `nama`, `gelar_dep
 
 CREATE TABLE `dpa_neo` (
   `id` bigint(20) NOT NULL,
+  `source_table` varchar(30) DEFAULT NULL,
+  `source_id` bigint(20) DEFAULT NULL,
   `kd_wilayah` varchar(60) DEFAULT NULL,
   `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
@@ -9085,6 +9172,34 @@ CREATE TABLE `dpa_neo` (
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `dpa_neo`
+--
+
+INSERT INTO `dpa_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
+(1, 'rka_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST: Dokumen Pelaksanaan Anggaran', NULL, NULL, 'ssh', 30, 'Kertas kerja perencanaan', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 75000000.0000, 1, 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
+(2, 'rka_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 240000000.0000, 1, 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(3, 'rka_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 180000000.0000, 1, 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL);
+
+--
+-- Trigger `dpa_neo`
+--
+DELIMITER $$
+CREATE TRIGGER `trg_dpa_protect_contract_delete` BEFORE DELETE ON `dpa_neo` FOR EACH ROW BEGIN
+  IF EXISTS(SELECT 1 FROM kontrak_neo WHERE tahap='dpa' AND anggaran_id=OLD.id AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPA sudah berkontrak dan tidak dapat dihapus'; END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `trg_dpa_protect_contract_update` BEFORE UPDATE ON `dpa_neo` FOR EACH ROW BEGIN
+  DECLARE contract_total DECIMAL(20,2) DEFAULT 0; DECLARE contract_count INT DEFAULT 0;
+  SELECT COALESCE(SUM(nilai_kontrak),0),COUNT(*) INTO contract_total,contract_count FROM kontrak_neo WHERE tahap='dpa' AND anggaran_id=OLD.id AND is_deleted=0;
+  IF contract_count>0 AND NEW.is_deleted=1 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPA sudah berkontrak dan tidak dapat dihapus'; END IF;
+  IF contract_count>0 AND NEW.jumlah<contract_total THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Nilai DPA tidak boleh lebih kecil dari nilai kontrak'; END IF;
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -9093,6 +9208,8 @@ CREATE TABLE `dpa_neo` (
 
 CREATE TABLE `dppa_neo` (
   `id` bigint(20) NOT NULL,
+  `source_table` varchar(30) DEFAULT NULL,
+  `source_id` bigint(20) DEFAULT NULL,
   `kd_wilayah` varchar(60) DEFAULT NULL,
   `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
@@ -9143,6 +9260,34 @@ CREATE TABLE `dppa_neo` (
   `username_insert` varchar(100) DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `dppa_neo`
+--
+
+INSERT INTO `dppa_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga_awal`, `id_standar_harga_awal`, `komponen_awal`, `spesifikasi_awal`, `tkdn_awal`, `pajak_awal`, `harga_satuan_awal`, `volume_awal`, `jumlah_awal`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `status_perubahan`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
+(1, 'dpa_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST: DPPA', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 82500000.0000, 1, 'ubah', 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
+(2, 'dpa_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 250000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(3, 'dpa_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 190000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL);
+
+--
+-- Trigger `dppa_neo`
+--
+DELIMITER $$
+CREATE TRIGGER `trg_dppa_protect_contract_delete` BEFORE DELETE ON `dppa_neo` FOR EACH ROW BEGIN
+  IF EXISTS(SELECT 1 FROM kontrak_neo WHERE tahap='dppa' AND anggaran_id=OLD.id AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPPA sudah berkontrak dan tidak dapat dihapus'; END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `trg_dppa_protect_contract_update` BEFORE UPDATE ON `dppa_neo` FOR EACH ROW BEGIN
+  DECLARE contract_total DECIMAL(20,2) DEFAULT 0; DECLARE contract_count INT DEFAULT 0;
+  SELECT COALESCE(SUM(nilai_kontrak),0),COUNT(*) INTO contract_total,contract_count FROM kontrak_neo WHERE tahap='dppa' AND anggaran_id=OLD.id AND is_deleted=0;
+  IF contract_count>0 AND NEW.is_deleted=1 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPPA sudah berkontrak dan tidak dapat dihapus'; END IF;
+  IF contract_count>0 AND NEW.jumlah<contract_total THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Nilai DPPA tidak boleh lebih kecil dari nilai kontrak'; END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -9271,6 +9416,13 @@ CREATE TABLE `indikator_program_renstra_neo` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `indikator_program_renstra_neo`
+--
+
+INSERT INTO `indikator_program_renstra_neo` (`id`, `program_id`, `nama_indikator`, `satuan`, `baseline`, `target_t1`, `target_t2`, `target_t3`, `target_t4`, `target_t5`, `target_akhir`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, 1, 'TRACE_TEST: Capaian program', '%', 70.00, 80.00, 85.00, 90.00, 95.00, 100.00, 100.00, 0, 'TRACE_TEST Phase 3', '2026-08-31 11:10:29', 'TRACE_TEST_PHASE3', '2026-08-31 11:10:29', NULL, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -9303,7 +9455,8 @@ CREATE TABLE `indikator_sasaran_renstra_neo` (
 --
 
 INSERT INTO `indikator_sasaran_renstra_neo` (`id`, `sasaran_id`, `nama_indikator`, `satuan`, `baseline`, `target_t1`, `target_t2`, `target_t3`, `target_t4`, `target_t5`, `target_akhir`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
-(1, 4, 'jalan', 'km', 10.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0, 'oke', '2026-03-08 05:15:30', 'inayah', '2026-03-08 13:15:30', NULL, 0);
+(1, 4, 'jalan', 'km', 10.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0, 'oke', '2026-03-08 05:15:30', 'inayah', '2026-03-08 13:15:30', NULL, 0),
+(2, 6, 'TRACE_TEST: Persentase dokumen tepat waktu', '%', 70.00, 80.00, 85.00, 90.00, 95.00, 100.00, 100.00, 0, 'TRACE_TEST Phase 3', '2026-08-31 11:10:29', 'TRACE_TEST_PHASE3', '2026-08-31 11:10:29', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -9346,6 +9499,13 @@ CREATE TABLE `kegiatan_renstra_neo` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `kegiatan_renstra_neo`
+--
+
+INSERT INTO `kegiatan_renstra_neo` (`id`, `program_id`, `kode_kegiatan`, `uraian`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, 1, 'X.XX.1.2.01', 'TRACE_TEST: Perencanaan dan Penganggaran', 0, 'TRACE_TEST Phase 3', '2026-08-31 11:10:29', 'TRACE_TEST_PHASE3', '2026-08-31 11:10:29', NULL, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -9359,6 +9519,8 @@ CREATE TABLE `kontrak_neo` (
   `tahun` year(4) DEFAULT NULL,
   `kd_sub_keg` varchar(50) DEFAULT NULL,
   `anggaran_id` bigint(20) DEFAULT NULL,
+  `paket_id` int(11) DEFAULT NULL,
+  `rekanan_id` int(11) DEFAULT NULL,
   `nama_sub_keg` text DEFAULT NULL,
   `tahap` enum('dpa','dppa') DEFAULT NULL,
   `total_anggaran` decimal(20,2) DEFAULT NULL,
@@ -9366,6 +9528,8 @@ CREATE TABLE `kontrak_neo` (
   `nomor_kontrak` varchar(100) DEFAULT NULL,
   `tanggal_kontrak` date DEFAULT NULL,
   `uraian_kontrak` text DEFAULT NULL,
+  `nomor_spk` varchar(100) DEFAULT NULL,
+  `tanggal_spk` date DEFAULT NULL,
   `nomor_spmk` varchar(100) DEFAULT NULL,
   `tanggal_spmk` date DEFAULT NULL,
   `waktu_pelaksanaan` bigint(20) DEFAULT NULL,
@@ -9381,8 +9545,53 @@ CREATE TABLE `kontrak_neo` (
   `tgl_insert` datetime DEFAULT NULL,
   `username_insert` varchar(100) DEFAULT NULL,
   `tgl_update` datetime DEFAULT NULL,
-  `username_update` varchar(100) DEFAULT NULL
+  `username_update` varchar(100) DEFAULT NULL,
+  `disable` tinyint(4) NOT NULL DEFAULT 0,
+  `kunci` tinyint(4) NOT NULL DEFAULT 0,
+  `setujui` tinyint(4) NOT NULL DEFAULT 0,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT 0,
+  `keterangan` varchar(400) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+--
+-- Dumping data untuk tabel `kontrak_neo`
+--
+
+INSERT INTO `kontrak_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `anggaran_id`, `paket_id`, `rekanan_id`, `nama_sub_keg`, `tahap`, `total_anggaran`, `nilai_kontrak`, `nomor_kontrak`, `tanggal_kontrak`, `uraian_kontrak`, `nomor_spk`, `tanggal_spk`, `nomor_spmk`, `tanggal_spmk`, `waktu_pelaksanaan`, `tanggal_mulai`, `tanggal_selesai`, `nama_ppk`, `nama_penyedia`, `nama_tim_teknis`, `tanggal_pho`, `tanggal_fho`, `tanggal_serah_terima`, `status_kontrak`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `disable`, `kunci`, `setujui`, `is_deleted`, `keterangan`) VALUES
+(1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', 2, 1, 190, 'Penyusunan Dokumen Perencanaan', 'dpa', 240000000.00, 225000000.00, 'KONTRAK/P4/A', '2026-02-01', 'TRACE_TEST Paket A dari DPA', 'SPK/P4/A', '2026-02-01', 'SPMK/P4/A', '2026-02-05', 120, '2026-02-05', '2026-06-04', 'PPK TRACE TEST', 'TRACE_TEST PT Infrastruktur Maju', NULL, NULL, NULL, NULL, 'berjalan', '2026-08-31 11:24:56', 'TRACE_TEST_PHASE4', NULL, NULL, 0, 1, 1, 0, 'TRACE_TEST Phase 4 Paket A'),
+(2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', 3, 2, 191, 'Penyusunan Dokumen RKA', 'dppa', 190000000.00, 175000000.00, 'KONTRAK/P4/B', '2026-03-01', 'TRACE_TEST Paket B dari DPPA', 'SPK/P4/B', '2026-03-01', 'SPMK/P4/B', '2026-03-05', 90, '2026-03-05', '2026-06-03', 'PPK TRACE TEST', 'TRACE_TEST CV Karya Mandiri', NULL, NULL, NULL, NULL, 'selesai', '2026-08-31 11:24:56', 'TRACE_TEST_PHASE4', NULL, NULL, 0, 1, 1, 0, 'TRACE_TEST Phase 4 Paket B');
+
+--
+-- Trigger `kontrak_neo`
+--
+DELIMITER $$
+CREATE TRIGGER `trg_kontrak_validate_insert` BEFORE INSERT ON `kontrak_neo` FOR EACH ROW BEGIN
+  DECLARE budget DECIMAL(20,2) DEFAULT NULL;
+  DECLARE sub_code VARCHAR(50) DEFAULT NULL;
+  DECLARE provider VARCHAR(255) DEFAULT NULL;
+  IF NEW.tahap='dpa' THEN SELECT jumlah,kd_sub_keg INTO budget,sub_code FROM dpa_neo WHERE id=NEW.anggaran_id AND kd_wilayah=NEW.kd_wilayah AND kd_opd=NEW.kd_opd AND tahun=NEW.tahun AND setujui=1 AND is_deleted=0 LIMIT 1;
+  ELSEIF NEW.tahap='dppa' THEN SELECT jumlah,kd_sub_keg INTO budget,sub_code FROM dppa_neo WHERE id=NEW.anggaran_id AND kd_wilayah=NEW.kd_wilayah AND kd_opd=NEW.kd_opd AND tahun=NEW.tahun AND setujui=1 AND is_deleted=0 LIMIT 1;
+  END IF;
+  IF budget IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Sumber kontrak harus DPA/DPPA yang disetujui'; END IF;
+  IF NEW.nilai_kontrak>budget THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Nilai kontrak melebihi anggaran DPA/DPPA'; END IF;
+  SELECT nama_perusahaan INTO provider FROM rekanan_neo WHERE id=NEW.rekanan_id AND kd_wilayah=NEW.kd_wilayah AND is_deleted=0 LIMIT 1;
+  IF provider IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Penyedia referensi tidak valid'; END IF;
+  SET NEW.total_anggaran=budget,NEW.kd_sub_keg=sub_code,NEW.nama_penyedia=provider;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `trg_kontrak_validate_update` BEFORE UPDATE ON `kontrak_neo` FOR EACH ROW BEGIN
+  DECLARE budget DECIMAL(20,2) DEFAULT NULL; DECLARE sub_code VARCHAR(50) DEFAULT NULL; DECLARE provider VARCHAR(255) DEFAULT NULL;
+  IF NEW.tahap='dpa' THEN SELECT jumlah,kd_sub_keg INTO budget,sub_code FROM dpa_neo WHERE id=NEW.anggaran_id AND kd_wilayah=NEW.kd_wilayah AND kd_opd=NEW.kd_opd AND tahun=NEW.tahun AND setujui=1 AND is_deleted=0 LIMIT 1;
+  ELSEIF NEW.tahap='dppa' THEN SELECT jumlah,kd_sub_keg INTO budget,sub_code FROM dppa_neo WHERE id=NEW.anggaran_id AND kd_wilayah=NEW.kd_wilayah AND kd_opd=NEW.kd_opd AND tahun=NEW.tahun AND setujui=1 AND is_deleted=0 LIMIT 1; END IF;
+  IF budget IS NULL OR NEW.nilai_kontrak>budget THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Kontrak tidak valid atau nilainya melebihi DPA/DPPA'; END IF;
+  SELECT nama_perusahaan INTO provider FROM rekanan_neo WHERE id=NEW.rekanan_id AND kd_wilayah=NEW.kd_wilayah AND is_deleted=0 LIMIT 1;
+  IF provider IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Penyedia referensi tidak valid'; END IF;
+  SET NEW.total_anggaran=budget,NEW.kd_sub_keg=sub_code,NEW.nama_penyedia=provider;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -11293,7 +11502,180 @@ INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data
 (1869, 'trx_naskah_dinas', 14, 'delete', '{\"id\":14,\"uuid\":null,\"jenis_id\":5,\"nomor\":\"08\",\"nomor_urut\":null,\"tahun\":\"2026\",\"klasifikasi_id\":null,\"tanggal_surat\":\"2026-03-18\",\"perihal\":null,\"status\":\"draft\",\"file_pdf\":null,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"username_insert\":\"inayah\",\"tgl_insert\":\"2026-03-23 06:38:37\",\"username_update\":null,\"tgl_update\":null,\"keterangan\":\"\",\"workflow_status\":\"draft\",\"verified_by\":null,\"verified_at\":null,\"signed_by\":null,\"signed_at\":null,\"final_at\":null,\"document_hash\":null}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-23 06:57:52'),
 (1870, 'halaman_berita', 1, 'update', '{\"id\":1,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"judul\":\"\",\"slug\":\"\",\"konten\":\"\",\"gambar\":\"\",\"keterangan\":\"\",\"tgl_insert\":\"2026-03-22 17:49:59\",\"username_insert\":\"inayah\",\"tgl_update\":null,\"username_update\":null,\"is_deleted\":0}', '{\"judul\":\"judul\",\"tgl_update\":\"2026-03-23 09:43:45\",\"username_update\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-23 09:43:45'),
 (1871, 'halaman_berita', 1, 'update', '{\"id\":1,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"judul\":\"judul\",\"slug\":\"\",\"konten\":\"\",\"gambar\":\"\",\"keterangan\":\"\",\"tgl_insert\":\"2026-03-22 17:49:59\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-23 09:43:45\",\"username_update\":\"inayah\",\"is_deleted\":0}', '{\"konten\":\"  Tutup \",\"keterangan\":\"keterangan\",\"tgl_update\":\"2026-03-23 09:44:32\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-23 09:44:32'),
-(1872, 'trx_naskah_dinas', 1, 'delete', '{\"id\":1,\"uuid\":null,\"jenis_id\":5,\"nomor\":\"1\\/DPU\",\"nomor_urut\":null,\"tahun\":\"2026\",\"klasifikasi_id\":null,\"tanggal_surat\":\"2026-03-23\",\"perihal\":\"Pengangkatan\",\"status\":\"draft\",\"file_pdf\":null,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"username_insert\":\"inayah\",\"tgl_insert\":\"2026-03-23 10:54:45\",\"username_update\":null,\"tgl_update\":null,\"keterangan\":\"ini adalah sample\",\"workflow_status\":\"draft\",\"verified_by\":null,\"verified_at\":null,\"signed_by\":null,\"signed_at\":null,\"final_at\":null,\"document_hash\":null}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-24 02:48:01');
+(1872, 'trx_naskah_dinas', 1, 'delete', '{\"id\":1,\"uuid\":null,\"jenis_id\":5,\"nomor\":\"1\\/DPU\",\"nomor_urut\":null,\"tahun\":\"2026\",\"klasifikasi_id\":null,\"tanggal_surat\":\"2026-03-23\",\"perihal\":\"Pengangkatan\",\"status\":\"draft\",\"file_pdf\":null,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"username_insert\":\"inayah\",\"tgl_insert\":\"2026-03-23 10:54:45\",\"username_update\":null,\"tgl_update\":null,\"keterangan\":\"ini adalah sample\",\"workflow_status\":\"draft\",\"verified_by\":null,\"verified_at\":null,\"signed_by\":null,\"signed_at\":null,\"final_at\":null,\"document_hash\":null}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-24 02:48:01'),
+(1873, 'halaman_berita', 2, 'delete', '{\"id\":2,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"judul\":\"\",\"slug\":\"\",\"konten\":\"\",\"gambar\":\"\",\"keterangan\":\"\",\"tgl_insert\":\"2026-03-25 14:30:09\",\"username_insert\":\"inayah\",\"tgl_update\":null,\"username_update\":null,\"is_deleted\":0}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3.1 Safari/605.1.15', '2026-03-25 15:05:04'),
+(1874, 'trx_naskah_dinas', 3, 'delete', '{\"id\":3,\"uuid\":null,\"jenis_id\":5,\"nomor\":\"9\",\"nomor_urut\":null,\"tahun\":\"2026\",\"klasifikasi_id\":null,\"tanggal_surat\":\"2026-03-25\",\"perihal\":\"\",\"status\":\"draft\",\"file_pdf\":null,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"username_insert\":\"inayah\",\"tgl_insert\":\"2026-03-25 10:09:27\",\"username_update\":null,\"tgl_update\":null,\"keterangan\":\"\",\"workflow_status\":\"draft\",\"verified_by\":null,\"verified_at\":null,\"signed_by\":null,\"signed_at\":null,\"final_at\":null,\"document_hash\":null}', NULL, 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-26 03:14:53'),
+(1875, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":null,\"username_update\":null}', '{\"tgl_update\":\"2026-03-28 08:45:00\",\"username_update\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 08:45:00'),
+(1876, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 08:45:00\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 08:46:49\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 08:46:49'),
+(1877, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 08:46:49\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 08:47:09\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 08:47:09'),
+(1878, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 08:47:09\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 08:51:18\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 08:51:18'),
+(1879, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 08:51:18\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 08:52:50\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 08:52:50'),
+(1880, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 08:52:50\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 08:52:59\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 08:52:59'),
+(1881, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 08:52:59\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 08:53:18\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 08:53:18'),
+(1882, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 08:53:18\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 09:17:14\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:17:14'),
+(1883, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 09:17:14\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 09:20:25\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:20:25'),
+(1884, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 09:20:25\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 09:20:54\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:20:54'),
+(1885, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 09:20:54\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 09:25:27\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:25:27');
+INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data`, `new_data`, `username`, `ip_address`, `user_agent`, `created_at`) VALUES
+(1886, 'rekening_kegiatan', 132, 'update', '{\"id\":132,\"kode\":\"X.XX.1.4.01.2\",\"parent_kode\":\"X.XX.1.4.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Penyediaan Gaji dan Tunjangan ASN Tenaga Kesehatan Otonomi Khusus Papua\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Tersedianya Gaji dan Tunjangan ASN Tenaga Kesehatan Otonomi Khusus Papua\",\"indikator\":\"Jumlah Orang yang Menerima Gaji dan Tunjangan Tenaga Kesehatan Otonomi Khusus Papua\",\"satuan\":\"Orang\\/bulan\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":null,\"username_update\":null}', '{\"tgl_update\":\"2026-03-28 09:25:45\",\"username_update\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:25:45'),
+(1887, 'rekening_kegiatan', 132, 'update', '{\"id\":132,\"kode\":\"X.XX.1.4.01.2\",\"parent_kode\":\"X.XX.1.4.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Penyediaan Gaji dan Tunjangan ASN Tenaga Kesehatan Otonomi Khusus Papua\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Tersedianya Gaji dan Tunjangan ASN Tenaga Kesehatan Otonomi Khusus Papua\",\"indikator\":\"Jumlah Orang yang Menerima Gaji dan Tunjangan Tenaga Kesehatan Otonomi Khusus Papua\",\"satuan\":\"Orang\\/bulan\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 09:25:45\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 09:26:03\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:26:03'),
+(1888, 'rekening_kegiatan', 132, 'update', '{\"id\":132,\"kode\":\"X.XX.1.4.01.2\",\"parent_kode\":\"X.XX.1.4.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Penyediaan Gaji dan Tunjangan ASN Tenaga Kesehatan Otonomi Khusus Papua\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Tersedianya Gaji dan Tunjangan ASN Tenaga Kesehatan Otonomi Khusus Papua\",\"indikator\":\"Jumlah Orang yang Menerima Gaji dan Tunjangan Tenaga Kesehatan Otonomi Khusus Papua\",\"satuan\":\"Orang\\/bulan\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 09:26:03\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 09:27:51\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:27:51'),
+(1889, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 09:25:27\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 09:32:19\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:32:19'),
+(1890, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 09:32:19\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 09:36:21\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:36:21'),
+(1891, 'rekening_kegiatan', 144, 'update', '{\"id\":144,\"kode\":\"1.1.2.2.01.10\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Rehabilitasi Sedang\\/Berat Ruang Unit Kesehatan Sekolah\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Ruang Unit Kesehatan Sekolah yang Terehabilitasi Sedang\\/Berat\",\"indikator\":\"Jumlah Ruang Unit Kesehatan Sekolah yang Telah Direhabilitasi Sedang\\/Berat\",\"satuan\":\"Ruang\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":null,\"username_update\":null}', '{\"tgl_update\":\"2026-03-28 09:36:38\",\"username_update\":\"inayah\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:36:38'),
+(1892, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 09:36:21\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 09:36:45\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:36:45'),
+(1893, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 09:36:45\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 09:37:23\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:37:23'),
+(1894, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 09:37:23\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 09:50:54\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:50:54'),
+(1895, 'rekening_kegiatan', 137, 'update', '{\"id\":137,\"kode\":\"1.1.2.2.01.1\",\"parent_kode\":\"1.1.2.2.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"Pembangunan Unit Sekolah Baru (USB)\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":\"Sekolah Baru yang Terbangun\",\"indikator\":\"Jumlah Sekolah Baru yang Telah Dibangun\",\"satuan\":\"Unit\",\"status\":1,\"tgl_insert\":\"2026-03-14 05:17:20\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-28 09:50:54\",\"username_update\":\"inayah\"}', '{\"tgl_update\":\"2026-03-28 09:51:06\"}', 'inayah', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15', '2026-03-28 09:51:06'),
+(1896, 'rekening_kegiatan', 4490, 'update', '{\"id\":4490,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN AWAL\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:34:33\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"tgl_update\":\"2026-08-30 18:34:33\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:34:33'),
+(1897, 'rekening_kegiatan', 4490, 'delete', '{\"id\":4490,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:34:33\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:34:33\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:34:33'),
+(1898, 'rekening_kegiatan', 4491, 'update', '{\"id\":4491,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN AWAL\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:37:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"tgl_update\":\"2026-08-30 18:37:27\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:37:27'),
+(1899, 'rekening_kegiatan', 4491, 'delete', '{\"id\":4491,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:37:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:37:27\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:37:27'),
+(1900, 'rekening_kegiatan', 4495, 'update', '{\"id\":4495,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN AWAL\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:43:34\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"tgl_update\":\"2026-08-30 18:43:34\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:43:34'),
+(1901, 'rekening_kegiatan', 4495, 'delete', '{\"id\":4495,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:43:34\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:43:34\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:43:34'),
+(1902, 'rekening_kegiatan', 4496, 'update', '{\"id\":4496,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:32\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"tgl_update\":\"2026-08-30 18:44:32\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:32'),
+(1903, 'rekening_kegiatan', 4497, 'update', '{\"id\":4497,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:32\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"tgl_update\":\"2026-08-30 18:44:32\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:32'),
+(1904, 'rekening_kegiatan', 4498, 'update', '{\"id\":4498,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:32\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"tgl_update\":\"2026-08-30 18:44:32\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:32'),
+(1905, 'rekening_kegiatan', 4499, 'update', '{\"id\":4499,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:32\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"tgl_update\":\"2026-08-30 18:44:32\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:32'),
+(1906, 'rekening_kegiatan', 4500, 'update', '{\"id\":4500,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:32\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"tgl_update\":\"2026-08-30 18:44:32\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:32'),
+(1907, 'rekening_kegiatan', 4502, 'update', '{\"id\":4502,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:46\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"tgl_update\":\"2026-08-30 18:44:46\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:46'),
+(1908, 'rekening_kegiatan', 4503, 'update', '{\"id\":4503,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:46\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"tgl_update\":\"2026-08-30 18:44:46\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:46'),
+(1909, 'rekening_kegiatan', 4504, 'update', '{\"id\":4504,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:46\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"tgl_update\":\"2026-08-30 18:44:46\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:46'),
+(1910, 'rekening_kegiatan', 4505, 'update', '{\"id\":4505,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:46\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"tgl_update\":\"2026-08-30 18:44:46\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:46'),
+(1911, 'rekening_kegiatan', 4506, 'update', '{\"id\":4506,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:46\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"tgl_update\":\"2026-08-30 18:44:46\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:46'),
+(1912, 'rekening_kegiatan', 4506, 'delete', '{\"id\":4506,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:46\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:44:46\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:46'),
+(1913, 'rekening_kegiatan', 4505, 'delete', '{\"id\":4505,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:46\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:44:46\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:46'),
+(1914, 'rekening_kegiatan', 4504, 'delete', '{\"id\":4504,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:46\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:44:46\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:46'),
+(1915, 'rekening_kegiatan', 4503, 'delete', '{\"id\":4503,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:46\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:44:46\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:46'),
+(1916, 'rekening_kegiatan', 4502, 'delete', '{\"id\":4502,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:44:46\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:44:46\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:44:46'),
+(1917, 'rekanan_neo', 175, 'update', '{\"id\":175,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-30 18:46:19\",\"tgl_update\":\"2026-08-31 02:46:19\",\"username_update\":null,\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', '{\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"tgl_update\":\"2026-08-30 18:46:19\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:46:19'),
+(1918, 'rekanan_neo', 175, 'delete', '{\"id\":175,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-30 18:46:19\",\"tgl_update\":\"2026-08-30 18:46:19\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:46:19'),
+(1919, 'rekanan_neo', 181, 'update', '{\"id\":181,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-30 18:50:31\",\"tgl_update\":\"2026-08-31 02:50:31\",\"username_update\":null,\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', '{\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"tgl_update\":\"2026-08-30 18:50:31\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:50:31'),
+(1920, 'rekanan_neo', 181, 'delete', '{\"id\":181,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-30 18:50:31\",\"tgl_update\":\"2026-08-30 18:50:31\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:50:31'),
+(1921, 'satuan_neo', 440, 'update', '{\"id\":440,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST\",\"peraturan_id\":4,\"tgl_insert\":\"2026-08-30 18:53:02\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:53:02\",\"username_update\":null,\"is_deleted\":0}', '{\"uraian\":\"TRACE SATUAN EDIT\",\"keterangan\":\"TRACE TEST EDIT\",\"tgl_update\":\"2026-08-30 18:53:02\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:53:02'),
+(1922, 'satuan_neo', 440, 'delete', '{\"id\":440,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN EDIT\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST EDIT\",\"peraturan_id\":4,\"tgl_insert\":\"2026-08-30 18:53:02\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:53:02\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:53:02'),
+(1923, 'master_biaya_akun', 7, 'update', '{\"id\":7,\"master_biaya_id\":9,\"kd_akun\":\"5\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-30 18:56:47\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"kd_akun\":\"5.1\",\"tgl_update\":\"2026-08-30 18:56:47\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:56:47'),
+(1924, 'master_biaya_akun', 9, 'update', '{\"id\":9,\"master_biaya_id\":11,\"kd_akun\":\"5\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-30 18:57:15\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"kd_akun\":\"5.1\",\"tgl_update\":\"2026-08-30 18:57:15\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:15'),
+(1925, 'master_biaya_akun', 9, 'delete', '{\"id\":9,\"master_biaya_id\":11,\"kd_akun\":\"5.1\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-30 18:57:15\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:57:15\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:15'),
+(1926, 'rekening_kegiatan', 4508, 'update', '{\"id\":4508,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN AWAL\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1927, 'rekening_kegiatan', 4508, 'delete', '{\"id\":4508,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1928, 'rekening_kegiatan', 4509, 'update', '{\"id\":4509,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1929, 'rekening_kegiatan', 4510, 'update', '{\"id\":4510,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1930, 'rekening_kegiatan', 4511, 'update', '{\"id\":4511,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1931, 'rekening_kegiatan', 4512, 'update', '{\"id\":4512,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1932, 'rekening_kegiatan', 4513, 'update', '{\"id\":4513,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1933, 'rekening_kegiatan', 4513, 'delete', '{\"id\":4513,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1934, 'rekening_kegiatan', 4512, 'delete', '{\"id\":4512,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1935, 'rekening_kegiatan', 4511, 'delete', '{\"id\":4511,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1936, 'rekening_kegiatan', 4510, 'delete', '{\"id\":4510,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1937, 'rekening_kegiatan', 4509, 'delete', '{\"id\":4509,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1938, 'rekanan_neo', 183, 'update', '{\"id\":183,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-30 18:57:27\",\"tgl_update\":\"2026-08-31 02:57:27\",\"username_update\":null,\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', '{\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1939, 'rekanan_neo', 183, 'delete', '{\"id\":183,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-30 18:57:27\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1940, 'satuan_neo', 442, 'update', '{\"id\":442,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST\",\"peraturan_id\":4,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:57:27\",\"username_update\":null,\"is_deleted\":0}', '{\"uraian\":\"TRACE SATUAN EDIT\",\"keterangan\":\"TRACE TEST EDIT\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1941, 'satuan_neo', 442, 'delete', '{\"id\":442,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN EDIT\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST EDIT\",\"peraturan_id\":4,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1942, 'master_biaya_akun', 11, 'update', '{\"id\":11,\"master_biaya_id\":13,\"kd_akun\":\"5\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"kd_akun\":\"5.1\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1943, 'master_biaya_akun', 11, 'delete', '{\"id\":11,\"master_biaya_id\":13,\"kd_akun\":\"5.1\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-30 18:57:27\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-30 18:57:27\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-30 18:57:27'),
+(1944, 'master_biaya_akun', 13, 'update', '{\"id\":13,\"master_biaya_id\":15,\"kd_akun\":\"5\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:43:22\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"kd_akun\":\"5.1\",\"tgl_update\":\"2026-08-31 02:43:22\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:22'),
+(1945, 'master_biaya_akun', 13, 'delete', '{\"id\":13,\"master_biaya_id\":15,\"kd_akun\":\"5.1\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:43:22\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:43:22\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:22'),
+(1946, 'rekening_kegiatan', 4515, 'update', '{\"id\":4515,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN AWAL\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:43:50\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"tgl_update\":\"2026-08-31 02:43:50\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:50'),
+(1947, 'rekening_kegiatan', 4515, 'delete', '{\"id\":4515,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:43:50\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:43:50\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:50'),
+(1948, 'satuan_neo', 444, 'update', '{\"id\":444,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST\",\"peraturan_id\":4,\"tgl_insert\":\"2026-08-31 02:43:50\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 10:43:50\",\"username_update\":null,\"is_deleted\":0}', '{\"uraian\":\"TRACE SATUAN EDIT\",\"keterangan\":\"TRACE TEST EDIT\",\"tgl_update\":\"2026-08-31 02:43:50\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:50'),
+(1949, 'satuan_neo', 444, 'delete', '{\"id\":444,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN EDIT\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST EDIT\",\"peraturan_id\":4,\"tgl_insert\":\"2026-08-31 02:43:50\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:43:50\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:50'),
+(1950, 'rekanan_neo', 185, 'update', '{\"id\":185,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-31 02:43:50\",\"tgl_update\":\"2026-08-31 10:43:50\",\"username_update\":null,\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', '{\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"tgl_update\":\"2026-08-31 02:43:50\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:50'),
+(1951, 'rekanan_neo', 185, 'delete', '{\"id\":185,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-31 02:43:50\",\"tgl_update\":\"2026-08-31 02:43:50\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:50'),
+(1952, 'rekening_kegiatan', 4516, 'update', '{\"id\":4516,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:43:51\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"tgl_update\":\"2026-08-31 02:43:51\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:51'),
+(1953, 'rekening_kegiatan', 4517, 'update', '{\"id\":4517,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:43:51\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"tgl_update\":\"2026-08-31 02:43:51\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:51'),
+(1954, 'rekening_kegiatan', 4518, 'update', '{\"id\":4518,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:43:51\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"tgl_update\":\"2026-08-31 02:43:51\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:51'),
+(1955, 'rekening_kegiatan', 4519, 'update', '{\"id\":4519,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:43:51\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"tgl_update\":\"2026-08-31 02:43:51\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:51'),
+(1956, 'rekening_kegiatan', 4520, 'update', '{\"id\":4520,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-08-31 02:43:51\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"tgl_update\":\"2026-08-31 02:43:51\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:51'),
+(1957, 'rekening_kegiatan', 4520, 'delete', '{\"id\":4520,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-08-31 02:43:51\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:43:51\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:51'),
+(1958, 'rekening_kegiatan', 4519, 'delete', '{\"id\":4519,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:43:51\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:43:51\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:51'),
+(1959, 'rekening_kegiatan', 4518, 'delete', '{\"id\":4518,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:43:51\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:43:51\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:51'),
+(1960, 'rekening_kegiatan', 4517, 'delete', '{\"id\":4517,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:43:51\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:43:51\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:51'),
+(1961, 'rekening_kegiatan', 4516, 'delete', '{\"id\":4516,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:43:51\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:43:51\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:43:51'),
+(1962, 'master_biaya', 17, 'update', '{\"id\":17,\"tipe\":\"ssh\",\"kode\":\"TRACE_TEST_PHASE2_SSH\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST ssh\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:54:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 02:54:56\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 02:54:56'),
+(1963, 'master_biaya', 18, 'update', '{\"id\":18,\"tipe\":\"hspk\",\"kode\":\"TRACE_TEST_PHASE2_HSPK\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST hspk\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:54:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 02:54:56\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 02:54:56'),
+(1964, 'master_biaya', 19, 'update', '{\"id\":19,\"tipe\":\"asb\",\"kode\":\"TRACE_TEST_PHASE2_ASB\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST asb\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:54:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 02:54:56\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 02:54:56'),
+(1965, 'master_biaya', 20, 'update', '{\"id\":20,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:54:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 02:54:56\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 02:54:56'),
+(1966, 'master_biaya', 22, 'update', '{\"id\":22,\"tipe\":\"ssh\",\"kode\":\"TRACE_TEST_PHASE2_SSH\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST ssh\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:55:20\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 02:55:20\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 02:55:20'),
+(1967, 'master_biaya', 23, 'update', '{\"id\":23,\"tipe\":\"hspk\",\"kode\":\"TRACE_TEST_PHASE2_HSPK\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST hspk\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:55:20\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 02:55:20\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 02:55:20');
+INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data`, `new_data`, `username`, `ip_address`, `user_agent`, `created_at`) VALUES
+(1968, 'master_biaya', 24, 'update', '{\"id\":24,\"tipe\":\"asb\",\"kode\":\"TRACE_TEST_PHASE2_ASB\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST asb\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:55:20\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 02:55:20\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 02:55:20'),
+(1969, 'master_biaya', 25, 'update', '{\"id\":25,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:55:20\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 02:55:20\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 02:55:20'),
+(1970, 'master_biaya', 22, 'delete', '{\"id\":22,\"tipe\":\"ssh\",\"kode\":\"TRACE_TEST_PHASE2_SSH\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST ssh\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:55:20\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 02:55:20\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 02:55:20'),
+(1971, 'master_biaya', 23, 'delete', '{\"id\":23,\"tipe\":\"hspk\",\"kode\":\"TRACE_TEST_PHASE2_HSPK\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST hspk\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:55:20\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 02:55:20\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 02:55:20'),
+(1972, 'master_biaya', 24, 'delete', '{\"id\":24,\"tipe\":\"asb\",\"kode\":\"TRACE_TEST_PHASE2_ASB\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST asb\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:55:20\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 02:55:20\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 02:55:20'),
+(1973, 'master_biaya', 25, 'delete', '{\"id\":25,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:55:20\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 02:55:20\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 02:55:20'),
+(1974, 'rekening_kegiatan', 4522, 'update', '{\"id\":4522,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN AWAL\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:56:52\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"tgl_update\":\"2026-08-31 02:56:52\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:52'),
+(1975, 'rekening_kegiatan', 4522, 'delete', '{\"id\":4522,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:56:52\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:56:52\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:52'),
+(1976, 'satuan_neo', 446, 'update', '{\"id\":446,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST\",\"peraturan_id\":4,\"tgl_insert\":\"2026-08-31 02:56:52\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 10:56:52\",\"username_update\":null,\"is_deleted\":0}', '{\"uraian\":\"TRACE SATUAN EDIT\",\"keterangan\":\"TRACE TEST EDIT\",\"tgl_update\":\"2026-08-31 02:56:52\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:52'),
+(1977, 'satuan_neo', 446, 'delete', '{\"id\":446,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN EDIT\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST EDIT\",\"peraturan_id\":4,\"tgl_insert\":\"2026-08-31 02:56:52\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:56:52\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1978, 'rekanan_neo', 187, 'update', '{\"id\":187,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-31 02:56:53\",\"tgl_update\":\"2026-08-31 10:56:53\",\"username_update\":null,\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', '{\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1979, 'rekanan_neo', 187, 'delete', '{\"id\":187,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-31 02:56:53\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1980, 'rekening_kegiatan', 4523, 'update', '{\"id\":4523,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:56:53\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1981, 'rekening_kegiatan', 4524, 'update', '{\"id\":4524,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:56:53\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1982, 'rekening_kegiatan', 4525, 'update', '{\"id\":4525,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:56:53\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1983, 'rekening_kegiatan', 4526, 'update', '{\"id\":4526,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:56:53\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1984, 'rekening_kegiatan', 4527, 'update', '{\"id\":4527,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-08-31 02:56:53\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1985, 'rekening_kegiatan', 4527, 'delete', '{\"id\":4527,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-08-31 02:56:53\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1986, 'rekening_kegiatan', 4526, 'delete', '{\"id\":4526,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:56:53\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1987, 'rekening_kegiatan', 4525, 'delete', '{\"id\":4525,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:56:53\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1988, 'rekening_kegiatan', 4524, 'delete', '{\"id\":4524,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:56:53\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1989, 'rekening_kegiatan', 4523, 'delete', '{\"id\":4523,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 02:56:53\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1990, 'master_biaya_akun', 18, 'update', '{\"id\":18,\"master_biaya_id\":28,\"kd_akun\":\"5\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:56:53\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"kd_akun\":\"5.1\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1991, 'master_biaya_akun', 18, 'delete', '{\"id\":18,\"master_biaya_id\":28,\"kd_akun\":\"5.1\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 02:56:53\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 02:56:53\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 02:56:53'),
+(1992, 'master_biaya', 31, 'update', '{\"id\":31,\"tipe\":\"ssh\",\"kode\":\"TRACE_TEST_PHASE2_SSH\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST ssh\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:11:11\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 03:11:11\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 03:11:11'),
+(1993, 'master_biaya', 32, 'update', '{\"id\":32,\"tipe\":\"hspk\",\"kode\":\"TRACE_TEST_PHASE2_HSPK\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST hspk\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:11:11\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 03:11:11\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 03:11:11'),
+(1994, 'master_biaya', 33, 'update', '{\"id\":33,\"tipe\":\"asb\",\"kode\":\"TRACE_TEST_PHASE2_ASB\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST asb\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:11:11\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 03:11:11\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 03:11:11'),
+(1995, 'master_biaya', 34, 'update', '{\"id\":34,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:11:11\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 03:11:11\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 03:11:11'),
+(1996, 'master_biaya', 31, 'delete', '{\"id\":31,\"tipe\":\"ssh\",\"kode\":\"TRACE_TEST_PHASE2_SSH\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST ssh\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:11:11\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 03:11:11\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 03:11:11'),
+(1997, 'master_biaya', 32, 'delete', '{\"id\":32,\"tipe\":\"hspk\",\"kode\":\"TRACE_TEST_PHASE2_HSPK\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST hspk\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:11:11\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 03:11:11\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 03:11:11'),
+(1998, 'master_biaya', 33, 'delete', '{\"id\":33,\"tipe\":\"asb\",\"kode\":\"TRACE_TEST_PHASE2_ASB\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST asb\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:11:11\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 03:11:11\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 03:11:11'),
+(1999, 'master_biaya', 34, 'delete', '{\"id\":34,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:11:11\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 03:11:11\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 03:11:11'),
+(2000, 'rekening_kegiatan', 4528, 'update', '{\"id\":4528,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:11:11\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"tgl_update\":\"2026-08-31 03:11:11\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:11'),
+(2001, 'rekening_kegiatan', 4529, 'update', '{\"id\":4529,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2002, 'rekening_kegiatan', 4530, 'update', '{\"id\":4530,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2003, 'rekening_kegiatan', 4531, 'update', '{\"id\":4531,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2004, 'rekening_kegiatan', 4532, 'update', '{\"id\":4532,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2005, 'rekening_kegiatan', 4532, 'delete', '{\"id\":4532,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2006, 'rekening_kegiatan', 4531, 'delete', '{\"id\":4531,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2007, 'rekening_kegiatan', 4530, 'delete', '{\"id\":4530,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2008, 'rekening_kegiatan', 4529, 'delete', '{\"id\":4529,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2009, 'rekening_kegiatan', 4528, 'delete', '{\"id\":4528,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:11:11\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:11:11\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2010, 'master_biaya_akun', 23, 'update', '{\"id\":23,\"master_biaya_id\":37,\"kd_akun\":\"5\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"kd_akun\":\"5.1\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2011, 'master_biaya_akun', 23, 'delete', '{\"id\":23,\"master_biaya_id\":37,\"kd_akun\":\"5.1\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2012, 'rekanan_neo', 189, 'update', '{\"id\":189,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-31 03:11:12\",\"tgl_update\":\"2026-08-31 11:11:12\",\"username_update\":null,\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', '{\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2013, 'rekanan_neo', 189, 'delete', '{\"id\":189,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-31 03:11:12\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2014, 'satuan_neo', 448, 'update', '{\"id\":448,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST\",\"peraturan_id\":4,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 11:11:12\",\"username_update\":null,\"is_deleted\":0}', '{\"uraian\":\"TRACE SATUAN EDIT\",\"keterangan\":\"TRACE TEST EDIT\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2015, 'satuan_neo', 448, 'delete', '{\"id\":448,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN EDIT\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST EDIT\",\"peraturan_id\":4,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2016, 'rekening_kegiatan', 4534, 'update', '{\"id\":4534,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN AWAL\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2017, 'rekening_kegiatan', 4534, 'delete', '{\"id\":4534,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:11:12\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:11:12\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:11:12'),
+(2018, 'master_biaya', 39, 'update', '{\"id\":39,\"tipe\":\"ssh\",\"kode\":\"TRACE_TEST_PHASE2_SSH\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST ssh\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 03:25:37'),
+(2019, 'master_biaya', 40, 'update', '{\"id\":40,\"tipe\":\"hspk\",\"kode\":\"TRACE_TEST_PHASE2_HSPK\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST hspk\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 03:25:37'),
+(2020, 'master_biaya', 41, 'update', '{\"id\":41,\"tipe\":\"asb\",\"kode\":\"TRACE_TEST_PHASE2_ASB\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST asb\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 03:25:37'),
+(2021, 'master_biaya', 42, 'update', '{\"id\":42,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-08-31 03:25:37'),
+(2022, 'master_biaya', 39, 'delete', '{\"id\":39,\"tipe\":\"ssh\",\"kode\":\"TRACE_TEST_PHASE2_SSH\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST ssh\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 03:25:37'),
+(2023, 'master_biaya', 40, 'delete', '{\"id\":40,\"tipe\":\"hspk\",\"kode\":\"TRACE_TEST_PHASE2_HSPK\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST hspk\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 03:25:37'),
+(2024, 'master_biaya', 41, 'delete', '{\"id\":41,\"tipe\":\"asb\",\"kode\":\"TRACE_TEST_PHASE2_ASB\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST asb\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 03:25:37'),
+(2025, 'master_biaya', 42, 'delete', '{\"id\":42,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"01.02.03\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 03:25:37'),
+(2026, 'rekening_kegiatan', 4535, 'update', '{\"id\":4535,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:37'),
+(2027, 'rekening_kegiatan', 4536, 'update', '{\"id\":4536,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:37'),
+(2028, 'rekening_kegiatan', 4537, 'update', '{\"id\":4537,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:37'),
+(2029, 'rekening_kegiatan', 4538, 'update', '{\"id\":4538,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:37'),
+(2030, 'rekening_kegiatan', 4539, 'update', '{\"id\":4539,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:37'),
+(2031, 'rekening_kegiatan', 4539, 'delete', '{\"id\":4539,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:37'),
+(2032, 'rekening_kegiatan', 4538, 'delete', '{\"id\":4538,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:37'),
+(2033, 'rekening_kegiatan', 4537, 'delete', '{\"id\":4537,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:37'),
+(2034, 'rekening_kegiatan', 4536, 'delete', '{\"id\":4536,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:37'),
+(2035, 'rekening_kegiatan', 4535, 'delete', '{\"id\":4535,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:37'),
+(2036, 'master_biaya_akun', 27, 'update', '{\"id\":27,\"master_biaya_id\":45,\"kd_akun\":\"5\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"kd_akun\":\"5.1\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:37'),
+(2037, 'master_biaya_akun', 27, 'delete', '{\"id\":27,\"master_biaya_id\":45,\"kd_akun\":\"5.1\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 03:25:37\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:25:37\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:37'),
+(2038, 'rekanan_neo', 193, 'update', '{\"id\":193,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-31 03:25:38\",\"tgl_update\":\"2026-08-31 11:25:38\",\"username_update\":null,\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', '{\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"tgl_update\":\"2026-08-31 03:25:38\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:38'),
+(2039, 'rekanan_neo', 193, 'delete', '{\"id\":193,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-08-31 03:25:38\",\"tgl_update\":\"2026-08-31 03:25:38\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:38'),
+(2040, 'satuan_neo', 450, 'update', '{\"id\":450,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST\",\"peraturan_id\":4,\"tgl_insert\":\"2026-08-31 03:25:38\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 11:25:38\",\"username_update\":null,\"is_deleted\":0}', '{\"uraian\":\"TRACE SATUAN EDIT\",\"keterangan\":\"TRACE TEST EDIT\",\"tgl_update\":\"2026-08-31 03:25:38\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:38'),
+(2041, 'satuan_neo', 450, 'delete', '{\"id\":450,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN EDIT\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST EDIT\",\"peraturan_id\":4,\"tgl_insert\":\"2026-08-31 03:25:38\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:25:38\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:38'),
+(2042, 'rekening_kegiatan', 4541, 'update', '{\"id\":4541,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN AWAL\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:25:38\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"tgl_update\":\"2026-08-31 03:25:38\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:38'),
+(2043, 'rekening_kegiatan', 4541, 'delete', '{\"id\":4541,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-08-31 03:25:38\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-08-31 03:25:38\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-08-31 03:25:38');
 
 -- --------------------------------------------------------
 
@@ -11324,6 +11706,13 @@ CREATE TABLE `master_biaya` (
   `username_update` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `master_biaya`
+--
+
+INSERT INTO `master_biaya` (`id`, `tipe`, `kode`, `kode_aset`, `kelompok_barang`, `uraian`, `spesifikasi`, `satuan_id`, `harga`, `tkdn`, `keterangan`, `kd_wilayah`, `tahun`, `peraturan_id`, `disable`, `is_deleted`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+(30, 'ssh', 'TRACE_TEST.P3.001', NULL, NULL, 'Kertas kerja perencanaan TRACE_TEST', 'A4 80 gsm', 1, 75000.00, 40.00, 'TRACE_TEST Phase 1-2 untuk Phase 3', '76.01', 2026, 1, 0, 0, '2026-08-31 11:10:29', 'TRACE_TEST_PHASE3', NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -11343,6 +11732,13 @@ CREATE TABLE `master_biaya_akun` (
   `tgl_update` datetime DEFAULT NULL,
   `username_update` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `master_biaya_akun`
+--
+
+INSERT INTO `master_biaya_akun` (`id`, `master_biaya_id`, `kd_akun`, `kd_wilayah`, `peraturan_id`, `disable`, `is_deleted`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
+(20, 30, '5.1.02.02.05.0044', '76.01', 1, 0, 0, '2026-08-31 11:10:29', 'TRACE_TEST_PHASE3', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -11369,7 +11765,8 @@ CREATE TABLE `misi_renstra_neo` (
 
 INSERT INTO `misi_renstra_neo` (`id`, `renstra_id`, `nama_misi`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
 (2, 4, 'misi 1', 0, 'ket', '2026-03-08 04:45:28', 'inayah', '2026-03-08 12:45:28', NULL, 0),
-(3, 4, 'misi 2', 0, 'ket 2', '2026-03-08 05:18:05', 'inayah', '2026-03-08 13:18:05', NULL, 0);
+(3, 4, 'misi 2', 0, 'ket 2', '2026-03-08 05:18:05', 'inayah', '2026-03-08 13:18:05', NULL, 0),
+(4, 5, 'TRACE_TEST: Meningkatkan kualitas perencanaan', 0, 'TRACE_TEST Phase 3', '2026-08-31 11:10:29', 'TRACE_TEST_PHASE3', '2026-08-31 11:10:29', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -11605,6 +12002,13 @@ CREATE TABLE `program_renstra_neo` (
   `username_update` varchar(100) DEFAULT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `program_renstra_neo`
+--
+
+INSERT INTO `program_renstra_neo` (`id`, `sasaran_id`, `kode_program`, `uraian`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, 6, 'X.XX.1', 'TRACE_TEST: Program Penunjang Urusan Pemerintahan', 0, 'TRACE_TEST Phase 3', '2026-08-31 11:10:29', 'TRACE_TEST_PHASE3', '2026-08-31 11:10:29', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -12073,7 +12477,9 @@ INSERT INTO `rekanan_neo` (`id`, `kd_wilayah`, `nama_perusahaan`, `alamat`, `ema
 (171, '76.01', 'CV. TRINI KARYA', 'BTN Pesona Teluk Palu Blok J No. 5 Kel. Tondo Palu', '', '80.968.093.7-831.000', '', '', '', 'RAFAEL YUSUP, ST', 'Direktur', '', '', '01', '2017-01-06', 'Palu', 'Drs. H. Andi Suryadi Sunusi, SH', NULL, '', NULL, 0, 'nabiila', '2024-04-06 16:18:45', '2024-04-06 16:18:45', 'nabiila', 0, NULL, NULL, NULL, NULL),
 (172, '76.01', 'CV. BERKAH BAHAGIA', 'Dusun Tunangan Desa Pangali-ali', '', '01.956.757.7-8143.000', '', '', '', 'MUHAMMAD ZALIM', 'Direktur', '', '', '02', '2001-07-03', '', 'Puspawati, SH', NULL, '', NULL, 0, 'nabiila', '2024-04-06 16:18:45', '2024-04-06 16:18:45', 'nabiila', 0, NULL, NULL, NULL, NULL),
 (173, '76.01', 'CV. RATU RAFA', 'Dusun Rojo Kelurahan Sarude, Kec. Sarjo Kab. Pasangkayu', '', '96.185.279.5-814.000', '', '', '', 'IRFAN HAMID', 'Direktur', '', '', '04', '2020-09-25', 'Pasangkayu', 'RISKAL, S.H., M.Kn', NULL, '', NULL, 0, 'nabiila', '2024-04-06 16:18:45', '2024-04-06 16:18:45', 'nabiila', 0, NULL, NULL, NULL, NULL),
-(174, '76.01', 'PT. AURAMA KARYA KONSULTAN', 'Komp. Permata Hijau Permai Blok B No. 21 Makassar', '', '02.308.444.5-805.000', '', '', '', 'HARDIANSYAH, ST', 'Direktur', '', '', '14', '2003-10-27', '', 'MARDIANA KADIR,SH', NULL, '', NULL, 0, 'nabiila', '2024-04-06 16:18:45', '2024-04-06 16:18:45', 'nabiila', 0, NULL, NULL, NULL, NULL);
+(174, '76.01', 'PT. AURAMA KARYA KONSULTAN', 'Komp. Permata Hijau Permai Blok B No. 21 Makassar', '', '02.308.444.5-805.000', '', '', '', 'HARDIANSYAH, ST', 'Direktur', '', '', '14', '2003-10-27', '', 'MARDIANA KADIR,SH', NULL, '', NULL, 0, 'nabiila', '2024-04-06 16:18:45', '2024-04-06 16:18:45', 'nabiila', 0, NULL, NULL, NULL, NULL),
+(190, '76.01', 'TRACE_TEST PT Infrastruktur Maju', 'Pasangkayu', 'paket-a@example.test', '00.000.000.0-000.001', '001001', 'Bank Sulbar', 'PT Infrastruktur Maju', 'Andi Pratama', 'Direktur', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TRACE_TEST Phase 4', NULL, 0, 'TRACE_TEST_PHASE4', '2026-08-31 11:24:56', '2026-08-31 11:24:56', NULL, 0, NULL, NULL, NULL, NULL),
+(191, '76.01', 'TRACE_TEST CV Karya Mandiri', 'Mamuju Tengah', 'paket-b@example.test', '00.000.000.0-000.002', '002002', 'Bank Sulbar', 'CV Karya Mandiri', 'Siti Rahma', 'Direktur', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TRACE_TEST Phase 4', NULL, 0, 'TRACE_TEST_PHASE4', '2026-08-31 11:24:56', '2026-08-31 11:24:56', NULL, 0, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -12235,19 +12641,19 @@ INSERT INTO `rekening_kegiatan` (`id`, `kode`, `parent_kode`, `level`, `uraian`,
 (129, 'X.XX.1.3.01.2', 'X.XX.1.3.01', 'sub_kegiatan', 'Penyediaan Gaji dan Tunjangan ASN Tenaga Kesehatan Otonomi Khusus Papua', '76.01', 4, 'Tersedianya Gaji dan Tunjangan ASN Tenaga Kesehatan Otonomi Khusus Papua', 'Jumlah Orang yang Menerima Gaji dan Tunjangan Tenaga Kesehatan Otonomi Khusus Papua', 'Orang/bulan', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (130, 'X.XX.1.4.01', 'X.XX.1.4', 'kegiatan', 'Administrasi Keuangan Perangkat Daerah Otonomi Khusus Papua', '76.01', 4, '', '', '', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (131, 'X.XX.1.4.01.1', 'X.XX.1.4.01', 'sub_kegiatan', 'Penyediaan Gaji dan Tunjangan ASN Tenaga Pendidik Otonomi Khusus Papua', '76.01', 4, 'Tersedianya Gaji dan Tunjangan ASN Tenaga Pendidik Otonomi Khusus Papua', 'Jumlah Orang yang Menerima Gaji dan Tunjangan Tenaga Pendidik Otonomi Khusus Papua', 'Orang/bulan', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
-(132, 'X.XX.1.4.01.2', 'X.XX.1.4.01', 'sub_kegiatan', 'Penyediaan Gaji dan Tunjangan ASN Tenaga Kesehatan Otonomi Khusus Papua', '76.01', 4, 'Tersedianya Gaji dan Tunjangan ASN Tenaga Kesehatan Otonomi Khusus Papua', 'Jumlah Orang yang Menerima Gaji dan Tunjangan Tenaga Kesehatan Otonomi Khusus Papua', 'Orang/bulan', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
+(132, 'X.XX.1.4.01.2', 'X.XX.1.4.01', 'sub_kegiatan', 'Penyediaan Gaji dan Tunjangan ASN Tenaga Kesehatan Otonomi Khusus Papua', '76.01', 4, 'Tersedianya Gaji dan Tunjangan ASN Tenaga Kesehatan Otonomi Khusus Papua', 'Jumlah Orang yang Menerima Gaji dan Tunjangan Tenaga Kesehatan Otonomi Khusus Papua', 'Orang/bulan', 1, '2026-03-14 05:17:20', 'inayah', '2026-03-28 09:27:51', 'inayah'),
 (133, '1', NULL, 'urusan', 'URUSAN PEMERINTAHAN WAJIB YANG BERKAITAN DENGAN PELAYANAN DASAR', '76.01', 4, '', '', '', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (134, '1.1', '1', 'bidang', 'URUSAN PEMERINTAHAN BIDANG PENDIDIKAN', '76.01', 4, '', '', '', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (135, '1.1.2', '1.1', 'program', 'PROGRAM PENGELOLAAN PENDIDIKAN', '76.01', 4, '', '', '', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (136, '1.1.2.2.01', '1.1.2.2', 'kegiatan', 'Pengelolaan Pendidikan Sekolah Dasar', '76.01', 4, '', '', '', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
-(137, '1.1.2.2.01.1', '1.1.2.2.01', 'sub_kegiatan', 'Pembangunan Unit Sekolah Baru (USB)', '76.01', 4, 'Sekolah Baru yang Terbangun', 'Jumlah Sekolah Baru yang Telah Dibangun', 'Unit', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
+(137, '1.1.2.2.01.1', '1.1.2.2.01', 'sub_kegiatan', 'Pembangunan Unit Sekolah Baru (USB)', '76.01', 4, 'Sekolah Baru yang Terbangun', 'Jumlah Sekolah Baru yang Telah Dibangun', 'Unit', 1, '2026-03-14 05:17:20', 'inayah', '2026-03-28 09:51:06', 'inayah'),
 (138, '1.1.2.2.01.3', '1.1.2.2.01', 'sub_kegiatan', 'Pembangunan Ruang Guru/Kepala Sekolah/TU', '76.01', 4, 'Ruang Guru/Kepala Sekolah/TU yang Terbangun', 'Jumlah Ruang Guru/Kepala Sekolah/TU yang Telah Dibangun', 'Ruang', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (139, '1.1.2.2.01.4', '1.1.2.2.01', 'sub_kegiatan', 'Pembangunan Ruang Unit Kesehatan Sekolah', '76.01', 4, 'Ruang Unit Kesehatan Sekolah yang Terbangun', 'Jumlah Ruang Unit Kesehatan Sekolah yang Telah Dibangun', 'Ruang', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (140, '1.1.2.2.01.5', '1.1.2.2.01', 'sub_kegiatan', 'Pembangunan Perpustakaan Sekolah', '76.01', 4, 'Ruang Perpustakaan Sekolah yang Terbangun', 'Jumlah Perpustakaan Sekolah yang Telah Dibangun', 'Ruang', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (141, '1.1.2.2.01.6', '1.1.2.2.01', 'sub_kegiatan', 'Pembangunan Sarana, Prasarana dan Utilitas Sekolah', '76.01', 4, 'Sarana, Prasarana dan Utilitas Sekolah yang Terbangun', 'Jumlah Sarana, Prasarana dan Utilitas Sekolah yang Telah Dibangun', 'Unit', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (142, '1.1.2.2.01.7', '1.1.2.2.01', 'sub_kegiatan', 'Pembangunan Rumah Dinas Kepala Sekolah/Guru/Penjaga Sekolah', '76.01', 4, 'Rumah Dinas Kepala Sekolah, Guru, Penjaga Sekolah yang Terbangun', 'Jumlah Rumah Dinas Kepala Sekolah, Guru, Penjaga Sekolah yang Telah Dibangun', 'Unit', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (143, '1.1.2.2.01.9', '1.1.2.2.01', 'sub_kegiatan', 'Rehabilitasi Sedang/Berat Ruang Guru/Kepala Sekolah/TU', '76.01', 4, 'Ruang Guru/Kepala Sekolah/TU yang Terehabilitasi Sedang/Berat', 'Jumlah Ruang Guru/Kepala Sekolah/TU yang Telah Direhabilitasi Sedang/Berat', 'Ruang', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
-(144, '1.1.2.2.01.10', '1.1.2.2.01', 'sub_kegiatan', 'Rehabilitasi Sedang/Berat Ruang Unit Kesehatan Sekolah', '76.01', 4, 'Ruang Unit Kesehatan Sekolah yang Terehabilitasi Sedang/Berat', 'Jumlah Ruang Unit Kesehatan Sekolah yang Telah Direhabilitasi Sedang/Berat', 'Ruang', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
+(144, '1.1.2.2.01.10', '1.1.2.2.01', 'sub_kegiatan', 'Rehabilitasi Sedang/Berat Ruang Unit Kesehatan Sekolah', '76.01', 4, 'Ruang Unit Kesehatan Sekolah yang Terehabilitasi Sedang/Berat', 'Jumlah Ruang Unit Kesehatan Sekolah yang Telah Direhabilitasi Sedang/Berat', 'Ruang', 1, '2026-03-14 05:17:20', 'inayah', '2026-03-28 09:36:38', 'inayah'),
 (145, '1.1.2.2.01.11', '1.1.2.2.01', 'sub_kegiatan', 'Rehabilitasi Sedang/Berat Perpustakaan Sekolah', '76.01', 4, 'Perpustakaan Sekolah yang Terehabilitasi Sedang/Berat', 'Jumlah PerpustakaanSekolah yang Telah Direhabilitasi Sedang/Berat', 'Ruang', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (146, '1.1.2.2.01.13', '1.1.2.2.01', 'sub_kegiatan', 'Rehabilitasi Sedang/Berat Rumah Dinas Kepala Sekolah/Guru/Penjaga Sekolah', '76.01', 4, 'Rumah Dinas Kepala Sekolah, Guru, Penjaga Sekolah yang Terehabilitasi Sedang/Berat', 'Jumlah Rumah Dinas Kepala Sekolah, Guru, Penjaga Sekolah yang Telah DiRehabilitasi Sedang/Berat', 'Unit', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (147, '1.1.2.2.01.14', '1.1.2.2.01', 'sub_kegiatan', 'Pengadaan Mebel Sekolah', '76.01', 4, 'Mebel Sekolah yang Tersedia', 'Jumlah Mebel sekolah yang Tersedia', 'Paket', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
@@ -16617,8 +17023,7 @@ INSERT INTO `rekening_kegiatan` (`id`, `kode`, `parent_kode`, `level`, `uraian`,
 (4480, '9.1.4.7.03.7', '9.1.4.7.03', 'sub_kegiatan', 'Pendistribusian dan Pendayagunaan ZIS Senif Ibnu Sabil', '76.01', 4, 'Terlaksananya Pendistribusian dan Pendayagunaan ZIS Senif Ibnu Sabil', 'Jumlah Orang yang Menerima ZIS Senif Fakir', 'Orang', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (4481, '9.1.4.7.03.8', '9.1.4.7.03', 'sub_kegiatan', 'Pendistribusian dan Pendayagunaan ZIS Senif Infaq', '76.01', 4, 'Terlaksananya Pendistribusian dan Pendayagunaan ZIS Senif Infaq', 'Jumlah Orang yang Menerima ZIS Senif Infaq', 'Orang', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
 (4482, '9.1.4.7.03.9', '9.1.4.7.03', 'sub_kegiatan', 'Pengelolaan Wakaf', '76.01', 4, 'Terkelolanya Wakaf', 'Jumlah Laporan Pengelolaan Wakaf', 'Laporan', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
-(4483, '9.1.4.7.03.10', '9.1.4.7.03', 'sub_kegiatan', 'Pendistribusian dan Pendayagunaan ZIS Guru SMA dan Sederajat', '76.01', 4, 'Terlaksananya Pendistribusian dan Pendayagunaan ZIS Guru SMA dan Sederajat', 'Jumlah Guru SMA dan Sederajat yang Mendapatkan ZIS', 'Orang', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL),
-(4484, '', NULL, 'urusan', '', '76.01', 4, NULL, NULL, NULL, 1, '2026-03-25 06:03:01', 'inayah', NULL, NULL);
+(4483, '9.1.4.7.03.10', '9.1.4.7.03', 'sub_kegiatan', 'Pendistribusian dan Pendayagunaan ZIS Guru SMA dan Sederajat', '76.01', 4, 'Terlaksananya Pendistribusian dan Pendayagunaan ZIS Guru SMA dan Sederajat', 'Jumlah Guru SMA dan Sederajat yang Mendapatkan ZIS', 'Orang', 1, '2026-03-14 05:17:20', 'inayah', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -16628,6 +17033,8 @@ INSERT INTO `rekening_kegiatan` (`id`, `kode`, `parent_kode`, `level`, `uraian`,
 
 CREATE TABLE `renja_neo` (
   `id` bigint(20) NOT NULL,
+  `source_table` varchar(30) DEFAULT NULL,
+  `source_id` bigint(20) DEFAULT NULL,
   `kd_wilayah` varchar(60) DEFAULT NULL,
   `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
@@ -16669,6 +17076,15 @@ CREATE TABLE `renja_neo` (
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `renja_neo`
+--
+
+INSERT INTO `renja_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
+(1, 'rkpd_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST: Penyusunan dokumen Renja', NULL, NULL, 'ssh', 30, 'Kertas kerja perencanaan', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 75000000.0000, 1, 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
+(2, 'rkpd_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 240000000.0000, 1, 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(3, 'rkpd_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 180000000.0000, 1, 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -16677,6 +17093,8 @@ CREATE TABLE `renja_neo` (
 
 CREATE TABLE `renja_p_neo` (
   `id` bigint(20) NOT NULL,
+  `source_table` varchar(30) DEFAULT NULL,
+  `source_id` bigint(20) DEFAULT NULL,
   `kd_wilayah` varchar(60) DEFAULT NULL,
   `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
@@ -16727,6 +17145,15 @@ CREATE TABLE `renja_p_neo` (
   `username_insert` varchar(100) DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `renja_p_neo`
+--
+
+INSERT INTO `renja_p_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga_awal`, `id_standar_harga_awal`, `komponen_awal`, `spesifikasi_awal`, `tkdn_awal`, `pajak_awal`, `harga_satuan_awal`, `volume_awal`, `jumlah_awal`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `status_perubahan`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
+(1, 'renja_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST: Renja Perubahan', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 82500000.0000, 1, 'ubah', 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
+(2, 'renja_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 250000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(3, 'renja_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 190000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL);
 
 -- --------------------------------------------------------
 
@@ -16757,7 +17184,8 @@ CREATE TABLE `renstra_neo` (
 --
 
 INSERT INTO `renstra_neo` (`id`, `kd_wilayah`, `kd_opd`, `periode_id`, `visi`, `status`, `kunci`, `setujui`, `disable`, `keterangan`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`, `is_deleted`) VALUES
-(4, '76.01', '1.03.0.00.0.00.01.0000', 1, 'visi', '1', 1, 1, 0, 'keterangan', '2026-03-08 04:25:24', '2026-03-08 12:25:24', 'inayah', NULL, 0);
+(4, '76.01', '1.03.0.00.0.00.01.0000', 1, 'visi', '1', 1, 1, 0, 'keterangan', '2026-03-08 04:25:24', '2026-03-08 12:25:24', 'inayah', NULL, 0),
+(5, '76.01', '1.03.0.00.0.00.01.0000', 1, 'TRACE_TEST: Pemerintahan daerah yang terencana dan akuntabel', 'aktif', 1, 1, 0, 'TRACE_TEST Phase 3', '2026-08-31 11:10:29', '2026-08-31 11:10:29', 'TRACE_TEST_PHASE3', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -16767,6 +17195,8 @@ INSERT INTO `renstra_neo` (`id`, `kd_wilayah`, `kd_opd`, `periode_id`, `visi`, `
 
 CREATE TABLE `rka_neo` (
   `id` bigint(20) NOT NULL,
+  `source_table` varchar(30) DEFAULT NULL,
+  `source_id` bigint(20) DEFAULT NULL,
   `kd_wilayah` varchar(60) DEFAULT NULL,
   `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
@@ -16808,6 +17238,15 @@ CREATE TABLE `rka_neo` (
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `rka_neo`
+--
+
+INSERT INTO `rka_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
+(1, 'renja_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST: Penyusunan dokumen RKA', NULL, NULL, 'ssh', 30, 'Kertas kerja perencanaan', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 75000000.0000, 1, 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
+(2, 'renja_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 240000000.0000, 1, 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(3, 'renja_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 180000000.0000, 1, 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -16816,6 +17255,8 @@ CREATE TABLE `rka_neo` (
 
 CREATE TABLE `rka_p_neo` (
   `id` bigint(20) NOT NULL,
+  `source_table` varchar(30) DEFAULT NULL,
+  `source_id` bigint(20) DEFAULT NULL,
   `kd_wilayah` varchar(60) DEFAULT NULL,
   `kd_opd` varchar(60) DEFAULT NULL,
   `tahun` year(4) DEFAULT NULL,
@@ -16867,6 +17308,105 @@ CREATE TABLE `rka_p_neo` (
   `username_update` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `rka_p_neo`
+--
+
+INSERT INTO `rka_p_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga_awal`, `id_standar_harga_awal`, `komponen_awal`, `spesifikasi_awal`, `tkdn_awal`, `pajak_awal`, `harga_satuan_awal`, `volume_awal`, `jumlah_awal`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `status_perubahan`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
+(1, 'rka_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST: RKA Perubahan', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 82500000.0000, 1, 'ubah', 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
+(2, 'rka_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 250000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(3, 'rka_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 190000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `rkpd_neo`
+--
+
+CREATE TABLE `rkpd_neo` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `renstra_sub_kegiatan_id` int(11) DEFAULT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_opd` varchar(60) NOT NULL,
+  `tahun` year(4) NOT NULL,
+  `kd_program` varchar(50) DEFAULT NULL,
+  `kd_kegiatan` varchar(50) DEFAULT NULL,
+  `kd_sub_keg` varchar(50) NOT NULL,
+  `indikator` varchar(510) DEFAULT NULL,
+  `target` decimal(18,2) NOT NULL DEFAULT 0.00,
+  `satuan_id` int(11) DEFAULT NULL,
+  `pagu` decimal(20,2) NOT NULL DEFAULT 0.00,
+  `sumber_dana_id` int(11) DEFAULT NULL,
+  `lokasi` varchar(255) DEFAULT NULL,
+  `kelompok_sasaran` varchar(255) DEFAULT NULL,
+  `status` enum('draft','final','approved') NOT NULL DEFAULT 'draft',
+  `disable` tinyint(4) NOT NULL DEFAULT 0,
+  `kunci` tinyint(4) NOT NULL DEFAULT 0,
+  `setujui` tinyint(4) NOT NULL DEFAULT 0,
+  `keterangan` text DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data untuk tabel `rkpd_neo`
+--
+
+INSERT INTO `rkpd_neo` (`id`, `renstra_sub_kegiatan_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_program`, `kd_kegiatan`, `kd_sub_keg`, `indikator`, `target`, `satuan_id`, `pagu`, `sumber_dana_id`, `lokasi`, `kelompok_sasaran`, `status`, `disable`, `kunci`, `setujui`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1', 'X.XX.1.2.01', 'X.XX.1.2.01.1', 'TRACE_TEST: Dokumen perencanaan tersusun', 1.00, 1, 75000000.00, 1, 'Kabupaten Mamuju Tengah', 'Perangkat Daerah', 'approved', 0, 1, 1, 'TRACE_TEST Phase 3', '2026-08-31 11:10:29', 'TRACE_TEST_PHASE3', NULL, NULL, 0),
+(2, 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1', 'X.XX.1.2.01', 'X.XX.1.2.01.1', 'TRACE_TEST Phase 4 Paket A: dokumen perencanaan', 1.00, 1, 240000000.00, 1, 'Pasangkayu', 'Perangkat Daerah', 'approved', 0, 1, 1, 'TRACE_TEST Phase 4 Paket A', '2026-08-31 11:24:56', 'TRACE_TEST_PHASE4', NULL, NULL, 0),
+(3, 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1', 'X.XX.1.2.01', 'X.XX.1.2.01.2', 'TRACE_TEST Phase 4 Paket B: dokumen RKA', 1.00, 1, 180000000.00, 1, 'Pasangkayu', 'Perangkat Daerah', 'approved', 0, 1, 1, 'TRACE_TEST Phase 4 Paket B', '2026-08-31 11:24:56', 'TRACE_TEST_PHASE4', NULL, NULL, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `rkpd_p_neo`
+--
+
+CREATE TABLE `rkpd_p_neo` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `source_rkpd_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `renstra_sub_kegiatan_id` int(11) DEFAULT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_opd` varchar(60) NOT NULL,
+  `tahun` year(4) NOT NULL,
+  `kd_program` varchar(50) DEFAULT NULL,
+  `kd_kegiatan` varchar(50) DEFAULT NULL,
+  `kd_sub_keg` varchar(50) NOT NULL,
+  `indikator` varchar(510) DEFAULT NULL,
+  `target_awal` decimal(18,2) NOT NULL DEFAULT 0.00,
+  `pagu_awal` decimal(20,2) NOT NULL DEFAULT 0.00,
+  `target` decimal(18,2) NOT NULL DEFAULT 0.00,
+  `satuan_id` int(11) DEFAULT NULL,
+  `pagu` decimal(20,2) NOT NULL DEFAULT 0.00,
+  `sumber_dana_id` int(11) DEFAULT NULL,
+  `lokasi` varchar(255) DEFAULT NULL,
+  `kelompok_sasaran` varchar(255) DEFAULT NULL,
+  `status_perubahan` enum('awal','ubah','tambah','hapus') NOT NULL DEFAULT 'awal',
+  `status` enum('draft','final','approved') NOT NULL DEFAULT 'draft',
+  `disable` tinyint(4) NOT NULL DEFAULT 0,
+  `kunci` tinyint(4) NOT NULL DEFAULT 0,
+  `setujui` tinyint(4) NOT NULL DEFAULT 0,
+  `keterangan` text DEFAULT NULL,
+  `tgl_insert` datetime DEFAULT NULL,
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data untuk tabel `rkpd_p_neo`
+--
+
+INSERT INTO `rkpd_p_neo` (`id`, `source_rkpd_id`, `renstra_sub_kegiatan_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_program`, `kd_kegiatan`, `kd_sub_keg`, `indikator`, `target_awal`, `pagu_awal`, `target`, `satuan_id`, `pagu`, `sumber_dana_id`, `lokasi`, `kelompok_sasaran`, `status_perubahan`, `status`, `disable`, `kunci`, `setujui`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, 1, 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1', 'X.XX.1.2.01', 'X.XX.1.2.01.1', 'TRACE_TEST: Dokumen perencanaan perubahan', 1.00, 75000000.00, 1.00, 1, 82500000.00, 1, 'Kabupaten Mamuju Tengah', 'Perangkat Daerah', 'ubah', 'approved', 0, 1, 1, 'TRACE_TEST Phase 3', '2026-08-31 11:10:29', 'TRACE_TEST_PHASE3', NULL, NULL, 0),
+(2, 2, 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1', 'X.XX.1.2.01', 'X.XX.1.2.01.1', 'TRACE_TEST Phase 4 Paket A Perubahan', 1.00, 240000000.00, 1.00, 1, 250000000.00, 1, NULL, NULL, 'ubah', 'approved', 0, 1, 1, 'TRACE_TEST Phase 4 Paket A', '2026-08-31 11:24:56', 'TRACE_TEST_PHASE4', NULL, NULL, 0),
+(3, 3, 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1', 'X.XX.1.2.01', 'X.XX.1.2.01.2', 'TRACE_TEST Phase 4 Paket B Perubahan', 1.00, 180000000.00, 1.00, 1, 190000000.00, 1, NULL, NULL, 'ubah', 'approved', 0, 1, 1, 'TRACE_TEST Phase 4 Paket B', '2026-08-31 11:24:56', 'TRACE_TEST_PHASE4', NULL, NULL, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -16893,7 +17433,8 @@ CREATE TABLE `sasaran_renstra_neo` (
 
 INSERT INTO `sasaran_renstra_neo` (`id`, `tujuan_id`, `kode_sasaran`, `nama_sasaran`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
 (4, 3, NULL, 'sasaran 1', 0, 'ket', '2026-03-08 05:06:27', 'inayah', '2026-03-08 13:06:27', NULL, 0),
-(5, 3, NULL, 'sasaran 2', 0, 'ket sasaran 2', '2026-03-08 05:12:09', 'inayah', '2026-03-08 13:12:09', NULL, 0);
+(5, 3, NULL, 'sasaran 2', 0, 'ket sasaran 2', '2026-03-08 05:12:09', 'inayah', '2026-03-08 13:12:09', NULL, 0),
+(6, 6, 'SS.01', 'TRACE_TEST: Dokumen perencanaan tepat waktu', 0, 'TRACE_TEST Phase 3', '2026-08-31 11:10:29', 'TRACE_TEST_PHASE3', '2026-08-31 11:10:29', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -17573,6 +18114,13 @@ CREATE TABLE `sub_kegiatan_renstra_neo` (
   `username_update` varchar(100) DEFAULT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `sub_kegiatan_renstra_neo`
+--
+
+INSERT INTO `sub_kegiatan_renstra_neo` (`id`, `kegiatan_renstra_id`, `master_sub_kegiatan_id`, `lokasi`, `kelompok_sasaran`, `baseline`, `target_t1`, `anggaran_t1`, `target_t2`, `anggaran_t2`, `target_t3`, `anggaran_t3`, `target_t4`, `anggaran_t4`, `target_t5`, `anggaran_t5`, `target_akhir`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, 1, 5, 'Kabupaten Mamuju Tengah', 'Perangkat Daerah', 1.00, 1.00, 75000000.00, 1.00, 80000000.00, 1.00, 85000000.00, 1.00, 90000000.00, 1.00, 95000000.00, 1.00, 0, 'TRACE_TEST Phase 3', '2026-08-31 11:10:29', 'TRACE_TEST_PHASE3', '2026-08-31 11:10:29', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -18366,7 +18914,7 @@ CREATE TABLE `trx_naskah_dinas` (
 
 INSERT INTO `trx_naskah_dinas` (`id`, `uuid`, `jenis_id`, `nomor`, `nomor_urut`, `tahun`, `klasifikasi_id`, `tanggal_surat`, `perihal`, `status`, `file_pdf`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`, `workflow_status`, `verified_by`, `verified_at`, `signed_by`, `signed_at`, `final_at`, `document_hash`) VALUES
 (2, NULL, 5, '02 DPUPR 2026', NULL, '2026', NULL, '2026-03-24', 'PENGANGKATAN PEJABAT PENATAUSAHAAN KEUANGAN DINAS PEKERJAAN UMUM DAN PENATAAN RUANG KABUPATEN PASANGKAYU TAHUN 2026', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-03-24 04:32:12', NULL, NULL, 'oke', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
-(3, NULL, 5, '9', NULL, '2026', NULL, '2026-03-25', '', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-03-25 10:09:27', NULL, NULL, '', 'draft', NULL, NULL, NULL, NULL, NULL, NULL);
+(4, NULL, 5, '05', NULL, '2026', NULL, '2026-03-26', 'perihal', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-03-26 03:12:42', NULL, NULL, '', 'draft', NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -18401,17 +18949,17 @@ INSERT INTO `trx_naskah_meta` (`id`, `naskah_id`, `meta_key`, `meta_value`, `kd_
 (22, 2, 'keterangan', 'oke', NULL, NULL, NULL, NULL),
 (23, 2, 'jenis_id', '5', NULL, NULL, NULL, NULL),
 (24, 2, 'struktur_json', '{\"menimbang\":[{\"type\":\"numbered\",\"text\":\"<ol><li><strong>bahwa</strong> : untuk menyediakan pengelolaan keuangan Dinas Pekerjaan Umum danPenataan Ruang Kabupaten Pasangkayu, maka dipandang perlu mengangkatPejabat Penatausahaan Keuangan pada Dinas Pekerjaan Umum dan PenataanRuang Kabupaten Pasangkayu;</li><li><li>bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap&nbsp;<span style=\\\"font-size: 1em;\\\">dan mampu melaksanakan tugas;</span></li><li><li>bahwa sebagaimana dimaksud pada point a perlu ditetapkan dalam keputusan</li><li>Kepala Dinas Pekerjaan Umum dan Penataan Ruang.</li></li></li></ol>\",\"align\":\"justify\"}],\"mengingat\":[{\"type\":\"numbered\",\"text\":\"<ol><li>Undang-Undang : Nomor 28 Tahun 1999 tentang penyelenggaraan Negara yang&nbsp;bersih dan bebas dari korupsi dan nepotisme (Lembaran Negara Republik&nbsp;Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Nomor 3851);</li><li><span style=\\\"font-size: 1em;\\\">Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu&nbsp;</span><span style=\\\"font-size: 1em;\\\">Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran&nbsp;</span><span style=\\\"font-size: 1em;\\\">Negara. Republik Indonesia Tahun 2003 Nomor 27, Tambahan Lembaran&nbsp;</span><span style=\\\"font-size: 1em;\\\">Negara Nomor 4270);</span></li></ol>\",\"align\":\"justify\"}],\"menetapkan\":[{\"type\":\"paragraph\",\"text\":\"KEPUTUSAN : KEPALA DINAS PEKERJAAN UMUM DAN PENATAAN RUANG&nbsp;TENTANG PENGANGKATAN PEJABAT PENATAUSAHAAN KEUANGAN DINAS&nbsp;PEKERJAAN UMUM DAN PENATAAN RUANG KABUPATEN PASANGKAYU&nbsp;TAHUN 2026\",\"align\":\"justify\"}],\"menetapkan_1\":[{\"type\":\"paragraph\",\"text\":\"PPK SKPD mempunyai tugas dan wewenang:\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"<ol><li><strong>melakukan</strong> : verifikasi SPP-UP, SPP-GU, SPP-TU, dan SPP-LS beserta bukti&nbsp;kelengkapannya yang diajukan oleh Bendahara Pengeluaran;</li><li>menyiapkan SPM;melakukan verifikasi laporan pertanggungjawaban Bendahara Penerimaan dan&nbsp;Bendahara Pengeluaran;</li><li>melaksanakan fungsi akuntansi pada SKPD; dan</li><li>menyusun laporan keuangan SKPD.</li></ol>\",\"align\":\"justify\"}],\"menetapkan_2\":[{\"type\":\"paragraph\",\"text\":\"Selain melaksanakan tugas dan wewenang pada angka 5, PPK SKPD&nbsp;melaksanakan tugas dan wewenang lainnya yaitu:\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"<ol><li><strong>melakukan</strong> : verifikasi SPP-UP, SPP-GU, SPP-TU, dan SPP-LS beserta bukti kelengkapannya yang diajukan oleh Bendahara lainnya;</li><li>melakukan verifikasi surat permintaan pembayaran atas pengembalian kelebihanpendapatan daerah dari bendahara penerimaan; dan</li><li>menerbitkan surat pernyataan verifikasi kelengkapan dan keabsahan SPP-UP,SPP-GU, SPP-TU dan SPP-LS beserta bukti kelengkapannya sebagai dasar penyiapan SPM.</li></ol>\",\"align\":\"justify\"}],\"menetapkan_3\":[{\"type\":\"paragraph\",\"text\":\"<strong>Segala</strong> : biaya yang timbul akibat keputusan ini dibebankan kepada APBD Dinas&nbsp;Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran2026.\",\"align\":\"justify\"}],\"menetapkan_4\":[{\"type\":\"paragraph\",\"text\":\"Keputusan : ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat&nbsp;kekeliruan didalamnya akan diperbaharui sebagaimana mestinya.\",\"align\":\"justify\"}],\"nama_ditugaskan\":[{\"nama\":\"Sri Irda Ayu, SP.,M.SI\",\"pangkat\":\"\",\"nip\":\"198306252005022003\",\"jabatan\":\"Kepala Bidang Binamarga\",\"jabatan_sk\":\"\",\"_id\":\"111\"}],\"tembusan\":[{\"type\":\"numbered\",\"text\":\"<ol><li><strong>Bupati</strong> : Pasangkayu, di Pasangkayu;</li><li>Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu;</li><li>Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu;</li><li>Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu;</li></ol>\",\"align\":\"justify\"}]}', NULL, NULL, NULL, NULL),
-(25, 3, 'nomor', '9', NULL, NULL, NULL, NULL),
-(26, 3, 'tanggal_surat', '25 Maret 2026', NULL, NULL, NULL, NULL),
-(27, 3, 'file', '', NULL, NULL, NULL, NULL),
-(28, 3, 'perihal', '', NULL, NULL, NULL, NULL),
-(29, 3, 'penandatangan', '3', NULL, NULL, NULL, NULL),
-(30, 3, 'jbt_pemberi_tgs', 'Kepala Dinas', NULL, NULL, NULL, NULL),
-(31, 3, 'pangkat_pemberi_tgs', 'Pembina, IV/a', NULL, NULL, NULL, NULL),
-(32, 3, 'asn', '14', NULL, NULL, NULL, NULL),
-(33, 3, 'keterangan', '', NULL, NULL, NULL, NULL),
-(34, 3, 'jenis_id', '5', NULL, NULL, NULL, NULL),
-(35, 3, 'struktur_json', '{\"menimbang\":[],\"mengingat\":[],\"menetapkan\":[],\"menetapkan_1\":[],\"menetapkan_2\":[],\"menetapkan_3\":[],\"menetapkan_4\":[],\"nama_ditugaskan\":[{\"nama\":\"Darmawi\",\"pangkat\":\"Pengatur Muda Tingkat I, II/b\",\"nip\":\"196705152006041014\",\"jabatan\":\"Pengadministrasi Umum\",\"jabatan_sk\":\"\",\"_id\":\"196705152006041014\"},{\"nama\":\"Irmawati, SE\",\"pangkat\":\"Penata, III/c\",\"nip\":\"197601032006042007\",\"jabatan\":\"Kasubag umum dan kepegawaian\",\"jabatan_sk\":\"\",\"_id\":\"197601032006042007\"}],\"tembusan\":[]}', NULL, NULL, NULL, NULL);
+(36, 4, 'nomor', '05', NULL, NULL, NULL, NULL),
+(37, 4, 'tanggal_surat', '26 Maret 2026', NULL, NULL, NULL, NULL),
+(38, 4, 'file', '', NULL, NULL, NULL, NULL),
+(39, 4, 'perihal', 'perihal', NULL, NULL, NULL, NULL),
+(40, 4, 'penandatangan', '3', NULL, NULL, NULL, NULL),
+(41, 4, 'jbt_pemberi_tgs', 'Kepala Dinas', NULL, NULL, NULL, NULL),
+(42, 4, 'pangkat_pemberi_tgs', 'Pembina, IV/a', NULL, NULL, NULL, NULL),
+(43, 4, 'asn', '93', NULL, NULL, NULL, NULL),
+(44, 4, 'keterangan', '', NULL, NULL, NULL, NULL),
+(45, 4, 'jenis_id', '5', NULL, NULL, NULL, NULL),
+(46, 4, 'struktur_json', '{\"menimbang\":[{\"type\":\"paragraph\",\"text\":\"oke\",\"align\":\"justify\"}],\"mengingat\":[{\"type\":\"paragraph\",\"text\":\"oke\",\"align\":\"justify\"}],\"menetapkan\":[],\"menetapkan_1\":[],\"menetapkan_2\":[],\"menetapkan_3\":[],\"menetapkan_4\":[],\"nama_ditugaskan\":[{\"nama\":\"Gusti Ayu Nastuti\",\"pangkat\":\"Juru Muda, I/a\",\"nip\":\"819950307868545000\",\"jabatan\":\"\",\"jabatan_sk\":\"\",\"_id\":\"819950307868545000\"},{\"nama\":\"Rosmayani\",\"pangkat\":\"Juru Muda, I/a\",\"nip\":\"352782285393646000\",\"jabatan\":\"\",\"jabatan_sk\":\"\",\"_id\":\"352782285393646000\"}],\"tembusan\":[]}', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -18438,7 +18986,7 @@ CREATE TABLE `trx_naskah_struktur` (
 
 INSERT INTO `trx_naskah_struktur` (`id`, `naskah_id`, `struktur_json`, `kd_wilayah`, `kd_opd`, `tahun`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
 (45, 2, '{\"menimbang\":[{\"type\":\"paragraph\",\"text\":\"bahwa untuk menyediakan pengelolaan keuangan Dinas Pekerjaan Umum danPenataan Ruang Kabupaten Pasangkayu, maka dipandang perlu mengangkatPejabat Penatausahaan Keuangan pada Dinas Pekerjaan Umum dan PenataanRuang Kabupaten Pasangkayu;\",\"align\":\"justify\"},{\"type\":\"paragraph\",\"text\":\"bahwa : yang tersebut namanya dalam lampiran keputusan ini dipandang cakap&nbsp;dan mampu melaksanakan tugas;bahwa sebagaimana dimaksud pada point a perlu ditetapkan dalam keputusan Kepala Dinas Pekerjaan Umum dan Penataan Ruang.\",\"align\":\"justify\"}],\"mengingat\":[{\"type\":\"numbered\",\"text\":\"Undang-Undang : Nomor 28 Tahun 1999 tentang penyelenggaraan Negara yang&nbsp;bersih dan bebas dari korupsi dan nepotisme (Lembaran Negara Republik&nbsp;Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Nomor 3851);Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu&nbsp;Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran&nbsp;Negara. Republik Indonesia Tahun 2003 Nomor 27, Tambahan Lembaran&nbsp;Negara Nomor 4270);\",\"align\":\"justify\"}],\"menetapkan\":[{\"type\":\"paragraph\",\"text\":\"KEPUTUSAN : KEPALA DINAS PEKERJAAN UMUM DAN PENATAAN RUANG&nbsp;TENTANG PENGANGKATAN PEJABAT PENATAUSAHAAN KEUANGAN DINAS&nbsp;PEKERJAAN UMUM DAN PENATAAN RUANG KABUPATEN PASANGKAYU&nbsp;TAHUN 2026\",\"align\":\"justify\"}],\"menetapkan_1\":[{\"type\":\"paragraph\",\"text\":\"PPK SKPD mempunyai tugas dan wewenang:\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melakukan : verifikasi SPP-UP, SPP-GU, SPP-TU, dan SPP-LS beserta bukti&nbsp;kelengkapannya yang diajukan oleh Bendahara Pengeluaran;menyiapkan SPM;melakukan verifikasi laporan pertanggungjawaban Bendahara Penerimaan dan&nbsp;Bendahara Pengeluaran;melaksanakan fungsi akuntansi pada SKPD; danmenyusun laporan keuangan SKPD.\",\"align\":\"justify\"}],\"menetapkan_2\":[{\"type\":\"paragraph\",\"text\":\"Selain melaksanakan tugas dan wewenang pada angka 5, PPK SKPD&nbsp;melaksanakan tugas dan wewenang lainnya yaitu:\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melakukan : verifikasi SPP-UP, SPP-GU, SPP-TU, dan SPP-LS beserta bukti kelengkapannya yang diajukan oleh Bendahara lainnya;melakukan verifikasi surat permintaan pembayaran atas pengembalian kelebihanpendapatan daerah dari bendahara penerimaan; danmenerbitkan surat pernyataan verifikasi kelengkapan dan keabsahan SPP-UP,SPP-GU, SPP-TU dan SPP-LS beserta bukti kelengkapannya sebagai dasar penyiapan SPM.\",\"align\":\"justify\"}],\"menetapkan_3\":[{\"type\":\"paragraph\",\"text\":\"Segala : biaya yang timbul akibat keputusan ini dibebankan kepada APBD Dinas&nbsp;Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran2026.\",\"align\":\"justify\"}],\"menetapkan_4\":[{\"type\":\"paragraph\",\"text\":\"Keputusan : ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat&nbsp;kekeliruan didalamnya akan diperbaharui sebagaimana mestinya.\",\"align\":\"justify\"}],\"nama_ditugaskan\":[{\"nama\":\"SRI IRDA AYU, SP.,M.Si\",\"pangkat\":\"Pembina, IV\\/a\",\"nip\":\"198306252005022003\",\"jabatan\":\"Kepala Bidang Binamarga\",\"jabatan_sk\":\"\",\"_id\":\"198306252005022003\"}],\"tembusan\":[{\"type\":\"numbered\",\"text\":\"Bupati : Pasangkayu, di Pasangkayu;Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu;Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu;Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu;\",\"align\":\"justify\"}]}', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(46, 3, '{\"nomor\":\"9\",\"tanggal_surat\":\"25 Maret 2026\",\"file\":\"\",\"perihal\":\"\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"Pembina, IV\\/a\",\"asn\":\"14\",\"keterangan\":\"\",\"jenis_id\":\"5\",\"menimbang\":[],\"mengingat\":[],\"menetapkan\":[],\"menetapkan_1\":[],\"menetapkan_2\":[],\"menetapkan_3\":[],\"menetapkan_4\":[],\"nama_ditugaskan\":[{\"nama\":\"Darmawi\",\"pangkat\":\"Pengatur Muda Tingkat I, II\\/b\",\"nip\":\"196705152006041014\",\"jabatan\":\"Pengadministrasi Umum\",\"jabatan_sk\":\"\",\"_id\":\"196705152006041014\"},{\"nama\":\"Irmawati, SE\",\"pangkat\":\"Penata, III\\/c\",\"nip\":\"197601032006042007\",\"jabatan\":\"Kasubag umum dan kepegawaian\",\"jabatan_sk\":\"\",\"_id\":\"197601032006042007\"}],\"tembusan\":[]}', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(47, 4, '{\"nomor\":\"05\",\"tanggal_surat\":\"26 Maret 2026\",\"file\":\"\",\"perihal\":\"perihal\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"Pembina, IV\\/a\",\"asn\":\"93\",\"keterangan\":\"\",\"jenis_id\":\"5\",\"menimbang\":[{\"type\":\"paragraph\",\"text\":\"oke\",\"align\":\"justify\"}],\"mengingat\":[{\"type\":\"paragraph\",\"text\":\"oke\",\"align\":\"justify\"}],\"menetapkan\":[],\"menetapkan_1\":[],\"menetapkan_2\":[],\"menetapkan_3\":[],\"menetapkan_4\":[],\"nama_ditugaskan\":[{\"nama\":\"Gusti Ayu Nastuti\",\"pangkat\":\"Juru Muda, I\\/a\",\"nip\":\"819950307868545000\",\"jabatan\":\"\",\"jabatan_sk\":\"\",\"_id\":\"819950307868545000\"},{\"nama\":\"Rosmayani\",\"pangkat\":\"Juru Muda, I\\/a\",\"nip\":\"352782285393646000\",\"jabatan\":\"\",\"jabatan_sk\":\"\",\"_id\":\"352782285393646000\"}],\"tembusan\":[]}', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -18458,7 +19006,7 @@ CREATE TABLE `trx_nomor_counter` (
 --
 
 INSERT INTO `trx_nomor_counter` (`id`, `klasifikasi_id`, `tahun`, `last_number`) VALUES
-(1, NULL, 2026, 3);
+(1, NULL, 2026, 4);
 
 -- --------------------------------------------------------
 
@@ -18486,7 +19034,8 @@ CREATE TABLE `tujuan_renstra_neo` (
 
 INSERT INTO `tujuan_renstra_neo` (`id`, `misi_id`, `kode_tujuan`, `nama_tujuan`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
 (3, 2, NULL, 'tujuan 1', 0, 'tujuan 2', '2026-03-08 04:46:05', 'inayah', '2026-03-08 12:46:05', NULL, 0),
-(4, 3, NULL, 'tujuan 1 misi 2', 0, 'ket', '2026-03-08 05:18:34', 'inayah', '2026-03-08 13:18:34', NULL, 0);
+(4, 3, NULL, 'tujuan 1 misi 2', 0, 'ket', '2026-03-08 05:18:34', 'inayah', '2026-03-08 13:18:34', NULL, 0),
+(6, 4, 'TT.01', 'TRACE_TEST: Perencanaan perangkat daerah meningkat', 0, 'TRACE_TEST Phase 3', '2026-08-31 11:10:29', 'TRACE_TEST_PHASE3', '2026-08-31 11:10:29', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -18653,6 +19202,13 @@ ALTER TABLE `anggaran_template`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `anggaran_workflow_log`
+--
+ALTER TABLE `anggaran_workflow_log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_workflow_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`tgl_copy`);
+
+--
 -- Indeks untuk tabel `aset_neo`
 --
 ALTER TABLE `aset_neo`
@@ -18668,13 +19224,17 @@ ALTER TABLE `cache_schema_naskah`
 -- Indeks untuk tabel `daftar_paket_neo`
 --
 ALTER TABLE `daftar_paket_neo`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_paket_anggaran` (`sumber_tahap`,`anggaran_id`),
+  ADD KEY `idx_paket_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`);
 
 --
 -- Indeks untuk tabel `daftar_realisasi_neo`
 --
 ALTER TABLE `daftar_realisasi_neo`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_realisasi_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`),
+  ADD KEY `idx_realisasi_kontrak` (`kontrak_id`,`tanggal`,`is_deleted`);
 
 --
 -- Indeks untuk tabel `daftar_uraian_paket`
@@ -18693,13 +19253,15 @@ ALTER TABLE `db_asn_pemda_neo`
 -- Indeks untuk tabel `dpa_neo`
 --
 ALTER TABLE `dpa_neo`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_dpa_source` (`source_table`,`source_id`);
 
 --
 -- Indeks untuk tabel `dppa_neo`
 --
 ALTER TABLE `dppa_neo`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_dppa_source` (`source_table`,`source_id`);
 
 --
 -- Indeks untuk tabel `group_rekap_akun`
@@ -18755,7 +19317,11 @@ ALTER TABLE `kegiatan_renstra_neo`
 -- Indeks untuk tabel `kontrak_neo`
 --
 ALTER TABLE `kontrak_neo`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_kontrak_nomor_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`nomor_kontrak`,`is_deleted`),
+  ADD KEY `idx_kontrak_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`),
+  ADD KEY `idx_kontrak_anggaran` (`tahap`,`anggaran_id`),
+  ADD KEY `idx_kontrak_rekanan` (`rekanan_id`);
 
 --
 -- Indeks untuk tabel `log_activity`
@@ -18770,14 +19336,19 @@ ALTER TABLE `log_activity`
 -- Indeks untuk tabel `master_biaya`
 --
 ALTER TABLE `master_biaya`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_master_biaya_scope` (`tipe`,`kd_wilayah`,`tahun`,`peraturan_id`,`is_deleted`),
+  ADD KEY `idx_master_biaya_satuan` (`satuan_id`),
+  ADD KEY `idx_master_biaya_kode` (`kode`);
 
 --
 -- Indeks untuk tabel `master_biaya_akun`
 --
 ALTER TABLE `master_biaya_akun`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_master_biaya` (`master_biaya_id`);
+  ADD KEY `fk_master_biaya` (`master_biaya_id`),
+  ADD KEY `idx_master_biaya_akun_scope` (`kd_wilayah`,`peraturan_id`,`is_deleted`),
+  ADD KEY `idx_master_biaya_akun_lookup` (`master_biaya_id`,`kd_akun`,`peraturan_id`,`is_deleted`);
 
 --
 -- Indeks untuk tabel `misi_renstra_neo`
@@ -18885,13 +19456,15 @@ ALTER TABLE `rekening_kegiatan`
 -- Indeks untuk tabel `renja_neo`
 --
 ALTER TABLE `renja_neo`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_renja_source` (`source_table`,`source_id`);
 
 --
 -- Indeks untuk tabel `renja_p_neo`
 --
 ALTER TABLE `renja_p_neo`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_renja_p_source` (`source_table`,`source_id`);
 
 --
 -- Indeks untuk tabel `renstra_neo`
@@ -18903,13 +19476,33 @@ ALTER TABLE `renstra_neo`
 -- Indeks untuk tabel `rka_neo`
 --
 ALTER TABLE `rka_neo`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_rka_source` (`source_table`,`source_id`);
 
 --
 -- Indeks untuk tabel `rka_p_neo`
 --
 ALTER TABLE `rka_p_neo`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_rka_p_source` (`source_table`,`source_id`);
+
+--
+-- Indeks untuk tabel `rkpd_neo`
+--
+ALTER TABLE `rkpd_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_rkpd_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`),
+  ADD KEY `idx_rkpd_sub` (`kd_sub_keg`),
+  ADD KEY `idx_rkpd_renstra` (`renstra_sub_kegiatan_id`);
+
+--
+-- Indeks untuk tabel `rkpd_p_neo`
+--
+ALTER TABLE `rkpd_p_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_rkpd_p_source` (`source_rkpd_id`),
+  ADD KEY `idx_rkpd_p_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`),
+  ADD KEY `idx_rkpd_p_sub` (`kd_sub_keg`);
 
 --
 -- Indeks untuk tabel `sasaran_renstra_neo`
@@ -19049,6 +19642,12 @@ ALTER TABLE `anggaran_template`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `anggaran_workflow_log`
+--
+ALTER TABLE `anggaran_workflow_log`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT untuk tabel `aset_neo`
 --
 ALTER TABLE `aset_neo`
@@ -19058,19 +19657,19 @@ ALTER TABLE `aset_neo`
 -- AUTO_INCREMENT untuk tabel `daftar_paket_neo`
 --
 ALTER TABLE `daftar_paket_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `daftar_realisasi_neo`
 --
 ALTER TABLE `daftar_realisasi_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `daftar_uraian_paket`
 --
 ALTER TABLE `daftar_uraian_paket`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `db_asn_pemda_neo`
@@ -19082,13 +19681,13 @@ ALTER TABLE `db_asn_pemda_neo`
 -- AUTO_INCREMENT untuk tabel `dpa_neo`
 --
 ALTER TABLE `dpa_neo`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `dppa_neo`
 --
 ALTER TABLE `dppa_neo`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `group_rekap_akun`
@@ -19106,7 +19705,7 @@ ALTER TABLE `group_sub_kegiatan`
 -- AUTO_INCREMENT untuk tabel `halaman_berita`
 --
 ALTER TABLE `halaman_berita`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `import_logs`
@@ -19118,13 +19717,13 @@ ALTER TABLE `import_logs`
 -- AUTO_INCREMENT untuk tabel `indikator_program_renstra_neo`
 --
 ALTER TABLE `indikator_program_renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `indikator_sasaran_renstra_neo`
 --
 ALTER TABLE `indikator_sasaran_renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `kd_wilayah_neo`
@@ -19136,37 +19735,37 @@ ALTER TABLE `kd_wilayah_neo`
 -- AUTO_INCREMENT untuk tabel `kegiatan_renstra_neo`
 --
 ALTER TABLE `kegiatan_renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `kontrak_neo`
 --
 ALTER TABLE `kontrak_neo`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `log_activity`
 --
 ALTER TABLE `log_activity`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1873;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2044;
 
 --
 -- AUTO_INCREMENT untuk tabel `master_biaya`
 --
 ALTER TABLE `master_biaya`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT untuk tabel `master_biaya_akun`
 --
 ALTER TABLE `master_biaya_akun`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT untuk tabel `misi_renstra_neo`
 --
 ALTER TABLE `misi_renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `organisasi_neo`
@@ -19178,7 +19777,7 @@ ALTER TABLE `organisasi_neo`
 -- AUTO_INCREMENT untuk tabel `pengaturan_neo`
 --
 ALTER TABLE `pengaturan_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT untuk tabel `peraturan_neo`
@@ -19196,7 +19795,7 @@ ALTER TABLE `periode_rpjmd`
 -- AUTO_INCREMENT untuk tabel `program_renstra_neo`
 --
 ALTER TABLE `program_renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `rab_paket_neo`
@@ -19250,55 +19849,67 @@ ALTER TABLE `rekanan_akta`
 -- AUTO_INCREMENT untuk tabel `rekanan_neo`
 --
 ALTER TABLE `rekanan_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=175;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=194;
 
 --
 -- AUTO_INCREMENT untuk tabel `rekening_kegiatan`
 --
 ALTER TABLE `rekening_kegiatan`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4487;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4542;
 
 --
 -- AUTO_INCREMENT untuk tabel `renja_neo`
 --
 ALTER TABLE `renja_neo`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `renja_p_neo`
 --
 ALTER TABLE `renja_p_neo`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `renstra_neo`
 --
 ALTER TABLE `renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `rka_neo`
 --
 ALTER TABLE `rka_neo`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `rka_p_neo`
 --
 ALTER TABLE `rka_p_neo`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT untuk tabel `rkpd_neo`
+--
+ALTER TABLE `rkpd_neo`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT untuk tabel `rkpd_p_neo`
+--
+ALTER TABLE `rkpd_p_neo`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `sasaran_renstra_neo`
 --
 ALTER TABLE `sasaran_renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT untuk tabel `satuan_neo`
 --
 ALTER TABLE `satuan_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=437;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=451;
 
 --
 -- AUTO_INCREMENT untuk tabel `sk_asn_neo`
@@ -19310,7 +19921,7 @@ ALTER TABLE `sk_asn_neo`
 -- AUTO_INCREMENT untuk tabel `sub_kegiatan_renstra_neo`
 --
 ALTER TABLE `sub_kegiatan_renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `sub_keg_dpa_neo`
@@ -19334,19 +19945,19 @@ ALTER TABLE `sumber_dana_neo`
 -- AUTO_INCREMENT untuk tabel `trx_naskah_dinas`
 --
 ALTER TABLE `trx_naskah_dinas`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `trx_naskah_meta`
 --
 ALTER TABLE `trx_naskah_meta`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT untuk tabel `trx_naskah_struktur`
 --
 ALTER TABLE `trx_naskah_struktur`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT untuk tabel `trx_nomor_counter`
@@ -19358,7 +19969,7 @@ ALTER TABLE `trx_nomor_counter`
 -- AUTO_INCREMENT untuk tabel `tujuan_renstra_neo`
 --
 ALTER TABLE `tujuan_renstra_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT untuk tabel `user_sesendok_biila`
