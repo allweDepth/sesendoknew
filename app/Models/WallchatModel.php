@@ -92,7 +92,8 @@ class WallchatModel
     ========================================== */
 public function store($data)
 {
-    $encrypted = $this->crypto->encrypt((string)$data['content']);
+    $isE2e = !empty($data['e2e_payload']);
+    $encrypted = $isE2e ? ['ciphertext'=>null,'nonce'=>null] : $this->crypto->encrypt((string)$data['content']);
     $theme = (string)($data['theme'] ?? 'default');
     if (!in_array($theme, ['default', 'ocean', 'sunset', 'forest', 'midnight'], true)) {
         $theme = 'default';
@@ -106,6 +107,8 @@ public function store($data)
         'content'    => '',
         'content_ciphertext' => $encrypted['ciphertext'],
         'content_nonce' => $encrypted['nonce'],
+        'e2e_payload' => $data['e2e_payload'] ?? null,
+        'encryption_version' => $isE2e ? 'webcrypto-v1' : 'server-v1',
         'is_ephemeral' => !empty($data['is_ephemeral']) ? 1 : 0,
         'attachment_name' => $data['attachment_name'] ?? null,
         'attachment_path' => $data['attachment_path'] ?? null,
@@ -159,7 +162,9 @@ public function store($data)
     public function getPrivateMessages(int $userId): array
     {
         $rows=$this->db->query("SELECT w.*,s.username pengirim,r.username penerima FROM wallchat w JOIN user_sesendok_biila s ON s.id=w.user_id JOIN user_sesendok_biila r ON r.id=w.receiver_id WHERE w.type='private' AND w.is_deleted=0 AND ((w.user_id=? AND w.deleted_by_sender=0) OR (w.receiver_id=? AND w.deleted_by_receiver=0)) ORDER BY w.created_at DESC LIMIT 50",[$userId,$userId])->fetchAll();
-        foreach($rows as &$row)$row['content']=$this->crypto->decrypt($row['content_ciphertext']??null,$row['content_nonce']??null,$row['content']??'');
+        foreach($rows as &$row) {
+            $row['content'] = !empty($row['e2e_payload']) ? '__E2E__'.base64_encode($row['e2e_payload']) : $this->crypto->decrypt($row['content_ciphertext']??null,$row['content_nonce']??null,$row['content']??'');
+        }
         return $rows;
     }
 

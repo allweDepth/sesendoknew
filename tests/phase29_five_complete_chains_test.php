@@ -1,0 +1,4 @@
+<?php
+require_once __DIR__.'/../app/Core/DB.php';$db=DB::getInstance();$ok=static function($v,$m){if(!$v)throw new RuntimeException('FAIL: '.$m);echo "PASS: $m\n";};
+$rows=$db->query("SELECT d.kd_sub_keg,k.id kontrak_id,COUNT(DISTINCT r.id) rab,COUNT(DISTINCT x.id) realisasi FROM dppa_neo d JOIN kontrak_neo k ON BINARY k.kd_wilayah=BINARY d.kd_wilayah AND BINARY k.kd_opd=BINARY d.kd_opd AND k.tahun=d.tahun AND BINARY k.kd_sub_keg=BINARY d.kd_sub_keg AND k.is_deleted=0 JOIN rab_paket_neo r ON r.kontrak_id=k.id AND r.is_deleted=0 JOIN daftar_realisasi_neo x ON x.kontrak_id=k.id AND x.is_deleted=0 WHERE d.is_deleted=0 GROUP BY d.kd_sub_keg,k.id")->fetchAll();
+$ok(count($rows)>=5,'minimal lima subkegiatan sampai kontrak, RAB, dan realisasi');foreach($rows as $r)$ok($r['rab']>0&&$r['realisasi']>0,"rantai {$r['kd_sub_keg']} lengkap");echo "PHASE 29 FIVE CHAINS TESTS COMPLETE\n";

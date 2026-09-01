@@ -104,8 +104,9 @@ class WallchatController extends Controller
 
     $model = new WallchatModel();
 
-    $receiver=(int)($_POST['receiver_id']??0);$content=trim($_POST['content']??'');
-    if(!$receiver||$receiver===(int)$_SESSION['user']['id']||$content===''){$this->jsonResult(false,'Penerima atau pesan tidak valid',422);return;}
+    $receiver=(int)($_POST['receiver_id']??0);$content=trim($_POST['content']??'');$e2e=trim((string)($_POST['e2e_payload']??''));
+    if(!$receiver||$receiver===(int)$_SESSION['user']['id']||($content===''&&$e2e==='')){$this->jsonResult(false,'Penerima atau pesan tidak valid',422);return;}
+    if($e2e!==''){$payload=json_decode($e2e,true);if(!is_array($payload)||($payload['version']??'')!=='webcrypto-v1'||empty($payload['ciphertext'])||empty($payload['iv'])||empty($payload['keys'])){$this->jsonResult(false,'Payload enkripsi tidak valid',422);return;}$content='Pesan terenkripsi end-to-end';}
     $attachment=$this->messageAttachment('private');
     $model->store([
       'user_id' => $_SESSION['user']['id'],
@@ -114,11 +115,29 @@ class WallchatController extends Controller
       'type' => 'private',
       'username' => $_SESSION['user']['username'],
       'is_ephemeral' => !empty($_POST['is_ephemeral']),
+      'e2e_payload' => $e2e ?: null,
       ...$attachment
     ]);
 
     $this->jsonResult(true,'Pesan pribadi berhasil dikirim');
     } catch(Throwable $e){$this->jsonResult(false,$e->getMessage(),400);}
+  }
+  public function registerMessageKey()
+  {
+    $this->beginJson();if(!Auth::check()){$this->jsonResult(false,'Sesi login tidak valid',401);return;}
+    $key=json_decode((string)($_POST['public_key']??''),true);
+    if(!is_array($key)||($key['kty']??'')!=='RSA'||empty($key['n'])||empty($key['e'])||strlen((string)$key['n'])<300){$this->jsonResult(false,'Kunci publik tidak valid',422);return;}
+    DB::getInstance()->update('user_sesendok_biila',['message_public_key'=>json_encode($key,JSON_UNESCAPED_SLASHES)],'WHERE id=?',[(int)$_SESSION['user']['id']]);
+    $this->jsonResult(true,'Kunci pesan tersimpan');
+  }
+  public function messageKeys()
+  {
+    $this->beginJson();if(!Auth::check()){$this->jsonResult(false,'Sesi login tidak valid',401);return;}
+    $receiver=(int)($_GET['receiver_id']??0);$ids=[(int)$_SESSION['user']['id'],$receiver];
+    $rows=DB::getInstance()->query('SELECT id,message_public_key FROM user_sesendok_biila WHERE id IN (?,?)',$ids)->fetchAll();$keys=[];
+    foreach($rows as $row)if(!empty($row['message_public_key']))$keys[(string)$row['id']]=json_decode($row['message_public_key'],true);
+    if(count($keys)<2){$this->jsonResult(false,'Penerima belum mengaktifkan kunci pesan di browser',409);return;}
+    if(ob_get_level()>0)ob_clean();echo json_encode(['success'=>true,'message'=>'Kunci tersedia','data'=>['keys'=>$keys]],JSON_UNESCAPED_SLASHES);if(ob_get_level()>0)ob_end_flush();
   }
   public function readPrivate()
   {
@@ -138,7 +157,7 @@ class WallchatController extends Controller
     $row=(new WallchatModel())->privateFile((int)($_GET['id']??0),(int)$_SESSION['user']['id']);
     if(!$row||empty($row['attachment_path'])){http_response_code(404);exit('Lampiran tidak ditemukan');}
     $root=realpath(dirname(__DIR__,2));$file=realpath($root.'/'.$row['attachment_path']);$allowed=realpath($root.'/storage/uploads/messages');
-    if(!$file||!$allowed||!str_starts_with($file,$allowed.DIRECTORY_SEPARATOR)){http_response_code(403);exit('Akses ditolak');}
+    if(!$file||!$allowed||!str_starts_with($file,$allowed.DIRECTORY_SEPARATOR)){http_response_code(403);exit('Akses ditolak');}while(ob_get_level()>0)ob_end_clean();
     header('Content-Type: '.$row['attachment_mime']);header('Content-Length: '.filesize($file));header('Content-Disposition: attachment; filename="'.rawurlencode($row['attachment_name']).'"');readfile($file);exit;
   }
 
@@ -161,7 +180,7 @@ class WallchatController extends Controller
   private function jsonResult(bool $success,string $message,int $status=200):void{if(ob_get_level()>0)ob_clean();http_response_code($status);echo json_encode(['success'=>$success,'message'=>$message,'data'=>[],'errors'=>[]],JSON_UNESCAPED_UNICODE);if(ob_get_level()>0)ob_end_flush();}
   public function mediaFile()
   {
-    if(!Auth::check())exit;$id=(int)($_GET['id']??0);$row=(new WallchatModel())->privateFile($id,(int)$_SESSION['user']['id']);if(!$row)$row=DB::getInstance()->query("SELECT * FROM wallchat WHERE id=? AND type IN ('status','comment') AND is_deleted=0",[$id])->fetch();if(!$row||empty($row['attachment_path'])){http_response_code(404);exit('Media tidak ditemukan');}$root=realpath(dirname(__DIR__,2));$file=realpath($root.'/'.$row['attachment_path']);$allowed=realpath($root.'/storage/uploads/messages');if(!$file||!$allowed||!str_starts_with($file,$allowed.DIRECTORY_SEPARATOR)){http_response_code(403);exit('Akses ditolak');}header('Content-Type: '.$row['attachment_mime']);header('Content-Length: '.filesize($file));header('Content-Disposition: inline; filename="'.rawurlencode($row['attachment_name']).'"');readfile($file);exit;
+    if(!Auth::check())exit;$id=(int)($_GET['id']??0);$row=(new WallchatModel())->privateFile($id,(int)$_SESSION['user']['id']);if(!$row)$row=DB::getInstance()->query("SELECT * FROM wallchat WHERE id=? AND type IN ('status','comment') AND is_deleted=0",[$id])->fetch();if(!$row||empty($row['attachment_path'])){http_response_code(404);exit('Media tidak ditemukan');}$root=realpath(dirname(__DIR__,2));$file=realpath($root.'/'.$row['attachment_path']);$allowed=realpath($root.'/storage/uploads/messages');if(!$file||!$allowed||!str_starts_with($file,$allowed.DIRECTORY_SEPARATOR)){http_response_code(403);exit('Akses ditolak');}while(ob_get_level()>0)ob_end_clean();header('Content-Type: '.$row['attachment_mime']);header('Content-Length: '.filesize($file));header('Content-Disposition: inline; filename="'.rawurlencode($row['attachment_name']).'"');readfile($file);exit;
   }
   public function delete()
   {

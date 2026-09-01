@@ -136,6 +136,8 @@ return [
   '/wallchat/update'   => ['WallchatController', 'update'],
   '/wallchat/comment'  => ['WallchatController', 'comment'],
   '/wallchat/private'  => ['WallchatController', 'privateMessage'],
+  '/wallchat/key/register' => ['WallchatController', 'registerMessageKey'],
+  '/wallchat/key' => ['WallchatController', 'messageKeys'],
   '/wallchat/private/read' => ['WallchatController', 'readPrivate'],
   '/wallchat/private/delete' => ['WallchatController', 'deletePrivate'],
   '/wallchat/private/file' => ['WallchatController', 'privateFile'],

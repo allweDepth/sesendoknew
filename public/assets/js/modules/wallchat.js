@@ -13,10 +13,15 @@ class WallchatModule {
 		this.mainContainer = "#main-content";
 	}
 
-	init() {
+	async init() {
 		this.bindEvents();
+		try { if(window.E2EMessage){await window.E2EMessage.init();await window.E2EMessage.decryptPage();} } catch(e){console.warn('E2E:',e.message);}
 		this.initDropdown();
 		$(document).off("click.wallComposer", "#openComposer").on("click.wallComposer", "#openComposer", ()=>$("#formPost").slideToggle(180).find("textarea").trigger("focus"));
+		$(document).off("click.wallViews", "#btnOpenInbox, #btnBackToWall, #btnComposePrivate")
+			.on("click.wallViews", "#btnOpenInbox", ()=>{$("#wallView").hide();$("#inboxView").fadeIn(160);window.scrollTo({top:0,behavior:"smooth"});})
+			.on("click.wallViews", "#btnBackToWall", ()=>{$("#inboxView").hide();$("#wallView").fadeIn(160);window.scrollTo({top:0,behavior:"smooth"});})
+			.on("click.wallViews", "#btnComposePrivate", ()=>$("#modalPrivateMessage").modal("show"));
 	}
 
 	bindEvents() {
@@ -66,10 +71,11 @@ class WallchatModule {
 		// kirim pesan pribadi
 		$(document).off("submit", "#formPrivateMessage");
 
-		$(document).on("submit", "#formPrivateMessage", (e) => {
+		$(document).on("submit", "#formPrivateMessage", async (e) => {
 			e.preventDefault();
 
-			const formData = new FormData(e.currentTarget);
+			const formData = new FormData(e.currentTarget),receiver=formData.get('receiver_id'),plain=String(formData.get('content')||'');
+			try{if(!window.E2EMessage)throw new Error('Web Crypto tidak tersedia');formData.set('e2e_payload',await window.E2EMessage.encrypt(plain,receiver));formData.set('content','');}catch(err){window.Toast?.error?.(err.message);return;}
 
 			window.Ajax.request({url:"/wallchat/private",method:"POST",
 				data: formData, processData:false, contentType:false,
@@ -116,9 +122,6 @@ class WallchatModule {
 	initDropdown() {
 		$(".ui.dropdown").dropdown();
 
-		$("#btnPrivateMessage").on("click", () => {
-			$("#modalPrivateMessage").modal("show");
-		});
 	}
 	destroy() {
 		// lepas semua event wallchat

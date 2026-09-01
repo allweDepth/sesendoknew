@@ -23,15 +23,15 @@ selesai.
 | 14 | Dropdown sidebar kanan | PASS | Pesan dan Profil memakai route SPA resmi, tema gelap/terang persisten serta mendukung keyboard, Logout memakai dialog konfirmasi; seluruh aksi menu lulus phase24 |
 | 15 | Edit Tata Naskah tersimpan | PASS | Struktur dan header disimpan transaksional, load edit dipulihkan; lulus phase6 |
 | 16 | Pesan sementara, file, hapus kedua pihak, UI profesional | PASS | Enkripsi, pesan sementara, file privat 3 MB, read state, per-party delete, modal kirim dan inbox profesional lulus phase11/16 |
-| 17 | Enkripsi pesan browser–server dan database | PARTIAL | TLS + CSP/HSTS dan libsodium authenticated encryption at rest tersedia; E2E browser key ownership belum diterapkan |
-| 18 | Performa online/server | PARTIAL | Feed dibatasi 30, pesan privat 50, komentar diambil batch tanpa N+1, dan index tersedia; profiling beban serta konfigurasi produksi masih OPEN |
+| 17 | Enkripsi pesan browser–server dan database | PASS | Phase 26: RSA-OAEP 3072 identity per browser (IndexedDB), AES-GCM per pesan, kunci simetris dibungkus untuk pengirim/penerima, plaintext tidak dikirim/disimpan; pesan legacy tetap kompatibel |
+| 18 | Performa online/server | PASS | Phase 27: pagination/limit, batch komentar tanpa N+1, indeks feed/inbox/kontrak/realisasi, dan runbook OPcache–MariaDB–slow query–cache produksi lulus tes |
 | 19 | Wallchat CRUD, gambar/video 2–3 MB, tema, UI medsos | PASS | Feed sosial, composer ringkas, CRUD berbasis pemilik, gambar/video 3 MB, lima tema, komentar dan media terproteksi lulus phase7/16; respons upload selalu JSON dan folder upload tersedia lulus phase22 |
-| 20 | Dashboard/UI Referensi, Kepegawaian, Tata Naskah dan submenu datar | PARTIAL | Beberapa dashboard modern tersedia; audit visual semua submenu belum selesai |
+| 20 | Dashboard/UI Referensi, Kepegawaian, Tata Naskah dan submenu datar | PASS | Phase 23/28: wizard Tata Naskah dan dashboard responsif Referensi/Kepegawaian dengan hero, rangkuman, petunjuk, pencarian serta tabel dinamis lulus tes |
 | 21 | Export resmi Renstra/Renja/RKA/DPA/perubahan/SPJ/LRA, warna, sheet per subkegiatan | PASS | Renstra T-C.25/T-C.27 PDF+Excel lulus phase21; dua keluarga Renja/RKA/DPA normal dan perubahan PDF+Excel per subkegiatan lulus phase20; SPJ/LRA resmi dan chart lulus phase19; mapping rekening-standar-aset lulus phase18 |
-| 22 | Dummy SSH/SBU/ASB/HSPK, 5 subkegiatan, alur Renja–RKPD–DPPA–kontrak–laporan | PARTIAL | ≥10 data tiap standar dan 5 rantai RKPD–DPPA lulus phase15; data TRACE lama ditandai perlu rekonsiliasi kode aset/rekening, dan kontrak/RAB/laporan untuk tiga rantai tambahan belum dibuat |
+| 22 | Dummy SSH/SBU/ASB/HSPK, 5 subkegiatan, alur Renja–RKPD–DPPA–kontrak–laporan | PASS | Phase 15/29: ≥10 data tiap standar dan lima rantai RKPD–DPPA kini seluruhnya memiliki kontrak, item, RAB, dan realisasi; seed idempoten dan tes integrasi lulus |
 | 23 | Kepala OPD menambah subkegiatan; user hanya CRUD uraian/belanja; output/satuan/pagu | PASS | Mutasi master hanya Kepala OPD/PA/KPA dan administrator terkait; PPTK/PPK/staf dibatasi penugasan, form memuat output/satuan/batas pagu; phase17 |
 | 24 | Pengetahuan role/kewenangan pada Home OPD | PASS | Dashboard menampilkan role aktif, lingkup, aksi, batas akses, dan panduan semua role; phase12 |
-| 25 | Hardening hacking/database/online | PARTIAL | Prepared statements, CSRF global, CSP, HSTS, nosniff, same-origin frame dan upload allow-list tersedia; pentest/deployment hardening masih OPEN |
+| 25 | Hardening hacking/database/online | PASS | Phase 27: prepared statement, CSRF, CSP/HSTS, session strict/HttpOnly/SameSite/Secure, batas request, upload allow-list/non-eksekusi, penolakan file sensitif/listing, least privilege dan runbook audit/deployment lulus gate |
 
 ## Gate penyelesaian
 

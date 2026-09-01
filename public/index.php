@@ -17,6 +17,10 @@ ob_start(function ($output) {
   if (APP_BASE_PATH === '') return $output;
   return preg_replace('#(href|src|action)=([\'\"])/(?!/)#i', '$1=$2' . APP_BASE_PATH . '/', $output);
 });
+ini_set('session.use_strict_mode','1');
+ini_set('session.cookie_httponly','1');
+ini_set('session.cookie_samesite','Strict');
+if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https') ini_set('session.cookie_secure','1');
 session_start();
 
 // Baseline browser hardening. TLS is terminated by the web server/proxy; HSTS
@@ -26,6 +30,8 @@ header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header("Permissions-Policy: camera=(), microphone=(), geolocation=(self)");
 header("Content-Security-Policy: default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
+header('Cache-Control: no-store, private');
+if ((int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 4 * 1024 * 1024) { http_response_code(413); exit('Request terlalu besar'); }
 if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https') {
   header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
 }
