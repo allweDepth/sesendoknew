@@ -5,7 +5,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;use PhpOffice\PhpSpreadsheet\Writer\Xls
 
 class AnggaranDocumentService
 {
-    private DB $db; private array $user;
+    private DB $db; private array $user; private ?string $currentSubCode=null;
     private const TABLES=['rkpd'=>'rkpd_neo','renja'=>'renja_neo','rka'=>'rka_neo','dpa'=>'dpa_neo','rkpd_p'=>'rkpd_p_neo','renja_p'=>'renja_p_neo','rka_p'=>'rka_p_neo','dppa'=>'dppa_neo'];
     public function __construct(array $user){$this->db=DB::getInstance();$this->user=$user;}
     private function table(string $logical):string{if(!isset(self::TABLES[$logical]))throw new InvalidArgumentException('Dokumen anggaran tidak valid');return self::TABLES[$logical];}
@@ -25,13 +25,22 @@ class AnggaranDocumentService
         $table=$this->table($logical);[$scope,$params]=$this->scope();$params[]=$code;
         if(str_starts_with($logical,'rkpd'))$select='a.id,a.kd_sub_keg,a.indikator AS uraian,a.target AS volume,a.pagu AS jumlah,a.lokasi,a.kelompok_sasaran,a.kunci,a.setujui,a.keterangan';
         else {$columns=array_column($this->db->query("SHOW COLUMNS FROM `$table`")->fetchAll(),'Field');$awal=in_array('jumlah_awal',$columns,true)?'a.volume_awal,a.harga_satuan_awal,a.jumlah_awal,':'NULL volume_awal,NULL harga_satuan_awal,NULL jumlah_awal,';$select="a.id,a.kd_sub_keg,a.kd_akun,a.kel_rek,a.jenis_kelompok,a.kelompok,a.komponen,a.spesifikasi,a.uraian,a.volume,a.harga_satuan,a.jumlah,$awal a.sumber_dana_id,a.kunci,a.setujui,a.keterangan";}
-        return $this->db->query("SELECT $select FROM `$table` a WHERE $scope AND a.kd_sub_keg=? ORDER BY a.id",$params)->fetchAll();
+        $rows=$this->db->query("SELECT $select FROM `$table` a WHERE $scope AND a.kd_sub_keg=? ORDER BY a.kd_akun,a.id",$params)->fetchAll();foreach($rows as &$row)$row['akun_hierarchy']=$this->accountHierarchy((string)($row['kd_akun']??''));unset($row);return$rows;
     }
 
     private function isChange(string $logical):bool{return in_array($logical,['rkpd_p','renja_p','rka_p','dppa'],true);}
     private function documentLabel(string $logical):string{return match($logical){'renja'=>'RENJA','rka'=>'RKA','dpa'=>'DPA','renja_p'=>'RENJA PERUBAHAN','rka_p'=>'RKA PERUBAHAN','dppa'=>'DPPA',default=>strtoupper($logical)};}
     private function e(mixed $value):string{return htmlspecialchars((string)$value,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');}
     private function money(mixed $value):string{return number_format((float)$value,2,',','.');}
+    private function accountHierarchy(string $code):array
+    {
+        $parts=array_values(array_filter(explode('.',$code),fn($v)=>$v!==''));$prefixes=[];$current='';foreach($parts as $part){$current=$current===''?$part:$current.'.'.$part;$prefixes[]=$current;}if(!$prefixes)return[];
+        $holders=implode(',',array_fill(0,count($prefixes),'?'));$rows=$this->db->query("SELECT kode,uraian FROM akun_neo WHERE kode IN ($holders) AND is_deleted=0 ORDER BY CHAR_LENGTH(kode),kode",$prefixes)->fetchAll();$map=[];foreach($rows as $r)$map[$r['kode']]=$r['uraian'];$out=[];foreach($prefixes as $prefix)$out[]=['kode'=>$prefix,'uraian'=>$map[$prefix]??('Rekening '.$prefix)];return$out;
+    }
+    private function hierarchyHtml(string $code,int $columns):string
+    {
+        $html='';foreach($this->accountHierarchy($code) as $depth=>$node){$html.='<tr style="background-color:'.($depth<2?'#d9eaf7':'#eef5fa').';font-weight:bold"><td>'.$this->e($node['kode']).'</td><td>'.$this->e($node['uraian']).'</td><td colspan="'.($columns-2).'"></td></tr>';}return$html;
+    }
     private function metadataRows(array $group):string
     {
         $opd=$this->user['nama_opd']??$this->user['opd']??$this->user['kd_opd']??'-';$year=(int)($this->user['tahun']??0);
@@ -59,7 +68,7 @@ class AnggaranDocumentService
     }
     public function monthlySummary(string $logical,?string $subCode=null):array
     {
-        [$scope,$p]=$this->scope('r');$p[]=$logical;$extra='';if($subCode!==null){$extra=' AND r.kd_sub_keg=?';$p[]=$subCode;}$rows=$this->db->query("SELECT r.bulan,SUM(r.nilai) nilai FROM rencana_realisasi_anggaran_neo r WHERE $scope AND r.dokumen=?$extra GROUP BY r.bulan ORDER BY r.bulan",$p)->fetchAll();$out=array_fill(1,12,0.0);foreach($rows as $r)$out[(int)$r['bulan']]=(float)$r['nilai'];return$out;
+        $subCode=$subCode??$this->currentSubCode;[$scope,$p]=$this->scope('r');$p[]=$logical;$extra='';if($subCode!==null){$extra=' AND r.kd_sub_keg=?';$p[]=$subCode;}$rows=$this->db->query("SELECT r.bulan,SUM(r.nilai) nilai FROM rencana_realisasi_anggaran_neo r WHERE $scope AND r.dokumen=?$extra GROUP BY r.bulan ORDER BY r.bulan",$p)->fetchAll();$out=array_fill(1,12,0.0);foreach($rows as $r)$out[(int)$r['bulan']]=(float)$r['nilai'];return$out;
     }
     public function exportRecapExcel(string $logical):string
     {
@@ -72,7 +81,7 @@ class AnggaranDocumentService
         require_once __DIR__.'/../../vendor/tecnickcom/tcpdf/tcpdf.php';
         $pdf=new TCPDF($orientation,'mm','A4',true,'UTF-8',false);$pdf->SetCreator('seSendok');$pdf->SetAuthor((string)($this->user['nama_opd']??'Pemerintah Daerah'));$pdf->SetTitle($this->documentLabel($logical));$pdf->setPrintHeader(false);$pdf->setPrintFooter(true);$pdf->SetMargins(8,8,8);$pdf->SetAutoPageBreak(true,12);
         if(!$groups){$pdf->AddPage();$pdf->SetFont('helvetica','B',12);$pdf->Cell(0,10,'TIDAK ADA DATA DALAM LINGKUP PENGGUNA',0,1,'C');return $pdf->Output('','S');}
-        foreach($groups as $group){$details=$this->details($logical,(string)$group['kd_sub_keg']);$pdf->AddPage();$pdf->SetFont('helvetica','',7.2);
+        foreach($groups as $group){$this->currentSubCode=(string)$group['kd_sub_keg'];$details=$this->details($logical,(string)$group['kd_sub_keg']);$pdf->AddPage();$pdf->SetFont('helvetica','',7.2);
             $title=$change?'DOKUMEN PELAKSANAAN PERGESERAN ANGGARAN':'DOKUMEN PELAKSANAAN ANGGARAN<br>SATUAN KERJA PERANGKAT DAERAH';
             $form=$change?'FORMULIR '.$this->documentLabel($logical).'<br>RINCIAN BELANJA SKPD':'FORMULIR '.$this->documentLabel($logical).'<br>RINCIAN BELANJA SKPD';
             $html='<table border="1" cellpadding="3"><tr><td width="72%" align="center" style="font-size:12px"><b>'.$title.'</b></td><td width="28%" align="center" style="font-size:10px"><b>'.$form.'</b></td></tr></table>';
@@ -85,6 +94,19 @@ class AnggaranDocumentService
             $tapd=$this->activeTapd();$html.='<br><b>Tim Anggaran Pemerintah Daerah</b><table border="1" cellpadding="2"><tr style="font-weight:bold;background-color:#e8e8e8"><td width="6%">No.</td><td width="34%">Nama</td><td width="24%">NIP</td><td width="24%">Jabatan</td><td width="12%">Tanda Tangan</td></tr>';foreach($tapd as $i=>$person)$html.='<tr><td>'.($i+1).'.</td><td>'.$this->e($person['nama']).'</td><td>'.$this->e($person['nip']).'</td><td>'.$this->e($person['jabatan']).'</td><td></td></tr>';if(!$tapd)$html.='<tr><td colspan="5">Belum ada penugasan TAPD yang berlaku pada tanggal cetak.</td></tr>';$html.='</table>';
             $pdf->writeHTML($html,true,false,true,false,'');
         }return $pdf->Output('','S');
+    }
+
+    public function exportOfficialPdf(string $logical):string
+    {
+        $groups=$this->groups($logical);$change=$this->isChange($logical);require_once __DIR__.'/../../vendor/tecnickcom/tcpdf/tcpdf.php';$pdf=new TCPDF('L','mm','A4',true,'UTF-8',false);$pdf->setPrintHeader(false);$pdf->setPrintFooter(true);$pdf->SetMargins(7,7,7);$pdf->SetAutoPageBreak(true,10);$pdf->SetFont('helvetica','',6.8);
+        foreach($groups as $group){$code=(string)$group['kd_sub_keg'];$this->currentSubCode=$code;$details=$this->details($logical,$code);$pdf->AddPage();$label=$this->documentLabel($logical);$html='<table border="1" cellpadding="2"><tr><td width="72%" align="center" style="font-size:11px"><b>'.($change?'DOKUMEN PELAKSANAAN PERGESERAN ANGGARAN':'DOKUMEN PELAKSANAAN ANGGARAN').'<br>SATUAN KERJA PERANGKAT DAERAH</b></td><td width="28%" align="center" style="font-size:9px"><b>FORMULIR '.$this->e($label).'<br>RINCIAN BELANJA SKPD</b></td></tr></table><table border="1" cellpadding="2">'.$this->metadataRows($group).'</table>';
+            if($change)$html.='<table border="1" cellpadding="2"><thead><tr style="font-weight:bold;background-color:#e7e7e7"><th width="12%" rowspan="2">Kode Rekening</th><th width="28%" rowspan="2">Uraian</th><th width="24%" colspan="3" align="center">Sebelum Perubahan</th><th width="24%" colspan="3" align="center">Sesudah Perubahan</th><th width="12%" rowspan="2">Bertambah/<br>(Berkurang)</th></tr><tr style="font-weight:bold;background-color:#e7e7e7"><th width="7%">Volume</th><th width="8%">Harga</th><th width="9%">Jumlah</th><th width="7%">Volume</th><th width="8%">Harga</th><th width="9%">Jumlah</th></tr></thead><tbody>';
+            else $html.='<table border="1" cellpadding="2"><thead><tr style="font-weight:bold;background-color:#e7e7e7"><th width="14%">Kode Rekening</th><th width="38%">Uraian</th><th width="12%">Koefisien/Volume</th><th width="10%">Satuan</th><th width="13%">Harga</th><th width="13%">Jumlah</th></tr></thead><tbody>';
+            $last='';$before=0;$after=0;foreach($details as $d){$account=(string)($d['kd_akun']??'');if($account!==$last){$html.=$this->hierarchyHtml($account,$change?9:6);$last=$account;}$ba=(float)($d['jumlah_awal']??0);$aa=(float)($d['jumlah']??0);$before+=$ba;$after+=$aa;$description='<b>'.$this->e($d['komponen']??$d['uraian']??'-').'</b>'.(!empty($d['spesifikasi'])?'<br>Spesifikasi: '.$this->e($d['spesifikasi']):'');if($change)$html.='<tr><td></td><td>'.$description.'</td><td align="right">'.$this->money($d['volume_awal']??0).'</td><td align="right">'.$this->money($d['harga_satuan_awal']??0).'</td><td align="right">'.$this->money($ba).'</td><td align="right">'.$this->money($d['volume']??0).'</td><td align="right">'.$this->money($d['harga_satuan']??0).'</td><td align="right">'.$this->money($aa).'</td><td align="right">'.$this->money($aa-$ba).'</td></tr>';else $html.='<tr><td></td><td>'.$description.'</td><td align="right">'.$this->money($d['volume']??0).'</td><td>'.$this->e($d['sat_1']??'-').'</td><td align="right">'.$this->money($d['harga_satuan']??0).'</td><td align="right">'.$this->money($aa).'</td></tr>';}
+            $html.=$change?'<tr style="font-weight:bold"><td colspan="2">Jumlah Anggaran Sub Kegiatan</td><td colspan="3" align="right">'.$this->money($before).'</td><td colspan="3" align="right">'.$this->money($after).'</td><td align="right">'.$this->money($after-$before).'</td></tr></tbody></table>':'<tr style="font-weight:bold"><td colspan="5">Jumlah Anggaran Sub Kegiatan</td><td align="right">'.$this->money($after).'</td></tr></tbody></table>';
+            $months=$this->monthlySummary($logical,$code);$names=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];$html.='<br><table cellpadding="2"><tr><td width="50%"><b>Rencana Penarikan Dana per Bulan</b><table border="1" cellpadding="1">';foreach($months as $m=>$v)$html.='<tr><td>'.$names[$m-1].'</td><td align="right">Rp'.$this->money($v).'</td></tr>';$html.='<tr style="font-weight:bold"><td>Jumlah</td><td align="right">Rp'.$this->money(array_sum($months)).'</td></tr></table></td><td width="50%" align="center">'.date('d-m-Y').'<br>Kepala SKPD<br><br><br><b><u>'.$this->e($this->user['nama_lengkap']??$this->user['nama']??'KEPALA SKPD').'</u></b><br>NIP. ................................</td></tr></table>';
+            $tapd=$this->activeTapd();$html.='<br><b>Tim Anggaran Pemerintah Daerah</b><table border="1" cellpadding="2"><tr style="font-weight:bold;background-color:#e7e7e7"><td width="6%">No.</td><td width="34%">Nama</td><td width="25%">NIP</td><td width="23%">Jabatan</td><td width="12%">Tanda Tangan</td></tr>';foreach($tapd as $i=>$p)$html.='<tr><td>'.($i+1).'.</td><td>'.$this->e($p['nama']).'</td><td>'.$this->e($p['nip']).'</td><td>'.$this->e($p['jabatan']).'</td><td></td></tr>';$html.='</table>';$pdf->writeHTML($html,true,false,true,false,'');}
+        return$pdf->Output('','S');
     }
     public function exportRecapPdf(string $logical):string
     {

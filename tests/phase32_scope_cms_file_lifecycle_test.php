@@ -1,0 +1,20 @@
+<?php
+require_once __DIR__.'/../app/Core/DB.php';
+require_once __DIR__.'/../app/Services/KontrakRealisasiService.php';
+$db=DB::getInstance();
+$ok=static function($value,string $message):void{if(!$value)throw new RuntimeException('FAIL: '.$message);echo "PASS: $message\n";};
+$roles=['super_admin','admin_wilayah','tapd','admin_opd','kepala_opd','pa_kpa','ppk','pptk','ppk_skpd','bendahara','pejabat_pengadaan','staf_opd','viewer'];
+foreach($roles as $role)$ok((bool)$db->query('SELECT id FROM user_sesendok_biila WHERE username=? AND type_user=? AND disable=0',['demo_'.$role,$role])->fetch(),'akun aktif tersedia untuk role '.$role);
+$columns=array_column($db->query('SHOW COLUMNS FROM halaman_berita')->fetchAll(),'Field');
+$ok(in_array('jenis_halaman',$columns,true)&&in_array('aktif',$columns,true),'CMS publik memiliki tipe halaman dan status aktif');
+$wall=file_get_contents(__DIR__.'/../app/Models/WallchatModel.php');
+$ok(str_contains($wall,'deletePhysicalAttachment'),'hapus Wall dan pesan privat terhubung ke penghapusan file fisik');
+$user=$db->query("SELECT u.* FROM user_sesendok_biila u WHERE u.kd_wilayah='76.01' AND u.kd_opd='1.03.0.00.0.00.01.0000' AND u.tahun=2026 AND u.disable=0 LIMIT 1")->fetch();
+$contract=$db->query('SELECT * FROM kontrak_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 LIMIT 1',[$user['kd_wilayah'],$user['kd_opd'],$user['tahun']])->fetch();
+$relative='storage/uploads/qa/contract-delete-'.bin2hex(random_bytes(4)).'.txt';$absolute=dirname(__DIR__).'/'.$relative;
+if(!is_dir(dirname($absolute)))mkdir(dirname($absolute),0775,true);file_put_contents($absolute,'phase32');
+$id=$db->insert('kontrak_dokumen_neo',['kontrak_id'=>$contract['id'],'jenis_dokumen'=>'LAINNYA','judul'=>'QA lifecycle','nama_file_asli'=>'qa.txt','path_file'=>$relative,'mime_type'=>'text/plain','ukuran'=>7,'versi'=>1,'kd_wilayah'=>$contract['kd_wilayah'],'kd_opd'=>$contract['kd_opd'],'tahun'=>$contract['tahun'],'username_insert'=>'PHASE32','is_deleted'=>0]);
+$result=(new KontrakRealisasiService($user))->deleteDocument((int)$id);
+$ok(!is_file($absolute)&&$result['physical_file_deleted']===true,'hapus dokumen kontrak menghapus file fisik dari server');
+$ok((int)$db->query('SELECT is_deleted FROM kontrak_dokumen_neo WHERE id=?',[$id])->fetch()['is_deleted']===1,'record dokumen kontrak ditandai terhapus setelah file fisik hilang');
+echo "PHASE 32 SCOPE/CMS/FILE LIFECYCLE TESTS COMPLETE\n";

@@ -47,7 +47,7 @@ class AnggaranController extends Controller
     {
         try {
             if (!Auth::check()) throw new RuntimeException('Sesi login tidak valid');
-            $logical=(string)($_GET['tbl']??'');$pdf=(new AnggaranDocumentService($_SESSION['user']??[]))->exportPdf($logical);
+            $logical=(string)($_GET['tbl']??'');$pdf=(new AnggaranDocumentService($_SESSION['user']??[]))->exportOfficialPdf($logical);
             header('Content-Type: application/pdf');header('Content-Disposition: attachment; filename="'.$logical.'-per-sub-kegiatan.pdf"');echo $pdf;
         } catch (Throwable $e) { http_response_code(400); echo $e->getMessage(); }
         exit;

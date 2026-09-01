@@ -1906,7 +1906,7 @@ HANYA PERIODE AKTIF DI-CACHE
     $whereParts = [];
     $params     = [];
 
-    if ($role === 'admin_wilayah') {
+    if (in_array($role,['admin_wilayah','tapd'],true)) {
 
       if (in_array('kd_wilayah', $columns)) {
         $whereParts[] = "`kd_wilayah` = ?";

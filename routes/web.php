@@ -27,6 +27,7 @@ return [
   '/kontrak/terms_pdf' => ['KontrakController', 'termsPdf'],
   '/kontrak/rab/import' => ['KontrakController', 'importRab'],
   '/kontrak/document/upload' => ['KontrakController', 'uploadDocument'],
+  '/kontrak/document/delete' => ['KontrakController', 'deleteDocument'],
   '/kontrak/document/download' => ['KontrakController', 'downloadDocument'],
   '/kontrak/pdf' => ['KontrakController', 'pdf'],
   '/kontrak/laporan_pdf' => ['KontrakController', 'reportPdf'],

@@ -145,6 +145,23 @@ class KontrakRealisasiService
         [$w,$o,$y]=$this->scope();$sql='SELECT d.* FROM kontrak_dokumen_neo d JOIN kontrak_neo k ON k.id=d.kontrak_id WHERE d.id=? AND d.is_deleted=0 AND k.kd_wilayah=? AND k.tahun=? AND k.is_deleted=0';$p=[$id,$w,$y];if($o&&$o!=='0'){$sql.=' AND k.kd_opd=?';$p[]=$o;}$row=$this->db->query($sql.' LIMIT 1',$p)->fetch();if(!$row)throw new RuntimeException('Dokumen tidak ditemukan');return $row;
     }
 
+    public function deleteDocument(int $id): array
+    {
+        $document=$this->document($id);
+        $root=realpath(dirname(__DIR__,2).'/storage/uploads');
+        $path=realpath(dirname(__DIR__,2).'/'.ltrim((string)$document['path_file'],'/'));
+        if(!$root||!$path||($path!==$root&&!str_starts_with($path,$root.DIRECTORY_SEPARATOR)))
+            throw new RuntimeException('Lokasi fisik dokumen tidak aman atau tidak ditemukan');
+        if(!is_file($path)||!unlink($path))
+            throw new RuntimeException('File fisik dokumen tidak dapat dihapus');
+        $this->db->update('kontrak_dokumen_neo',[
+            'is_deleted'=>1,
+            'tgl_update'=>date('Y-m-d H:i:s'),
+            'username_update'=>$this->user['username']??'system'
+        ],'WHERE id=?',[$id]);
+        return ['id'=>$id,'physical_file_deleted'=>true];
+    }
+
     public function contractItems(int $contractId): array
     {
         $this->contractHeader($contractId);

@@ -26,17 +26,17 @@ class HomeController extends Controller
   }
   public function datateknis()
   {
-    $this->view('home/datateknis', ['active' => 'datateknis'], 'public');
+    $this->publicContent('data_teknis','Data Teknis');
   }
 
   public function organisasi()
   {
-    $this->view('home/organisasi', ['active' => 'organisasi'], 'public');
+    $this->publicContent('organisasi','Organisasi');
   }
 
   public function pelayanan()
   {
-    $this->view('home/pelayanan', ['active' => 'pelayanan'], 'public');
+    $this->publicContent('pelayanan','Pelayanan');
   }
   public function news()
   {
@@ -47,5 +47,9 @@ class HomeController extends Controller
       'active' => 'berita',
       'berita' => $berita
     ], 'public');
+  }
+  private function publicContent(string $type,string $title):void
+  {
+    $items=(new BeritaModel())->getAll(null,$type);$this->view('home/public_content',['active'=>$type==='data_teknis'?'datateknis':$type,'title'=>$title,'items'=>$items,'type'=>$type],'public');
   }
 }

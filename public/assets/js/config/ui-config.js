@@ -1586,6 +1586,8 @@ UIConfig.halaman_berita = {
 					name: "slug",
 				},
 			},
+			{tag:"fieldDropdown",prop:{label:"Tampil pada halaman",name:"jenis_halaman",options:[{value:"berita",text:"Berita"},{value:"data_teknis",text:"Data Teknis"},{value:"organisasi",text:"Organisasi"},{value:"pelayanan",text:"Pelayanan"}]}},
+			{tag:"fieldDropdown",prop:{label:"Status Publikasi",name:"aktif",options:[{value:1,text:"Aktif - tampil ke publik"},{value:0,text:"Nonaktif - disembunyikan"}]}},
 
 			{
 				tag: "fieldTextarea",

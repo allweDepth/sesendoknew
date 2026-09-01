@@ -32,6 +32,12 @@ selesai.
 | 23 | Kepala OPD menambah subkegiatan; user hanya CRUD uraian/belanja; output/satuan/pagu | PASS | Mutasi master hanya Kepala OPD/PA/KPA dan administrator terkait; PPTK/PPK/staf dibatasi penugasan, form memuat output/satuan/batas pagu; phase17 |
 | 24 | Pengetahuan role/kewenangan pada Home OPD | PASS | Dashboard menampilkan role aktif, lingkup, aksi, batas akses, dan panduan semua role; phase12 |
 | 25 | Hardening hacking/database/online | PASS | Phase 27: prepared statement, CSRF, CSP/HSTS, session strict/HttpOnly/SameSite/Secure, batas request, upload allow-list/non-eksekusi, penolakan file sensitif/listing, least privilege dan runbook audit/deployment lulus gate |
+| 26 | Rencana penarikan DPA/DPPA per rincian rekening dan 12 bulan | PASS | Phase 30: tabel rencana bulanan, validasi tidak melampaui pagu, UI per rincian, rangkuman per subkegiatan pada PDF resmi |
+| 27 | Penugasan TAPD bertanggal dan penanda tangan dokumen | PASS | Phase 30: role TAPD daerah, masa berlaku awal/akhir, urutan dan tabel tanda tangan sesuai tanggal cetak |
+| 28 | Hierarki rekening, lebar kolom konsisten, PDF rincian dan rekap DPA/DPPA | PASS | Phase 30/31: baris hierarki akun, uraian rincian tanpa pengulangan kode, tabel fixed/colgroup, PDF rincian serta rekap resmi telah dirender visual |
+| 29 | Wall media, toast otomatis, inbox terpisah, lifecycle file upload | PASS | Media memakai endpoint privat tanpa cache basi; toast maksimal empat dan auto-hide; inbox punya halaman/kembali ke Wall; hapus Wall/dokumen kontrak menghapus file fisik |
+| 30 | Scope user berdasarkan role, organisasi/OPD dan akun semua role | PASS | Role TAPD ditambahkan, scope regional/OPD/subkegiatan diterapkan, seed idempoten membuat akun uji seluruh role pada scope data aktif |
+| 31 | CMS depan Berita/Data Teknis/Organisasi/Pelayanan dengan status aktif | PASS | Phase 31: tipe konten dan toggle aktif, akses pengelola daerah/TAPD, halaman publik hero/card hanya menampilkan konten aktif |
 
 ## Gate penyelesaian
 

@@ -134,8 +134,9 @@
     /* FIX: pastikan di atas dimmer */
   }
   #toastContainer:empty { display:none !important; width:0 !important; }
-  #toastContainer:not(:has(.ui.toast)) { display:none !important; width:0 !important; pointer-events:none !important; }
-  #toastContainer .toast-box:not(:has(.ui.toast)) { display:none !important; }
+  #toastContainer:not(:has(.ui.toast)):not(:has(.app-toast)) { display:none !important; width:0 !important; pointer-events:none !important; }
+  #toastContainer .toast-box:not(:has(.ui.toast)):not(:has(.app-toast)) { display:none !important; }
+  #toastContainer .app-toast{position:relative;display:block!important;width:360px;max-width:calc(100vw - 28px);margin:0 0 10px!important;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.16)!important;transition:opacity .18s,transform .18s}.app-toast-leave{opacity:0;transform:translateX(20px)}.app-toast-progress{position:absolute;left:0;bottom:0;height:3px;width:100%;background:rgba(0,0,0,.2);transform-origin:left;animation:appToastProgress 3.2s linear forwards}@keyframes appToastProgress{to{transform:scaleX(0)}}
   .ui.toast-container:empty,.ui.notifications:empty { display:none !important; border:0 !important; box-shadow:none !important; }
 
   /* TABLE WRAPPER */
@@ -342,6 +343,7 @@
 
   <!-- JS -->
   <script>
+  window.ASSET_VERSION = "<?= (string)max((int)@filemtime(__DIR__.'/../../../public/assets/js/app.js'),(int)@filemtime(__DIR__.'/../../../public/assets/js/modules/anggaran-document.js'),(int)@filemtime(__DIR__.'/../../../public/assets/js/core/toast.js')) ?>";
   window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
   </script>
   <script>

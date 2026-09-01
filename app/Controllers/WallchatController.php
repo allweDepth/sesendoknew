@@ -158,7 +158,7 @@ class WallchatController extends Controller
     if(!$row||empty($row['attachment_path'])){http_response_code(404);exit('Lampiran tidak ditemukan');}
     $root=realpath(dirname(__DIR__,2));$file=realpath($root.'/'.$row['attachment_path']);$allowed=realpath($root.'/storage/uploads/messages');
     if(!$file||!$allowed||!str_starts_with($file,$allowed.DIRECTORY_SEPARATOR)){http_response_code(403);exit('Akses ditolak');}while(ob_get_level()>0)ob_end_clean();
-    header('Content-Type: '.$row['attachment_mime']);header('Content-Length: '.filesize($file));header('Content-Disposition: attachment; filename="'.rawurlencode($row['attachment_name']).'"');readfile($file);exit;
+    header('Content-Type: '.$row['attachment_mime']);header('Content-Length: '.filesize($file));header('Cache-Control: private, no-store, max-age=0');header('X-Content-Type-Options: nosniff');header('Content-Disposition: attachment; filename="'.rawurlencode($row['attachment_name']).'"');readfile($file);exit;
   }
 
   private function messageAttachment(string $channel): array
@@ -180,7 +180,7 @@ class WallchatController extends Controller
   private function jsonResult(bool $success,string $message,int $status=200):void{if(ob_get_level()>0)ob_clean();http_response_code($status);echo json_encode(['success'=>$success,'message'=>$message,'data'=>[],'errors'=>[]],JSON_UNESCAPED_UNICODE);if(ob_get_level()>0)ob_end_flush();}
   public function mediaFile()
   {
-    if(!Auth::check())exit;$id=(int)($_GET['id']??0);$row=(new WallchatModel())->privateFile($id,(int)$_SESSION['user']['id']);if(!$row)$row=DB::getInstance()->query("SELECT * FROM wallchat WHERE id=? AND type IN ('status','comment') AND is_deleted=0",[$id])->fetch();if(!$row||empty($row['attachment_path'])){http_response_code(404);exit('Media tidak ditemukan');}$root=realpath(dirname(__DIR__,2));$file=realpath($root.'/'.$row['attachment_path']);$allowed=realpath($root.'/storage/uploads/messages');if(!$file||!$allowed||!str_starts_with($file,$allowed.DIRECTORY_SEPARATOR)){http_response_code(403);exit('Akses ditolak');}while(ob_get_level()>0)ob_end_clean();header('Content-Type: '.$row['attachment_mime']);header('Content-Length: '.filesize($file));header('Content-Disposition: inline; filename="'.rawurlencode($row['attachment_name']).'"');readfile($file);exit;
+    if(!Auth::check())exit;$id=(int)($_GET['id']??0);$row=(new WallchatModel())->privateFile($id,(int)$_SESSION['user']['id']);if(!$row)$row=DB::getInstance()->query("SELECT * FROM wallchat WHERE id=? AND type IN ('status','comment') AND is_deleted=0",[$id])->fetch();if(!$row||empty($row['attachment_path'])){http_response_code(404);exit('Media tidak ditemukan');}$root=realpath(dirname(__DIR__,2));$file=realpath($root.'/'.$row['attachment_path']);$allowed=realpath($root.'/storage/uploads/messages');if(!$file||!$allowed||!str_starts_with($file,$allowed.DIRECTORY_SEPARATOR)){http_response_code(403);exit('Akses ditolak');}while(ob_get_level()>0)ob_end_clean();header('Content-Type: '.$row['attachment_mime']);header('Content-Length: '.filesize($file));header('Cache-Control: private, no-store, max-age=0');header('X-Content-Type-Options: nosniff');header('Content-Disposition: inline; filename="'.rawurlencode($row['attachment_name']).'"');readfile($file);exit;
   }
   public function delete()
   {

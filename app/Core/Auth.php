@@ -57,6 +57,7 @@ class Auth
             'bendahara',
             'pejabat_pengadaan',
             'staf_opd'
+            ,'tapd'
         ];
     }
 

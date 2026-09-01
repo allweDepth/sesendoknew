@@ -14,7 +14,7 @@ class BeritaModel
     /**
      * Ambil semua berita aktif
      */
-    public function getAll($kdWilayah = null)
+    public function getAll($kdWilayah = null, string $type='berita')
     {
         $sql = "
             SELECT id,kd_wilayah,judul,slug AS id_pengenal,
@@ -24,10 +24,10 @@ class BeritaModel
                    COALESCE(tgl_update,tgl_insert) AS tanggal,
                    gambar,tgl_insert,tgl_update,username_insert,username_update,keterangan,0 AS urutan
             FROM halaman_berita
-            WHERE is_deleted = 0
+            WHERE is_deleted = 0 AND aktif=1 AND jenis_halaman=?
         ";
 
-        $params = [];
+        $params = [$type];
 
         // Optional filter wilayah
         if ($kdWilayah) {

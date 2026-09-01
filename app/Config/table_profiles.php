@@ -2050,6 +2050,7 @@ $profiles = [
     // --------------------------------------------------
     'table' => 'halaman_berita',
     'primary_key' => 'id',
+    'allowed_roles' => ['super_admin','admin_wilayah','tapd'],
 
     // --------------------------------------------------
     // auto session
@@ -2103,6 +2104,7 @@ $profiles = [
           'id',
           'judul',
           'slug',
+          'jenis_halaman','aktif',
           'konten',
           'gambar',
           'kd_wilayah',
@@ -2114,6 +2116,7 @@ $profiles = [
         'searchable' => [
           'judul',
           'slug',
+          'jenis_halaman','aktif',
           'konten',
           'username_insert'
         ],
@@ -2133,6 +2136,7 @@ $profiles = [
           'kd_opd',
           'judul',
           'slug',
+          'jenis_halaman','aktif',
           'konten',
           'gambar',
           'keterangan',

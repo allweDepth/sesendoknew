@@ -204,7 +204,7 @@ class App {
 
 		const script = document.createElement("script"); // buat script module
 
-		script.src = window.appUrl(`/assets/js/modules/${moduleName}.js`); // set path module
+		script.src = window.appUrl(`/assets/js/modules/${moduleName}.js`) + `?v=${encodeURIComponent(window.ASSET_VERSION||Date.now())}`; // cache-bust setiap rilis
 
 		script.defer = true; // gunakan defer
 

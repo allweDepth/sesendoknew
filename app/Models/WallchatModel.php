@@ -128,7 +128,8 @@ public function store($data)
     public function update($id, $content)
     {
         $encrypted = $this->crypto->encrypt((string)$content);
-        return $this->db->update(
+        $row=$this->db->query('SELECT attachment_path FROM wallchat WHERE id=? AND user_id=? AND is_deleted=0',[$id,$userId])->fetch();
+        $result=$this->db->update(
             'wallchat',
             [
                 'content'    => '',
@@ -139,6 +140,8 @@ public function store($data)
             'WHERE id = ?',
             [$id]
         );
+        if($result&&$row)$this->deletePhysicalAttachment($row['attachment_path']??null);
+        return $result;
     }
 
     public function updateOwned(int $id,int $userId,string $content,?string $theme=null): bool
@@ -181,13 +184,21 @@ public function store($data)
 
     public function deletePrivate(int $id,int $userId): bool
     {
-        $row=$this->db->query("SELECT user_id,receiver_id FROM wallchat WHERE id=? AND type='private' AND is_deleted=0",[$id])->fetch();
+        $row=$this->db->query("SELECT user_id,receiver_id,attachment_path FROM wallchat WHERE id=? AND type='private' AND is_deleted=0",[$id])->fetch();
         if(!$row)return false;
         if((int)$row['user_id']===$userId)$this->db->update('wallchat',['deleted_by_sender'=>1],'WHERE id=?',[$id]);
         elseif((int)$row['receiver_id']===$userId)$this->db->update('wallchat',['deleted_by_receiver'=>1],'WHERE id=?',[$id]);
         else return false;
+        $both=$this->db->query('SELECT id FROM wallchat WHERE id=? AND deleted_by_sender=1 AND deleted_by_receiver=1',[$id])->fetch();
         $this->db->query('UPDATE wallchat SET is_deleted=1,content_ciphertext=NULL,content_nonce=NULL,content=\'\' WHERE id=? AND deleted_by_sender=1 AND deleted_by_receiver=1',[$id]);
+        if($both)$this->deletePhysicalAttachment($row['attachment_path']??null);
         return true;
+    }
+
+    private function deletePhysicalAttachment(?string $relative): void
+    {
+        if(!$relative)return;$root=realpath(dirname(__DIR__,2));$allowed=$root?realpath($root.'/storage/uploads/messages'):false;$file=$root?realpath($root.'/'.ltrim($relative,'/')):false;
+        if($allowed&&$file&&str_starts_with($file,$allowed.DIRECTORY_SEPARATOR)&&is_file($file))@unlink($file);
     }
 
     public function privateFile(int $id,int $userId): ?array
