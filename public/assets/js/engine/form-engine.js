@@ -297,7 +297,19 @@ class FormEngine {
 	async populateForm(data) {
 		this.isPopulating = true;
 		try {
-			const orderedKeys = ["urusan", "bidang", "program", "kegiatan", "sub_kegiatan"];
+			const orderedKeys = [
+				"urusan", "bidang", "program", "kegiatan", "sub_kegiatan",
+				"kd_sub_keg", "kd_akun", "objek_belanja", "jenis_kelompok",
+				"jenis_standar_harga", "id_standar_harga",
+			];
+
+			// Komponen SSH/SBU/ASB/HSPK adalah dropdown dependen. Saat edit,
+			// sumbernya harus mengikuti jenis yang tersimpan sebelum opsi dimuat.
+			const standardType = String(data.jenis_standar_harga || "ssh").toLowerCase();
+			const standardDropdown = $(`${this.formSelector} [name="id_standar_harga"]`).closest(".ui.dropdown");
+			if (standardDropdown.length) {
+				standardDropdown.attr("data-source", standardType).data("source", standardType);
+			}
 
 			const processField = async (key) => {
 				const field = $(`${this.formSelector} [name="${key}"]`);
@@ -341,9 +353,12 @@ class FormEngine {
 
 					// Edit harus memuat ulang opsi beserta nilai aktif. Opsi add
 					// yang sudah terlanjur dimuat belum tentu memuat nilai tersebut.
-					dropdown.find(".menu").empty();
-					dropdown.removeData("loading");
-					await this.loadDropdown(dropdown, { ...params, value: value });
+					const hasRemoteSource = Boolean(dropdown.data("source"));
+					if (hasRemoteSource) {
+						dropdown.find(".menu").empty();
+						dropdown.removeData("loading");
+						await this.loadDropdown(dropdown, { ...params, value: value });
+					}
 
 					// 🔥 set value
 					this.applyDropdownSelection(dropdown, value);
