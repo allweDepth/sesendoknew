@@ -44,6 +44,26 @@ $(document).ready(function () {
 		closable: true,
 	});
 	$(".ui.dropdown").dropdown();
+
+	// Tema pengguna persisten dan tetap aktif setelah navigasi SPA/refresh.
+	const applyTheme = (dark) => {
+		$("body").toggleClass("dark-mode", dark);
+		const toggle = $("#darkToggle");
+		toggle.find("span").text(dark ? "Mode Terang" : "Mode Gelap");
+		toggle.find("i").toggleClass("moon", !dark).toggleClass("sun", dark);
+		toggle.attr("aria-pressed", dark ? "true" : "false");
+	};
+	let savedDark = false;
+	try { savedDark = localStorage.getItem("sesendok-theme") === "dark"; } catch (_) {}
+	applyTheme(savedDark);
+	$(document).off("click.userTheme keydown.userTheme", "#darkToggle")
+		.on("click.userTheme keydown.userTheme", "#darkToggle", function (e) {
+			if (e.type === "keydown" && !["Enter", " "].includes(e.key)) return;
+			e.preventDefault();
+			const dark = !$("body").hasClass("dark-mode");applyTheme(dark);
+			try { localStorage.setItem("sesendok-theme", dark ? "dark" : "light"); } catch (_) {}
+			$("#userMenu").dropdown("hide");
+		});
 	$(".ui.sticky").sticky({
 		context: $context,
 	});

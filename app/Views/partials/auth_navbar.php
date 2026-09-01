@@ -26,12 +26,12 @@
                 </div>
             </div>
             <div class="right menu">
-                <div class="ui dropdown item"><span><i class="user icon"></i></span><i class="dropdown icon"></i>
+                <div class="ui dropdown item" id="userMenu" aria-label="Menu pengguna"><span><i class="user icon"></i></span><i class="dropdown icon"></i>
                     <div class="menu">
-                        <a class="item" href="/wallchat" data-spa="server"><i class="circular comments outline icon"></i>Pesan</a>
-                        <a class="item" id="darkToggle"><i class="circular moon icon"></i>Change Themes</a>
-                        <a class="item" href="/profil" data-spa="server"><i class="circular qrcode icon"></i>Profil &amp; Pengaturan</a>
-                        <a class="item" href="/logout" id="btnLogout"><i class="circular sign out alternate icon"></i>Log Out</a>
+                        <a class="item" id="userMenuMessages" href="/wallchat" data-spa="server" data-title="Wallchat"><i class="circular comments outline icon"></i>Pesan</a>
+                        <a class="item" id="darkToggle" role="button" tabindex="0"><i class="circular moon icon"></i><span>Mode Gelap</span></a>
+                        <a class="item" id="userMenuProfile" href="/profil" data-spa="server" data-title="Profil &amp; Pengaturan"><i class="circular qrcode icon"></i>Profil &amp; Pengaturan</a>
+                        <a class="item" href="/logout" id="btnLogout"><i class="circular sign out alternate icon"></i>Keluar</a>
                       
                     </div>
                 </div>
