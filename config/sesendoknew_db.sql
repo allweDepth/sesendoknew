@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 01 Sep 2026 pada 08.52
+-- Waktu pembuatan: 01 Sep 2026 pada 13.16
 -- Versi server: 12.3.3-MariaDB
 -- Versi PHP: 8.5.10
 
@@ -17659,18 +17659,18 @@ CREATE TABLE `rencana_rekening_anggaran_neo` (
 --
 
 INSERT INTO `rencana_rekening_anggaran_neo` (`id`, `dokumen`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `jenis`, `bulan`, `nilai`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
-(1, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 1, 51500000.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
-(2, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 2, 51500000.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
-(3, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 3, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
-(4, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 4, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
-(5, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 5, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
-(6, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 6, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
-(7, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 7, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
-(8, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 8, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
-(9, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 9, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
-(10, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 10, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
-(11, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 11, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
-(12, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 12, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
+(1, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 1, 51500000.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 21:06:03', 'nabiila', 0),
+(2, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 2, 51500000.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 21:06:03', 'nabiila', 0),
+(3, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 3, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 21:06:03', 'nabiila', 0),
+(4, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 4, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 21:06:03', 'nabiila', 0),
+(5, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 5, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 21:06:03', 'nabiila', 0),
+(6, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 6, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 21:06:03', 'nabiila', 0),
+(7, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 7, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 21:06:03', 'nabiila', 0),
+(8, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 8, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 21:06:03', 'nabiila', 0),
+(9, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 9, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 21:06:03', 'nabiila', 0),
+(10, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 10, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 21:06:03', 'nabiila', 0),
+(11, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 11, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 21:06:03', 'nabiila', 0),
+(12, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 12, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 21:06:03', 'nabiila', 0),
 (25, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 1, 0.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
 (26, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 2, 0.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
 (27, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 3, 0.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
@@ -19955,7 +19955,7 @@ CREATE TABLE `user_sesendok_biila` (
 
 INSERT INTO `user_sesendok_biila` (`id`, `pegawai_id`, `username`, `email`, `nama`, `nip`, `password`, `message_public_key`, `remember_token`, `kd_opd`, `nama_org`, `kd_wilayah`, `type_user`, `photo`, `signature_image`, `signature_verified`, `tgl_daftar`, `tgl_login`, `tahun`, `kontak_person`, `alamat`, `font_size`, `theme`, `warna_tbl`, `scrolling_table`, `disable_login`, `disable_anggaran`, `disable_kontrak`, `disable_realisasi`, `disable_chat`, `ket`, `disable`) VALUES
 (1, NULL, 'alwi_mansyur', 'alwi@gmail.com', 'Alwi Mansyur', '1980', '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_wilayah', 'images/avatar/default.jpeg', NULL, 0, '2018-06-04 21:57:05', '2024-10-23 15:03:04', '2024', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
-(2, NULL, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', '{\"alg\":\"RSA-OAEP-256\",\"e\":\"AQAB\",\"ext\":true,\"key_ops\":[\"encrypt\"],\"kty\":\"RSA\",\"n\":\"ltYx4xwH9tHXD6Ui8DdxB-YKbzX2NevtfBVWnL7PFHXliKdDN6ZikmSDHBIATiEpzy6qVKOTDVXuJiBvL5PvAjr3j9NDpFs84kspEz13A-m3PFRLL1zorcX4JP1wgvhd9siqWG3P7T7JfPrD5RsQ4vV4YqTHT_ZpOFcbQWk0aG9GB0dI-29LOPmrvMgrXqkkomclcKVaihJA6LJKc3rG3seCdBxSVbgx4H5n9fDyebO8qOMFau3GIilwXR7NQ6IUFWn8WxpQJGJ77Phj2gZZ8-kXqBlidqr07US4-AVF61QbS8a6oPBGEpTIDL8WGk0-s-KwcDy9fR-JNk0eHYRElZlnsFBDoJHzP_R3YA01OMVQwULVPo2sjrosF0BgTlBwZEwatpW4sNc2sy0ZpBjUyLSc29dzR4cwwUCPPEE7AnPE5h7zAzzx4RtSa0ZmcSAQhJLOTRhPvZ27QyZ226gRfRNqIck9e7v-4oUKAr3AFUXshprN2ddShWbS8DxpQ6cT\"}', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_opd', 'img/avatar/username(nabiila)_dok(photo)_wilayah(76.01)_2305070e99916190687b3774c0d56f134b954d74_2.jpg', NULL, 0, '2018-06-09 15:54:29', '2026-02-24 21:15:01', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
+(2, NULL, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', '{\"alg\":\"RSA-OAEP-256\",\"e\":\"AQAB\",\"ext\":true,\"key_ops\":[\"encrypt\"],\"kty\":\"RSA\",\"n\":\"nDF3THRmpDrTYo7T8vPqwMqcD3pdUWfr4g4nHjLte8yaRJ5VQo47JNTLWrYUqOqNtyx8D6zVygw7LcNfM9anreo28zrZERYS3zyVdy_FW2amHyAqYpkv_To4brKhQ2QAOh3FrwYsEb-Xv2IzN249S3ysvvwJTLHkD4BYSIBIZXSWZNknfqcoWxaoatlxt1Mx-vsIPi5a4KafkcO8C_fc58Riz_2XTK1w8jU58ppo4NGLuIlvYxIMBiQlVbayqwW-mgtZNlqwBHYZ2VxKNaBOgdcDpI7BR8So6Yh860PZdsWxEvMs5gFd6YpxSb-FPpisMbxEg9TTDKwna1wNJzZjWv9n58gyfn_EM5sUoT-y0MOidJYmW-sYSH0ZXoT_VonBFbbDfSWPxUpyY1cYtjZVPqx45aFoIw7fS4Qv4vT1l-qdWXQzwVDSGprwBNOS1vpLIBJw_yWWWZ1LGwoOZWXXXXr6fC1DF2zkpzNzddpwe5zfn4l_NuKQCudfHS4HvpUd\"}', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_opd', 'img/avatar/username(nabiila)_dok(photo)_wilayah(76.01)_2305070e99916190687b3774c0d56f134b954d74_2.jpg', NULL, 0, '2018-06-09 15:54:29', '2026-02-24 21:15:01', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
 (3, NULL, 'inayah', 'inayah@gmail.com', 'Inayah Nadhilah', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'super_admin', 'images/avatar/default.jpeg', NULL, 0, '2018-06-22 22:04:17', '2020-03-08 02:30:41', '2026', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'dimana mana hatiku senang oke', 0),
 (4, NULL, 'Arlinda', 'arlinda@gmail.com', 'Arlinda Achmad', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '', 'Prof', '', 'admin_opd', 'images/avatar/default.jpeg', NULL, 0, '2018-07-10 14:27:06', '2018-10-21 12:23:09', '2024', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu.', 0),
 (5, NULL, 'administrator', 'alwi.mansyur@gmail.com', 'administrator', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '', 'administrator AHSP', '', 'user', 'images/avatar/c14719a7f71e46badf2cf93ae373ae9797281782_9.png', NULL, 0, '2023-02-09 23:41:34', '2023-02-23 00:05:26', '2024', '08128886665', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk mu', 0),
@@ -21015,7 +21015,7 @@ ALTER TABLE `rencana_realisasi_anggaran_neo`
 -- AUTO_INCREMENT untuk tabel `rencana_rekening_anggaran_neo`
 --
 ALTER TABLE `rencana_rekening_anggaran_neo`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=169;
 
 --
 -- AUTO_INCREMENT untuk tabel `renja_neo`
