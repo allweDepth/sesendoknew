@@ -26,11 +26,14 @@ class Toast {
 			position: "top right",
 			onHidden: () => Toast.cleanup(),
 		});
-		setTimeout(() => Toast.cleanup(), 3400);
+		const createdAt = Date.now();
+		setTimeout(() => $("#toastContainer .ui.toast").filter(function(){return !$(this).attr("data-toast-created");}).attr("data-toast-created", String(createdAt)), 0);
+		setTimeout(() => Toast.cleanup(true, createdAt), 3600);
 	}
 
-	static cleanup() {
+	static cleanup(forceExpired = false, createdAt = 0) {
 		const container = $("#toastContainer");
+		if (forceExpired) container.find(".ui.toast").each(function(){const born=Number($(this).attr("data-toast-created")||0);if(!born||born<=createdAt)$(this).remove();});
 		container.find(".toast-box").each(function () {
 			if (!$(this).find(".ui.toast").length) $(this).remove();
 		});

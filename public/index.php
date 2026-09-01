@@ -15,7 +15,10 @@ function app_url(string $path = '/'): string
 
 ob_start(function ($output) {
   if (APP_BASE_PATH === '') return $output;
-  return preg_replace('#(href|src|action)=([\'\"])/(?!/)#i', '$1=$2' . APP_BASE_PATH . '/', $output);
+  return preg_replace_callback('#(href|src|action)=([\'\"])(/(?!/)[^\'\"]*)#i', static function(array $match): string {
+    if ($match[3] === APP_BASE_PATH || str_starts_with($match[3], APP_BASE_PATH . '/')) return $match[0];
+    return $match[1].'='.$match[2].APP_BASE_PATH.$match[3];
+  }, $output);
 });
 ini_set('session.use_strict_mode','1');
 ini_set('session.cookie_httponly','1');

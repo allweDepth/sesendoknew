@@ -231,6 +231,11 @@ return [
   '/anggaran/advance'      => ['AnggaranController', 'advance'],
   '/anggaran/export_pdf'   => ['AnggaranController', 'exportPdf'],
   '/anggaran/export_excel' => ['AnggaranController', 'exportExcel'],
+  '/anggaran/export_rekap_excel' => ['AnggaranController', 'exportRecapExcel'],
+  '/anggaran/export_rekap_pdf' => ['AnggaranController', 'exportRecapPdf'],
+  '/anggaran/rencana_bulanan' => ['AnggaranController', 'monthlyPlan'],
+  '/anggaran/tapd' => ['AnggaranController', 'tapdList'],
+  '/anggaran/tapd/save' => ['AnggaranController', 'tapdSave'],
   '/anggaran/groups'       => ['AnggaranController', 'groups'],
   '/anggaran/details'      => ['AnggaranController', 'details'],
 ];
