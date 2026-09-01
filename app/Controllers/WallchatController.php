@@ -150,7 +150,10 @@ class WallchatController extends Controller
     $mime=(new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
     $allowed=['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp','video/mp4'=>'mp4','video/webm'=>'webm','application/pdf'=>'pdf','application/vnd.openxmlformats-officedocument.wordprocessingml.document'=>'docx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'=>'xlsx'];
     if(!isset($allowed[$mime]))throw new InvalidArgumentException('Lampiran harus JPG, PNG, WebP, MP4, WebM, PDF, DOCX, atau XLSX');
-    $relative='storage/uploads/messages/'.$channel.'/'.date('Y/m');$dir=dirname(__DIR__,2).'/'.$relative;if(!is_dir($dir)&&!mkdir($dir,0770,true))throw new RuntimeException('Folder pesan tidak dapat dibuat');
+    $baseRelative='storage/uploads/messages';$base=dirname(__DIR__,2).'/'.$baseRelative;if(!is_dir($base)&&!mkdir($base,0733,true))throw new RuntimeException('Folder pesan tidak dapat dibuat');
+    $relative=$baseRelative.'/'.$channel.'/'.date('Y/m');$dir=dirname(__DIR__,2).'/'.$relative;
+    if(!is_dir($dir)&&!mkdir($dir,0733,true)){$relative=$baseRelative;$dir=$base;}
+    if(!is_writable($dir))throw new RuntimeException('Folder pesan belum memiliki izin tulis untuk web server');
     $name=bin2hex(random_bytes(16)).'.'.$allowed[$mime];if(!move_uploaded_file($file['tmp_name'],$dir.'/'.$name))throw new RuntimeException('Lampiran gagal disimpan');
     return ['attachment_name'=>basename((string)$file['name']),'attachment_path'=>$relative.'/'.$name,'attachment_mime'=>$mime,'attachment_size'=>(int)$file['size']];
   }

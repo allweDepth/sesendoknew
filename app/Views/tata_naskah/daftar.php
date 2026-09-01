@@ -5,9 +5,7 @@ $totalCol = $totalCol ?? 5;
 ?>
 <div class="ui container">
 
-  <div class="ui info message">
-    Data Naskah: <?= strtoupper($tbl) ?>
-  </div>
+  <div class="ui blue segment"><h2 class="ui header"><i class="file alternate outline icon"></i><div class="content">Daftar Tata Naskah<div class="sub header">Cari dokumen, pantau status, lanjutkan edit, atau cetak PDF.</div></div></h2><div class="ui fluid icon input"><input id="searchTataNaskah" placeholder="Cari nomor, status, atau tanggal..."><i class="search icon"></i></div></div>
 
   <div class="ui hidden divider"></div>
 
@@ -61,4 +59,3 @@ $totalCol = $totalCol ?? 5;
   </div>
 
 </div>
-

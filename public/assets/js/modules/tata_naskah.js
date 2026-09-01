@@ -126,6 +126,9 @@ class TataNaskahModule {
 		$(document).off("click", ".btn-open-naskah");
 		$(document).off("click", ".btn-edit-row");
 		$(document).off("submit", "#form_modal"); // 🔥 FIX
+		$(document).off("input.naskahSearch", "#jenisNaskahSearch, #searchTataNaskah");
+		$(document).on("input.naskahSearch", "#jenisNaskahSearch", e=>{const q=String(e.target.value||"").toLowerCase();$("#jenis-list .item").each(function(){$(this).toggle($(this).text().toLowerCase().includes(q));});});
+		$(document).on("input.naskahSearch", "#searchTataNaskah", e=>{const q=String(e.target.value||"").toLowerCase();$('[name="tabel_trx_naskah_dinas"] tr[data-id]').each(function(){$(this).toggle($(this).text().toLowerCase().includes(q));});});
 
 		// =====================================
 		// 🔥 FIX: HUBUNGKAN .btnSubmit KE FORM MODAL
@@ -182,6 +185,7 @@ class TataNaskahModule {
 
 		$(document).on("click", ".kelompok-card", (e) => {
 			const kelompokId = $(e.currentTarget).data("id");
+			$("[data-naskah-step=1]").removeClass("active").addClass("completed");$("[data-naskah-step=2]").removeClass("disabled").addClass("active");
 			this.loadJenis(kelompokId);
 		});
 
@@ -189,7 +193,7 @@ class TataNaskahModule {
 			const jenisId = $(e.currentTarget).data("jenis-id");
 			if (!jenisId) return;
 
-			this.loadSchema(jenisId);
+			$("[data-naskah-step=2]").removeClass("active").addClass("completed");$("[data-naskah-step=3]").removeClass("disabled").addClass("active");this.loadSchema(jenisId);
 		});
 
 		// =====================================
@@ -236,10 +240,10 @@ class TataNaskahModule {
 				},
 				success: (res) => {
 					if (res.success) {
-						Toast.show("success", "Data berhasil disimpan");
+						Toast.success("Data berhasil disimpan");
 						$(document).trigger(`form:success.${this.state.tbl}.table`); // // sesuai TableManager listener
 					} else {
-						Toast.show("error", res.message || "Gagal");
+						Toast.error(res.message || "Gagal");
 					}
 				},
 			});
@@ -399,7 +403,7 @@ class TataNaskahModule {
 
 			success: (res) => {
 				if (res.error) {
-					Toast.show("error", res.error);
+					Toast.error(res.error);
 					return;
 				}
 
@@ -502,6 +506,7 @@ class TataNaskahModule {
 
 		container.find("select").trigger("change");
 		container.find("input, textarea").trigger("input");
+		this.enhanceForm(this.currentId!==null);
 
 		if (jenisId) {
 			$("#form_modal").find('input[name="jenis_id"]').remove();
@@ -611,6 +616,12 @@ class TataNaskahModule {
 				return false; // tetap cegah submit default
 			},
 		});
+	}
+	enhanceForm(isEdit=false) {
+		const form=$("#form_modal");if(!form.length)return;
+		form.find(".naskah-form-guide").remove();form.prepend(`<div class="ui info message naskah-form-guide"><div class="header">${isEdit?'Edit':'Buat'} Naskah Dinas</div><p>Field bertanda wajib harus dilengkapi. Kemajuan pengisian: <b data-naskah-progress>0%</b></p><div class="ui tiny indicating progress"><div class="bar"></div></div></div>`);
+		const update=()=>{const required=form.find('.required.field:visible').filter(function(){return $(this).find('input,textarea,select').length;});let filled=0;required.each(function(){const field=$(this).find('input[type!=hidden],textarea,select').first();if(String(field.val()||'').trim()!=='')filled++;});const percent=required.length?Math.round(filled/required.length*100):100;form.find('[data-naskah-progress]').text(`${percent}%`);form.find('.naskah-form-guide .progress').progress({percent});};
+		form.off('input.naskahProgress change.naskahProgress').on('input.naskahProgress change.naskahProgress','input,textarea,select',update);update();
 	}
 
 	/**

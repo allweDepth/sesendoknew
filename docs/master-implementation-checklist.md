@@ -13,7 +13,7 @@ selesai.
 | 4 | SPJ, LRA, laporan bulanan fisik/keuangan Excel/PDF/chart | PASS | SPJ berbasis bukti, LRA pagu–realisasi–sisa, rekap fisik/keuangan 12 bulan, total, format berwarna, PDF, dan chart Excel lulus phase19 |
 | 5 | Modal multi-uraian difilter subkegiatan, search, limit | PASS | Wajib pilih subkegiatan, pencarian uraian/rekening/nilai, limit 50 |
 | 6 | Kop surat default OPD dan gambar upload | PASS | Form resmi, default OPD, logo kiri/kanan, gambar penuh, warna garis, MIME/size validation, dan render PDF lulus phase13 |
-| 7 | Tata naskah rapi dan mudah | PARTIAL | 25 jenis, workflow dan PDF lulus phase6/9; audit UX seluruh jenis masih diperlukan |
+| 7 | Tata naskah rapi dan mudah | PASS | 25 jenis, workflow/edit/PDF lulus phase6/9; wizard tiga langkah, pencarian jenis/daftar, indikator kelengkapan field, validasi dan API toast yang benar lulus phase23 |
 | 8 | Matriks role, pengelola role, pembatasan subkegiatan | PASS | Matriks backend/frontend, CRUD user OPD oleh kepala OPD, hashing, pembatasan role/scope, deaktivasi, dan penugasan subkegiatan lulus phase12/14 |
 | 9 | Cetak/upload kontrak, SSKK/SSUK, serah terima/gambar/dokumen lain | PASS | PDF kontrak, generator SSKK/SSUK, dan 16 jenis dokumen upload terhubung; phase13 |
 | 10 | Folder upload kontrak dan kepegawaian | PASS | Hirarki scope/tahun/kontrak/jenis; schema dokumen pegawai tersedia |
