@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 31 Agu 2026 pada 18.44
+-- Waktu pembuatan: 01 Sep 2026 pada 03.57
 -- Versi server: 12.3.3-MariaDB
 -- Versi PHP: 8.5.10
 
@@ -4598,7 +4598,8 @@ INSERT INTO `anggaran_workflow_log` (`id`, `source_table`, `target_table`, `tahu
 (7, 'rkpd_neo', 'renja_neo', '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 'phase3_test', '2026-08-31 13:25:54'),
 (8, 'rkpd_neo', 'renja_neo', '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 'phase3_test', '2026-08-31 17:53:10'),
 (9, 'rkpd_neo', 'renja_neo', '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 'phase3_test', '2026-08-31 18:21:46'),
-(10, 'rkpd_neo', 'renja_neo', '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 'phase3_test', '2026-08-31 18:27:31');
+(10, 'rkpd_neo', 'renja_neo', '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 'phase3_test', '2026-08-31 18:27:31'),
+(11, 'rkpd_neo', 'renja_neo', '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 'phase3_test', '2026-09-01 03:12:56');
 
 -- --------------------------------------------------------
 
@@ -8846,9 +8847,9 @@ INSERT INTO `daftar_paket_neo` (`id`, `kd_rup`, `kd_paket`, `kd_wilayah`, `kd_op
 CREATE TABLE `daftar_realisasi_neo` (
   `id` int(11) NOT NULL,
   `tahun` year(4) NOT NULL,
-  `kd_wilayah` varchar(60) DEFAULT NULL,
-  `kd_opd` varchar(60) DEFAULT NULL,
-  `kd_sub_keg` varchar(100) NOT NULL,
+  `kd_wilayah` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci DEFAULT NULL,
+  `kd_opd` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci DEFAULT NULL,
+  `kd_sub_keg` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci DEFAULT NULL,
   `kd_akun` varchar(100) NOT NULL,
   `id_paket` int(11) NOT NULL,
   `kontrak_id` bigint(20) DEFAULT NULL,
@@ -8886,7 +8887,10 @@ INSERT INTO `daftar_realisasi_neo` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `kd_s
 (1, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 1, 1, NULL, 'TRACE_TEST Paket A', 1, 'Termin I', 2, 'dpa', 0.350000000000, 78750000.000000000000, '2026-03-31', 3, 35.00, 0.00, NULL, 'BUKTI/P4/A/1', NULL, 'TRACE_TEST_PHASE4', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 4 Paket A Termin I', 0, 0, 1, 1),
 (2, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 1, 1, NULL, 'TRACE_TEST Paket A', 1, 'Termin II', 2, 'dpa', 0.300000000000, 67500000.000000000000, '2026-04-30', 4, 65.00, 0.00, NULL, 'BUKTI/P4/A/2', NULL, 'TRACE_TEST_PHASE4', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 4 Paket A Termin II', 0, 0, 1, 1),
 (3, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', 2, 2, NULL, 'TRACE_TEST Paket B', 2, 'Termin I', 3, 'dppa', 0.500000000000, 87500000.000000000000, '2026-04-15', 4, 50.00, 0.00, NULL, 'BUKTI/P4/B/1', NULL, 'TRACE_TEST_PHASE4', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 4 Paket B Termin I', 0, 0, 1, 1),
-(4, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', 2, 2, NULL, 'TRACE_TEST Paket B', 2, 'Termin II', 3, 'dppa', 0.500000000000, 87500000.000000000000, '2026-05-31', 5, 100.00, 0.00, NULL, 'BUKTI/P4/B/2', NULL, 'TRACE_TEST_PHASE4', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 4 Paket B Termin II', 0, 0, 1, 1);
+(4, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', 2, 2, NULL, 'TRACE_TEST Paket B', 2, 'Termin II', 3, 'dppa', 0.500000000000, 87500000.000000000000, '2026-05-31', 5, 100.00, 0.00, NULL, 'BUKTI/P4/B/2', NULL, 'TRACE_TEST_PHASE4', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 4 Paket B Termin II', 0, 0, 1, 1),
+(5, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'TRACE.PH15.3', '5.1.02.02.05.0044', 1, 3, NULL, 'TRACE_TEST Paket A', 1, 'Termin I', 4, 'dppa', 1.000000000000, 46350000.000000000000, '2026-02-01', 1, 50.00, 0.00, NULL, 'TRACE/REAL/PH29/3', NULL, 'TRACE_PHASE29', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 29', 0, 0, 1, 1),
+(6, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'TRACE.PH15.4', '5.1.02.02.05.0044', 1, 4, NULL, 'TRACE_TEST Paket A', 1, 'Termin I', 5, 'dppa', 1.000000000000, 46800000.000000000000, '2026-02-01', 1, 50.00, 0.00, NULL, 'TRACE/REAL/PH29/4', NULL, 'TRACE_PHASE29', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 29', 0, 0, 1, 1),
+(7, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'TRACE.PH15.5', '5.1.02.02.05.0044', 1, 5, NULL, 'TRACE_TEST Paket A', 1, 'Termin I', 6, 'dppa', 1.000000000000, 47250000.000000000000, '2026-02-01', 1, 50.00, 0.00, NULL, 'TRACE/REAL/PH29/5', NULL, 'TRACE_PHASE29', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 29', 0, 0, 1, 1);
 
 --
 -- Trigger `daftar_realisasi_neo`
@@ -9272,12 +9276,12 @@ CREATE TABLE `dpa_neo` (
 --
 
 INSERT INTO `dpa_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
-(1, 'rka_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST: Dokumen Pelaksanaan Anggaran', NULL, NULL, 'ssh', 30, 'Kertas kerja perencanaan', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 75000000.0000, 1, 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
-(2, 'rka_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 240000000.0000, 1, 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
-(3, 'rka_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 180000000.0000, 1, 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
-(4, 'rka_neo', 4, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.3', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 3', NULL, NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 103000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 3', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
-(5, 'rka_neo', 5, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.4', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 4', NULL, NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 104000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 4', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
-(6, 'rka_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 5', NULL, NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 105000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
+(1, 'rka_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST: Dokumen Pelaksanaan Anggaran', 'non_paket', NULL, 'ssh', 30, 'Kertas kerja perencanaan', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 75000000.0000, 1, 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
+(2, 'rka_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST Phase 4 Paket A', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 240000000.0000, 1, 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(3, 'rka_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST Phase 4 Paket B', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 180000000.0000, 1, 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(4, 'rka_neo', 4, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.3', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 3', 'non_paket', NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 103000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 3', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
+(5, 'rka_neo', 5, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.4', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 4', 'non_paket', NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 104000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 4', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
+(6, 'rka_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 5', 'non_paket', NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 105000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
 
 --
 -- Trigger `dpa_neo`
@@ -9378,12 +9382,12 @@ CREATE TABLE `dppa_neo` (
 --
 
 INSERT INTO `dppa_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga_awal`, `id_standar_harga_awal`, `komponen_awal`, `spesifikasi_awal`, `tkdn_awal`, `pajak_awal`, `harga_satuan_awal`, `volume_awal`, `jumlah_awal`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `status_perubahan`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
-(1, 'dpa_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST: DPPA', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 82500000.0000, 1, 'ubah', 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
-(2, 'dpa_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 250000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
-(3, 'dpa_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 190000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
-(4, 'rka_p_neo', 4, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.3', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 103000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 3', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
-(5, 'rka_p_neo', 5, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.4', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 4', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 104000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 4', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
-(6, 'rka_p_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 5', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 105000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
+(1, 'dpa_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST: DPPA', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, 'ssh', 30, NULL, NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 82500000.0000, 1, 'ubah', 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
+(2, 'dpa_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST Phase 4 Paket A', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 250000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(3, 'dpa_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST Phase 4 Paket B', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 190000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(4, 'rka_p_neo', 4, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.3', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 3', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, 'ssh', 30, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 103000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 3', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
+(5, 'rka_p_neo', 5, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.4', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 4', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, 'ssh', 30, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 104000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 4', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
+(6, 'rka_p_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 5', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, 'ssh', 30, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 105000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
 
 --
 -- Trigger `dppa_neo`
@@ -9697,7 +9701,10 @@ CREATE TABLE `kontrak_item_neo` (
 
 INSERT INTO `kontrak_item_neo` (`id`, `kontrak_id`, `tahap`, `anggaran_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `uraian`, `pagu`, `nilai_kontrak`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
 (1, 1, 'dpa', 2, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'TRACE_TEST Phase 4 Paket A', 240000000.00, 225000000.00, '2026-08-31 21:04:51', 'TRACE_TEST_PHASE4', NULL, NULL, 0),
-(2, 2, 'dppa', 3, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.2', '5.1.02.02.05.0044', 'TRACE_TEST Phase 4 Paket B', 190000000.00, 175000000.00, '2026-08-31 21:04:51', 'TRACE_TEST_PHASE4', NULL, NULL, 0);
+(2, 2, 'dppa', 3, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.2', '5.1.02.02.05.0044', 'TRACE_TEST Phase 4 Paket B', 190000000.00, 175000000.00, '2026-08-31 21:04:51', 'TRACE_TEST_PHASE4', NULL, NULL, 0),
+(3, 3, 'dpa', 4, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'Belanja terstandar sub kegiatan 3', 103000000.00, 92700000.00, '2026-09-01 11:10:48', 'TRACE_PHASE29', NULL, NULL, 0),
+(4, 4, 'dpa', 5, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.4', '5.1.02.02.05.0044', 'Belanja terstandar sub kegiatan 4', 104000000.00, 93600000.00, '2026-09-01 11:11:14', 'TRACE_PHASE29', NULL, NULL, 0),
+(5, 5, 'dpa', 6, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.5', '5.1.02.02.05.0044', 'Belanja terstandar sub kegiatan 5', 105000000.00, 94500000.00, '2026-09-01 11:11:14', 'TRACE_PHASE29', NULL, NULL, 0);
 
 --
 -- Trigger `kontrak_item_neo`
@@ -9759,8 +9766,8 @@ CREATE TABLE `kontrak_jadwal_neo` (
 --
 
 INSERT INTO `kontrak_jadwal_neo` (`id`, `kontrak_id`, `rab_id`, `minggu_ke`, `tanggal_mulai`, `tanggal_selesai`, `bobot_rencana`, `bobot_realisasi`, `rencana_kumulatif`, `realisasi_kumulatif`, `keterangan`, `kd_wilayah`, `kd_opd`, `tahun`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
-(15, 1, NULL, 1, '2026-02-05', '2026-02-05', 40.0000, 35.0000, 40.0000, 35.0000, '', '76.01', '1.03.0.00.0.00.01.0000', '2026', '2026-09-01 02:36:30', 'TRACE_PHASE10', NULL, NULL, 0),
-(16, 1, NULL, 2, '2026-02-05', '2026-06-04', 60.0000, 55.0000, 100.0000, 90.0000, '', '76.01', '1.03.0.00.0.00.01.0000', '2026', '2026-09-01 02:36:30', 'TRACE_PHASE10', NULL, NULL, 0);
+(17, 1, NULL, 1, '2026-02-05', '2026-02-05', 40.0000, 35.0000, 40.0000, 35.0000, '', '76.01', '1.03.0.00.0.00.01.0000', '2026', '2026-09-01 11:12:53', 'TRACE_PHASE10', NULL, NULL, 0),
+(18, 1, NULL, 2, '2026-02-05', '2026-06-04', 60.0000, 55.0000, 100.0000, 90.0000, '', '76.01', '1.03.0.00.0.00.01.0000', '2026', '2026-09-01 11:12:53', 'TRACE_PHASE10', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -9817,7 +9824,10 @@ CREATE TABLE `kontrak_neo` (
 
 INSERT INTO `kontrak_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `anggaran_id`, `paket_id`, `rekanan_id`, `ppk_id`, `pptk_id`, `nama_sub_keg`, `tahap`, `total_anggaran`, `nilai_kontrak`, `nomor_kontrak`, `tanggal_kontrak`, `uraian_kontrak`, `nomor_spk`, `tanggal_spk`, `nomor_spmk`, `tanggal_spmk`, `waktu_pelaksanaan`, `tanggal_mulai`, `tanggal_selesai`, `nama_ppk`, `nama_penyedia`, `nama_tim_teknis`, `tanggal_pho`, `tanggal_fho`, `tanggal_serah_terima`, `status_kontrak`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `disable`, `kunci`, `setujui`, `is_deleted`, `keterangan`) VALUES
 (1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', 2, 1, 190, NULL, NULL, 'Penyusunan Dokumen Perencanaan', 'dpa', 240000000.00, 225000000.00, 'KONTRAK/P4/A', '2026-02-01', 'TRACE_TEST Paket A dari DPA', 'SPK/P4/A', '2026-02-01', 'SPMK/P4/A', '2026-02-05', 120, '2026-02-05', '2026-06-04', 'PPK TRACE TEST', 'TRACE_TEST PT Infrastruktur Maju', NULL, NULL, NULL, NULL, 'berjalan', '2026-08-31 11:24:56', 'TRACE_TEST_PHASE4', NULL, NULL, 0, 1, 1, 0, 'TRACE_TEST Phase 4 Paket A'),
-(2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', 3, 2, 191, NULL, NULL, 'Penyusunan Dokumen RKA', 'dppa', 190000000.00, 175000000.00, 'KONTRAK/P4/B', '2026-03-01', 'TRACE_TEST Paket B dari DPPA', 'SPK/P4/B', '2026-03-01', 'SPMK/P4/B', '2026-03-05', 90, '2026-03-05', '2026-06-03', 'PPK TRACE TEST', 'TRACE_TEST CV Karya Mandiri', NULL, NULL, NULL, NULL, 'selesai', '2026-08-31 11:24:56', 'TRACE_TEST_PHASE4', NULL, NULL, 0, 1, 1, 0, 'TRACE_TEST Phase 4 Paket B');
+(2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', 3, 2, 191, NULL, NULL, 'Penyusunan Dokumen RKA', 'dppa', 190000000.00, 175000000.00, 'KONTRAK/P4/B', '2026-03-01', 'TRACE_TEST Paket B dari DPPA', 'SPK/P4/B', '2026-03-01', 'SPMK/P4/B', '2026-03-05', 90, '2026-03-05', '2026-06-03', 'PPK TRACE TEST', 'TRACE_TEST CV Karya Mandiri', NULL, NULL, NULL, NULL, 'selesai', '2026-08-31 11:24:56', 'TRACE_TEST_PHASE4', NULL, NULL, 0, 1, 1, 0, 'TRACE_TEST Phase 4 Paket B'),
+(3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.3', 4, 1, 190, NULL, NULL, 'Sub Kegiatan Uji 3', 'dpa', 103000000.00, 92700000.00, 'TRACE/PH29/3/2026', '2026-02-01', 'Paket lengkap Phase 29 sub kegiatan 3', 'SPK/P4/A', '2026-02-01', 'SPMK/P4/A', '2026-02-05', 120, '2026-02-05', '2026-06-04', 'PPK TRACE TEST', 'TRACE_TEST PT Infrastruktur Maju', NULL, NULL, NULL, NULL, 'aktif', '2026-09-01 03:10:48', 'TRACE_PHASE29', NULL, NULL, 0, 1, 1, 0, 'TRACE_TEST Phase 29'),
+(4, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.4', 5, 1, 190, NULL, NULL, 'Sub Kegiatan Uji 4', 'dpa', 104000000.00, 93600000.00, 'TRACE/PH29/4/2026', '2026-02-01', 'Paket lengkap Phase 29 sub kegiatan 4', 'SPK/P4/A', '2026-02-01', 'SPMK/P4/A', '2026-02-05', 120, '2026-02-05', '2026-06-04', 'PPK TRACE TEST', 'TRACE_TEST PT Infrastruktur Maju', NULL, NULL, NULL, NULL, 'aktif', '2026-09-01 03:11:14', 'TRACE_PHASE29', NULL, NULL, 0, 1, 1, 0, 'TRACE_TEST Phase 29'),
+(5, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', 6, 1, 190, NULL, NULL, 'Sub Kegiatan Uji 5', 'dpa', 105000000.00, 94500000.00, 'TRACE/PH29/5/2026', '2026-02-01', 'Paket lengkap Phase 29 sub kegiatan 5', 'SPK/P4/A', '2026-02-01', 'SPMK/P4/A', '2026-02-05', 120, '2026-02-05', '2026-06-04', 'PPK TRACE TEST', 'TRACE_TEST PT Infrastruktur Maju', NULL, NULL, NULL, NULL, 'aktif', '2026-09-01 03:11:14', 'TRACE_PHASE29', NULL, NULL, 0, 1, 1, 0, 'TRACE_TEST Phase 29');
 
 -- --------------------------------------------------------
 
@@ -9849,6 +9859,13 @@ CREATE TABLE `kop_surat_neo` (
   `username_update` varchar(100) DEFAULT NULL,
   `is_deleted` tinyint(4) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `kop_surat_neo`
+--
+
+INSERT INTO `kop_surat_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `nama_pemerintah`, `nama_opd`, `alamat`, `telepon`, `email`, `website`, `kode_pos`, `logo_kiri`, `logo_kanan`, `gambar_kop`, `gunakan_gambar_kop`, `warna_garis`, `aktif`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'PEMERINTAH KABUPATEN PASANGKAYU', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', 'Jalan Pangeran Antasari Pasangkayu', '', '', '', '91571', NULL, NULL, NULL, 0, '', 1, '2026-09-01 03:02:12', 'nabiila', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -12058,7 +12075,33 @@ INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data
 (2164, 'master_biaya', 118, 'delete', '{\"id\":118,\"tipe\":\"ssh\",\"kode\":\"TRACE_TEST_PHASE2_SSH\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST ssh\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 18:29:09\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 18:29:09\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 18:29:09'),
 (2165, 'master_biaya', 119, 'delete', '{\"id\":119,\"tipe\":\"hspk\",\"kode\":\"TRACE_TEST_PHASE2_HSPK\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST hspk\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 18:29:09\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 18:29:09\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 18:29:09'),
 (2166, 'master_biaya', 120, 'delete', '{\"id\":120,\"tipe\":\"asb\",\"kode\":\"TRACE_TEST_PHASE2_ASB\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST asb\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 18:29:09\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 18:29:09\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 18:29:09'),
-(2167, 'master_biaya', 121, 'delete', '{\"id\":121,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 18:29:09\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 18:29:09\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 18:29:09');
+(2167, 'master_biaya', 121, 'delete', '{\"id\":121,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-08-31 18:29:09\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-08-31 18:29:09\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-08-31 18:29:09'),
+(2168, 'rekening_kegiatan', 4578, 'update', '{\"id\":4578,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2169, 'rekening_kegiatan', 4579, 'update', '{\"id\":4579,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2170, 'rekening_kegiatan', 4580, 'update', '{\"id\":4580,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2171, 'rekening_kegiatan', 4581, 'update', '{\"id\":4581,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2172, 'rekening_kegiatan', 4582, 'update', '{\"id\":4582,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2173, 'rekening_kegiatan', 4582, 'delete', '{\"id\":4582,\"kode\":\"TRACEH.01.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01.01.01\",\"level\":\"sub_kegiatan\",\"uraian\":\"TRACE_TEST SUB_KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":\"Dokumen\",\"status\":1,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2174, 'rekening_kegiatan', 4581, 'delete', '{\"id\":4581,\"kode\":\"TRACEH.01.01.01.01\",\"parent_kode\":\"TRACEH.01.01\",\"level\":\"kegiatan\",\"uraian\":\"TRACE_TEST KEGIATAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2175, 'rekening_kegiatan', 4580, 'delete', '{\"id\":4580,\"kode\":\"TRACEH.01.01\",\"parent_kode\":\"TRACEH.01\",\"level\":\"program\",\"uraian\":\"TRACE_TEST PROGRAM EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2176, 'rekening_kegiatan', 4579, 'delete', '{\"id\":4579,\"kode\":\"TRACEH.01\",\"parent_kode\":\"TRACEH\",\"level\":\"bidang\",\"uraian\":\"TRACE_TEST BIDANG EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2177, 'rekening_kegiatan', 4578, 'delete', '{\"id\":4578,\"kode\":\"TRACEH\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN EDIT\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2178, 'master_biaya_akun', 49, 'update', '{\"id\":49,\"master_biaya_id\":127,\"kd_akun\":\"5\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"kd_akun\":\"5.1\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2179, 'master_biaya_akun', 49, 'delete', '{\"id\":49,\"master_biaya_id\":127,\"kd_akun\":\"5.1\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2180, 'rekanan_neo', 201, 'update', '{\"id\":201,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-09-01 03:12:55\",\"tgl_update\":\"2026-09-01 11:12:55\",\"username_update\":null,\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', '{\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2181, 'rekanan_neo', 201, 'delete', '{\"id\":201,\"kd_wilayah\":\"76.01\",\"nama_perusahaan\":\"TRACE_TEST REKANAN\",\"alamat\":\"TRACE_TEST ALAMAT EDIT\",\"email\":null,\"npwp\":\"TRACE.TEST.NPWP\",\"no_rekening\":null,\"bank_rekening\":null,\"atas_nama_rekening\":null,\"direktur\":\"TRACE_TEST DIREKTUR\",\"jabatan\":null,\"no_ktp\":null,\"alamat_dir\":null,\"no_akta_pendirian\":null,\"tgl_akta_pendirian\":null,\"lokasi_notaris_pendirian\":null,\"nama_notaris_pendirian\":null,\"file\":null,\"keterangan\":null,\"no_sortir\":null,\"disable\":0,\"username_insert\":\"TRACE_TEST\",\"tgl_insert\":\"2026-09-01 03:12:55\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0,\"no_akta_perubahan\":null,\"tgl_akta_perubahan\":null,\"nama_notaris_perubahan\":null,\"lokasi_notaris_perubahan\":null}', NULL, 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2182, 'satuan_neo', 458, 'update', '{\"id\":458,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST\",\"peraturan_id\":4,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-09-01 11:12:55\",\"username_update\":null,\"is_deleted\":0}', '{\"uraian\":\"TRACE SATUAN EDIT\",\"keterangan\":\"TRACE TEST EDIT\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2183, 'satuan_neo', 458, 'delete', '{\"id\":458,\"value\":\"trace_unit\",\"uraian\":\"TRACE SATUAN EDIT\",\"sebutan_lain\":\"TRACE\",\"disable\":0,\"aksi\":null,\"keterangan\":\"TRACE TEST EDIT\",\"peraturan_id\":4,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\",\"is_deleted\":0}', NULL, 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2184, 'rekening_kegiatan', 4584, 'update', '{\"id\":4584,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN AWAL\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":null,\"username_update\":null}', '{\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2185, 'rekening_kegiatan', 4584, 'delete', '{\"id\":4584,\"kode\":\"TRACE_TEST_URUSAN\",\"parent_kode\":null,\"level\":\"urusan\",\"uraian\":\"TRACE_TEST URUSAN DIUBAH\",\"kd_wilayah\":\"76.01\",\"peraturan_id\":4,\"kinerja\":null,\"indikator\":null,\"satuan\":null,\"status\":1,\"tgl_insert\":\"2026-09-01 03:12:55\",\"username_insert\":\"TRACE_TEST\",\"tgl_update\":\"2026-09-01 03:12:55\",\"username_update\":\"TRACE_TEST\"}', NULL, 'TRACE_TEST', NULL, NULL, '2026-09-01 03:12:55'),
+(2186, 'master_biaya', 129, 'update', '{\"id\":129,\"tipe\":\"ssh\",\"kode\":\"TRACE_TEST_PHASE2_SSH\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST ssh\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
+(2187, 'master_biaya', 130, 'update', '{\"id\":130,\"tipe\":\"hspk\",\"kode\":\"TRACE_TEST_PHASE2_HSPK\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST hspk\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
+(2188, 'master_biaya', 131, 'update', '{\"id\":131,\"tipe\":\"asb\",\"kode\":\"TRACE_TEST_PHASE2_ASB\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST asb\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
+(2189, 'master_biaya', 132, 'update', '{\"id\":132,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"125000.50\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":null,\"username_update\":null}', '{\"harga\":150000.75,\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
+(2190, 'master_biaya', 129, 'delete', '{\"id\":129,\"tipe\":\"ssh\",\"kode\":\"TRACE_TEST_PHASE2_SSH\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST ssh\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
+(2191, 'master_biaya', 130, 'delete', '{\"id\":130,\"tipe\":\"hspk\",\"kode\":\"TRACE_TEST_PHASE2_HSPK\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST hspk\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
+(2192, 'master_biaya', 131, 'delete', '{\"id\":131,\"tipe\":\"asb\",\"kode\":\"TRACE_TEST_PHASE2_ASB\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST asb\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
+(2193, 'master_biaya', 132, 'delete', '{\"id\":132,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-09-01 03:12:56');
 
 -- --------------------------------------------------------
 
@@ -12536,8 +12579,12 @@ CREATE TABLE `rab_paket_neo` (
 --
 
 INSERT INTO `rab_paket_neo` (`id`, `kontrak_id`, `kontrak_item_id`, `tahun`, `kd_wilayah`, `kd_opd`, `id_renja_p`, `id_dpa`, `id_dppa`, `nomor`, `uraian`, `satuan`, `type`, `vol_hps`, `vol_penawaran`, `vol_negoisasi`, `harga_sat_hps`, `harga_sat_penawaran`, `harga_sat_negoisasi`, `pajak`, `jumlah_hps`, `jumlah_penawaran`, `jumlah_negoisasi`, `bobot`, `KBBI`, `keterangan`, `username_insert`, `tgl_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
-(25, 1, NULL, '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 0, 0, '1', 'Mobilisasi dan persiapan', 'ls', 'PEKERJAAN', NULL, NULL, 1.000000000000, NULL, NULL, 56250000.000000000000, NULL, NULL, NULL, 56250000.000000000000, 50.0000, NULL, '', 'TRACE_PHASE10', '2026-08-31 18:36:30', '2026-09-01 02:36:30', NULL, 0),
-(26, 1, NULL, '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 0, 0, '1', 'Mobilisasi dan persiapan', 'ls', 'PEKERJAAN', NULL, NULL, 1.000000000000, NULL, NULL, 56250000.000000000000, NULL, NULL, NULL, 56250000.000000000000, 50.0000, NULL, '', 'TRACE_PHASE10', '2026-08-31 18:36:30', '2026-09-01 02:36:30', NULL, 0);
+(27, 3, 3, '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 0, 4, '1', 'RAB terintegrasi TRACE.PH15.3', 'paket', 'PEKERJAAN', 1.000000000000, 1.000000000000, 1.000000000000, 92700000.000000000000, 92700000.000000000000, 92700000.000000000000, NULL, 92700000.000000000000, 92700000.000000000000, 92700000.000000000000, 100.0000, NULL, '', 'TRACE_PHASE29', '2026-08-31 18:36:30', '2026-09-01 02:36:30', NULL, 0),
+(28, 4, 4, '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 0, 5, '1', 'RAB terintegrasi TRACE.PH15.4', 'paket', 'PEKERJAAN', 1.000000000000, 1.000000000000, 1.000000000000, 93600000.000000000000, 93600000.000000000000, 93600000.000000000000, NULL, 93600000.000000000000, 93600000.000000000000, 93600000.000000000000, 100.0000, NULL, '', 'TRACE_PHASE29', '2026-08-31 18:36:30', '2026-09-01 02:36:30', NULL, 0),
+(29, 5, 5, '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 0, 6, '1', 'RAB terintegrasi TRACE.PH15.5', 'paket', 'PEKERJAAN', 1.000000000000, 1.000000000000, 1.000000000000, 94500000.000000000000, 94500000.000000000000, 94500000.000000000000, NULL, 94500000.000000000000, 94500000.000000000000, 94500000.000000000000, 100.0000, NULL, '', 'TRACE_PHASE29', '2026-08-31 18:36:30', '2026-09-01 02:36:30', NULL, 0),
+(30, 2, 2, '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 0, 3, '1', 'RAB terintegrasi X.XX.1.2.01.2', 'paket', 'PEKERJAAN', 1.000000000000, 1.000000000000, 1.000000000000, 175000000.000000000000, 175000000.000000000000, 175000000.000000000000, NULL, 175000000.000000000000, 175000000.000000000000, 175000000.000000000000, 100.0000, NULL, '', 'TRACE_PHASE29', '2026-08-31 18:36:30', '2026-09-01 02:36:30', NULL, 0),
+(33, 1, NULL, '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 0, 0, '1', 'Mobilisasi dan persiapan', 'ls', 'PEKERJAAN', NULL, NULL, 1.000000000000, NULL, NULL, 56250000.000000000000, NULL, NULL, NULL, 56250000.000000000000, 50.0000, NULL, '', 'TRACE_PHASE10', '2026-09-01 03:12:53', '2026-09-01 11:12:53', NULL, 0),
+(34, 1, NULL, '2026', '76.01', '1.03.0.00.0.00.01.0000', 0, 0, 0, '1', 'Mobilisasi dan persiapan', 'ls', 'PEKERJAAN', NULL, NULL, 1.000000000000, NULL, NULL, 56250000.000000000000, NULL, NULL, NULL, 56250000.000000000000, 50.0000, NULL, '', 'TRACE_PHASE10', '2026-09-01 03:12:53', '2026-09-01 11:12:53', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -17531,6 +17578,50 @@ INSERT INTO `rekening_kegiatan` (`id`, `kode`, `parent_kode`, `level`, `uraian`,
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `rencana_realisasi_anggaran_neo`
+--
+
+CREATE TABLE `rencana_realisasi_anggaran_neo` (
+  `id` bigint(20) NOT NULL,
+  `dokumen` enum('dpa','dppa') NOT NULL,
+  `anggaran_id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(20) NOT NULL,
+  `kd_opd` varchar(50) NOT NULL,
+  `tahun` smallint(6) NOT NULL,
+  `kd_sub_keg` varchar(100) NOT NULL,
+  `kd_akun` varchar(100) NOT NULL,
+  `jenis` enum('belanja','pendapatan') NOT NULL DEFAULT 'belanja',
+  `bulan` tinyint(4) NOT NULL,
+  `nilai` decimal(20,2) NOT NULL DEFAULT 0.00,
+  `keterangan` varchar(255) DEFAULT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `rencana_realisasi_anggaran_neo`
+--
+
+INSERT INTO `rencana_realisasi_anggaran_neo` (`id`, `dokumen`, `anggaran_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `jenis`, `bulan`, `nilai`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 1, 37500000.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
+(2, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 2, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
+(3, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 3, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
+(4, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 4, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
+(5, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 5, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
+(6, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 6, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
+(7, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 7, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
+(8, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 8, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
+(9, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 9, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
+(10, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 10, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
+(11, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 11, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
+(12, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 12, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0);
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `renja_neo`
 --
 
@@ -17584,12 +17675,12 @@ CREATE TABLE `renja_neo` (
 --
 
 INSERT INTO `renja_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
-(1, 'rkpd_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST: Penyusunan dokumen Renja', NULL, NULL, 'ssh', 30, 'Kertas kerja perencanaan', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 75000000.0000, 1, 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
-(2, 'rkpd_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 240000000.0000, 1, 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
-(3, 'rkpd_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 180000000.0000, 1, 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
-(4, 'rkpd_neo', 4, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.3', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 3', NULL, NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 103000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 3', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
-(5, 'rkpd_neo', 5, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.4', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 4', NULL, NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 104000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 4', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
-(6, 'rkpd_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 5', NULL, NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 105000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
+(1, 'rkpd_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST: Penyusunan dokumen Renja', 'non_paket', NULL, 'ssh', 30, 'Kertas kerja perencanaan', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 75000000.0000, 1, 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
+(2, 'rkpd_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST Phase 4 Paket A', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 240000000.0000, 1, 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(3, 'rkpd_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST Phase 4 Paket B', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 180000000.0000, 1, 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(4, 'rkpd_neo', 4, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.3', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 3', 'non_paket', NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 103000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 3', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
+(5, 'rkpd_neo', 5, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.4', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 4', 'non_paket', NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 104000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 4', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
+(6, 'rkpd_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 5', 'non_paket', NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 105000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
 
 -- --------------------------------------------------------
 
@@ -17657,12 +17748,12 @@ CREATE TABLE `renja_p_neo` (
 --
 
 INSERT INTO `renja_p_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga_awal`, `id_standar_harga_awal`, `komponen_awal`, `spesifikasi_awal`, `tkdn_awal`, `pajak_awal`, `harga_satuan_awal`, `volume_awal`, `jumlah_awal`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `status_perubahan`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
-(1, 'renja_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST: Renja Perubahan', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 82500000.0000, 1, 'ubah', 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
-(2, 'renja_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 250000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
-(3, 'renja_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 190000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
-(4, 'rkpd_p_neo', 4, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.3', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 103000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 3', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
-(5, 'rkpd_p_neo', 5, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.4', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 4', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 104000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 4', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
-(6, 'rkpd_p_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 5', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 105000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
+(1, 'renja_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST: Renja Perubahan', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, 'ssh', 30, NULL, NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 82500000.0000, 1, 'ubah', 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
+(2, 'renja_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST Phase 4 Paket A', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 250000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(3, 'renja_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST Phase 4 Paket B', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 190000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(4, 'rkpd_p_neo', 4, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.3', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 3', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, 'ssh', 30, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 103000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 3', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
+(5, 'rkpd_p_neo', 5, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.4', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 4', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, 'ssh', 30, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 104000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 4', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
+(6, 'rkpd_p_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 5', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, 'ssh', 30, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 105000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
 
 -- --------------------------------------------------------
 
@@ -17804,12 +17895,12 @@ CREATE TABLE `rka_neo` (
 --
 
 INSERT INTO `rka_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
-(1, 'renja_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST: Penyusunan dokumen RKA', NULL, NULL, 'ssh', 30, 'Kertas kerja perencanaan', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 75000000.0000, 1, 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
-(2, 'renja_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 240000000.0000, 1, 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
-(3, 'renja_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 180000000.0000, 1, 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
-(4, 'renja_neo', 4, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.3', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 3', NULL, NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 103000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 3', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
-(5, 'renja_neo', 5, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.4', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 4', NULL, NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 104000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 4', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
-(6, 'renja_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 5', NULL, NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 105000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
+(1, 'renja_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST: Penyusunan dokumen RKA', 'non_paket', NULL, 'ssh', 30, 'Kertas kerja perencanaan', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 75000000.0000, 1, 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
+(2, 'renja_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST Phase 4 Paket A', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 240000000.0000, 1, 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(3, 'renja_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST Phase 4 Paket B', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1.0000, 180000000.0000, 1, 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(4, 'renja_neo', 4, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.3', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 3', 'non_paket', NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 103000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 3', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
+(5, 'renja_neo', 5, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.4', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 4', 'non_paket', NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 104000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 4', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
+(6, 'renja_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 5', 'non_paket', NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 105000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
 
 -- --------------------------------------------------------
 
@@ -17877,12 +17968,12 @@ CREATE TABLE `rka_p_neo` (
 --
 
 INSERT INTO `rka_p_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga_awal`, `id_standar_harga_awal`, `komponen_awal`, `spesifikasi_awal`, `tkdn_awal`, `pajak_awal`, `harga_satuan_awal`, `volume_awal`, `jumlah_awal`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `status_perubahan`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
-(1, 'rka_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST: RKA Perubahan', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 82500000.0000, 1, 'ubah', 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
-(2, 'rka_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 250000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
-(3, 'rka_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, NULL, 'TRACE_TEST Phase 4 Paket B', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 190000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
-(4, 'renja_p_neo', 4, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.3', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 103000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 3', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
-(5, 'renja_p_neo', 5, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.4', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 4', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 104000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 4', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
-(6, 'renja_p_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, NULL, 'Belanja terstandar sub kegiatan 5', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, NULL, NULL, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 105000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
+(1, 'rka_neo', 1, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST: RKA Perubahan', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, 'ssh', 30, NULL, NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 82500000.0000, 1, 'ubah', 'TRACE_TEST Phase 3', 0, 1, 1, 0, '2026-08-31 11:10:29', NULL, 'TRACE_TEST_PHASE3', NULL),
+(2, 'rka_neo', 2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.1', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST Phase 4 Paket A', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 240000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 250000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket A', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(3, 'rka_neo', 3, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'X.XX.1.2.01.2', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'TRACE_TEST Phase 4 Paket B', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 180000000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 190000000.0000, 1, 'ubah', 'TRACE_TEST Phase 4 Paket B', 0, 1, 1, 0, '2026-08-31 11:24:56', NULL, 'TRACE_TEST_PHASE4', NULL),
+(4, 'renja_p_neo', 4, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.3', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 3', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, 'ssh', 30, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 103000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 3', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
+(5, 'renja_p_neo', 5, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.4', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 4', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, 'ssh', 30, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 104000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 4', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL),
+(6, 'renja_p_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 5', 'non_paket', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 75000.0000, 1000.0000, 75000000.0000, 'ssh', 30, 'Komponen SSH Phase 15', NULL, NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1100.0000, 105000000.0000, 1, 'ubah', 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
 
 -- --------------------------------------------------------
 
@@ -19476,6 +19567,42 @@ INSERT INTO `sumber_dana_neo` (`id`, `sumber_dana`, `kelompok`, `jenis_akun`, `o
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `tapd_penugasan_neo`
+--
+
+CREATE TABLE `tapd_penugasan_neo` (
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(20) NOT NULL,
+  `tahun` smallint(6) NOT NULL,
+  `user_id` bigint(20) DEFAULT NULL,
+  `nama` varchar(255) NOT NULL,
+  `nip` varchar(50) DEFAULT NULL,
+  `jabatan` varchar(150) NOT NULL,
+  `urutan` smallint(6) NOT NULL DEFAULT 1,
+  `tanggal_mulai` date NOT NULL,
+  `tanggal_selesai` date NOT NULL,
+  `aktif` tinyint(4) NOT NULL DEFAULT 1,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `tapd_penugasan_neo`
+--
+
+INSERT INTO `tapd_penugasan_neo` (`id`, `kd_wilayah`, `tahun`, `user_id`, `nama`, `nip`, `jabatan`, `urutan`, `tanggal_mulai`, `tanggal_selesai`, `aktif`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, '76.01', 2026, NULL, 'KARTINI, SH., M.P.W.P', '198401092003122003', 'WAKIL KETUA', 1, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0),
+(2, '76.01', 2026, NULL, 'SUHARDI, S.Pd', '196812311993081006', 'ANGGOTA', 2, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0),
+(3, '76.01', 2026, NULL, 'GUNAWAN, ST., M.Si', '198004092010011007', 'ANGGOTA', 3, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0),
+(4, '76.01', 2026, NULL, 'DINI RESQIYAH A. LOPPU, S.A.P', '198603192008012001', 'ANGGOTA', 4, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0),
+(5, '76.01', 2026, NULL, 'I PUTU ERIK, SE', '198411032008011002', 'ANGGOTA', 5, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0);
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `trx_naskah_dinas`
 --
 
@@ -19514,7 +19641,7 @@ CREATE TABLE `trx_naskah_dinas` (
 INSERT INTO `trx_naskah_dinas` (`id`, `uuid`, `jenis_id`, `nomor`, `nomor_urut`, `tahun`, `klasifikasi_id`, `tanggal_surat`, `perihal`, `status`, `file_pdf`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`, `workflow_status`, `verified_by`, `verified_at`, `signed_by`, `signed_at`, `final_at`, `document_hash`) VALUES
 (2, NULL, 5, '02 DPUPR 2026', NULL, '2026', NULL, '2026-03-24', 'PENGANGKATAN PEJABAT PENATAUSAHAAN KEUANGAN DINAS PEKERJAAN UMUM DAN PENATAAN RUANG KABUPATEN PASANGKAYU TAHUN 2026', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-03-24 04:32:12', NULL, NULL, 'oke', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
 (4, NULL, 5, '05', NULL, '2026', NULL, '2026-03-26', 'perihal', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-03-26 03:12:42', NULL, NULL, '', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
-(5, 'TRACE_TEST_PHASE6', 7, 'B/TRACE/DPUPR/2026', 999, '2026', 1, '2026-08-31', 'TRACE EDIT TATA NASKAH TERSIMPAN', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'TRACE_TEST', '2026-08-31 16:08:56', 'TRACE_TEST', '2026-08-31 18:21:46', 'TRACE_TEST Phase 6', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 'TRACE_TEST_PHASE6', 7, 'B/TRACE/DPUPR/2026', 999, '2026', 1, '2026-08-31', 'TRACE EDIT TATA NASKAH TERSIMPAN', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'TRACE_TEST', '2026-08-31 16:08:56', 'TRACE_TEST', '2026-09-01 03:12:56', 'TRACE_TEST Phase 6', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
 (6, 'tnd_6a957e412f7dd6.76381103', 1, 'TRACE/001/1.03.0.00.0.00.01.0000/2026', 901, '2026', 1, '2026-08-31', 'Contoh Peraturan Arsip Nasional Republik Indonesia', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'TRACE_TEST', '2026-08-31 13:14:41', NULL, NULL, 'TRACE_SAMPLE_TND_1', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
 (7, 'tnd_6a957e412fc033.65405791', 2, 'TRACE/002/1.03.0.00.0.00.01.0000/2026', 902, '2026', 1, '2026-08-31', 'Contoh Instruksi', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'TRACE_TEST', '2026-08-31 13:14:41', NULL, NULL, 'TRACE_SAMPLE_TND_2', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
 (8, 'tnd_6a957e412febb6.21012988', 3, 'TRACE/003/1.03.0.00.0.00.01.0000/2026', 903, '2026', 1, '2026-08-31', 'Contoh Surat Edaran', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'TRACE_TEST', '2026-08-31 13:14:41', NULL, NULL, 'TRACE_SAMPLE_TND_3', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
@@ -19663,7 +19790,7 @@ INSERT INTO `trx_naskah_struktur` (`id`, `naskah_id`, `struktur_json`, `kd_wilay
 (71, 28, '{\"penanda_tangan\":\"Pejabat Contoh seSendok\",\"jabatan_penandatangan\":\"Kepala Perangkat Daerah\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-08-31 13:14:41', 'TRACE_TEST', NULL, NULL),
 (72, 29, '{\"nomor\":\"TRACE\\/TND\\/2026\",\"tanggal_surat\":\"2026-08-31\",\"file\":\"Contoh Pilih File Dokumen disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\",\"penanda_tangan\":\"Pejabat Contoh seSendok\",\"jabatan_penandatangan\":\"Kepala Perangkat Daerah\",\"perihal\":\"Pelaksanaan Administrasi Pemerintahan Tahun 2026\",\"penandatangan\":\"Contoh Penandatangan disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\",\"jbt_pemberi_tgs\":\"Kepala Perangkat Daerah\",\"pangkat_pemberi_tgs\":\"Contoh Pangkat disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\",\"pelatihan\":\"Contoh Pelatihan disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-08-31 13:14:41', 'TRACE_TEST', NULL, NULL),
 (73, 30, '{\"penanda_tangan\":\"Pejabat Contoh seSendok\",\"jabatan_penandatangan\":\"Kepala Perangkat Daerah\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-08-31 13:25:33', 'TRACE_TEST', NULL, NULL),
-(77, 5, '{\"kepada\": \"Sekretaris dan Para Kepala Bidang\", \"dari\": \"Kepala Dinas\", \"tanggal_surat\": \"31 Agustus 2026\", \"perihal\": \"Undangan Rapat Evaluasi Pelaksanaan Kegiatan\", \"isi\": \"Sehubungan dengan pelaksanaan kegiatan Tahun Anggaran 2026, diminta menghadiri rapat evaluasi pada waktu dan tempat yang telah ditentukan.\", \"jbt_pemberi_tgs\": \"Kepala Dinas\", \"nama_penandatangan\": \"TRACE TEST PEJABAT\", \"tembusan\": [{\"text\": \"Bupati Pasangkayu sebagai laporan\"}]}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-08-31 18:21:46', 'TRACE_TEST', NULL, NULL);
+(80, 5, '{\"kepada\": \"Sekretaris dan Para Kepala Bidang\", \"dari\": \"Kepala Dinas\", \"tanggal_surat\": \"31 Agustus 2026\", \"perihal\": \"Undangan Rapat Evaluasi Pelaksanaan Kegiatan\", \"isi\": \"Sehubungan dengan pelaksanaan kegiatan Tahun Anggaran 2026, diminta menghadiri rapat evaluasi pada waktu dan tempat yang telah ditentukan.\", \"jbt_pemberi_tgs\": \"Kepala Dinas\", \"nama_penandatangan\": \"TRACE TEST PEJABAT\", \"tembusan\": [{\"text\": \"Bupati Pasangkayu sebagai laporan\"}]}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-09-01 03:12:56', 'TRACE_TEST', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -19684,7 +19811,7 @@ CREATE TABLE `trx_nomor_counter` (
 
 INSERT INTO `trx_nomor_counter` (`id`, `klasifikasi_id`, `tahun`, `last_number`) VALUES
 (1, NULL, 2026, 4),
-(2, 1, 2026, 30);
+(2, 1, 2026, 36);
 
 -- --------------------------------------------------------
 
@@ -19728,6 +19855,7 @@ CREATE TABLE `user_sesendok_biila` (
   `nama` varchar(255) NOT NULL,
   `nip` varchar(18) DEFAULT NULL,
   `password` varchar(225) NOT NULL,
+  `message_public_key` longtext DEFAULT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
   `kd_opd` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `nama_org` varchar(400) NOT NULL,
@@ -19758,13 +19886,13 @@ CREATE TABLE `user_sesendok_biila` (
 -- Dumping data untuk tabel `user_sesendok_biila`
 --
 
-INSERT INTO `user_sesendok_biila` (`id`, `username`, `email`, `nama`, `nip`, `password`, `remember_token`, `kd_opd`, `nama_org`, `kd_wilayah`, `type_user`, `photo`, `signature_image`, `signature_verified`, `tgl_daftar`, `tgl_login`, `tahun`, `kontak_person`, `alamat`, `font_size`, `theme`, `warna_tbl`, `scrolling_table`, `disable_login`, `disable_anggaran`, `disable_kontrak`, `disable_realisasi`, `disable_chat`, `ket`, `disable`) VALUES
-(1, 'alwi_mansyur', 'alwi@gmail.com', 'Alwi Mansyur', '1980', '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_wilayah', 'images/avatar/default.jpeg', NULL, 0, '2018-06-04 21:57:05', '2024-10-23 15:03:04', '2024', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
-(2, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_opd', 'img/avatar/username(nabiila)_dok(photo)_wilayah(76.01)_2305070e99916190687b3774c0d56f134b954d74_2.jpg', NULL, 0, '2018-06-09 15:54:29', '2026-02-24 21:15:01', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
-(3, 'inayah', 'inayah@gmail.com', 'Inayah Nadhilah', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'super_admin', 'images/avatar/default.jpeg', NULL, 0, '2018-06-22 22:04:17', '2020-03-08 02:30:41', '2026', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'dimana mana hatiku senang oke', 0),
-(4, 'Arlinda', 'arlinda@gmail.com', 'Arlinda Achmad', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '', 'Prof', '', 'admin_opd', 'images/avatar/default.jpeg', NULL, 0, '2018-07-10 14:27:06', '2018-10-21 12:23:09', '2024', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu.', 0),
-(5, 'administrator', 'alwi.mansyur@gmail.com', 'administrator', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, '', 'administrator AHSP', '', 'user', 'images/avatar/c14719a7f71e46badf2cf93ae373ae9797281782_9.png', NULL, 0, '2023-02-09 23:41:34', '2023-02-23 00:05:26', '2024', '08128886665', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk mu', 0),
-(8, 'trace_user_b6d132', 'trace_b6d132@example.test', 'TRACE USER OPD', '9900b6d132', '$2y$12$Yvbw303kraYklB/x5V0G7e5KMmuk97uIftsWSERR6Jnf2S3CLYa46', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'pptk', 'default.jpeg', NULL, 0, '2026-08-31 18:08:47', NULL, '2026', '0812000000', NULL, NULL, 'auto', NULL, NULL, 0, 1, 1, 1, 1, NULL, 0);
+INSERT INTO `user_sesendok_biila` (`id`, `username`, `email`, `nama`, `nip`, `password`, `message_public_key`, `remember_token`, `kd_opd`, `nama_org`, `kd_wilayah`, `type_user`, `photo`, `signature_image`, `signature_verified`, `tgl_daftar`, `tgl_login`, `tahun`, `kontak_person`, `alamat`, `font_size`, `theme`, `warna_tbl`, `scrolling_table`, `disable_login`, `disable_anggaran`, `disable_kontrak`, `disable_realisasi`, `disable_chat`, `ket`, `disable`) VALUES
+(1, 'alwi_mansyur', 'alwi@gmail.com', 'Alwi Mansyur', '1980', '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_wilayah', 'images/avatar/default.jpeg', NULL, 0, '2018-06-04 21:57:05', '2024-10-23 15:03:04', '2024', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(2, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', '{\"alg\":\"RSA-OAEP-256\",\"e\":\"AQAB\",\"ext\":true,\"key_ops\":[\"encrypt\"],\"kty\":\"RSA\",\"n\":\"pSCtXM-BR4vh-x_dkCstygKRHbU7ilStf5dAY0wbYk8Wg30T53fdv6fuZrdhE2laHUZVLUaDa1skWTS5ZQvaTrpLpyxt9iYc-4U9I8qJCdzkGSNPaeDlVJ90lex79fXtsCYM2eXCy6VfSF6qgyJ-cS1xC6YhKDglj4xLpshK5URVU6nmsnocHcYGDXrB26xPk9JhhuHubAOPoutCtsNjBzTH6g1tX8QY-VBR0OL2IR-eAXjfdmFjZMOizzhbQgoRIRp1z02ISiQVL0Gec0O2WVhWCUm_sEJE8rrwLI0AA91hOVD5_eRYrM-jfLd1vNvE7pJhTVGYO2Dn2Qz7_ezJ323O768dPmbklJDETv26ZFQbRG57orEmbCgNW_hAcW5ehbOEYg-qfkWUQE6MOPfuGV11Q4x_Ht05ATR-WSnuKCXstZ-a6t0jQWmLcv5pGE35LYkB3zzoBuOiuQPVzVAsLmxfPIs9oqjwHAA00jFi664f878cz1Aq8N-a8YqGIa0L\"}', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_opd', 'img/avatar/username(nabiila)_dok(photo)_wilayah(76.01)_2305070e99916190687b3774c0d56f134b954d74_2.jpg', NULL, 0, '2018-06-09 15:54:29', '2026-02-24 21:15:01', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
+(3, 'inayah', 'inayah@gmail.com', 'Inayah Nadhilah', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'super_admin', 'images/avatar/default.jpeg', NULL, 0, '2018-06-22 22:04:17', '2020-03-08 02:30:41', '2026', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'dimana mana hatiku senang oke', 0),
+(4, 'Arlinda', 'arlinda@gmail.com', 'Arlinda Achmad', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '', 'Prof', '', 'admin_opd', 'images/avatar/default.jpeg', NULL, 0, '2018-07-10 14:27:06', '2018-10-21 12:23:09', '2024', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu.', 0),
+(5, 'administrator', 'alwi.mansyur@gmail.com', 'administrator', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '', 'administrator AHSP', '', 'user', 'images/avatar/c14719a7f71e46badf2cf93ae373ae9797281782_9.png', NULL, 0, '2023-02-09 23:41:34', '2023-02-23 00:05:26', '2024', '08128886665', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk mu', 0),
+(8, 'trace_user_b6d132', 'trace_b6d132@example.test', 'TRACE USER OPD', '9900b6d132', '$2y$12$Yvbw303kraYklB/x5V0G7e5KMmuk97uIftsWSERR6Jnf2S3CLYa46', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'pptk', 'default.jpeg', NULL, 0, '2026-08-31 18:08:47', NULL, '2026', '0812000000', NULL, NULL, 'auto', NULL, NULL, 0, 1, 1, 1, 1, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -19807,6 +19935,8 @@ CREATE TABLE `wallchat` (
   `content` text NOT NULL,
   `content_ciphertext` longtext DEFAULT NULL,
   `content_nonce` varchar(64) DEFAULT NULL,
+  `e2e_payload` longtext DEFAULT NULL,
+  `encryption_version` varchar(20) DEFAULT NULL,
   `is_ephemeral` tinyint(4) NOT NULL DEFAULT 0,
   `read_at` datetime DEFAULT NULL,
   `deleted_by_sender` tinyint(4) NOT NULL DEFAULT 0,
@@ -19830,29 +19960,40 @@ CREATE TABLE `wallchat` (
 -- Dumping data untuk tabel `wallchat`
 --
 
-INSERT INTO `wallchat` (`id`, `user_id`, `receiver_id`, `parent_id`, `type`, `content`, `content_ciphertext`, `content_nonce`, `is_ephemeral`, `read_at`, `deleted_by_sender`, `deleted_by_receiver`, `attachment_name`, `attachment_path`, `attachment_mime`, `attachment_size`, `theme`, `created_at`, `updated_at`, `is_deleted`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `file`) VALUES
-(1, 1, NULL, NULL, 'status', '', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-02-16 06:21:46', NULL, 0, '2026-03-15 16:05:57', '', '2026-03-15 16:05:57', NULL, NULL),
-(2, 1, NULL, NULL, 'status', '', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-02-16 06:33:34', NULL, 0, '2026-03-15 16:05:57', '', '2026-03-15 16:05:57', NULL, NULL),
-(3, 1, NULL, NULL, 'status', 'halooooo', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-02-16 06:33:42', NULL, 0, '2026-03-15 16:05:57', '', '2026-03-15 16:05:57', NULL, NULL),
-(4, 1, NULL, 3, 'comment', 'okelah', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-02-16 06:33:51', NULL, 0, '2026-03-15 16:05:57', '', '2026-08-31 16:14:57', NULL, NULL),
-(14, 1, NULL, NULL, 'status', '', '5eULBP+MLva237y+/BEoPF+EXjBFshe69RAEL/EZiJ4nTrnNawYwzRg=', '/Qf//hLCClSMywTWHaJwWk/T350WT1Fd', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 17:55:36', NULL, 1, '2026-09-01 01:55:36', 'alwi_mansyur', '2026-09-01 01:55:36', NULL, NULL),
-(15, 2, NULL, 14, 'comment', '', 'tkPL/pB5SmPM8XgmsN/jeKI3LkT/fhv00ZgPxL/9YbH0COg4DB4JvVPm', 'Lvk1IQVvlYZJyb6gfYgs+LAJQAN3E60Y', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 17:55:36', NULL, 0, '2026-09-01 01:55:36', 'nabiila', '2026-09-01 01:55:36', NULL, NULL),
-(16, 1, 2, NULL, 'private', '', 'mcGkC4elZpGaCK2NXw7wZ4KUUqfAWlfgG+WKQQYOdg9n94C5EUwe8WsG', '0u97cOflAd26+ohIfVfoLlrTwDU+/dnH', 0, '2026-08-31 18:13:03', 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 17:55:36', NULL, 0, '2026-09-01 01:55:36', 'alwi_mansyur', '2026-09-01 02:13:03', NULL, NULL),
-(17, 1, 2, NULL, 'private', '', NULL, NULL, 1, '2026-08-31 17:55:59', 1, 1, NULL, NULL, NULL, 0, 'default', '2026-08-31 17:55:59', NULL, 1, '2026-09-01 01:55:59', 'alwi_mansyur', '2026-09-01 01:55:59', NULL, NULL),
-(18, 1, NULL, NULL, 'status', '', 'gmopwbG/t24DrQmpEeh+wF+tWkdK4IuYkaNoELzzLj/onlKIGzAxm/s=', 'd14oSVy6fPEhJ2RcXXYcSaZHv7xsGKaC', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:21', NULL, 1, '2026-09-01 02:19:21', 'alwi_mansyur', '2026-09-01 02:19:21', NULL, NULL),
-(19, 2, NULL, 18, 'comment', '', 'k36IksYWfawBpzBK4/k6+rQdCJfCnqIhgq7Q4sV36PJ+Ls6isBNrSAVs', 'zsDxubKyg6ITmi7jX2BMQgBgy+qq2+vV', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:21', NULL, 0, '2026-09-01 02:19:21', 'nabiila', '2026-09-01 02:19:21', NULL, NULL),
-(20, 1, 2, NULL, 'private', '', '6tg/G/l/zBehM9Z15JkHwGAUfTidKd6cR1UzzgC/UxKiUDfmXGDCEEfW', '8jSkm3k8CDFqIwZrllWIqRZRsKgvZ2YM', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:21', NULL, 0, '2026-09-01 02:19:21', 'alwi_mansyur', '2026-09-01 02:19:21', NULL, NULL),
-(21, 1, 2, NULL, 'private', '', NULL, NULL, 1, '2026-08-31 18:19:21', 1, 1, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:21', NULL, 1, '2026-09-01 02:19:21', 'alwi_mansyur', '2026-09-01 02:19:21', NULL, NULL),
-(22, 1, NULL, NULL, 'status', '', '+y7HyOHbPKWH02iiNEM3ALpLVTStS1U+Ot419yHd6U7E/w==', 'OLVgcD8WXeo26Gp/hUK0W2e7pCcl5Dad', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'sunset', '2026-08-31 18:19:21', '2026-08-31 18:19:21', 1, '2026-09-01 02:19:21', 'alwi_mansyur', '2026-09-01 02:19:21', NULL, NULL),
-(23, 1, NULL, NULL, 'status', '', 'uKplBqyX3DRqlNLiZKepDEWUB8c+Cv07W2erZbYr4FEURf5O4cTtDcI=', '+eFOXsvW+/flbLoilV5Fusbr3nAcJseH', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:50', NULL, 1, '2026-09-01 02:19:50', 'alwi_mansyur', '2026-09-01 02:19:50', NULL, NULL),
-(24, 2, NULL, 23, 'comment', '', '5fOXq88CdOvd9H4hc4lr38sYJPeZYqrdsfH3mGWCdI3zKlDRbYml9w0Y', '+LCgyLyha1k21E68kpXNMDvpm7fu0tcF', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:50', NULL, 0, '2026-09-01 02:19:50', 'nabiila', '2026-09-01 02:19:50', NULL, NULL),
-(25, 1, 2, NULL, 'private', '', 'L2XEEIcDz38hE62RcWR9y08IeI3wTRlwpvRR1+u6Su2kP+dKMNEzTLPH', 'LextC8MtBpXylIR4wmkcu+oIoVkmPZY2', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:50', NULL, 0, '2026-09-01 02:19:50', 'alwi_mansyur', '2026-09-01 02:19:50', NULL, NULL),
-(26, 1, NULL, NULL, 'status', '', 'Y3VCSEb2oM2QgTzkaIwzaMAR6oOgSUJGW58NszBOHGfY5A==', 'jdI1IgQMA+V0vv0wa4G9ylMff1K1WKJd', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'sunset', '2026-08-31 18:19:50', '2026-08-31 18:19:50', 1, '2026-09-01 02:19:50', 'alwi_mansyur', '2026-09-01 02:19:50', NULL, NULL),
-(27, 1, 2, NULL, 'private', '', NULL, NULL, 1, '2026-08-31 18:21:44', 1, 1, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:21:44', NULL, 1, '2026-09-01 02:21:44', 'alwi_mansyur', '2026-09-01 02:21:44', NULL, NULL),
-(28, 1, NULL, NULL, 'status', '', 'GPWs6/q+lOI3n5futlQ9Z+R9/JJchSC/sA5Zxpoe9NbgSA==', '1Lfd20KdTgN9yFtAdsW5gl9TQb6VBEnb', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'sunset', '2026-08-31 18:21:45', '2026-08-31 18:21:45', 1, '2026-09-01 02:21:45', 'alwi_mansyur', '2026-09-01 02:21:45', NULL, NULL),
-(29, 1, NULL, NULL, 'status', '', 'KXoZS5UqvHh6EBbBxZwaRLX84S8UEB4kTVj2HIgceMNGWrqYjQO9bws=', 'GP4PcVYkmImQs8jiQ5dwoAZrwG+wJ19K', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:21:46', NULL, 1, '2026-09-01 02:21:46', 'alwi_mansyur', '2026-09-01 02:21:46', NULL, NULL),
-(30, 2, NULL, 29, 'comment', '', '7JyiNqKKmrOuD1patm0bhwqJqtukJ2712sBH3ieshUMJ/H1JGAgmGy16', 'Kce/hAa8zS1Q0JkYa//ToPl4EGCy7cWW', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:21:46', NULL, 0, '2026-09-01 02:21:46', 'nabiila', '2026-09-01 02:21:46', NULL, NULL),
-(31, 1, 2, NULL, 'private', '', 'VlStN789bCjdBz/2GghBckOj0xuPWyFMhQjQTZ5w2peB4+grCI1L2Hx1', 'x5Fx5Xh6SdtD3gIDwa8mVdNBtvKRsCBQ', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:21:46', NULL, 0, '2026-09-01 02:21:46', 'alwi_mansyur', '2026-09-01 02:21:46', NULL, NULL);
+INSERT INTO `wallchat` (`id`, `user_id`, `receiver_id`, `parent_id`, `type`, `content`, `content_ciphertext`, `content_nonce`, `e2e_payload`, `encryption_version`, `is_ephemeral`, `read_at`, `deleted_by_sender`, `deleted_by_receiver`, `attachment_name`, `attachment_path`, `attachment_mime`, `attachment_size`, `theme`, `created_at`, `updated_at`, `is_deleted`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `file`) VALUES
+(1, 1, NULL, NULL, 'status', '', NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-02-16 06:21:46', NULL, 0, '2026-03-15 16:05:57', '', '2026-03-15 16:05:57', NULL, NULL),
+(2, 1, NULL, NULL, 'status', '', NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-02-16 06:33:34', NULL, 0, '2026-03-15 16:05:57', '', '2026-03-15 16:05:57', NULL, NULL),
+(3, 1, NULL, NULL, 'status', 'halooooo', NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-02-16 06:33:42', NULL, 0, '2026-03-15 16:05:57', '', '2026-03-15 16:05:57', NULL, NULL),
+(4, 1, NULL, 3, 'comment', 'okelah', NULL, NULL, NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-02-16 06:33:51', NULL, 0, '2026-03-15 16:05:57', '', '2026-08-31 16:14:57', NULL, NULL),
+(14, 1, NULL, NULL, 'status', '', '5eULBP+MLva237y+/BEoPF+EXjBFshe69RAEL/EZiJ4nTrnNawYwzRg=', '/Qf//hLCClSMywTWHaJwWk/T350WT1Fd', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 17:55:36', NULL, 1, '2026-09-01 01:55:36', 'alwi_mansyur', '2026-09-01 01:55:36', NULL, NULL),
+(15, 2, NULL, 14, 'comment', '', 'tkPL/pB5SmPM8XgmsN/jeKI3LkT/fhv00ZgPxL/9YbH0COg4DB4JvVPm', 'Lvk1IQVvlYZJyb6gfYgs+LAJQAN3E60Y', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 17:55:36', NULL, 0, '2026-09-01 01:55:36', 'nabiila', '2026-09-01 01:55:36', NULL, NULL),
+(16, 1, 2, NULL, 'private', '', 'mcGkC4elZpGaCK2NXw7wZ4KUUqfAWlfgG+WKQQYOdg9n94C5EUwe8WsG', '0u97cOflAd26+ohIfVfoLlrTwDU+/dnH', NULL, NULL, 0, '2026-08-31 18:13:03', 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 17:55:36', NULL, 0, '2026-09-01 01:55:36', 'alwi_mansyur', '2026-09-01 02:13:03', NULL, NULL),
+(17, 1, 2, NULL, 'private', '', NULL, NULL, NULL, NULL, 1, '2026-08-31 17:55:59', 1, 1, NULL, NULL, NULL, 0, 'default', '2026-08-31 17:55:59', NULL, 1, '2026-09-01 01:55:59', 'alwi_mansyur', '2026-09-01 01:55:59', NULL, NULL),
+(18, 1, NULL, NULL, 'status', '', 'gmopwbG/t24DrQmpEeh+wF+tWkdK4IuYkaNoELzzLj/onlKIGzAxm/s=', 'd14oSVy6fPEhJ2RcXXYcSaZHv7xsGKaC', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:21', NULL, 1, '2026-09-01 02:19:21', 'alwi_mansyur', '2026-09-01 02:19:21', NULL, NULL),
+(19, 2, NULL, 18, 'comment', '', 'k36IksYWfawBpzBK4/k6+rQdCJfCnqIhgq7Q4sV36PJ+Ls6isBNrSAVs', 'zsDxubKyg6ITmi7jX2BMQgBgy+qq2+vV', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:21', NULL, 0, '2026-09-01 02:19:21', 'nabiila', '2026-09-01 02:19:21', NULL, NULL),
+(20, 1, 2, NULL, 'private', '', '6tg/G/l/zBehM9Z15JkHwGAUfTidKd6cR1UzzgC/UxKiUDfmXGDCEEfW', '8jSkm3k8CDFqIwZrllWIqRZRsKgvZ2YM', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:21', NULL, 0, '2026-09-01 02:19:21', 'alwi_mansyur', '2026-09-01 02:19:21', NULL, NULL),
+(21, 1, 2, NULL, 'private', '', NULL, NULL, NULL, NULL, 1, '2026-08-31 18:19:21', 1, 1, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:21', NULL, 1, '2026-09-01 02:19:21', 'alwi_mansyur', '2026-09-01 02:19:21', NULL, NULL),
+(22, 1, NULL, NULL, 'status', '', '+y7HyOHbPKWH02iiNEM3ALpLVTStS1U+Ot419yHd6U7E/w==', 'OLVgcD8WXeo26Gp/hUK0W2e7pCcl5Dad', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'sunset', '2026-08-31 18:19:21', '2026-08-31 18:19:21', 1, '2026-09-01 02:19:21', 'alwi_mansyur', '2026-09-01 02:19:21', NULL, NULL),
+(23, 1, NULL, NULL, 'status', '', 'uKplBqyX3DRqlNLiZKepDEWUB8c+Cv07W2erZbYr4FEURf5O4cTtDcI=', '+eFOXsvW+/flbLoilV5Fusbr3nAcJseH', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:50', NULL, 1, '2026-09-01 02:19:50', 'alwi_mansyur', '2026-09-01 02:19:50', NULL, NULL),
+(24, 2, NULL, 23, 'comment', '', '5fOXq88CdOvd9H4hc4lr38sYJPeZYqrdsfH3mGWCdI3zKlDRbYml9w0Y', '+LCgyLyha1k21E68kpXNMDvpm7fu0tcF', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:50', NULL, 0, '2026-09-01 02:19:50', 'nabiila', '2026-09-01 02:19:50', NULL, NULL),
+(25, 1, 2, NULL, 'private', '', 'L2XEEIcDz38hE62RcWR9y08IeI3wTRlwpvRR1+u6Su2kP+dKMNEzTLPH', 'LextC8MtBpXylIR4wmkcu+oIoVkmPZY2', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:19:50', NULL, 0, '2026-09-01 02:19:50', 'alwi_mansyur', '2026-09-01 02:19:50', NULL, NULL),
+(26, 1, NULL, NULL, 'status', '', 'Y3VCSEb2oM2QgTzkaIwzaMAR6oOgSUJGW58NszBOHGfY5A==', 'jdI1IgQMA+V0vv0wa4G9ylMff1K1WKJd', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'sunset', '2026-08-31 18:19:50', '2026-08-31 18:19:50', 1, '2026-09-01 02:19:50', 'alwi_mansyur', '2026-09-01 02:19:50', NULL, NULL),
+(27, 1, 2, NULL, 'private', '', NULL, NULL, NULL, NULL, 1, '2026-08-31 18:21:44', 1, 1, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:21:44', NULL, 1, '2026-09-01 02:21:44', 'alwi_mansyur', '2026-09-01 02:21:44', NULL, NULL),
+(28, 1, NULL, NULL, 'status', '', 'GPWs6/q+lOI3n5futlQ9Z+R9/JJchSC/sA5Zxpoe9NbgSA==', '1Lfd20KdTgN9yFtAdsW5gl9TQb6VBEnb', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'sunset', '2026-08-31 18:21:45', '2026-08-31 18:21:45', 1, '2026-09-01 02:21:45', 'alwi_mansyur', '2026-09-01 02:21:45', NULL, NULL),
+(29, 1, NULL, NULL, 'status', '', 'KXoZS5UqvHh6EBbBxZwaRLX84S8UEB4kTVj2HIgceMNGWrqYjQO9bws=', 'GP4PcVYkmImQs8jiQ5dwoAZrwG+wJ19K', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:21:46', NULL, 1, '2026-09-01 02:21:46', 'alwi_mansyur', '2026-09-01 02:21:46', NULL, NULL),
+(30, 2, NULL, 29, 'comment', '', '7JyiNqKKmrOuD1patm0bhwqJqtukJ2712sBH3ieshUMJ/H1JGAgmGy16', 'Kce/hAa8zS1Q0JkYa//ToPl4EGCy7cWW', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:21:46', NULL, 0, '2026-09-01 02:21:46', 'nabiila', '2026-09-01 02:21:46', NULL, NULL),
+(31, 1, 2, NULL, 'private', '', 'VlStN789bCjdBz/2GghBckOj0xuPWyFMhQjQTZ5w2peB4+grCI1L2Hx1', 'x5Fx5Xh6SdtD3gIDwa8mVdNBtvKRsCBQ', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-08-31 18:21:46', NULL, 0, '2026-09-01 02:21:46', 'alwi_mansyur', '2026-09-01 02:21:46', NULL, NULL),
+(32, 2, 1, NULL, 'private', '', 'SKz8rFJmauPaEAv+SLWgLxcqdPsDYw==', 'RcmLArpG6y2QyZbkDZlnX8px0HOKqbji', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-09-01 02:37:47', NULL, 0, '2026-09-01 10:37:47', 'nabiila', '2026-09-01 10:37:47', NULL, NULL),
+(33, 1, NULL, NULL, 'status', '', 'WbesNtibiOna/RM3y+OaITQqBvSm17Nq7APJQhaxNYyhDQ==', 'D57idGVQB1QESWbyz8IWDBSiuIp/8ihf', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'sunset', '2026-09-01 02:45:35', '2026-09-01 02:45:35', 1, '2026-09-01 10:45:35', 'alwi_mansyur', '2026-09-01 10:45:35', NULL, NULL),
+(34, 2, NULL, NULL, 'status', '', 'v5GjDzNuNLEbIEoija4AvThfa4X4', 'FeRbrgG3GyrwIqCNuBRWriuras+fTo63', NULL, NULL, 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-09-01 02:50:04', NULL, 1, '2026-09-01 10:50:04', 'nabiila', '2026-09-01 10:50:09', NULL, NULL),
+(35, 2, NULL, NULL, 'status', '', 'bO/6zyv2nErDSZWy79fT5C4nLs5niIJQK70z4sJ/sh+s', 'F5FfbmfjDDtKTh0yecxUBd6klkUzGrkb', NULL, NULL, 0, NULL, 0, 0, 'images-8.jpeg', 'storage/uploads/messages/wall/2026/09/1b25969572fb8775849283991fed1d62.jpg', 'image/jpeg', 24784, 'midnight', '2026-09-01 02:55:54', NULL, 1, '2026-09-01 10:55:54', 'nabiila', '2026-09-01 11:09:10', NULL, NULL),
+(36, 2, NULL, NULL, 'status', '', 'zb4RaU7jVpbhWfpCyR42mCBmW5Hz6EwbDbeQLkE5d6Az', 'P+CTs1mAggWY3TtBQUwMowX7KG6ScMYj', NULL, 'server-v1', 0, NULL, 0, 0, 'images-8.jpeg', 'storage/uploads/messages/wall/2026/09/7bf3e09511b6aaec24915fde51471e91.jpg', 'image/jpeg', 24784, 'forest', '2026-09-01 03:10:10', NULL, 1, '2026-09-01 11:10:10', 'nabiila', '2026-09-01 11:13:02', NULL, NULL),
+(37, 1, 2, NULL, 'private', '', NULL, NULL, NULL, 'server-v1', 1, '2026-09-01 03:12:54', 1, 1, NULL, NULL, NULL, 0, 'default', '2026-09-01 03:12:54', NULL, 1, '2026-09-01 11:12:54', 'alwi_mansyur', '2026-09-01 11:12:54', NULL, NULL),
+(38, 1, NULL, NULL, 'status', '', '/EitqmhhxpUSx0FOiZ2XA7Xp5dnq28UwP88uuvjKTcP9CA==', '/fgyl4HoqHfo4JD2dRgwHBaVxjyrWY0K', NULL, 'server-v1', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'sunset', '2026-09-01 03:12:54', '2026-09-01 03:12:54', 1, '2026-09-01 11:12:54', 'alwi_mansyur', '2026-09-01 11:12:54', NULL, NULL),
+(39, 1, NULL, NULL, 'status', '', 'oo/l+7TMXdUiMMje4kPGcjUBgTBf+Ma2hN4QQqU3B89UEIAigfwilWg=', '1VWaSN41eZCczZK3FrGAlXnGSyiy6ZtH', NULL, 'server-v1', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-09-01 03:12:56', NULL, 1, '2026-09-01 11:12:56', 'alwi_mansyur', '2026-09-01 11:12:56', NULL, NULL),
+(40, 2, NULL, 39, 'comment', '', 'czzpo/KFRJeXlEUay8ABUqPdyVs2SLhHO+YjJ47d/Kb+zrf5pZ4LQ2r2', 'xewdpPvFfKovm3RknSMmJwHTUwZO6cxd', NULL, 'server-v1', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-09-01 03:12:56', NULL, 0, '2026-09-01 11:12:56', 'nabiila', '2026-09-01 11:12:56', NULL, NULL),
+(41, 1, 2, NULL, 'private', '', '8K02uC5f2iOAUHrx+insX12y00UjJs3Hfvc0B2MLHaRcef+hDsZiMbTU', 'JiUMDzZvR7JLq2RQn7mX744jid+l16WU', NULL, 'server-v1', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-09-01 03:12:56', NULL, 0, '2026-09-01 11:12:56', 'alwi_mansyur', '2026-09-01 11:12:56', NULL, NULL),
+(42, 2, NULL, NULL, 'status', '', '7wE9W8J17hiijuOhqeDNuwGhLwAL4jeKwjQ=', 'XKSYeUgRqom7MydP2itm7R+4bIB4XiZ+', NULL, 'server-v1', 0, NULL, 0, 0, 'images-8.jpeg', 'storage/uploads/messages/wall/2026/09/88e3104321cf5b683f96108cd5735618.jpg', 'image/jpeg', 24784, 'forest', '2026-09-01 03:16:04', '2026-09-01 03:29:26', 0, '2026-09-01 11:16:04', 'nabiila', '2026-09-01 11:29:26', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -19986,7 +20127,8 @@ ALTER TABLE `daftar_realisasi_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_realisasi_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`),
   ADD KEY `idx_realisasi_kontrak` (`kontrak_id`,`tanggal`,`is_deleted`),
-  ADD KEY `idx_realisasi_rab` (`rab_id`);
+  ADD KEY `idx_realisasi_rab` (`rab_id`),
+  ADD KEY `idx_realisasi_contract_phase27` (`kontrak_id`,`is_deleted`,`tanggal`);
 
 --
 -- Indeks untuk tabel `daftar_uraian_paket`
@@ -20255,6 +20397,15 @@ ALTER TABLE `rekening_kegiatan`
   ADD KEY `idx_rekening_level` (`level`);
 
 --
+-- Indeks untuk tabel `rencana_realisasi_anggaran_neo`
+--
+ALTER TABLE `rencana_realisasi_anggaran_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_rencana_bulan` (`dokumen`,`anggaran_id`,`bulan`),
+  ADD KEY `idx_rencana_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`dokumen`,`is_deleted`),
+  ADD KEY `idx_rencana_sub_akun` (`kd_sub_keg`,`kd_akun`);
+
+--
 -- Indeks untuk tabel `renja_neo`
 --
 ALTER TABLE `renja_neo`
@@ -20373,6 +20524,13 @@ ALTER TABLE `sumber_dana_neo`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `tapd_penugasan_neo`
+--
+ALTER TABLE `tapd_penugasan_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_tapd_berlaku` (`kd_wilayah`,`tahun`,`tanggal_mulai`,`tanggal_selesai`,`aktif`,`is_deleted`);
+
+--
 -- Indeks untuk tabel `trx_naskah_dinas`
 --
 ALTER TABLE `trx_naskah_dinas`
@@ -20438,7 +20596,10 @@ ALTER TABLE `wallchat`
   ADD KEY `idx_wallchat_receiver` (`receiver_id`,`type`,`is_deleted`,`created_at`),
   ADD KEY `idx_wallchat_feed` (`type`,`parent_id`,`is_deleted`,`created_at`),
   ADD KEY `idx_wallchat_private_visibility` (`type`,`user_id`,`receiver_id`,`is_deleted`,`deleted_by_sender`,`deleted_by_receiver`,`created_at`),
-  ADD KEY `idx_wallchat_owner_feed` (`user_id`,`type`,`is_deleted`,`created_at`);
+  ADD KEY `idx_wallchat_owner_feed` (`user_id`,`type`,`is_deleted`,`created_at`),
+  ADD KEY `idx_wall_feed` (`type`,`is_deleted`,`parent_id`,`created_at`),
+  ADD KEY `idx_wall_private_sender` (`type`,`is_deleted`,`user_id`,`deleted_by_sender`,`created_at`),
+  ADD KEY `idx_wall_private_receiver` (`type`,`is_deleted`,`receiver_id`,`deleted_by_receiver`,`created_at`);
 
 --
 -- Indeks untuk tabel `wilayah_neo`
@@ -20496,7 +20657,7 @@ ALTER TABLE `anggaran_template`
 -- AUTO_INCREMENT untuk tabel `anggaran_workflow_log`
 --
 ALTER TABLE `anggaran_workflow_log`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT untuk tabel `aset_neo`
@@ -20520,7 +20681,7 @@ ALTER TABLE `daftar_paket_neo`
 -- AUTO_INCREMENT untuk tabel `daftar_realisasi_neo`
 --
 ALTER TABLE `daftar_realisasi_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT untuk tabel `daftar_uraian_paket`
@@ -20610,43 +20771,43 @@ ALTER TABLE `kontrak_dokumen_neo`
 -- AUTO_INCREMENT untuk tabel `kontrak_item_neo`
 --
 ALTER TABLE `kontrak_item_neo`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `kontrak_jadwal_neo`
 --
 ALTER TABLE `kontrak_jadwal_neo`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT untuk tabel `kontrak_neo`
 --
 ALTER TABLE `kontrak_neo`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `kop_surat_neo`
 --
 ALTER TABLE `kop_surat_neo`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `log_activity`
 --
 ALTER TABLE `log_activity`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2168;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2194;
 
 --
 -- AUTO_INCREMENT untuk tabel `master_biaya`
 --
 ALTER TABLE `master_biaya`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=125;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
 
 --
 -- AUTO_INCREMENT untuk tabel `master_biaya_akun`
 --
 ALTER TABLE `master_biaya_akun`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT untuk tabel `misi_renstra_neo`
@@ -20670,7 +20831,7 @@ ALTER TABLE `pejabat_tahunan_neo`
 -- AUTO_INCREMENT untuk tabel `pengaturan_neo`
 --
 ALTER TABLE `pengaturan_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT untuk tabel `peraturan_neo`
@@ -20694,7 +20855,7 @@ ALTER TABLE `program_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `rab_paket_neo`
 --
 ALTER TABLE `rab_paket_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT untuk tabel `ref_jenis_naskah`
@@ -20742,13 +20903,19 @@ ALTER TABLE `rekanan_akta`
 -- AUTO_INCREMENT untuk tabel `rekanan_neo`
 --
 ALTER TABLE `rekanan_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=200;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=202;
 
 --
 -- AUTO_INCREMENT untuk tabel `rekening_kegiatan`
 --
 ALTER TABLE `rekening_kegiatan`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4578;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4585;
+
+--
+-- AUTO_INCREMENT untuk tabel `rencana_realisasi_anggaran_neo`
+--
+ALTER TABLE `rencana_realisasi_anggaran_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT untuk tabel `renja_neo`
@@ -20814,7 +20981,7 @@ ALTER TABLE `sasaran_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `satuan_neo`
 --
 ALTER TABLE `satuan_neo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=457;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=459;
 
 --
 -- AUTO_INCREMENT untuk tabel `sk_asn_neo`
@@ -20853,6 +21020,12 @@ ALTER TABLE `sumber_dana_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=301;
 
 --
+-- AUTO_INCREMENT untuk tabel `tapd_penugasan_neo`
+--
+ALTER TABLE `tapd_penugasan_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT untuk tabel `trx_naskah_dinas`
 --
 ALTER TABLE `trx_naskah_dinas`
@@ -20874,13 +21047,13 @@ ALTER TABLE `trx_naskah_status_history`
 -- AUTO_INCREMENT untuk tabel `trx_naskah_struktur`
 --
 ALTER TABLE `trx_naskah_struktur`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 
 --
 -- AUTO_INCREMENT untuk tabel `trx_nomor_counter`
 --
 ALTER TABLE `trx_nomor_counter`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT untuk tabel `tujuan_renstra_neo`
@@ -20892,7 +21065,7 @@ ALTER TABLE `tujuan_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `user_sesendok_biila`
 --
 ALTER TABLE `user_sesendok_biila`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT untuk tabel `user_subkegiatan_neo`
@@ -20904,7 +21077,7 @@ ALTER TABLE `user_subkegiatan_neo`
 -- AUTO_INCREMENT untuk tabel `wallchat`
 --
 ALTER TABLE `wallchat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT untuk tabel `wilayah_neo`
