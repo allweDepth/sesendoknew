@@ -124,6 +124,7 @@ return [
   '/pengaturan/current' => ['PengaturanController', 'current'],
   '/user_opd' => ['UserOpdController', 'index'],
   '/user_opd/list' => ['UserOpdController', 'list'],
+  '/user_opd/employees' => ['UserOpdController', 'employees'],
   '/user_opd/save' => ['UserOpdController', 'save'],
   '/user_opd/delete' => ['UserOpdController', 'delete'],
   /*
@@ -221,6 +222,7 @@ return [
   '/renja_perubahan'  => ['AnggaranController', 'renjaPerubahan'],
   '/rka_perubahan'    => ['AnggaranController', 'rkaPerubahan'],
   '/dppa'             => ['AnggaranController', 'dppa'],
+  '/anggaran/rencana-rekening' => ['AnggaranController', 'monthlyAccountPage'],
 
 
   /*
@@ -235,6 +237,7 @@ return [
   '/anggaran/export_rekap_excel' => ['AnggaranController', 'exportRecapExcel'],
   '/anggaran/export_rekap_pdf' => ['AnggaranController', 'exportRecapPdf'],
   '/anggaran/rencana_bulanan' => ['AnggaranController', 'monthlyPlan'],
+  '/anggaran/rencana-rekening/data' => ['AnggaranController', 'monthlyAccounts'],
   '/anggaran/tapd' => ['AnggaranController', 'tapdList'],
   '/anggaran/tapd/save' => ['AnggaranController', 'tapdSave'],
   '/anggaran/groups'       => ['AnggaranController', 'groups'],

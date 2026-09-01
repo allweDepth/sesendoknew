@@ -38,6 +38,9 @@ selesai.
 | 29 | Wall media, toast otomatis, inbox terpisah, lifecycle file upload | PASS | Media memakai endpoint privat tanpa cache basi; toast maksimal empat dan auto-hide; inbox punya halaman/kembali ke Wall; hapus Wall/dokumen kontrak menghapus file fisik |
 | 30 | Scope user berdasarkan role, organisasi/OPD dan akun semua role | PASS | Role TAPD ditambahkan, scope regional/OPD/subkegiatan diterapkan, seed idempoten membuat akun uji seluruh role pada scope data aktif |
 | 31 | CMS depan Berita/Data Teknis/Organisasi/Pelayanan dengan status aktif | PASS | Phase 31: tipe konten dan toggle aktif, akses pengelola daerah/TAPD, halaman publik hero/card hanya menampilkan konten aktif |
+| 32 | Rencana DPA/DPPA per rekening level akhir pada halaman list | PASS | Phase 33: halaman penuh non-modal, tabel horizontal, pembagian 12 bulan per kode rekening, batas maksimal pagu rekening, rangkuman per sub kegiatan, dan tombol kembali |
+| 33 | User OPD/Kepala OPD/TAPD bersumber dari pegawai sesuai wilayah dan OPD | PASS | Phase 33: relasi `pegawai_id`, dropdown pencarian pegawai aktif, scope wilayah/OPD, tab User Wilayah dan Tim Anggaran Daerah, aktivasi user serta masa penugasan TAPD |
+| 34 | PDF normal/perubahan mengikuti orientasi dan kolom formulir resmi | PASS | Phase 33: normal A4 potret, perubahan A4 lanskap; kolom PPN/satuan/volume/harga/jumlah sejajar; tabel input bulanan dan TAPD tidak dicampur ke formulir rincian resmi |
 
 ## Gate penyelesaian
 
