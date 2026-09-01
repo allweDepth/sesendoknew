@@ -98,7 +98,7 @@ class ProfilModule {
 
 	bindPhotoWatcher() {
 		$('#chooseProfilePhoto').off('click.profile').on('click.profile',()=>$('#profilePhotoInput').trigger('click'));
-		$('#profilePhotoInput').off('change.profile').on('change.profile',e=>{const file=e.target.files[0];if(!file)return;const data=new FormData();data.append('photo',file);this.ajax.request({url:'/profil/upload-photo',method:'POST',data,processData:false,contentType:false,beforeSend:()=>$('#chooseProfilePhoto').addClass('loading'),success:res=>{$('#preview_photo').attr('src',`${res.data.url}?v=${Date.now()}`);$('img[data-user-avatar]').attr('src',`${res.data.url}?v=${Date.now()}`);},complete:()=>$('#chooseProfilePhoto').removeClass('loading')});});
+		$('#profilePhotoInput').off('change.profile').on('change.profile',e=>{const file=e.target.files[0];if(!file)return;if(!/^image\/(jpeg|png|webp)$/.test(file.type)||file.size>3*1024*1024){FormFeedback.error($('form[name="profil"]'),{message:'Foto harus JPG, PNG, atau WebP dan maksimal 3 MB'});e.target.value='';return;}const preview=URL.createObjectURL(file);$('#preview_photo').attr('src',preview);const data=new FormData();data.append('photo',file);this.ajax.request({url:'/profil/upload-photo',method:'POST',data,processData:false,contentType:false,beforeSend:()=>$('#chooseProfilePhoto').addClass('loading'),success:res=>{const finalUrl=`${res.data.url}${res.data.url.includes('?')?'&':'?'}v=${Date.now()}`;$('#preview_photo').attr('src',finalUrl);$('img[data-user-avatar]').attr('src',finalUrl);URL.revokeObjectURL(preview);},error:()=>URL.revokeObjectURL(preview),complete:()=>{$('#chooseProfilePhoto').removeClass('loading');e.target.value='';}});});
 	}
 
 	bindPeriodSelector() {

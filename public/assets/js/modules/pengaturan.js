@@ -56,7 +56,22 @@ class PengaturanModule {
 			});
 
 			this.bindSubmit();
+			this.bindPeriodTable();
 			this.initUI();
+		});
+	}
+
+	bindPeriodTable() {
+		$(document).off('click.documentPeriod', '.edit-document-period').on('click.documentPeriod', '.edit-document-period', e => {
+			if (!this.canEdit()) return;
+			const button = $(e.currentTarget), row = button.closest('tr'), inputs = row.find('input');
+			const editing = row.hasClass('editing');
+			$('#document-period-table tr.editing').not(row).removeClass('editing').find('input').prop('readonly', true);
+			$('#document-period-table .edit-document-period').not(button).removeClass('green').addClass('blue').find('i').attr('class', 'edit icon');
+			row.toggleClass('editing', !editing);
+			inputs.prop('readonly', editing);
+			button.toggleClass('blue', editing).toggleClass('green', !editing).find('i').attr('class', editing ? 'edit icon' : 'check icon');
+			if (!editing) inputs.first().trigger('focus');
 		});
 	}
 

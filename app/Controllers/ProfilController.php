@@ -38,6 +38,8 @@ class ProfilController extends Controller
             $id=(int)($_POST['periode_id']??0);$year=(int)($_POST['tahun']??0);$u=$_SESSION['user'];$db=DB::getInstance();
             $p=$db->query('SELECT id,periode_mulai,periode_selesai FROM periode_rpjmd WHERE id=? AND COALESCE(status_aktif,1)=1',[$id])->fetch();
             if(!$p||$year<(int)$p['periode_mulai']||$year>(int)$p['periode_selesai'])throw new InvalidArgumentException('Tahun harus berada dalam rentang periode aktif');
+            $regional=in_array($u['type_user']??'', ['super_admin','admin_wilayah','tapd'], true);
+            if(!$regional){$allowed=$db->query('SELECT 1 FROM renstra_neo WHERE periode_id=? AND kd_wilayah=? AND kd_opd=? LIMIT 1',[$id,$u['kd_wilayah'],$u['kd_opd']])->fetchColumn();if(!$allowed)throw new RuntimeException('Periode tersebut bukan Renstra aktif OPD pengguna');}
             $_SESSION['user']['tahun']=$year;$_SESSION['user']['periode_id']=$id;$db->update('user_sesendok_biila',['tahun'=>$year],'WHERE id=?',[(int)$u['id']]);return ['tahun'=>$year,'periode_id'=>$id];
         });
     }
@@ -47,7 +49,7 @@ class ProfilController extends Controller
         $this->json(function () {
             $file=$_FILES['photo']??[];if(($file['error']??UPLOAD_ERR_NO_FILE)!==UPLOAD_ERR_OK)throw new InvalidArgumentException('Pilih gambar profil');
             if((int)$file['size']>3*1024*1024)throw new InvalidArgumentException('Foto profil maksimal 3 MB');$mime=(new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);$ext=['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp'][$mime]??null;if(!$ext)throw new InvalidArgumentException('Foto harus JPG, PNG, atau WebP');
-            $u=$_SESSION['user'];$relative='storage/uploads/'.preg_replace('/[^A-Za-z0-9._-]/','_',($u['kd_wilayah']??'wilayah').'-'.($u['kd_opd']??'daerah')).'/profil';$dir=dirname(__DIR__,2).'/'.$relative;if(!is_dir($dir)&&!mkdir($dir,0770,true))throw new RuntimeException('Folder foto profil tidak dapat dibuat');$name='user-'.(int)$u['id'].'-'.bin2hex(random_bytes(6)).'.'.$ext;if(!move_uploaded_file($file['tmp_name'],$dir.'/'.$name))throw new RuntimeException('Foto gagal disimpan');$path=$relative.'/'.$name;DB::getInstance()->update('user_sesendok_biila',['photo'=>$path],'WHERE id=?',[(int)$u['id']]);$_SESSION['user']['photo']=$path;return ['photo'=>$path,'url'=>app_url('/'.$path)];
+            $u=$_SESSION['user'];$old=(string)($u['photo']??'');$relative='storage/uploads/'.preg_replace('/[^A-Za-z0-9._-]/','_',($u['kd_wilayah']??'wilayah').'-'.($u['kd_opd']??'daerah')).'/profil';$dir=dirname(__DIR__,2).'/'.$relative;if(!is_dir($dir)&&!mkdir($dir,0770,true))throw new RuntimeException('Folder foto profil tidak dapat dibuat');$name='user-'.(int)$u['id'].'-'.bin2hex(random_bytes(6)).'.'.$ext;if(!move_uploaded_file($file['tmp_name'],$dir.'/'.$name))throw new RuntimeException('Foto gagal disimpan');$path=$relative.'/'.$name;DB::getInstance()->update('user_sesendok_biila',['photo'=>$path],'WHERE id=?',[(int)$u['id']]);$_SESSION['user']['photo']=$path;if(str_starts_with($old,'storage/uploads/')&&$old!==$path){$oldFile=dirname(__DIR__,2).'/'.$old;if(is_file($oldFile))@unlink($oldFile);}return ['photo'=>$path,'url'=>app_url('/'.$path)];
         });
     }
 }

@@ -42,6 +42,7 @@ return [
     */
   '/login/proses'      => ['AuthController', 'login'],
   '/logout'            => ['AuthController', 'logout'],
+  '/session/status'    => ['AuthController', 'status'],
   '/register/proses'   => ['AuthController', 'register'],
 
   /*

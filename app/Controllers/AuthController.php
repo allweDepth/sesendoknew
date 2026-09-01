@@ -28,6 +28,17 @@ class AuthController extends Controller
         header('Location: ' . app_url('/'));
         exit;
     }
+
+    public function status(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        if (!Auth::check()) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'expired' => true, 'message' => 'Session habis. Silakan login ulang.']);
+            return;
+        }
+        echo json_encode(['success' => true, 'message' => 'Session aktif']);
+    }
     public function register()
     {
         header('Content-Type: application/json');

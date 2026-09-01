@@ -43,6 +43,7 @@ selesai.
 | 34 | PDF normal/perubahan mengikuti orientasi dan kolom formulir resmi | PASS | Phase 33: normal A4 potret, perubahan A4 lanskap; kolom PPN/satuan/volume/harga/jumlah sejajar; tabel input bulanan dan TAPD tidak dicampur ke formulir rincian resmi |
 | 35 | Validasi Fomantic seluruh CRUD dan feedback form | PASS | Phase 34: schema eksplisit maupun inferensi atribut required/email, field error, ringkasan gagal, feedback sukses di dalam form, serta toast global |
 | 36 | Foto profil, periode Renstra/RPJMD, dan Excel hierarki resmi | PASS | Phase 34: upload foto tervalidasi/live preview; dropdown RPJMD regional atau Renstra OPD beserta tahun di dalam rentang; Excel normal/perubahan memuat metadata, hierarki rekening, PPN, warna, dan sheet per subkegiatan |
+| 37 | Navigasi Kontrak/Realisasi, toolbar tabel, sticky header, periode dokumen, dan session guard | PASS | Phase 35: menu Kontrak/Realisasi terpisah; Realisasi memiliki dashboard/list input; search+jumlah baris mengontrol tabel aktif; injector aksi idempoten; header mengikuti ikon/deskripsi aktif; periode berbentuk tabel edit; klik SPA dan AJAX 401 kembali ke halaman utama |
 
 ## Gate penyelesaian
 

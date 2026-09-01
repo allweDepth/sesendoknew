@@ -161,7 +161,16 @@
     outline: none;
     padding: 4px;
     line-height: 1.4;
+    text-align-last: left;
   }
+
+  /* Baris terakhir paragraf justified tidak boleh ikut direnggangkan. */
+  .doc-editor p, .doc-editor div, .ql-editor p, .document-preview p {
+    text-align-last: left;
+  }
+
+  body.session-expired #mainContext,
+  body.session-expired .ui.top.attached.menu { pointer-events:none !important; opacity:.72; }
 
   /* ================= TOOLBAR ================= */
 

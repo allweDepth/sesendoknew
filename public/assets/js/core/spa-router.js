@@ -1,5 +1,6 @@
 class SpaRouter {
 	constructor() {
+		this.sessionLocked = false;
 		this.bindLinks();
 		this.bindPopState();
 		this.handleInitialLoad(); // 🔥 refresh masuk sini
@@ -46,19 +47,44 @@ class SpaRouter {
 			const target = new URL(link.href, window.location.origin);
 			if (target.pathname !== currentPath) return;
 			const matches = [...target.searchParams].every(([key, value]) => currentParams.get(key) === value);
-			if (matches && (!bestMatch || target.searchParams.size > bestMatch.searchParams.size)) bestMatch = target;
-			if (matches && target.searchParams.size === currentParams.size) {
-				$("#dynamicHeaderTitle").text(link.dataset.title);
-			}
+			if (matches && (!bestMatch || target.searchParams.size > bestMatch.params)) bestMatch = { link, params: target.searchParams.size };
 		});
+		if (bestMatch) this.updateHeader(bestMatch.link);
+	}
+
+	updateHeader(link) {
+		const $link = $(link), title = $link.data('title') || 'Dashboard';
+		const icon = $link.find('i.icon').last().attr('class') || 'home icon';
+		const description = $link.data('description') || `Kelola ${String(title).replaceAll('/', ' — ')} pada tahun anggaran aktif.`;
+		$('#dynamicHeaderTitle').text(title);
+		$('#dynamicHeaderIcon').attr('class', icon).addClass('circular blue');
+		$('#dynamicHeader .pDashboard').text(description);
+		$('.sidebarutama a.item').removeClass('active');
+		$link.addClass('active').parents('.content').show().siblings('.title').addClass('active');
+	}
+
+	async ensureSession() {
+		if (this.sessionLocked) return false;
+		try {
+			const response = await fetch('/session/status', { headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }, cache: 'no-store' });
+			const payload = await response.json().catch(() => ({}));
+			if (!response.ok || payload.expired || payload.success !== true) throw new Error(payload.message || 'Session habis');
+			return true;
+		} catch (_) {
+			this.sessionLocked = true;
+			$('body').addClass('session-expired');
+			window.location.replace(window.appUrl ? window.appUrl('/') : '/');
+			return false;
+		}
 	}
 
 	// ================================
 	// CLICK HANDLER
 	// ================================
 	bindLinks() {
-		$(document).on("click", "[data-spa]", (e) => {
+		$(document).on("click", "[data-spa]", async (e) => {
 			e.preventDefault();
+			if (!(await this.ensureSession())) return;
 
 			const $link = $(e.currentTarget);
 
@@ -70,9 +96,7 @@ class SpaRouter {
 			const title = $link.data("title"); // ambil data-title dari menu
 
 			// 🔥 UPDATE HEADER <a href="/module" data-spa="client" data-title="MODULE NAME">
-			if (title) {
-				$("#dynamicHeaderTitle").text(title); // ubah teks header
-			}
+			if (title) this.updateHeader(e.currentTarget);
 			if (window.app?.resetState) {
 				window.app.resetState();
 			}
@@ -109,6 +133,7 @@ class SpaRouter {
 					});
 
 					TableManager.instances = {};
+					window.tableManager = null;
 				}
 
 				// render module baru
@@ -133,6 +158,7 @@ class SpaRouter {
 		})
 			.then((res) => res.text())
 			.then((html) => {
+				window.tableManager = null;
 				$("#main-content").html(html);
 
 				// 🔥 memastikan module JS tersedia

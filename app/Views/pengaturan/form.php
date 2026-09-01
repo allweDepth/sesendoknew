@@ -99,7 +99,10 @@ $tahunLabel = $user['tahun'] ?? '-';
             </div>
             <div id="schedule-status-cards" class="ui four stackable cards"></div>
 
-            <div class="ui stackable two column grid">
+            <div class="table-wrapper">
+            <table class="ui compact celled striped table" id="document-period-table">
+                <thead><tr><th>Dokumen</th><th>Mulai</th><th>Selesai</th><th class="collapsing">Aksi</th></tr></thead>
+                <tbody>
 
                 <?php
                 $ranges = [
@@ -119,31 +122,15 @@ $tahunLabel = $user['tahun'] ?? '-';
                 ];
 
                 foreach ($ranges as $name => $label): ?>
-                    <div class="eight wide column">
-                        <div class="field">
-                            <label><i class="clock outline icon"></i><?= $label ?></label>
-                            <div class="two fields">
-                                <div class="field">
-                                    <div class="ui calendar start_<?= $name ?>">
-                                        <div class="ui input left icon">
-                                            <i class="calendar icon"></i>
-                                            <input type="text" name="awal_<?= $name ?>" <?= $disabled ?>>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="field">
-                                    <div class="ui calendar end_<?= $name ?>">
-                                        <div class="ui input left icon">
-                                            <i class="calendar icon"></i>
-                                            <input type="text" name="akhir_<?= $name ?>" <?= $disabled ?>>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <tr data-period-row="<?= $name ?>">
+                        <td><i class="clock outline icon"></i><strong><?= $label ?></strong></td>
+                        <td><div class="ui calendar start_<?= $name ?>"><div class="ui fluid input left icon"><i class="calendar icon"></i><input type="text" name="awal_<?= $name ?>" readonly <?= $disabled ?>></div></div></td>
+                        <td><div class="ui calendar end_<?= $name ?>"><div class="ui fluid input left icon"><i class="calendar icon"></i><input type="text" name="akhir_<?= $name ?>" readonly <?= $disabled ?>></div></div></td>
+                        <td><button type="button" class="ui mini blue icon button edit-document-period <?= $disabled ?>" data-period="<?= $name ?>" title="Edit periode <?= $label ?>"><i class="edit icon"></i></button></td>
+                    </tr>
                 <?php endforeach; ?>
-
+                </tbody>
+            </table>
             </div>
 
             <!-- ================= KONTROL SISTEM ================= -->

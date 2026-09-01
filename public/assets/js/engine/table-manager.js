@@ -499,19 +499,25 @@ data-id="${id}">
 		// SEARCH EVENT
 		// =====================================================
 
-		const searchEvent = `keypress.tableSearch.${this.state.tbl}`;
-
-		$(document).off(searchEvent);
-
-		$(document).on(searchEvent, "#cari_data", (e) => {
-			if (e.which === 13) {
-				this.searchQuery = $(e.currentTarget).val();
-
+		const namespace = `.tableToolbar.${this.tbl}`;
+		$(document).off(namespace);
+		const runSearch = () => {
+			clearTimeout(this.searchTimer);
+			this.searchTimer = setTimeout(() => {
+				this.searchQuery = String($("#cari_data").val() || '').trim();
 				this.currentPage = 1;
-
 				this.fetchData();
-			}
-		});
+			}, 280);
+		};
+		$(document)
+			.on(`input${namespace}`, "#cari_data", runSearch)
+			.on(`keydown${namespace}`, "#cari_data", e => { if (e.key === 'Enter') { e.preventDefault(); runSearch(); } })
+			.on(`click${namespace}`, ".cari_data .search.icon", runSearch)
+			.on(`change${namespace}`, "#countRow input[name=countRow]", () => {
+				this.syncLimitFromNavbar();
+				this.currentPage = 1;
+				this.fetchData();
+			});
 	}
 
 	/* =====================================================
@@ -646,7 +652,8 @@ data-id="${id}">
 		// hapus event global
 		$(document).off(`click.tableAction.${this.state.tbl}`);
 
-		$(document).off(`keypress.tableSearch.${this.state.tbl}`);
+		$(document).off(`.tableToolbar.${this.tbl}`);
+		clearTimeout(this.searchTimer);
 
 		// bersihkan DOM
 		$(this.tbody).empty();

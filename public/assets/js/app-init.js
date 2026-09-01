@@ -45,6 +45,33 @@ $(document).ready(function () {
 	});
 	$(".ui.dropdown").dropdown();
 
+	// Toolbar atas berlaku pada tabel aktif. TableManager menangani tabel server;
+	// fallback ini menyaring tabel/list khusus yang dirender oleh modul sendiri.
+	const filterActiveUi = () => {
+		if (window.tableManager && window.TableManager?.instances?.[window.tableManager.tbl]) return;
+		const query = String($('#cari_data').val() || '').toLowerCase().trim();
+		const rawLimit = $('#countRow').dropdown('get value') || '5';
+		const limit = rawLimit === 'all' ? Number.MAX_SAFE_INTEGER : (parseInt(rawLimit, 10) || 5);
+		$('#main-content table:visible tbody').each(function () {
+			let shown = 0;
+			$(this).children('tr').each(function () {
+				const match = !query || $(this).text().toLowerCase().includes(query);
+				const visible = match && shown < limit;
+				$(this).toggle(visible);
+				if (visible) shown++;
+			});
+		});
+		$('#main-content .budget-group, #main-content [data-global-search-item]').each(function (index) {
+			const match = !query || $(this).text().toLowerCase().includes(query);
+			$(this).toggle(match && index < limit);
+		});
+	};
+	let toolbarTimer;
+	$(document).off('.globalTableToolbar')
+		.on('input.globalTableToolbar', '#cari_data', () => { clearTimeout(toolbarTimer); toolbarTimer = setTimeout(filterActiveUi, 180); })
+		.on('click.globalTableToolbar', '.cari_data .search.icon', filterActiveUi);
+	$('#countRow').dropdown({ onChange: () => setTimeout(filterActiveUi, 0) });
+
 	// Tema pengguna persisten dan tetap aktif setelah navigasi SPA/refresh.
 	const applyTheme = (dark) => {
 		$("body").toggleClass("dark-mode", dark);

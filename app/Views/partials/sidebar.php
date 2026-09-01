@@ -141,11 +141,17 @@
     </div>
 
     <div class="item">
-      <div class="title"><i class="dropdown icon"></i> Kontrak &amp; Realisasi</div>
+      <div class="title"><i class="dropdown icon"></i> <i class="file signature icon"></i> Kontrak</div>
       <div class="content">
-        <a class="item" href="/kontrak?tbl=kontrak" data-spa="client" data-title="Kontrak"><i class="file signature icon"></i> SPK / SPMK / Kontrak</a>
-        <a class="item" href="/kontrak?tbl=realisasi" data-spa="client" data-title="Kontrak/Realisasi"><i class="chart line icon"></i> Realisasi</a>
-        <a class="item" href="/kontrak?tbl=__laporan" data-spa="client" data-title="Kontrak/Laporan"><i class="chart bar icon"></i> Laporan &amp; Grafik</a>
+        <a class="item" href="/kontrak?tbl=kontrak" data-spa="client" data-title="Kontrak/Daftar Kontrak" data-description="Kelola SPK, SPMK, kontrak, RAB, jadwal, dan dokumen kontrak."><i class="file signature icon"></i> Daftar Kontrak</a>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="title"><i class="dropdown icon"></i> <i class="chart line icon"></i> Realisasi</div>
+      <div class="content">
+        <a class="item" href="/kontrak?tbl=__laporan" data-spa="client" data-title="Realisasi/Dashboard" data-description="Ringkasan nilai kontrak, progres bulanan, status, dan grafik realisasi."><i class="chart pie icon"></i> Dashboard</a>
+        <a class="item" href="/kontrak?tbl=realisasi" data-spa="client" data-title="Realisasi/Penginputan" data-description="Daftar penginputan kemajuan fisik dan keuangan setiap kontrak."><i class="edit outline icon"></i> List Penginputan</a>
       </div>
     </div>
 
