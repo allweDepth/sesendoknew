@@ -95,6 +95,8 @@ return [
   '/renstra/delete'         => ['RenstraController', 'delete'],
   '/renstra/import'         => ['RenstraController', 'importExcel'],
   '/renstra/export_word'    => ['RenstraController', 'exportWord'],
+  '/renstra/export_pdf'     => ['RenstraController', 'exportPdf'],
+  '/renstra/export_excel'   => ['RenstraController', 'exportExcel'],
 
   /*
     |--------------------------------------------------------------------------

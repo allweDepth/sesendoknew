@@ -18,4 +18,10 @@ class RenstraModule extends BaseCrudModule {
         });
     }
 
+    renderLayout() {
+        super.renderLayout();
+        $('#crudMenu').after('<div class="ui small buttons renstra-export"><button class="ui green button" data-renstra-export="excel"><i class="file excel icon"></i>Excel Renstra</button><button class="ui red button" data-renstra-export="pdf"><i class="file pdf icon"></i>PDF Renstra</button></div><div class="ui hidden divider"></div>');
+        $(document).off('click.renstraExport','[data-renstra-export]').on('click.renstraExport','[data-renstra-export]',e=>{const type=$(e.currentTarget).data('renstra-export'),path=`/renstra/export_${type}`;window.location.href=window.appUrl?window.appUrl(path):path;});
+    }
+
 }
