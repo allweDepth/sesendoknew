@@ -591,6 +591,11 @@ class FormEngine {
 			success: (res) => {
 				if (!res || res.success !== true) return;
 				this.isSubmitting = false; // // reset flag submit
+				form.removeClass('error').addClass('success');
+				form.find('.ui.error.message').hide().empty();
+				let successBox = form.find('.ui.success.message');
+				if (!successBox.length) successBox = $('<div class="ui success message" role="status"></div>').prependTo(form);
+				successBox.html(`<i class="check circle icon"></i>${$('<div>').text(res.message || 'Data berhasil disimpan').html()}`).show();
 
 				// ==================================================
 				// AKTIFKAN KEMBALI CALENDAR YANG TADI DISABLE
@@ -626,6 +631,8 @@ class FormEngine {
 		const errors = response?.errors || {};
 		const messages = [];
 		form.find('.field').removeClass('error');
+		form.removeClass('success').addClass('error');
+		form.find('.ui.success.message').hide().empty();
 		if (errors && typeof errors === 'object') {
 			Object.entries(errors).forEach(([name, value]) => {
 				const items = Array.isArray(value) ? value : [value];
@@ -1289,18 +1296,12 @@ data-filter='${JSON.stringify(prop.filter || {})}' // // 🔥 filter server
 		// ============================================================
 		// VALIDATION WAJIB ADA
 		// ============================================================
-		if (!config?.validation) {
-			Toast.error(`Validation tidak ditemukan untuk ${configKey}`); // // tampilkan error ke user
-
-			this.validationDisabled = true; // // blok submit
-
-			return; // // hentikan init
-		}
+		const schema = config?.validation || this.inferValidationSchema();
 
 		// ============================================================
 		// BANGUN RULE VALIDATION
 		// ============================================================
-		const fields = this.buildFomanticRules(config.validation);
+		const fields = this.buildFomanticRules(schema);
 
 		// ============================================================
 		// INISIALISASI VALIDATION FOMANTIC
@@ -1368,6 +1369,20 @@ data-filter='${JSON.stringify(prop.filter || {})}' // // 🔥 filter server
 				return false;
 			},
 		});
+	}
+
+	inferValidationSchema() {
+		const schema = {};
+		$(this.formSelector).find('[name]').each(function () {
+			const input = $(this), name = input.attr('name');
+			if (!name || input.prop('disabled')) return;
+			const rules = {};
+			if (input.prop('required') || input.closest('.required.field').length) rules.required = true;
+			if (input.attr('type') === 'email') rules.email = true;
+			if (input.attr('minlength')) rules.minLength = Number(input.attr('minlength'));
+			if (Object.keys(rules).length) schema[name] = rules;
+		});
+		return schema;
 	}
 	/**
 	 * ============================================================

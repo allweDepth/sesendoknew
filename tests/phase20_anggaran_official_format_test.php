@@ -16,7 +16,9 @@ foreach(['dpa'=>false,'dppa'=>true] as $logical=>$change){
     $file=$service->exportExcel($logical);$book=PhpOffice\PhpSpreadsheet\IOFactory::load($file);$groups=$service->groups($logical);
     $ok($book->getSheetCount()===count($groups),"Excel $logical satu sheet per sub kegiatan");
     $sheet=$book->getSheet(0);$ok(str_contains((string)$sheet->getCell('A1')->getValue(),'DOKUMEN PELAKSANAAN'),"Excel $logical memakai kepala formulir resmi");
-    $ok((string)$sheet->getCell('C6')->getValue()===($change?'SEBELUM PERUBAHAN':'KOEFISIEN/VOLUME'),"Excel $logical memakai format ".($change?'perubahan':'normal'));
+    $values=[];foreach($sheet->getRowIterator() as $row)foreach($row->getCellIterator() as $cell)$values[]=(string)$cell->getValue();
+    $ok(in_array($change?'SEBELUM PERUBAHAN':'KOEFISIEN/VOLUME',$values,true),"Excel $logical memakai format ".($change?'perubahan':'normal'));
+    $ok(in_array('PPN',$values,true),"Excel $logical memuat kolom PPN formulir resmi");
     unlink($file);
 }
 

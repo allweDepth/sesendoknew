@@ -41,6 +41,8 @@ selesai.
 | 32 | Rencana DPA/DPPA per rekening level akhir pada halaman list | PASS | Phase 33: halaman penuh non-modal, tabel horizontal, pembagian 12 bulan per kode rekening, batas maksimal pagu rekening, rangkuman per sub kegiatan, dan tombol kembali |
 | 33 | User OPD/Kepala OPD/TAPD bersumber dari pegawai sesuai wilayah dan OPD | PASS | Phase 33: relasi `pegawai_id`, dropdown pencarian pegawai aktif, scope wilayah/OPD, tab User Wilayah dan Tim Anggaran Daerah, aktivasi user serta masa penugasan TAPD |
 | 34 | PDF normal/perubahan mengikuti orientasi dan kolom formulir resmi | PASS | Phase 33: normal A4 potret, perubahan A4 lanskap; kolom PPN/satuan/volume/harga/jumlah sejajar; tabel input bulanan dan TAPD tidak dicampur ke formulir rincian resmi |
+| 35 | Validasi Fomantic seluruh CRUD dan feedback form | PASS | Phase 34: schema eksplisit maupun inferensi atribut required/email, field error, ringkasan gagal, feedback sukses di dalam form, serta toast global |
+| 36 | Foto profil, periode Renstra/RPJMD, dan Excel hierarki resmi | PASS | Phase 34: upload foto tervalidasi/live preview; dropdown RPJMD regional atau Renstra OPD beserta tahun di dalam rentang; Excel normal/perubahan memuat metadata, hierarki rekening, PPN, warna, dan sheet per subkegiatan |
 
 ## Gate penyelesaian
 

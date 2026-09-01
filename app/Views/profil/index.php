@@ -13,19 +13,20 @@
           <div class="content">
             <div class="center">
 
-              <button type="button" name="direct" jns="upload" tbl="user_sesendok_biila" dok="photo"
-                class="ui inverted icon button">
+              <button type="button" id="chooseProfilePhoto" class="ui inverted icon button">
 
                 <i class="camera icon"></i>
                 Ganti Foto
 
               </button>
+              <input type="file" id="profilePhotoInput" accept="image/jpeg,image/png,image/webp" hidden>
 
             </div>
           </div>
         </div>
 
-        <img id="preview_photo" class="ui medium rounded image" src="assets/img/avatar/default.png"
+        <?php $profilePhoto=$_SESSION['user']['photo']??'';$profilePhoto=str_contains($profilePhoto,'/')?$profilePhoto:'assets/img/avatar/'.($profilePhoto?:'default.png'); ?>
+        <img id="preview_photo" class="ui medium rounded image" src="<?= app_url('/'.$profilePhoto) ?>"
           onerror="this.src='assets/img/avatar/default.png'">
 
       </div>
@@ -72,7 +73,7 @@
         <div class="content">Pengaturan Akun</div>
       </h3>
 
-      <div class="two fields">
+      <div class="three fields">
 
         <div class="field">
           <label>Nama Lengkap</label>
@@ -102,9 +103,13 @@
 
       <div class="two fields">
 
-        <div class="field">
+        <div class="required field">
+          <label>Rentang Dokumen Aktif</label>
+          <select class="ui search dropdown" id="planningPeriod" name="periode_id" required><option value="">Memuat periode…</option></select>
+        </div>
+        <div class="required field">
           <label>Tahun Anggaran Aktif</label>
-          <input type="text" name="tahun">
+          <select class="ui search dropdown" id="budgetYear" name="tahun" required><option value="">Pilih rentang dahulu</option></select>
         </div>
 
         <div class="field">
@@ -200,6 +205,9 @@
       </div>
 
       <div class="ui hidden divider"></div>
+
+      <div class="ui error message" role="alert"></div>
+      <div class="ui success message" role="status"></div>
 
       <button class="ui primary right floated button">
         <i class="save icon"></i>

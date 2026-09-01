@@ -19,6 +19,7 @@ class ProfilModule {
 		this.initUI();
 		this.bindFormWatcher();
 		this.bindPhotoWatcher();
+		this.bindPeriodSelector();
 		// this.loadProfil();
 		this.loadData();
 	}
@@ -96,13 +97,12 @@ class ProfilModule {
 	// ======================================================
 
 	bindPhotoWatcher() {
-		$(document).on("upload:success", (e, res) => {
-			if (!res || !res.photo) return;
+		$('#chooseProfilePhoto').off('click.profile').on('click.profile',()=>$('#profilePhotoInput').trigger('click'));
+		$('#profilePhotoInput').off('change.profile').on('change.profile',e=>{const file=e.target.files[0];if(!file)return;const data=new FormData();data.append('photo',file);this.ajax.request({url:'/profil/upload-photo',method:'POST',data,processData:false,contentType:false,beforeSend:()=>$('#chooseProfilePhoto').addClass('loading'),success:res=>{$('#preview_photo').attr('src',`${res.data.url}?v=${Date.now()}`);$('img[data-user-avatar]').attr('src',`${res.data.url}?v=${Date.now()}`);},complete:()=>$('#chooseProfilePhoto').removeClass('loading')});});
+	}
 
-			const url = "uploads/" + res.photo;
-
-			$("#preview_photo").attr("src", url);
-		});
+	bindPeriodSelector() {
+		this.ajax.request({url:'/profil/periods',method:'GET',success:res=>{const data=res.data||{},period=$('#planningPeriod'),year=$('#budgetYear');period.empty().append('<option value="">Pilih rentang</option>');(data.periods||[]).forEach(p=>period.append(`<option value="${p.id}" data-start="${p.periode_mulai}" data-end="${p.periode_selesai}">${data.scope} ${p.periode_mulai}–${p.periode_selesai}${p.keterangan?' · '+p.keterangan:''}</option>`));period.dropdown('refresh');const selected=(data.periods||[]).find(p=>Number(data.selected_year)>=Number(p.periode_mulai)&&Number(data.selected_year)<=Number(p.periode_selesai));if(selected)period.dropdown('set selected',String(selected.id));const fill=()=>{const option=period.find('option:selected'),start=Number(option.data('start')),end=Number(option.data('end'));year.empty().append('<option value="">Pilih tahun</option>');if(start&&end)for(let y=start;y<=end;y++)year.append(`<option value="${y}">${y}</option>`);year.dropdown('refresh');if(data.selected_year>=start&&data.selected_year<=end)year.dropdown('set selected',String(data.selected_year));};period.off('change.period').on('change.period',fill);fill();year.off('change.period').on('change.period',()=>{if(!period.val()||!year.val())return;this.ajax.request({url:'/profil/select-period',method:'POST',data:{periode_id:period.val(),tahun:year.val()},success:()=>{$('#card_tahun').text(year.val());$('.dash_header .label').text(year.val());}});});}});
 	}
 
 	destroy() {

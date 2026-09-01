@@ -152,6 +152,9 @@ return [
     |--------------------------------------------------------------------------
     */
   '/profil'        => ['ProfilController', 'index'],
+  '/profil/periods' => ['ProfilController', 'periods'],
+  '/profil/select-period' => ['ProfilController', 'selectPeriod'],
+  '/profil/upload-photo' => ['ProfilController', 'uploadPhoto'],
 
   /*
     |--------------------------------------------------------------------------
