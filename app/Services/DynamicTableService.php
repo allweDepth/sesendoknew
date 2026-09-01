@@ -560,6 +560,8 @@ GET SINGLE ROW
       $row['struktur_json'] = $row['_read']['trx_naskah_struktur'][0]['struktur_json'];
     }
 
+    $row = $this->normalizeBudgetEditRow($table, $row);
+
     // ==========================================
     // 🔥 APPLY ALIAS SINGLE ROW
     // ==========================================
@@ -579,6 +581,23 @@ GET SINGLE ROW
       ],
       $row
     );
+  }
+
+  /** Memulihkan field klasifikasi yang kosong pada data anggaran legacy. */
+  private function normalizeBudgetEditRow(string $table, array $row): array
+  {
+    $budgetTables=['renja_neo','rka_neo','dpa_neo','renja_p_neo','rka_p_neo','dppa_neo'];
+    if(!in_array($table,$budgetTables,true))return $row;
+    $sourceMap=['renja_p_neo'=>'renja_neo','rka_p_neo'=>'rka_neo','dppa_neo'=>'dpa_neo'];
+    if(isset($sourceMap[$table])&&!empty($row['source_id'])){
+      $source=$this->db->query("SELECT objek_belanja,jenis_kelompok,jenis_standar_harga,id_standar_harga,kelompok FROM `{$sourceMap[$table]}` WHERE id=? AND is_deleted=0 LIMIT 1",[(int)$row['source_id']])->fetch();
+      if($source)foreach(['objek_belanja','jenis_kelompok','jenis_standar_harga','id_standar_harga','kelompok'] as $field)if(($row[$field]??null)===null||$row[$field]==='')$row[$field]=$source[$field]??null;
+    }
+    $account=(string)($row['kd_akun']??'');
+    if(empty($row['objek_belanja']))$row['objek_belanja']=str_starts_with($account,'5.2.')?'belanja_modal':(str_starts_with($account,'5.3.')?'belanja_tidak_terduga':'belanja_operasi');
+    if(empty($row['jenis_kelompok']))$row['jenis_kelompok']=empty($row['kelompok'])?'non_paket':'pemaketan';
+    if(empty($row['jenis_standar_harga'])&&!empty($row['id_standar_harga'])){$standard=$this->db->query('SELECT tipe FROM master_biaya WHERE id=? AND is_deleted=0 LIMIT 1',[(int)$row['id_standar_harga']])->fetch();$row['jenis_standar_harga']=$standard['tipe']??'ssh';}
+    return $row;
   }
 
   /* =========================================================

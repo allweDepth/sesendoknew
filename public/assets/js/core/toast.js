@@ -24,7 +24,18 @@ class Toast {
 			showProgress: "bottom",
 			context: "#toastContainer",
 			position: "top right",
+			onHidden: () => Toast.cleanup(),
 		});
+		setTimeout(() => Toast.cleanup(), 3400);
+	}
+
+	static cleanup() {
+		const container = $("#toastContainer");
+		container.find(".toast-box").each(function () {
+			if (!$(this).find(".ui.toast").length) $(this).remove();
+		});
+		if (!container.find(".ui.toast").length) container.empty().hide();
+		else container.show();
 	}
 }
 

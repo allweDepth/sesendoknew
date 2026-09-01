@@ -134,6 +134,8 @@
     /* FIX: pastikan di atas dimmer */
   }
   #toastContainer:empty { display:none !important; width:0 !important; }
+  #toastContainer:not(:has(.ui.toast)) { display:none !important; width:0 !important; pointer-events:none !important; }
+  #toastContainer .toast-box:not(:has(.ui.toast)) { display:none !important; }
   .ui.toast-container:empty,.ui.notifications:empty { display:none !important; border:0 !important; box-shadow:none !important; }
 
   /* TABLE WRAPPER */

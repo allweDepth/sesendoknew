@@ -45,14 +45,16 @@ class WallchatController extends Controller
   // endpoint post status
   public function store()
   {
-    if (!Auth::check()) exit;
+    $this->beginJson();if (!Auth::check()){$this->jsonResult(false,'Sesi login tidak valid',401);return;}
+
+    try {
 
     $model = new WallchatModel();
 
     $content = trim($_POST['content'] ?? '');
 
     if ($content === '') {
-      echo json_encode(['success' => false]);
+      $this->jsonResult(false,'Isi posting tidak boleh kosong',422);
       return;
     }
 
@@ -66,7 +68,8 @@ class WallchatController extends Controller
       ...$attachment
     ]);
 
-    echo json_encode(['success' => true]);
+    $this->jsonResult(true,'Posting berhasil dipublikasikan');
+    } catch(Throwable $e){$this->jsonResult(false,$e->getMessage(),400);}
   }
   public function update()
   {
@@ -95,12 +98,14 @@ class WallchatController extends Controller
   // kirim pesan pribadi
   public function privateMessage()
   {
-    if (!Auth::check()) exit;
+    $this->beginJson();if (!Auth::check()){$this->jsonResult(false,'Sesi login tidak valid',401);return;}
+
+    try {
 
     $model = new WallchatModel();
 
     $receiver=(int)($_POST['receiver_id']??0);$content=trim($_POST['content']??'');
-    if(!$receiver||$receiver===(int)$_SESSION['user']['id']||$content===''){echo json_encode(['success'=>false,'message'=>'Penerima atau pesan tidak valid']);return;}
+    if(!$receiver||$receiver===(int)$_SESSION['user']['id']||$content===''){$this->jsonResult(false,'Penerima atau pesan tidak valid',422);return;}
     $attachment=$this->messageAttachment('private');
     $model->store([
       'user_id' => $_SESSION['user']['id'],
@@ -112,7 +117,8 @@ class WallchatController extends Controller
       ...$attachment
     ]);
 
-    echo json_encode(['success' => true]);
+    $this->jsonResult(true,'Pesan pribadi berhasil dikirim');
+    } catch(Throwable $e){$this->jsonResult(false,$e->getMessage(),400);}
   }
   public function readPrivate()
   {
@@ -148,6 +154,8 @@ class WallchatController extends Controller
     $name=bin2hex(random_bytes(16)).'.'.$allowed[$mime];if(!move_uploaded_file($file['tmp_name'],$dir.'/'.$name))throw new RuntimeException('Lampiran gagal disimpan');
     return ['attachment_name'=>basename((string)$file['name']),'attachment_path'=>$relative.'/'.$name,'attachment_mime'=>$mime,'attachment_size'=>(int)$file['size']];
   }
+  private function beginJson():void{ob_start();header('Content-Type: application/json; charset=UTF-8');}
+  private function jsonResult(bool $success,string $message,int $status=200):void{if(ob_get_level()>0)ob_clean();http_response_code($status);echo json_encode(['success'=>$success,'message'=>$message,'data'=>[],'errors'=>[]],JSON_UNESCAPED_UNICODE);if(ob_get_level()>0)ob_end_flush();}
   public function mediaFile()
   {
     if(!Auth::check())exit;$id=(int)($_GET['id']??0);$row=(new WallchatModel())->privateFile($id,(int)$_SESSION['user']['id']);if(!$row)$row=DB::getInstance()->query("SELECT * FROM wallchat WHERE id=? AND type IN ('status','comment') AND is_deleted=0",[$id])->fetch();if(!$row||empty($row['attachment_path'])){http_response_code(404);exit('Media tidak ditemukan');}$root=realpath(dirname(__DIR__,2));$file=realpath($root.'/'.$row['attachment_path']);$allowed=realpath($root.'/storage/uploads/messages');if(!$file||!$allowed||!str_starts_with($file,$allowed.DIRECTORY_SEPARATOR)){http_response_code(403);exit('Akses ditolak');}header('Content-Type: '.$row['attachment_mime']);header('Content-Length: '.filesize($file));header('Content-Disposition: inline; filename="'.rawurlencode($row['attachment_name']).'"');readfile($file);exit;

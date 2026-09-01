@@ -18,14 +18,14 @@ selesai.
 | 9 | Cetak/upload kontrak, SSKK/SSUK, serah terima/gambar/dokumen lain | PASS | PDF kontrak, generator SSKK/SSUK, dan 16 jenis dokumen upload terhubung; phase13 |
 | 10 | Folder upload kontrak dan kepegawaian | PASS | Hirarki scope/tahun/kontrak/jenis; schema dokumen pegawai tersedia |
 | 11 | Hapus tab menu ganda Kontrak/Realisasi/Standar Harga | PASS | `useMenu=false` untuk kedua modul; lulus phase12 |
-| 12 | Garis/notifikasi kanan atas | PARTIAL | Container notifikasi kosong disembunyikan; acceptance visual sesi login masih diperlukan |
+| 12 | Garis/notifikasi kanan atas | PASS | Wrapper/progress toast yatim dibersihkan lewat callback dan fallback timer; container tanpa `.ui.toast` dipaksa tersembunyi; lulus phase22 |
 | 13 | Dropdown jumlah row dan search global | PASS | Navbar global terhubung `TableManager`, rows/search diteruskan ke seluruh tabel dinamis |
 | 14 | Dropdown sidebar kanan | PARTIAL | Pesan, Profil/Pengaturan, tema, dan logout kini mempunyai handler/link; acceptance visual tersisa |
 | 15 | Edit Tata Naskah tersimpan | PASS | Struktur dan header disimpan transaksional, load edit dipulihkan; lulus phase6 |
 | 16 | Pesan sementara, file, hapus kedua pihak, UI profesional | PASS | Enkripsi, pesan sementara, file privat 3 MB, read state, per-party delete, modal kirim dan inbox profesional lulus phase11/16 |
 | 17 | Enkripsi pesan browser–server dan database | PARTIAL | TLS + CSP/HSTS dan libsodium authenticated encryption at rest tersedia; E2E browser key ownership belum diterapkan |
 | 18 | Performa online/server | PARTIAL | Feed dibatasi 30, pesan privat 50, komentar diambil batch tanpa N+1, dan index tersedia; profiling beban serta konfigurasi produksi masih OPEN |
-| 19 | Wallchat CRUD, gambar/video 2–3 MB, tema, UI medsos | PASS | Feed sosial, composer ringkas, CRUD berbasis pemilik, gambar/video 3 MB, lima tema, komentar dan media terproteksi lulus phase7/16 |
+| 19 | Wallchat CRUD, gambar/video 2–3 MB, tema, UI medsos | PASS | Feed sosial, composer ringkas, CRUD berbasis pemilik, gambar/video 3 MB, lima tema, komentar dan media terproteksi lulus phase7/16; respons upload selalu JSON dan folder upload tersedia lulus phase22 |
 | 20 | Dashboard/UI Referensi, Kepegawaian, Tata Naskah dan submenu datar | PARTIAL | Beberapa dashboard modern tersedia; audit visual semua submenu belum selesai |
 | 21 | Export resmi Renstra/Renja/RKA/DPA/perubahan/SPJ/LRA, warna, sheet per subkegiatan | PASS | Renstra T-C.25/T-C.27 PDF+Excel lulus phase21; dua keluarga Renja/RKA/DPA normal dan perubahan PDF+Excel per subkegiatan lulus phase20; SPJ/LRA resmi dan chart lulus phase19; mapping rekening-standar-aset lulus phase18 |
 | 22 | Dummy SSH/SBU/ASB/HSPK, 5 subkegiatan, alur Renja–RKPD–DPPA–kontrak–laporan | PARTIAL | ≥10 data tiap standar dan 5 rantai RKPD–DPPA lulus phase15; data TRACE lama ditandai perlu rekonsiliasi kode aset/rekening, dan kontrak/RAB/laporan untuk tiga rantai tambahan belum dibuat |
