@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 01 Sep 2026 pada 03.57
+-- Waktu pembuatan: 01 Sep 2026 pada 08.52
 -- Versi server: 12.3.3-MariaDB
 -- Versi PHP: 8.5.10
 
@@ -9488,6 +9488,8 @@ CREATE TABLE `halaman_berita` (
   `kd_opd` varchar(50) DEFAULT NULL,
   `judul` varchar(255) NOT NULL,
   `slug` varchar(255) DEFAULT NULL,
+  `jenis_halaman` enum('berita','data_teknis','organisasi','pelayanan') NOT NULL DEFAULT 'berita',
+  `aktif` tinyint(4) NOT NULL DEFAULT 1,
   `konten` longtext NOT NULL,
   `gambar` varchar(255) DEFAULT NULL,
   `keterangan` text DEFAULT NULL,
@@ -9502,8 +9504,8 @@ CREATE TABLE `halaman_berita` (
 -- Dumping data untuk tabel `halaman_berita`
 --
 
-INSERT INTO `halaman_berita` (`id`, `kd_wilayah`, `kd_opd`, `judul`, `slug`, `konten`, `gambar`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
-(1, '76.01', '1.03.0.00.0.00.01.0000', 'judul', '', '  Tutup ', '', 'keterangan', '2026-03-22 09:49:59', 'inayah', '2026-03-23 01:44:32', 'inayah', 0);
+INSERT INTO `halaman_berita` (`id`, `kd_wilayah`, `kd_opd`, `judul`, `slug`, `jenis_halaman`, `aktif`, `konten`, `gambar`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, '76.01', '1.03.0.00.0.00.01.0000', 'judul', '', 'berita', 1, '  Tutup ', '', 'keterangan', '2026-03-22 09:49:59', 'inayah', '2026-03-23 01:44:32', 'inayah', 0);
 
 -- --------------------------------------------------------
 
@@ -9666,8 +9668,17 @@ CREATE TABLE `kontrak_dokumen_neo` (
   `tahun` year(4) DEFAULT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
   `is_deleted` tinyint(4) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `kontrak_dokumen_neo`
+--
+
+INSERT INTO `kontrak_dokumen_neo` (`id`, `kontrak_id`, `jenis_dokumen`, `nomor_dokumen`, `tanggal_dokumen`, `judul`, `nama_file_asli`, `path_file`, `mime_type`, `ukuran`, `versi`, `keterangan`, `kd_wilayah`, `kd_opd`, `tahun`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, 1, 'LAINNYA', NULL, NULL, 'QA lifecycle', 'qa.txt', 'storage/uploads/qa/contract-delete-026fec18.txt', 'text/plain', 7, 1, NULL, '76.01', '1.03.0.00.0.00.01.0000', '2026', '2026-09-01 16:09:54', 'PHASE32', '2026-09-01 08:09:54', 'nabiila', 1);
 
 -- --------------------------------------------------------
 
@@ -17606,18 +17617,72 @@ CREATE TABLE `rencana_realisasi_anggaran_neo` (
 --
 
 INSERT INTO `rencana_realisasi_anggaran_neo` (`id`, `dokumen`, `anggaran_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `jenis`, `bulan`, `nilai`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
-(1, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 1, 37500000.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
-(2, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 2, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
-(3, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 3, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
-(4, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 4, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
-(5, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 5, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
-(6, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 6, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
-(7, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 7, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
-(8, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 8, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
-(9, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 9, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
-(10, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 10, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
-(11, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 11, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0),
-(12, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 12, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 11:34:46', 'nabiila', 0);
+(1, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 1, 37500000.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 16:32:00', 'nabiila', 0),
+(2, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 2, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 16:32:00', 'nabiila', 0),
+(3, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 3, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 16:32:00', 'nabiila', 0),
+(4, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 4, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 16:32:00', 'nabiila', 0),
+(5, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 5, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 16:32:00', 'nabiila', 0),
+(6, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 6, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 16:32:00', 'nabiila', 0),
+(7, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 7, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 16:32:00', 'nabiila', 0),
+(8, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 8, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 16:32:00', 'nabiila', 0),
+(9, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 9, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 16:32:00', 'nabiila', 0),
+(10, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 10, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 16:32:00', 'nabiila', 0),
+(11, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 11, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 16:32:00', 'nabiila', 0),
+(12, 'dpa', 1, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 12, 0.00, NULL, '2026-09-01 11:33:58', 'nabiila', '2026-09-01 16:32:00', 'nabiila', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `rencana_rekening_anggaran_neo`
+--
+
+CREATE TABLE `rencana_rekening_anggaran_neo` (
+  `id` bigint(20) NOT NULL,
+  `dokumen` enum('dpa','dppa') NOT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_opd` varchar(60) NOT NULL,
+  `tahun` smallint(6) NOT NULL,
+  `kd_sub_keg` varchar(100) NOT NULL,
+  `kd_akun` varchar(100) NOT NULL,
+  `jenis` enum('belanja','pendapatan') NOT NULL DEFAULT 'belanja',
+  `bulan` tinyint(4) NOT NULL,
+  `nilai` decimal(20,2) NOT NULL DEFAULT 0.00,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `rencana_rekening_anggaran_neo`
+--
+
+INSERT INTO `rencana_rekening_anggaran_neo` (`id`, `dokumen`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `jenis`, `bulan`, `nilai`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 1, 51500000.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
+(2, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 2, 51500000.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
+(3, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 3, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
+(4, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 4, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
+(5, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 5, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
+(6, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 6, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
+(7, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 7, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
+(8, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 8, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
+(9, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 9, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
+(10, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 10, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
+(11, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 11, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
+(12, 'dpa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.3', '5.1.02.02.05.0044', 'belanja', 12, 0.00, '2026-09-01 16:31:10', 'nabiila', '2026-09-01 16:48:00', 'nabiila', 0),
+(25, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 1, 0.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
+(26, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 2, 0.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
+(27, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 3, 0.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
+(28, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 4, 0.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
+(29, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 5, 0.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
+(30, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 6, 0.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
+(31, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 7, 0.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
+(32, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 8, 0.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
+(33, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 9, 0.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
+(34, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 10, 232500000.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
+(35, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 11, 100000000.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0),
+(36, 'dppa', '76.01', '1.03.0.00.0.00.01.0000', 2026, 'X.XX.1.2.01.1', '5.1.02.02.05.0044', 'belanja', 12, 0.00, '2026-09-01 16:46:13', 'nabiila', '2026-09-01 16:46:47', 'nabiila', 0);
 
 -- --------------------------------------------------------
 
@@ -19575,6 +19640,7 @@ CREATE TABLE `tapd_penugasan_neo` (
   `kd_wilayah` varchar(20) NOT NULL,
   `tahun` smallint(6) NOT NULL,
   `user_id` bigint(20) DEFAULT NULL,
+  `pegawai_id` int(11) DEFAULT NULL,
   `nama` varchar(255) NOT NULL,
   `nip` varchar(50) DEFAULT NULL,
   `jabatan` varchar(150) NOT NULL,
@@ -19593,12 +19659,12 @@ CREATE TABLE `tapd_penugasan_neo` (
 -- Dumping data untuk tabel `tapd_penugasan_neo`
 --
 
-INSERT INTO `tapd_penugasan_neo` (`id`, `kd_wilayah`, `tahun`, `user_id`, `nama`, `nip`, `jabatan`, `urutan`, `tanggal_mulai`, `tanggal_selesai`, `aktif`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
-(1, '76.01', 2026, NULL, 'KARTINI, SH., M.P.W.P', '198401092003122003', 'WAKIL KETUA', 1, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0),
-(2, '76.01', 2026, NULL, 'SUHARDI, S.Pd', '196812311993081006', 'ANGGOTA', 2, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0),
-(3, '76.01', 2026, NULL, 'GUNAWAN, ST., M.Si', '198004092010011007', 'ANGGOTA', 3, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0),
-(4, '76.01', 2026, NULL, 'DINI RESQIYAH A. LOPPU, S.A.P', '198603192008012001', 'ANGGOTA', 4, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0),
-(5, '76.01', 2026, NULL, 'I PUTU ERIK, SE', '198411032008011002', 'ANGGOTA', 5, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0);
+INSERT INTO `tapd_penugasan_neo` (`id`, `kd_wilayah`, `tahun`, `user_id`, `pegawai_id`, `nama`, `nip`, `jabatan`, `urutan`, `tanggal_mulai`, `tanggal_selesai`, `aktif`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
+(1, '76.01', 2026, NULL, NULL, 'KARTINI, SH., M.P.W.P', '198401092003122003', 'WAKIL KETUA', 1, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0),
+(2, '76.01', 2026, NULL, NULL, 'SUHARDI, S.Pd', '196812311993081006', 'ANGGOTA', 2, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0),
+(3, '76.01', 2026, NULL, NULL, 'GUNAWAN, ST., M.Si', '198004092010011007', 'ANGGOTA', 3, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0),
+(4, '76.01', 2026, NULL, NULL, 'DINI RESQIYAH A. LOPPU, S.A.P', '198603192008012001', 'ANGGOTA', 4, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0),
+(5, '76.01', 2026, NULL, NULL, 'I PUTU ERIK, SE', '198411032008011002', 'ANGGOTA', 5, '2026-01-01', '2026-12-31', 1, '2026-09-01 11:33:58', 'REFERENCE_SKPD_PDF', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -19850,6 +19916,7 @@ INSERT INTO `tujuan_renstra_neo` (`id`, `misi_id`, `kode_tujuan`, `nama_tujuan`,
 
 CREATE TABLE `user_sesendok_biila` (
   `id` int(11) NOT NULL,
+  `pegawai_id` int(11) DEFAULT NULL,
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `nama` varchar(255) NOT NULL,
@@ -19886,13 +19953,26 @@ CREATE TABLE `user_sesendok_biila` (
 -- Dumping data untuk tabel `user_sesendok_biila`
 --
 
-INSERT INTO `user_sesendok_biila` (`id`, `username`, `email`, `nama`, `nip`, `password`, `message_public_key`, `remember_token`, `kd_opd`, `nama_org`, `kd_wilayah`, `type_user`, `photo`, `signature_image`, `signature_verified`, `tgl_daftar`, `tgl_login`, `tahun`, `kontak_person`, `alamat`, `font_size`, `theme`, `warna_tbl`, `scrolling_table`, `disable_login`, `disable_anggaran`, `disable_kontrak`, `disable_realisasi`, `disable_chat`, `ket`, `disable`) VALUES
-(1, 'alwi_mansyur', 'alwi@gmail.com', 'Alwi Mansyur', '1980', '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_wilayah', 'images/avatar/default.jpeg', NULL, 0, '2018-06-04 21:57:05', '2024-10-23 15:03:04', '2024', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
-(2, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', '{\"alg\":\"RSA-OAEP-256\",\"e\":\"AQAB\",\"ext\":true,\"key_ops\":[\"encrypt\"],\"kty\":\"RSA\",\"n\":\"pSCtXM-BR4vh-x_dkCstygKRHbU7ilStf5dAY0wbYk8Wg30T53fdv6fuZrdhE2laHUZVLUaDa1skWTS5ZQvaTrpLpyxt9iYc-4U9I8qJCdzkGSNPaeDlVJ90lex79fXtsCYM2eXCy6VfSF6qgyJ-cS1xC6YhKDglj4xLpshK5URVU6nmsnocHcYGDXrB26xPk9JhhuHubAOPoutCtsNjBzTH6g1tX8QY-VBR0OL2IR-eAXjfdmFjZMOizzhbQgoRIRp1z02ISiQVL0Gec0O2WVhWCUm_sEJE8rrwLI0AA91hOVD5_eRYrM-jfLd1vNvE7pJhTVGYO2Dn2Qz7_ezJ323O768dPmbklJDETv26ZFQbRG57orEmbCgNW_hAcW5ehbOEYg-qfkWUQE6MOPfuGV11Q4x_Ht05ATR-WSnuKCXstZ-a6t0jQWmLcv5pGE35LYkB3zzoBuOiuQPVzVAsLmxfPIs9oqjwHAA00jFi664f878cz1Aq8N-a8YqGIa0L\"}', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_opd', 'img/avatar/username(nabiila)_dok(photo)_wilayah(76.01)_2305070e99916190687b3774c0d56f134b954d74_2.jpg', NULL, 0, '2018-06-09 15:54:29', '2026-02-24 21:15:01', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
-(3, 'inayah', 'inayah@gmail.com', 'Inayah Nadhilah', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'super_admin', 'images/avatar/default.jpeg', NULL, 0, '2018-06-22 22:04:17', '2020-03-08 02:30:41', '2026', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'dimana mana hatiku senang oke', 0),
-(4, 'Arlinda', 'arlinda@gmail.com', 'Arlinda Achmad', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '', 'Prof', '', 'admin_opd', 'images/avatar/default.jpeg', NULL, 0, '2018-07-10 14:27:06', '2018-10-21 12:23:09', '2024', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu.', 0),
-(5, 'administrator', 'alwi.mansyur@gmail.com', 'administrator', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '', 'administrator AHSP', '', 'user', 'images/avatar/c14719a7f71e46badf2cf93ae373ae9797281782_9.png', NULL, 0, '2023-02-09 23:41:34', '2023-02-23 00:05:26', '2024', '08128886665', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk mu', 0),
-(8, 'trace_user_b6d132', 'trace_b6d132@example.test', 'TRACE USER OPD', '9900b6d132', '$2y$12$Yvbw303kraYklB/x5V0G7e5KMmuk97uIftsWSERR6Jnf2S3CLYa46', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'pptk', 'default.jpeg', NULL, 0, '2026-08-31 18:08:47', NULL, '2026', '0812000000', NULL, NULL, 'auto', NULL, NULL, 0, 1, 1, 1, 1, NULL, 0);
+INSERT INTO `user_sesendok_biila` (`id`, `pegawai_id`, `username`, `email`, `nama`, `nip`, `password`, `message_public_key`, `remember_token`, `kd_opd`, `nama_org`, `kd_wilayah`, `type_user`, `photo`, `signature_image`, `signature_verified`, `tgl_daftar`, `tgl_login`, `tahun`, `kontak_person`, `alamat`, `font_size`, `theme`, `warna_tbl`, `scrolling_table`, `disable_login`, `disable_anggaran`, `disable_kontrak`, `disable_realisasi`, `disable_chat`, `ket`, `disable`) VALUES
+(1, NULL, 'alwi_mansyur', 'alwi@gmail.com', 'Alwi Mansyur', '1980', '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_wilayah', 'images/avatar/default.jpeg', NULL, 0, '2018-06-04 21:57:05', '2024-10-23 15:03:04', '2024', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(2, NULL, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', '{\"alg\":\"RSA-OAEP-256\",\"e\":\"AQAB\",\"ext\":true,\"key_ops\":[\"encrypt\"],\"kty\":\"RSA\",\"n\":\"ltYx4xwH9tHXD6Ui8DdxB-YKbzX2NevtfBVWnL7PFHXliKdDN6ZikmSDHBIATiEpzy6qVKOTDVXuJiBvL5PvAjr3j9NDpFs84kspEz13A-m3PFRLL1zorcX4JP1wgvhd9siqWG3P7T7JfPrD5RsQ4vV4YqTHT_ZpOFcbQWk0aG9GB0dI-29LOPmrvMgrXqkkomclcKVaihJA6LJKc3rG3seCdBxSVbgx4H5n9fDyebO8qOMFau3GIilwXR7NQ6IUFWn8WxpQJGJ77Phj2gZZ8-kXqBlidqr07US4-AVF61QbS8a6oPBGEpTIDL8WGk0-s-KwcDy9fR-JNk0eHYRElZlnsFBDoJHzP_R3YA01OMVQwULVPo2sjrosF0BgTlBwZEwatpW4sNc2sy0ZpBjUyLSc29dzR4cwwUCPPEE7AnPE5h7zAzzx4RtSa0ZmcSAQhJLOTRhPvZ27QyZ226gRfRNqIck9e7v-4oUKAr3AFUXshprN2ddShWbS8DxpQ6cT\"}', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_opd', 'img/avatar/username(nabiila)_dok(photo)_wilayah(76.01)_2305070e99916190687b3774c0d56f134b954d74_2.jpg', NULL, 0, '2018-06-09 15:54:29', '2026-02-24 21:15:01', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
+(3, NULL, 'inayah', 'inayah@gmail.com', 'Inayah Nadhilah', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'super_admin', 'images/avatar/default.jpeg', NULL, 0, '2018-06-22 22:04:17', '2020-03-08 02:30:41', '2026', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'dimana mana hatiku senang oke', 0),
+(4, NULL, 'Arlinda', 'arlinda@gmail.com', 'Arlinda Achmad', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '', 'Prof', '', 'admin_opd', 'images/avatar/default.jpeg', NULL, 0, '2018-07-10 14:27:06', '2018-10-21 12:23:09', '2024', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu.', 0),
+(5, NULL, 'administrator', 'alwi.mansyur@gmail.com', 'administrator', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '', 'administrator AHSP', '', 'user', 'images/avatar/c14719a7f71e46badf2cf93ae373ae9797281782_9.png', NULL, 0, '2023-02-09 23:41:34', '2023-02-23 00:05:26', '2024', '08128886665', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk mu', 0),
+(8, NULL, 'trace_user_b6d132', 'trace_b6d132@example.test', 'TRACE USER OPD', '9900b6d132', '$2y$12$Yvbw303kraYklB/x5V0G7e5KMmuk97uIftsWSERR6Jnf2S3CLYa46', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'pptk', 'default.jpeg', NULL, 0, '2026-08-31 18:08:47', NULL, '2026', '0812000000', NULL, NULL, 'auto', NULL, NULL, 0, 1, 1, 1, 1, NULL, 0),
+(13, NULL, 'demo_super_admin', 'demo_super_admin@sesendok.local', 'DEMO SUPER ADMIN', 'D2609010000', '$2y$12$ESh9bqNFmlUp4.PEBZggoeSxz4Q1rK0U32PWjJJW1u1wPPFa27psi', NULL, NULL, '0', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'super_admin', 'images/avatar/default.jpeg', NULL, 0, '2026-09-01 08:03:51', '2024-10-23 15:03:04', '2026', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(14, NULL, 'demo_admin_wilayah', 'demo_admin_wilayah@sesendok.local', 'DEMO ADMIN WILAYAH', 'D2609010001', '$2y$12$siZy2KHiwFcuyVi8LKY8heJhAtyS6XUahJD85xfKzOBvoemjPnaMq', NULL, NULL, '0', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_wilayah', 'images/avatar/default.jpeg', NULL, 0, '2026-09-01 08:03:52', '2024-10-23 15:03:04', '2026', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(15, NULL, 'demo_tapd', 'demo_tapd@sesendok.local', 'DEMO TAPD', 'D2609010002', '$2y$12$56uyg4/Y7GxmkiLPIFsI1e89f/Rd8rqoya21Ok.HVt0p7oFhGP5AK', NULL, NULL, '0', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'tapd', 'images/avatar/default.jpeg', NULL, 0, '2026-09-01 08:03:52', '2024-10-23 15:03:04', '2026', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(16, NULL, 'demo_admin_opd', 'demo_admin_opd@sesendok.local', 'DEMO ADMIN OPD', 'D2609010003', '$2y$12$gg49T0wmRwKv5MUvKm.FL.Zlvxz1gN899j8WMXzTkE2riJpPUhWlm', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_opd', 'images/avatar/default.jpeg', NULL, 0, '2026-09-01 08:03:52', '2024-10-23 15:03:04', '2026', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(17, NULL, 'demo_kepala_opd', 'demo_kepala_opd@sesendok.local', 'DEMO KEPALA OPD', 'D2609010004', '$2y$12$3dclzx20P5fLwvE17AeTBOnVbpX8hiXDPO2JETC4WeLpqrUngp98O', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'kepala_opd', 'images/avatar/default.jpeg', NULL, 0, '2026-09-01 08:03:52', '2024-10-23 15:03:04', '2026', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(18, NULL, 'demo_pa_kpa', 'demo_pa_kpa@sesendok.local', 'DEMO PA KPA', 'D2609010005', '$2y$12$YPJQqRnsgTum9tT/4Y8erukODzV0C4a2sLV449qAruQtXZ.Ybdecy', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'pa_kpa', 'images/avatar/default.jpeg', NULL, 0, '2026-09-01 08:03:52', '2024-10-23 15:03:04', '2026', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(19, NULL, 'demo_ppk', 'demo_ppk@sesendok.local', 'DEMO PPK', 'D2609010006', '$2y$12$HzYlbvvpH9LC/cCwAfOrN.h33dedgEpPNVTUiZuSJ0EiXT8MUcXtu', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'ppk', 'images/avatar/default.jpeg', NULL, 0, '2026-09-01 08:03:52', '2024-10-23 15:03:04', '2026', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(20, NULL, 'demo_pptk', 'demo_pptk@sesendok.local', 'DEMO PPTK', 'D2609010007', '$2y$12$fHSYa1pvPp0mYDcJJF515OSb0KUIEtB6KaOGQ7zAtubOulJ7.bXsm', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'pptk', 'images/avatar/default.jpeg', NULL, 0, '2026-09-01 08:03:53', '2024-10-23 15:03:04', '2026', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(21, NULL, 'demo_ppk_skpd', 'demo_ppk_skpd@sesendok.local', 'DEMO PPK SKPD', 'D2609010008', '$2y$12$t6r0UiF58IWRCnXbMgyiH./xAIt8THtz7l2ZO1kuWgXMvsj8Tvt3i', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'ppk_skpd', 'images/avatar/default.jpeg', NULL, 0, '2026-09-01 08:03:53', '2024-10-23 15:03:04', '2026', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(22, NULL, 'demo_bendahara', 'demo_bendahara@sesendok.local', 'DEMO BENDAHARA', 'D2609010009', '$2y$12$nV0ePZEUlN5yuZkySj19qecF4jAat/juYkmR8X65/WMbHi7oVmbi6', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'bendahara', 'images/avatar/default.jpeg', NULL, 0, '2026-09-01 08:03:53', '2024-10-23 15:03:04', '2026', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(23, NULL, 'demo_pejabat_pengadaan', 'demo_pejabat_pengadaan@sesendok.local', 'DEMO PEJABAT PENGADAAN', 'D2609010010', '$2y$12$OBipnIAzveI9ugXScwA.5uXKAx7YUlqI357Jx.O9D.sr.l.rXrmG6', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'pejabat_pengadaan', 'images/avatar/default.jpeg', NULL, 0, '2026-09-01 08:03:53', '2024-10-23 15:03:04', '2026', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(24, NULL, 'demo_staf_opd', 'demo_staf_opd@sesendok.local', 'DEMO STAF OPD', 'D2609010011', '$2y$12$I64di17OndJZYKRKkUmwkeio2qqIDoAj1zYgg4OIjXhi3JQupIdZS', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'staf_opd', 'images/avatar/default.jpeg', NULL, 0, '2026-09-01 08:03:53', '2024-10-23 15:03:04', '2026', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
+(25, NULL, 'demo_viewer', 'demo_viewer@sesendok.local', 'DEMO VIEWER', 'D2609010012', '$2y$12$nvyFUrewDncO6HO9JKxSPebxNWmr0L0CaTB1l7520CkebYpy5uCCO', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'viewer', 'images/avatar/default.jpeg', NULL, 0, '2026-09-01 08:03:53', '2024-10-23 15:03:04', '2026', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0);
 
 -- --------------------------------------------------------
 
@@ -19993,7 +20073,10 @@ INSERT INTO `wallchat` (`id`, `user_id`, `receiver_id`, `parent_id`, `type`, `co
 (39, 1, NULL, NULL, 'status', '', 'oo/l+7TMXdUiMMje4kPGcjUBgTBf+Ma2hN4QQqU3B89UEIAigfwilWg=', '1VWaSN41eZCczZK3FrGAlXnGSyiy6ZtH', NULL, 'server-v1', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-09-01 03:12:56', NULL, 1, '2026-09-01 11:12:56', 'alwi_mansyur', '2026-09-01 11:12:56', NULL, NULL),
 (40, 2, NULL, 39, 'comment', '', 'czzpo/KFRJeXlEUay8ABUqPdyVs2SLhHO+YjJ47d/Kb+zrf5pZ4LQ2r2', 'xewdpPvFfKovm3RknSMmJwHTUwZO6cxd', NULL, 'server-v1', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-09-01 03:12:56', NULL, 0, '2026-09-01 11:12:56', 'nabiila', '2026-09-01 11:12:56', NULL, NULL),
 (41, 1, 2, NULL, 'private', '', '8K02uC5f2iOAUHrx+insX12y00UjJs3Hfvc0B2MLHaRcef+hDsZiMbTU', 'JiUMDzZvR7JLq2RQn7mX744jid+l16WU', NULL, 'server-v1', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-09-01 03:12:56', NULL, 0, '2026-09-01 11:12:56', 'alwi_mansyur', '2026-09-01 11:12:56', NULL, NULL),
-(42, 2, NULL, NULL, 'status', '', '7wE9W8J17hiijuOhqeDNuwGhLwAL4jeKwjQ=', 'XKSYeUgRqom7MydP2itm7R+4bIB4XiZ+', NULL, 'server-v1', 0, NULL, 0, 0, 'images-8.jpeg', 'storage/uploads/messages/wall/2026/09/88e3104321cf5b683f96108cd5735618.jpg', 'image/jpeg', 24784, 'forest', '2026-09-01 03:16:04', '2026-09-01 03:29:26', 0, '2026-09-01 11:16:04', 'nabiila', '2026-09-01 11:29:26', NULL, NULL);
+(42, 2, NULL, NULL, 'status', '', '7wE9W8J17hiijuOhqeDNuwGhLwAL4jeKwjQ=', 'XKSYeUgRqom7MydP2itm7R+4bIB4XiZ+', NULL, 'server-v1', 0, NULL, 0, 0, 'images-8.jpeg', 'storage/uploads/messages/wall/2026/09/88e3104321cf5b683f96108cd5735618.jpg', 'image/jpeg', 24784, 'forest', '2026-09-01 03:16:04', '2026-09-01 03:29:26', 1, '2026-09-01 11:16:04', 'nabiila', '2026-09-01 15:54:16', NULL, NULL),
+(43, 1, NULL, NULL, 'status', '', 'XCLjcJDUA6CnY+m05Y+E8wR7byoALQyStZUeZMD4rhc1euBScmFODwg=', 'vj5Pe+hCVXeaU2kYN4VTQg4f0//FM6pD', NULL, 'server-v1', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-09-01 08:04:52', NULL, 1, '2026-09-01 16:04:52', 'alwi_mansyur', '2026-09-01 16:04:52', NULL, NULL),
+(44, 2, NULL, 43, 'comment', '', 'BtEW3Bot47jXp1gyeMIS8RlJS29MmRZGMW/2jmlEwoHsVG0mrHgojkqX', '2cR5Biw3K4FMzgbg9aPvDMu6Z4MfUS9Z', NULL, 'server-v1', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-09-01 08:04:52', NULL, 0, '2026-09-01 16:04:52', 'nabiila', '2026-09-01 16:04:52', NULL, NULL),
+(45, 1, 2, NULL, 'private', '', 'JSJb4+0h3xbuqLI1gixr86AoK5CDDgq35KseWvyuabnv6Mo81RLnnHfc', 'jiANtqLBek6MH+Zqzq3X+HYxEpNh9w7i', NULL, 'server-v1', 0, NULL, 0, 0, NULL, NULL, NULL, 0, 'default', '2026-09-01 08:04:52', NULL, 0, '2026-09-01 16:04:52', 'alwi_mansyur', '2026-09-01 16:04:52', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -20181,7 +20264,8 @@ ALTER TABLE `group_sub_kegiatan`
 -- Indeks untuk tabel `halaman_berita`
 --
 ALTER TABLE `halaman_berita`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_halaman_publik` (`jenis_halaman`,`aktif`,`is_deleted`,`kd_wilayah`);
 
 --
 -- Indeks untuk tabel `import_logs`
@@ -20406,6 +20490,14 @@ ALTER TABLE `rencana_realisasi_anggaran_neo`
   ADD KEY `idx_rencana_sub_akun` (`kd_sub_keg`,`kd_akun`);
 
 --
+-- Indeks untuk tabel `rencana_rekening_anggaran_neo`
+--
+ALTER TABLE `rencana_rekening_anggaran_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_rencana_rekening_bulan` (`dokumen`,`kd_wilayah`,`kd_opd`,`tahun`,`kd_sub_keg`,`kd_akun`,`jenis`,`bulan`),
+  ADD KEY `idx_rencana_rekening_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`dokumen`,`kd_sub_keg`,`is_deleted`);
+
+--
 -- Indeks untuk tabel `renja_neo`
 --
 ALTER TABLE `renja_neo`
@@ -20528,7 +20620,8 @@ ALTER TABLE `sumber_dana_neo`
 --
 ALTER TABLE `tapd_penugasan_neo`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_tapd_berlaku` (`kd_wilayah`,`tahun`,`tanggal_mulai`,`tanggal_selesai`,`aktif`,`is_deleted`);
+  ADD KEY `idx_tapd_berlaku` (`kd_wilayah`,`tahun`,`tanggal_mulai`,`tanggal_selesai`,`aktif`,`is_deleted`),
+  ADD KEY `idx_tapd_pegawai` (`pegawai_id`,`kd_wilayah`);
 
 --
 -- Indeks untuk tabel `trx_naskah_dinas`
@@ -20575,7 +20668,8 @@ ALTER TABLE `tujuan_renstra_neo`
 ALTER TABLE `user_sesendok_biila`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `username` (`username`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `idx_user_pegawai` (`pegawai_id`,`kd_wilayah`,`kd_opd`);
 
 --
 -- Indeks untuk tabel `user_subkegiatan_neo`
@@ -20765,7 +20859,7 @@ ALTER TABLE `kegiatan_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `kontrak_dokumen_neo`
 --
 ALTER TABLE `kontrak_dokumen_neo`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `kontrak_item_neo`
@@ -20915,7 +21009,13 @@ ALTER TABLE `rekening_kegiatan`
 -- AUTO_INCREMENT untuk tabel `rencana_realisasi_anggaran_neo`
 --
 ALTER TABLE `rencana_realisasi_anggaran_neo`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+
+--
+-- AUTO_INCREMENT untuk tabel `rencana_rekening_anggaran_neo`
+--
+ALTER TABLE `rencana_rekening_anggaran_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
 
 --
 -- AUTO_INCREMENT untuk tabel `renja_neo`
@@ -21065,7 +21165,7 @@ ALTER TABLE `tujuan_renstra_neo`
 -- AUTO_INCREMENT untuk tabel `user_sesendok_biila`
 --
 ALTER TABLE `user_sesendok_biila`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT untuk tabel `user_subkegiatan_neo`
@@ -21077,7 +21177,7 @@ ALTER TABLE `user_subkegiatan_neo`
 -- AUTO_INCREMENT untuk tabel `wallchat`
 --
 ALTER TABLE `wallchat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT untuk tabel `wilayah_neo`
