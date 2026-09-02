@@ -169,6 +169,19 @@
       transform: translateX(20px)
     }
 
+    .sidebarkanan .form-feedback-zone {
+      position: sticky;
+      top: 0;
+      z-index: 12;
+      margin-bottom: 12px;
+      background: inherit;
+    }
+
+    .sidebarkanan .form-feedback-zone .ui.message {
+      margin: 0 0 10px !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .08);
+    }
+
     .app-toast-progress {
       position: absolute;
       left: 0;
@@ -378,6 +391,9 @@
   <!-- NAVBAR (DI LUAR PUSHABLE) -->
   <?php require __DIR__ . '/../partials/auth_navbar.php'; ?>
 
+  <!-- Toast global harus berada di luar pushable/dimmer agar tetap terlihat saat sidebar kanan aktif. -->
+  <div id="toastContainer"></div>
+
   <!-- SIDEBAR WRAPPER (membuka #mainContext) -->
   <?php require __DIR__ . '/../partials/sidebar.php'; ?>
 
@@ -390,7 +406,6 @@
   <!-- PUSHER -->
   <div class="pusher">
 
-    <div id="toastContainer"></div>
     <!-- sticky-->
     <div class="ui sticky">
       <div class="ui icon message dashboard" id="dynamicHeader"><i class="home icon" id="dynamicHeaderIcon"></i>
@@ -413,7 +428,7 @@
   <!-- JS -->
   <script>
     window.ASSET_VERSION =
-      "<?= (string)max((int)@filemtime(__DIR__ . '/../../../public/assets/js/app.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/anggaran-document.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/profil.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/validation-engine.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/toast.js')) ?>";
+      "<?= (string)max((int)@filemtime(__DIR__ . '/../../../public/assets/js/app.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/anggaran-document.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/profil.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/kontrak.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/validation-engine.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/toast.js')) ?>";
     window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
   </script>
   <script>

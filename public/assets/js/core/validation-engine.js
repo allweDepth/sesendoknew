@@ -86,8 +86,12 @@ class FormFeedback {
 	static ensure(form) {
 		form = $(form);
 		if (!form.length) return form;
-		if (!form.find(".ui.error.message").length) form.append('<div class="ui error message" role="alert"></div>');
-		if (!form.find(".ui.success.message").length) form.append('<div class="ui success message" role="status"></div>');
+		let zone = form.children(".form-feedback-zone");
+		if (!zone.length) {
+			zone = $('<div class="form-feedback-zone" aria-live="polite"></div>').prependTo(form);
+		}
+		if (!zone.find(".ui.error.message").length) zone.append('<div class="ui error message" role="alert"></div>');
+		if (!zone.find(".ui.success.message").length) zone.append('<div class="ui success message" role="status"></div>');
 		return form;
 	}
 
@@ -225,6 +229,8 @@ class FormValidation {
 		const errors = this.collect(form);
 		if (Object.keys(errors).length) {
 			FormFeedback.error(form, { success: false, message: "Periksa kembali isian formulir.", errors });
+			const firstMessage = Object.values(errors).flat().find(Boolean) || "Periksa kembali isian formulir.";
+			if (window.Toast) Toast.error(`Form belum valid — ${firstMessage}`);
 			const first = form.find(".field.error").first();
 			if (options.focus !== false && first.length) first[0].scrollIntoView({ behavior: "smooth", block: "center" });
 			return false;
