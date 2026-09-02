@@ -48,8 +48,8 @@
           <i class="olive clipboard list icon"></i> Kegiatan
         </a>
 
-        <a class="item" href="/referensi?tbl=rekening_kegiatan&amp;req=sub_kegiatan" data-req="sub_kegiatan" data-spa="client"
-          data-title="Referensi/Sub Kegiatan">
+        <a class="item" href="/referensi?tbl=rekening_kegiatan&amp;req=sub_kegiatan" data-req="sub_kegiatan"
+          data-spa="client" data-title="Referensi/Sub Kegiatan">
           <i class="grey list alternate icon"></i> Sub Kegiatan
         </a>
 
@@ -119,9 +119,12 @@
     <div class="item">
       <div class="title"><i class="dropdown icon"></i> <i class="project diagram icon"></i> Perencanaan</div>
       <div class="content">
-        <a class="item" href="/renstra" data-spa="client" data-title="Anggaran/Renstra"><i class="purple sitemap icon"></i> RENSTRA</a>
-        <a class="item" href="/rkpd" data-spa="client" data-title="Anggaran/RKPD"><i class="blue calendar check icon"></i> RKPD</a>
-        <a class="item" href="/renja" data-spa="client" data-title="Anggaran/Renja"><i class="violet tasks icon"></i> RENJA</a>
+        <a class="item" href="/renstra" data-spa="client" data-title="Anggaran/Renstra"><i
+            class="purple sitemap icon"></i> RENSTRA</a>
+        <a class="item" href="/rkpd" data-spa="client" data-title="Anggaran/RKPD"><i
+            class="blue calendar check icon"></i> RKPD</a>
+        <a class="item" href="/renja" data-spa="client" data-title="Anggaran/Renja"><i class="violet tasks icon"></i>
+          RENJA</a>
       </div>
     </div>
 
@@ -129,29 +132,41 @@
     <div class="item">
       <div class="title"><i class="dropdown icon"></i> <i class="shopping cart icon"></i> Penganggaran</div>
       <div class="content">
-        <a class="item" href="/pengaturan" data-spa="client" data-title="Penganggaran/Jadwal"><i class="clock outline icon"></i> Jadwal Penganggaran</a>
+        <a class="item" href="/pengaturan" data-spa="client" data-title="Penganggaran/Jadwal"><i
+            class="clock outline icon"></i> Jadwal Penganggaran</a>
         <div class="item"><strong><i class="list alternate outline icon"></i> Sub Kegiatan Belanja</strong></div>
         <a class="item" href="/rka" data-spa="client" data-title="Anggaran/RKA"><i class="calculator icon"></i> RKA</a>
-        <a class="item" href="/dpa" data-spa="client" data-title="Anggaran/DPA"><i class="yellow file alternate icon"></i> DPA</a>
-        <a class="item" href="/rkpd_perubahan" data-spa="client" data-title="Anggaran/RKPD Perubahan"><i class="orange sync icon"></i> RKPD Perubahan</a>
-        <a class="item" href="/renja_perubahan" data-spa="client" data-title="Anggaran/Renja Perubahan"><i class="orange sync alternate icon"></i> RENJA Perubahan</a>
-        <a class="item" href="/rka_perubahan" data-spa="client" data-title="Anggaran/RKA Perubahan"><i class="orange edit icon"></i> RKA Perubahan</a>
-        <a class="item" href="/dppa" data-spa="client" data-title="Anggaran/DPPA"><i class="brown folder open icon"></i> DPPA</a>
+        <a class="item" href="/dpa" data-spa="client" data-title="Anggaran/DPA"><i
+            class="yellow file alternate icon"></i> DPA</a>
+        <a class="item" href="/rkpd_perubahan" data-spa="client" data-title="Anggaran/RKPD Perubahan"><i
+            class="orange sync icon"></i> RKPD Perubahan</a>
+        <a class="item" href="/renja_perubahan" data-spa="client" data-title="Anggaran/Renja Perubahan"><i
+            class="orange sync alternate icon"></i> RENJA Perubahan</a>
+        <a class="item" href="/rka_perubahan" data-spa="client" data-title="Anggaran/RKA Perubahan"><i
+            class="orange edit icon"></i> RKA Perubahan</a>
+        <a class="item" href="/dppa" data-spa="client" data-title="Anggaran/DPPA"><i class="brown folder open icon"></i>
+          DPPA</a>
       </div>
     </div>
 
     <div class="item">
       <div class="title"><i class="dropdown icon"></i> <i class="file signature icon"></i> Kontrak</div>
       <div class="content">
-        <a class="item" href="/kontrak?tbl=kontrak" data-spa="client" data-title="Kontrak/Daftar Kontrak" data-description="Kelola SPK, SPMK, kontrak, RAB, jadwal, dan dokumen kontrak."><i class="file signature icon"></i> Daftar Kontrak</a>
+        <a class="item" href="/kontrak?tbl=kontrak" data-spa="client" data-title="Kontrak/Daftar Kontrak"
+          data-description="Kelola SPK, SPMK, kontrak, RAB, jadwal, dan dokumen kontrak."><i
+            class="file signature icon"></i> Daftar Kontrak</a>
       </div>
     </div>
 
     <div class="item">
-      <div class="title"><i class="dropdown icon"></i> <i class="chart line icon"></i> Realisasi</div>
+      <div class="title"><i class="dropdown icon"></i> <i class="chartline icon"></i> Realisasi</div>
       <div class="content">
-        <a class="item" href="/kontrak?tbl=__laporan" data-spa="client" data-title="Realisasi/Dashboard" data-description="Ringkasan nilai kontrak, progres bulanan, status, dan grafik realisasi."><i class="chart pie icon"></i> Dashboard</a>
-        <a class="item" href="/kontrak?tbl=realisasi" data-spa="client" data-title="Realisasi/Penginputan" data-description="Daftar penginputan kemajuan fisik dan keuangan setiap kontrak."><i class="edit outline icon"></i> List Penginputan</a>
+        <a class="item" href="/kontrak?tbl=__laporan" data-spa="client" data-title="Realisasi/Dashboard"
+          data-description="Ringkasan nilai kontrak, progres bulanan, status, dan grafik realisasi."><i
+            class="chart pie icon"></i> Dashboard</a>
+        <a class="item" href="/kontrak?tbl=realisasi" data-spa="client" data-title="Realisasi/Penginputan"
+          data-description="Daftar penginputan kemajuan fisik dan keuangan setiap kontrak."><i
+            class="edit outline icon"></i> List Penginputan</a>
       </div>
     </div>
 
@@ -188,13 +203,15 @@
         <a class="item" href="/kepegawaian?tbl=sk_pegawai" data-spa="client" data-title="Kepegawaian/SK Pegawai">
           <i class="green file signature icon"></i> SK Pegawai
         </a>
-        <a class="item" href="/kepegawaian?tbl=pejabat_tahunan" data-spa="client" data-title="Kepegawaian/Pejabat Tahunan">
+        <a class="item" href="/kepegawaian?tbl=pejabat_tahunan" data-spa="client"
+          data-title="Kepegawaian/Pejabat Tahunan">
           <i class="violet user shield icon"></i> Pejabat Wajib Tahunan
         </a>
         <a class="item" href="/kepegawaian?tbl=absensi" data-spa="client" data-title="Kepegawaian/Absensi">
           <i class="teal calendar check icon"></i> Absensi Pegawai
         </a>
-        <a class="item" href="/kepegawaian?tbl=penugasan_subkegiatan" data-spa="client" data-title="Kepegawaian/Penugasan Sub Kegiatan">
+        <a class="item" href="/kepegawaian?tbl=penugasan_subkegiatan" data-spa="client"
+          data-title="Kepegawaian/Penugasan Sub Kegiatan">
           <i class="blue sitemap icon"></i> Role &amp; Sub Kegiatan
         </a>
       </div>
@@ -217,29 +234,31 @@
         <a class="item" href="/tata_naskah/daftar" data-spa="client" data-title="Tata Naskah/Daftar Naskah">
           <i class="violet folder icon"></i> Daftar Naskah
         </a>
-        <a class="item" href="/kop_surat" data-spa="server" data-title="Tata Naskah/Kop Surat"><i class="image outline icon"></i> Kop Surat Resmi</a>
+        <a class="item" href="/kop_surat" data-spa="server" data-title="Tata Naskah/Kop Surat"><i
+            class="image outline icon"></i> Kop Surat Resmi</a>
       </div>
     </div>
 
     <?php if (($_SESSION['user']['type_user'] ?? '') !== 'viewer'): ?>
-    <a class="item" href="/halaman_berita" data-spa="client" data-title="Halaman Berita">
-      <i class="newspaper icon"></i> Halaman Berita
-    </a>
+      <a class="item" href="/halaman_berita" data-spa="client" data-title="Halaman Berita">
+        <i class="newspaper icon"></i> Halaman Berita
+      </a>
 
-    <a class="item" href="/pengaturan" data-spa="client" data-title="Pengaturan">
-      <i class="toolbox icon"></i> Pengaturan
-    </a>
+      <a class="item" href="/pengaturan" data-spa="client" data-title="Pengaturan">
+        <i class="toolbox icon"></i> Pengaturan
+      </a>
     <?php endif; ?>
-    <?php if (in_array(($_SESSION['user']['type_user'] ?? ''), ['super_admin','admin_wilayah','admin_opd','kepala_opd'], true)): ?>
-    <a class="item" href="/user_opd" data-spa="server" data-title="Pengaturan User dan Role OPD"><i class="users cog icon"></i> User &amp; Role OPD</a>
+    <?php if (in_array(($_SESSION['user']['type_user'] ?? ''), ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd'], true)): ?>
+      <a class="item" href="/user_opd" data-spa="server" data-title="Pengaturan User dan Role OPD"><i
+          class="users cog icon"></i> User &amp; Role OPD</a>
     <?php endif; ?>
     <?php if (($_SESSION['user']['type_user'] ?? '') === 'super_admin'): ?>
-    <a class="item" href="/reset_tabel" data-spa="client" data-title="Reset Tabel Database">
-      <i class="erase icon"></i> Reset Tabel
-    </a>
-    <a class="item" href="/user_pemda" data-spa="client" data-title="Pengaturan User Pemda">
-      <i class="toolbox icon"></i> User Pemda
-    </a>
+      <a class="item" href="/reset_tabel" data-spa="client" data-title="Reset Tabel Database">
+        <i class="erase icon"></i> Reset Tabel
+      </a>
+      <a class="item" href="/user_pemda" data-spa="client" data-title="Pengaturan User Pemda">
+        <i class="toolbox icon"></i> User Pemda
+      </a>
     <?php endif; ?>
     <a class="item" href="/wallchat" data-spa="server" data-title="Wallchat">
       <i class="comments outline icon"></i> Pesan
