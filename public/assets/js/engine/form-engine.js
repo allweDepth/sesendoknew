@@ -174,18 +174,22 @@ class FormEngine {
 	}
 	applyDropdownSelection($dropdown, value) {
 		const normalized = String(value);
-		let $item = $dropdown.find(".menu .item").filter(function () {
-			return String($(this).attr("data-value")) === normalized;
-		}).first();
+		let $item = $dropdown
+			.find(".menu .item")
+			.filter(function () {
+				return String($(this).attr("data-value")) === normalized;
+			})
+			.first();
 
 		if (!$item.length) {
-			$dropdown.find(".menu").append(
-				$("<div>", { class: "item", "data-value": normalized, text: normalized }),
-			);
+			$dropdown.find(".menu").append($("<div>", { class: "item", "data-value": normalized, text: normalized }));
 			$dropdown.dropdown("refresh");
-			$item = $dropdown.find(".menu .item").filter(function () {
-				return String($(this).attr("data-value")) === normalized;
-			}).first();
+			$item = $dropdown
+				.find(".menu .item")
+				.filter(function () {
+					return String($(this).attr("data-value")) === normalized;
+				})
+				.first();
 		}
 
 		$dropdown.dropdown("set value", normalized);
@@ -298,9 +302,17 @@ class FormEngine {
 		this.isPopulating = true;
 		try {
 			const orderedKeys = [
-				"urusan", "bidang", "program", "kegiatan", "sub_kegiatan",
-				"kd_sub_keg", "kd_akun", "objek_belanja", "jenis_kelompok",
-				"jenis_standar_harga", "id_standar_harga",
+				"urusan",
+				"bidang",
+				"program",
+				"kegiatan",
+				"sub_kegiatan",
+				"kd_sub_keg",
+				"kd_akun",
+				"objek_belanja",
+				"jenis_kelompok",
+				"jenis_standar_harga",
+				"id_standar_harga",
 			];
 
 			// Komponen SSH/SBU/ASB/HSPK adalah dropdown dependen. Saat edit,
@@ -505,8 +517,12 @@ class FormEngine {
 		}
 
 		// ======================================================
-		// VALIDASI FOMANTIC (SINGLE ENGINE)
+		// VALIDASI UNIVERSAL + FOMANTIC
 		// ======================================================
+		if (window.FormValidation && !FormValidation.validate(form)) {
+			this.isSubmitting = false;
+			return;
+		}
 		form.form("validate form"); // // trigger validasi
 
 		if (!form.form("is valid")) {
@@ -514,8 +530,8 @@ class FormEngine {
 			return; // // stop submit
 		}
 
-		const submitButtons = form.closest('.sidebar, .modal').find('.btnSubmit');
-		submitButtons.addClass('loading disabled').prop('disabled', true);
+		const submitButtons = form.closest(".sidebar, .modal").find(".btnSubmit");
+		submitButtons.addClass("loading disabled").prop("disabled", true);
 
 		// ======================================================
 		// NORMALISASI CALENDAR KOSONG
@@ -591,11 +607,17 @@ class FormEngine {
 			success: (res) => {
 				if (!res || res.success !== true) return;
 				this.isSubmitting = false; // // reset flag submit
-				form.removeClass('error').addClass('success');
-				form.find('.ui.error.message').hide().empty();
-				let successBox = form.find('.ui.success.message');
+				form.removeClass("error").addClass("success");
+				form.find(".ui.error.message").hide().empty();
+				let successBox = form.find(".ui.success.message");
 				if (!successBox.length) successBox = $('<div class="ui success message" role="status"></div>').prependTo(form);
-				successBox.html(`<i class="check circle icon"></i>${$('<div>').text(res.message || 'Data berhasil disimpan').html()}`).show();
+				successBox
+					.html(
+						`<i class="check circle icon"></i>${$("<div>")
+							.text(res.message || "Data berhasil disimpan")
+							.html()}`,
+					)
+					.show();
 
 				// ==================================================
 				// AKTIFKAN KEMBALI CALENDAR YANG TADI DISABLE
@@ -622,7 +644,7 @@ class FormEngine {
 			},
 			complete: () => {
 				this.isSubmitting = false;
-				submitButtons.removeClass('loading disabled').prop('disabled', false);
+				submitButtons.removeClass("loading disabled").prop("disabled", false);
 			},
 		});
 	}
@@ -630,23 +652,27 @@ class FormEngine {
 	renderBackendErrors(form, response = {}) {
 		const errors = response?.errors || {};
 		const messages = [];
-		form.find('.field').removeClass('error');
-		form.removeClass('success').addClass('error');
-		form.find('.ui.success.message').hide().empty();
-		if (errors && typeof errors === 'object') {
+		form.find(".field").removeClass("error");
+		form.removeClass("success").addClass("error");
+		form.find(".ui.success.message").hide().empty();
+		if (errors && typeof errors === "object") {
 			Object.entries(errors).forEach(([name, value]) => {
 				const items = Array.isArray(value) ? value : [value];
-				items.forEach(item => item && messages.push(`${name}: ${item}`));
-				form.find(`[name="${name}"]`).closest('.field').addClass('error');
+				items.forEach((item) => item && messages.push(`${name}: ${item}`));
+				form.find(`[name="${name}"]`).closest(".field").addClass("error");
 			});
 		}
 		if (!messages.length && response?.message) messages.push(response.message);
-		const box = form.find('.ui.error.message');
+		const box = form.find(".ui.error.message");
 		if (box.length && messages.length) {
-			box.html(`<div class="header">Data tidak dapat disimpan</div><ul class="list">${messages.map(message => `<li>${$('<div>').text(message).html()}</li>`).join('')}</ul>`).show();
+			box
+				.html(
+					`<div class="header">Data tidak dapat disimpan</div><ul class="list">${messages.map((message) => `<li>${$("<div>").text(message).html()}</li>`).join("")}</ul>`,
+				)
+				.show();
 		}
-		const firstError = form.find('.field.error').first();
-		if (firstError.length) firstError[0].scrollIntoView({behavior:'smooth', block:'center'});
+		const firstError = form.find(".field.error").first();
+		if (firstError.length) firstError[0].scrollIntoView({ behavior: "smooth", block: "center" });
 	}
 
 	/**
@@ -1258,6 +1284,19 @@ data-filter='${JSON.stringify(prop.filter || {})}' // // 🔥 filter server
 				});
 			}
 
+			if (cfg.minLength) {
+				rules.push({
+					type: `minLength[${Number(cfg.minLength)}]`,
+					prompt: `${label} minimal ${Number(cfg.minLength)} karakter`,
+				});
+			}
+			if (cfg.maxLength) {
+				rules.push({
+					type: `maxLength[${Number(cfg.maxLength)}]`,
+					prompt: `${label} maksimal ${Number(cfg.maxLength)} karakter`,
+				});
+			}
+
 			// ======================================================
 			// FINAL ASSIGN
 			// ======================================================
@@ -1319,7 +1358,7 @@ data-filter='${JSON.stringify(prop.filter || {})}' // // 🔥 filter server
 			// ========================================================
 			// VALIDATION FAILED
 			// ========================================================
-				onFailure: function (errors) {
+			onFailure: function (errors) {
 				const form = $(this);
 
 				const errorBox = form.find(".ui.error.message");
@@ -1373,15 +1412,18 @@ data-filter='${JSON.stringify(prop.filter || {})}' // // 🔥 filter server
 
 	inferValidationSchema() {
 		const schema = {};
-		$(this.formSelector).find('[name]').each(function () {
-			const input = $(this), name = input.attr('name');
-			if (!name || input.prop('disabled')) return;
-			const rules = {};
-			if (input.prop('required') || input.closest('.required.field').length) rules.required = true;
-			if (input.attr('type') === 'email') rules.email = true;
-			if (input.attr('minlength')) rules.minLength = Number(input.attr('minlength'));
-			if (Object.keys(rules).length) schema[name] = rules;
-		});
+		$(this.formSelector)
+			.find("[name]")
+			.each(function () {
+				const input = $(this),
+					name = input.attr("name");
+				if (!name || input.prop("disabled")) return;
+				const rules = {};
+				if (input.prop("required") || input.closest(".required.field").length) rules.required = true;
+				if (input.attr("type") === "email") rules.email = true;
+				if (input.attr("minlength")) rules.minLength = Number(input.attr("minlength"));
+				if (Object.keys(rules).length) schema[name] = rules;
+			});
 		return schema;
 	}
 	/**

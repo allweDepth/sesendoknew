@@ -1,7 +1,172 @@
-<div class="ui container"><div class="ui clearing segment"><h2 class="ui left floated header"><i class="users cog blue icon"></i><div class="content"><?= $regional?'Pengaturan User & Tim Anggaran Daerah':'User & Role OPD' ?><div class="sub header">Nama pengguna dan pejabat dipilih dari master kepegawaian wilayah/OPD aktif.</div></div></h2><button class="ui right floated primary button" id="newOpdUser"><i class="plus icon"></i>Tambah User</button></div>
-<?php if($regional):?><div class="ui top attached tabular menu"><a class="active item" data-tab="regional-users">User Wilayah</a><a class="item" data-tab="regional-tapd">Tim Anggaran Daerah</a></div><?php endif;?>
-<div class="ui <?= $regional?'bottom attached active tab segment':'' ?>" <?= $regional?'data-tab="regional-users"':'' ?>><div class="user-table-scroll"><table class="ui celled striped table" style="min-width:950px"><thead><tr><th>Pegawai</th><th>Username</th><th>Role/OPD</th><th>NIP/Kontak</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="opdUserRows"><tr><td colspan="6"><div class="ui active inline loader"></div></td></tr></tbody></table></div></div>
-<?php if($regional):?><div class="ui bottom attached tab segment" data-tab="regional-tapd"><form class="ui form segment" id="tapdAssignmentForm"><h3 class="ui header">Penugasan Tim Anggaran Pemerintah Daerah</h3><div class="three fields"><div class="required field"><label>Pegawai Wilayah</label><select class="ui search dropdown employeeOptions" name="pegawai_id"></select></div><div class="required field"><label>Jabatan Tim</label><input name="jabatan" placeholder="Ketua/Wakil Ketua/Anggota"></div><div class="field"><label>Urutan</label><input type="number" min="1" name="urutan" value="1"></div></div><div class="three fields"><div class="required field"><label>Berlaku mulai</label><input type="date" name="tanggal_mulai"></div><div class="required field"><label>Berlaku sampai</label><input type="date" name="tanggal_selesai"></div><div class="field"><label>&nbsp;</label><button class="ui primary button" type="submit">Simpan Penugasan</button></div></div></form><div class="ui relaxed divided list" id="tapdActiveList"></div></div><?php endif;?></div>
-<div class="ui modal" id="opdUserModal"><i class="close icon"></i><div class="header">User dari Data Kepegawaian</div><div class="content"><form class="ui form" id="opdUserForm"><input type="hidden" name="id"><div class="required field"><label>Pegawai</label><select class="ui fluid search dropdown employeeOptions" name="pegawai_id"></select></div><div class="three fields"><div class="required field"><label>Username</label><input name="username"></div><div class="required field"><label>Email Login</label><input type="email" name="email"></div><div class="required field"><label>Role</label><select class="ui dropdown" name="type_user"><?php foreach($roles as $role):?><option value="<?= $role ?>"><?= ucwords(str_replace('_',' ',$role)) ?></option><?php endforeach;?></select></div></div><div class="field"><label>Password <small>(wajib saat tambah)</small></label><input type="password" name="password" minlength="8"></div><div class="ui toggle checkbox"><input type="checkbox" name="disable" value="1"><label>Nonaktifkan login</label></div></form></div><div class="actions"><button class="ui deny button">Batal</button><button class="ui primary button" id="saveOpdUser">Simpan</button></div></div>
-<style>.user-table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}</style>
-<script>$(function(){const esc=v=>$('<div>').text(v??'').html();let employees=[];const fillEmployees=()=>{$('.employeeOptions').each(function(){const current=$(this).val();$(this).html('<option value="">Pilih pegawai...</option>'+employees.map(p=>`<option value="${p.id}">${esc(p.nama)} - ${esc(p.nip)} (${esc(p.kd_opd||'Wilayah')})</option>`).join('')).dropdown('refresh').dropdown('set selected',current||'')})},loadEmployees=()=>window.Ajax.request({url:'/user_opd/employees',method:'GET',success:r=>{employees=r.data||[];fillEmployees()}}),load=()=>window.Ajax.request({url:'/user_opd/list',method:'GET',success:r=>$('#opdUserRows').html((r.data||[]).map(x=>`<tr data-row='${esc(JSON.stringify(x))}'><td><b>${esc(x.nama)}</b><br><small>${esc(x.email)}</small></td><td>${esc(x.username)}</td><td><span class="ui blue label">${esc(x.type_user)}</span><br><small>${esc(x.kd_opd||'-')}</small></td><td>${esc(x.nip||'-')}<br>${esc(x.kontak_person||'')}</td><td>${Number(x.disable)?'<span class="ui red label">Nonaktif</span>':'<span class="ui green label">Aktif</span>'}</td><td><button class="ui mini button editOpdUser">Edit</button><button class="ui mini red basic button deleteOpdUser" data-id="${x.id}">Nonaktifkan</button></td></tr>`).join('')||'<tr><td colspan="6">Belum ada user.</td></tr>')}),loadTapd=()=>window.Ajax.request({url:'/anggaran/tapd',method:'GET',success:r=>$('#tapdActiveList').html((r.data||[]).map((p,i)=>`<div class="item"><i class="user circle icon"></i><div class="content"><b>${i+1}. ${esc(p.nama)}</b><div>${esc(p.nip||'-')} - ${esc(p.jabatan)}</div></div></div>`).join('')||'<div class="ui message">Belum ada TAPD aktif.</div>')});$('#newOpdUser').click(()=>{$('#opdUserForm')[0].reset();$('#opdUserForm [name=id]').val('');fillEmployees();$('#opdUserModal').modal('show')});$(document).on('click','.editOpdUser',function(){const x=$(this).closest('tr').data('row');Object.entries(x).forEach(([k,v])=>$('#opdUserForm [name='+k+']').val(v));fillEmployees();$('#opdUserModal').modal('show')});$('#saveOpdUser').click(()=>window.Ajax.request({url:'/user_opd/save',method:'POST',data:$('#opdUserForm').serialize(),success:()=>{$('#opdUserModal').modal('hide');load()}}));$(document).on('click','.deleteOpdUser',function(){if(confirm('Nonaktifkan user dan cabut seluruh penugasan?'))window.Ajax.request({url:'/user_opd/delete',method:'POST',data:{id:$(this).data('id')},success:load})});$('#tapdAssignmentForm').on('submit',function(e){e.preventDefault();window.Ajax.request({url:'/anggaran/tapd/save',method:'POST',data:$(this).serialize(),success:()=>{this.reset();loadTapd()}})});$('.menu .item').tab();$('.ui.dropdown').dropdown();$('.ui.checkbox').checkbox();loadEmployees();load();loadTapd();});</script>
+<div class="ui container">
+  <div class="ui clearing segment">
+    <h2 class="ui left floated header"><i class="users cog blue icon"></i>
+      <div class="content"><?= $regional ? 'Pengaturan User & Tim Anggaran Daerah' : 'User & Role OPD' ?><div
+          class="sub header">Nama pengguna dan pejabat dipilih dari master kepegawaian wilayah/OPD aktif.</div>
+      </div>
+    </h2><button class="ui right floated primary button" id="newOpdUser"><i class="plus icon"></i>Tambah User</button>
+  </div>
+  <?php if ($regional): ?><div class="ui top attached tabular menu"><a class="active item"
+        data-tab="regional-users">User
+        Wilayah</a><a class="item" data-tab="regional-tapd">Tim Anggaran Daerah</a></div><?php endif; ?>
+  <div class="ui <?= $regional ? 'bottom attached active tab segment' : '' ?>"
+    <?= $regional ? 'data-tab="regional-users"' : '' ?>>
+    <div class="user-table-scroll">
+      <table class="ui celled striped table" style="min-width:950px">
+        <thead>
+          <tr>
+            <th>Pegawai</th>
+            <th>Username</th>
+            <th>Role/OPD</th>
+            <th>NIP/Kontak</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="opdUserRows">
+          <tr>
+            <td colspan="6">
+              <div class="ui active inline loader"></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <?php if ($regional): ?><div class="ui bottom attached tab segment" data-tab="regional-tapd">
+      <form class="ui form segment" id="tapdAssignmentForm">
+        <h3 class="ui header">Penugasan Tim Anggaran Pemerintah Daerah</h3>
+        <div class="three fields">
+          <div class="required field"><label>Pegawai Wilayah</label><select class="ui search dropdown employeeOptions"
+              name="pegawai_id"></select></div>
+          <div class="required field"><label>Jabatan Tim</label><input name="jabatan"
+              placeholder="Ketua/Wakil Ketua/Anggota"></div>
+          <div class="field"><label>Urutan</label><input type="number" min="1" name="urutan" value="1"></div>
+        </div>
+        <div class="three fields">
+          <div class="required field"><label>Berlaku mulai</label><input type="date" name="tanggal_mulai"></div>
+          <div class="required field"><label>Berlaku sampai</label><input type="date" name="tanggal_selesai"></div>
+          <div class="field"><label>&nbsp;</label><button class="ui primary button" type="submit">Simpan
+              Penugasan</button></div>
+        </div>
+      </form>
+      <div class="ui relaxed divided list" id="tapdActiveList"></div>
+    </div><?php endif; ?>
+</div>
+<div class="ui modal" id="opdUserModal"><i class="close icon"></i>
+  <div class="header">User dari Data Kepegawaian</div>
+  <div class="content">
+    <form class="ui form" id="opdUserForm"><input type="hidden" name="id">
+      <div class="required field"><label>Pegawai</label><select class="ui fluid search dropdown employeeOptions"
+          name="pegawai_id"></select></div>
+      <div class="three fields">
+        <div class="required field"><label>Username</label><input name="username"></div>
+        <div class="required field"><label>Email Login</label><input type="email" name="email"></div>
+        <div class="required field"><label>Role</label><select class="ui dropdown"
+            name="type_user"><?php foreach ($roles as $role): ?><option value="<?= $role ?>">
+                <?= ucwords(str_replace('_', ' ', $role)) ?></option><?php endforeach; ?></select></div>
+      </div>
+      <div class="field"><label>Password <small>(wajib saat tambah)</small></label><input type="password"
+          name="password" minlength="8"></div>
+      <div class="ui toggle checkbox"><input type="checkbox" name="disable" value="1"><label>Nonaktifkan login</label>
+      </div>
+    </form>
+  </div>
+  <div class="actions"><button class="ui deny button">Batal</button><button class="ui primary button"
+      id="saveOpdUser">Simpan</button></div>
+</div>
+<style>
+  .user-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch
+  }
+</style>
+<script>
+  $(function() {
+    const esc = v => $('<div>').text(v ?? '').html();
+    let employees = [];
+    const fillEmployees = () => {
+        $('.employeeOptions').each(function() {
+          const current = $(this).val();
+          $(this).html('<option value="">Pilih pegawai...</option>' + employees.map(p =>
+              `<option value="${p.id}">${esc(p.nama)} - ${esc(p.nip)} (${esc(p.kd_opd||'Wilayah')})</option>`)
+            .join('')).dropdown('refresh').dropdown('set selected', current || '')
+        })
+      },
+      loadEmployees = () => window.Ajax.request({
+        url: '/user_opd/employees',
+        method: 'GET',
+        success: r => {
+          employees = r.data || [];
+          fillEmployees()
+        }
+      }),
+      load = () => window.Ajax.request({
+        url: '/user_opd/list',
+        method: 'GET',
+        success: r => $('#opdUserRows').html((r.data || []).map(x =>
+          `<tr data-row='${esc(JSON.stringify(x))}'><td><b>${esc(x.nama)}</b><br><small>${esc(x.email)}</small></td><td>${esc(x.username)}</td><td><span class="ui blue label">${esc(x.type_user)}</span><br><small>${esc(x.kd_opd||'-')}</small></td><td>${esc(x.nip||'-')}<br>${esc(x.kontak_person||'')}</td><td>${Number(x.disable)?'<span class="ui red label">Nonaktif</span>':'<span class="ui green label">Aktif</span>'}</td><td><button class="ui mini button editOpdUser">Edit</button><button class="ui mini red basic button deleteOpdUser" data-id="${x.id}">Nonaktifkan</button></td></tr>`
+        ).join('') || '<tr><td colspan="6">Belum ada user.</td></tr>')
+      }),
+      loadTapd = () => window.Ajax.request({
+        url: '/anggaran/tapd',
+        method: 'GET',
+        success: r => $('#tapdActiveList').html((r.data || []).map((p, i) =>
+          `<div class="item"><i class="user circle icon"></i><div class="content"><b>${i+1}. ${esc(p.nama)}</b><div>${esc(p.nip||'-')} - ${esc(p.jabatan)}</div></div></div>`
+        ).join('') || '<div class="ui message">Belum ada TAPD aktif.</div>')
+      });
+    $('#newOpdUser').click(() => {
+      $('#opdUserForm')[0].reset();
+      $('#opdUserForm [name=id]').val('');
+      fillEmployees();
+      $('#opdUserModal').modal('show')
+    });
+    $(document).on('click', '.editOpdUser', function() {
+      const x = $(this).closest('tr').data('row');
+      Object.entries(x).forEach(([k, v]) => $('#opdUserForm [name=' + k + ']').val(v));
+      fillEmployees();
+      $('#opdUserModal').modal('show')
+    });
+    $('#saveOpdUser').click(() => {
+      const form = $('#opdUserForm');
+      if (window.FormValidation && !FormValidation.validate(form)) return;
+      window.Ajax.request({
+        url: '/user_opd/save',
+        method: 'POST',
+        data: form.serialize(),
+        success: () => {
+          $('#opdUserModal').modal('hide');
+          load()
+        }
+      })
+    });
+    $(document).on('click', '.deleteOpdUser', function() {
+      if (confirm('Nonaktifkan user dan cabut seluruh penugasan?')) window.Ajax.request({
+        url: '/user_opd/delete',
+        method: 'POST',
+        data: {
+          id: $(this).data('id')
+        },
+        success: load
+      })
+    });
+    $('#tapdAssignmentForm').on('submit', function(e) {
+      e.preventDefault();
+      window.Ajax.request({
+        url: '/anggaran/tapd/save',
+        method: 'POST',
+        data: $(this).serialize(),
+        success: () => {
+          this.reset();
+          loadTapd()
+        }
+      })
+    });
+    $('.menu .item').tab();
+    $('.ui.dropdown').dropdown();
+    $('.ui.checkbox').checkbox();
+    loadEmployees();
+    load();
+    loadTapd();
+  });
+</script>
