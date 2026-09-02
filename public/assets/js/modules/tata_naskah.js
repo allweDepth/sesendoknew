@@ -130,30 +130,9 @@ class TataNaskahModule {
 		$(document).on("input.naskahSearch", "#jenisNaskahSearch", e=>{const q=String(e.target.value||"").toLowerCase();$("#jenis-list .item").each(function(){$(this).toggle($(this).text().toLowerCase().includes(q));});});
 		$(document).on("input.naskahSearch", "#searchTataNaskah", e=>{const q=String(e.target.value||"").toLowerCase();$('[name="tabel_trx_naskah_dinas"] tr[data-id]').each(function(){$(this).toggle($(this).text().toLowerCase().includes(q));});});
 
-		// =====================================
-		// 🔥 FIX: HUBUNGKAN .btnSubmit KE FORM MODAL
-		// =====================================
-		$(document).off("click", ".btnSubmit"); // // cegah double binding
-
-		$(document).on("click", ".btnSubmit", (e) => {
-			const btn = $(e.currentTarget); // // ambil button
-
-			// =====================================
-			// VALIDASI: HARUS DI DALAM MODAL INI
-			// =====================================
-			const modal = btn.closest("#mainModal"); // // scope modal
-
-			if (!modal.length) return; // // bukan modal ini → skip
-
-			const form = modal.find("#form_modal"); // // ambil form modal
-
-			if (!form.length) return; // // safety
-
-			// =====================================
-			// TRIGGER SUBMIT (INI YANG HILANG)
-			// =====================================
-			form.trigger("submit"); // // gunakan jQuery event agar tidak double
-		});
+		// Tombol .btnSubmit dikelola global oleh FlyoutController.
+		// Modul ini hanya menangani event submit #form_modal agar tidak
+		// memutus handler Submit milik sidebar/flyout modul lain pada SPA.
 
 		// =====================================
 		// EDIT

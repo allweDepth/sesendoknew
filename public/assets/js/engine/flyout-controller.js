@@ -75,15 +75,31 @@ class FlyoutController {
 		// sebelum
 		// self.getActiveForm().submit();
 
-		$(document).on("click", ".btnSubmit", function (e) {
-			// intercept klik tombol
+		$(document)
+			.off("click.flyoutSubmit", ".btnSubmit")
+			.on("click.flyoutSubmit", ".btnSubmit", function (e) {
+				// Submit harus mengikuti container tombol yang benar-benar diklik.
+				// Ini menjaga flyout tetap bekerja walau modul SPA lain membuka modal.
+				e.preventDefault();
 
-			e.preventDefault(); // cegah submit native
+				const $button = $(this);
+				let form = $button.closest("#mainModal").find("#form_modal");
 
-			const form = self.getActiveForm(); // ambil form aktif
+				if (!form.length) {
+					form = $button.closest(".sidebarkanan").find("#form_flyout");
+				}
 
-			form.trigger("submit"); // trigger submit event jQuery agar FormEngine menangkap
-		});
+				if (!form.length) {
+					form = self.getActiveForm();
+				}
+
+				if (!form.length) {
+					console.error("Form aktif untuk tombol Submit tidak ditemukan");
+					return;
+				}
+
+				form.trigger("submit");
+			});
 
 		// CLOSE FLYOUT
 		$(document).on("click", ".btnFlyoutClose", function () {
