@@ -153,6 +153,8 @@ return [
     |--------------------------------------------------------------------------
     */
   '/profil'        => ['ProfilController', 'index'],
+  '/profil/save' => ['ProfilController', 'save'],
+  '/profil/photo' => ['ProfilController', 'photo'],
   '/profil/periods' => ['ProfilController', 'periods'],
   '/profil/select-period' => ['ProfilController', 'selectPeriod'],
   '/profil/upload-photo' => ['ProfilController', 'uploadPhoto'],
@@ -201,7 +203,7 @@ return [
     |--------------------------------------------------------------------------
     */
   '/api' => ['ApiController', 'handle'],
-/*
+  /*
 |--------------------------------------------------------------------------
 | ANGGARAN MODULE (RENJA → DPPA)
 |--------------------------------------------------------------------------

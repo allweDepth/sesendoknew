@@ -408,7 +408,7 @@ $profiles = [
       ]
     ]
   ],
-  'mapping' => [ 
+  'mapping' => [
 
     'table' => 'master_biaya_akun',
     'auto_session' => ['kd_wilayah', 'peraturan_id'],
@@ -622,7 +622,7 @@ $profiles = [
     'primary_key' => 'id',
     'allowed_roles' => ['super_admin', 'admin_wilayah'],
     'soft_lock' => true,
-    'dropdown' => ['value'=>'id','label'=>'uraian','searchable'=>['kode','uraian'],'order_by'=>'kode ASC'],
+    'dropdown' => ['value' => 'id', 'label' => 'uraian', 'searchable' => ['kode', 'uraian'], 'order_by' => 'kode ASC'],
     'import' => [
       'enabled' => true
     ],
@@ -711,7 +711,7 @@ $profiles = [
     'primary_key' => 'id',
     'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
     'soft_lock' => true,
-    'dropdown' => ['value'=>'id','label'=>'nama_perusahaan','searchable'=>['nama_perusahaan','npwp'],'order_by'=>'nama_perusahaan ASC'],
+    'dropdown' => ['value' => 'id', 'label' => 'nama_perusahaan', 'searchable' => ['nama_perusahaan', 'npwp'], 'order_by' => 'nama_perusahaan ASC'],
     'auto_session' => ['kd_wilayah'],
     'where' => [
       'is_deleted' => 0
@@ -882,66 +882,78 @@ $profiles = [
   ],
 
   'pppk' => [
-    'table' => 'db_asn_pemda_neo', 'primary_key' => 'id',
+    'table' => 'db_asn_pemda_neo',
+    'primary_key' => 'id',
     'auto_session' => ['kd_wilayah', 'kd_opd'],
     'where' => ['jenis_kepeg' => 'PPPK'],
     'validation' => ['nip' => ['required', 'unique'], 'nama' => ['required']],
     'modes' => [
-      'default' => ['select' => ['id','nama','nip','jabatan','unit_kerja','status_kepeg','keterangan'], 'searchable' => ['nama','nip','jabatan'], 'order_by' => 'nama ASC'],
-      'kepegawaian' => ['select' => ['id','nama','nip','jabatan','unit_kerja','status_kepeg','keterangan'], 'searchable' => ['nama','nip','jabatan'], 'order_by' => 'nama ASC'],
+      'default' => ['select' => ['id', 'nama', 'nip', 'jabatan', 'unit_kerja', 'status_kepeg', 'keterangan'], 'searchable' => ['nama', 'nip', 'jabatan'], 'order_by' => 'nama ASC'],
+      'kepegawaian' => ['select' => ['id', 'nama', 'nip', 'jabatan', 'unit_kerja', 'status_kepeg', 'keterangan'], 'searchable' => ['nama', 'nip', 'jabatan'], 'order_by' => 'nama ASC'],
       'edit' => ['select' => ['*'], 'searchable' => ['*'], 'order_by' => 'nama ASC']
     ]
   ],
 
   'riwayat_jabatan' => [
-    'table' => 'riwayat_jabatan_neo', 'primary_key' => 'id', 'auto_session' => ['kd_wilayah','kd_opd','tahun'],
+    'table' => 'riwayat_jabatan_neo',
+    'primary_key' => 'id',
+    'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
     'validation' => ['pegawai_id' => ['required'], 'jabatan' => ['required'], 'tmt' => ['required']],
     'modes' => [
-      'kepegawaian' => ['select' => ['id','pegawai_id','nomor_sk','jabatan','unit_kerja','tmt','tanggal_selesai','keterangan'], 'searchable' => ['nomor_sk','jabatan','unit_kerja'], 'order_by' => 'tmt DESC'],
-      'default' => ['select' => ['*'], 'searchable' => ['nomor_sk','jabatan','unit_kerja'], 'order_by' => 'tmt DESC'],
+      'kepegawaian' => ['select' => ['id', 'pegawai_id', 'nomor_sk', 'jabatan', 'unit_kerja', 'tmt', 'tanggal_selesai', 'keterangan'], 'searchable' => ['nomor_sk', 'jabatan', 'unit_kerja'], 'order_by' => 'tmt DESC'],
+      'default' => ['select' => ['*'], 'searchable' => ['nomor_sk', 'jabatan', 'unit_kerja'], 'order_by' => 'tmt DESC'],
       'edit' => ['select' => ['*'], 'searchable' => ['*'], 'order_by' => 'id DESC']
     ]
   ],
 
   'riwayat_pangkat' => [
-    'table' => 'riwayat_pangkat_neo', 'primary_key' => 'id', 'auto_session' => ['kd_wilayah','kd_opd','tahun'],
+    'table' => 'riwayat_pangkat_neo',
+    'primary_key' => 'id',
+    'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
     'validation' => ['pegawai_id' => ['required'], 'golongan' => ['required'], 'tmt' => ['required']],
     'modes' => [
-      'kepegawaian' => ['select' => ['id','pegawai_id','nomor_sk','golongan','ruang','tmt','masa_kerja_tahun','keterangan'], 'searchable' => ['nomor_sk','golongan','ruang'], 'order_by' => 'tmt DESC'],
-      'default' => ['select' => ['*'], 'searchable' => ['nomor_sk','golongan','ruang'], 'order_by' => 'tmt DESC'],
+      'kepegawaian' => ['select' => ['id', 'pegawai_id', 'nomor_sk', 'golongan', 'ruang', 'tmt', 'masa_kerja_tahun', 'keterangan'], 'searchable' => ['nomor_sk', 'golongan', 'ruang'], 'order_by' => 'tmt DESC'],
+      'default' => ['select' => ['*'], 'searchable' => ['nomor_sk', 'golongan', 'ruang'], 'order_by' => 'tmt DESC'],
       'edit' => ['select' => ['*'], 'searchable' => ['*'], 'order_by' => 'id DESC']
     ]
   ],
 
   'cuti' => [
-    'table' => 'cuti_pegawai_neo', 'primary_key' => 'id', 'auto_session' => ['kd_wilayah','kd_opd','tahun'],
+    'table' => 'cuti_pegawai_neo',
+    'primary_key' => 'id',
+    'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
     'validation' => ['pegawai_id' => ['required'], 'jenis_cuti' => ['required'], 'tanggal_mulai' => ['required'], 'tanggal_selesai' => ['required']],
     'modes' => [
-      'kepegawaian' => ['select' => ['id','pegawai_id','nomor_surat','jenis_cuti','tanggal_mulai','tanggal_selesai','jumlah_hari','status','keterangan'], 'searchable' => ['nomor_surat','jenis_cuti','status'], 'order_by' => 'tanggal_mulai DESC'],
-      'default' => ['select' => ['*'], 'searchable' => ['nomor_surat','jenis_cuti','status'], 'order_by' => 'tanggal_mulai DESC'],
+      'kepegawaian' => ['select' => ['id', 'pegawai_id', 'nomor_surat', 'jenis_cuti', 'tanggal_mulai', 'tanggal_selesai', 'jumlah_hari', 'status', 'keterangan'], 'searchable' => ['nomor_surat', 'jenis_cuti', 'status'], 'order_by' => 'tanggal_mulai DESC'],
+      'default' => ['select' => ['*'], 'searchable' => ['nomor_surat', 'jenis_cuti', 'status'], 'order_by' => 'tanggal_mulai DESC'],
       'edit' => ['select' => ['*'], 'searchable' => ['*'], 'order_by' => 'id DESC']
     ]
   ],
 
   'sk_pegawai' => [
-    'table' => 'sk_pegawai_neo', 'primary_key' => 'id', 'auto_session' => ['kd_wilayah','kd_opd','tahun'],
+    'table' => 'sk_pegawai_neo',
+    'primary_key' => 'id',
+    'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
     'validation' => ['pegawai_id' => ['required'], 'nomor_sk' => ['required'], 'jenis_sk' => ['required']],
     'modes' => [
-      'kepegawaian' => ['select' => ['id','pegawai_id','nomor_sk','tanggal_sk','jenis_sk','tentang','file','keterangan'], 'searchable' => ['nomor_sk','jenis_sk','tentang'], 'order_by' => 'tanggal_sk DESC'],
-      'default' => ['select' => ['*'], 'searchable' => ['nomor_sk','jenis_sk','tentang'], 'order_by' => 'tanggal_sk DESC'],
+      'kepegawaian' => ['select' => ['id', 'pegawai_id', 'nomor_sk', 'tanggal_sk', 'jenis_sk', 'tentang', 'file', 'keterangan'], 'searchable' => ['nomor_sk', 'jenis_sk', 'tentang'], 'order_by' => 'tanggal_sk DESC'],
+      'default' => ['select' => ['*'], 'searchable' => ['nomor_sk', 'jenis_sk', 'tentang'], 'order_by' => 'tanggal_sk DESC'],
       'edit' => ['select' => ['*'], 'searchable' => ['*'], 'order_by' => 'id DESC']
     ]
   ],
 
   'pejabat_tahunan' => [
-    'table'=>'pejabat_tahunan_neo','primary_key'=>'id','auto_session'=>['kd_wilayah','kd_opd','tahun'],
-    'where'=>['is_deleted'=>0],'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
-    'validation'=>['jenis_pejabat'=>['required'],'pegawai_id'=>['required','numeric'],'nomor_sk'=>['required'],'berlaku_mulai'=>['required'],'berlaku_sampai'=>['required']],
-    'dropdown'=>['value'=>'id','label'=>'nama_pegawai','searchable'=>['nama_pegawai','nip','jenis_pejabat','kd_sub_keg'],'order_by'=>'nama_pegawai ASC'],
-    'modes'=>[
-      'default'=>['select'=>['id','jenis_pejabat','nama_pegawai','nip','nomor_sk','berlaku_mulai','berlaku_sampai','kd_sub_keg','keterangan'],'searchable'=>['jenis_pejabat','nama_pegawai','nip','nomor_sk','kd_sub_keg'],'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0],'order_by'=>'berlaku_mulai DESC'],
-      'dropdown'=>['select'=>['id','nama_pegawai','nip','jenis_pejabat','kd_sub_keg'],'searchable'=>['nama_pegawai','nip','jenis_pejabat','kd_sub_keg'],'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0],'order_by'=>'nama_pegawai ASC'],
-      'edit'=>['select'=>['*'],'searchable'=>['nama_pegawai','nip'],'order_by'=>'id ASC']
+    'table' => 'pejabat_tahunan_neo',
+    'primary_key' => 'id',
+    'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
+    'where' => ['is_deleted' => 0],
+    'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1],
+    'validation' => ['jenis_pejabat' => ['required'], 'pegawai_id' => ['required', 'numeric'], 'nomor_sk' => ['required'], 'berlaku_mulai' => ['required'], 'berlaku_sampai' => ['required']],
+    'dropdown' => ['value' => 'id', 'label' => 'nama_pegawai', 'searchable' => ['nama_pegawai', 'nip', 'jenis_pejabat', 'kd_sub_keg'], 'order_by' => 'nama_pegawai ASC'],
+    'modes' => [
+      'default' => ['select' => ['id', 'jenis_pejabat', 'nama_pegawai', 'nip', 'nomor_sk', 'berlaku_mulai', 'berlaku_sampai', 'kd_sub_keg', 'keterangan'], 'searchable' => ['jenis_pejabat', 'nama_pegawai', 'nip', 'nomor_sk', 'kd_sub_keg'], 'where' => ['kd_wilayah' => 'user', 'kd_opd' => 'user', 'tahun' => 'user', 'is_deleted' => 0], 'order_by' => 'berlaku_mulai DESC'],
+      'dropdown' => ['select' => ['id', 'nama_pegawai', 'nip', 'jenis_pejabat', 'kd_sub_keg'], 'searchable' => ['nama_pegawai', 'nip', 'jenis_pejabat', 'kd_sub_keg'], 'where' => ['kd_wilayah' => 'user', 'kd_opd' => 'user', 'tahun' => 'user', 'is_deleted' => 0], 'order_by' => 'nama_pegawai ASC'],
+      'edit' => ['select' => ['*'], 'searchable' => ['nama_pegawai', 'nip'], 'order_by' => 'id ASC']
     ]
   ],
 
@@ -1998,7 +2010,11 @@ $profiles = [
           'tahun',
           'kontak_person',
           'nama_org',
-          'kd_opd'
+          'kd_opd',
+          'font_size',
+          'theme',
+          'warna_tbl',
+          'ket'
         ],
 
         // field yang boleh dicari
@@ -2050,7 +2066,7 @@ $profiles = [
     // --------------------------------------------------
     'table' => 'halaman_berita',
     'primary_key' => 'id',
-    'allowed_roles' => ['super_admin','admin_wilayah','tapd'],
+    'allowed_roles' => ['super_admin', 'admin_wilayah', 'tapd'],
 
     // --------------------------------------------------
     // auto session
@@ -2104,7 +2120,8 @@ $profiles = [
           'id',
           'judul',
           'slug',
-          'jenis_halaman','aktif',
+          'jenis_halaman',
+          'aktif',
           'konten',
           'gambar',
           'kd_wilayah',
@@ -2116,7 +2133,8 @@ $profiles = [
         'searchable' => [
           'judul',
           'slug',
-          'jenis_halaman','aktif',
+          'jenis_halaman',
+          'aktif',
           'konten',
           'username_insert'
         ],
@@ -2136,7 +2154,8 @@ $profiles = [
           'kd_opd',
           'judul',
           'slug',
-          'jenis_halaman','aktif',
+          'jenis_halaman',
+          'aktif',
           'konten',
           'gambar',
           'keterangan',
@@ -2219,14 +2238,22 @@ $standarHargaProfile = static function (string $tipe): array {
     'modes' => [
       'default' => [
         'select' => [
-          'master_biaya.id', 'master_biaya.kode', 'master_biaya.kode_aset',
-          'master_biaya.kelompok_barang', 'master_biaya.uraian',
-          'master_biaya.spesifikasi', 'satuan_neo.uraian AS satuan',
-          'master_biaya.harga', 'master_biaya.tkdn', 'master_biaya.keterangan'
+          'master_biaya.id',
+          'master_biaya.kode',
+          'master_biaya.kode_aset',
+          'master_biaya.kelompok_barang',
+          'master_biaya.uraian',
+          'master_biaya.spesifikasi',
+          'satuan_neo.uraian AS satuan',
+          'master_biaya.harga',
+          'master_biaya.tkdn',
+          'master_biaya.keterangan'
         ],
         'searchable' => [
-          'master_biaya.kode', 'master_biaya.kode_aset',
-          'master_biaya.kelompok_barang', 'master_biaya.uraian',
+          'master_biaya.kode',
+          'master_biaya.kode_aset',
+          'master_biaya.kelompok_barang',
+          'master_biaya.uraian',
           'master_biaya.spesifikasi'
         ],
         'order_by' => 'master_biaya.kode ASC',
@@ -2255,20 +2282,22 @@ $documentProfile = static function (string $table, array $searchable = ['kd_sub_
     'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
     'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
     'where' => ['is_deleted' => 0],
-    'soft_delete' => ['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
-    'import' => ['enabled'=>true,'allowed_roles'=>['super_admin','admin_wilayah','admin_opd']],
+    'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1],
+    'import' => ['enabled' => true, 'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd']],
     'modes' => [
       'default' => [
-        'select' => ['*'], 'searchable' => $searchable, 'order_by' => 'id DESC',
-        'where' => ['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0]
+        'select' => ['*'],
+        'searchable' => $searchable,
+        'order_by' => 'id DESC',
+        'where' => ['kd_wilayah' => 'user', 'kd_opd' => 'user', 'tahun' => 'user', 'is_deleted' => 0]
       ],
-      'edit' => ['select'=>['*'],'searchable'=>$searchable,'order_by'=>'id ASC']
+      'edit' => ['select' => ['*'], 'searchable' => $searchable, 'order_by' => 'id ASC']
     ]
   ];
 };
-$profiles['rkpd'] = $documentProfile('rkpd_neo', ['kd_program','kd_kegiatan','kd_sub_keg','indikator','lokasi']);
-$profiles['rkpd']['validation'] = ['kd_sub_keg'=>['required'],'target'=>['required','numeric'],'pagu'=>['required','numeric']];
-$profiles['rkpd_p'] = $documentProfile('rkpd_p_neo', ['kd_program','kd_kegiatan','kd_sub_keg','indikator','lokasi']);
+$profiles['rkpd'] = $documentProfile('rkpd_neo', ['kd_program', 'kd_kegiatan', 'kd_sub_keg', 'indikator', 'lokasi']);
+$profiles['rkpd']['validation'] = ['kd_sub_keg' => ['required'], 'target' => ['required', 'numeric'], 'pagu' => ['required', 'numeric']];
+$profiles['rkpd_p'] = $documentProfile('rkpd_p_neo', ['kd_program', 'kd_kegiatan', 'kd_sub_keg', 'indikator', 'lokasi']);
 $profiles['renja'] = $documentProfile('renja_neo');
 $profiles['rka'] = $documentProfile('rka_neo');
 $profiles['dpa'] = $documentProfile('dpa_neo');
@@ -2277,77 +2306,89 @@ $profiles['rka_p'] = $documentProfile('rka_p_neo');
 $profiles['dppa'] = $documentProfile('dppa_neo');
 
 $profiles['kontrak'] = [
-  'table'=>'kontrak_neo','primary_key'=>'id','allowed_roles'=>['super_admin','admin_wilayah','admin_opd'],
-  'auto_session'=>['kd_wilayah','kd_opd','tahun'],
-  'where'=>['is_deleted'=>0],
-  'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
-  'not_duplicate'=>['kd_wilayah','kd_opd','tahun','nomor_kontrak'],
-  'lookup'=>['nama_ppk'=>['table'=>'pejabat_tahunan_neo','value_field'=>'nama_pegawai','match'=>['id'=>'ppk_id']]],
-  'validation'=>['rekanan_id'=>['required','numeric'],'nomor_spk'=>['required'],'nomor_spmk'=>['required'],'nomor_kontrak'=>['required']],
-  'req_filters'=>['kontrak_dpa'=>['where'=>['tahap'=>'dpa']],'kontrak_dppa'=>['where'=>['tahap'=>'dppa']]],
-  'dropdown'=>['value'=>'id','label'=>'nomor_kontrak'],
-  'modes'=>[
-    'default'=>[
-      'select'=>['kontrak_neo.id','kontrak_neo.tahap','kontrak_neo.kd_sub_keg','kontrak_neo.nomor_spk','kontrak_neo.nomor_spmk','kontrak_neo.nomor_kontrak','kontrak_neo.uraian_kontrak','rekanan_neo.nama_perusahaan AS penyedia','kontrak_neo.total_anggaran','kontrak_neo.nilai_kontrak','kontrak_neo.tanggal_mulai','kontrak_neo.tanggal_selesai','kontrak_neo.status_kontrak'],
-      'searchable'=>['kontrak_neo.nomor_spk','kontrak_neo.nomor_spmk','kontrak_neo.nomor_kontrak','kontrak_neo.uraian_kontrak','rekanan_neo.nama_perusahaan'],
-      'where'=>['kontrak_neo.kd_wilayah'=>'user','kontrak_neo.kd_opd'=>'user','kontrak_neo.tahun'=>'user','kontrak_neo.is_deleted'=>0],
-      'order_by'=>'kontrak_neo.id DESC'
+  'table' => 'kontrak_neo',
+  'primary_key' => 'id',
+  'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
+  'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
+  'where' => ['is_deleted' => 0],
+  'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1],
+  'not_duplicate' => ['kd_wilayah', 'kd_opd', 'tahun', 'nomor_kontrak'],
+  'lookup' => ['nama_ppk' => ['table' => 'pejabat_tahunan_neo', 'value_field' => 'nama_pegawai', 'match' => ['id' => 'ppk_id']]],
+  'validation' => ['rekanan_id' => ['required', 'numeric'], 'nomor_spk' => ['required'], 'nomor_spmk' => ['required'], 'nomor_kontrak' => ['required']],
+  'req_filters' => ['kontrak_dpa' => ['where' => ['tahap' => 'dpa']], 'kontrak_dppa' => ['where' => ['tahap' => 'dppa']]],
+  'dropdown' => ['value' => 'id', 'label' => 'nomor_kontrak'],
+  'modes' => [
+    'default' => [
+      'select' => ['kontrak_neo.id', 'kontrak_neo.tahap', 'kontrak_neo.kd_sub_keg', 'kontrak_neo.nomor_spk', 'kontrak_neo.nomor_spmk', 'kontrak_neo.nomor_kontrak', 'kontrak_neo.uraian_kontrak', 'rekanan_neo.nama_perusahaan AS penyedia', 'kontrak_neo.total_anggaran', 'kontrak_neo.nilai_kontrak', 'kontrak_neo.tanggal_mulai', 'kontrak_neo.tanggal_selesai', 'kontrak_neo.status_kontrak'],
+      'searchable' => ['kontrak_neo.nomor_spk', 'kontrak_neo.nomor_spmk', 'kontrak_neo.nomor_kontrak', 'kontrak_neo.uraian_kontrak', 'rekanan_neo.nama_perusahaan'],
+      'where' => ['kontrak_neo.kd_wilayah' => 'user', 'kontrak_neo.kd_opd' => 'user', 'kontrak_neo.tahun' => 'user', 'kontrak_neo.is_deleted' => 0],
+      'order_by' => 'kontrak_neo.id DESC'
     ],
-    'edit'=>['select'=>['kontrak_neo.*'],'searchable'=>['kontrak_neo.nomor_kontrak'],'order_by'=>'kontrak_neo.id ASC']
+    'edit' => ['select' => ['kontrak_neo.*'], 'searchable' => ['kontrak_neo.nomor_kontrak'], 'order_by' => 'kontrak_neo.id ASC']
   ],
-  'join'=>[['table'=>'rekanan_neo','on'=>'rekanan_neo.id = kontrak_neo.rekanan_id']]
+  'join' => [['table' => 'rekanan_neo', 'on' => 'rekanan_neo.id = kontrak_neo.rekanan_id']]
 ];
 $profiles['realisasi'] = [
-  'table'=>'daftar_realisasi_neo','primary_key'=>'id','allowed_roles'=>['super_admin','admin_wilayah','admin_opd'],
-  'auto_session'=>['kd_wilayah','kd_opd','tahun'],'where'=>['is_deleted'=>0],
-  'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
-  'validation'=>['kontrak_id'=>['required','numeric'],'tanggal'=>['required'],'jumlah'=>['required','numeric'],'progress_fisik'=>['required','numeric']],
-  'modes'=>[
-    'default'=>['select'=>['daftar_realisasi_neo.id','kontrak_neo.nomor_kontrak','daftar_realisasi_neo.tanggal','daftar_realisasi_neo.periode','daftar_realisasi_neo.kd_sub_keg','daftar_realisasi_neo.kd_akun','daftar_realisasi_neo.jumlah','daftar_realisasi_neo.progress_fisik','daftar_realisasi_neo.nomor_bukti','daftar_realisasi_neo.keterangan'],'searchable'=>['kontrak_neo.nomor_kontrak','daftar_realisasi_neo.kd_sub_keg','daftar_realisasi_neo.nomor_bukti','daftar_realisasi_neo.keterangan'],'where'=>['daftar_realisasi_neo.kd_wilayah'=>'user','daftar_realisasi_neo.kd_opd'=>'user','daftar_realisasi_neo.tahun'=>'user','daftar_realisasi_neo.is_deleted'=>0],'order_by'=>'daftar_realisasi_neo.tanggal DESC'],
-    'edit'=>['select'=>['daftar_realisasi_neo.*'],'searchable'=>['daftar_realisasi_neo.keterangan'],'order_by'=>'daftar_realisasi_neo.id ASC']
+  'table' => 'daftar_realisasi_neo',
+  'primary_key' => 'id',
+  'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
+  'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
+  'where' => ['is_deleted' => 0],
+  'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1],
+  'validation' => ['kontrak_id' => ['required', 'numeric'], 'tanggal' => ['required'], 'jumlah' => ['required', 'numeric'], 'progress_fisik' => ['required', 'numeric']],
+  'modes' => [
+    'default' => ['select' => ['daftar_realisasi_neo.id', 'kontrak_neo.nomor_kontrak', 'daftar_realisasi_neo.tanggal', 'daftar_realisasi_neo.periode', 'daftar_realisasi_neo.kd_sub_keg', 'daftar_realisasi_neo.kd_akun', 'daftar_realisasi_neo.jumlah', 'daftar_realisasi_neo.progress_fisik', 'daftar_realisasi_neo.nomor_bukti', 'daftar_realisasi_neo.keterangan'], 'searchable' => ['kontrak_neo.nomor_kontrak', 'daftar_realisasi_neo.kd_sub_keg', 'daftar_realisasi_neo.nomor_bukti', 'daftar_realisasi_neo.keterangan'], 'where' => ['daftar_realisasi_neo.kd_wilayah' => 'user', 'daftar_realisasi_neo.kd_opd' => 'user', 'daftar_realisasi_neo.tahun' => 'user', 'daftar_realisasi_neo.is_deleted' => 0], 'order_by' => 'daftar_realisasi_neo.tanggal DESC'],
+    'edit' => ['select' => ['daftar_realisasi_neo.*'], 'searchable' => ['daftar_realisasi_neo.keterangan'], 'order_by' => 'daftar_realisasi_neo.id ASC']
   ],
-  'join'=>[['table'=>'kontrak_neo','on'=>'kontrak_neo.id = daftar_realisasi_neo.kontrak_id']]
+  'join' => [['table' => 'kontrak_neo', 'on' => 'kontrak_neo.id = daftar_realisasi_neo.kontrak_id']]
 ];
-$profiles['rab_kontrak']=['table'=>'rab_paket_neo','primary_key'=>'id','dropdown'=>['value'=>'id','label'=>'uraian','searchable'=>['nomor','uraian'],'order_by'=>'nomor ASC'],'modes'=>['dropdown'=>['select'=>['id','kontrak_id','nomor','uraian','satuan','jumlah_negoisasi','bobot'],'searchable'=>['nomor','uraian'],'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0],'order_by'=>'nomor ASC']]];
-foreach (['dpa','dppa'] as $budgetDropdown) {
-  $profiles[$budgetDropdown]['dropdown']=['value'=>'id','label'=>'uraian','searchable'=>['kd_sub_keg','uraian'],'order_by'=>'id DESC'];
+$profiles['rab_kontrak'] = ['table' => 'rab_paket_neo', 'primary_key' => 'id', 'dropdown' => ['value' => 'id', 'label' => 'uraian', 'searchable' => ['nomor', 'uraian'], 'order_by' => 'nomor ASC'], 'modes' => ['dropdown' => ['select' => ['id', 'kontrak_id', 'nomor', 'uraian', 'satuan', 'jumlah_negoisasi', 'bobot'], 'searchable' => ['nomor', 'uraian'], 'where' => ['kd_wilayah' => 'user', 'kd_opd' => 'user', 'tahun' => 'user', 'is_deleted' => 0], 'order_by' => 'nomor ASC']]];
+foreach (['dpa', 'dppa'] as $budgetDropdown) {
+  $profiles[$budgetDropdown]['dropdown'] = ['value' => 'id', 'label' => 'uraian', 'searchable' => ['kd_sub_keg', 'uraian'], 'order_by' => 'id DESC'];
 }
 
-$officialDropdown = static function(string $type): array {
+$officialDropdown = static function (string $type): array {
   return [
-    'table'=>'pejabat_tahunan_neo','primary_key'=>'id',
-    'dropdown'=>['value'=>'id','label'=>'nama_pegawai','searchable'=>['nama_pegawai','nip','kd_sub_keg'],'order_by'=>'nama_pegawai ASC'],
-    'modes'=>['dropdown'=>[
-      'select'=>['id','nama_pegawai','nip','jenis_pejabat','kd_sub_keg'],
-      'searchable'=>['nama_pegawai','nip','kd_sub_keg'],
-      'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','jenis_pejabat'=>$type,'berlaku_mulai <='=>date('Y-m-d'),'berlaku_sampai >='=>date('Y-m-d'),'is_deleted'=>0],
-      'order_by'=>'nama_pegawai ASC'
+    'table' => 'pejabat_tahunan_neo',
+    'primary_key' => 'id',
+    'dropdown' => ['value' => 'id', 'label' => 'nama_pegawai', 'searchable' => ['nama_pegawai', 'nip', 'kd_sub_keg'], 'order_by' => 'nama_pegawai ASC'],
+    'modes' => ['dropdown' => [
+      'select' => ['id', 'nama_pegawai', 'nip', 'jenis_pejabat', 'kd_sub_keg'],
+      'searchable' => ['nama_pegawai', 'nip', 'kd_sub_keg'],
+      'where' => ['kd_wilayah' => 'user', 'kd_opd' => 'user', 'tahun' => 'user', 'jenis_pejabat' => $type, 'berlaku_mulai <=' => date('Y-m-d'), 'berlaku_sampai >=' => date('Y-m-d'), 'is_deleted' => 0],
+      'order_by' => 'nama_pegawai ASC'
     ]]
   ];
 };
-$profiles['pejabat_ppk']=$officialDropdown('PPK');
-$profiles['pejabat_pptk']=$officialDropdown('PPTK');
+$profiles['pejabat_ppk'] = $officialDropdown('PPK');
+$profiles['pejabat_pptk'] = $officialDropdown('PPTK');
 
-$profiles['absensi']=[
-  'table'=>'absensi_pegawai_neo','primary_key'=>'id','allowed_roles'=>['super_admin','admin_wilayah','admin_opd','kepala_opd'],
-  'auto_session'=>['kd_wilayah','kd_opd','tahun'],'where'=>['is_deleted'=>0],
-  'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
-  'validation'=>['pegawai_id'=>['required','numeric'],'tanggal'=>['required'],'status'=>['required']],
-  'import'=>['enabled'=>true,'allowed_roles'=>['super_admin','admin_wilayah','admin_opd']],
-  'modes'=>['default'=>['select'=>['absensi_pegawai_neo.id','db_asn_pemda_neo.nama AS pegawai','absensi_pegawai_neo.tanggal','absensi_pegawai_neo.jam_masuk','absensi_pegawai_neo.jam_pulang','absensi_pegawai_neo.status','absensi_pegawai_neo.keterangan'],'searchable'=>['db_asn_pemda_neo.nama','absensi_pegawai_neo.status'],'where'=>['absensi_pegawai_neo.kd_wilayah'=>'user','absensi_pegawai_neo.kd_opd'=>'user','absensi_pegawai_neo.tahun'=>'user','absensi_pegawai_neo.is_deleted'=>0],'order_by'=>'absensi_pegawai_neo.tanggal DESC'],'edit'=>['select'=>['absensi_pegawai_neo.*'],'searchable'=>['absensi_pegawai_neo.status'],'order_by'=>'absensi_pegawai_neo.id DESC']],
-  'join'=>[['table'=>'db_asn_pemda_neo','on'=>'db_asn_pemda_neo.id=absensi_pegawai_neo.pegawai_id']]
+$profiles['absensi'] = [
+  'table' => 'absensi_pegawai_neo',
+  'primary_key' => 'id',
+  'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd'],
+  'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
+  'where' => ['is_deleted' => 0],
+  'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1],
+  'validation' => ['pegawai_id' => ['required', 'numeric'], 'tanggal' => ['required'], 'status' => ['required']],
+  'import' => ['enabled' => true, 'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd']],
+  'modes' => ['default' => ['select' => ['absensi_pegawai_neo.id', 'db_asn_pemda_neo.nama AS pegawai', 'absensi_pegawai_neo.tanggal', 'absensi_pegawai_neo.jam_masuk', 'absensi_pegawai_neo.jam_pulang', 'absensi_pegawai_neo.status', 'absensi_pegawai_neo.keterangan'], 'searchable' => ['db_asn_pemda_neo.nama', 'absensi_pegawai_neo.status'], 'where' => ['absensi_pegawai_neo.kd_wilayah' => 'user', 'absensi_pegawai_neo.kd_opd' => 'user', 'absensi_pegawai_neo.tahun' => 'user', 'absensi_pegawai_neo.is_deleted' => 0], 'order_by' => 'absensi_pegawai_neo.tanggal DESC'], 'edit' => ['select' => ['absensi_pegawai_neo.*'], 'searchable' => ['absensi_pegawai_neo.status'], 'order_by' => 'absensi_pegawai_neo.id DESC']],
+  'join' => [['table' => 'db_asn_pemda_neo', 'on' => 'db_asn_pemda_neo.id=absensi_pegawai_neo.pegawai_id']]
 ];
-$profiles['penugasan_subkegiatan']=[
-  'table'=>'user_subkegiatan_neo','primary_key'=>'id','allowed_roles'=>['super_admin','admin_wilayah','admin_opd','kepala_opd'],
-  'auto_session'=>['kd_wilayah','kd_opd','tahun'],'where'=>['is_deleted'=>0],
-  'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
-  'validation'=>['user_id'=>['required','numeric'],'kd_sub_keg'=>['required'],'peran'=>['required'],'berlaku_mulai'=>['required'],'berlaku_sampai'=>['required']],
-  'modes'=>['default'=>['select'=>['*'],'searchable'=>['kd_sub_keg','peran','keterangan'],'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0],'order_by'=>'id DESC']]
+$profiles['penugasan_subkegiatan'] = [
+  'table' => 'user_subkegiatan_neo',
+  'primary_key' => 'id',
+  'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd'],
+  'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
+  'where' => ['is_deleted' => 0],
+  'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1],
+  'validation' => ['user_id' => ['required', 'numeric'], 'kd_sub_keg' => ['required'], 'peran' => ['required'], 'berlaku_mulai' => ['required'], 'berlaku_sampai' => ['required']],
+  'modes' => ['default' => ['select' => ['*'], 'searchable' => ['kd_sub_keg', 'peran', 'keterangan'], 'where' => ['kd_wilayah' => 'user', 'kd_opd' => 'user', 'tahun' => 'user', 'is_deleted' => 0], 'order_by' => 'id DESC']]
 ];
-$profiles['kop_surat']=['table'=>'kop_surat_neo','primary_key'=>'id','allowed_roles'=>['super_admin','admin_wilayah','admin_opd','kepala_opd'],'auto_session'=>['kd_wilayah','kd_opd','tahun'],'where'=>['is_deleted'=>0],'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],'validation'=>['nama_pemerintah'=>['required'],'nama_opd'=>['required']],'modes'=>['default'=>['select'=>['*'],'searchable'=>['nama_pemerintah','nama_opd','alamat'],'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0],'order_by'=>'id DESC']]];
+$profiles['kop_surat'] = ['table' => 'kop_surat_neo', 'primary_key' => 'id', 'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd'], 'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'], 'where' => ['is_deleted' => 0], 'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1], 'validation' => ['nama_pemerintah' => ['required'], 'nama_opd' => ['required']], 'modes' => ['default' => ['select' => ['*'], 'searchable' => ['nama_pemerintah', 'nama_opd', 'alamat'], 'where' => ['kd_wilayah' => 'user', 'kd_opd' => 'user', 'tahun' => 'user', 'is_deleted' => 0], 'order_by' => 'id DESC']]];
 
-foreach (['akun','mapping','aset','organisasi','satuan','satuan_teks','sumber_dana','wilayah','peraturan','rekanan','rekening_kegiatan','sbu','ssh','hspk','asb','periode_rpjmd','misi_renstra_neo','tujuan_renstra_neo','sasaran_renstra_neo','indikator_sasaran_renstra_neo','program_renstra_neo','indikator_program_renstra_neo','kegiatan_renstra_neo','sub_kegiatan_renstra_neo','renstra_neo','rkpd','renja','rka','dpa','rkpd_p','renja_p','rka_p','dppa','kontrak','rab_kontrak','realisasi','asn','pppk','riwayat_jabatan','riwayat_pangkat','cuti','sk_pegawai','pejabat_tahunan','absensi'] as $importKey) {
-  if(isset($profiles[$importKey]))$profiles[$importKey]['import']=['enabled'=>true,'allowed_roles'=>['super_admin','admin_wilayah','admin_opd']];
+foreach (['akun', 'mapping', 'aset', 'organisasi', 'satuan', 'satuan_teks', 'sumber_dana', 'wilayah', 'peraturan', 'rekanan', 'rekening_kegiatan', 'sbu', 'ssh', 'hspk', 'asb', 'periode_rpjmd', 'misi_renstra_neo', 'tujuan_renstra_neo', 'sasaran_renstra_neo', 'indikator_sasaran_renstra_neo', 'program_renstra_neo', 'indikator_program_renstra_neo', 'kegiatan_renstra_neo', 'sub_kegiatan_renstra_neo', 'renstra_neo', 'rkpd', 'renja', 'rka', 'dpa', 'rkpd_p', 'renja_p', 'rka_p', 'dppa', 'kontrak', 'rab_kontrak', 'realisasi', 'asn', 'pppk', 'riwayat_jabatan', 'riwayat_pangkat', 'cuti', 'sk_pegawai', 'pejabat_tahunan', 'absensi'] as $importKey) {
+  if (isset($profiles[$importKey])) $profiles[$importKey]['import'] = ['enabled' => true, 'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd']];
 }
 
 /* Correct legacy Renstra dropdown fields that referenced non-existent columns. */

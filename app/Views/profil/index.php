@@ -25,9 +25,8 @@
           </div>
         </div>
 
-        <?php $profilePhoto=$_SESSION['user']['photo']??'';$profilePhoto=str_contains($profilePhoto,'/')?$profilePhoto:'assets/img/avatar/'.($profilePhoto?:'default.png'); ?>
-        <img id="preview_photo" class="ui medium rounded image" src="<?= app_url('/'.$profilePhoto) ?>"
-          onerror="this.src='assets/img/avatar/default.png'">
+        <img id="preview_photo" class="ui medium rounded image" src="<?= app_url('/profil/photo') ?>"
+          onerror="this.onerror=null;this.src='<?= app_url('/assets/img/avatar/default.png') ?>'">
 
       </div>
 
@@ -65,8 +64,8 @@
 
   <div class="twelve wide column">
 
-    <form class="ui form profil" name="profil" jns="edit" tbl="profil" req="profil"
-      id_row="<?= $_SESSION['user']['id'] ?>">
+    <form class="ui form profil" name="profil" id="profilForm" method="post" action="<?= app_url('/profil/save') ?>"
+      jns="edit" tbl="profil" req="profil" id_row="<?= $_SESSION['user']['id'] ?>">
 
       <h3 class="ui dividing header">
         <i class="user icon"></i>
@@ -105,11 +104,15 @@
 
         <div class="required field">
           <label>Rentang Dokumen Aktif</label>
-          <select class="ui search dropdown" id="planningPeriod" name="periode_id" required><option value="">Memuat periode…</option></select>
+          <select class="ui search dropdown" id="planningPeriod" name="periode_id" required>
+            <option value="">Memuat periode…</option>
+          </select>
         </div>
         <div class="required field">
           <label>Tahun Anggaran Aktif</label>
-          <select class="ui search dropdown" id="budgetYear" name="tahun" required><option value="">Pilih rentang dahulu</option></select>
+          <select class="ui search dropdown" id="budgetYear" name="tahun" required>
+            <option value="">Pilih rentang dahulu</option>
+          </select>
         </div>
 
         <div class="field">

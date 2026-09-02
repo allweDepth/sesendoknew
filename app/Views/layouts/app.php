@@ -8,303 +8,363 @@
   <link rel="stylesheet" href="/assets/css/fomantic.min.css">
   <link rel="stylesheet" href="/assets/css/dark.css">
   <style>
-  #mainContext {
-    min-height: calc(100vh - 40px);
-  }
+    #mainContext {
+      min-height: calc(100vh - 40px);
+    }
 
-  .pusher .ui .container {
-    padding: 20px !important;
-  }
+    .pusher .ui .container {
+      padding: 20px !important;
+    }
 
-  /* 🔥 FIX GLOBAL SCROLL (JANGAN LOCK TOTAL) */
-  html,
-  body {
-    height: 100%;
-    overflow: hidden;
-    /* 🔥 KUNCI UTAMA */
-  }
+    /* 🔥 FIX GLOBAL SCROLL (JANGAN LOCK TOTAL) */
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      /* 🔥 KUNCI UTAMA */
+    }
 
-  /* FIX SEGMENT PUSHABLE */
-  #mainContext.ui.segment {
-    height: calc(100vh - 40px);
-    padding: 0 !important;
-    overflow: hidden;
-  }
+    /* FIX SEGMENT PUSHABLE */
+    #mainContext.ui.segment {
+      height: calc(100vh - 40px);
+      padding: 0 !important;
+      overflow: hidden;
+    }
 
-  /* PUSHER */
-  #mainContext .pusher {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+    /* PUSHER */
+    #mainContext .pusher {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
 
-  /* STICKY HEADER */
-  #mainContext .pusher>.ui.sticky {
-    flex: 0 0 auto;
-  }
+    /* STICKY HEADER */
+    #mainContext .pusher>.ui.sticky {
+      flex: 0 0 auto;
+    }
 
-  /* SCROLL AREA */
-  #mainContext .content-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-  }
+    /* SCROLL AREA */
+    #mainContext .content-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
 
-  /* Sidebar kiri tetap dapat digulir, tetapi identitas aplikasi/tahun tidak ikut hilang. */
-  #mainContext .sidebarutama {
-    overflow-y: auto !important;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(84, 200, 255, .65) transparent;
-    background: linear-gradient(180deg, #14283b 0%, #0c1722 100%) !important;
-  }
-  #mainContext .sidebarutama > .item:first-child {
-    position: sticky;
-    top: 0;
-    z-index: 12;
-    background: linear-gradient(135deg, #173a58, #10283c) !important;
-    box-shadow: 0 8px 22px rgba(0,0,0,.28);
-  }
-  #mainContext .sidebarutama .content .item {
-    margin: 3px 8px !important;
-    border-radius: 8px !important;
-    transition: background .18s ease, transform .18s ease;
-  }
-  #mainContext .sidebarutama .content .item:hover,
-  #mainContext .sidebarutama .content .item.active {
-    background: rgba(84,200,255,.16) !important;
-    transform: translateX(3px);
-  }
-  #crudMenu.ui.pointing.menu {
-    background: #fff;
-    border: 1px solid #e3ebf3;
-    border-radius: 12px;
-    padding: 5px;
-    box-shadow: 0 8px 25px rgba(20,52,80,.06);
-  }
+    /* Sidebar kiri tetap dapat digulir, tetapi identitas aplikasi/tahun tidak ikut hilang. */
+    #mainContext .sidebarutama {
+      overflow-y: auto !important;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(84, 200, 255, .65) transparent;
+      background: linear-gradient(180deg, #14283b 0%, #0c1722 100%) !important;
+    }
 
-  /* ================================
+    #mainContext .sidebarutama>.item:first-child {
+      position: sticky;
+      top: 0;
+      z-index: 12;
+      background: linear-gradient(135deg, #173a58, #10283c) !important;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, .28);
+    }
+
+    #mainContext .sidebarutama .content .item {
+      margin: 3px 8px !important;
+      border-radius: 8px !important;
+      transition: background .18s ease, transform .18s ease;
+    }
+
+    #mainContext .sidebarutama .content .item:hover,
+    #mainContext .sidebarutama .content .item.active {
+      background: rgba(84, 200, 255, .16) !important;
+      transform: translateX(3px);
+    }
+
+    #crudMenu.ui.pointing.menu {
+      background: #fff;
+      border: 1px solid #e3ebf3;
+      border-radius: 12px;
+      padding: 5px;
+      box-shadow: 0 8px 25px rgba(20, 52, 80, .06);
+    }
+
+    /* ================================
    SIDEBAR KANAN WIDTH CONTROL
 ================================ */
 
-  /* Default (Desktop) */
-  .sidebarkanan {
-    width: 420px !important;
-    display: flex;
-  }
-
-  /* Tablet */
-  @media (max-width: 992px) {
+    /* Default (Desktop) */
     .sidebarkanan {
-      width: 360px !important;
+      width: 420px !important;
+      display: flex;
     }
-  }
 
-  /* Mobile */
-  @media (max-width: 768px) {
-    .sidebarkanan {
-      width: 100% !important;
+    /* Tablet */
+    @media (max-width: 992px) {
+      .sidebarkanan {
+        width: 360px !important;
+      }
     }
-  }
 
-  /* FLYOUT */
-  .flyout-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-  }
+    /* Mobile */
+    @media (max-width: 768px) {
+      .sidebarkanan {
+        width: 100% !important;
+      }
+    }
 
-  .flyout-body {
-    flex: 1;
-    overflow-y: auto;
-  }
+    /* FLYOUT */
+    .flyout-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+    }
 
-  .flyout-footer {
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-  }
+    .flyout-body {
+      flex: 1;
+      overflow-y: auto;
+    }
 
-  /* TOAST */
-  #toastContainer {
-    position: fixed;
-    /* FIX: keluar dari stacking context parent */
-    top: 5px;
-    right: 20px;
-    width: 350px;
-    z-index: 99999;
-    /* FIX: pastikan di atas dimmer */
-  }
-  #toastContainer:empty { display:none !important; width:0 !important; }
-  #toastContainer:not(:has(.ui.toast)):not(:has(.app-toast)) { display:none !important; width:0 !important; pointer-events:none !important; }
-  #toastContainer .toast-box:not(:has(.ui.toast)):not(:has(.app-toast)) { display:none !important; }
-  #toastContainer .app-toast{position:relative;display:block!important;width:360px;max-width:calc(100vw - 28px);margin:0 0 10px!important;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.16)!important;transition:opacity .18s,transform .18s}.app-toast-leave{opacity:0;transform:translateX(20px)}.app-toast-progress{position:absolute;left:0;bottom:0;height:3px;width:100%;background:rgba(0,0,0,.2);transform-origin:left;animation:appToastProgress 3.2s linear forwards}@keyframes appToastProgress{to{transform:scaleX(0)}}
-  .ui.toast-container:empty,.ui.notifications:empty { display:none !important; border:0 !important; box-shadow:none !important; }
+    .flyout-footer {
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
 
-  /* TABLE WRAPPER */
-  .table-wrapper {
-    overflow-x: auto;
-  }
+    /* TOAST */
+    #toastContainer {
+      position: fixed;
+      /* FIX: keluar dari stacking context parent */
+      top: 5px;
+      right: 20px;
+      width: 350px;
+      z-index: 99999;
+      /* FIX: pastikan di atas dimmer */
+    }
 
-  /* ================================
-   DOCUMENT BUILDER (DESKTOP)
-================================ */
+    #toastContainer:empty {
+      display: none !important;
+      width: 0 !important;
+    }
 
-  /* container cell */
-  .doc-cell {
-    position: relative;
-    padding-top: 20px !important;
-    /* lebih compact */
-  }
+    #toastContainer:not(:has(.ui.toast)):not(:has(.app-toast)) {
+      display: none !important;
+      width: 0 !important;
+      pointer-events: none !important;
+    }
 
-  /* editor */
-  .doc-editor {
-    min-height: 32px;
-    outline: none;
-    padding: 4px;
-    line-height: 1.4;
-    text-align-last: left;
-  }
+    #toastContainer .toast-box:not(:has(.ui.toast)):not(:has(.app-toast)) {
+      display: none !important;
+    }
 
-  /* Baris terakhir paragraf justified tidak boleh ikut direnggangkan. */
-  .doc-editor p, .doc-editor div, .ql-editor p, .document-preview p {
-    text-align-last: left;
-  }
+    #toastContainer .app-toast {
+      position: relative;
+      display: block !important;
+      width: 360px;
+      max-width: calc(100vw - 28px);
+      margin: 0 0 10px !important;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .16) !important;
+      transition: opacity .18s, transform .18s
+    }
 
-  body.session-expired #mainContext,
-  body.session-expired .ui.top.attached.menu { pointer-events:none !important; opacity:.72; }
+    .app-toast-leave {
+      opacity: 0;
+      transform: translateX(20px)
+    }
 
-  /* ================= TOOLBAR ================= */
+    .app-toast-progress {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 100%;
+      background: rgba(0, 0, 0, .2);
+      transform-origin: left;
+      animation: appToastProgress 3.2s linear forwards
+    }
 
-  .doc-toolbar {
-    position: absolute;
-    top: 0;
-    left: 2px;
+    @keyframes appToastProgress {
+      to {
+        transform: scaleX(0)
+      }
+    }
 
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 2px;
+    .ui.toast-container:empty,
+    .ui.notifications:empty {
+      display: none !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
 
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(4px);
-
-    padding: 2px 4px;
-    border-radius: 4px;
-
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
-
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: all 0.15s ease;
-
-    pointer-events: auto;
-    z-index: 10;
-  }
-
-  /* tampil saat hover / focus */
-  .doc-cell:hover .doc-toolbar,
-  .doc-cell:focus-within .doc-toolbar {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* group tombol */
-  .doc-toolbar .btn-group {
-    display: flex;
-    gap: 2px;
-    align-items: center;
-  }
-
-  /* divider vertikal */
-  .doc-toolbar .divider {
-    width: 1px;
-    height: 14px;
-    background: rgba(0, 0, 0, 0.12);
-    margin: 0 2px;
-  }
-
-  /* tombol */
-  .doc-toolbar .button {
-    min-width: 22px;
-    height: 22px;
-    font-size: 11px;
-    padding: 2px !important;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 3px;
-  }
-
-  /* hover */
-  .doc-toolbar .button:hover {
-    background: rgba(0, 0, 0, 0.06) !important;
-  }
-
-  /* aktif */
-  .doc-toolbar .button.active {
-    background: #2185d0 !important;
-    color: #fff !important;
-  }
-
-  /* ================================
-   MOBILE FIX
-================================ */
-
-  @media (max-width: 768px) {
-
-    /* table scroll */
-    .ui.table {
-      display: block;
+    /* TABLE WRAPPER */
+    .table-wrapper {
       overflow-x: auto;
     }
 
-    /* spacing */
+    /* ================================
+   DOCUMENT BUILDER (DESKTOP)
+================================ */
+
+    /* container cell */
     .doc-cell {
-      padding-top: 8px !important;
-    }
-
-    /* toolbar jadi inline */
-    .doc-toolbar {
-      position: static;
-      opacity: 1;
-      transform: none;
-
-      display: flex !important;
-      flex-wrap: wrap;
-      gap: 6px;
-
-      margin-bottom: 6px;
-      padding: 0;
-
-      background: transparent;
-      box-shadow: none;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    }
-
-    .doc-toolbar .btn-group {
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-
-    .doc-toolbar .divider {
-      display: none;
-    }
-
-    /* tombol mobile */
-    .doc-toolbar .button {
-      padding: 8px !important;
-      font-size: 14px;
-      min-width: 36px;
-      height: 36px;
+      position: relative;
+      padding-top: 20px !important;
+      /* lebih compact */
     }
 
     /* editor */
     .doc-editor {
-      width: 100%;
-      min-height: 60px;
+      min-height: 32px;
+      outline: none;
+      padding: 4px;
+      line-height: 1.4;
+      text-align-last: left;
     }
-  }
+
+    /* Baris terakhir paragraf justified tidak boleh ikut direnggangkan. */
+    .doc-editor p,
+    .doc-editor div,
+    .ql-editor p,
+    .document-preview p {
+      text-align-last: left;
+    }
+
+    body.session-expired #mainContext,
+    body.session-expired .ui.top.attached.menu {
+      pointer-events: none !important;
+      opacity: .72;
+    }
+
+    /* ================= TOOLBAR ================= */
+
+    .doc-toolbar {
+      position: absolute;
+      top: 0;
+      left: 2px;
+
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 2px;
+
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(4px);
+
+      padding: 2px 4px;
+      border-radius: 4px;
+
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: all 0.15s ease;
+
+      pointer-events: auto;
+      z-index: 10;
+    }
+
+    /* tampil saat hover / focus */
+    .doc-cell:hover .doc-toolbar,
+    .doc-cell:focus-within .doc-toolbar {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* group tombol */
+    .doc-toolbar .btn-group {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+
+    /* divider vertikal */
+    .doc-toolbar .divider {
+      width: 1px;
+      height: 14px;
+      background: rgba(0, 0, 0, 0.12);
+      margin: 0 2px;
+    }
+
+    /* tombol */
+    .doc-toolbar .button {
+      min-width: 22px;
+      height: 22px;
+      font-size: 11px;
+      padding: 2px !important;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 3px;
+    }
+
+    /* hover */
+    .doc-toolbar .button:hover {
+      background: rgba(0, 0, 0, 0.06) !important;
+    }
+
+    /* aktif */
+    .doc-toolbar .button.active {
+      background: #2185d0 !important;
+      color: #fff !important;
+    }
+
+    /* ================================
+   MOBILE FIX
+================================ */
+
+    @media (max-width: 768px) {
+
+      /* table scroll */
+      .ui.table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      /* spacing */
+      .doc-cell {
+        padding-top: 8px !important;
+      }
+
+      /* toolbar jadi inline */
+      .doc-toolbar {
+        position: static;
+        opacity: 1;
+        transform: none;
+
+        display: flex !important;
+        flex-wrap: wrap;
+        gap: 6px;
+
+        margin-bottom: 6px;
+        padding: 0;
+
+        background: transparent;
+        box-shadow: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      .doc-toolbar .btn-group {
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .doc-toolbar .divider {
+        display: none;
+      }
+
+      /* tombol mobile */
+      .doc-toolbar .button {
+        padding: 8px !important;
+        font-size: 14px;
+        min-width: 36px;
+        height: 36px;
+      }
+
+      /* editor */
+      .doc-editor {
+        width: 100%;
+        min-height: 60px;
+      }
+    }
   </style>
 </head>
 
@@ -352,35 +412,39 @@
 
   <!-- JS -->
   <script>
-  window.ASSET_VERSION = "<?= (string)max((int)@filemtime(__DIR__.'/../../../public/assets/js/app.js'),(int)@filemtime(__DIR__.'/../../../public/assets/js/modules/anggaran-document.js'),(int)@filemtime(__DIR__.'/../../../public/assets/js/core/toast.js')) ?>";
-  window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
+    window.ASSET_VERSION =
+      "<?= (string)max((int)@filemtime(__DIR__ . '/../../../public/assets/js/app.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/anggaran-document.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/profil.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/validation-engine.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/toast.js')) ?>";
+    window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
   </script>
   <script>
-  window.app = window.app || {};
-  window.app.user = <?= json_encode($_SESSION['user'] ?? []); ?>;
+    window.app = window.app || {};
+    window.app.user = <?= json_encode($_SESSION['user'] ?? []); ?>;
   </script>
   <!-- LIBRARY -->
   <script src="/assets/js/jquery.min.js"></script>
   <script src="/assets/js/fomantic.min.js"></script>
   <script>
-  window.APP_BASE_PATH = <?= json_encode(APP_BASE_PATH) ?>;
-  window.appUrl = function(path) {
-    if (!path || !path.startsWith('/') || path.startsWith('//')) return path;
-    if (window.APP_BASE_PATH && (path === window.APP_BASE_PATH || path.startsWith(window.APP_BASE_PATH + '/'))) return path;
-    return window.APP_BASE_PATH + path;
-  };
-  window.appRoutePath = function(path) {
-    path = path || '/';
-    if (window.APP_BASE_PATH && (path === window.APP_BASE_PATH || path.startsWith(window.APP_BASE_PATH + '/'))) {
-      path = path.slice(window.APP_BASE_PATH.length) || '/';
-    }
-    return path;
-  };
-  $.ajaxPrefilter(function(options) { options.url = window.appUrl(options.url); });
-  const nativeFetch = window.fetch.bind(window);
-  window.fetch = function(resource, options) {
-    return nativeFetch(typeof resource === 'string' ? window.appUrl(resource) : resource, options);
-  };
+    window.APP_BASE_PATH = <?= json_encode(APP_BASE_PATH) ?>;
+    window.appUrl = function(path) {
+      if (!path || !path.startsWith('/') || path.startsWith('//')) return path;
+      if (window.APP_BASE_PATH && (path === window.APP_BASE_PATH || path.startsWith(window.APP_BASE_PATH + '/')))
+        return path;
+      return window.APP_BASE_PATH + path;
+    };
+    window.appRoutePath = function(path) {
+      path = path || '/';
+      if (window.APP_BASE_PATH && (path === window.APP_BASE_PATH || path.startsWith(window.APP_BASE_PATH + '/'))) {
+        path = path.slice(window.APP_BASE_PATH.length) || '/';
+      }
+      return path;
+    };
+    $.ajaxPrefilter(function(options) {
+      options.url = window.appUrl(options.url);
+    });
+    const nativeFetch = window.fetch.bind(window);
+    window.fetch = function(resource, options) {
+      return nativeFetch(typeof resource === 'string' ? window.appUrl(resource) : resource, options);
+    };
   </script>
 
   <!-- ================= CORE ================= -->
@@ -422,7 +486,7 @@
   <script src="/assets/js/app-init.js"></script>
 
   <script>
-  window.CSRF_TOKEN = "<?= $_SESSION['csrf_token'] ?? '' ?>";
+    window.CSRF_TOKEN = "<?= $_SESSION['csrf_token'] ?? '' ?>";
   </script>
 </body>
 
