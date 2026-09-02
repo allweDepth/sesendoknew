@@ -35,7 +35,7 @@ class KontrakModule extends BaseCrudModule {
 				<div class="four fields">
 					<div class="field"><label>Jenis</label><select name="jenis_dokumen" class="ui dropdown">${["KONTRAK", "SPK", "SPMK", "SSKK", "SSUK", "RAB", "JADWAL", "KURVA_S", "GAMBAR", "BAST", "PHO", "FHO", "ADENDUM", "JAMINAN", "LAPORAN", "LAINNYA"].map((x) => `<option value="${x}">${x.replaceAll("_", " ")}</option>`).join("")}</select></div>
 					<div class="required field"><label>Judul</label><input name="judul" required></div>
-					<div class="field"><label>Tanggal</label><input type="date" name="tanggal_dokumen"></div>
+					<div class="field"><label>Tanggal</label><div class="ui calendar contract-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" name="tanggal_dokumen" placeholder="YYYY-MM-DD" autocomplete="off"></div></div></div>
 					<div class="required field"><label>File (maks. 25 MB)</label><input type="file" name="file" required accept=".pdf,.jpg,.jpeg,.png,.xlsx,.docx,.zip"></div>
 				</div>
 				<button type="submit" class="ui teal button"><i class="upload icon"></i>Upload Dokumen</button>
@@ -380,11 +380,32 @@ class KontrakModule extends BaseCrudModule {
 			<div class="ui bottom attached ${activeTab === "schedule" ? "active " : ""}tab segment" data-tab="schedule"><form class="ui form" id="contractScheduleForm"><div class="ui info message"><div class="header">Jadwal disusun per item RAB</div><p>Rencana dan realisasi setiap item dicatat per minggu/periode. Kurva S kontrak dihitung dari bobot item RAB × progres kumulatif item.</p></div><div class="s-chart">${bars || '<div class="ui message">Belum ada Kurva S tersimpan.</div>'}</div>${scheduleGroups || '<div class="ui warning message">Simpan RAB terlebih dahulu agar Time Schedule dapat dibuat per item RAB.</div>'}<button type="button" class="ui teal button" data-delivery-action="save-schedule" ${rab.length ? "" : "disabled"}><i class="save icon"></i>Simpan Time Schedule</button></form></div>
 			<div class="ui bottom attached ${activeTab === "documents" ? "active " : ""}tab segment" data-tab="documents"><div class="ui info message">Dokumen kontrak disusun per kontrak dan jenis dokumen: Kontrak, SPK, SPMK, SSKK, SSUK, RAB, Jadwal, Kurva S, gambar, BAST, PHO/FHO, adendum, jaminan, dan laporan.</div>${docCards}</div>`);
 		$("#contractDeliveryContent .menu .item").tab();
+		this.initContractCalendars($("#contractDeliveryContent"));
 		if (activeTab === "documents") $("#contractDeliveryContent .menu .item[data-tab=documents]").trigger("click");
 	}
 
+	initContractCalendars(container) {
+		const scope = container ? $(container) : $(document);
+		if (typeof $.fn.calendar !== "function") return;
+		scope.find(".ui.calendar.contract-calendar").each(function () {
+			const cal = $(this);
+			if (cal.data("module-calendar")) return;
+			cal.calendar({
+				type: "date",
+				firstDayOfWeek: 1,
+				formatter: {
+					date(date) {
+						if (!date) return "";
+						const pad = (n) => String(n).padStart(2, "0");
+						return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+					},
+				},
+			});
+		});
+	}
+
 	scheduleRow(x, rabId) {
-		return `<tr><td><input type="hidden" value="${rabId}" data-week="rab_id"><input type="number" min="1" step="1" value="${x.minggu_ke || ""}" data-week="minggu_ke" required></td><td><input type="date" value="${x.tanggal_mulai || ""}" data-week="tanggal_mulai" required></td><td><input type="date" value="${x.tanggal_selesai || ""}" data-week="tanggal_selesai" required></td><td><input type="number" min="0" max="100" step="0.01" value="${Number(x.bobot_rencana || 0)}" data-week="bobot_rencana" required></td><td><input type="number" min="0" max="100" step="0.01" value="${Number(x.bobot_realisasi || 0)}" data-week="bobot_realisasi" required></td><td>${Number(x.rencana_kumulatif || 0).toFixed(2)}%</td><td>${Number(x.realisasi_kumulatif || 0).toFixed(2)}%</td><td><button type="button" class="ui mini red basic icon button" data-delivery-action="remove-week"><i class="trash icon"></i></button></td></tr>`;
+		return `<tr><td><input type="hidden" value="${rabId}" data-week="rab_id"><input type="number" min="1" step="1" value="${x.minggu_ke || ""}" data-week="minggu_ke" required></td><td><div class="ui calendar contract-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" value="${x.tanggal_mulai || ""}" data-week="tanggal_mulai" required autocomplete="off"></div></div></td><td><div class="ui calendar contract-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" value="${x.tanggal_selesai || ""}" data-week="tanggal_selesai" required autocomplete="off"></div></div></td><td><input type="number" min="0" max="100" step="0.01" value="${Number(x.bobot_rencana || 0)}" data-week="bobot_rencana" required></td><td><input type="number" min="0" max="100" step="0.01" value="${Number(x.bobot_realisasi || 0)}" data-week="bobot_realisasi" required></td><td>${Number(x.rencana_kumulatif || 0).toFixed(2)}%</td><td>${Number(x.realisasi_kumulatif || 0).toFixed(2)}%</td><td><button type="button" class="ui mini red basic icon button" data-delivery-action="remove-week"><i class="trash icon"></i></button></td></tr>`;
 	}
 
 	deliveryAction(a, button) {
@@ -429,6 +450,7 @@ class KontrakModule extends BaseCrudModule {
 					rabId,
 				),
 			);
+			this.initContractCalendars(body);
 			return;
 		}
 		if (a === "remove-week") {
