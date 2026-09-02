@@ -1399,7 +1399,13 @@ data-filter='${JSON.stringify(prop.filter || {})}' // // 🔥 filter server
 				// ================================================
 				// BLOK SUBMIT DEFAULT BROWSER
 				// ================================================
-				event.preventDefault();
+				// Fomantic memanggil onSuccess tanpa event saat validation
+				// dijalankan secara programatik melalui "validate form".
+				// Submit native sudah diblok di bindEvents(), jadi guard event
+				// mencegah TypeError tanpa mengubah alur validasi/penyimpanan.
+				if (event && typeof event.preventDefault === "function") {
+					event.preventDefault();
+				}
 
 				// sembunyikan error summary
 				$(this).find(".ui.error.message").hide().empty();
