@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
 require_once __DIR__ . '/PdfTemplateService.php';
+require_once __DIR__ . '/PageSetupService.php';
 require_once __DIR__ . '/../Core/DB.php';
 
 class PdfService
@@ -42,7 +43,8 @@ class PdfService
       throw new Exception("Data tidak ditemukan");
     }
 
-    $pdf = new TCPDF(); // init
+    $setup=PageSetupService::current();
+    $pdf = new TCPDF(PageSetupService::orientation($setup,'P'),'mm',PageSetupService::tcpdfFormat($setup),true,'UTF-8',false);
     $pdf->AddPage();
     $pdf->SetFont('times', '', 11);
 
@@ -120,7 +122,8 @@ class PdfService
     // =====================================================
     // INIT PDF
     // =====================================================
-    $pdf = new TCPDF('P', 'mm', 'F4', true, 'UTF-8', false);
+    $setup=PageSetupService::current();
+    $pdf = new TCPDF(PageSetupService::orientation($setup,'P'), 'mm', PageSetupService::tcpdfFormat($setup), true, 'UTF-8', false);
     $pdf->SetCreator('seSendok Tata Naskah');
     $pdf->SetTitle(($naskah['jenis_naskah'] ?? 'Naskah Dinas').' '.$naskah['nomor']);
     $pdf->SetMargins(25, 18, 20);

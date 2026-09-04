@@ -623,6 +623,10 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
         throw new Exception('Hanya Kepala OPD/PA/KPA yang dapat mengelola daftar subkegiatan.');
       }
     }
+    if ($table === 'rpjmd_kabupaten_neo' && in_array($action,['add','edit','delete'],true)
+        && !in_array($role,['super_admin','admin_wilayah'],true)) {
+      throw new Exception('RPJMD Kabupaten hanya dapat dikelola Admin Kabupaten; pengguna lain hanya dapat melihat.');
+    }
   }
 
   /* =========================================================
@@ -820,6 +824,11 @@ INSERT (FIXED STABLE VERSION v3.1)
       } else {
         $filtered['status_aktif'] = 0;
       }
+    }
+    if($table==='rpjmd_kabupaten_neo'){
+      $start=(string)($filtered['berlaku_mulai']??'');
+      if($start!==''&&empty($filtered['berlaku_sampai']))$filtered['berlaku_sampai']=date('Y-m-d',strtotime($start.' +5 years -1 day'));
+      if($start===''||$filtered['berlaku_sampai']<$start)return JsonResponse::error('Masa berlaku RPJMD tidak valid');
     }
 
     // 🔥 Auto periode untuk renstra
@@ -1161,6 +1170,9 @@ IGNORE SYSTEM FIELD
       if (!isset($filtered[$field])) {
         $filtered[$field] = $value;
       }
+    }
+    if($table==='rpjmd_kabupaten_neo'&&($filtered['berlaku_mulai']??'')>($filtered['berlaku_sampai']??'')){
+      return JsonResponse::error('Tanggal akhir RPJMD harus sesudah tanggal mulai');
     }
 
     if (in_array($table, ['dpa_neo', 'dppa_neo'], true)) {

@@ -119,12 +119,20 @@
     <div class="item">
       <div class="title"><i class="dropdown icon"></i> <i class="project diagram icon"></i> Perencanaan</div>
       <div class="content">
+        <a class="item" href="/referensi?tbl=rpjmd_kabupaten" data-spa="client" data-title="Perencanaan/RPJMD Kabupaten"><i class="landmark icon"></i> RPJMD Kabupaten</a>
         <a class="item" href="/renstra" data-spa="client" data-title="Anggaran/Renstra"><i
             class="purple sitemap icon"></i> RENSTRA</a>
         <a class="item" href="/rkpd" data-spa="client" data-title="Anggaran/RKPD"><i
             class="blue calendar check icon"></i> RKPD</a>
         <a class="item" href="/renja" data-spa="client" data-title="Anggaran/Renja"><i class="violet tasks icon"></i>
           RENJA</a>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="title"><i class="dropdown icon"></i> <i class="lightbulb outline icon"></i> Usulan</div>
+      <div class="content">
+        <a class="item" href="/referensi?tbl=usulan_pembangunan" data-spa="client" data-title="Usulan/Musrenbang, Pokir DPRD, dan Masyarakat"><i class="comments outline icon"></i> Daftar Usulan</a>
       </div>
     </div>
 
@@ -161,6 +169,7 @@
     <div class="item">
       <div class="title"><i class="dropdown icon"></i> <i class="chartline icon"></i> Realisasi</div>
       <div class="content">
+        <a class="item" href="/referensi?tbl=evaluasi_renja" data-spa="client" data-title="Realisasi/Evaluasi Renja Triwulan"><i class="clipboard check icon"></i> Evaluasi Renja</a>
         <a class="item" href="/kontrak?tbl=__laporan" data-spa="client" data-title="Realisasi/Dashboard"
           data-description="Ringkasan nilai kontrak, progres bulanan, status, dan grafik realisasi."><i
             class="chart pie icon"></i> Dashboard</a>
@@ -246,6 +255,9 @@
 
       <a class="item" href="/pengaturan" data-spa="client" data-title="Pengaturan">
         <i class="toolbox icon"></i> Pengaturan
+      </a>
+      <a class="item" href="/pengaturan#page-setup" data-spa="client" data-title="Pengaturan/Page Setup PDF dan Excel">
+        <i class="file outline icon"></i> Page Setup
       </a>
     <?php endif; ?>
     <?php if (in_array(($_SESSION['user']['type_user'] ?? ''), ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd'], true)): ?>

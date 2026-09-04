@@ -1161,6 +1161,22 @@ UIConfig.global_print = {
 		],
 	},
 };
+UIConfig.rpjmd_kabupaten={layout:{columns:1},validation:{nama_dokumen:{required:true},berlaku_mulai:{required:true},berlaku_sampai:{required:true}},form:{elements:[
+	{tag:"field",prop:{label:"Nama Dokumen RPJMD",name:"nama_dokumen"}},{tag:"field",prop:{label:"Nomor Perda",name:"nomor_perda"}},
+	{tag:"fieldCalendar",prop:{label:"Tanggal Perda",name:"tanggal_perda",calendarType:"date"}},{tag:"fieldCalendar",prop:{label:"Berlaku Mulai",name:"berlaku_mulai",calendarType:"date"}},{tag:"fieldCalendar",prop:{label:"Berlaku Sampai (default 5 tahun)",name:"berlaku_sampai",calendarType:"date"}},
+	{tag:"fieldTextarea",prop:{label:"Visi",name:"visi"}},{tag:"fieldTextarea",prop:{label:"Misi",name:"misi"}},{tag:"fieldTextarea",prop:{label:"Sasaran",name:"sasaran"}},{tag:"fieldTextarea",prop:{label:"Indikator",name:"indikator"}},
+	{tag:"fieldDropdown",prop:{label:"Status",name:"status",options:[{value:"draft",text:"Draft"},{value:"berlaku",text:"Berlaku"},{value:"berakhir",text:"Berakhir"}]}},{tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan"}}
+]}};
+UIConfig.usulan_pembangunan={layout:{columns:1},validation:{jenis_usulan:{required:true},pengusul:{required:true},uraian:{required:true}},form:{elements:[
+	{tag:"fieldDropdown",prop:{label:"Sumber Usulan",name:"jenis_usulan",options:[{value:"musrenbang",text:"Musrenbang"},{value:"pokir_dprd",text:"Pokok Pikiran DPRD"},{value:"masyarakat",text:"Usulan Masyarakat"}]}},{tag:"field",prop:{label:"Pengusul",name:"pengusul"}},{tag:"field",prop:{label:"NIK/Nomor Identitas",name:"nik_no_identitas"}},
+	{tag:"fieldTextarea",prop:{label:"Alamat",name:"alamat"}},{tag:"field",prop:{label:"Desa/Kelurahan",name:"desa_kelurahan"}},{tag:"field",prop:{label:"Kecamatan",name:"kecamatan"}},{tag:"fieldTextarea",prop:{label:"Uraian Usulan",name:"uraian"}},{tag:"field",prop:{label:"Volume",name:"volume",type:"number"}},{tag:"field",prop:{label:"Satuan",name:"satuan"}},{tag:"fieldTextarea",prop:{label:"Lokasi",name:"lokasi"}},{tag:"field",prop:{label:"Perkiraan Anggaran",name:"perkiraan_anggaran",type:"number"}},{tag:"field",prop:{label:"Prioritas",name:"prioritas",type:"number"}},
+	{tag:"fieldDropdown",prop:{label:"Status",name:"status",options:[{value:"diusulkan",text:"Diusulkan"},{value:"diverifikasi",text:"Diverifikasi"},{value:"diterima",text:"Diterima"},{value:"ditolak",text:"Ditolak"},{value:"diakomodasi",text:"Diakomodasi"}]}},{tag:"fieldTextarea",prop:{label:"Catatan Verifikasi",name:"catatan_verifikasi"}}
+]}};
+UIConfig.evaluasi_renja={layout:{columns:1},validation:{triwulan:{required:true},kd_sub_keg:{required:true},indikator:{required:true}},form:{elements:[
+	{tag:"fieldDropdown",prop:{label:"Triwulan",name:"triwulan",options:[{value:"1",text:"Triwulan I"},{value:"2",text:"Triwulan II"},{value:"3",text:"Triwulan III"},{value:"4",text:"Triwulan IV"}]}},{tag:"fieldDropdown",prop:{label:"Sub Kegiatan",name:"kd_sub_keg",source:"rekening_kegiatan.sub_kegiatan",search:true}},{tag:"fieldTextarea",prop:{label:"Indikator Kinerja",name:"indikator"}},{tag:"field",prop:{label:"Satuan",name:"satuan"}},
+	{tag:"field",prop:{label:"Target Tahunan",name:"target_tahunan",type:"number"}},{tag:"field",prop:{label:"Target Triwulan",name:"target_triwulan",type:"number"}},{tag:"field",prop:{label:"Realisasi Triwulan",name:"realisasi_triwulan",type:"number"}},{tag:"field",prop:{label:"Realisasi Kumulatif",name:"realisasi_kumulatif",type:"number"}},{tag:"field",prop:{label:"Pagu Anggaran",name:"pagu_anggaran",type:"number"}},{tag:"field",prop:{label:"Realisasi Anggaran Triwulan",name:"realisasi_anggaran_triwulan",type:"number"}},{tag:"field",prop:{label:"Realisasi Anggaran Kumulatif",name:"realisasi_anggaran_kumulatif",type:"number"}},
+	{tag:"fieldTextarea",prop:{label:"Faktor Pendorong",name:"faktor_pendorong"}},{tag:"fieldTextarea",prop:{label:"Faktor Penghambat",name:"faktor_penghambat"}},{tag:"fieldTextarea",prop:{label:"Tindak Lanjut",name:"tindak_lanjut"}},{tag:"fieldDropdown",prop:{label:"Status",name:"status",options:[{value:"draft",text:"Draft"},{value:"dikirim",text:"Dikirim ke Bappeda"},{value:"diverifikasi",text:"Diverifikasi"},{value:"perbaikan",text:"Perlu Perbaikan"}]}}
+]}};
 UIConfig.__importFactory = function (tbl, templateFile) {
 	const templateHtml = templateFile
 		? `<a href="/assets/template_import/${templateFile}" target="_blank">

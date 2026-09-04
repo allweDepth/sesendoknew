@@ -190,10 +190,11 @@ class TataNaskahModule {
 			// ======================================================
 			// TRIGGER FOMANTIC VALIDATION
 			// ======================================================
-			form.form("validate form");
-
-			if (!form.form("is valid")) {
-				return; // stop submit
+			// Tidak semua schema Tata Naskah mempunyai rule UIConfig. Memanggil
+			// validator yang belum diinisialisasi menghentikan add/edit tanpa AJAX.
+			if (form.data("module-form")) {
+				form.form("validate form");
+				if (!form.form("is valid")) return;
 			}
 
 			const builder = window.documentBuilder; // // ambil instance builder global
@@ -559,6 +560,7 @@ class TataNaskahModule {
 		// =====================================
 		if (!Object.keys(fields).length) {
 			console.warn("VALIDATION SKIP: tidak ada field cocok di DOM");
+			this.enhanceForm(this.currentId!==null);
 			return;
 		}
 

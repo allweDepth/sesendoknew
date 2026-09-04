@@ -93,7 +93,6 @@ class DocumentBuilder {
 				// 🔥 ALIGN
 				if (rowData.align) {
 					row.attr("data-align", rowData.align);
-					row.find(".doc-editor").css("text-align", rowData.align);
 				}
 
 				// 🔥 TEXT (editable_table)
@@ -361,27 +360,6 @@ class DocumentBuilder {
 			editor.focus();
 
 			// =====================================
-			// 🔥 HELPER RANGE API
-			// =====================================
-			function wrapSelection(tag) {
-				let sel = window.getSelection();
-				if (!sel.rangeCount) return;
-
-				let range = sel.getRangeAt(0);
-				let content = range.extractContents();
-
-				let el = document.createElement(tag);
-				el.appendChild(content);
-
-				range.insertNode(el);
-
-				sel.removeAllRanges();
-				let newRange = document.createRange();
-				newRange.selectNodeContents(el);
-				sel.addRange(newRange);
-			}
-
-			// =====================================
 			// STYLE (MODERN)
 			// =====================================
 			let style = btn.data("style");
@@ -396,21 +374,7 @@ class DocumentBuilder {
 					arr.push(style); // // toggle ON
 				}
 
-				tr.attr("data-style", arr.join(",")); // // simpan ke TR
-				switch (style) {
-					case "bold":
-						wrapSelection("strong"); // ✅
-						break;
-
-					case "italic":
-						wrapSelection("em"); // ✅
-						break;
-
-					case "underline":
-						wrapSelection("u"); // ✅
-						break;
-				}
-
+				tr.attr("data-style", arr.join(",")); // properti ekspor, bukan mutasi isi
 				btn.toggleClass("active");
 				return;
 			}
@@ -455,7 +419,6 @@ class DocumentBuilder {
 
 			if (align) {
 				tr.attr("data-align", align);
-				editor.css("text-align", align);
 			}
 
 			// =====================================
@@ -481,26 +444,8 @@ class DocumentBuilder {
 			}
 		});
 
-		// =====================================
-		// AUTO FORMAT "NAMA : ISI" (GLOBAL)
-		// =====================================
-		this.container.off("blur", ".doc-editor");
-
-		this.container.on("blur", ".doc-editor", function () {
-			let el = $(this);
-			let text = el.text().trim();
-
-			if (text.includes(":")) return;
-
-			let parts = text.split(" ");
-
-			if (parts.length >= 2) {
-				let label = parts.shift();
-				let rest = parts.join(" ");
-
-				el.html(`<strong>${label}</strong> : ${rest}`);
-			}
-		});
+		// Isi editor tidak boleh ditulis ulang. Type, alignment, font style, dan
+		// label disimpan sebagai metadata baris dan diterapkan saat ekspor PDF.
 	}
 
 	// ======================================================

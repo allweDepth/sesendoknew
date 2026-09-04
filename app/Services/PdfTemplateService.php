@@ -61,7 +61,23 @@ class PdfTemplateService
     $no=1;
     foreach($rows as $row){
       if(!is_array($row)){$text=$this->stringValue($row);}elseif(isset($row['text'])){$text=$this->stringValue($row['text']);}else{$parts=[];foreach($columns?:array_keys($row) as $column)if(!str_starts_with((string)$column,'_')&&!empty($row[$column]))$parts[]=ucwords(str_replace('_',' ',(string)$column)).': '.$this->stringValue($row[$column]);$text=implode('; ',$parts);}
-      if($text==='')continue;$pdf->SetFont('times','',11);$pdf->Cell(8,6,$no++.'.',0,0);$pdf->MultiCell(0,6,$text,0,'J');
+      if($text==='')continue;
+      $type=is_array($row)?($row['type']??'paragraph'):'paragraph';
+      $align=is_array($row)?strtoupper((string)($row['align']??'justify')):'J';
+      $align=['LEFT'=>'L','CENTER'=>'C','RIGHT'=>'R','JUSTIFY'=>'J'][$align]??'J';
+      $styles=is_array($row)&&is_array($row['style']??null)?$row['style']:[];
+      $font=(in_array('bold',$styles,true)?'B':'').(in_array('italic',$styles,true)?'I':'').(in_array('underline',$styles,true)?'U':'');
+      $pdf->SetFont('times',$font,11);
+      if(is_array($row)&&($row['format']??'')==='label'&&str_contains($text,':')){
+        [$caption,$body]=array_pad(explode(':',$text,2),2,'');
+        $text=trim($caption).' : '.trim($body);
+      }
+      if($type==='list'){$pdf->Cell(8,6,"\xE2\x80\xA2",0,0);}
+      elseif($type==='numbered'){$pdf->Cell(8,6,$no++.'.',0,0);}
+      else{$pdf->Cell(8,6,'',0,0);}
+      // TCPDF MultiCell dengan J membiarkan baris terakhir mengikuti alignment
+      // paragraf normal; tidak memakai stretch/force-justify.
+      $pdf->MultiCell(0,6,$text,0,$align,false,1,'','',true,0,false,true,0,'T',false);
     }
     $pdf->Ln(2);
   }
@@ -70,7 +86,8 @@ class PdfTemplateService
   {
     if(is_bool($value))return $value?'Ya':'Tidak';
     if(is_array($value))return implode("\n",array_map(function($v){if(is_array($v)&&isset($v['text']))return (string)$v['text'];return is_scalar($v)?(string)$v:implode('; ',array_filter(array_map(fn($x)=>is_scalar($x)?(string)$x:'',$v)));},$value));
-    return is_scalar($value)?(string)$value:'';
+    if(!is_scalar($value))return '';
+    return trim(html_entity_decode(strip_tags((string)$value),ENT_QUOTES|ENT_HTML5,'UTF-8'));
   }
 
   private function findValue(array $data,array $keys):string

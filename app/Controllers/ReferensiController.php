@@ -18,7 +18,10 @@ class ReferensiController extends Controller
         'sumber_dana',
         'organisasi',
         'peraturan',
-        'wilayah'
+        'wilayah',
+        'rpjmd_kabupaten',
+        'usulan_pembangunan',
+        'evaluasi_renja'
     ];
 
 

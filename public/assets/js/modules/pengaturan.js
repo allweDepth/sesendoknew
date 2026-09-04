@@ -58,6 +58,7 @@ class PengaturanModule {
 			this.bindSubmit();
 			this.bindPeriodTable();
 			this.initUI();
+			if(window.location.hash==="#page-setup") $('#pengaturan-tabs .item[data-tab="page-setup"]').trigger("click");
 		});
 	}
 
@@ -327,7 +328,7 @@ class PengaturanModule {
 	populate() {
 		if (!this.data) return;
 
-		const form = $("#form-pengaturan");
+		const form = $("#form-pengaturan, #form-page-setup");
 
 		Object.keys(this.data).forEach((key) => {
 			const field = form.find(`[name="${key}"]`);
@@ -391,6 +392,14 @@ class PengaturanModule {
 					}
 				},
 			});
+		});
+		$("#form-page-setup").on("submit", (e) => {
+			e.preventDefault();
+			if (!this.data || !this.canEdit()) return;
+			const values = Object.fromEntries($(e.currentTarget).serializeArray().map(x => [x.name, x.value]));
+			this.ajax.request({data:{action:"edit",tbl:"pengaturan",id_row:this.data.id,mode:"update",...values},success:(res)=>{
+				if(res.success){this.data={...this.data,...values};Toast.success("Page Setup global berhasil disimpan");}
+			}});
 		});
 	}
 

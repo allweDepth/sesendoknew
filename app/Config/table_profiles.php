@@ -1829,6 +1829,10 @@ $profiles = [
       'kd_wilayah' => ['type' => 'string'],
       'tahun' => ['type' => 'integer'],
       'tahun_renstra' => ['type' => 'integer'],
+      'ukuran_kertas' => ['type' => 'string'],
+      'orientasi_kertas' => ['type' => 'string'],
+      'font_pdf' => ['type' => 'string'],
+      'ukuran_font_pdf' => ['type' => 'decimal'],
       'awal_renja' => ['type' => 'datetime'],
       'akhir_renja' => ['type' => 'datetime'],
       'kunci' => ['type' => 'boolean'],
@@ -2387,7 +2391,11 @@ $profiles['penugasan_subkegiatan'] = [
 ];
 $profiles['kop_surat'] = ['table' => 'kop_surat_neo', 'primary_key' => 'id', 'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd'], 'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'], 'where' => ['is_deleted' => 0], 'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1], 'validation' => ['nama_pemerintah' => ['required'], 'nama_opd' => ['required']], 'modes' => ['default' => ['select' => ['*'], 'searchable' => ['nama_pemerintah', 'nama_opd', 'alamat'], 'where' => ['kd_wilayah' => 'user', 'kd_opd' => 'user', 'tahun' => 'user', 'is_deleted' => 0], 'order_by' => 'id DESC']]];
 
-foreach (['akun', 'mapping', 'aset', 'organisasi', 'satuan', 'satuan_teks', 'sumber_dana', 'wilayah', 'peraturan', 'rekanan', 'rekening_kegiatan', 'sbu', 'ssh', 'hspk', 'asb', 'periode_rpjmd', 'misi_renstra_neo', 'tujuan_renstra_neo', 'sasaran_renstra_neo', 'indikator_sasaran_renstra_neo', 'program_renstra_neo', 'indikator_program_renstra_neo', 'kegiatan_renstra_neo', 'sub_kegiatan_renstra_neo', 'renstra_neo', 'rkpd', 'renja', 'rka', 'dpa', 'rkpd_p', 'renja_p', 'rka_p', 'dppa', 'kontrak', 'rab_kontrak', 'realisasi', 'asn', 'pppk', 'riwayat_jabatan', 'riwayat_pangkat', 'cuti', 'sk_pegawai', 'pejabat_tahunan', 'absensi'] as $importKey) {
+$profiles['rpjmd_kabupaten']=['table'=>'rpjmd_kabupaten_neo','primary_key'=>'id','auto_session'=>['kd_wilayah'],'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],'validation'=>['nama_dokumen'=>['required'],'berlaku_mulai'=>['required'],'berlaku_sampai'=>['required']],'modes'=>['default'=>['select'=>['id','nama_dokumen','nomor_perda','berlaku_mulai','berlaku_sampai','status','keterangan'],'searchable'=>['nama_dokumen','nomor_perda','visi'],'where'=>['kd_wilayah'=>'user','is_deleted'=>0],'order_by'=>'berlaku_mulai DESC'],'edit'=>['select'=>['*'],'searchable'=>['nama_dokumen'],'order_by'=>'id DESC']]];
+$profiles['usulan_pembangunan']=['table'=>'usulan_pembangunan_neo','primary_key'=>'id','auto_session'=>['kd_wilayah','kd_opd','tahun'],'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],'validation'=>['jenis_usulan'=>['required'],'pengusul'=>['required'],'uraian'=>['required']],'modes'=>['default'=>['select'=>['id','jenis_usulan','pengusul','uraian','lokasi','perkiraan_anggaran','prioritas','status'],'searchable'=>['pengusul','uraian','lokasi'],'where'=>['kd_wilayah'=>'user','tahun'=>'user','is_deleted'=>0],'order_by'=>'prioritas ASC,id DESC'],'edit'=>['select'=>['*'],'searchable'=>['uraian'],'order_by'=>'id DESC']]];
+$profiles['evaluasi_renja']=['table'=>'evaluasi_renja_neo','primary_key'=>'id','auto_session'=>['kd_wilayah','kd_opd','tahun'],'soft_delete'=>['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],'validation'=>['triwulan'=>['required','numeric'],'kd_sub_keg'=>['required'],'indikator'=>['required']],'modes'=>['default'=>['select'=>['id','triwulan','kd_sub_keg','indikator','target_tahunan','realisasi_kumulatif','pagu_anggaran','realisasi_anggaran_kumulatif','status'],'searchable'=>['kd_sub_keg','indikator'],'where'=>['kd_wilayah'=>'user','kd_opd'=>'user','tahun'=>'user','is_deleted'=>0],'order_by'=>'triwulan DESC,kd_sub_keg'],'edit'=>['select'=>['*'],'searchable'=>['indikator'],'order_by'=>'id DESC']]];
+
+foreach (['akun', 'mapping', 'aset', 'organisasi', 'satuan', 'satuan_teks', 'sumber_dana', 'wilayah', 'peraturan', 'rekanan', 'rekening_kegiatan', 'sbu', 'ssh', 'hspk', 'asb', 'periode_rpjmd', 'rpjmd_kabupaten', 'usulan_pembangunan', 'evaluasi_renja', 'misi_renstra_neo', 'tujuan_renstra_neo', 'sasaran_renstra_neo', 'indikator_sasaran_renstra_neo', 'program_renstra_neo', 'indikator_program_renstra_neo', 'kegiatan_renstra_neo', 'sub_kegiatan_renstra_neo', 'renstra_neo', 'rkpd', 'renja', 'rka', 'dpa', 'rkpd_p', 'renja_p', 'rka_p', 'dppa', 'kontrak', 'rab_kontrak', 'realisasi', 'asn', 'pppk', 'riwayat_jabatan', 'riwayat_pangkat', 'cuti', 'sk_pegawai', 'pejabat_tahunan', 'absensi'] as $importKey) {
   if (isset($profiles[$importKey])) $profiles[$importKey]['import'] = ['enabled' => true, 'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd']];
 }
 

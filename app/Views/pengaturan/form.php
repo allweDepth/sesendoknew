@@ -34,6 +34,7 @@ $tahunLabel = $user['tahun'] ?? '-';
     <div class="ui top attached tabular menu" id="pengaturan-tabs">
         <a class="active item" data-tab="pengaturan">Pengaturan Wilayah</a>
         <a class="item" data-tab="periode">Periode RPJMD</a>
+        <a class="item" data-tab="page-setup">Page Setup PDF/Excel</a>
     </div>
 
     <!-- TAB 1 -->
@@ -196,6 +197,19 @@ $tahunLabel = $user['tahun'] ?? '-';
     <!-- TAB 2 -->
     <div class="ui bottom attached tab segment" data-tab="periode">
         <div id="periode-rpjmd-container"></div>
+    </div>
+
+    <div class="ui bottom attached tab segment" data-tab="page-setup">
+        <form class="ui form" id="form-page-setup">
+            <div class="ui info message">Berlaku global untuk ekspor PDF dan pengaturan cetak Excel pada seluruh menu di wilayah dan tahun aktif.</div>
+            <div class="four fields">
+                <div class="field"><label>Ukuran Kertas</label><select name="ukuran_kertas" <?= $disabled ?>><option value="A4">A4 (210 × 297 mm)</option><option value="F4">F4/Folio (210 × 330 mm)</option><option value="LEGAL">Legal (216 × 356 mm)</option></select></div>
+                <div class="field"><label>Orientasi</label><select name="orientasi_kertas" <?= $disabled ?>><option value="AUTO">Otomatis per dokumen</option><option value="P">Portrait</option><option value="L">Landscape</option></select></div>
+                <div class="field"><label>Font PDF</label><select name="font_pdf" <?= $disabled ?>><option value="helvetica">Helvetica</option><option value="times">Times</option><option value="courier">Courier</option></select></div>
+                <div class="field"><label>Ukuran Font PDF</label><input type="number" min="6" max="18" step="0.5" name="ukuran_font_pdf" <?= $disabled ?>></div>
+            </div>
+            <?php if ($canEdit): ?><button class="ui primary button"><i class="save icon"></i>Simpan Page Setup</button><?php else: ?><div class="ui grey disabled button">Read Only</div><?php endif; ?>
+        </form>
     </div>
 
 </div>
