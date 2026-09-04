@@ -1161,7 +1161,7 @@ UIConfig.global_print = {
 		],
 	},
 };
-UIConfig.rpjmd_kabupaten={layout:{columns:1},validation:{nama_dokumen:{required:true},berlaku_mulai:{required:true},berlaku_sampai:{required:true}},form:{elements:[
+UIConfig.rpjmd_kabupaten={layout:{columns:1},validation:{nama_dokumen:{required:true},berlaku_mulai:{required:true}},form:{elements:[
 	{tag:"field",prop:{label:"Nama Dokumen RPJMD",name:"nama_dokumen"}},{tag:"field",prop:{label:"Nomor Perda",name:"nomor_perda"}},
 	{tag:"fieldCalendar",prop:{label:"Tanggal Perda",name:"tanggal_perda",calendarType:"date"}},{tag:"fieldCalendar",prop:{label:"Berlaku Mulai",name:"berlaku_mulai",calendarType:"date"}},{tag:"fieldCalendar",prop:{label:"Berlaku Sampai (default 5 tahun)",name:"berlaku_sampai",calendarType:"date"}},
 	{tag:"fieldTextarea",prop:{label:"Visi",name:"visi"}},{tag:"fieldTextarea",prop:{label:"Misi",name:"misi"}},{tag:"fieldTextarea",prop:{label:"Sasaran",name:"sasaran"}},{tag:"fieldTextarea",prop:{label:"Indikator",name:"indikator"}},

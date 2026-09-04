@@ -204,20 +204,38 @@ class TataNaskahModule {
 				return; // // stop karena memang wajib
 			}
 
-			const payload = builder.collectStructure(); // // ambil struktur form
-			// 🔥 WAJIB STRINGIFY DI SINI
-			const finalPayload = {
+			const payload = builder.collectStructure(); // ambil tabel/uraian beserta metadata ekspor
+
+			// DocumentBuilder hanya mengoleksi tabel. Field header Tata Naskah
+			// (perihal, penandatangan, jabatan, pangkat, tanggal, dll.) berada
+			// di luar tabel sehingga wajib digabung ke payload yang sama.
+			form.find("input[name], textarea[name], select[name]").each(function () {
+				const field = $(this);
+				const name = field.attr("name");
+				if (!name || field.prop("disabled") || field.attr("type") === "file") return;
+				if (field.attr("type") === "radio" && !field.prop("checked")) return;
+				if (field.attr("type") === "checkbox") {
+					payload[name] = field.prop("checked") ? 1 : 0;
+					return;
+				}
+				payload[name] = field.val() ?? "";
+			});
+
+			const data = {
+				action: this.currentId !== null ? "edit_json" : "add_json",
+				id_row: this.currentId !== null ? this.currentId : "",
+				tbl: this.state.tbl,
 				struktur_json: JSON.stringify(payload),
 			};
+
+			["jenis_id", "nomor", "klasifikasi_id", "tanggal_surat", "perihal"].forEach((key) => {
+				if (payload[key] !== undefined && payload[key] !== null && payload[key] !== "") data[key] = payload[key];
+			});
+
 			window.Ajax.request({
 				url: AppConfig.apiUrl + "dynamic",
 				method: "POST",
-				data: {
-					action: this.currentId !== null ? "edit_json" : "add_json", // // STRICT CHECK
-					id_row: this.currentId !== null ? this.currentId : "", // // hindari null
-					tbl: this.state.tbl,
-					...finalPayload,
-				},
+				data,
 				success: (res) => {
 					if (res.success) {
 						Toast.success("Data berhasil disimpan");

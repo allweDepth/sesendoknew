@@ -46,14 +46,14 @@ class PdfService
     $setup=PageSetupService::current();
     $pdf = new TCPDF(PageSetupService::orientation($setup,'P'),'mm',PageSetupService::tcpdfFormat($setup),true,'UTF-8',false);
     $pdf->AddPage();
-    $pdf->SetFont('times', '', 11);
+    $pdf->SetFont($setup['font'], '', $setup['font_size']);
 
     foreach ($data as $key => $val) {
 
-      $pdf->SetFont('times', 'B', 11);
+      $pdf->SetFont($setup['font'], 'B', $setup['font_size']);
       $pdf->Cell(50, 6, strtoupper($key), 0, 0);
 
-      $pdf->SetFont('times', '', 11);
+      $pdf->SetFont($setup['font'], '', $setup['font_size']);
       $pdf->MultiCell(0, 6, ': ' . $val, 0, 1);
     }
 
@@ -99,8 +99,15 @@ class PdfService
     $strukturData = json_decode($struktur['struktur_json'], true); // isi
     $schemaData   = json_decode($jenis['schema_json'], true); // template
     if(!empty($strukturData['penandatangan']) && ctype_digit((string)$strukturData['penandatangan'])){
-      $pegawai=$this->db->query('SELECT CONCAT_WS(" ",gelar_depan,nama) nama FROM db_asn_pemda_neo WHERE id=?',[(int)$strukturData['penandatangan']])->fetch();
-      if($pegawai)$strukturData['nama_penandatangan']=$pegawai['nama'];
+      $pegawai=$this->db->query('SELECT nama,gelar_depan,gelar,nip,jabatan,golongan,ruang FROM db_asn_pemda_neo WHERE id=?',[(int)$strukturData['penandatangan']])->fetch();
+      if($pegawai){
+        $nama=trim(trim((string)($pegawai['gelar_depan']??'')).' '.trim((string)($pegawai['nama']??'')));
+        if(trim((string)($pegawai['gelar']??''))!=='')$nama.=($nama!==''?', ':'').trim((string)$pegawai['gelar']);
+        $strukturData['nama_penandatangan']=$nama;
+        $strukturData['jabatan_penandatangan']=$strukturData['jbt_pemberi_tgs']??$pegawai['jabatan']??'';
+        $strukturData['pangkat_penandatangan']=$strukturData['pangkat_pemberi_tgs']??trim(implode('/',array_filter([$pegawai['golongan']??null,$pegawai['ruang']??null])));
+        $strukturData['nip_penandatangan']=$pegawai['nip']??'';
+      }
     }
 
     // =====================================================
@@ -135,7 +142,7 @@ class PdfService
     // =====================================================
     // RENDER TEMPLATE
     // =====================================================
-    $tpl = new PdfTemplateService();
+    $tpl = new PdfTemplateService($setup);
     $logo = __DIR__.'/../../public/assets/img/umum/logo.png';
     $tpl->renderOfficial($pdf, $naskah, $schemaData, $strukturData, is_file($logo)?$logo:null);
 

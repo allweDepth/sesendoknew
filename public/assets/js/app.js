@@ -152,7 +152,7 @@ class App {
 		// Normalisasi URL (hapus query string)
 		// ============================================
 
-		const cleanUrl = (window.appRoutePath ? window.appRoutePath(url) : url).split("?")[0]; // hapus query string
+		const cleanUrl = (window.appRoutePath ? window.appRoutePath(url) : url).split(/[?#]/)[0]; // hapus query string dan hash tab
 
 		// Ambil segment pertama
 		const firstSegment = "/" + cleanUrl.split("/")[1]; // ambil segment pertama path

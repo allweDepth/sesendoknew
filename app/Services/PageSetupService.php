@@ -28,6 +28,26 @@ final class PageSetupService
         return ($settings['paper']??'A4')==='F4'?[210,330]:($settings['paper']??'A4');
     }
 
+    public static function applyPdf(TCPDF $pdf,array $settings):void
+    {
+        $pdf->SetFont((string)($settings['font']??'helvetica'),'',(float)($settings['font_size']??10));
+    }
+
+    public static function applyExcel(object $sheet,array $settings,string $fallback='P'):void
+    {
+        if(!method_exists($sheet,'getPageSetup'))return;
+        $setup=$sheet->getPageSetup();
+        $orientation=self::orientation($settings,$fallback)==='L'
+            ? \PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE
+            : \PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT;
+        $paper=match($settings['paper']??'A4'){
+            'LEGAL'=>\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_LEGAL,
+            'F4'=>\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_FOLIO,
+            default=>\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4,
+        };
+        $setup->setOrientation($orientation)->setPaperSize($paper)->setFitToWidth(1)->setFitToHeight(0);
+    }
+
     public static function orientation(array $settings,string $fallback='P'):string
     {
         return ($settings['orientation']??'AUTO')==='AUTO'?$fallback:$settings['orientation'];

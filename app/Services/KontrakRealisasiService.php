@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
+require_once __DIR__ . '/PageSetupService.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -266,6 +267,7 @@ class KontrakRealisasiService
     foreach ($data['curve'] as $x) $s->fromArray(['', $x['minggu_ke'], (float)$x['rencana_kumulatif'], (float)$x['realisasi_kumulatif']], null, 'A' . $r++);
     foreach (range('A', 'H') as $c) $s->getColumnDimension($c)->setAutoSize(true);
     $s->getStyle('A1:H1')->getFont()->setBold(true);
+    PageSetupService::applyExcel($s,PageSetupService::current($this->user),'L');
     $tmp = tempnam(sys_get_temp_dir(), 'rab_') . '.xlsx';
     (new Xlsx($book))->save($tmp);
     return $tmp;
@@ -297,7 +299,7 @@ class KontrakRealisasiService
   {
     $data = $this->delivery($contractId);
     $d = $data['contract'];
-    $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8');
+    $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'L'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
     $pdf->SetMargins(10, 10, 10);
     $pdf->AddPage();
     $pdf->SetFont('helvetica', 'B', 13);
@@ -337,7 +339,7 @@ class KontrakRealisasiService
     if (!in_array($type, ['SSKK', 'SSUK'], true)) throw new InvalidArgumentException('Jenis syarat kontrak tidak valid');
     $data = $this->delivery($contractId);
     $d = $data['contract'];
-    $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8');
+    $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'P'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
     $pdf->SetMargins(18, 15, 18);
     $pdf->SetAutoPageBreak(true, 18);
     $pdf->AddPage();
@@ -491,7 +493,7 @@ class KontrakRealisasiService
     }
     $d = $this->db->query($sql, $params)->fetch();
     if (!$d) throw new RuntimeException('Kontrak tidak ditemukan');
-    $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8');
+    $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'P'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
     $pdf->SetMargins(18, 15, 18);
     $pdf->AddPage();
     $pdf->SetFont('helvetica', 'B', 14);
@@ -528,7 +530,7 @@ class KontrakRealisasiService
     $rows = $this->reportRows();
     [,, $y] = $this->scope();
     $summary = $this->summary();
-    $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8');
+    $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'L'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
     $pdf->SetMargins(8, 10, 8);
     $pdf->AddPage();
     $pdf->SetFont('helvetica', 'B', 13);
@@ -586,6 +588,7 @@ class KontrakRealisasiService
       $chart->setBottomRightPosition('U18');
       $sheet->addChart($chart);
     }
+    PageSetupService::applyExcel($sheet,PageSetupService::current($this->user),'L');
     $tmp = tempnam(sys_get_temp_dir(), 'phase4_') . '.xlsx';
     (new Xlsx($book))->setIncludeCharts(true)->save($tmp);
     return $tmp;
@@ -630,6 +633,19 @@ class KontrakRealisasiService
     }
     unset($row);
     return array_values($grouped);
+  }
+
+  private function accountLevelSummary(array $rows,string $amountField='jumlah'): array
+  {
+    $totals=[];$codes=[];
+    foreach($rows as $row){
+      $code=trim((string)($row['kd_akun']??''));if($code==='')continue;
+      $parts=array_values(array_filter(explode('.',$code),static fn($v)=>$v!==''));$prefix='';
+      foreach($parts as $part){$prefix=$prefix===''?$part:$prefix.'.'.$part;$totals[$prefix]=($totals[$prefix]??0)+(float)($row[$amountField]??0);$codes[$prefix]=true;}
+    }
+    if(!$codes)return[];$list=array_keys($codes);$holders=implode(',',array_fill(0,count($list),'?'));$names=[];
+    foreach($this->db->query("SELECT kode,uraian FROM akun_neo WHERE kode IN ($holders) AND is_deleted=0",$list)->fetchAll() as $row)$names[(string)$row['kode']]=(string)$row['uraian'];
+    uksort($totals,'strnatcmp');$out=[];foreach($totals as $code=>$amount)$out[]=['kode'=>$code,'uraian'=>$names[$code]??('Rekening '.$code),'jumlah'=>$amount];return$out;
   }
 
   public function monthlyFinancialRows(): array
@@ -699,6 +715,11 @@ class KontrakRealisasiService
     } else {
       $s->setCellValue('D' . $totalRow, '=SUM(D5:D' . ($row - 1) . ')');
     }
+    if(in_array($format,['spj','lra'],true)){
+      $source=$format==='spj'?$this->financialRows():$this->lraRows();
+      $summary=$this->accountLevelSummary($source,$format==='spj'?'jumlah':'realisasi');
+      if($summary){$summaryRow=$totalRow+3;$s->setCellValue('A'.$summaryRow,'REKAP NOMOR REKENING BELANJA PER LEVEL');$s->mergeCells('A'.$summaryRow.':'.$last.$summaryRow);$s->getStyle('A'.$summaryRow.':'.$last.$summaryRow)->getFont()->setBold(true);$summaryRow++;$s->fromArray(['KODE REKENING','URAIAN','JUMLAH'],null,'A'.$summaryRow);$s->getStyle('A'.$summaryRow.':C'.$summaryRow)->getFont()->setBold(true);$summaryRow++;foreach($summary as $level){$s->fromArray([$level['kode'],$level['uraian'],$level['jumlah']],null,'A'.$summaryRow++);}$s->getStyle('C'.($totalRow+5).':C'.max($totalRow+5,$summaryRow-1))->getNumberFormat()->setFormatCode('#,##0.00');}
+    }
     $s->getStyle("A1:{$last}1")->getFont()->setBold(true)->setSize(14)->getColor()->setARGB('FFFFFFFF');
     $s->getStyle("A1:{$last}1")->getFill()->setFillType('solid')->getStartColor()->setARGB('FF174A68');
     $s->getStyle("A4:{$last}4")->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');
@@ -727,6 +748,7 @@ class KontrakRealisasiService
       $chart->setBottomRightPosition($format === 'lra' ? 'Q20' : 'P20');
       $s->addChart($chart);
     }
+    PageSetupService::applyExcel($s,PageSetupService::current($this->user),'L');
     $tmp = tempnam(sys_get_temp_dir(), 'finance_') . '.xlsx';
     $writer = new Xlsx($book);
     $writer->setIncludeCharts(true);
@@ -739,7 +761,7 @@ class KontrakRealisasiService
     $format = in_array($format, ['spj', 'lra', 'bulanan_fisik_keuangan'], true) ? $format : 'lra';
     [,, $year] = $this->scope();
     $title = ['spj' => 'FORMAT SPJ BENDAHARA', 'lra' => 'LAPORAN REALISASI ANGGARAN', 'bulanan_fisik_keuangan' => 'LAPORAN BULANAN FISIK DAN KEUANGAN'][$format];
-    $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8');
+    $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'L'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
     $pdf->SetMargins(8, 10, 8);
     $pdf->AddPage();
     $pdf->SetFont('helvetica', 'B', 13);
@@ -789,6 +811,10 @@ class KontrakRealisasiService
       }
       $pdf->Text(22, $baseY + 7, 'Biru: fisik | Oranye: keuangan');
       return $pdf->Output('', 'S');
+    }
+    if(in_array($format,['spj','lra'],true)){
+      $summary=$this->accountLevelSummary($format==='spj'?$this->financialRows():$this->lraRows(),$format==='spj'?'jumlah':'realisasi');
+      if($summary){$html.='<br><b>REKAP NOMOR REKENING BELANJA PER LEVEL</b><table border="1" cellpadding="3"><tr style="font-weight:bold;background-color:#dcecff"><th width="22%">Kode Rekening</th><th width="58%">Uraian</th><th width="20%">Jumlah</th></tr>';foreach($summary as $level)$html.='<tr><td>'.$e($level['kode']).'</td><td>'.$e($level['uraian']).'</td><td width="20%" align="right">'.number_format((float)$level['jumlah'],0,',','.').'</td></tr>';$html.='</table>';}
     }
     $pdf->writeHTML($html, true, false, true, false, '');
     return $pdf->Output('', 'S');

@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../Services/DynamicTableService.php';
 require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../Services/JsonResponse.php';
+require_once __DIR__ . '/../Services/PageSetupService.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -177,6 +178,7 @@ class DynamicController
       $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($columnIndex))->setAutoSize(true);
     }
 
+    PageSetupService::applyExcel($sheet,PageSetupService::current($_SESSION['user']??[]),'L');
     $writer = new Xlsx($spreadsheet);
     $writer->save('php://output');
     exit;
@@ -193,6 +195,7 @@ class DynamicController
     $book=new Spreadsheet();$sheet=$book->getActiveSheet();$sheet->setTitle(substr('Template-'.$key,0,31));
     foreach($columns as $i=>$column){$cell=Coordinate::stringFromColumnIndex($i+1).'1';$sheet->setCellValue($cell,strtoupper($column));$sheet->getColumnDimension(Coordinate::stringFromColumnIndex($i+1))->setWidth(max(14,min(32,strlen($column)+5)));}
     $last=Coordinate::stringFromColumnIndex(max(1,count($columns)));$sheet->getStyle("A1:{$last}1")->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');$sheet->getStyle("A1:{$last}1")->getFill()->setFillType('solid')->getStartColor()->setARGB('FF176B87');$sheet->getStyle("A1:{$last}50")->getBorders()->getAllBorders()->setBorderStyle('hair')->getColor()->setARGB('FFD5E1E8');$sheet->freezePane('A2');$sheet->setAutoFilter("A1:{$last}1");
+    PageSetupService::applyExcel($sheet,PageSetupService::current($_SESSION['user']??[]),'L');
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');header('Content-Disposition: attachment; filename="template-'.preg_replace('/[^a-z0-9_-]/i','',$key).'.xlsx"');(new Xlsx($book))->save('php://output');exit;
   }
 

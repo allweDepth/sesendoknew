@@ -97,7 +97,7 @@ class DocumentBuilder {
 
 				// 🔥 TEXT (editable_table)
 				if (rowData.text !== undefined) {
-					row.find(".doc-editor").html(rowData.text || "");
+					row.find(".doc-editor").text(this.normalizeEditorText(rowData.text));
 				}
 
 				// 🔥 TABLE NORMAL (nama_ditugaskan)
@@ -566,6 +566,9 @@ class DocumentBuilder {
 						<button type="button" class="ui icon button" data-type="numbered">
 							<i class="list ol icon"></i>
 						</button>
+						<button type="button" class="ui button" data-type="alpha" title="Penomoran abjad">
+							<span aria-hidden="true">a.</span>
+						</button>
 					</div>
 
 					<div class="divider"></div>
@@ -627,6 +630,19 @@ class DocumentBuilder {
 		return row;
 	}
 
+	normalizeEditorText(value) {
+		if (value === null || value === undefined) return "";
+		const holder = document.createElement("div");
+		holder.innerHTML = String(value)
+			.replace(/<\/li>/gi, "\n")
+			.replace(/<br\s*\/?\s*>/gi, "\n")
+			.replace(/<\/(?:p|div)>/gi, "\n");
+		return String(holder.textContent || "")
+			.replace(/\u00a0/g, " ")
+			.replace(/\n{3,}/g, "\n\n")
+			.trim();
+	}
+
 	// ======================================================
 	// INIT UI
 	// ======================================================
@@ -669,7 +685,7 @@ class DocumentBuilder {
 							let editor = $(this).find(".doc-editor");
 
 							if (editor.length) {
-								value = editor.html().trim(); // ✅ FIX: preserve HTML
+								value = String(editor.get(0)?.innerText || "").trim();
 							} else {
 								value = $(this).text().trim();
 							}

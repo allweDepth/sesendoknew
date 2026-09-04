@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
+require_once __DIR__ . '/PageSetupService.php';
 
 class StandarHargaService
 {
@@ -30,13 +31,14 @@ class StandarHargaService
             [$type, $scope['kd_wilayah'], $scope['tahun'], $scope['peraturan_id']]
         )->fetchAll();
 
-        $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8');
+        $setup=PageSetupService::current($this->user);
+        $pdf = new TCPDF(PageSetupService::orientation($setup,'L'), 'mm', PageSetupService::tcpdfFormat($setup), true, 'UTF-8');
         $pdf->SetCreator('seSendok');
         $pdf->SetTitle(strtoupper($type) . ' Tahun ' . $scope['tahun']);
         $pdf->SetMargins(10, 12, 10);
         $pdf->SetAutoPageBreak(true, 12);
         $pdf->AddPage();
-        $pdf->SetFont('helvetica', 'B', 13);
+        $pdf->SetFont($setup['font'], 'B', max(10,(float)$setup['font_size']+3));
         $pdf->Cell(0, 8, 'DAFTAR ' . strtoupper($type) . ' TAHUN ' . $scope['tahun'], 0, 1, 'C');
         $pdf->Ln(2);
 
@@ -61,7 +63,7 @@ class StandarHargaService
             $html .= '<tr><td colspan="8" align="center">Tidak ada data</td></tr>';
         }
 
-        $pdf->SetFont('helvetica', '', 8);
+        $pdf->SetFont($setup['font'], '', max(6,(float)$setup['font_size']-2));
         $pdf->writeHTML($html . '</tbody></table>', true, false, true, false, '');
         return $pdf->Output('', 'S');
     }
