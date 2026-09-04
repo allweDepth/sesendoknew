@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 02, 2026 at 10:04 AM
--- Server version: 12.3.3-MariaDB
--- PHP Version: 8.5.10
+-- Waktu pembuatan: 04 Sep 2026 pada 18.38
+-- Versi server: 12.3.3-MariaDB
+-- Versi PHP: 8.5.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `sesendoknew_db`
+-- Basis data: `sesendoknew_db`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `absensi_pegawai_neo`
+-- Struktur dari tabel `absensi_pegawai_neo`
 --
 
 CREATE TABLE `absensi_pegawai_neo` (
@@ -54,7 +54,7 @@ CREATE TABLE `absensi_pegawai_neo` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `akun_neo`
+-- Struktur dari tabel `akun_neo`
 --
 
 CREATE TABLE `akun_neo` (
@@ -81,7 +81,7 @@ CREATE TABLE `akun_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `akun_neo`
+-- Dumping data untuk tabel `akun_neo`
 --
 
 INSERT INTO `akun_neo` (`id`, `akun`, `kelompok`, `jenis_akun`, `objek`, `rincian_objek`, `sub_rincian_objek`, `kode`, `uraian`, `belanja`, `pembiayaan`, `peraturan`, `disable`, `aksi`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -4397,7 +4397,7 @@ INSERT INTO `akun_neo` (`id`, `akun`, `kelompok`, `jenis_akun`, `objek`, `rincia
 -- --------------------------------------------------------
 
 --
--- Table structure for table `analisa_rab`
+-- Struktur dari tabel `analisa_rab`
 --
 
 CREATE TABLE `analisa_rab` (
@@ -4425,7 +4425,7 @@ CREATE TABLE `analisa_rab` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `anggaran_copy_log`
+-- Struktur dari tabel `anggaran_copy_log`
 --
 
 CREATE TABLE `anggaran_copy_log` (
@@ -4441,7 +4441,7 @@ CREATE TABLE `anggaran_copy_log` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `anggaran_perubahan_template`
+-- Struktur dari tabel `anggaran_perubahan_template`
 --
 
 CREATE TABLE `anggaran_perubahan_template` (
@@ -4500,7 +4500,7 @@ CREATE TABLE `anggaran_perubahan_template` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `anggaran_program_renstra_neo`
+-- Struktur dari tabel `anggaran_program_renstra_neo`
 --
 
 CREATE TABLE `anggaran_program_renstra_neo` (
@@ -4520,7 +4520,7 @@ CREATE TABLE `anggaran_program_renstra_neo` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `anggaran_template`
+-- Struktur dari tabel `anggaran_template`
 --
 
 CREATE TABLE `anggaran_template` (
@@ -4569,7 +4569,7 @@ CREATE TABLE `anggaran_template` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `anggaran_workflow_log`
+-- Struktur dari tabel `anggaran_workflow_log`
 --
 
 CREATE TABLE `anggaran_workflow_log` (
@@ -4585,7 +4585,7 @@ CREATE TABLE `anggaran_workflow_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `anggaran_workflow_log`
+-- Dumping data untuk tabel `anggaran_workflow_log`
 --
 
 INSERT INTO `anggaran_workflow_log` (`id`, `source_table`, `target_table`, `tahun`, `kd_wilayah`, `kd_opd`, `jumlah_data`, `username`, `tgl_copy`) VALUES
@@ -4605,7 +4605,7 @@ INSERT INTO `anggaran_workflow_log` (`id`, `source_table`, `target_table`, `tahu
 -- --------------------------------------------------------
 
 --
--- Table structure for table `aset_neo`
+-- Struktur dari tabel `aset_neo`
 --
 
 CREATE TABLE `aset_neo` (
@@ -4632,7 +4632,7 @@ CREATE TABLE `aset_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `aset_neo`
+-- Dumping data untuk tabel `aset_neo`
 --
 
 INSERT INTO `aset_neo` (`id`, `akun`, `kelompok`, `jenis_akun`, `objek`, `rincian_objek`, `sub_rincian_objek`, `kode`, `uraian`, `belanja`, `pembiayaan`, `peraturan`, `disable`, `aksi`, `keterangan`, `tgl_insert`, `username_insert`, `username_update`, `tgl_update`, `is_deleted`) VALUES
@@ -8688,7 +8688,7 @@ INSERT INTO `aset_neo` (`id`, `akun`, `kelompok`, `jenis_akun`, `objek`, `rincia
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cache_schema_naskah`
+-- Struktur dari tabel `cache_schema_naskah`
 --
 
 CREATE TABLE `cache_schema_naskah` (
@@ -8699,7 +8699,7 @@ CREATE TABLE `cache_schema_naskah` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `cache_schema_naskah`
+-- Dumping data untuk tabel `cache_schema_naskah`
 --
 
 INSERT INTO `cache_schema_naskah` (`jenis_id`, `schema_version`, `schema_json`, `tgl_insert`) VALUES
@@ -8731,7 +8731,7 @@ INSERT INTO `cache_schema_naskah` (`jenis_id`, `schema_version`, `schema_json`, 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cuti_pegawai_neo`
+-- Struktur dari tabel `cuti_pegawai_neo`
 --
 
 CREATE TABLE `cuti_pegawai_neo` (
@@ -8758,7 +8758,7 @@ CREATE TABLE `cuti_pegawai_neo` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `daftar_paket_neo`
+-- Struktur dari tabel `daftar_paket_neo`
 --
 
 CREATE TABLE `daftar_paket_neo` (
@@ -8832,7 +8832,7 @@ CREATE TABLE `daftar_paket_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `daftar_paket_neo`
+-- Dumping data untuk tabel `daftar_paket_neo`
 --
 
 INSERT INTO `daftar_paket_neo` (`id`, `kd_rup`, `kd_paket`, `kd_wilayah`, `kd_opd`, `tahun`, `sumber_tahap`, `anggaran_id`, `uraian`, `id_uraian`, `kd_sub_keg`, `volume`, `satuan`, `harga_satuan`, `jumlah`, `pagu`, `metode_pengadaan`, `metode_pemilihan`, `pengadaan_penyedia`, `jns_kontrak`, `renc_output`, `output`, `id_rekanan`, `nama_rekanan`, `nama_ppk`, `nip_ppk`, `nama_pptk`, `waktu_pelaksanaan`, `waktu_pemeliharaan`, `nip_pptk`, `tgl_kontrak`, `no_kontrak`, `tgl_persiapan_kont`, `no_persiapan_kont`, `tgl_spmk`, `no_spmk`, `addendum`, `tgl_undangan`, `no_undangan`, `tgl_penawaran`, `no_penawaran`, `tgl_nego`, `no_nego`, `tgl_sppbj`, `no_sppbj`, `tgl_pho`, `no_pho`, `tgl_fho`, `no_fho`, `username_insert`, `tgl_insert`, `tgl_update`, `username_update`, `keterangan`, `file_kontrak`, `file_addendum`, `file_pho`, `file_fho`, `file`, `file_laporan`, `file_dokumentasi0`, `file_dokumentasi50`, `file_dokumentasi100`, `disable`, `setujui`, `kunci`, `is_deleted`) VALUES
@@ -8842,7 +8842,7 @@ INSERT INTO `daftar_paket_neo` (`id`, `kd_rup`, `kd_paket`, `kd_wilayah`, `kd_op
 -- --------------------------------------------------------
 
 --
--- Table structure for table `daftar_realisasi_neo`
+-- Struktur dari tabel `daftar_realisasi_neo`
 --
 
 CREATE TABLE `daftar_realisasi_neo` (
@@ -8881,7 +8881,7 @@ CREATE TABLE `daftar_realisasi_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `daftar_realisasi_neo`
+-- Dumping data untuk tabel `daftar_realisasi_neo`
 --
 
 INSERT INTO `daftar_realisasi_neo` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `kd_sub_keg`, `kd_akun`, `id_paket`, `kontrak_id`, `rab_id`, `ket_paket`, `id_uraian_paket`, `ket_uraian_paket`, `id_dok_anggaran`, `dok`, `vol`, `jumlah`, `tanggal`, `periode`, `progress_fisik`, `progress_keuangan`, `uraian_progress`, `nomor_bukti`, `file`, `username_insert`, `username_update`, `tgl_insert`, `tgl_update`, `keterangan`, `disable`, `is_deleted`, `setujui`, `kunci`) VALUES
@@ -8894,7 +8894,7 @@ INSERT INTO `daftar_realisasi_neo` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `kd_s
 (7, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'TRACE.PH15.5', '5.1.02.02.05.0044', 1, 5, NULL, 'TRACE_TEST Paket A', 1, 'Termin I', 6, 'dppa', 1.000000000000, 47250000.000000000000, '2026-02-01', 1, 50.00, 0.00, NULL, 'TRACE/REAL/PH29/5', NULL, 'TRACE_PHASE29', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 29', 0, 0, 1, 1);
 
 --
--- Triggers `daftar_realisasi_neo`
+-- Trigger `daftar_realisasi_neo`
 --
 DELIMITER $$
 CREATE TRIGGER `trg_realisasi_validate_insert` BEFORE INSERT ON `daftar_realisasi_neo` FOR EACH ROW BEGIN
@@ -8921,7 +8921,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `daftar_uraian_paket`
+-- Struktur dari tabel `daftar_uraian_paket`
 --
 
 CREATE TABLE `daftar_uraian_paket` (
@@ -8949,7 +8949,7 @@ CREATE TABLE `daftar_uraian_paket` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `daftar_uraian_paket`
+-- Dumping data untuk tabel `daftar_uraian_paket`
 --
 
 INSERT INTO `daftar_uraian_paket` (`id`, `id_paket`, `id_dok_anggaran`, `dok`, `tahun`, `kd_wilayah`, `kd_opd`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `jumlah_pagu`, `jumlah_kontrak`, `vol_kontrak`, `sat_kontrak`, `realisasi_vol`, `realisasi_jumlah`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
@@ -8959,7 +8959,7 @@ INSERT INTO `daftar_uraian_paket` (`id`, `id_paket`, `id_dok_anggaran`, `dok`, `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `db_asn_pemda_neo`
+-- Struktur dari tabel `db_asn_pemda_neo`
 --
 
 CREATE TABLE `db_asn_pemda_neo` (
@@ -9075,7 +9075,7 @@ CREATE TABLE `db_asn_pemda_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `db_asn_pemda_neo`
+-- Dumping data untuk tabel `db_asn_pemda_neo`
 --
 
 INSERT INTO `db_asn_pemda_neo` (`id`, `kd_wilayah`, `kd_opd`, `nama`, `gelar_depan`, `gelar`, `nip`, `t4_lahir`, `tgl_lahir`, `file_akta_lahir`, `golongan`, `ruang`, `agama`, `kelamin`, `jenis_kepeg`, `status_kepeg`, `jabatan`, `id_jabatan`, `no_ktp`, `file_ktp`, `no_kk`, `tgl_kk`, `file_kk`, `npwp`, `file_npwp`, `alamat`, `kontak_person`, `email`, `status`, `no_buku_nikah`, `tgl_nikah`, `file_buku_nikah`, `nama_anak`, `nik_anak`, `nama_ayah`, `nama_ibu`, `nama_pasangan`, `no_karpeg`, `tgl_karpeg`, `file_karpeg`, `no_taspen`, `tgl_taspen`, `no_karsi_karsu`, `tgl_karsi_karsu`, `file_karsi_karsu`, `nmr_sk_terakhir`, `tgl_tmt_akhir`, `pj_sk_terakhir`, `nmr_sk_cpns`, `tgl_sk_cpns`, `pj_sk_cpns`, `nmr_sk_pns`, `tgl_sk_pns`, `pj_sk_pns`, `sk_pangkat_terakhir`, `tgl_sk_terakhir`, `pend_sekolah_sd`, `pend_ijasah_sd`, `pend_tgl_tmt_sd`, `pend_t4_sd`, `pend_file_sd`, `pend_sekolah_smp`, `pend_ijasah_smp`, `pend_tgl_tmt_smp`, `pend_t4_smp`, `pend_file_smp`, `pend_sekolah_smu`, `pend_ijasah_smu`, `pend_tgl_tmt_smu`, `pend_t4_smu`, `pend_file_smu`, `pend_sekolah_s1`, `pend_ijasah_s1`, `pend_tgl_tmt_s1`, `pend_t4_s1`, `pend_file_s1`, `pend_sekolah_s2`, `pend_ijasah_s2`, `pend_tgl_tmt_s2`, `pend_t4_s2`, `pend_file_s2`, `pend_sekolah_s3`, `pend_ijasah_s3`, `pend_tgl_tmt_s3`, `pend_t4_s3`, `pend_file_s3`, `pend_sekolah_akhir`, `pend_ijasah_akhir`, `pend_tgl_tmt_akhir`, `pend_t4_akhir`, `pend_file_akhir`, `file_photo`, `gapok`, `aktif`, `no_urut`, `unit_kerja`, `no_rekening`, `nama_bank`, `urutan`, `kelompok`, `suka`, `follow`, `keterangan`, `disable`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`, `is_deleted`) VALUES
@@ -9138,7 +9138,7 @@ INSERT INTO `db_asn_pemda_neo` (`id`, `kd_wilayah`, `kd_opd`, `nama`, `gelar_dep
 (56, '76.01', '1.03.0.00.0.00.01.0000', 'daharia', NULL, '', '196712312012122006', 'enrekang', '1967-12-31', NULL, '2', 'b', 'islam', 'wanita', 'pnsd2', 'peg_tetap', '', NULL, '7601025507710002', NULL, NULL, NULL, NULL, '550988455814000', NULL, 'Tikke,', '085395083935', '1@gmail.com', 'menikah', '220,07,III,1992', '1992-01-03', NULL, 'rita andriani ;risky amalia ;ahmad makbul  abd muttaqina;nurhikmasari ;nurfadillah afif', '', 'Damang -', 'Ralli', 'Kalman', 'A 04001217', '2015-06-04', NULL, '196120121220067123', '2013-06-19', 'BA 04025336', '2016-10-18', NULL, '823.2/628/BKPP', '2024-01-01', 'bupati mamuju utara', '813.2/077/BKD', '2013-03-04', '', '821.12/597/BKDD', '2014-03-28', '', '', '1970-01-01', 'Hilang', 'Hilang', '1904-01-01', '', NULL, 'SMPN 1201 Tanrutedong', '', '1983-05-24', '', NULL, 'SMA Swasta Ampera Ujung Pandang', '06 OC oh 0071191', '1986-05-07', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Ujung Pandang', '06 OC 0071191', '1986-01-05', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL, '', 0, '2024-04-06 16:23:40', '2024-04-06 16:23:40', 'nabiila', 'nabiila', 0),
 (57, '76.01', '1.03.0.00.0.00.01.0000', 'nur rachmadsyah', NULL, '', '196910042012121001', 'palu', '1969-04-10', NULL, '2', 'b', 'islam', 'pria', 'pnsd2', 'peg_tetap', 'Pengadministrasi Umum', NULL, '7271020410000001', NULL, NULL, NULL, NULL, '550873129814000', NULL, 'Palu', '081341002252', 'rachmadsyah1969@gmail.com', 'menikah', '108,12,III,1995', '1995-03-15', NULL, 'nur firmansyah;abd.agam gani;nur fadhansyah;nanda syumayah;syawal mubarak', '', 'Alm. H.M.Nur djusdinsyah -', 'Hj Murni DG. Pawatta', 'Daelira A.Pangeran', 'A 04001256', '2015-06-04', NULL, '196910042012121001', '2013-06-13', 'AA 04001256', '2015-06-04', NULL, '823.2/628/BKPP', '2024-01-01', 'bupati mamuju utara', '813.2/079/BKDD', '2013-03-04', '', '821.12/597/BKDD', '2014-03-28', '', '', '1970-01-01', 'SDN 6 Palu', '24 OA oa 16951', '1983-05-31', '', NULL, 'SMPN 3 Palu', '24 OB ob 0141594', '1986-05-05', '', NULL, 'SMA N 4 Palu', '24 OC oh 0412030', '1989-05-11', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Palu', '24 OC oh 0412030', '1989-11-05', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL, '', 0, '2024-04-06 16:23:40', '2024-04-06 16:23:40', 'nabiila', 'nabiila', 0),
 (58, '76.01', '1.03.0.00.0.00.01.0000', 'adil bakry', NULL, '', '197408262012121002', 'ujung pandang', '1974-08-26', NULL, '2', 'b', 'islam', 'pria', 'pnsd2', 'peg_tetap', 'Pengadministrasi Kepegawaian', NULL, '7601012608740002', NULL, NULL, NULL, NULL, '550811764814000', NULL, 'Jl. RA Kartini', '082345097929', 'adilbakriq@gmail.com', 'menikah', '356,16,VII,2004', '2004-10-07', NULL, 'afifah nur adilah adil bakri;azkiyah nur aulia adil bakri;azraf nizar ahmad adil bakri', '', 'H.Muh.Bakry-', 'Hj Masnia Saleh', 'Wahidah', 'A 04001210', '2015-06-04', NULL, '197408262012121002', '2013-06-14', 'AA 04023606', '2016-11-22', NULL, '823.2/628/BKPP', '2024-01-01', 'bupati mamuju utara', '813.2/067/BKDD', '2013-03-04', '', '821.12/597/BKDD', '2014-03-28', '', '', '1970-01-01', 'SDN Pontiku 2', '06 OA oa 0140563', '1988-06-24', '', NULL, 'SMPN 4 Ujung Pandang', '06 OA ob 0458075', '1991-06-08', '', NULL, 'STM N Balikpapan', '26 OB on 0063906', '1994-05-17', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Balikpapan', '26 OB on 0063906', '1994-05-17', 'Listrik', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL, '', 0, '2024-04-06 16:23:40', '2024-04-06 16:23:40', 'nabiila', 'nabiila', 0),
-(59, '76.01', '1.03.0.00.0.00.01.0000', 'a. pajarungi', '', '', '197707242012121003', 'lariang', '1997-07-24', NULL, '2', 'b', 'islam', 'pria', 'pnsd2', 'peg_tetap', 'Pengadministrasi Umum', NULL, '7601022407770002', NULL, NULL, NULL, NULL, '550865422814000', NULL, 'Jl. Muh Hatta', '082290840790', 'andipajarungi1977pu@gmail.com', 'menikah', 'kk.31.05.01/pw.01/231/2011', '2011-11-16', NULL, 'andi kipra;andi kasmin;andi nur handalani;andi alif ramadhan', '', 'Andi Sabbi-', 'Andi Ampa', 'Sunarti', 'A 04001202', '2015-06-04', NULL, '197707242012121003', '2013-11-07', '', '1904-01-01', NULL, '823.2/312/BKPPD', '2024-01-01', 'Bupati Pasangkayu', '813.2/031/BKDD', '2013-03-04', '', '821.12/597/BKDD', '2014-03-28', '', '', '1970-01-01', 'SD Inpres Kalukombeo', 'Hilang', '1904-01-01', '', NULL, 'SMPN 1 Banawa', 'Hilang', '1904-01-01', '', NULL, 'SMA Paket C', '', '1904-01-01', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Mamuju Utara', '33PC0500017', '2008-07-01', 'IPS', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL, '', 0, '2024-04-06 16:23:40', '2026-02-19 10:06:39', 'nabiila', 'nabiila', 0),
+(59, '76.01', '1.03.0.00.0.00.01.0000', 'a. pajarungi', '', '', '197707242012121003', 'lariang', '1997-07-24', NULL, '2', 'b', 'islam', 'pria', 'pnsd2', 'peg_tetap', 'Pengadministrasi Umum', NULL, '7601022407770002', NULL, NULL, NULL, NULL, '550865422814000', NULL, 'Jl. Muh Hatta', '082290840790', 'andipajarungi1977pu@gmail.com', 'menikah', 'kk.31.05.01/pw.01/231/2011', '2011-11-16', NULL, 'andi kipra;andi kasmin;andi nur handalani;andi alif ramadhan', '', 'Andi Sabbi-', 'Andi Ampa', 'Sunarti', 'A 04001202', '2015-06-04', NULL, '197707242012121003', '2013-11-07', '', '1904-01-01', NULL, '823.2/312/BKPPD', '2024-01-01', 'Bupati Pasangkayu', '813.2/031/BKDD', '2013-03-04', '', '821.12/597/BKDD', '2014-03-28', '', '', '1970-01-01', 'SD Inpres Kalukombeo', 'Hilang', '1904-01-01', '', NULL, 'SMPN 1 Banawa', 'Hilang', '1904-01-01', '', NULL, 'SMA Paket C', '', '1904-01-01', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Mamuju Utara', '33PC0500017', '2008-07-01', 'IPS', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL, '', 0, '2024-04-06 16:23:40', '2026-09-02 21:52:23', 'nabiila', 'nabiila', 0),
 (60, '76.01', '1.03.0.00.0.00.01.0000', 'rachmiy. s', NULL, '', '197709302012122002', 'luwu', '1977-09-30', NULL, '2', 'b', 'islam', 'wanita', 'pnsd2', 'peg_tetap', 'Pengadministrasi Umum', NULL, '760102700970004', NULL, NULL, NULL, NULL, '555073972814000', NULL, 'Jl.Ponegoro', '081354318227', 'rachmiy.s@g.mail.com', 'menikah', '99,13,III,2012', '2012-07-03', NULL, 'qhairia arqanina', '', 'Siradjuddin-', 'Nur Huda', 'Muh.Syafriel', 'A 04001268', '2015-06-04', NULL, '197709302012122002', '2014-02-28', 'BA 04025339', '2016-10-18', NULL, '823.2/628/BKPP', '2024-01-01', 'Bupati Pasangkayu', '813.2/307/BKDD', '2013-03-04', '', '821.12/597/BKDD', '2014-03-28', '', '', '1970-01-01', 'SDN No.234 Temmalebba', '06 OA oa 0032499', '1990-06-07', '', NULL, 'Madrasah Tsanawiyah Negeri Palopo', 'E.IV/t/Mts-411/0002/93', '1993-06-07', '', NULL, 'Madrasah Aliyah Palopo', 'E.IV/t/MA 09/0224/1996', '1996-05-27', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Palopo', 'E.IV/t/MA-09/0224/1996', '1996-05-27', 'IPS', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL, '', 0, '2024-04-06 16:23:40', '2024-04-06 16:23:40', 'nabiila', 'nabiila', 0),
 (61, '76.01', '1.03.0.00.0.00.01.0000', 'lelianti', NULL, '', '197712242012122001', 'mamuju', '1977-12-24', NULL, '2', 'b', 'islam', 'wanita', 'pnsd2', 'peg_tetap', 'Pengadministrasi Keuangan', NULL, '760102641270003', NULL, NULL, NULL, NULL, '550860217814000', NULL, 'Jl.Ir Soekarno', '082190466956', 'lelianti@gmail.com', 'menikah', '237/20,X,2005', '2005-10-11', NULL, 'fathur pratama tamsil;farahmi fuanrianagari tamsil', '', 'Ahsan-', 'Saripa', 'Tamsil', 'A 04001244', '2015-06-04', NULL, '197712242012122001', '2013-07-17', 'BA 04025328', '2016-10-18', NULL, '823.2/628/BKPP', '2024-01-01', 'Bupati Pasangkayu', '813.2/211/BKDD', '2013-03-04', '', '821.12/597/BKDD', '2014-03-28', '', '', '1970-01-01', 'SDN Pangiang', '06 OA oa 0085179', '1990-06-07', '', NULL, 'SMPN 2 Donggala', '24 OA ob 1587602', '1993-06-05', '', NULL, 'SMEA N Donggala', '24 OB om 0186677', '1996-05-25', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Donggala', '24 OB om 0186677', '1996-05-25', 'Perkantoran', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL, '', 0, '2024-04-06 16:23:40', '2024-04-06 16:23:40', 'nabiila', 'nabiila', 0),
 (62, '76.01', '1.03.0.00.0.00.01.0000', 'muhammad mustaqim nur', NULL, '', '198303262012121004', 'gresik', '1983-03-26', NULL, '2', 'b', 'islam', 'pria', 'pnsd2', 'peg_tetap', 'Pengadministrasi Umum', NULL, '7601042603830001', NULL, NULL, NULL, NULL, '550913420814000', NULL, 'Jl. Husni Thamrin', '081354937272', 'mustaqimnur@gmail.com', 'menikah', '31,08,III,2006', '2006-08-03', NULL, 'hesiah fhati muttaqim', '', 'H.Muchtar nur-', 'Hj.Ratna', 'Nur asiah', 'A 04001248', '2015-06-04', NULL, '198303262012121004', '2013-06-17', 'AA 04023894', '2016-11-22', NULL, '823.2/628/BKPP', '2024-01-01', 'Bupati Pasangkayu', '813.2/294/BKDD', '2013-03-04', '', '821.12/597/BKDD', '2014-03-28', '', '', '1970-01-01', 'SDN 1 Marauke', '18 OA oa 0020824', '1997-06-12', '', NULL, 'SLTPN 2 Marauke', '18 DI 2207483', '2000-06-16', '', NULL, 'SMK Karya Bakti', 'DN-05 Mk 0360531', '2003-06-05', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'GRESIK', 'DN -05 Mk 0360531', '2003-05-06', 'Teknik Mesin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL, '', 0, '2024-04-06 16:23:40', '2024-04-06 16:23:40', 'nabiila', 'nabiila', 0),
@@ -9197,7 +9197,7 @@ INSERT INTO `db_asn_pemda_neo` (`id`, `kd_wilayah`, `kd_opd`, `nama`, `gelar_dep
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dokumen_pegawai_neo`
+-- Struktur dari tabel `dokumen_pegawai_neo`
 --
 
 CREATE TABLE `dokumen_pegawai_neo` (
@@ -9224,7 +9224,7 @@ CREATE TABLE `dokumen_pegawai_neo` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dpa_neo`
+-- Struktur dari tabel `dpa_neo`
 --
 
 CREATE TABLE `dpa_neo` (
@@ -9273,7 +9273,7 @@ CREATE TABLE `dpa_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `dpa_neo`
+-- Dumping data untuk tabel `dpa_neo`
 --
 
 INSERT INTO `dpa_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -9285,7 +9285,7 @@ INSERT INTO `dpa_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`
 (6, 'rka_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 5', 'non_paket', NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 105000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
 
 --
--- Triggers `dpa_neo`
+-- Trigger `dpa_neo`
 --
 DELIMITER $$
 CREATE TRIGGER `trg_dpa_contract_guard_delete` BEFORE DELETE ON `dpa_neo` FOR EACH ROW BEGIN
@@ -9320,7 +9320,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dppa_neo`
+-- Struktur dari tabel `dppa_neo`
 --
 
 CREATE TABLE `dppa_neo` (
@@ -9379,7 +9379,7 @@ CREATE TABLE `dppa_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `dppa_neo`
+-- Dumping data untuk tabel `dppa_neo`
 --
 
 INSERT INTO `dppa_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga_awal`, `id_standar_harga_awal`, `komponen_awal`, `spesifikasi_awal`, `tkdn_awal`, `pajak_awal`, `harga_satuan_awal`, `volume_awal`, `jumlah_awal`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `status_perubahan`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -9394,7 +9394,7 @@ INSERT INTO `dppa_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd
 (9, 'dpa_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 5', 'non_paket', NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, 1000.0000, 105000000.0000, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 105000000.0000, 1, 'awal', 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 0, 0, '2026-09-01 09:09:48', NULL, 'nabiila', NULL);
 
 --
--- Triggers `dppa_neo`
+-- Trigger `dppa_neo`
 --
 DELIMITER $$
 CREATE TRIGGER `trg_dppa_contract_guard_delete` BEFORE DELETE ON `dppa_neo` FOR EACH ROW BEGIN
@@ -9429,7 +9429,40 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `group_rekap_akun`
+-- Struktur dari tabel `evaluasi_renja_neo`
+--
+
+CREATE TABLE `evaluasi_renja_neo` (
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_opd` varchar(60) NOT NULL,
+  `tahun` smallint(6) NOT NULL,
+  `triwulan` tinyint(4) NOT NULL,
+  `kd_sub_keg` varchar(100) NOT NULL,
+  `indikator` varchar(500) NOT NULL,
+  `satuan` varchar(50) DEFAULT NULL,
+  `target_tahunan` decimal(20,4) NOT NULL DEFAULT 0.0000,
+  `target_triwulan` decimal(20,4) NOT NULL DEFAULT 0.0000,
+  `realisasi_triwulan` decimal(20,4) NOT NULL DEFAULT 0.0000,
+  `realisasi_kumulatif` decimal(20,4) NOT NULL DEFAULT 0.0000,
+  `pagu_anggaran` decimal(20,2) NOT NULL DEFAULT 0.00,
+  `realisasi_anggaran_triwulan` decimal(20,2) NOT NULL DEFAULT 0.00,
+  `realisasi_anggaran_kumulatif` decimal(20,2) NOT NULL DEFAULT 0.00,
+  `faktor_pendorong` text DEFAULT NULL,
+  `faktor_penghambat` text DEFAULT NULL,
+  `tindak_lanjut` text DEFAULT NULL,
+  `status` enum('draft','dikirim','diverifikasi','perbaikan') NOT NULL DEFAULT 'draft',
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT 0
+) ;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `group_rekap_akun`
 --
 
 CREATE TABLE `group_rekap_akun` (
@@ -9449,7 +9482,7 @@ CREATE TABLE `group_rekap_akun` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `group_sub_kegiatan`
+-- Struktur dari tabel `group_sub_kegiatan`
 --
 
 CREATE TABLE `group_sub_kegiatan` (
@@ -9474,7 +9507,7 @@ CREATE TABLE `group_sub_kegiatan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `group_sub_kegiatan`
+-- Dumping data untuk tabel `group_sub_kegiatan`
 --
 
 INSERT INTO `group_sub_kegiatan` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `nama_sub_keg`, `output`, `satuan_output`, `batas_anggaran`, `tahap`, `total_anggaran`, `disable`, `setujui`, `tanggal_setujui`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
@@ -9483,7 +9516,7 @@ INSERT INTO `group_sub_kegiatan` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub
 -- --------------------------------------------------------
 
 --
--- Table structure for table `halaman_berita`
+-- Struktur dari tabel `halaman_berita`
 --
 
 CREATE TABLE `halaman_berita` (
@@ -9505,7 +9538,7 @@ CREATE TABLE `halaman_berita` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `halaman_berita`
+-- Dumping data untuk tabel `halaman_berita`
 --
 
 INSERT INTO `halaman_berita` (`id`, `kd_wilayah`, `kd_opd`, `judul`, `slug`, `jenis_halaman`, `aktif`, `konten`, `gambar`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9514,7 +9547,7 @@ INSERT INTO `halaman_berita` (`id`, `kd_wilayah`, `kd_opd`, `judul`, `slug`, `je
 -- --------------------------------------------------------
 
 --
--- Table structure for table `import_logs`
+-- Struktur dari tabel `import_logs`
 --
 
 CREATE TABLE `import_logs` (
@@ -9534,7 +9567,7 @@ CREATE TABLE `import_logs` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `indikator_program_renstra_neo`
+-- Struktur dari tabel `indikator_program_renstra_neo`
 --
 
 CREATE TABLE `indikator_program_renstra_neo` (
@@ -9559,7 +9592,7 @@ CREATE TABLE `indikator_program_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `indikator_program_renstra_neo`
+-- Dumping data untuk tabel `indikator_program_renstra_neo`
 --
 
 INSERT INTO `indikator_program_renstra_neo` (`id`, `program_id`, `nama_indikator`, `satuan`, `baseline`, `target_t1`, `target_t2`, `target_t3`, `target_t4`, `target_t5`, `target_akhir`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9568,7 +9601,7 @@ INSERT INTO `indikator_program_renstra_neo` (`id`, `program_id`, `nama_indikator
 -- --------------------------------------------------------
 
 --
--- Table structure for table `indikator_sasaran_renstra_neo`
+-- Struktur dari tabel `indikator_sasaran_renstra_neo`
 --
 
 CREATE TABLE `indikator_sasaran_renstra_neo` (
@@ -9593,7 +9626,7 @@ CREATE TABLE `indikator_sasaran_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `indikator_sasaran_renstra_neo`
+-- Dumping data untuk tabel `indikator_sasaran_renstra_neo`
 --
 
 INSERT INTO `indikator_sasaran_renstra_neo` (`id`, `sasaran_id`, `nama_indikator`, `satuan`, `baseline`, `target_t1`, `target_t2`, `target_t3`, `target_t4`, `target_t5`, `target_akhir`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9603,7 +9636,7 @@ INSERT INTO `indikator_sasaran_renstra_neo` (`id`, `sasaran_id`, `nama_indikator
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kd_wilayah_neo`
+-- Struktur dari tabel `kd_wilayah_neo`
 --
 
 CREATE TABLE `kd_wilayah_neo` (
@@ -9624,7 +9657,7 @@ CREATE TABLE `kd_wilayah_neo` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kegiatan_renstra_neo`
+-- Struktur dari tabel `kegiatan_renstra_neo`
 --
 
 CREATE TABLE `kegiatan_renstra_neo` (
@@ -9642,7 +9675,7 @@ CREATE TABLE `kegiatan_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `kegiatan_renstra_neo`
+-- Dumping data untuk tabel `kegiatan_renstra_neo`
 --
 
 INSERT INTO `kegiatan_renstra_neo` (`id`, `program_id`, `kode_kegiatan`, `uraian`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9651,7 +9684,7 @@ INSERT INTO `kegiatan_renstra_neo` (`id`, `program_id`, `kode_kegiatan`, `uraian
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kontrak_dokumen_neo`
+-- Struktur dari tabel `kontrak_dokumen_neo`
 --
 
 CREATE TABLE `kontrak_dokumen_neo` (
@@ -9678,7 +9711,7 @@ CREATE TABLE `kontrak_dokumen_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `kontrak_dokumen_neo`
+-- Dumping data untuk tabel `kontrak_dokumen_neo`
 --
 
 INSERT INTO `kontrak_dokumen_neo` (`id`, `kontrak_id`, `jenis_dokumen`, `nomor_dokumen`, `tanggal_dokumen`, `judul`, `nama_file_asli`, `path_file`, `mime_type`, `ukuran`, `versi`, `keterangan`, `kd_wilayah`, `kd_opd`, `tahun`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9687,7 +9720,7 @@ INSERT INTO `kontrak_dokumen_neo` (`id`, `kontrak_id`, `jenis_dokumen`, `nomor_d
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kontrak_item_neo`
+-- Struktur dari tabel `kontrak_item_neo`
 --
 
 CREATE TABLE `kontrak_item_neo` (
@@ -9711,7 +9744,7 @@ CREATE TABLE `kontrak_item_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `kontrak_item_neo`
+-- Dumping data untuk tabel `kontrak_item_neo`
 --
 
 INSERT INTO `kontrak_item_neo` (`id`, `kontrak_id`, `tahap`, `anggaran_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `uraian`, `pagu`, `nilai_kontrak`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9722,7 +9755,7 @@ INSERT INTO `kontrak_item_neo` (`id`, `kontrak_id`, `tahap`, `anggaran_id`, `kd_
 (5, 5, 'dpa', 6, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.5', '5.1.02.02.05.0044', 'Belanja terstandar sub kegiatan 5', 105000000.00, 94500000.00, '2026-09-01 11:11:14', 'TRACE_PHASE29', NULL, NULL, 0);
 
 --
--- Triggers `kontrak_item_neo`
+-- Trigger `kontrak_item_neo`
 --
 DELIMITER $$
 CREATE TRIGGER `trg_kontrak_item_validate_insert` BEFORE INSERT ON `kontrak_item_neo` FOR EACH ROW BEGIN
@@ -9751,7 +9784,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kontrak_jadwal_neo`
+-- Struktur dari tabel `kontrak_jadwal_neo`
 --
 
 CREATE TABLE `kontrak_jadwal_neo` (
@@ -9777,7 +9810,7 @@ CREATE TABLE `kontrak_jadwal_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `kontrak_jadwal_neo`
+-- Dumping data untuk tabel `kontrak_jadwal_neo`
 --
 
 INSERT INTO `kontrak_jadwal_neo` (`id`, `kontrak_id`, `rab_id`, `minggu_ke`, `tanggal_mulai`, `tanggal_selesai`, `bobot_rencana`, `bobot_realisasi`, `rencana_kumulatif`, `realisasi_kumulatif`, `keterangan`, `kd_wilayah`, `kd_opd`, `tahun`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9787,7 +9820,7 @@ INSERT INTO `kontrak_jadwal_neo` (`id`, `kontrak_id`, `rab_id`, `minggu_ke`, `ta
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kontrak_neo`
+-- Struktur dari tabel `kontrak_neo`
 --
 
 CREATE TABLE `kontrak_neo` (
@@ -9834,7 +9867,7 @@ CREATE TABLE `kontrak_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 --
--- Dumping data for table `kontrak_neo`
+-- Dumping data untuk tabel `kontrak_neo`
 --
 
 INSERT INTO `kontrak_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `anggaran_id`, `paket_id`, `rekanan_id`, `ppk_id`, `pptk_id`, `nama_sub_keg`, `tahap`, `total_anggaran`, `nilai_kontrak`, `nomor_kontrak`, `tanggal_kontrak`, `uraian_kontrak`, `nomor_spk`, `tanggal_spk`, `nomor_spmk`, `tanggal_spmk`, `waktu_pelaksanaan`, `tanggal_mulai`, `tanggal_selesai`, `nama_ppk`, `nama_penyedia`, `nama_tim_teknis`, `tanggal_pho`, `tanggal_fho`, `tanggal_serah_terima`, `status_kontrak`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `disable`, `kunci`, `setujui`, `is_deleted`, `keterangan`) VALUES
@@ -9847,7 +9880,7 @@ INSERT INTO `kontrak_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kop_surat_neo`
+-- Struktur dari tabel `kop_surat_neo`
 --
 
 CREATE TABLE `kop_surat_neo` (
@@ -9876,7 +9909,7 @@ CREATE TABLE `kop_surat_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `kop_surat_neo`
+-- Dumping data untuk tabel `kop_surat_neo`
 --
 
 INSERT INTO `kop_surat_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `nama_pemerintah`, `nama_opd`, `alamat`, `telepon`, `email`, `website`, `kode_pos`, `logo_kiri`, `logo_kanan`, `gambar_kop`, `gunakan_gambar_kop`, `warna_garis`, `aktif`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9885,7 +9918,7 @@ INSERT INTO `kop_surat_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `nama_pemeri
 -- --------------------------------------------------------
 
 --
--- Table structure for table `log_activity`
+-- Struktur dari tabel `log_activity`
 --
 
 CREATE TABLE `log_activity` (
@@ -9902,7 +9935,7 @@ CREATE TABLE `log_activity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `log_activity`
+-- Dumping data untuk tabel `log_activity`
 --
 
 INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data`, `new_data`, `username`, `ip_address`, `user_agent`, `created_at`) VALUES
@@ -12116,12 +12149,13 @@ INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data
 (2190, 'master_biaya', 129, 'delete', '{\"id\":129,\"tipe\":\"ssh\",\"kode\":\"TRACE_TEST_PHASE2_SSH\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST ssh\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
 (2191, 'master_biaya', 130, 'delete', '{\"id\":130,\"tipe\":\"hspk\",\"kode\":\"TRACE_TEST_PHASE2_HSPK\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST hspk\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
 (2192, 'master_biaya', 131, 'delete', '{\"id\":131,\"tipe\":\"asb\",\"kode\":\"TRACE_TEST_PHASE2_ASB\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST asb\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
-(2193, 'master_biaya', 132, 'delete', '{\"id\":132,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-09-01 03:12:56');
+(2193, 'master_biaya', 132, 'delete', '{\"id\":132,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
+(2194, 'db_asn_pemda_neo', 59, 'update', '{\"id\":59,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"nama\":\"a. pajarungi\",\"gelar_depan\":\"\",\"gelar\":\"\",\"nip\":\"197707242012121003\",\"t4_lahir\":\"lariang\",\"tgl_lahir\":\"1997-07-24\",\"file_akta_lahir\":null,\"golongan\":\"2\",\"ruang\":\"b\",\"agama\":\"islam\",\"kelamin\":\"pria\",\"jenis_kepeg\":\"pnsd2\",\"status_kepeg\":\"peg_tetap\",\"jabatan\":\"Pengadministrasi Umum\",\"id_jabatan\":null,\"no_ktp\":\"7601022407770002\",\"file_ktp\":null,\"no_kk\":null,\"tgl_kk\":null,\"file_kk\":null,\"npwp\":\"550865422814000\",\"file_npwp\":null,\"alamat\":\"Jl. Muh Hatta\",\"kontak_person\":\"082290840790\",\"email\":\"andipajarungi1977pu@gmail.com\",\"status\":\"menikah\",\"no_buku_nikah\":\"kk.31.05.01\\/pw.01\\/231\\/2011\",\"tgl_nikah\":\"2011-11-16\",\"file_buku_nikah\":null,\"nama_anak\":\"andi kipra;andi kasmin;andi nur handalani;andi alif ramadhan\",\"nik_anak\":\"\",\"nama_ayah\":\"Andi Sabbi-\",\"nama_ibu\":\"Andi Ampa\",\"nama_pasangan\":\"Sunarti\",\"no_karpeg\":\"A 04001202\",\"tgl_karpeg\":\"2015-06-04\",\"file_karpeg\":null,\"no_taspen\":\"197707242012121003\",\"tgl_taspen\":\"2013-11-07\",\"no_karsi_karsu\":\"\",\"tgl_karsi_karsu\":\"1904-01-01\",\"file_karsi_karsu\":null,\"nmr_sk_terakhir\":\"823.2\\/312\\/BKPPD\",\"tgl_tmt_akhir\":\"2024-01-01\",\"pj_sk_terakhir\":\"Bupati Pasangkayu\",\"nmr_sk_cpns\":\"813.2\\/031\\/BKDD\",\"tgl_sk_cpns\":\"2013-03-04\",\"pj_sk_cpns\":\"\",\"nmr_sk_pns\":\"821.12\\/597\\/BKDD\",\"tgl_sk_pns\":\"2014-03-28\",\"pj_sk_pns\":\"\",\"sk_pangkat_terakhir\":\"\",\"tgl_sk_terakhir\":\"1970-01-01\",\"pend_sekolah_sd\":\"SD Inpres Kalukombeo\",\"pend_ijasah_sd\":\"Hilang\",\"pend_tgl_tmt_sd\":\"1904-01-01\",\"pend_t4_sd\":\"\",\"pend_file_sd\":null,\"pend_sekolah_smp\":\"SMPN 1 Banawa\",\"pend_ijasah_smp\":\"Hilang\",\"pend_tgl_tmt_smp\":\"1904-01-01\",\"pend_t4_smp\":\"\",\"pend_file_smp\":null,\"pend_sekolah_smu\":\"SMA Paket C\",\"pend_ijasah_smu\":\"\",\"pend_tgl_tmt_smu\":\"1904-01-01\",\"pend_t4_smu\":\"\",\"pend_file_smu\":null,\"pend_sekolah_s1\":null,\"pend_ijasah_s1\":null,\"pend_tgl_tmt_s1\":null,\"pend_t4_s1\":null,\"pend_file_s1\":null,\"pend_sekolah_s2\":null,\"pend_ijasah_s2\":null,\"pend_tgl_tmt_s2\":null,\"pend_t4_s2\":null,\"pend_file_s2\":null,\"pend_sekolah_s3\":null,\"pend_ijasah_s3\":null,\"pend_tgl_tmt_s3\":null,\"pend_t4_s3\":null,\"pend_file_s3\":null,\"pend_sekolah_akhir\":\"Mamuju Utara\",\"pend_ijasah_akhir\":\"33PC0500017\",\"pend_tgl_tmt_akhir\":\"2008-07-01\",\"pend_t4_akhir\":\"IPS\",\"pend_file_akhir\":null,\"file_photo\":null,\"gapok\":null,\"aktif\":null,\"no_urut\":null,\"unit_kerja\":null,\"no_rekening\":null,\"nama_bank\":null,\"urutan\":null,\"kelompok\":4,\"suka\":null,\"follow\":null,\"keterangan\":\"\",\"disable\":0,\"tgl_insert\":\"2024-04-06 16:23:40\",\"tgl_update\":\"2026-02-19 10:06:39\",\"username_insert\":\"nabiila\",\"username_update\":\"nabiila\",\"is_deleted\":0}', '{\"tgl_lahir\":\"1997-07-24 00:00:00\",\"tgl_update\":\"2026-09-02 21:52:23\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6.2 Safari/605.1.15', '2026-09-02 21:52:23');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `master_biaya`
+-- Struktur dari tabel `master_biaya`
 --
 
 CREATE TABLE `master_biaya` (
@@ -12148,7 +12182,7 @@ CREATE TABLE `master_biaya` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `master_biaya`
+-- Dumping data untuk tabel `master_biaya`
 --
 
 INSERT INTO `master_biaya` (`id`, `tipe`, `kode`, `kode_aset`, `kelompok_barang`, `uraian`, `spesifikasi`, `satuan_id`, `harga`, `tkdn`, `keterangan`, `kd_wilayah`, `tahun`, `peraturan_id`, `disable`, `is_deleted`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
@@ -12197,7 +12231,7 @@ INSERT INTO `master_biaya` (`id`, `tipe`, `kode`, `kode_aset`, `kelompok_barang`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `master_biaya_akun`
+-- Struktur dari tabel `master_biaya_akun`
 --
 
 CREATE TABLE `master_biaya_akun` (
@@ -12215,7 +12249,7 @@ CREATE TABLE `master_biaya_akun` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `master_biaya_akun`
+-- Dumping data untuk tabel `master_biaya_akun`
 --
 
 INSERT INTO `master_biaya_akun` (`id`, `master_biaya_id`, `kd_akun`, `kd_wilayah`, `peraturan_id`, `disable`, `is_deleted`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
@@ -12224,7 +12258,7 @@ INSERT INTO `master_biaya_akun` (`id`, `master_biaya_id`, `kd_akun`, `kd_wilayah
 -- --------------------------------------------------------
 
 --
--- Table structure for table `misi_renstra_neo`
+-- Struktur dari tabel `misi_renstra_neo`
 --
 
 CREATE TABLE `misi_renstra_neo` (
@@ -12241,7 +12275,7 @@ CREATE TABLE `misi_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `misi_renstra_neo`
+-- Dumping data untuk tabel `misi_renstra_neo`
 --
 
 INSERT INTO `misi_renstra_neo` (`id`, `renstra_id`, `nama_misi`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -12252,7 +12286,7 @@ INSERT INTO `misi_renstra_neo` (`id`, `renstra_id`, `nama_misi`, `disable`, `ket
 -- --------------------------------------------------------
 
 --
--- Table structure for table `organisasi_neo`
+-- Struktur dari tabel `organisasi_neo`
 --
 
 CREATE TABLE `organisasi_neo` (
@@ -12277,7 +12311,7 @@ CREATE TABLE `organisasi_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `organisasi_neo`
+-- Dumping data untuk tabel `organisasi_neo`
 --
 
 INSERT INTO `organisasi_neo` (`id`, `kd_wilayah`, `kode`, `uraian`, `alamat`, `nama_kepala`, `nip_kepala`, `singkatan`, `file`, `peraturan_id`, `disable`, `aksi`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -12317,7 +12351,7 @@ INSERT INTO `organisasi_neo` (`id`, `kd_wilayah`, `kode`, `uraian`, `alamat`, `n
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pejabat_tahunan_neo`
+-- Struktur dari tabel `pejabat_tahunan_neo`
 --
 
 CREATE TABLE `pejabat_tahunan_neo` (
@@ -12343,7 +12377,7 @@ CREATE TABLE `pejabat_tahunan_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `pejabat_tahunan_neo`
+-- Dumping data untuk tabel `pejabat_tahunan_neo`
 --
 
 INSERT INTO `pejabat_tahunan_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `jenis_pejabat`, `pegawai_id`, `nama_pegawai`, `nip`, `nomor_sk`, `tanggal_sk`, `berlaku_mulai`, `berlaku_sampai`, `kd_sub_keg`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -12351,7 +12385,7 @@ INSERT INTO `pejabat_tahunan_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `jenis
 (2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'PPTK', 2, 'MAHMUD', '196901272003121004', 'SK-TRACE/PPTK/2026', '2026-01-02', '2026-01-01', '2026-12-31', 'X.XX.1.2.01.1', 'Data contoh pejabat aktif Phase 9', '2026-08-31 13:25:33', 'TRACE_TEST_PHASE3', NULL, NULL, 0);
 
 --
--- Triggers `pejabat_tahunan_neo`
+-- Trigger `pejabat_tahunan_neo`
 --
 DELIMITER $$
 CREATE TRIGGER `trg_pejabat_fill_insert` BEFORE INSERT ON `pejabat_tahunan_neo` FOR EACH ROW BEGIN
@@ -12375,7 +12409,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pengaturan_neo`
+-- Struktur dari tabel `pengaturan_neo`
 --
 
 CREATE TABLE `pengaturan_neo` (
@@ -12383,6 +12417,10 @@ CREATE TABLE `pengaturan_neo` (
   `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tahun` year(4) NOT NULL,
   `tahun_renstra` year(4) NOT NULL,
+  `ukuran_kertas` varchar(10) NOT NULL DEFAULT 'A4',
+  `orientasi_kertas` enum('AUTO','P','L') NOT NULL DEFAULT 'AUTO',
+  `font_pdf` varchar(20) NOT NULL DEFAULT 'helvetica',
+  `ukuran_font_pdf` decimal(4,1) NOT NULL DEFAULT 10.0,
   `aturan_anggaran` varchar(255) NOT NULL,
   `aturan_organisasi` int(11) DEFAULT NULL,
   `aturan_pengadaan` varchar(255) NOT NULL,
@@ -12447,18 +12485,18 @@ CREATE TABLE `pengaturan_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `pengaturan_neo`
+-- Dumping data untuk tabel `pengaturan_neo`
 --
 
-INSERT INTO `pengaturan_neo` (`id`, `kd_wilayah`, `tahun`, `tahun_renstra`, `aturan_anggaran`, `aturan_organisasi`, `aturan_pengadaan`, `aturan_akun`, `aturan_asb`, `aturan_sbu`, `aturan_ssh`, `aturan_hspk`, `aturan_sumber_dana`, `aturan_sub_kegiatan`, `rpjmd_aktif`, `awal_renja`, `akhir_renja`, `awal_dpa`, `akhir_dpa`, `awal_renja_p`, `akhir_renja_p`, `awal_dppa`, `akhir_dppa`, `awal_renstra`, `akhir_renstra`, `disable`, `kunci`, `setujui`, `kunci_renstra`, `kunci_renja`, `kunci_dpa`, `kunci_renja_p`, `kunci_dppa`, `kunci_paket`, `kunci_realisasi`, `setujui_renstra`, `setujui_renja`, `setujui_dpa`, `setujui_renja_p`, `setujui_dppa`, `setujui_paket`, `setujui_realisasi`, `id_opd_tampilkan`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`, `awal_rkpd`, `akhir_rkpd`, `awal_kua_ppas`, `akhir_kua_ppas`, `awal_rka`, `akhir_rka`, `awal_rapbd`, `akhir_rapbd`, `awal_rak`, `akhir_rak`, `awal_rkpd_perubahan`, `akhir_rkpd_perubahan`, `awal_kua_ppas_perubahan`, `akhir_kua_ppas_perubahan`, `awal_apbd_perubahan`, `akhir_apbd_perubahan`) VALUES
-(1, '76.01', '2026', '2021', '4', 4, '2', 4, 4, 4, 4, 4, 4, 4, NULL, '2024-03-31 08:00:00', '2024-04-30 07:55:00', '2024-03-31 08:00:00', '2024-04-30 07:55:00', '2024-03-31 08:00:00', '2024-04-30 07:55:00', '2024-03-31 08:00:00', '2024-04-30 07:00:00', '2024-03-31 12:00:00', '2024-04-30 07:55:00', 1, 1, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15, '2024', '2024-04-06 16:13:40', 'nabiila', '2026-03-03 09:13:53', 'inayah', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(2, '76.01', '2025', '2025', '3', 4, '1', 4, 4, 4, 4, 4, 4, 4, NULL, '2024-12-31 08:00:00', '2025-12-30 23:55:00', '2025-05-31 12:00:00', '2025-06-23 13:35:00', '2025-06-08 17:35:00', '2025-06-24 17:00:00', '2025-06-16 17:05:00', '2025-06-24 13:20:00', '2024-12-31 08:00:00', '2029-12-30 00:00:00', 1, 0, 0, 0, 1, 1, 1, 0, NULL, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, 15, 'ok', '2025-10-20 09:01:53', 'nabiila', '2025-10-20 09:01:53', 'nabiila', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(3, '76.01', '2026', '2025', '4', 4, '1', 4, 4, 4, 4, 4, 4, 4, NULL, '2025-12-31 16:00:00', '2026-12-31 15:55:00', '2025-12-31 16:00:00', '2026-12-31 15:55:00', '2026-04-30 16:00:00', '2026-12-31 15:55:00', '2026-05-31 16:55:00', '2026-12-31 15:55:00', '2024-12-31 16:00:00', '2029-12-31 15:00:00', 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, 0, 'masih harus di uodate menurut SIPD 2025', '2026-01-26 03:56:15', 'nabiila', '2026-02-26 20:37:38', 'inayah', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `pengaturan_neo` (`id`, `kd_wilayah`, `tahun`, `tahun_renstra`, `ukuran_kertas`, `orientasi_kertas`, `font_pdf`, `ukuran_font_pdf`, `aturan_anggaran`, `aturan_organisasi`, `aturan_pengadaan`, `aturan_akun`, `aturan_asb`, `aturan_sbu`, `aturan_ssh`, `aturan_hspk`, `aturan_sumber_dana`, `aturan_sub_kegiatan`, `rpjmd_aktif`, `awal_renja`, `akhir_renja`, `awal_dpa`, `akhir_dpa`, `awal_renja_p`, `akhir_renja_p`, `awal_dppa`, `akhir_dppa`, `awal_renstra`, `akhir_renstra`, `disable`, `kunci`, `setujui`, `kunci_renstra`, `kunci_renja`, `kunci_dpa`, `kunci_renja_p`, `kunci_dppa`, `kunci_paket`, `kunci_realisasi`, `setujui_renstra`, `setujui_renja`, `setujui_dpa`, `setujui_renja_p`, `setujui_dppa`, `setujui_paket`, `setujui_realisasi`, `id_opd_tampilkan`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`, `awal_rkpd`, `akhir_rkpd`, `awal_kua_ppas`, `akhir_kua_ppas`, `awal_rka`, `akhir_rka`, `awal_rapbd`, `akhir_rapbd`, `awal_rak`, `akhir_rak`, `awal_rkpd_perubahan`, `akhir_rkpd_perubahan`, `awal_kua_ppas_perubahan`, `akhir_kua_ppas_perubahan`, `awal_apbd_perubahan`, `akhir_apbd_perubahan`) VALUES
+(1, '76.01', '2026', '2021', 'A4', 'AUTO', 'helvetica', 10.0, '4', 4, '2', 4, 4, 4, 4, 4, 4, 4, NULL, '2024-03-31 08:00:00', '2024-04-30 07:55:00', '2024-03-31 08:00:00', '2024-04-30 07:55:00', '2024-03-31 08:00:00', '2024-04-30 07:55:00', '2024-03-31 08:00:00', '2024-04-30 07:00:00', '2024-03-31 12:00:00', '2024-04-30 07:55:00', 1, 1, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15, '2024', '2024-04-06 16:13:40', 'nabiila', '2026-03-03 09:13:53', 'inayah', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, '76.01', '2025', '2025', 'A4', 'AUTO', 'helvetica', 10.0, '3', 4, '1', 4, 4, 4, 4, 4, 4, 4, NULL, '2024-12-31 08:00:00', '2025-12-30 23:55:00', '2025-05-31 12:00:00', '2025-06-23 13:35:00', '2025-06-08 17:35:00', '2025-06-24 17:00:00', '2025-06-16 17:05:00', '2025-06-24 13:20:00', '2024-12-31 08:00:00', '2029-12-30 00:00:00', 1, 0, 0, 0, 1, 1, 1, 0, NULL, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, 15, 'ok', '2025-10-20 09:01:53', 'nabiila', '2025-10-20 09:01:53', 'nabiila', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, '76.01', '2026', '2025', 'A4', 'AUTO', 'helvetica', 10.0, '4', 4, '1', 4, 4, 4, 4, 4, 4, 4, NULL, '2025-12-31 16:00:00', '2026-12-31 15:55:00', '2025-12-31 16:00:00', '2026-12-31 15:55:00', '2026-04-30 16:00:00', '2026-12-31 15:55:00', '2026-05-31 16:55:00', '2026-12-31 15:55:00', '2024-12-31 16:00:00', '2029-12-31 15:00:00', 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, 0, 'masih harus di uodate menurut SIPD 2025', '2026-01-26 03:56:15', 'nabiila', '2026-02-26 20:37:38', 'inayah', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `peraturan_neo`
+-- Struktur dari tabel `peraturan_neo`
 --
 
 CREATE TABLE `peraturan_neo` (
@@ -12487,7 +12525,7 @@ CREATE TABLE `peraturan_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `peraturan_neo`
+-- Dumping data untuk tabel `peraturan_neo`
 --
 
 INSERT INTO `peraturan_neo` (`id`, `kd_wilayah`, `kode`, `type_dok`, `judul`, `judul_singkat`, `nomor`, `bentuk`, `bentuk_singkat`, `t4_penetapan`, `tgl_penetapan`, `tgl_pengundangan`, `status`, `disable`, `aksi`, `file`, `username_insert`, `tgl_insert`, `tgl_update`, `username_update`, `keterangan`, `is_deleted`) VALUES
@@ -12499,7 +12537,7 @@ INSERT INTO `peraturan_neo` (`id`, `kd_wilayah`, `kode`, `type_dok`, `judul`, `j
 -- --------------------------------------------------------
 
 --
--- Table structure for table `periode_rpjmd`
+-- Struktur dari tabel `periode_rpjmd`
 --
 
 CREATE TABLE `periode_rpjmd` (
@@ -12516,7 +12554,7 @@ CREATE TABLE `periode_rpjmd` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `periode_rpjmd`
+-- Dumping data untuk tabel `periode_rpjmd`
 --
 
 INSERT INTO `periode_rpjmd` (`id`, `kd_wilayah`, `periode_mulai`, `periode_selesai`, `status_aktif`, `keterangan`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -12525,7 +12563,7 @@ INSERT INTO `periode_rpjmd` (`id`, `kd_wilayah`, `periode_mulai`, `periode_seles
 -- --------------------------------------------------------
 
 --
--- Table structure for table `program_renstra_neo`
+-- Struktur dari tabel `program_renstra_neo`
 --
 
 CREATE TABLE `program_renstra_neo` (
@@ -12543,7 +12581,7 @@ CREATE TABLE `program_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `program_renstra_neo`
+-- Dumping data untuk tabel `program_renstra_neo`
 --
 
 INSERT INTO `program_renstra_neo` (`id`, `sasaran_id`, `kode_program`, `uraian`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -12552,7 +12590,7 @@ INSERT INTO `program_renstra_neo` (`id`, `sasaran_id`, `kode_program`, `uraian`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rab_paket_neo`
+-- Struktur dari tabel `rab_paket_neo`
 --
 
 CREATE TABLE `rab_paket_neo` (
@@ -12590,7 +12628,7 @@ CREATE TABLE `rab_paket_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `rab_paket_neo`
+-- Dumping data untuk tabel `rab_paket_neo`
 --
 
 INSERT INTO `rab_paket_neo` (`id`, `kontrak_id`, `kontrak_item_id`, `tahun`, `kd_wilayah`, `kd_opd`, `id_renja_p`, `id_dpa`, `id_dppa`, `nomor`, `uraian`, `satuan`, `type`, `vol_hps`, `vol_penawaran`, `vol_negoisasi`, `harga_sat_hps`, `harga_sat_penawaran`, `harga_sat_negoisasi`, `pajak`, `jumlah_hps`, `jumlah_penawaran`, `jumlah_negoisasi`, `bobot`, `KBBI`, `keterangan`, `username_insert`, `tgl_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -12605,7 +12643,7 @@ INSERT INTO `rab_paket_neo` (`id`, `kontrak_id`, `kontrak_item_id`, `tahun`, `kd
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ref_jenis_naskah`
+-- Struktur dari tabel `ref_jenis_naskah`
 --
 
 CREATE TABLE `ref_jenis_naskah` (
@@ -12629,7 +12667,7 @@ CREATE TABLE `ref_jenis_naskah` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `ref_jenis_naskah`
+-- Dumping data untuk tabel `ref_jenis_naskah`
 --
 
 INSERT INTO `ref_jenis_naskah` (`id`, `kelompok_id`, `nama`, `kode_form`, `sub_kategori`, `urutan`, `schema_json`, `schema_version`, `allowed_roles`, `auto_generate_nomor`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`) VALUES
@@ -12662,7 +12700,7 @@ INSERT INTO `ref_jenis_naskah` (`id`, `kelompok_id`, `nama`, `kode_form`, `sub_k
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ref_jenis_naskah_dinas`
+-- Struktur dari tabel `ref_jenis_naskah_dinas`
 --
 
 CREATE TABLE `ref_jenis_naskah_dinas` (
@@ -12684,7 +12722,7 @@ CREATE TABLE `ref_jenis_naskah_dinas` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ref_kelompok_naskah`
+-- Struktur dari tabel `ref_kelompok_naskah`
 --
 
 CREATE TABLE `ref_kelompok_naskah` (
@@ -12702,7 +12740,7 @@ CREATE TABLE `ref_kelompok_naskah` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `ref_kelompok_naskah`
+-- Dumping data untuk tabel `ref_kelompok_naskah`
 --
 
 INSERT INTO `ref_kelompok_naskah` (`id`, `kode`, `nama`, `urutan`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`) VALUES
@@ -12713,7 +12751,7 @@ INSERT INTO `ref_kelompok_naskah` (`id`, `kode`, `nama`, `urutan`, `kd_wilayah`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ref_klasifikasi_keamanan`
+-- Struktur dari tabel `ref_klasifikasi_keamanan`
 --
 
 CREATE TABLE `ref_klasifikasi_keamanan` (
@@ -12731,7 +12769,7 @@ CREATE TABLE `ref_klasifikasi_keamanan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `ref_klasifikasi_keamanan`
+-- Dumping data untuk tabel `ref_klasifikasi_keamanan`
 --
 
 INSERT INTO `ref_klasifikasi_keamanan` (`id`, `kode`, `nama`, `warna`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`) VALUES
@@ -12743,7 +12781,7 @@ INSERT INTO `ref_klasifikasi_keamanan` (`id`, `kode`, `nama`, `warna`, `kd_wilay
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ref_template_naskah`
+-- Struktur dari tabel `ref_template_naskah`
 --
 
 CREATE TABLE `ref_template_naskah` (
@@ -12761,7 +12799,7 @@ CREATE TABLE `ref_template_naskah` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `ref_template_naskah`
+-- Dumping data untuk tabel `ref_template_naskah`
 --
 
 INSERT INTO `ref_template_naskah` (`id`, `jenis_id`, `nama_template`, `form_schema`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`) VALUES
@@ -12770,7 +12808,7 @@ INSERT INTO `ref_template_naskah` (`id`, `jenis_id`, `nama_template`, `form_sche
 -- --------------------------------------------------------
 
 --
--- Table structure for table `register_naskah_dinas`
+-- Struktur dari tabel `register_naskah_dinas`
 --
 
 CREATE TABLE `register_naskah_dinas` (
@@ -12800,7 +12838,7 @@ CREATE TABLE `register_naskah_dinas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `register_naskah_dinas`
+-- Dumping data untuk tabel `register_naskah_dinas`
 --
 
 INSERT INTO `register_naskah_dinas` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `klasifikasi_keamanan`, `jenis_naskah_dinas`, `sifat`, `sub_sifat`, `tanggal`, `nomor`, `uraian`, `jabatan`, `nama_lengkap`, `nip`, `pangkat`, `asal_surat`, `keterangan`, `file`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `disable`) VALUES
@@ -12809,7 +12847,7 @@ INSERT INTO `register_naskah_dinas` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `kla
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rekanan_akta`
+-- Struktur dari tabel `rekanan_akta`
 --
 
 CREATE TABLE `rekanan_akta` (
@@ -12828,7 +12866,7 @@ CREATE TABLE `rekanan_akta` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rekanan_neo`
+-- Struktur dari tabel `rekanan_neo`
 --
 
 CREATE TABLE `rekanan_neo` (
@@ -12865,7 +12903,7 @@ CREATE TABLE `rekanan_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `rekanan_neo`
+-- Dumping data untuk tabel `rekanan_neo`
 --
 
 INSERT INTO `rekanan_neo` (`id`, `kd_wilayah`, `nama_perusahaan`, `alamat`, `email`, `npwp`, `no_rekening`, `bank_rekening`, `atas_nama_rekening`, `direktur`, `jabatan`, `no_ktp`, `alamat_dir`, `no_akta_pendirian`, `tgl_akta_pendirian`, `lokasi_notaris_pendirian`, `nama_notaris_pendirian`, `file`, `keterangan`, `no_sortir`, `disable`, `username_insert`, `tgl_insert`, `tgl_update`, `username_update`, `is_deleted`, `no_akta_perubahan`, `tgl_akta_perubahan`, `nama_notaris_perubahan`, `lokasi_notaris_perubahan`) VALUES
@@ -13050,7 +13088,7 @@ INSERT INTO `rekanan_neo` (`id`, `kd_wilayah`, `nama_perusahaan`, `alamat`, `ema
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rekening_kegiatan`
+-- Struktur dari tabel `rekening_kegiatan`
 --
 
 CREATE TABLE `rekening_kegiatan` (
@@ -13072,7 +13110,7 @@ CREATE TABLE `rekening_kegiatan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `rekening_kegiatan`
+-- Dumping data untuk tabel `rekening_kegiatan`
 --
 
 INSERT INTO `rekening_kegiatan` (`id`, `kode`, `parent_kode`, `level`, `uraian`, `kd_wilayah`, `peraturan_id`, `kinerja`, `indikator`, `satuan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
@@ -17594,7 +17632,7 @@ INSERT INTO `rekening_kegiatan` (`id`, `kode`, `parent_kode`, `level`, `uraian`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rencana_realisasi_anggaran_neo`
+-- Struktur dari tabel `rencana_realisasi_anggaran_neo`
 --
 
 CREATE TABLE `rencana_realisasi_anggaran_neo` (
@@ -17618,7 +17656,7 @@ CREATE TABLE `rencana_realisasi_anggaran_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `rencana_realisasi_anggaran_neo`
+-- Dumping data untuk tabel `rencana_realisasi_anggaran_neo`
 --
 
 INSERT INTO `rencana_realisasi_anggaran_neo` (`id`, `dokumen`, `anggaran_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `jenis`, `bulan`, `nilai`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -17638,7 +17676,7 @@ INSERT INTO `rencana_realisasi_anggaran_neo` (`id`, `dokumen`, `anggaran_id`, `k
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rencana_rekening_anggaran_neo`
+-- Struktur dari tabel `rencana_rekening_anggaran_neo`
 --
 
 CREATE TABLE `rencana_rekening_anggaran_neo` (
@@ -17660,7 +17698,7 @@ CREATE TABLE `rencana_rekening_anggaran_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `rencana_rekening_anggaran_neo`
+-- Dumping data untuk tabel `rencana_rekening_anggaran_neo`
 --
 
 INSERT INTO `rencana_rekening_anggaran_neo` (`id`, `dokumen`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `jenis`, `bulan`, `nilai`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -17692,7 +17730,7 @@ INSERT INTO `rencana_rekening_anggaran_neo` (`id`, `dokumen`, `kd_wilayah`, `kd_
 -- --------------------------------------------------------
 
 --
--- Table structure for table `renja_neo`
+-- Struktur dari tabel `renja_neo`
 --
 
 CREATE TABLE `renja_neo` (
@@ -17741,7 +17779,7 @@ CREATE TABLE `renja_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `renja_neo`
+-- Dumping data untuk tabel `renja_neo`
 --
 
 INSERT INTO `renja_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -17755,7 +17793,7 @@ INSERT INTO `renja_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_op
 -- --------------------------------------------------------
 
 --
--- Table structure for table `renja_p_neo`
+-- Struktur dari tabel `renja_p_neo`
 --
 
 CREATE TABLE `renja_p_neo` (
@@ -17814,7 +17852,7 @@ CREATE TABLE `renja_p_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `renja_p_neo`
+-- Dumping data untuk tabel `renja_p_neo`
 --
 
 INSERT INTO `renja_p_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga_awal`, `id_standar_harga_awal`, `komponen_awal`, `spesifikasi_awal`, `tkdn_awal`, `pajak_awal`, `harga_satuan_awal`, `volume_awal`, `jumlah_awal`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `status_perubahan`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -17828,7 +17866,7 @@ INSERT INTO `renja_p_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_
 -- --------------------------------------------------------
 
 --
--- Table structure for table `renstra_neo`
+-- Struktur dari tabel `renstra_neo`
 --
 
 CREATE TABLE `renstra_neo` (
@@ -17850,7 +17888,7 @@ CREATE TABLE `renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `renstra_neo`
+-- Dumping data untuk tabel `renstra_neo`
 --
 
 INSERT INTO `renstra_neo` (`id`, `kd_wilayah`, `kd_opd`, `periode_id`, `visi`, `status`, `kunci`, `setujui`, `disable`, `keterangan`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`, `is_deleted`) VALUES
@@ -17860,7 +17898,7 @@ INSERT INTO `renstra_neo` (`id`, `kd_wilayah`, `kd_opd`, `periode_id`, `visi`, `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `riwayat_jabatan_neo`
+-- Struktur dari tabel `riwayat_jabatan_neo`
 --
 
 CREATE TABLE `riwayat_jabatan_neo` (
@@ -17886,7 +17924,7 @@ CREATE TABLE `riwayat_jabatan_neo` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `riwayat_pangkat_neo`
+-- Struktur dari tabel `riwayat_pangkat_neo`
 --
 
 CREATE TABLE `riwayat_pangkat_neo` (
@@ -17912,7 +17950,7 @@ CREATE TABLE `riwayat_pangkat_neo` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rka_neo`
+-- Struktur dari tabel `rka_neo`
 --
 
 CREATE TABLE `rka_neo` (
@@ -17961,7 +17999,7 @@ CREATE TABLE `rka_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `rka_neo`
+-- Dumping data untuk tabel `rka_neo`
 --
 
 INSERT INTO `rka_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -17975,7 +18013,7 @@ INSERT INTO `rka_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rka_p_neo`
+-- Struktur dari tabel `rka_p_neo`
 --
 
 CREATE TABLE `rka_p_neo` (
@@ -18034,7 +18072,7 @@ CREATE TABLE `rka_p_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `rka_p_neo`
+-- Dumping data untuk tabel `rka_p_neo`
 --
 
 INSERT INTO `rka_p_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga_awal`, `id_standar_harga_awal`, `komponen_awal`, `spesifikasi_awal`, `tkdn_awal`, `pajak_awal`, `harga_satuan_awal`, `volume_awal`, `jumlah_awal`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `status_perubahan`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -18048,7 +18086,7 @@ INSERT INTO `rka_p_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_op
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rkpd_neo`
+-- Struktur dari tabel `rkpd_neo`
 --
 
 CREATE TABLE `rkpd_neo` (
@@ -18080,7 +18118,7 @@ CREATE TABLE `rkpd_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `rkpd_neo`
+-- Dumping data untuk tabel `rkpd_neo`
 --
 
 INSERT INTO `rkpd_neo` (`id`, `renstra_sub_kegiatan_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_program`, `kd_kegiatan`, `kd_sub_keg`, `indikator`, `target`, `satuan_id`, `pagu`, `sumber_dana_id`, `lokasi`, `kelompok_sasaran`, `status`, `disable`, `kunci`, `setujui`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -18094,7 +18132,7 @@ INSERT INTO `rkpd_neo` (`id`, `renstra_sub_kegiatan_id`, `kd_wilayah`, `kd_opd`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rkpd_p_neo`
+-- Struktur dari tabel `rkpd_p_neo`
 --
 
 CREATE TABLE `rkpd_p_neo` (
@@ -18130,7 +18168,7 @@ CREATE TABLE `rkpd_p_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `rkpd_p_neo`
+-- Dumping data untuk tabel `rkpd_p_neo`
 --
 
 INSERT INTO `rkpd_p_neo` (`id`, `source_rkpd_id`, `renstra_sub_kegiatan_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_program`, `kd_kegiatan`, `kd_sub_keg`, `indikator`, `target_awal`, `pagu_awal`, `target`, `satuan_id`, `pagu`, `sumber_dana_id`, `lokasi`, `kelompok_sasaran`, `status_perubahan`, `status`, `disable`, `kunci`, `setujui`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -18144,7 +18182,34 @@ INSERT INTO `rkpd_p_neo` (`id`, `source_rkpd_id`, `renstra_sub_kegiatan_id`, `kd
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sasaran_renstra_neo`
+-- Struktur dari tabel `rpjmd_kabupaten_neo`
+--
+
+CREATE TABLE `rpjmd_kabupaten_neo` (
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
+  `nama_dokumen` varchar(255) NOT NULL,
+  `nomor_perda` varchar(100) DEFAULT NULL,
+  `tanggal_perda` date DEFAULT NULL,
+  `berlaku_mulai` date NOT NULL,
+  `berlaku_sampai` date NOT NULL,
+  `visi` text DEFAULT NULL,
+  `misi` longtext DEFAULT NULL,
+  `sasaran` longtext DEFAULT NULL,
+  `indikator` longtext DEFAULT NULL,
+  `status` enum('draft','berlaku','berakhir') NOT NULL DEFAULT 'draft',
+  `keterangan` text DEFAULT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `sasaran_renstra_neo`
 --
 
 CREATE TABLE `sasaran_renstra_neo` (
@@ -18162,7 +18227,7 @@ CREATE TABLE `sasaran_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `sasaran_renstra_neo`
+-- Dumping data untuk tabel `sasaran_renstra_neo`
 --
 
 INSERT INTO `sasaran_renstra_neo` (`id`, `tujuan_id`, `kode_sasaran`, `nama_sasaran`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -18173,7 +18238,7 @@ INSERT INTO `sasaran_renstra_neo` (`id`, `tujuan_id`, `kode_sasaran`, `nama_sasa
 -- --------------------------------------------------------
 
 --
--- Table structure for table `satuan_neo`
+-- Struktur dari tabel `satuan_neo`
 --
 
 CREATE TABLE `satuan_neo` (
@@ -18193,7 +18258,7 @@ CREATE TABLE `satuan_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `satuan_neo`
+-- Dumping data untuk tabel `satuan_neo`
 --
 
 INSERT INTO `satuan_neo` (`id`, `value`, `uraian`, `sebutan_lain`, `disable`, `aksi`, `keterangan`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -18636,7 +18701,7 @@ INSERT INTO `satuan_neo` (`id`, `value`, `uraian`, `sebutan_lain`, `disable`, `a
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sk_asn_neo`
+-- Struktur dari tabel `sk_asn_neo`
 --
 
 CREATE TABLE `sk_asn_neo` (
@@ -18671,7 +18736,7 @@ CREATE TABLE `sk_asn_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `sk_asn_neo`
+-- Dumping data untuk tabel `sk_asn_neo`
 --
 
 INSERT INTO `sk_asn_neo` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `nomor`, `tgl_surat_dibuat`, `tentang`, `pemberi_tgs`, `jbt_pemberi_tgs`, `pangkat_pemberi_tgs`, `nama_pemberi_tgs`, `nama_ditugaskan`, `bentuk_lampiran`, `menimbang`, `mengingat`, `menetapkan_1`, `menetapkan_2`, `menetapkan_3`, `menetapkan_4`, `tembusan`, `file`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `disable`, `is_deleted`) VALUES
@@ -18819,7 +18884,7 @@ INSERT INTO `sk_asn_neo` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `nomor`, `tgl_s
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sk_pegawai_neo`
+-- Struktur dari tabel `sk_pegawai_neo`
 --
 
 CREATE TABLE `sk_pegawai_neo` (
@@ -18845,7 +18910,7 @@ CREATE TABLE `sk_pegawai_neo` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sub_kegiatan_renstra_neo`
+-- Struktur dari tabel `sub_kegiatan_renstra_neo`
 --
 
 CREATE TABLE `sub_kegiatan_renstra_neo` (
@@ -18876,7 +18941,7 @@ CREATE TABLE `sub_kegiatan_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `sub_kegiatan_renstra_neo`
+-- Dumping data untuk tabel `sub_kegiatan_renstra_neo`
 --
 
 INSERT INTO `sub_kegiatan_renstra_neo` (`id`, `kegiatan_renstra_id`, `master_sub_kegiatan_id`, `lokasi`, `kelompok_sasaran`, `baseline`, `target_t1`, `anggaran_t1`, `target_t2`, `anggaran_t2`, `target_t3`, `anggaran_t3`, `target_t4`, `anggaran_t4`, `target_t5`, `anggaran_t5`, `target_akhir`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -18885,7 +18950,7 @@ INSERT INTO `sub_kegiatan_renstra_neo` (`id`, `kegiatan_renstra_id`, `master_sub
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sub_keg_dpa_neo`
+-- Struktur dari tabel `sub_keg_dpa_neo`
 --
 
 CREATE TABLE `sub_keg_dpa_neo` (
@@ -18935,7 +19000,7 @@ CREATE TABLE `sub_keg_dpa_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `sub_keg_dpa_neo`
+-- Dumping data untuk tabel `sub_keg_dpa_neo`
 --
 
 INSERT INTO `sub_keg_dpa_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kel_rek`, `uraian`, `tolak_ukur_capaian_keg`, `target_kinerja_capaian_keg`, `tolak_ukur_keluaran`, `target_kinerja_keluaran`, `tolak_ukur_hasil`, `target_kinerja_hasil`, `tolak_ukur_capaian_keg_p`, `target_kinerja_capaian_keg_p`, `tolak_ukur_keluaran_p`, `target_kinerja_keluaran_p`, `tolak_ukur_hasil_p`, `target_kinerja_hasil_p`, `sumber_dana`, `lokasi`, `keluaran_sub_keg`, `keluaran_sub_keg_p`, `awal_pelaksanaan`, `akhir_pelaksanaan`, `jumlah_pagu`, `jumlah_pagu_p`, `jumlah_rincian`, `jumlah_rincian_p`, `disable`, `aksi`, `keterangan`, `kelompok_json`, `keterangan_json`, `tgl_insert`, `tgl_update`, `username_update`, `username_insert`, `setujui`, `kunci`, `setujui_p`, `kunci_p`, `is_deleted`) VALUES
@@ -19018,7 +19083,7 @@ INSERT INTO `sub_keg_dpa_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_ke
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sub_keg_renja_neo`
+-- Struktur dari tabel `sub_keg_renja_neo`
 --
 
 CREATE TABLE `sub_keg_renja_neo` (
@@ -19068,7 +19133,7 @@ CREATE TABLE `sub_keg_renja_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `sub_keg_renja_neo`
+-- Dumping data untuk tabel `sub_keg_renja_neo`
 --
 
 INSERT INTO `sub_keg_renja_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kel_rek`, `uraian`, `tolak_ukur_capaian_keg`, `target_kinerja_capaian_keg`, `tolak_ukur_keluaran`, `target_kinerja_keluaran`, `tolak_ukur_hasil`, `target_kinerja_hasil`, `tolak_ukur_capaian_keg_p`, `target_kinerja_capaian_keg_p`, `tolak_ukur_keluaran_p`, `target_kinerja_keluaran_p`, `tolak_ukur_hasil_p`, `target_kinerja_hasil_p`, `sumber_dana`, `lokasi`, `keluaran_sub_keg`, `keluaran_sub_keg_p`, `awal_pelaksanaan`, `akhir_pelaksanaan`, `jumlah_pagu`, `jumlah_pagu_p`, `jumlah_rincian`, `jumlah_rincian_p`, `disable`, `aksi`, `keterangan`, `kelompok_json`, `keterangan_json`, `tgl_insert`, `tgl_update`, `username_update`, `username_insert`, `setujui`, `kunci`, `setujui_p`, `kunci_p`, `is_deleted`) VALUES
@@ -19303,7 +19368,7 @@ INSERT INTO `sub_keg_renja_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sumber_dana_neo`
+-- Struktur dari tabel `sumber_dana_neo`
 --
 
 CREATE TABLE `sumber_dana_neo` (
@@ -19328,7 +19393,7 @@ CREATE TABLE `sumber_dana_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `sumber_dana_neo`
+-- Dumping data untuk tabel `sumber_dana_neo`
 --
 
 INSERT INTO `sumber_dana_neo` (`id`, `sumber_dana`, `kelompok`, `jenis_akun`, `objek`, `rincian_objek`, `sub_rincian_objek`, `kode`, `uraian`, `peraturan_id`, `disable`, `aksi`, `keterangan`, `username_insert`, `tgl_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -19637,7 +19702,7 @@ INSERT INTO `sumber_dana_neo` (`id`, `sumber_dana`, `kelompok`, `jenis_akun`, `o
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tapd_penugasan_neo`
+-- Struktur dari tabel `tapd_penugasan_neo`
 --
 
 CREATE TABLE `tapd_penugasan_neo` (
@@ -19661,7 +19726,7 @@ CREATE TABLE `tapd_penugasan_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `tapd_penugasan_neo`
+-- Dumping data untuk tabel `tapd_penugasan_neo`
 --
 
 INSERT INTO `tapd_penugasan_neo` (`id`, `kd_wilayah`, `tahun`, `user_id`, `pegawai_id`, `nama`, `nip`, `jabatan`, `urutan`, `tanggal_mulai`, `tanggal_selesai`, `aktif`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -19674,7 +19739,7 @@ INSERT INTO `tapd_penugasan_neo` (`id`, `kd_wilayah`, `tahun`, `user_id`, `pegaw
 -- --------------------------------------------------------
 
 --
--- Table structure for table `trx_naskah_dinas`
+-- Struktur dari tabel `trx_naskah_dinas`
 --
 
 CREATE TABLE `trx_naskah_dinas` (
@@ -19706,7 +19771,7 @@ CREATE TABLE `trx_naskah_dinas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `trx_naskah_dinas`
+-- Dumping data untuk tabel `trx_naskah_dinas`
 --
 
 INSERT INTO `trx_naskah_dinas` (`id`, `uuid`, `jenis_id`, `nomor`, `nomor_urut`, `tahun`, `klasifikasi_id`, `tanggal_surat`, `perihal`, `status`, `file_pdf`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`, `workflow_status`, `verified_by`, `verified_at`, `signed_by`, `signed_at`, `final_at`, `document_hash`) VALUES
@@ -19742,7 +19807,7 @@ INSERT INTO `trx_naskah_dinas` (`id`, `uuid`, `jenis_id`, `nomor`, `nomor_urut`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `trx_naskah_meta`
+-- Struktur dari tabel `trx_naskah_meta`
 --
 
 CREATE TABLE `trx_naskah_meta` (
@@ -19757,7 +19822,7 @@ CREATE TABLE `trx_naskah_meta` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `trx_naskah_meta`
+-- Dumping data untuk tabel `trx_naskah_meta`
 --
 
 INSERT INTO `trx_naskah_meta` (`id`, `naskah_id`, `meta_key`, `meta_value`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`) VALUES
@@ -19790,7 +19855,7 @@ INSERT INTO `trx_naskah_meta` (`id`, `naskah_id`, `meta_key`, `meta_value`, `kd_
 -- --------------------------------------------------------
 
 --
--- Table structure for table `trx_naskah_status_history`
+-- Struktur dari tabel `trx_naskah_status_history`
 --
 
 CREATE TABLE `trx_naskah_status_history` (
@@ -19804,7 +19869,7 @@ CREATE TABLE `trx_naskah_status_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 --
--- Dumping data for table `trx_naskah_status_history`
+-- Dumping data untuk tabel `trx_naskah_status_history`
 --
 
 INSERT INTO `trx_naskah_status_history` (`id`, `naskah_id`, `status_dari`, `status_ke`, `catatan`, `username`, `created_at`) VALUES
@@ -19813,7 +19878,7 @@ INSERT INTO `trx_naskah_status_history` (`id`, `naskah_id`, `status_dari`, `stat
 -- --------------------------------------------------------
 
 --
--- Table structure for table `trx_naskah_struktur`
+-- Struktur dari tabel `trx_naskah_struktur`
 --
 
 CREATE TABLE `trx_naskah_struktur` (
@@ -19830,7 +19895,7 @@ CREATE TABLE `trx_naskah_struktur` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `trx_naskah_struktur`
+-- Dumping data untuk tabel `trx_naskah_struktur`
 --
 
 INSERT INTO `trx_naskah_struktur` (`id`, `naskah_id`, `struktur_json`, `kd_wilayah`, `kd_opd`, `tahun`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
@@ -19866,7 +19931,7 @@ INSERT INTO `trx_naskah_struktur` (`id`, `naskah_id`, `struktur_json`, `kd_wilay
 -- --------------------------------------------------------
 
 --
--- Table structure for table `trx_nomor_counter`
+-- Struktur dari tabel `trx_nomor_counter`
 --
 
 CREATE TABLE `trx_nomor_counter` (
@@ -19877,7 +19942,7 @@ CREATE TABLE `trx_nomor_counter` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `trx_nomor_counter`
+-- Dumping data untuk tabel `trx_nomor_counter`
 --
 
 INSERT INTO `trx_nomor_counter` (`id`, `klasifikasi_id`, `tahun`, `last_number`) VALUES
@@ -19887,7 +19952,7 @@ INSERT INTO `trx_nomor_counter` (`id`, `klasifikasi_id`, `tahun`, `last_number`)
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tujuan_renstra_neo`
+-- Struktur dari tabel `tujuan_renstra_neo`
 --
 
 CREATE TABLE `tujuan_renstra_neo` (
@@ -19905,7 +19970,7 @@ CREATE TABLE `tujuan_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `tujuan_renstra_neo`
+-- Dumping data untuk tabel `tujuan_renstra_neo`
 --
 
 INSERT INTO `tujuan_renstra_neo` (`id`, `misi_id`, `kode_tujuan`, `nama_tujuan`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -19916,7 +19981,7 @@ INSERT INTO `tujuan_renstra_neo` (`id`, `misi_id`, `kode_tujuan`, `nama_tujuan`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user_sesendok_biila`
+-- Struktur dari tabel `user_sesendok_biila`
 --
 
 CREATE TABLE `user_sesendok_biila` (
@@ -19955,7 +20020,7 @@ CREATE TABLE `user_sesendok_biila` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `user_sesendok_biila`
+-- Dumping data untuk tabel `user_sesendok_biila`
 --
 
 INSERT INTO `user_sesendok_biila` (`id`, `pegawai_id`, `username`, `email`, `nama`, `nip`, `password`, `message_public_key`, `remember_token`, `kd_opd`, `nama_org`, `kd_wilayah`, `type_user`, `photo`, `signature_image`, `signature_verified`, `tgl_daftar`, `tgl_login`, `tahun`, `kontak_person`, `alamat`, `font_size`, `theme`, `warna_tbl`, `scrolling_table`, `disable_login`, `disable_anggaran`, `disable_kontrak`, `disable_realisasi`, `disable_chat`, `ket`, `disable`) VALUES
@@ -19982,7 +20047,7 @@ INSERT INTO `user_sesendok_biila` (`id`, `pegawai_id`, `username`, `email`, `nam
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user_subkegiatan_neo`
+-- Struktur dari tabel `user_subkegiatan_neo`
 --
 
 CREATE TABLE `user_subkegiatan_neo` (
@@ -20008,7 +20073,39 @@ CREATE TABLE `user_subkegiatan_neo` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `wallchat`
+-- Struktur dari tabel `usulan_pembangunan_neo`
+--
+
+CREATE TABLE `usulan_pembangunan_neo` (
+  `id` bigint(20) NOT NULL,
+  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_opd` varchar(60) DEFAULT NULL,
+  `tahun` smallint(6) NOT NULL,
+  `jenis_usulan` enum('musrenbang','pokir_dprd','masyarakat') NOT NULL,
+  `pengusul` varchar(255) NOT NULL,
+  `nik_no_identitas` varchar(100) DEFAULT NULL,
+  `alamat` text DEFAULT NULL,
+  `desa_kelurahan` varchar(150) DEFAULT NULL,
+  `kecamatan` varchar(150) DEFAULT NULL,
+  `uraian` text NOT NULL,
+  `volume` decimal(18,2) DEFAULT NULL,
+  `satuan` varchar(50) DEFAULT NULL,
+  `lokasi` text DEFAULT NULL,
+  `perkiraan_anggaran` decimal(20,2) NOT NULL DEFAULT 0.00,
+  `prioritas` tinyint(4) DEFAULT NULL,
+  `status` enum('diusulkan','diverifikasi','diterima','ditolak','diakomodasi') NOT NULL DEFAULT 'diusulkan',
+  `catatan_verifikasi` text DEFAULT NULL,
+  `tgl_insert` datetime NOT NULL DEFAULT current_timestamp(),
+  `username_insert` varchar(100) DEFAULT NULL,
+  `tgl_update` datetime DEFAULT NULL,
+  `username_update` varchar(100) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `wallchat`
 --
 
 CREATE TABLE `wallchat` (
@@ -20042,7 +20139,7 @@ CREATE TABLE `wallchat` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `wallchat`
+-- Dumping data untuk tabel `wallchat`
 --
 
 INSERT INTO `wallchat` (`id`, `user_id`, `receiver_id`, `parent_id`, `type`, `content`, `content_ciphertext`, `content_nonce`, `e2e_payload`, `encryption_version`, `is_ephemeral`, `read_at`, `deleted_by_sender`, `deleted_by_receiver`, `attachment_name`, `attachment_path`, `attachment_mime`, `attachment_size`, `theme`, `created_at`, `updated_at`, `is_deleted`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `file`) VALUES
@@ -20086,7 +20183,7 @@ INSERT INTO `wallchat` (`id`, `user_id`, `receiver_id`, `parent_id`, `type`, `co
 -- --------------------------------------------------------
 
 --
--- Table structure for table `wilayah_neo`
+-- Struktur dari tabel `wilayah_neo`
 --
 
 CREATE TABLE `wilayah_neo` (
@@ -20112,7 +20209,7 @@ CREATE TABLE `wilayah_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data for table `wilayah_neo`
+-- Dumping data untuk tabel `wilayah_neo`
 --
 
 INSERT INTO `wilayah_neo` (`id`, `kode`, `uraian`, `status`, `jml_kec`, `jml_kel`, `jml_desa`, `luas`, `penduduk`, `logo`, `peta`, `keterangan`, `disable`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `file`, `is_deleted`) VALUES
@@ -20125,11 +20222,11 @@ INSERT INTO `wilayah_neo` (`id`, `kode`, `uraian`, `status`, `jml_kec`, `jml_kel
 (7, '76.06', 'MAMUJU TENGAH', 'kab', 5, 0, 54, 2774.930000000000, 138231, NULL, NULL, 'Luas Wilayah Indikatif sesuai Surat Badan Informasi Geospasial No. B-8.31/PBW-BIG/IGD.04.04/6/2021 Tanggal 8 Juni 2021', 0, '2026-02-18 13:11:51', 'nabiila', '2026-02-18 13:11:51', 'nabiila', NULL, 0);
 
 --
--- Indexes for dumped tables
+-- Indeks untuk tabel yang dibuang
 --
 
 --
--- Indexes for table `absensi_pegawai_neo`
+-- Indeks untuk tabel `absensi_pegawai_neo`
 --
 ALTER TABLE `absensi_pegawai_neo`
   ADD PRIMARY KEY (`id`),
@@ -20137,63 +20234,63 @@ ALTER TABLE `absensi_pegawai_neo`
   ADD KEY `idx_absen_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`tanggal`);
 
 --
--- Indexes for table `akun_neo`
+-- Indeks untuk tabel `akun_neo`
 --
 ALTER TABLE `akun_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `analisa_rab`
+-- Indeks untuk tabel `analisa_rab`
 --
 ALTER TABLE `analisa_rab`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `anggaran_copy_log`
+-- Indeks untuk tabel `anggaran_copy_log`
 --
 ALTER TABLE `anggaran_copy_log`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `anggaran_perubahan_template`
+-- Indeks untuk tabel `anggaran_perubahan_template`
 --
 ALTER TABLE `anggaran_perubahan_template`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `anggaran_program_renstra_neo`
+-- Indeks untuk tabel `anggaran_program_renstra_neo`
 --
 ALTER TABLE `anggaran_program_renstra_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `program_id` (`program_id`);
 
 --
--- Indexes for table `anggaran_template`
+-- Indeks untuk tabel `anggaran_template`
 --
 ALTER TABLE `anggaran_template`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `anggaran_workflow_log`
+-- Indeks untuk tabel `anggaran_workflow_log`
 --
 ALTER TABLE `anggaran_workflow_log`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_workflow_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`tgl_copy`);
 
 --
--- Indexes for table `aset_neo`
+-- Indeks untuk tabel `aset_neo`
 --
 ALTER TABLE `aset_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `cache_schema_naskah`
+-- Indeks untuk tabel `cache_schema_naskah`
 --
 ALTER TABLE `cache_schema_naskah`
   ADD PRIMARY KEY (`jenis_id`,`schema_version`);
 
 --
--- Indexes for table `cuti_pegawai_neo`
+-- Indeks untuk tabel `cuti_pegawai_neo`
 --
 ALTER TABLE `cuti_pegawai_neo`
   ADD PRIMARY KEY (`id`),
@@ -20201,7 +20298,7 @@ ALTER TABLE `cuti_pegawai_neo`
   ADD KEY `idx_cuti_pegawai` (`pegawai_id`);
 
 --
--- Indexes for table `daftar_paket_neo`
+-- Indeks untuk tabel `daftar_paket_neo`
 --
 ALTER TABLE `daftar_paket_neo`
   ADD PRIMARY KEY (`id`),
@@ -20209,7 +20306,7 @@ ALTER TABLE `daftar_paket_neo`
   ADD KEY `idx_paket_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`);
 
 --
--- Indexes for table `daftar_realisasi_neo`
+-- Indeks untuk tabel `daftar_realisasi_neo`
 --
 ALTER TABLE `daftar_realisasi_neo`
   ADD PRIMARY KEY (`id`),
@@ -20219,20 +20316,20 @@ ALTER TABLE `daftar_realisasi_neo`
   ADD KEY `idx_realisasi_contract_phase27` (`kontrak_id`,`is_deleted`,`tanggal`);
 
 --
--- Indexes for table `daftar_uraian_paket`
+-- Indeks untuk tabel `daftar_uraian_paket`
 --
 ALTER TABLE `daftar_uraian_paket`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `db_asn_pemda_neo`
+-- Indeks untuk tabel `db_asn_pemda_neo`
 --
 ALTER TABLE `db_asn_pemda_neo`
   ADD UNIQUE KEY `id` (`id`),
   ADD UNIQUE KEY `nip` (`nip`);
 
 --
--- Indexes for table `dokumen_pegawai_neo`
+-- Indeks untuk tabel `dokumen_pegawai_neo`
 --
 ALTER TABLE `dokumen_pegawai_neo`
   ADD PRIMARY KEY (`id`),
@@ -20240,58 +20337,66 @@ ALTER TABLE `dokumen_pegawai_neo`
   ADD KEY `idx_dok_pegawai_scope` (`kd_wilayah`,`kd_opd`,`tahun`);
 
 --
--- Indexes for table `dpa_neo`
+-- Indeks untuk tabel `dpa_neo`
 --
 ALTER TABLE `dpa_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_dpa_source` (`source_table`,`source_id`);
 
 --
--- Indexes for table `dppa_neo`
+-- Indeks untuk tabel `dppa_neo`
 --
 ALTER TABLE `dppa_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_dppa_source` (`source_table`,`source_id`);
 
 --
--- Indexes for table `group_rekap_akun`
+-- Indeks untuk tabel `evaluasi_renja_neo`
+--
+ALTER TABLE `evaluasi_renja_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_evaluasi_renja` (`kd_wilayah`,`kd_opd`,`tahun`,`triwulan`,`kd_sub_keg`,`indikator`(150)),
+  ADD KEY `idx_evaluasi_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`triwulan`,`is_deleted`);
+
+--
+-- Indeks untuk tabel `group_rekap_akun`
 --
 ALTER TABLE `group_rekap_akun`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `group_sub_kegiatan`
+-- Indeks untuk tabel `group_sub_kegiatan`
 --
 ALTER TABLE `group_sub_kegiatan`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `halaman_berita`
+-- Indeks untuk tabel `halaman_berita`
 --
 ALTER TABLE `halaman_berita`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_halaman_publik` (`jenis_halaman`,`aktif`,`is_deleted`,`kd_wilayah`);
 
 --
--- Indexes for table `import_logs`
+-- Indeks untuk tabel `import_logs`
 --
 ALTER TABLE `import_logs`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `indikator_program_renstra_neo`
+-- Indeks untuk tabel `indikator_program_renstra_neo`
 --
 ALTER TABLE `indikator_program_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `indikator_sasaran_renstra_neo`
+-- Indeks untuk tabel `indikator_sasaran_renstra_neo`
 --
 ALTER TABLE `indikator_sasaran_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `kd_wilayah_neo`
+-- Indeks untuk tabel `kd_wilayah_neo`
 --
 ALTER TABLE `kd_wilayah_neo`
   ADD PRIMARY KEY (`id`),
@@ -20299,13 +20404,13 @@ ALTER TABLE `kd_wilayah_neo`
   ADD KEY `idx_kode_wilayah` (`kode`);
 
 --
--- Indexes for table `kegiatan_renstra_neo`
+-- Indeks untuk tabel `kegiatan_renstra_neo`
 --
 ALTER TABLE `kegiatan_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `kontrak_dokumen_neo`
+-- Indeks untuk tabel `kontrak_dokumen_neo`
 --
 ALTER TABLE `kontrak_dokumen_neo`
   ADD PRIMARY KEY (`id`),
@@ -20313,7 +20418,7 @@ ALTER TABLE `kontrak_dokumen_neo`
   ADD KEY `idx_dok_scope` (`kd_wilayah`,`kd_opd`,`tahun`);
 
 --
--- Indexes for table `kontrak_item_neo`
+-- Indeks untuk tabel `kontrak_item_neo`
 --
 ALTER TABLE `kontrak_item_neo`
   ADD PRIMARY KEY (`id`),
@@ -20322,7 +20427,7 @@ ALTER TABLE `kontrak_item_neo`
   ADD KEY `idx_kontrak_item_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`);
 
 --
--- Indexes for table `kontrak_jadwal_neo`
+-- Indeks untuk tabel `kontrak_jadwal_neo`
 --
 ALTER TABLE `kontrak_jadwal_neo`
   ADD PRIMARY KEY (`id`),
@@ -20331,7 +20436,7 @@ ALTER TABLE `kontrak_jadwal_neo`
   ADD KEY `idx_jadwal_rab` (`rab_id`,`minggu_ke`);
 
 --
--- Indexes for table `kontrak_neo`
+-- Indeks untuk tabel `kontrak_neo`
 --
 ALTER TABLE `kontrak_neo`
   ADD PRIMARY KEY (`id`),
@@ -20341,14 +20446,14 @@ ALTER TABLE `kontrak_neo`
   ADD KEY `idx_kontrak_rekanan` (`rekanan_id`);
 
 --
--- Indexes for table `kop_surat_neo`
+-- Indeks untuk tabel `kop_surat_neo`
 --
 ALTER TABLE `kop_surat_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_kop_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`aktif`);
 
 --
--- Indexes for table `log_activity`
+-- Indeks untuk tabel `log_activity`
 --
 ALTER TABLE `log_activity`
   ADD PRIMARY KEY (`id`),
@@ -20357,7 +20462,7 @@ ALTER TABLE `log_activity`
   ADD KEY `idx_action` (`action`);
 
 --
--- Indexes for table `master_biaya`
+-- Indeks untuk tabel `master_biaya`
 --
 ALTER TABLE `master_biaya`
   ADD PRIMARY KEY (`id`),
@@ -20366,7 +20471,7 @@ ALTER TABLE `master_biaya`
   ADD KEY `idx_master_biaya_kode` (`kode`);
 
 --
--- Indexes for table `master_biaya_akun`
+-- Indeks untuk tabel `master_biaya_akun`
 --
 ALTER TABLE `master_biaya_akun`
   ADD PRIMARY KEY (`id`),
@@ -20375,20 +20480,20 @@ ALTER TABLE `master_biaya_akun`
   ADD KEY `idx_master_biaya_akun_lookup` (`master_biaya_id`,`kd_akun`,`peraturan_id`,`is_deleted`);
 
 --
--- Indexes for table `misi_renstra_neo`
+-- Indeks untuk tabel `misi_renstra_neo`
 --
 ALTER TABLE `misi_renstra_neo`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uniq_misi` (`renstra_id`,`nama_misi`) USING HASH;
 
 --
--- Indexes for table `organisasi_neo`
+-- Indeks untuk tabel `organisasi_neo`
 --
 ALTER TABLE `organisasi_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `pejabat_tahunan_neo`
+-- Indeks untuk tabel `pejabat_tahunan_neo`
 --
 ALTER TABLE `pejabat_tahunan_neo`
   ADD PRIMARY KEY (`id`),
@@ -20396,31 +20501,31 @@ ALTER TABLE `pejabat_tahunan_neo`
   ADD KEY `idx_pejabat_sub` (`kd_sub_keg`,`jenis_pejabat`,`is_deleted`);
 
 --
--- Indexes for table `pengaturan_neo`
+-- Indeks untuk tabel `pengaturan_neo`
 --
 ALTER TABLE `pengaturan_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `peraturan_neo`
+-- Indeks untuk tabel `peraturan_neo`
 --
 ALTER TABLE `peraturan_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `periode_rpjmd`
+-- Indeks untuk tabel `periode_rpjmd`
 --
 ALTER TABLE `periode_rpjmd`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `program_renstra_neo`
+-- Indeks untuk tabel `program_renstra_neo`
 --
 ALTER TABLE `program_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `rab_paket_neo`
+-- Indeks untuk tabel `rab_paket_neo`
 --
 ALTER TABLE `rab_paket_neo`
   ADD PRIMARY KEY (`id`),
@@ -20428,56 +20533,56 @@ ALTER TABLE `rab_paket_neo`
   ADD KEY `idx_rab_kontrak_item` (`kontrak_item_id`);
 
 --
--- Indexes for table `ref_jenis_naskah`
+-- Indeks untuk tabel `ref_jenis_naskah`
 --
 ALTER TABLE `ref_jenis_naskah`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `ref_jenis_naskah_dinas`
+-- Indeks untuk tabel `ref_jenis_naskah_dinas`
 --
 ALTER TABLE `ref_jenis_naskah_dinas`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `ref_kelompok_naskah`
+-- Indeks untuk tabel `ref_kelompok_naskah`
 --
 ALTER TABLE `ref_kelompok_naskah`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `ref_klasifikasi_keamanan`
+-- Indeks untuk tabel `ref_klasifikasi_keamanan`
 --
 ALTER TABLE `ref_klasifikasi_keamanan`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `ref_template_naskah`
+-- Indeks untuk tabel `ref_template_naskah`
 --
 ALTER TABLE `ref_template_naskah`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `register_naskah_dinas`
+-- Indeks untuk tabel `register_naskah_dinas`
 --
 ALTER TABLE `register_naskah_dinas`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `rekanan_akta`
+-- Indeks untuk tabel `rekanan_akta`
 --
 ALTER TABLE `rekanan_akta`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_rekanan` (`rekanan_id`);
 
 --
--- Indexes for table `rekanan_neo`
+-- Indeks untuk tabel `rekanan_neo`
 --
 ALTER TABLE `rekanan_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `rekening_kegiatan`
+-- Indeks untuk tabel `rekening_kegiatan`
 --
 ALTER TABLE `rekening_kegiatan`
   ADD PRIMARY KEY (`id`),
@@ -20487,7 +20592,7 @@ ALTER TABLE `rekening_kegiatan`
   ADD KEY `idx_rekening_level` (`level`);
 
 --
--- Indexes for table `rencana_realisasi_anggaran_neo`
+-- Indeks untuk tabel `rencana_realisasi_anggaran_neo`
 --
 ALTER TABLE `rencana_realisasi_anggaran_neo`
   ADD PRIMARY KEY (`id`),
@@ -20496,7 +20601,7 @@ ALTER TABLE `rencana_realisasi_anggaran_neo`
   ADD KEY `idx_rencana_sub_akun` (`kd_sub_keg`,`kd_akun`);
 
 --
--- Indexes for table `rencana_rekening_anggaran_neo`
+-- Indeks untuk tabel `rencana_rekening_anggaran_neo`
 --
 ALTER TABLE `rencana_rekening_anggaran_neo`
   ADD PRIMARY KEY (`id`),
@@ -20504,27 +20609,27 @@ ALTER TABLE `rencana_rekening_anggaran_neo`
   ADD KEY `idx_rencana_rekening_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`dokumen`,`kd_sub_keg`,`is_deleted`);
 
 --
--- Indexes for table `renja_neo`
+-- Indeks untuk tabel `renja_neo`
 --
 ALTER TABLE `renja_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_renja_source` (`source_table`,`source_id`);
 
 --
--- Indexes for table `renja_p_neo`
+-- Indeks untuk tabel `renja_p_neo`
 --
 ALTER TABLE `renja_p_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_renja_p_source` (`source_table`,`source_id`);
 
 --
--- Indexes for table `renstra_neo`
+-- Indeks untuk tabel `renstra_neo`
 --
 ALTER TABLE `renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `riwayat_jabatan_neo`
+-- Indeks untuk tabel `riwayat_jabatan_neo`
 --
 ALTER TABLE `riwayat_jabatan_neo`
   ADD PRIMARY KEY (`id`),
@@ -20532,7 +20637,7 @@ ALTER TABLE `riwayat_jabatan_neo`
   ADD KEY `idx_rj_pegawai` (`pegawai_id`);
 
 --
--- Indexes for table `riwayat_pangkat_neo`
+-- Indeks untuk tabel `riwayat_pangkat_neo`
 --
 ALTER TABLE `riwayat_pangkat_neo`
   ADD PRIMARY KEY (`id`),
@@ -20540,21 +20645,21 @@ ALTER TABLE `riwayat_pangkat_neo`
   ADD KEY `idx_rp_pegawai` (`pegawai_id`);
 
 --
--- Indexes for table `rka_neo`
+-- Indeks untuk tabel `rka_neo`
 --
 ALTER TABLE `rka_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_rka_source` (`source_table`,`source_id`);
 
 --
--- Indexes for table `rka_p_neo`
+-- Indeks untuk tabel `rka_p_neo`
 --
 ALTER TABLE `rka_p_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_rka_p_source` (`source_table`,`source_id`);
 
 --
--- Indexes for table `rkpd_neo`
+-- Indeks untuk tabel `rkpd_neo`
 --
 ALTER TABLE `rkpd_neo`
   ADD PRIMARY KEY (`id`),
@@ -20563,7 +20668,7 @@ ALTER TABLE `rkpd_neo`
   ADD KEY `idx_rkpd_renstra` (`renstra_sub_kegiatan_id`);
 
 --
--- Indexes for table `rkpd_p_neo`
+-- Indeks untuk tabel `rkpd_p_neo`
 --
 ALTER TABLE `rkpd_p_neo`
   ADD PRIMARY KEY (`id`),
@@ -20572,25 +20677,32 @@ ALTER TABLE `rkpd_p_neo`
   ADD KEY `idx_rkpd_p_sub` (`kd_sub_keg`);
 
 --
--- Indexes for table `sasaran_renstra_neo`
+-- Indeks untuk tabel `rpjmd_kabupaten_neo`
+--
+ALTER TABLE `rpjmd_kabupaten_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_rpjmd_wilayah_masa` (`kd_wilayah`,`berlaku_mulai`,`berlaku_sampai`,`is_deleted`);
+
+--
+-- Indeks untuk tabel `sasaran_renstra_neo`
 --
 ALTER TABLE `sasaran_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `satuan_neo`
+-- Indeks untuk tabel `satuan_neo`
 --
 ALTER TABLE `satuan_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `sk_asn_neo`
+-- Indeks untuk tabel `sk_asn_neo`
 --
 ALTER TABLE `sk_asn_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `sk_pegawai_neo`
+-- Indeks untuk tabel `sk_pegawai_neo`
 --
 ALTER TABLE `sk_pegawai_neo`
   ADD PRIMARY KEY (`id`),
@@ -20598,31 +20710,31 @@ ALTER TABLE `sk_pegawai_neo`
   ADD KEY `idx_sk_pegawai` (`pegawai_id`);
 
 --
--- Indexes for table `sub_kegiatan_renstra_neo`
+-- Indeks untuk tabel `sub_kegiatan_renstra_neo`
 --
 ALTER TABLE `sub_kegiatan_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `sub_keg_dpa_neo`
+-- Indeks untuk tabel `sub_keg_dpa_neo`
 --
 ALTER TABLE `sub_keg_dpa_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `sub_keg_renja_neo`
+-- Indeks untuk tabel `sub_keg_renja_neo`
 --
 ALTER TABLE `sub_keg_renja_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `sumber_dana_neo`
+-- Indeks untuk tabel `sumber_dana_neo`
 --
 ALTER TABLE `sumber_dana_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `tapd_penugasan_neo`
+-- Indeks untuk tabel `tapd_penugasan_neo`
 --
 ALTER TABLE `tapd_penugasan_neo`
   ADD PRIMARY KEY (`id`),
@@ -20630,46 +20742,46 @@ ALTER TABLE `tapd_penugasan_neo`
   ADD KEY `idx_tapd_pegawai` (`pegawai_id`,`kd_wilayah`);
 
 --
--- Indexes for table `trx_naskah_dinas`
+-- Indeks untuk tabel `trx_naskah_dinas`
 --
 ALTER TABLE `trx_naskah_dinas`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `trx_naskah_meta`
+-- Indeks untuk tabel `trx_naskah_meta`
 --
 ALTER TABLE `trx_naskah_meta`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `trx_naskah_status_history`
+-- Indeks untuk tabel `trx_naskah_status_history`
 --
 ALTER TABLE `trx_naskah_status_history`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_naskah_status_history` (`naskah_id`,`created_at`);
 
 --
--- Indexes for table `trx_naskah_struktur`
+-- Indeks untuk tabel `trx_naskah_struktur`
 --
 ALTER TABLE `trx_naskah_struktur`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_naskah_struktur` (`naskah_id`);
 
 --
--- Indexes for table `trx_nomor_counter`
+-- Indeks untuk tabel `trx_nomor_counter`
 --
 ALTER TABLE `trx_nomor_counter`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unik` (`klasifikasi_id`,`tahun`);
 
 --
--- Indexes for table `tujuan_renstra_neo`
+-- Indeks untuk tabel `tujuan_renstra_neo`
 --
 ALTER TABLE `tujuan_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `user_sesendok_biila`
+-- Indeks untuk tabel `user_sesendok_biila`
 --
 ALTER TABLE `user_sesendok_biila`
   ADD PRIMARY KEY (`id`),
@@ -20678,7 +20790,7 @@ ALTER TABLE `user_sesendok_biila`
   ADD KEY `idx_user_pegawai` (`pegawai_id`,`kd_wilayah`,`kd_opd`);
 
 --
--- Indexes for table `user_subkegiatan_neo`
+-- Indeks untuk tabel `user_subkegiatan_neo`
 --
 ALTER TABLE `user_subkegiatan_neo`
   ADD PRIMARY KEY (`id`),
@@ -20686,7 +20798,14 @@ ALTER TABLE `user_subkegiatan_neo`
   ADD KEY `idx_user_sub_scope` (`kd_wilayah`,`kd_opd`,`tahun`);
 
 --
--- Indexes for table `wallchat`
+-- Indeks untuk tabel `usulan_pembangunan_neo`
+--
+ALTER TABLE `usulan_pembangunan_neo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_usulan_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`jenis_usulan`,`is_deleted`);
+
+--
+-- Indeks untuk tabel `wallchat`
 --
 ALTER TABLE `wallchat`
   ADD PRIMARY KEY (`id`),
@@ -20702,525 +20821,543 @@ ALTER TABLE `wallchat`
   ADD KEY `idx_wall_private_receiver` (`type`,`is_deleted`,`receiver_id`,`deleted_by_receiver`,`created_at`);
 
 --
--- Indexes for table `wilayah_neo`
+-- Indeks untuk tabel `wilayah_neo`
 --
 ALTER TABLE `wilayah_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT for table `absensi_pegawai_neo`
+-- AUTO_INCREMENT untuk tabel `absensi_pegawai_neo`
 --
 ALTER TABLE `absensi_pegawai_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `akun_neo`
+-- AUTO_INCREMENT untuk tabel `akun_neo`
 --
 ALTER TABLE `akun_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4277;
 
 --
--- AUTO_INCREMENT for table `analisa_rab`
+-- AUTO_INCREMENT untuk tabel `analisa_rab`
 --
 ALTER TABLE `analisa_rab`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `anggaran_copy_log`
+-- AUTO_INCREMENT untuk tabel `anggaran_copy_log`
 --
 ALTER TABLE `anggaran_copy_log`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `anggaran_perubahan_template`
+-- AUTO_INCREMENT untuk tabel `anggaran_perubahan_template`
 --
 ALTER TABLE `anggaran_perubahan_template`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `anggaran_program_renstra_neo`
+-- AUTO_INCREMENT untuk tabel `anggaran_program_renstra_neo`
 --
 ALTER TABLE `anggaran_program_renstra_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `anggaran_template`
+-- AUTO_INCREMENT untuk tabel `anggaran_template`
 --
 ALTER TABLE `anggaran_template`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `anggaran_workflow_log`
+-- AUTO_INCREMENT untuk tabel `anggaran_workflow_log`
 --
 ALTER TABLE `anggaran_workflow_log`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT for table `aset_neo`
+-- AUTO_INCREMENT untuk tabel `aset_neo`
 --
 ALTER TABLE `aset_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4033;
 
 --
--- AUTO_INCREMENT for table `cuti_pegawai_neo`
+-- AUTO_INCREMENT untuk tabel `cuti_pegawai_neo`
 --
 ALTER TABLE `cuti_pegawai_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `daftar_paket_neo`
+-- AUTO_INCREMENT untuk tabel `daftar_paket_neo`
 --
 ALTER TABLE `daftar_paket_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `daftar_realisasi_neo`
+-- AUTO_INCREMENT untuk tabel `daftar_realisasi_neo`
 --
 ALTER TABLE `daftar_realisasi_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT for table `daftar_uraian_paket`
+-- AUTO_INCREMENT untuk tabel `daftar_uraian_paket`
 --
 ALTER TABLE `daftar_uraian_paket`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `db_asn_pemda_neo`
+-- AUTO_INCREMENT untuk tabel `db_asn_pemda_neo`
 --
 ALTER TABLE `db_asn_pemda_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=113;
 
 --
--- AUTO_INCREMENT for table `dokumen_pegawai_neo`
+-- AUTO_INCREMENT untuk tabel `dokumen_pegawai_neo`
 --
 ALTER TABLE `dokumen_pegawai_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `dpa_neo`
+-- AUTO_INCREMENT untuk tabel `dpa_neo`
 --
 ALTER TABLE `dpa_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `dppa_neo`
+-- AUTO_INCREMENT untuk tabel `dppa_neo`
 --
 ALTER TABLE `dppa_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT for table `group_rekap_akun`
+-- AUTO_INCREMENT untuk tabel `evaluasi_renja_neo`
+--
+ALTER TABLE `evaluasi_renja_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `group_rekap_akun`
 --
 ALTER TABLE `group_rekap_akun`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `group_sub_kegiatan`
+-- AUTO_INCREMENT untuk tabel `group_sub_kegiatan`
 --
 ALTER TABLE `group_sub_kegiatan`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `halaman_berita`
+-- AUTO_INCREMENT untuk tabel `halaman_berita`
 --
 ALTER TABLE `halaman_berita`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `import_logs`
+-- AUTO_INCREMENT untuk tabel `import_logs`
 --
 ALTER TABLE `import_logs`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `indikator_program_renstra_neo`
+-- AUTO_INCREMENT untuk tabel `indikator_program_renstra_neo`
 --
 ALTER TABLE `indikator_program_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `indikator_sasaran_renstra_neo`
+-- AUTO_INCREMENT untuk tabel `indikator_sasaran_renstra_neo`
 --
 ALTER TABLE `indikator_sasaran_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `kd_wilayah_neo`
+-- AUTO_INCREMENT untuk tabel `kd_wilayah_neo`
 --
 ALTER TABLE `kd_wilayah_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `kegiatan_renstra_neo`
+-- AUTO_INCREMENT untuk tabel `kegiatan_renstra_neo`
 --
 ALTER TABLE `kegiatan_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `kontrak_dokumen_neo`
+-- AUTO_INCREMENT untuk tabel `kontrak_dokumen_neo`
 --
 ALTER TABLE `kontrak_dokumen_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `kontrak_item_neo`
+-- AUTO_INCREMENT untuk tabel `kontrak_item_neo`
 --
 ALTER TABLE `kontrak_item_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `kontrak_jadwal_neo`
+-- AUTO_INCREMENT untuk tabel `kontrak_jadwal_neo`
 --
 ALTER TABLE `kontrak_jadwal_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- AUTO_INCREMENT for table `kontrak_neo`
+-- AUTO_INCREMENT untuk tabel `kontrak_neo`
 --
 ALTER TABLE `kontrak_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `kop_surat_neo`
+-- AUTO_INCREMENT untuk tabel `kop_surat_neo`
 --
 ALTER TABLE `kop_surat_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `log_activity`
+-- AUTO_INCREMENT untuk tabel `log_activity`
 --
 ALTER TABLE `log_activity`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2194;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2195;
 
 --
--- AUTO_INCREMENT for table `master_biaya`
+-- AUTO_INCREMENT untuk tabel `master_biaya`
 --
 ALTER TABLE `master_biaya`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
 
 --
--- AUTO_INCREMENT for table `master_biaya_akun`
+-- AUTO_INCREMENT untuk tabel `master_biaya_akun`
 --
 ALTER TABLE `master_biaya_akun`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
--- AUTO_INCREMENT for table `misi_renstra_neo`
+-- AUTO_INCREMENT untuk tabel `misi_renstra_neo`
 --
 ALTER TABLE `misi_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `organisasi_neo`
+-- AUTO_INCREMENT untuk tabel `organisasi_neo`
 --
 ALTER TABLE `organisasi_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
--- AUTO_INCREMENT for table `pejabat_tahunan_neo`
+-- AUTO_INCREMENT untuk tabel `pejabat_tahunan_neo`
 --
 ALTER TABLE `pejabat_tahunan_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `pengaturan_neo`
+-- AUTO_INCREMENT untuk tabel `pengaturan_neo`
 --
 ALTER TABLE `pengaturan_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT for table `peraturan_neo`
+-- AUTO_INCREMENT untuk tabel `peraturan_neo`
 --
 ALTER TABLE `peraturan_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `periode_rpjmd`
+-- AUTO_INCREMENT untuk tabel `periode_rpjmd`
 --
 ALTER TABLE `periode_rpjmd`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `program_renstra_neo`
+-- AUTO_INCREMENT untuk tabel `program_renstra_neo`
 --
 ALTER TABLE `program_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `rab_paket_neo`
+-- AUTO_INCREMENT untuk tabel `rab_paket_neo`
 --
 ALTER TABLE `rab_paket_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
--- AUTO_INCREMENT for table `ref_jenis_naskah`
+-- AUTO_INCREMENT untuk tabel `ref_jenis_naskah`
 --
 ALTER TABLE `ref_jenis_naskah`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
--- AUTO_INCREMENT for table `ref_jenis_naskah_dinas`
+-- AUTO_INCREMENT untuk tabel `ref_jenis_naskah_dinas`
 --
 ALTER TABLE `ref_jenis_naskah_dinas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `ref_kelompok_naskah`
+-- AUTO_INCREMENT untuk tabel `ref_kelompok_naskah`
 --
 ALTER TABLE `ref_kelompok_naskah`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `ref_klasifikasi_keamanan`
+-- AUTO_INCREMENT untuk tabel `ref_klasifikasi_keamanan`
 --
 ALTER TABLE `ref_klasifikasi_keamanan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `ref_template_naskah`
+-- AUTO_INCREMENT untuk tabel `ref_template_naskah`
 --
 ALTER TABLE `ref_template_naskah`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `register_naskah_dinas`
+-- AUTO_INCREMENT untuk tabel `register_naskah_dinas`
 --
 ALTER TABLE `register_naskah_dinas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `rekanan_akta`
+-- AUTO_INCREMENT untuk tabel `rekanan_akta`
 --
 ALTER TABLE `rekanan_akta`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `rekanan_neo`
+-- AUTO_INCREMENT untuk tabel `rekanan_neo`
 --
 ALTER TABLE `rekanan_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=202;
 
 --
--- AUTO_INCREMENT for table `rekening_kegiatan`
+-- AUTO_INCREMENT untuk tabel `rekening_kegiatan`
 --
 ALTER TABLE `rekening_kegiatan`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4585;
 
 --
--- AUTO_INCREMENT for table `rencana_realisasi_anggaran_neo`
+-- AUTO_INCREMENT untuk tabel `rencana_realisasi_anggaran_neo`
 --
 ALTER TABLE `rencana_realisasi_anggaran_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
--- AUTO_INCREMENT for table `rencana_rekening_anggaran_neo`
+-- AUTO_INCREMENT untuk tabel `rencana_rekening_anggaran_neo`
 --
 ALTER TABLE `rencana_rekening_anggaran_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
 
 --
--- AUTO_INCREMENT for table `renja_neo`
+-- AUTO_INCREMENT untuk tabel `renja_neo`
 --
 ALTER TABLE `renja_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `renja_p_neo`
+-- AUTO_INCREMENT untuk tabel `renja_p_neo`
 --
 ALTER TABLE `renja_p_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `renstra_neo`
+-- AUTO_INCREMENT untuk tabel `renstra_neo`
 --
 ALTER TABLE `renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `riwayat_jabatan_neo`
+-- AUTO_INCREMENT untuk tabel `riwayat_jabatan_neo`
 --
 ALTER TABLE `riwayat_jabatan_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `riwayat_pangkat_neo`
+-- AUTO_INCREMENT untuk tabel `riwayat_pangkat_neo`
 --
 ALTER TABLE `riwayat_pangkat_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `rka_neo`
+-- AUTO_INCREMENT untuk tabel `rka_neo`
 --
 ALTER TABLE `rka_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `rka_p_neo`
+-- AUTO_INCREMENT untuk tabel `rka_p_neo`
 --
 ALTER TABLE `rka_p_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `rkpd_neo`
+-- AUTO_INCREMENT untuk tabel `rkpd_neo`
 --
 ALTER TABLE `rkpd_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `rkpd_p_neo`
+-- AUTO_INCREMENT untuk tabel `rkpd_p_neo`
 --
 ALTER TABLE `rkpd_p_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `sasaran_renstra_neo`
+-- AUTO_INCREMENT untuk tabel `rpjmd_kabupaten_neo`
+--
+ALTER TABLE `rpjmd_kabupaten_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `sasaran_renstra_neo`
 --
 ALTER TABLE `sasaran_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `satuan_neo`
+-- AUTO_INCREMENT untuk tabel `satuan_neo`
 --
 ALTER TABLE `satuan_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=459;
 
 --
--- AUTO_INCREMENT for table `sk_asn_neo`
+-- AUTO_INCREMENT untuk tabel `sk_asn_neo`
 --
 ALTER TABLE `sk_asn_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
 
 --
--- AUTO_INCREMENT for table `sk_pegawai_neo`
+-- AUTO_INCREMENT untuk tabel `sk_pegawai_neo`
 --
 ALTER TABLE `sk_pegawai_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `sub_kegiatan_renstra_neo`
+-- AUTO_INCREMENT untuk tabel `sub_kegiatan_renstra_neo`
 --
 ALTER TABLE `sub_kegiatan_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `sub_keg_dpa_neo`
+-- AUTO_INCREMENT untuk tabel `sub_keg_dpa_neo`
 --
 ALTER TABLE `sub_keg_dpa_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
--- AUTO_INCREMENT for table `sub_keg_renja_neo`
+-- AUTO_INCREMENT untuk tabel `sub_keg_renja_neo`
 --
 ALTER TABLE `sub_keg_renja_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=226;
 
 --
--- AUTO_INCREMENT for table `sumber_dana_neo`
+-- AUTO_INCREMENT untuk tabel `sumber_dana_neo`
 --
 ALTER TABLE `sumber_dana_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=301;
 
 --
--- AUTO_INCREMENT for table `tapd_penugasan_neo`
+-- AUTO_INCREMENT untuk tabel `tapd_penugasan_neo`
 --
 ALTER TABLE `tapd_penugasan_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `trx_naskah_dinas`
+-- AUTO_INCREMENT untuk tabel `trx_naskah_dinas`
 --
 ALTER TABLE `trx_naskah_dinas`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
--- AUTO_INCREMENT for table `trx_naskah_meta`
+-- AUTO_INCREMENT untuk tabel `trx_naskah_meta`
 --
 ALTER TABLE `trx_naskah_meta`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
--- AUTO_INCREMENT for table `trx_naskah_status_history`
+-- AUTO_INCREMENT untuk tabel `trx_naskah_status_history`
 --
 ALTER TABLE `trx_naskah_status_history`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `trx_naskah_struktur`
+-- AUTO_INCREMENT untuk tabel `trx_naskah_struktur`
 --
 ALTER TABLE `trx_naskah_struktur`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 
 --
--- AUTO_INCREMENT for table `trx_nomor_counter`
+-- AUTO_INCREMENT untuk tabel `trx_nomor_counter`
 --
 ALTER TABLE `trx_nomor_counter`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
--- AUTO_INCREMENT for table `tujuan_renstra_neo`
+-- AUTO_INCREMENT untuk tabel `tujuan_renstra_neo`
 --
 ALTER TABLE `tujuan_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `user_sesendok_biila`
+-- AUTO_INCREMENT untuk tabel `user_sesendok_biila`
 --
 ALTER TABLE `user_sesendok_biila`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
--- AUTO_INCREMENT for table `user_subkegiatan_neo`
+-- AUTO_INCREMENT untuk tabel `user_subkegiatan_neo`
 --
 ALTER TABLE `user_subkegiatan_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `wallchat`
+-- AUTO_INCREMENT untuk tabel `usulan_pembangunan_neo`
+--
+ALTER TABLE `usulan_pembangunan_neo`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `wallchat`
 --
 ALTER TABLE `wallchat`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
--- AUTO_INCREMENT for table `wilayah_neo`
+-- AUTO_INCREMENT untuk tabel `wilayah_neo`
 --
 ALTER TABLE `wilayah_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- Constraints for dumped tables
+-- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
 
 --
--- Constraints for table `kontrak_item_neo`
+-- Ketidakleluasaan untuk tabel `kontrak_item_neo`
 --
 ALTER TABLE `kontrak_item_neo`
   ADD CONSTRAINT `fk_kontrak_item_header` FOREIGN KEY (`kontrak_id`) REFERENCES `kontrak_neo` (`id`);
 
 --
--- Constraints for table `master_biaya_akun`
+-- Ketidakleluasaan untuk tabel `master_biaya_akun`
 --
 ALTER TABLE `master_biaya_akun`
   ADD CONSTRAINT `fk_master_biaya` FOREIGN KEY (`master_biaya_id`) REFERENCES `master_biaya` (`id`);
 
 --
--- Constraints for table `rekanan_akta`
+-- Ketidakleluasaan untuk tabel `rekanan_akta`
 --
 ALTER TABLE `rekanan_akta`
   ADD CONSTRAINT `1` FOREIGN KEY (`rekanan_id`) REFERENCES `rekanan_neo` (`id`);
 
 --
--- Constraints for table `trx_naskah_status_history`
+-- Ketidakleluasaan untuk tabel `trx_naskah_status_history`
 --
 ALTER TABLE `trx_naskah_status_history`
   ADD CONSTRAINT `fk_naskah_status_history` FOREIGN KEY (`naskah_id`) REFERENCES `trx_naskah_dinas` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `trx_naskah_struktur`
+-- Ketidakleluasaan untuk tabel `trx_naskah_struktur`
 --
 ALTER TABLE `trx_naskah_struktur`
   ADD CONSTRAINT `fk_naskah_struktur` FOREIGN KEY (`naskah_id`) REFERENCES `trx_naskah_dinas` (`id`) ON DELETE CASCADE;
