@@ -125,7 +125,6 @@ class TataNaskahModule {
 		$(document).off("click", ".kelompok-card");
 		$(document).off("click", ".btn-open-naskah");
 		$(document).off("click", ".btn-edit-row");
-		$(document).off("submit", "#form_modal"); // 🔥 FIX
 		$(document).off("input.naskahSearch", "#jenisNaskahSearch, #searchTataNaskah");
 		$(document).on("input.naskahSearch", "#jenisNaskahSearch", e=>{const q=String(e.target.value||"").toLowerCase();$("#jenis-list .item").each(function(){$(this).toggle($(this).text().toLowerCase().includes(q));});});
 		$(document).on("input.naskahSearch", "#searchTataNaskah", e=>{const q=String(e.target.value||"").toLowerCase();$('[name="tabel_trx_naskah_dinas"] tr[data-id]').each(function(){$(this).toggle($(this).text().toLowerCase().includes(q));});});
@@ -175,76 +174,98 @@ class TataNaskahModule {
 			$("[data-naskah-step=2]").removeClass("active").addClass("completed");$("[data-naskah-step=3]").removeClass("disabled").addClass("active");this.loadSchema(jenisId);
 		});
 
-		// =====================================
-		// 🔥 FIX: SUBMIT VIA DocumentBuilder
-		// =====================================
-		$(document).on("submit", "#form_modal", (e) => {
-			e.preventDefault(); // // cegah reload
+		// Submit Tata Naskah dipasang langsung pada form/tombol saat renderForm.
+		// Ini sengaja tidak memakai handler Submit global karena tombol Fomantic
+		// `.positive` juga merupakan tombol approve modal dan dapat menghentikan
+		// alur bubbling sebelum handler global melakukan request.
+	}
 
-			console.log("SUBMIT TRIGGERED"); // // TRACE WAJIB
-			// =====================================
-			// TAMBAH VALIDATION ENGINE (MANUAL)
-			// =====================================
-			const form = $("#form_modal");
+	bindSubmitHandlers() {
+		const form = $("#form_modal");
+		const button = $("#mainModal .btnSubmit");
+		if (!form.length || !button.length) return;
 
-			// ======================================================
-			// TRIGGER FOMANTIC VALIDATION
-			// ======================================================
-			// Tidak semua schema Tata Naskah mempunyai rule UIConfig. Memanggil
-			// validator yang belum diinisialisasi menghentikan add/edit tanpa AJAX.
-			if (form.data("module-form")) {
-				form.form("validate form");
-				if (!form.form("is valid")) return;
+		form.off("submit.tataNaskah").on("submit.tataNaskah", (e) => {
+			e.preventDefault();
+			this.submitNaskahForm();
+		});
+
+		// Handler langsung pada tombol berjalan sebelum delegated handler milik
+		// FlyoutController. Stop bubbling hanya untuk modal Tata Naskah ini.
+		button.off("click.tataNaskah").on("click.tataNaskah", (e) => {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			this.submitNaskahForm();
+		});
+	}
+
+	submitNaskahForm() {
+		if (this.isSubmitting) return;
+
+		const form = $("#form_modal");
+		const builder = window.documentBuilder;
+		if (!form.length || !builder) {
+			Toast.error("Form Tata Naskah belum siap.");
+			return;
+		}
+
+		// `is valid` memeriksa rule tanpa menjalankan callback onSuccess submit.
+		// Callback onSuccess Fomantic memang mengembalikan false untuk mencegah
+		// native submit, sehingga jangan memanggil `validate form` sebagai submit.
+		if (form.data("module-form") && !form.form("is valid")) {
+			form.form("validate form");
+			return;
+		}
+
+		const payload = builder.collectStructure();
+
+		// Pertahankan header yang berasal dari record edit walaupun field tersebut
+		// tidak dirender oleh schema (contoh jenis_id). Nilai DOM kemudian
+		// menimpa nilai lama sehingga data yang diedit tetap menjadi sumber utama.
+		["jenis_id", "nomor", "klasifikasi_id", "tanggal_surat", "perihal"].forEach((key) => {
+			const value = builder.data?.[key];
+			if (value !== undefined && value !== null) payload[key] = value;
+		});
+
+		form.find("input[name], textarea[name], select[name]").each(function () {
+			const field = $(this);
+			const name = field.attr("name");
+			if (!name || field.prop("disabled") || field.attr("type") === "file") return;
+			if (field.attr("type") === "radio" && !field.prop("checked")) return;
+			if (field.attr("type") === "checkbox") {
+				payload[name] = field.prop("checked") ? 1 : 0;
+				return;
 			}
+			payload[name] = field.val() ?? "";
+		});
 
-			const builder = window.documentBuilder; // // ambil instance builder global
+		const editing = this.currentId !== null && this.currentId !== undefined && this.currentId !== "";
+		const data = {
+			action: editing ? "edit_json" : "add_json",
+			id_row: editing ? this.currentId : "",
+			tbl: "trx_naskah_dinas",
+			struktur_json: JSON.stringify(payload),
+		};
 
-			if (!builder) {
-				console.error("documentBuilder tidak ditemukan"); // // logging jelas
-				return; // // stop karena memang wajib
-			}
+		["jenis_id", "nomor", "klasifikasi_id", "tanggal_surat", "perihal"].forEach((key) => {
+			if (payload[key] !== undefined && payload[key] !== null && payload[key] !== "") data[key] = payload[key];
+		});
 
-			const payload = builder.collectStructure(); // ambil tabel/uraian beserta metadata ekspor
+		this.isSubmitting = true;
+		const submitButton = $("#mainModal .btnSubmit");
+		submitButton.addClass("loading disabled");
 
-			// DocumentBuilder hanya mengoleksi tabel. Field header Tata Naskah
-			// (perihal, penandatangan, jabatan, pangkat, tanggal, dll.) berada
-			// di luar tabel sehingga wajib digabung ke payload yang sama.
-			form.find("input[name], textarea[name], select[name]").each(function () {
-				const field = $(this);
-				const name = field.attr("name");
-				if (!name || field.prop("disabled") || field.attr("type") === "file") return;
-				if (field.attr("type") === "radio" && !field.prop("checked")) return;
-				if (field.attr("type") === "checkbox") {
-					payload[name] = field.prop("checked") ? 1 : 0;
-					return;
-				}
-				payload[name] = field.val() ?? "";
-			});
-
-			const data = {
-				action: this.currentId !== null ? "edit_json" : "add_json",
-				id_row: this.currentId !== null ? this.currentId : "",
-				tbl: this.state.tbl,
-				struktur_json: JSON.stringify(payload),
-			};
-
-			["jenis_id", "nomor", "klasifikasi_id", "tanggal_surat", "perihal"].forEach((key) => {
-				if (payload[key] !== undefined && payload[key] !== null && payload[key] !== "") data[key] = payload[key];
-			});
-
-			window.Ajax.request({
-				url: AppConfig.apiUrl + "dynamic",
-				method: "POST",
-				data,
-				success: (res) => {
-					if (res.success) {
-						Toast.success("Data berhasil disimpan");
-						$(document).trigger(`form:success.${this.state.tbl}.table`); // // sesuai TableManager listener
-					} else {
-						Toast.error(res.message || "Gagal");
-					}
-				},
-			});
+		window.Ajax.request({
+			url: AppConfig.apiUrl + "dynamic",
+			method: "POST",
+			data,
+			success: () => {
+				$(document).trigger(`form:success.${this.state.tbl}.table`);
+			},
+			complete: () => {
+				this.isSubmitting = false;
+				submitButton.removeClass("loading disabled");
+			},
 		});
 	}
 
@@ -573,6 +594,11 @@ class TataNaskahModule {
 			};
 		});
 
+		// Submit harus selalu aktif, termasuk schema yang tidak mempunyai
+		// rule UIConfig yang cocok. Ini tepat kasus form Tata Naskah pada
+		// beberapa jenis dokumen.
+		this.bindSubmitHandlers();
+
 		// =====================================
 		// 🔥 JIKA KOSONG → JANGAN INIT
 		// =====================================
@@ -615,6 +641,7 @@ class TataNaskahModule {
 				return false; // tetap cegah submit default
 			},
 		});
+
 	}
 	enhanceForm(isEdit=false) {
 		const form=$("#form_modal");if(!form.length)return;
@@ -650,6 +677,8 @@ class TataNaskahModule {
 		$(document).off("click", ".kelompok-card");
 		$(document).off("click", ".btn-open-naskah");
 		$(document).off("form:success");
+		$("#form_modal").off("submit.tataNaskah");
+		$("#mainModal .btnSubmit").off("click.tataNaskah");
 
 		$(this.mainContainer).empty();
 	}

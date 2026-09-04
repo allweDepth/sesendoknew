@@ -95,18 +95,24 @@ class DocumentBuilder {
 					row.attr("data-align", rowData.align);
 				}
 
-				// 🔥 TEXT (editable_table)
+				// Editable text Tata Naskah selalu tampil plain di modal. Semua
+				// style/type/format hanya metadata ekspor PDF dan tidak boleh
+				// mengubah isi maupun tampilan editor.
 				if (rowData.text !== undefined) {
-					row.find(".doc-editor").text(this.normalizeEditorText(rowData.text));
+					row.find(".doc-editor")
+						.text(this.normalizeEditorText(rowData.text, rowData))
+						.css({ fontWeight: "normal", fontStyle: "normal", textDecoration: "none" });
 				}
 
-				// 🔥 TABLE NORMAL (nama_ditugaskan)
+				// Tabel biasa tetap mengikuti mapping lama. Pada editable_table,
+				// properti internal jangan pernah diinjeksi lagi sebagai HTML.
 				Object.entries(rowData).forEach(([key, val]) => {
+					if (["text", "type", "align", "style", "format", "_id"].includes(key)) return;
 					let cell = row.find(`[data-key="${key}"]`);
 					if (!cell.length) return;
 
 					if (cell.find(".doc-editor").length) {
-						cell.find(".doc-editor").html(val || "");
+						cell.find(".doc-editor").text(this.normalizeEditorText(val, rowData));
 					} else {
 						cell.text(val || "");
 					}
@@ -553,7 +559,7 @@ class DocumentBuilder {
 			if (i === 0) {
 				cells.push(`
 			<td data-key="${key}" class="doc-cell">
-				<div class="doc-editor" contenteditable="true" style="text-align: justify;"></div>
+				<div class="doc-editor" contenteditable="true" style="text-align: justify; font-weight:normal; font-style:normal; text-decoration:none;"></div>
 				<div class="doc-toolbar">
 
 					<div class="btn-group">
@@ -630,17 +636,37 @@ class DocumentBuilder {
 		return row;
 	}
 
-	normalizeEditorText(value) {
+	normalizeEditorText(value, rowData = {}) {
 		if (value === null || value === undefined) return "";
+
+		let source = String(value);
+		// Versi lama tombol Label pernah menyisipkan <strong>kata</strong> :
+		// ke isi editor. Bersihkan artefak itu hanya pada baris yang memang
+		// mempunyai metadata format=label; teks pengguna lainnya tidak disentuh.
+		if (rowData?.format === "label") {
+			source = source.replace(/<\/strong>\s*:\s*/gi, "</strong> ");
+		}
+
 		const holder = document.createElement("div");
-		holder.innerHTML = String(value)
+		holder.innerHTML = source
 			.replace(/<\/li>/gi, "\n")
 			.replace(/<br\s*\/?\s*>/gi, "\n")
 			.replace(/<\/(?:p|div)>/gi, "\n");
-		return String(holder.textContent || "")
+
+		let text = String(holder.textContent || "")
 			.replace(/\u00a0/g, " ")
 			.replace(/\n{3,}/g, "\n\n")
 			.trim();
+
+		// Data yang sudah sempat tersimpan setelah HTML dibersihkan masih dapat
+		// membawa pola lama "Kata : lanjutan". Metadata label membuat pola ini
+		// dapat dikenali tanpa mengubah tanda titik dua yang memang diketik user
+		// pada baris non-label.
+		if (rowData?.format === "label") {
+			text = text.replace(/^(\S+)\s+:\s+(?=\S)/, "$1 ");
+		}
+
+		return text;
 	}
 
 	// ======================================================
