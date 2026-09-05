@@ -73,9 +73,10 @@ class PdfTemplateService
     foreach($rows as $row){
       if(!is_array($row)){$text=$this->stringValue($row);}elseif(isset($row['text'])){$text=$this->stringValue($row['text']);}else{$parts=[];foreach($columns?:array_keys($row) as $column)if(!str_starts_with((string)$column,'_')&&!empty($row[$column]))$parts[]=ucwords(str_replace('_',' ',(string)$column)).': '.$this->stringValue($row[$column]);$text=implode('; ',$parts);}
       if($text==='')continue;
-      $type=is_array($row)?($row['type']??'paragraph'):'paragraph';
+      $type=is_array($row)?strtolower((string)($row['type']??'paragraph')):'paragraph';
+      $type=['bullet'=>'list','ordered'=>'numbered','letter'=>'alpha'][$type]??$type;
       $align=is_array($row)?strtoupper((string)($row['align']??'justify')):'J';
-      $align=['LEFT'=>'L','CENTER'=>'C','RIGHT'=>'R','JUSTIFY'=>'J'][$align]??'J';
+      $align=['L'=>'L','C'=>'C','R'=>'R','J'=>'J','LEFT'=>'L','CENTER'=>'C','RIGHT'=>'R','JUSTIFY'=>'J'][$align]??'J';
       $styles=is_array($row)&&is_array($row['style']??null)?$row['style']:[];
       $font=(in_array('bold',$styles,true)?'B':'').(in_array('italic',$styles,true)?'I':'').(in_array('underline',$styles,true)?'U':'');
       $pdf->SetFont($this->font,$font,$this->fs());
@@ -91,8 +92,19 @@ class PdfTemplateService
         // Paragraf memutus rangkaian nomor/abjad. Baris numbered berikutnya mulai lagi dari 1/a.
         $sequenceType=null;$sequenceNo=0;
       }
-      $pdf->Cell(8,6,$marker,0,0,'L');
-      $pdf->MultiCell(0,6,$text,0,$align,false,1,'','',true,0,false,true,0,'T',false);
+      if($type==='list'){
+        // Core font TCPDF tidak selalu memiliki glyph bullet. Gambar titik agar
+        // hasilnya konsisten pada semua font PDF yang dapat dipilih pengguna.
+        $x=$pdf->GetX();$y=$pdf->GetY();
+        $pdf->SetFillColor(0,0,0);$pdf->Circle($x+2.2,$y+3,0.65,0,360,'F');
+        $pdf->SetXY($x+8,$y);
+      }elseif($marker!==''){
+        $pdf->Cell(8,6,$marker,0,0,'L');
+      }
+      // MultiCell TCPDF meratakan baris-baris penuh untuk J, sedangkan baris
+      // terakhir perlu line-break eksplisit agar tetap rata kiri.
+      $renderText=$align==='J'?rtrim($text)."\n":$text;
+      $pdf->MultiCell(0,6,$renderText,0,$align,false,1,'','',true,0,false,true,0,'T',false);
     }
     $pdf->Ln(2);
   }
