@@ -77,7 +77,11 @@ class PdfTemplateService
       $type=['bullet'=>'list','ordered'=>'numbered','letter'=>'alpha'][$type]??$type;
       $align=is_array($row)?strtoupper((string)($row['align']??'justify')):'J';
       $align=['L'=>'L','C'=>'C','R'=>'R','J'=>'J','LEFT'=>'L','CENTER'=>'C','RIGHT'=>'R','JUSTIFY'=>'J'][$align]??'J';
-      $styles=is_array($row)&&is_array($row['style']??null)?$row['style']:[];
+      $styles=[];
+      if(is_array($row)){
+        $rawStyles=$row['style']??[];
+        $styles=is_array($rawStyles)?$rawStyles:array_filter(array_map('trim',explode(',',(string)$rawStyles)));
+      }
       $font=(in_array('bold',$styles,true)?'B':'').(in_array('italic',$styles,true)?'I':'').(in_array('underline',$styles,true)?'U':'');
       $pdf->SetFont($this->font,$font,$this->fs());
       if(is_array($row)&&($row['format']??'')==='label'&&str_contains($text,':')){[$caption,$body]=array_pad(explode(':',$text,2),2,'');$text=trim($caption).' : '.trim($body);}
@@ -101,8 +105,9 @@ class PdfTemplateService
       }elseif($marker!==''){
         $pdf->Cell(8,6,$marker,0,0,'L');
       }
-      // MultiCell TCPDF meratakan baris-baris penuh untuk J, sedangkan baris
-      // terakhir perlu line-break eksplisit agar tetap rata kiri.
+      // TCPDF menerapkan alignment dari metadata pada saat ekspor. Newline
+      // terminal menandai akhir paragraf sehingga baris terakhir justify tetap
+      // rata kiri dan tidak ikut direnggangkan.
       $renderText=$align==='J'?rtrim($text)."\n":$text;
       $pdf->MultiCell(0,6,$renderText,0,$align,false,1,'','',true,0,false,true,0,'T',false);
     }

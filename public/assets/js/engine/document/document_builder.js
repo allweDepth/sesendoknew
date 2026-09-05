@@ -93,7 +93,6 @@ class DocumentBuilder {
 				// 🔥 ALIGN
 				if (rowData.align) {
 					row.attr("data-align", rowData.align);
-					this.applyEditorAlignment(row.find(".doc-editor"), rowData.align);
 				}
 
 				// Editable text Tata Naskah selalu tampil plain di modal. Semua
@@ -426,7 +425,6 @@ class DocumentBuilder {
 
 			if (align) {
 				tr.attr("data-align", align);
-				this.applyEditorAlignment(editor, align);
 			}
 
 			// =====================================
@@ -552,7 +550,7 @@ class DocumentBuilder {
 		let table = this.container.find(`table[name="${section}"]`);
 		let cols = table.data("columns") || [];
 
-		let row = `<tr data-type="paragraph" data-align="justify">`; // ✅ default resmi
+		let row = `<tr data-type="paragraph" data-align="justify">`; // properti default ekspor PDF
 		let cells = [];
 
 		cols.forEach((col, i) => {
@@ -561,7 +559,7 @@ class DocumentBuilder {
 			if (i === 0) {
 				cells.push(`
 			<td data-key="${key}" class="doc-cell">
-				<div class="doc-editor" contenteditable="true" style="text-align:justify; text-align-last:left; font-weight:normal; font-style:normal; text-decoration:none;"></div>
+				<div class="doc-editor" contenteditable="true"></div>
 				<div class="doc-toolbar">
 
 					<div class="btn-group">
@@ -669,16 +667,6 @@ class DocumentBuilder {
 		}
 
 		return text;
-	}
-
-	applyEditorAlignment(editor, align) {
-		const allowed = ["left", "center", "right", "justify"];
-		const value = allowed.includes(align) ? align : "justify";
-		editor.css({
-			textAlign: value,
-			// Pada paragraf justify, baris terakhir secara kaidah tetap rata kiri.
-			textAlignLast: value === "justify" ? "left" : "auto",
-		});
 	}
 
 	// ======================================================

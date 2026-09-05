@@ -196,7 +196,7 @@ class App {
 				// cek builder belum dimuat
 
 				const builderScript = document.createElement("script"); // buat element script
-				builderScript.src = window.appUrl("/assets/js/engine/document/document_builder.js"); // path builder
+				builderScript.src = window.appUrl("/assets/js/engine/document/document_builder.js?v=20260905.2"); // cache-bust patch metadata-only
 				document.body.appendChild(builderScript); // inject script
 				this.loadedModules.push("document_builder"); // tandai sudah dimuat
 			}
