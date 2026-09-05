@@ -32,7 +32,7 @@ class StandarHargaService
         )->fetchAll();
 
         $setup=PageSetupService::current($this->user);
-        $pdf = new TCPDF(PageSetupService::orientation($setup,'L'), 'mm', PageSetupService::tcpdfFormat($setup), true, 'UTF-8');
+        $pdf = PageSetupService::createPdf($setup,'L');
         $pdf->SetCreator('seSendok');
         $pdf->SetTitle(strtoupper($type) . ' Tahun ' . $scope['tahun']);
         $pdf->SetMargins(10, 12, 10);

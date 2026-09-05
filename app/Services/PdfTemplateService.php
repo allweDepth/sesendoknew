@@ -13,19 +13,20 @@ class PdfTemplateService
   private function fs(float $delta=0):float{return max(5,$this->baseSize+$delta);}
   public function renderOfficial(TCPDF $pdf,array $header,array $schema,array $data,?string $logo=null):void
   {
+    $startY=max(14.0,(float)$pdf->GetY());
     $kop=$this->officialLetterhead();
-    if(!empty($kop['gunakan_gambar_kop'])&&!empty($kop['gambar_kop'])){$full=dirname(__DIR__,2).'/'.ltrim($kop['gambar_kop'],'/');if(is_file($full)){$pdf->Image($full,25,10,165,30,'','','',false,300);$pdf->SetY(42);$logo=null;}}
+    if(!empty($kop['gunakan_gambar_kop'])&&!empty($kop['gambar_kop'])){$full=dirname(__DIR__,2).'/'.ltrim($kop['gambar_kop'],'/');if(is_file($full)){$pdf->Image($full,25,$startY-4,165,30,'','','',false,300);$pdf->SetY($startY+28);$logo=null;}}
     if(empty($kop['gunakan_gambar_kop'])&&!empty($kop['logo_kiri'])){$custom=dirname(__DIR__,2).'/'.ltrim($kop['logo_kiri'],'/');if(is_file($custom))$logo=$custom;}
-    if($logo){$level=error_reporting();error_reporting($level & ~E_DEPRECATED);$pdf->Image($logo,25,14,22,22,'','','',false,300);error_reporting($level);}
-    if(empty($kop['gunakan_gambar_kop'])&&!empty($kop['logo_kanan'])){$right=dirname(__DIR__,2).'/'.ltrim($kop['logo_kanan'],'/');if(is_file($right))$pdf->Image($right,165,14,22,22,'','','',false,300);}
+    if($logo){$level=error_reporting();error_reporting($level & ~E_DEPRECATED);$pdf->Image($logo,25,$startY,22,22,'','','',false,300);error_reporting($level);}
+    if(empty($kop['gunakan_gambar_kop'])&&!empty($kop['logo_kanan'])){$right=dirname(__DIR__,2).'/'.ltrim($kop['logo_kanan'],'/');if(is_file($right))$pdf->Image($right,165,$startY,22,22,'','','',false,300);}
     $pdf->SetFont($this->font,'B',$this->fs(2));
-    $pdf->SetXY(50,15);
+    $pdf->SetXY(50,$startY+1);
     $pdf->MultiCell(137,6,strtoupper($kop['nama_pemerintah']??$_SESSION['user']['nama_pemda']??'PEMERINTAH DAERAH'),0,'C');
     $pdf->SetFont($this->font,'B',$this->fs(4));
     $pdf->SetX(50);$pdf->MultiCell(137,7,strtoupper($kop['nama_opd']??$_SESSION['user']['nama_opd']??'PERANGKAT DAERAH'),0,'C');
     $pdf->SetFont($this->font,'',$this->fs(-2));
     $address=$kop['alamat']??$_SESSION['user']['alamat_opd']??'';$contact=trim(implode(' · ',array_filter([$kop['telepon']??null,$kop['email']??null,$kop['website']??null])));$pdf->SetX(50);$pdf->MultiCell(137,5,trim($address.($contact?' · '.$contact:'')),0,'C');
-    $rgb=$this->hexColor($kop['warna_garis']??'#000000');$pdf->SetDrawColor(...$rgb);$pdf->SetLineWidth(.7);$pdf->Line(25,39,190,39);$pdf->SetLineWidth(.2);$pdf->Line(25,40,190,40);$pdf->SetDrawColor(0,0,0);$pdf->Ln(8);
+    $rgb=$this->hexColor($kop['warna_garis']??'#000000');$pdf->SetDrawColor(...$rgb);$pdf->SetLineWidth(.7);$pdf->Line(25,$startY+25,190,$startY+25);$pdf->SetLineWidth(.2);$pdf->Line(25,$startY+26,190,$startY+26);$pdf->SetDrawColor(0,0,0);$pdf->SetY($startY+32);
 
     $pdf->SetFont($this->font,'B',$this->fs(2));
     $pdf->MultiCell(0,7,strtoupper($header['jenis_naskah']??'NASKAH DINAS'),0,'C');
@@ -41,7 +42,7 @@ class PdfTemplateService
     $pangkat=$this->findValue($data,['pangkat_penandatangan','pangkat_pemberi_tgs']);
     $nip=$this->findValue($data,['nip_penandatangan','nip_pemberi_tgs']);
     if($penanda||$jabatan){$pdf->Ln(9);$pdf->SetX(112);$pdf->SetFont($this->font,'',$this->fs());$pdf->MultiCell(75,6,(string)$jabatan,0,'C');$pdf->Ln(16);$pdf->SetX(112);$pdf->SetFont($this->font,'B',$this->fs());$pdf->MultiCell(75,6,strtoupper((string)$penanda),0,'C');if($pangkat!==''){$pdf->SetX(112);$pdf->SetFont($this->font,'',$this->fs(-1));$pdf->MultiCell(75,5,(string)$pangkat,0,'C');}if($nip!==''){$pdf->SetX(112);$pdf->SetFont($this->font,'',$this->fs(-1));$pdf->MultiCell(75,5,'NIP. '.(string)$nip,0,'C');}}
-    $pdf->SetAutoPageBreak(false);$pdf->SetY(-14);$pdf->SetFont($this->font,'I',$this->fs(-3));$pdf->Cell(0,5,'Dokumen elektronik seSendok - '.($header['workflow_status']??'draft').' - Halaman '.$pdf->getAliasNumPage().'/'.$pdf->getAliasNbPages(),0,0,'C');
+    $this->renderAssignmentAttachment($pdf,$header,$data);
   }
 
   public function render(TCPDF $pdf, array $schema, array $data)
@@ -57,7 +58,7 @@ class PdfTemplateService
     if($type==='message')return;
     if($type==='fields'){foreach(($item['fields']??[]) as $child)$this->renderItem($pdf,$child,$data);return;}
     $field=$item['field']??$item['name']??'';$label=$item['label']??strtoupper((string)$field);
-    if(in_array($field,['nomor','tanggal_surat','perihal','file','penandatangan','penanda_tangan','nama_penandatangan','jabatan_penandatangan','jabatan_pejabat','nama_pejabat','nama_pemberi_tugas','pangkat_penandatangan','pangkat_pemberi_tgs','nip_penandatangan','nip_pemberi_tgs','asn','bentuk_lampiran','disable','keterangan','jbt_pemberi_tgs'],true))return;
+    if(in_array($field,['nomor','tanggal_surat','perihal','file','penandatangan','penanda_tangan','nama_penandatangan','jabatan_penandatangan','jabatan_pejabat','nama_pejabat','nama_pemberi_tugas','pangkat_penandatangan','pangkat_pemberi_tgs','nip_penandatangan','nip_pemberi_tgs','asn','nama_ditugaskan','bentuk_lampiran','disable','keterangan','jbt_pemberi_tgs'],true))return;
     if($type==='section'){$pdf->Ln(3);$pdf->SetFont($this->font,'B',$this->fs());$pdf->MultiCell(0,6,strtoupper((string)$label),0,'C');return;}
     $raw=$field!==''?($data[$field]??''):($item['value']??$item['text']??'');
     if(in_array($type,['editable_table','table'],true)){$this->renderCollection($pdf,(string)$label,$raw,$item['columns']??[]);return;}
@@ -120,6 +121,33 @@ class PdfTemplateService
     while($number>0){$number--; $value=chr(97+($number%26)).$value; $number=intdiv($number,26);}
     return $value;
   }
+
+  /** Nama yang ditugaskan pada SK selalu dicetak sebagai lampiran halaman baru. */
+  private function renderAssignmentAttachment(TCPDF $pdf,array $header,array $data):void
+  {
+    $rows=$data['nama_ditugaskan']??[];if(!is_array($rows)||!array_is_list($rows)||!is_array($rows[0]??null))return;
+    $jenis=strtolower((string)($header['jenis_naskah']??''));if(!str_contains($jenis,'penetapan')&&!str_contains($jenis,'keputusan'))return;
+    $pdf->AddPage();$pdf->SetFont($this->font,'',$this->fs());
+    $title=$this->escape((string)($header['jenis_naskah']??'Keputusan Kepala Dinas'));$number=$this->escape((string)($header['nomor']??'-'));$date=$this->escape((string)($header['tanggal_surat']??'-'));$about=$this->escape((string)($header['perihal']??'-'));
+    $html='<table cellpadding="2"><tr><td width="14%">Lampiran</td><td width="3%">:</td><td width="83%">'.$title.'</td></tr><tr><td>Nomor</td><td>:</td><td>'.$number.'</td></tr><tr><td>Tanggal</td><td>:</td><td>'.$date.'</td></tr><tr><td>Tentang</td><td>:</td><td>'.$about.'</td></tr></table><hr>';
+    if($this->truthy($data['bentuk_lampiran']??false)){
+      $html.='<br><table border="1" cellpadding="5"><thead><tr style="font-weight:bold;text-align:center"><th width="7%">NO.</th><th width="35%">NAMA</th><th width="26%">JABATAN</th><th width="32%">KETERANGAN</th></tr></thead><tbody>';
+      foreach($rows as $i=>$row){$name=$this->escape((string)($row['nama']??''));$rank=$this->escape((string)($row['pangkat']??''));$nip=$this->escape((string)($row['nip']??''));$position=$this->escape((string)($row['jabatan']??''));$note=$this->escape((string)($row['jabatan_sk']??$row['keterangan']??''));$html.='<tr><td width="7%">'.($i+1).'.</td><td width="35%">'.$name.($rank!==''?'<br>'.$rank:'').($nip!==''?'<br>NIP. '.$nip:'').'</td><td width="26%">'.$position.'</td><td width="32%">'.$note.'</td></tr>';}
+      $html.='</tbody></table>';
+    }else{
+      foreach($rows as $i=>$row){$items=[['Nama',$row['nama']??''],['Pangkat/Gol',$row['pangkat']??''],['NIP',$row['nip']??''],['Jabatan',$row['jabatan']??''],['Keterangan',$row['jabatan_sk']??$row['keterangan']??'']];$html.='<br><table cellpadding="3"><tr><td width="6%">'.($i+1).'.</td><td width="94%"><table cellpadding="2">';foreach($items as [$label,$value])$html.='<tr><td width="22%">'.$label.'</td><td width="4%">:</td><td width="74%">'.$this->escape((string)$value).'</td></tr>';$html.='</table></td></tr></table>';}
+    }
+    $html.='<br><br>'.$this->attachmentSignature($data);$pdf->writeHTML($html,true,false,true,false,'');
+  }
+
+  private function attachmentSignature(array $data):string
+  {
+    $name=$this->escape($this->findValue($data,['nama_penandatangan','penanda_tangan','nama_pejabat','nama_pemberi_tugas']));$position=$this->escape($this->findValue($data,['jabatan_penandatangan','jabatan_pejabat','jbt_pemberi_tgs']));$rank=$this->escape($this->findValue($data,['pangkat_penandatangan','pangkat_pemberi_tgs']));$nip=$this->escape($this->findValue($data,['nip_penandatangan','nip_pemberi_tgs']));
+    return '<table cellpadding="2"><tr><td width="60%"></td><td width="40%">Ditetapkan di '.htmlspecialchars((string)($_SESSION['user']['nama_wilayah']??'Pasangkayu'),ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8').'<br>'.$position.'<br><br><br><b><u>'.strtoupper($name).'</u></b>'.($rank!==''?'<br>'.$rank:'').($nip!==''?'<br>NIP. '.$nip:'').'</td></tr></table>';
+  }
+
+  private function truthy(mixed $value):bool{return in_array(strtolower(trim((string)$value)),['1','true','yes','on','tabel'],true);}
+  private function escape(string $value):string{return htmlspecialchars($value,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');}
 
   private function stringValue($value):string
   {

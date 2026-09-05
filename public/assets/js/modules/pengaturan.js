@@ -58,12 +58,14 @@ class PengaturanModule {
 			this.bindSubmit();
 			this.bindPeriodTable();
 			this.initUI();
+			this.bindPageSectionEditors();
 			const toggleCustomPaper = () => {
 				const custom = $('#form-page-setup [name="ukuran_kertas"]').val() === "CUSTOM";
 				$("#custom-paper-fields").toggle(custom).find("input").prop("required", custom);
 			};
 			$('#form-page-setup [name="ukuran_kertas"]').off("change.pageSetup").on("change.pageSetup", toggleCustomPaper);
 			toggleCustomPaper();
+			if(this.data)this.populate();
 			if(window.location.hash==="#page-setup") $('#pengaturan-tabs .item[data-tab="page-setup"]').trigger("click");
 		});
 	}
@@ -346,7 +348,39 @@ class PengaturanModule {
 				field.val(this.data[key]);
 			}
 		});
+		this.populatePageSections();
 		this.renderScheduleStatus();
+	}
+
+	sectionDefaults(kind) {
+		return {font:"helvetica",size:8,color:"#222222",bold:false,italic:false,underline:false,divider:false,columns:[
+			{text:"",width:25,align:"L"},{text:"",width:50,align:"C"},{text:kind==="footer"?"{page} / {pages}":"",width:25,align:"R"}
+		]};
+	}
+
+	bindPageSectionEditors() {
+		const root=$("#form-page-setup");
+		root.off("click.pageSection","[data-section-flag]").on("click.pageSection","[data-section-flag]",e=>{$(e.currentTarget).toggleClass("active primary");this.syncPageSection($(e.currentTarget).closest("[data-page-section]"));});
+		root.off("input.pageSection change.pageSection","[data-section-style],[data-column-key]").on("input.pageSection change.pageSection","[data-section-style],[data-column-key]",e=>this.syncPageSection($(e.currentTarget).closest("[data-page-section]")));
+	}
+
+	populatePageSections() {
+		["header","footer"].forEach(kind=>{
+			const panel=$(`[data-page-section="${kind}"]`);if(!panel.length)return;
+			let config=this.sectionDefaults(kind);try{const saved=JSON.parse(this.data?.[`${kind}_pdf_json`]||"null");if(saved&&typeof saved==="object")config={...config,...saved,columns:Array.isArray(saved.columns)?saved.columns:config.columns};}catch(_e){}
+			panel.find('[data-section-style="font"]').closest('.dropdown').dropdown('set selected',config.font||'helvetica');
+			panel.find('[data-section-style="size"]').val(config.size||8);panel.find('[data-section-style="color"]').val(config.color||'#222222');
+			["bold","italic","underline","divider"].forEach(flag=>panel.find(`[data-section-flag="${flag}"]`).toggleClass("active primary",!!config[flag]));
+			panel.find('[data-column]').each(function(){const i=Number($(this).data('column')),column=config.columns?.[i]||{};$(this).find('[data-column-key="text"]').val(column.text||'');$(this).find('[data-column-key="width"]').val(column.width??[25,50,25][i]);$(this).find('[data-column-key="align"]').closest('.dropdown').dropdown('set selected',column.align||['L','C','R'][i]);});
+			this.syncPageSection(panel);
+		});
+	}
+
+	syncPageSection(panel) {
+		if(!panel?.length)return;const kind=panel.data('page-section'),config={font:panel.find('[data-section-style="font"]').val()||'helvetica',size:Number(panel.find('[data-section-style="size"]').val())||8,color:panel.find('[data-section-style="color"]').val()||'#222222'};
+		["bold","italic","underline","divider"].forEach(flag=>config[flag]=panel.find(`[data-section-flag="${flag}"]`).hasClass('active'));
+		config.columns=panel.find('[data-column]').map(function(){return{text:String($(this).find('[data-column-key="text"]').val()||''),width:Number($(this).find('[data-column-key="width"]').val())||0,align:$(this).find('[data-column-key="align"]').val()||'L'};}).get();
+		panel.find(`[name="${kind}_pdf_json"]`).val(JSON.stringify(config));
 	}
 
 	renderScheduleStatus() {
@@ -402,7 +436,9 @@ class PengaturanModule {
 		$("#form-page-setup").on("submit", (e) => {
 			e.preventDefault();
 			if (!this.data) return;
+			$(e.currentTarget).find('[data-page-section]').each((_,panel)=>this.syncPageSection($(panel)));
 			const values = Object.fromEntries($(e.currentTarget).serializeArray().map(x => [x.name, x.value]));
+			["header_pdf_aktif","footer_pdf_aktif"].forEach(name=>values[name]=$(e.currentTarget).find(`[name="${name}"]`).prop('checked')?1:0);
 			this.ajax.request({data:{action:"edit",tbl:"pengaturan",id_row:this.data.id,mode:"update",...values},success:(res)=>{
 				if(res.success){this.data={...this.data,...values};Toast.show({success:true,message:"Page Setup PDF global berhasil disimpan"});}
 			}});

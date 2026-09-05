@@ -49,19 +49,23 @@ class AnggaranDocumentService
         }
         return $totals;
     }
-    private function hierarchyHtml(string $code,bool $change,array $afterTotals,array $beforeTotals=[],int $columns=7):string
+    private function hierarchyHtml(string $code,bool $change,array $afterTotals,array $beforeTotals=[],array|int $widths=[]):string
     {
+        if(is_int($widths))$widths=match($widths){13=>[11,19,8,5,7,3.5,6,8,5,7,3.5,6,11],9=>[11,25,7,8,10,7,8,10,14],6=>[16,37,12,10,12,13],default=>[14,36,12,8,12,6,12]};
         $html='';
         foreach($this->accountHierarchy($code) as $depth=>$node){
             $key=(string)$node['kode'];$after=(float)($afterTotals[$key]??0);$before=(float)($beforeTotals[$key]??0);
             $style='background-color:'.($depth<2?'#d9eaf7':'#eef5fa').';font-weight:bold';
-            if($change){
-                $spacer=max(0,intdiv($columns-5,2));
-                $html.='<tr style="'.$style.'"><td>'.$this->e($key).'</td><td>'.$this->e($node['uraian']).'</td>'.($spacer?'<td colspan="'.$spacer.'"></td>':'').'<td align="right">'.$this->money($before).'</td>'.($spacer?'<td colspan="'.$spacer.'"></td>':'').'<td align="right">'.$this->money($after).'</td><td align="right">'.$this->money($after-$before).'</td></tr>';
-            }else{
-                $spacer=max(0,$columns-3);
-                $html.='<tr style="'.$style.'"><td>'.$this->e($key).'</td><td>'.$this->e($node['uraian']).'</td>'.($spacer?'<td colspan="'.$spacer.'"></td>':'').'<td align="right">'.$this->money($after).'</td></tr>';
+            if(!$widths)$widths=$change?[11,19,8,5,7,3.5,6,8,5,7,3.5,6,11]:[14,36,12,8,12,6,12];
+            $count=count($widths);$cells=[];
+            for($i=0;$i<$count;$i++){
+                $value='';$align='L';
+                if($i===0)$value=$this->e($key);elseif($i===1)$value=$this->e($node['uraian']);
+                elseif($change){$group=intdiv($count-3,2);if($i===1+$group){$value=$this->money($before);$align='R';}elseif($i===1+2*$group){$value=$this->money($after);$align='R';}elseif($i===$count-1){$value=$this->money($after-$before);$align='R';}}
+                elseif($i===$count-1){$value=$this->money($after);$align='R';}
+                $cells[]='<td width="'.$widths[$i].'%" align="'.$align.'">'.$value.'</td>';
             }
+            $html.='<tr style="'.$style.'">'.implode('',$cells).'</tr>';
         }
         return$html;
     }
@@ -120,7 +124,7 @@ class AnggaranDocumentService
     {
         $groups=$this->groups($logical);$change=$this->isChange($logical);$orientation=$change?'L':'P';
         require_once __DIR__.'/../../vendor/tecnickcom/tcpdf/tcpdf.php';
-        $pdf=new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),$orientation),'mm',PageSetupService::tcpdfFormat(PageSetupService::current($this->user)),true,'UTF-8',false);$pdf->SetCreator('seSendok');$pdf->SetAuthor((string)($this->user['nama_opd']??'Pemerintah Daerah'));$pdf->SetTitle($this->documentLabel($logical));$pdf->setPrintHeader(false);$pdf->setPrintFooter(true);$pdf->SetMargins(8,8,8);$pdf->SetAutoPageBreak(true,12);PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[8,8,8,12]);
+        $pdf=PageSetupService::createPdf(PageSetupService::current($this->user),$orientation);$pdf->SetCreator('seSendok');$pdf->SetAuthor((string)($this->user['nama_opd']??'Pemerintah Daerah'));$pdf->SetTitle($this->documentLabel($logical));$pdf->SetMargins(8,8,8);$pdf->SetAutoPageBreak(true,12);PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[8,8,8,12]);
         if(!$groups){$pdf->AddPage();$pdf->SetFont('helvetica','B',12);$pdf->Cell(0,10,'TIDAK ADA DATA DALAM LINGKUP PENGGUNA',0,1,'C');return $pdf->Output('','S');}
         foreach($groups as $group){$this->currentSubCode=(string)$group['kd_sub_keg'];$details=$this->details($logical,(string)$group['kd_sub_keg']);$pdf->AddPage();$pdf->SetFont('helvetica','',7.2);
             $title=$change?'DOKUMEN PELAKSANAAN PERGESERAN ANGGARAN':'DOKUMEN PELAKSANAAN ANGGARAN<br>SATUAN KERJA PERANGKAT DAERAH';
@@ -139,7 +143,7 @@ class AnggaranDocumentService
 
     public function exportOfficialPdf(string $logical):string
     {
-        $groups=$this->groups($logical);$change=$this->isChange($logical);require_once __DIR__.'/../../vendor/tecnickcom/tcpdf/tcpdf.php';$pdf=new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'L'),'mm',PageSetupService::tcpdfFormat(PageSetupService::current($this->user)),true,'UTF-8',false);$pdf->setPrintHeader(false);$pdf->setPrintFooter(true);$pdf->SetMargins(7,7,7);$pdf->SetAutoPageBreak(true,10);PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[7,7,7,10]);$pdf->SetFont('helvetica','',6.8);
+        $groups=$this->groups($logical);$change=$this->isChange($logical);$pdf=PageSetupService::createPdf(PageSetupService::current($this->user),'L');$pdf->SetMargins(7,7,7);$pdf->SetAutoPageBreak(true,10);PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[7,7,7,10]);$pdf->SetFont('helvetica','',6.8);
         foreach($groups as $group){$code=(string)$group['kd_sub_keg'];$this->currentSubCode=$code;$details=$this->details($logical,$code);$pdf->AddPage();$label=$this->documentLabel($logical);$html='<table border="1" cellpadding="2"><tr><td width="72%" align="center" style="font-size:11px"><b>'.($change?'DOKUMEN PELAKSANAAN PERGESERAN ANGGARAN':'DOKUMEN PELAKSANAAN ANGGARAN').'<br>SATUAN KERJA PERANGKAT DAERAH</b></td><td width="28%" align="center" style="font-size:9px"><b>FORMULIR '.$this->e($label).'<br>RINCIAN BELANJA SKPD</b></td></tr></table><table border="1" cellpadding="2">'.$this->metadataRows($group).'</table>';
             if($change)$html.='<table border="1" cellpadding="2"><thead><tr style="font-weight:bold;background-color:#e7e7e7"><th width="12%" rowspan="2">Kode Rekening</th><th width="28%" rowspan="2">Uraian</th><th width="24%" colspan="3" align="center">Sebelum Perubahan</th><th width="24%" colspan="3" align="center">Sesudah Perubahan</th><th width="12%" rowspan="2">Bertambah/<br>(Berkurang)</th></tr><tr style="font-weight:bold;background-color:#e7e7e7"><th width="7%">Volume</th><th width="8%">Harga</th><th width="9%">Jumlah</th><th width="7%">Volume</th><th width="8%">Harga</th><th width="9%">Jumlah</th></tr></thead><tbody>';
             else $html.='<table border="1" cellpadding="2"><thead><tr style="font-weight:bold;background-color:#e7e7e7"><th width="14%">Kode Rekening</th><th width="38%">Uraian</th><th width="12%">Koefisien/Volume</th><th width="10%">Satuan</th><th width="13%">Harga</th><th width="13%">Jumlah</th></tr></thead><tbody>';
@@ -151,13 +155,17 @@ class AnggaranDocumentService
     }
     public function exportRecapPdf(string $logical):string
     {
-        $rows=$this->recapRows($logical);require_once __DIR__.'/../../vendor/tecnickcom/tcpdf/tcpdf.php';$pdf=new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'L'),'mm',PageSetupService::tcpdfFormat(PageSetupService::current($this->user)),true,'UTF-8',false);$pdf->setPrintHeader(false);$pdf->SetMargins(7,7,7);PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[7,7,7,10]);$pdf->AddPage();$pdf->SetFont('helvetica','',7);$change=$logical==='dppa';$html='<h2 align="center">DOKUMEN PELAKSANAAN '.($change?'PERGESERAN ':'').'ANGGARAN<br>REKAPITULASI BELANJA BERDASARKAN PROGRAM, KEGIATAN, DAN SUB KEGIATAN</h2><table border="1" cellpadding="2"><tr style="font-weight:bold;background-color:#e8e8e8"><td width="13%">Kode Sub Kegiatan</td><td width="25%">Uraian</td><td width="12%">Kode Rekening</td>'.($change?'<td width="12%">Sebelum</td>':'').'<td width="12%">Belanja Operasi</td><td width="12%">Belanja Modal</td><td width="12%">Jumlah</td>'.($change?'<td width="12%">Bertambah/(Berkurang)</td>':'').'</tr>';$total=0;foreach($rows as $r){$delta=(float)$r['sesudah']-(float)$r['sebelum'];$total+=(float)$r['sesudah'];$html.='<tr><td>'.$this->e($r['kd_sub_keg']).'</td><td>'.$this->e($r['uraian']).'</td><td>'.$this->e($r['kd_akun']).'</td>'.($change?'<td align="right">'.$this->money($r['sebelum']).'</td>':'').'<td align="right">'.$this->money($r['operasi']).'</td><td align="right">'.$this->money($r['modal']).'</td><td align="right">'.$this->money($r['sesudah']).'</td>'.($change?'<td align="right">'.$this->money($delta).'</td>':'').'</tr>';}$html.='<tr style="font-weight:bold"><td colspan="'.($change?6:5).'">JUMLAH BELANJA</td><td align="right">'.$this->money($total).'</td>'.($change?'<td></td>':'').'</tr></table>';$pdf->writeHTML($html,true,false,true,false,'');return$pdf->Output('','S');
+        $rows=$this->recapRows($logical);$setup=PageSetupService::current($this->user);$pdf=PageSetupService::createPdf($setup,'L');$pdf->SetMargins(7,7,7);PageSetupService::applyPdf($pdf,$setup,[7,7,7,10]);$pdf->AddPage();$pdf->SetFont('helvetica','',7);$change=$logical==='dppa';
+        $widths=$change?[13,25,12,12,12,12,12,12]:[13,27,15,15,15,15];$labels=$change?['Kode Sub Kegiatan','Uraian','Kode Rekening','Sebelum','Belanja Operasi','Belanja Modal','Jumlah','Bertambah/(Berkurang)']:['Kode Sub Kegiatan','Uraian','Kode Rekening','Belanja Operasi','Belanja Modal','Jumlah'];
+        $html='<h2 align="center">DOKUMEN PELAKSANAAN '.($change?'PERGESERAN ':'').'ANGGARAN<br>REKAPITULASI BELANJA BERDASARKAN PROGRAM, KEGIATAN, DAN SUB KEGIATAN</h2><table border="1" cellpadding="2"><tr style="font-weight:bold;background-color:#e8e8e8">';foreach($labels as $i=>$label)$html.='<td width="'.$widths[$i].'%">'.$label.'</td>';$html.='</tr>';$total=0;
+        foreach($rows as $r){$delta=(float)$r['sesudah']-(float)$r['sebelum'];$total+=(float)$r['sesudah'];$values=$change?[$r['kd_sub_keg'],$r['uraian'],$r['kd_akun'],$this->money($r['sebelum']),$this->money($r['operasi']),$this->money($r['modal']),$this->money($r['sesudah']),$this->money($delta)]:[$r['kd_sub_keg'],$r['uraian'],$r['kd_akun'],$this->money($r['operasi']),$this->money($r['modal']),$this->money($r['sesudah'])];$html.='<tr>';foreach($values as $i=>$value)$html.='<td width="'.$widths[$i].'%"'.($i>2?' align="right"':'').'>'.$this->e($value).'</td>';$html.='</tr>';}
+        $html.='<tr style="font-weight:bold"><td colspan="'.(count($widths)-1).'">JUMLAH BELANJA</td><td width="'.$widths[array_key_last($widths)].'%" align="right">'.$this->money($total).'</td></tr></table>';$pdf->writeHTML($html,true,false,true,false,'');return$pdf->Output('','S');
     }
 
     public function exportRegulatoryPdf(string $logical):string
     {
         $groups=$this->groups($logical);$change=$this->isChange($logical);require_once __DIR__.'/../../vendor/tecnickcom/tcpdf/tcpdf.php';
-        $pdf=new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),$change?'L':'P'),'mm',PageSetupService::tcpdfFormat(PageSetupService::current($this->user)),true,'UTF-8',false);$pdf->setPrintHeader(false);$pdf->setPrintFooter(true);$pdf->SetMargins(7,7,7);$pdf->SetAutoPageBreak(true,10);PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[7,7,7,10]);$pdf->SetFont('helvetica','',6.4);
+        $pdf=PageSetupService::createPdf(PageSetupService::current($this->user),$change?'L':'P');$pdf->SetMargins(7,7,7);$pdf->SetAutoPageBreak(true,10);PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[7,7,7,10]);$pdf->SetFont('helvetica','',6.4);
         if(!$groups){$pdf->AddPage();$pdf->Cell(0,8,'TIDAK ADA DATA DALAM LINGKUP PENGGUNA',0,1,'C');return$pdf->Output('','S');}
         foreach($groups as $group){$details=$this->details($logical,(string)$group['kd_sub_keg']);$pdf->AddPage();$label=$this->documentLabel($logical);$heading=$change?'DOKUMEN PELAKSANAAN PERGESERAN ANGGARAN':'DOKUMEN PELAKSANAAN ANGGARAN';
             $html='<table border="1" cellpadding="2"><tr><td width="72%" align="center" style="font-size:10px"><b>'.$heading.'<br>SATUAN KERJA PERANGKAT DAERAH</b></td><td width="28%" align="center" style="font-size:8px"><b>FORMULIR<br>'.$this->e($label).' RINCIAN BELANJA SKPD</b></td></tr></table><table border="1" cellpadding="2">'.$this->metadataRows($group).'</table>';

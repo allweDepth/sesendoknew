@@ -299,7 +299,7 @@ class KontrakRealisasiService
   {
     $data = $this->delivery($contractId);
     $d = $data['contract'];
-    $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'L'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
+    $pdf = PageSetupService::createPdf(PageSetupService::current($this->user),'L');
     $pdf->SetMargins(10, 10, 10);
     PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[10,10,10,10]);
     $pdf->AddPage();
@@ -340,7 +340,7 @@ class KontrakRealisasiService
     if (!in_array($type, ['SSKK', 'SSUK'], true)) throw new InvalidArgumentException('Jenis syarat kontrak tidak valid');
     $data = $this->delivery($contractId);
     $d = $data['contract'];
-    $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'P'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
+    $pdf = PageSetupService::createPdf(PageSetupService::current($this->user),'P');
     $pdf->SetMargins(18, 15, 18);
     $pdf->SetAutoPageBreak(true, 18);
     PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[18,15,18,18]);
@@ -495,7 +495,7 @@ class KontrakRealisasiService
     }
     $d = $this->db->query($sql, $params)->fetch();
     if (!$d) throw new RuntimeException('Kontrak tidak ditemukan');
-    $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'P'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
+    $pdf = PageSetupService::createPdf(PageSetupService::current($this->user),'P');
     $pdf->SetMargins(18, 15, 18);
     PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[18,15,18,15]);
     $pdf->AddPage();
@@ -533,7 +533,7 @@ class KontrakRealisasiService
     $rows = $this->reportRows();
     [,, $y] = $this->scope();
     $summary = $this->summary();
-    $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'L'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
+    $pdf = PageSetupService::createPdf(PageSetupService::current($this->user),'L');
     $pdf->SetMargins(8, 10, 8);
     PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[8,10,8,10]);
     $pdf->AddPage();
@@ -765,7 +765,7 @@ class KontrakRealisasiService
     $format = in_array($format, ['spj', 'lra', 'bulanan_fisik_keuangan'], true) ? $format : 'lra';
     [,, $year] = $this->scope();
     $title = ['spj' => 'FORMAT SPJ BENDAHARA', 'lra' => 'LAPORAN REALISASI ANGGARAN', 'bulanan_fisik_keuangan' => 'LAPORAN BULANAN FISIK DAN KEUANGAN'][$format];
-    $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'L'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
+    $pdf = PageSetupService::createPdf(PageSetupService::current($this->user),'L');
     $pdf->SetMargins(8, 10, 8);
     PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[8,10,8,10]);
     $pdf->AddPage();
