@@ -475,7 +475,7 @@
   <script src="/assets/js/core/dialog.js"></script>
   <!-- UI REGISTRY -->
   <script src="/assets/js/ui/ui-registry.js"></script>
-  <script src="/assets/js/ui/rich-document-editor.js"></script>
+  <script src="/assets/js/ui/rich-document-editor.js?v=20260905.4"></script>
   <!-- ================= ENGINE ================= -->
 
   <script src="/assets/js/engine/table-manager.js"></script>

@@ -4,6 +4,8 @@ class RichDocumentEditor {
 		this.root = $(options.container);
 		this.selected = null;
 		this.range = null;
+		this.inspectorHost = options.inspectorContainer ? $(options.inspectorContainer) : $();
+		this.scope = this.root;
 	}
 
 	mount(html = "") {
@@ -27,8 +29,13 @@ class RichDocumentEditor {
 				</aside>
 			</div>
 		</div>${this.dialogMarkup()}`);
-		this.root.find(".ui.dropdown").dropdown();
-		this.root.find(".menu .item").tab({context:this.root});
+		if(this.inspectorHost.length){
+			this.inspectorHost.empty().append(this.root.find(".rde-inspector"));
+			this.root.find(".rde-main").addClass("rde-external-inspector");
+			this.scope=this.root.add(this.inspectorHost);
+		}
+		this.scope.find(".ui.dropdown").dropdown();
+		this.scope.find(".menu .item").tab({context:this.inspectorHost.length?this.inspectorHost:this.root});
 		this.bind();
 		return this;
 	}
@@ -39,31 +46,34 @@ class RichDocumentEditor {
 	dialogMarkup(){return `<div class="ui tiny modal rde-dialog"><i class="close icon"></i><div class="header">Sisipkan Objek</div><div class="content"><div class="ui form"><div class="field rde-url"><label>URL</label><input name="url" placeholder="https://..."></div><div class="two fields rde-grid"><div class="field"><label>Baris</label><input type="number" name="rows" min="1" max="50" value="3"></div><div class="field"><label>Kolom</label><input type="number" name="cols" min="1" max="20" value="3"></div></div><div class="field rde-values"><label>Data grafik</label><input name="values" value="20,35,60,45"></div><div class="field rde-shape"><label>Bentuk</label><select class="ui dropdown" name="shape"><option value="rectangle">Kotak</option><option value="circle">Lingkaran</option><option value="pill">Kapsul</option></select></div></div></div><div class="actions"><button class="ui cancel button">Batal</button><button class="ui primary approve button">Sisipkan</button></div></div>`;}
 
 	bind(){
-		this.root.off(".rde");
-		this.root.on("click.rde","[data-command]",e=>{e.preventDefault();this.restoreRange();document.execCommand($(e.currentTarget).data("command"),false,null);this.captureRange();});
-		this.root.on("keyup.rde mouseup.rde",".rde-canvas",()=>this.captureRange());
-		this.root.on("click.rde",".rde-canvas table,.rde-canvas td,.rde-canvas img,.rde-canvas .rde-chart,.rde-canvas .rde-shape",e=>{e.stopPropagation();this.select(e.currentTarget);});
-		this.root.on("click.rde",".rde-canvas",e=>{if(e.target===e.currentTarget||e.target.matches("p,div,li,h1,h2,h3"))this.select(e.target);});
-		this.root.on("change.rde input.rde","[data-style]",e=>this.applyStyle(e.currentTarget));
-		this.root.on("change.rde","[data-rde-list]",e=>this.applyList(e.currentTarget.value));
-		this.root.on("change.rde","[data-rde-wrap]",e=>this.applyWrap(e.currentTarget.value));
-		this.root.on("change.rde input.rde","[data-border]",()=>this.applyBorder());
-		this.root.on("input.rde","[data-rde-opacity]",e=>this.target().css("opacity",Number(e.currentTarget.value)/100));
-		this.root.on("click.rde","[data-insert]",e=>this.openDialog($(e.currentTarget).data("insert")));
-		this.root.on("click.rde",'[data-rde="resize-table"]',()=>this.resizeTable());
-		this.root.on("click.rde",'[data-rde="undo"]',()=>document.execCommand("undo"));this.root.on("click.rde",'[data-rde="redo"]',()=>document.execCommand("redo"));
-		this.root.on("click.rde",'[data-rde="forward"]',()=>this.target().css("zIndex",(Number(this.target().css("zIndex"))||1)+1));this.root.on("click.rde",'[data-rde="backward"]',()=>this.target().css("zIndex",Math.max(0,(Number(this.target().css("zIndex"))||1)-1)));
-		this.root.on("click.rde",'[data-rde="save"]',()=>this.options.onSave?.(this.value(),this.meta()));this.root.on("click.rde",'[data-rde="back"]',()=>this.options.onBack?.());
+		this.scope.off(".rde");
+		this.scope.on("click.rde","[data-command]",e=>{e.preventDefault();this.restoreRange();document.execCommand($(e.currentTarget).data("command"),false,null);this.captureRange();});
+		this.scope.on("keyup.rde mouseup.rde",".rde-canvas",()=>this.captureRange());
+		this.scope.on("click.rde",".rde-canvas table,.rde-canvas td,.rde-canvas img,.rde-canvas .rde-chart,.rde-canvas .rde-shape",e=>{e.stopPropagation();this.select(e.currentTarget);});
+		this.scope.on("click.rde",".rde-canvas",e=>{if(e.target===e.currentTarget||e.target.matches("p,div,li,h1,h2,h3"))this.select(e.target);});
+		this.scope.on("change.rde input.rde","[data-style]",e=>this.applyStyle(e.currentTarget));
+		this.scope.on("change.rde","[data-rde-list]",e=>this.applyList(e.currentTarget.value));
+		this.scope.on("change.rde","[data-rde-wrap]",e=>this.applyWrap(e.currentTarget.value));
+		this.scope.on("change.rde input.rde","[data-border]",()=>this.applyBorder());
+		this.scope.on("input.rde","[data-rde-opacity]",e=>this.target().css("opacity",Number(e.currentTarget.value)/100));
+		this.scope.on("click.rde","[data-insert]",e=>this.openDialog($(e.currentTarget).data("insert")));
+		this.scope.on("click.rde",'[data-rde="resize-table"]',()=>this.resizeTable());
+		this.scope.on("click.rde",'[data-rde="undo"]',()=>document.execCommand("undo"));this.scope.on("click.rde",'[data-rde="redo"]',()=>document.execCommand("redo"));
+		this.scope.on("click.rde",'[data-rde="forward"]',()=>this.target().css("zIndex",(Number(this.target().css("zIndex"))||1)+1));this.scope.on("click.rde",'[data-rde="backward"]',()=>this.target().css("zIndex",Math.max(0,(Number(this.target().css("zIndex"))||1)-1)));
+		// Tombol utama berada di root editor, ikat langsung agar tetap aktif saat
+		// inspector dipindahkan ke sidebar global Fomantic.
+		this.root.find('[data-rde="save"]').off("click.rdeDirect").on("click.rdeDirect",()=>this.options.onSave?.(this.value(),this.meta()));
+		this.root.find('[data-rde="back"]').off("click.rdeDirect").on("click.rdeDirect",()=>this.options.onBack?.());
 	}
 	captureRange(){const selection=window.getSelection();if(selection?.rangeCount&&this.root.find(".rde-canvas")[0].contains(selection.anchorNode))this.range=selection.getRangeAt(0).cloneRange();}
 	restoreRange(){this.root.find(".rde-canvas").trigger("focus");if(this.range){const s=window.getSelection();s.removeAllRanges();s.addRange(this.range);}}
-	select(node){this.root.find(".rde-selected").removeClass("rde-selected");this.selected=$(node).addClass("rde-selected");this.root.find("[data-rde-selection]").text(node.tagName?.toLowerCase()==="td"?"Cell":node.tagName?.toLowerCase()==="table"?"Table":node.dataset?.rdeType||"Text");}
+	select(node){this.root.find(".rde-selected").removeClass("rde-selected");this.selected=$(node).addClass("rde-selected");this.scope.find("[data-rde-selection]").text(node.tagName?.toLowerCase()==="td"?"Cell":node.tagName?.toLowerCase()==="table"?"Table":node.dataset?.rdeType||"Text");}
 	target(){return this.selected?.length?this.selected:this.root.find(".rde-canvas");}
 	applyStyle(input){const value=input.value+(input.dataset.unit||"");this.target().css(input.dataset.style,value);}
 	applyList(value){this.restoreRange();if(value==="none")return;document.execCommand(value==="decimal"||value==="lower-alpha"?"insertOrderedList":"insertUnorderedList");const list=$(window.getSelection()?.anchorNode).closest("ol,ul");list.css("list-style-type",value);}
 	applyWrap(value){const t=this.target();t.css({float:value,margin:value==="none"?"0":"8px 16px",maxWidth:value==="none"?"100%":"50%"});}
-	applyBorder(){this.target().css({borderStyle:"solid",borderColor:this.root.find('[data-border="color"]').val(),borderWidth:this.root.find('[data-border="width"]').val()+"px"});}
-	resizeTable(){const table=this.target().is("table")?this.target():this.target().closest("table");if(!table.length)return Toast.show({success:false,message:"Pilih tabel atau sel terlebih dahulu"});const rows=Math.max(1,Number(this.root.find('[data-table-size="rows"]').val())),cols=Math.max(1,Number(this.root.find('[data-table-size="cols"]').val()));while(table.find("tr").length<rows)table.append(`<tr>${"<td><br></td>".repeat(cols)}</tr>`);table.find("tr").slice(rows).remove();table.find("tr").each(function(){while(this.cells.length<cols)$(this).append("<td><br></td>");while(this.cells.length>cols)this.deleteCell(-1);});}
+	applyBorder(){this.target().css({borderStyle:"solid",borderColor:this.scope.find('[data-border="color"]').val(),borderWidth:this.scope.find('[data-border="width"]').val()+"px"});}
+	resizeTable(){const table=this.target().is("table")?this.target():this.target().closest("table");if(!table.length)return Toast.show({success:false,message:"Pilih tabel atau sel terlebih dahulu"});const rows=Math.max(1,Number(this.scope.find('[data-table-size="rows"]').val())),cols=Math.max(1,Number(this.scope.find('[data-table-size="cols"]').val()));while(table.find("tr").length<rows)table.append(`<tr>${"<td><br></td>".repeat(cols)}</tr>`);table.find("tr").slice(rows).remove();table.find("tr").each(function(){while(this.cells.length<cols)$(this).append("<td><br></td>");while(this.cells.length>cols)this.deleteCell(-1);});}
 	openDialog(type){this.captureRange();const modal=this.root.find(".rde-dialog");modal.data("type",type);modal.find(".rde-url").toggle(["image","link"].includes(type));modal.find(".rde-grid").toggle(type==="table");modal.find(".rde-values").toggle(type==="chart");modal.find(".rde-shape").toggle(type==="shape");modal.modal({closable:false,onApprove:()=>{this.insert(type,modal);return true;}}).modal("show");}
 	insert(type,modal){let html="";if(type==="image"){const url=this.escape(modal.find('[name="url"]').val());html=`<figure class="rde-object" data-rde-type="Image"><img src="${url}" alt="Gambar berita"><figcaption>Keterangan gambar</figcaption></figure>`;}if(type==="link"){this.restoreRange();document.execCommand("createLink",false,modal.find('[name="url"]').val());return;}if(type==="table"){const rows=Math.max(1,Number(modal.find('[name="rows"]').val())),cols=Math.max(1,Number(modal.find('[name="cols"]').val()));html=`<table class="ui celled structured table" data-rde-type="Table"><tbody>${Array.from({length:rows},(_,r)=>`<tr>${Array.from({length:cols},(_,c)=>`<${r===0?'th':'td'}>${r===0?`Kolom ${c+1}`:"<br>"}</${r===0?'th':'td'}>`).join("")}</tr>`).join("")}</tbody></table><p><br></p>`;}if(type==="chart"){const values=modal.find('[name="values"]').val().split(",").map(Number).filter(Number.isFinite),max=Math.max(...values,1);html=`<div class="rde-chart" data-rde-type="Chart">${values.map((v,i)=>`<span style="height:${Math.max(8,v/max*160)}px"><b>${v}</b><small>${i+1}</small></span>`).join("")}</div><p><br></p>`;}if(type==="shape"){const shape=modal.find('[name="shape"]').val();html=`<div class="rde-shape ${shape}" data-rde-type="Shape" contenteditable="true">Teks shape</div><p><br></p>`;}this.restoreRange();document.execCommand("insertHTML",false,html);}
 	meta(){const data={};this.root.find(".rde-meta [name]").each((_,el)=>{data[el.name]=$(el).val();});return data;}
@@ -71,7 +81,7 @@ class RichDocumentEditor {
 	value(){const copy=this.root.find(".rde-canvas").clone();copy.find(".rde-selected").removeClass("rde-selected");return copy.html();}
 	escape(v){return String(v||"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
 	injectStyles(){if(document.getElementById("richDocumentEditorStyles"))return;$("head").append(`<style id="richDocumentEditorStyles">
-	.rde-workspace{--panel:330px}.rde-topbar{position:sticky;top:0;z-index:20;margin-bottom:12px!important}.rde-meta{background:#fff;border:1px solid #dfe6ed;border-radius:8px;padding:14px;margin-bottom:12px}.rde-main{display:grid;grid-template-columns:minmax(0,1fr) var(--panel);gap:14px;align-items:start}.rde-document{min-width:0}.rde-insertbar{position:sticky;top:72px;z-index:15;width:100%;padding:8px;background:#f6f8fa;overflow-x:auto}.rde-canvas{min-height:720px;background:#fff;padding:58px 68px;margin:auto;box-shadow:0 5px 25px rgba(34,36,38,.13);outline:none;line-height:1.5}.rde-canvas:empty:before{content:attr(data-placeholder);color:#9aa6b2}.rde-inspector{position:sticky!important;top:72px;max-height:calc(100vh - 95px);overflow:auto;margin:0!important}.rde-inspector .fields{margin-bottom:.65rem!important}.rde-selected{outline:2px solid #00b5ad!important;outline-offset:2px}.rde-canvas img{max-width:100%;height:auto}.rde-canvas table{width:100%;border-collapse:collapse;margin:16px 0}.rde-canvas td,.rde-canvas th{border:1px solid #d5dde5;padding:8px;min-width:40px}.rde-object{max-width:100%;margin:14px 0}.rde-chart{height:210px;display:flex;align-items:flex-end;gap:12px;padding:24px 20px 30px;border:1px solid #dfe8f0;border-radius:8px;clear:both}.rde-chart span{flex:1;min-width:24px;background:linear-gradient(#54c8ff,#2185d0);border-radius:5px 5px 0 0;text-align:center;color:#fff;position:relative}.rde-chart small{position:absolute;bottom:-22px;left:0;right:0;color:#555}.rde-shape{width:180px;height:100px;background:#00b5ad;color:#fff;display:flex;align-items:center;justify-content:center;padding:12px;margin:16px 0}.rde-shape.circle{width:120px;height:120px;border-radius:50%}.rde-shape.pill{border-radius:999px}@media(max-width:1000px){.rde-main{grid-template-columns:1fr}.rde-inspector{position:static!important;max-height:none}.rde-canvas{padding:35px 28px;min-height:560px}}
+	.rde-workspace{--panel:330px}.rde-topbar{position:sticky;top:0;z-index:20;margin-bottom:12px!important}.rde-meta{background:#fff;border:1px solid #dfe6ed;border-radius:8px;padding:14px;margin-bottom:12px}.rde-main{display:grid;grid-template-columns:minmax(0,1fr) var(--panel);gap:14px;align-items:start}.rde-main.rde-external-inspector{display:block}.rde-document{min-width:0}.rde-insertbar{position:sticky;top:72px;z-index:15;width:100%;padding:8px;background:#f6f8fa;overflow-x:auto}.rde-canvas{min-height:720px;background:#fff;padding:58px 68px;margin:auto;box-shadow:0 5px 25px rgba(34,36,38,.13);outline:none;line-height:1.5}.rde-canvas:empty:before{content:attr(data-placeholder);color:#9aa6b2}.rde-inspector{position:sticky!important;top:72px;max-height:calc(100vh - 95px);overflow:auto;margin:0!important}.sidebarkanan .rde-inspector{position:static!important;max-height:none;border:0!important;box-shadow:none!important}.rde-inspector .fields{margin-bottom:.65rem!important}.rde-selected{outline:2px solid #00b5ad!important;outline-offset:2px}.rde-canvas img{max-width:100%;height:auto}.rde-canvas table{width:100%;border-collapse:collapse;margin:16px 0}.rde-canvas td,.rde-canvas th{border:1px solid #d5dde5;padding:8px;min-width:40px}.rde-object{max-width:100%;margin:14px 0}.rde-chart{height:210px;display:flex;align-items:flex-end;gap:12px;padding:24px 20px 30px;border:1px solid #dfe8f0;border-radius:8px;clear:both}.rde-chart span{flex:1;min-width:24px;background:linear-gradient(#54c8ff,#2185d0);border-radius:8px 8px 0 0;text-align:center;color:#fff;position:relative}.rde-chart small{position:absolute;bottom:-22px;left:0;right:0;color:#555}.rde-shape{width:180px;height:100px;background:#00b5ad;color:#fff;display:flex;align-items:center;justify-content:center;padding:12px;margin:16px 0}.rde-shape.circle{width:120px;height:120px;border-radius:50%}.rde-shape.pill{border-radius:999px}@media(max-width:1000px){.rde-main{grid-template-columns:1fr}.rde-inspector{position:static!important;max-height:none}.rde-canvas{padding:35px 28px;min-height:560px}}
 	</style>`);}
 }
 window.RichDocumentEditor=RichDocumentEditor;

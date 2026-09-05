@@ -13,8 +13,12 @@ class HalamanBeritaModule extends BaseCrudModule {
 		const show=data=>{
 			$("#halamanBeritaEditor").remove();
 			$("#crud-table-container").hide().after('<div id="halamanBeritaEditor"></div>');
-			this.editor=new RichDocumentEditor({container:"#halamanBeritaEditor",onBack:()=>this.closeEditor(),onSave:(html,meta)=>this.saveEditor(action,id,html,meta)}).mount(data.konten||"");
+			$(".sidebarkanan .flyout-footer").hide();
+			$(".sidebarkanan #content_flyout").text("Format Berita");
+			$(".sidebarkanan #icon_flyout").attr("class","paint brush icon");
+			this.editor=new RichDocumentEditor({container:"#halamanBeritaEditor",inspectorContainer:".sidebarkanan #form_flyout",onBack:()=>this.closeEditor(),onSave:(html,meta)=>this.saveEditor(action,id,html,meta)}).mount(data.konten||"");
 			this.editor.setMeta(data);
+			$(".sidebarkanan").sidebar({context:"#mainContext",dimPage:false,closable:false,transition:"push",exclusive:false}).sidebar("show");
 		};
 		if(action==="edit"&&id)this.ajax.request({data:{action:"edit",tbl:"halaman_berita",id_row:id},success:res=>res?.data?show(res.data):Toast.show({success:false,message:"Data berita tidak ditemukan"})});
 		else show({jenis_halaman:"berita",aktif:1});
@@ -22,8 +26,8 @@ class HalamanBeritaModule extends BaseCrudModule {
 	saveEditor(action,id,html,meta){
 		if(!String(meta.judul||"").trim())return Toast.show({success:false,message:"Judul berita wajib diisi"});
 		const slug=String(meta.slug||meta.judul).toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-		this.ajax.request({data:{action:action==="edit"?"edit":"add",tbl:"halaman_berita",...(id?{id_row:id}:{}),...meta,slug,konten:html},success:res=>{if(res?.success){Toast.show({success:true,message:"Halaman berita berhasil disimpan"});this.closeEditor(true);}else Toast.show({success:false,message:res?.message||"Berita gagal disimpan"});}});
+		this.ajax.request({data:{action:action==="edit"?"edit":"add",...(action==="edit"?{mode:"update"}:{}),tbl:"halaman_berita",...(id?{id_row:id}:{}),...meta,slug,konten:html},success:res=>{if(res?.success){this.closeEditor(true);}else Toast.show({success:false,message:res?.message||"Berita gagal disimpan"});}});
 	}
-	closeEditor(reload=false){$("#halamanBeritaEditor").remove();$("#crud-table-container").show();this.editor=null;if(reload)this.loadTable("halaman_berita");}
+	closeEditor(reload=false){if(this.editor?.scope)this.editor.scope.off(".rde");$(".sidebarkanan").sidebar("hide");$(".sidebarkanan #form_flyout").empty();$(".sidebarkanan .flyout-footer").show();$("#halamanBeritaEditor").remove();$("#crud-table-container").show();this.editor=null;if(reload)this.loadTable("halaman_berita");}
 	destroy(){$(document).off(".newsWorkspace");this.closeEditor();}
 }
