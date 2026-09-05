@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 04 Sep 2026 pada 18.38
--- Versi server: 12.3.3-MariaDB
--- Versi PHP: 8.5.10
+-- Generation Time: Sep 05, 2026 at 09:11 AM
+-- Server version: 12.3.3-MariaDB
+-- PHP Version: 8.5.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Basis data: `sesendoknew_db`
+-- Database: `sesendoknew_db`
 --
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `absensi_pegawai_neo`
+-- Table structure for table `absensi_pegawai_neo`
 --
 
 CREATE TABLE `absensi_pegawai_neo` (
@@ -54,7 +54,7 @@ CREATE TABLE `absensi_pegawai_neo` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `akun_neo`
+-- Table structure for table `akun_neo`
 --
 
 CREATE TABLE `akun_neo` (
@@ -81,7 +81,7 @@ CREATE TABLE `akun_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `akun_neo`
+-- Dumping data for table `akun_neo`
 --
 
 INSERT INTO `akun_neo` (`id`, `akun`, `kelompok`, `jenis_akun`, `objek`, `rincian_objek`, `sub_rincian_objek`, `kode`, `uraian`, `belanja`, `pembiayaan`, `peraturan`, `disable`, `aksi`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -4397,7 +4397,7 @@ INSERT INTO `akun_neo` (`id`, `akun`, `kelompok`, `jenis_akun`, `objek`, `rincia
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `analisa_rab`
+-- Table structure for table `analisa_rab`
 --
 
 CREATE TABLE `analisa_rab` (
@@ -4425,7 +4425,7 @@ CREATE TABLE `analisa_rab` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `anggaran_copy_log`
+-- Table structure for table `anggaran_copy_log`
 --
 
 CREATE TABLE `anggaran_copy_log` (
@@ -4441,7 +4441,7 @@ CREATE TABLE `anggaran_copy_log` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `anggaran_perubahan_template`
+-- Table structure for table `anggaran_perubahan_template`
 --
 
 CREATE TABLE `anggaran_perubahan_template` (
@@ -4500,7 +4500,7 @@ CREATE TABLE `anggaran_perubahan_template` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `anggaran_program_renstra_neo`
+-- Table structure for table `anggaran_program_renstra_neo`
 --
 
 CREATE TABLE `anggaran_program_renstra_neo` (
@@ -4520,7 +4520,7 @@ CREATE TABLE `anggaran_program_renstra_neo` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `anggaran_template`
+-- Table structure for table `anggaran_template`
 --
 
 CREATE TABLE `anggaran_template` (
@@ -4569,7 +4569,7 @@ CREATE TABLE `anggaran_template` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `anggaran_workflow_log`
+-- Table structure for table `anggaran_workflow_log`
 --
 
 CREATE TABLE `anggaran_workflow_log` (
@@ -4585,7 +4585,7 @@ CREATE TABLE `anggaran_workflow_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data untuk tabel `anggaran_workflow_log`
+-- Dumping data for table `anggaran_workflow_log`
 --
 
 INSERT INTO `anggaran_workflow_log` (`id`, `source_table`, `target_table`, `tahun`, `kd_wilayah`, `kd_opd`, `jumlah_data`, `username`, `tgl_copy`) VALUES
@@ -4605,7 +4605,7 @@ INSERT INTO `anggaran_workflow_log` (`id`, `source_table`, `target_table`, `tahu
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `aset_neo`
+-- Table structure for table `aset_neo`
 --
 
 CREATE TABLE `aset_neo` (
@@ -4632,7 +4632,7 @@ CREATE TABLE `aset_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `aset_neo`
+-- Dumping data for table `aset_neo`
 --
 
 INSERT INTO `aset_neo` (`id`, `akun`, `kelompok`, `jenis_akun`, `objek`, `rincian_objek`, `sub_rincian_objek`, `kode`, `uraian`, `belanja`, `pembiayaan`, `peraturan`, `disable`, `aksi`, `keterangan`, `tgl_insert`, `username_insert`, `username_update`, `tgl_update`, `is_deleted`) VALUES
@@ -8688,7 +8688,7 @@ INSERT INTO `aset_neo` (`id`, `akun`, `kelompok`, `jenis_akun`, `objek`, `rincia
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `cache_schema_naskah`
+-- Table structure for table `cache_schema_naskah`
 --
 
 CREATE TABLE `cache_schema_naskah` (
@@ -8699,7 +8699,7 @@ CREATE TABLE `cache_schema_naskah` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `cache_schema_naskah`
+-- Dumping data for table `cache_schema_naskah`
 --
 
 INSERT INTO `cache_schema_naskah` (`jenis_id`, `schema_version`, `schema_json`, `tgl_insert`) VALUES
@@ -8731,7 +8731,7 @@ INSERT INTO `cache_schema_naskah` (`jenis_id`, `schema_version`, `schema_json`, 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `cuti_pegawai_neo`
+-- Table structure for table `cuti_pegawai_neo`
 --
 
 CREATE TABLE `cuti_pegawai_neo` (
@@ -8758,7 +8758,7 @@ CREATE TABLE `cuti_pegawai_neo` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `daftar_paket_neo`
+-- Table structure for table `daftar_paket_neo`
 --
 
 CREATE TABLE `daftar_paket_neo` (
@@ -8832,7 +8832,7 @@ CREATE TABLE `daftar_paket_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `daftar_paket_neo`
+-- Dumping data for table `daftar_paket_neo`
 --
 
 INSERT INTO `daftar_paket_neo` (`id`, `kd_rup`, `kd_paket`, `kd_wilayah`, `kd_opd`, `tahun`, `sumber_tahap`, `anggaran_id`, `uraian`, `id_uraian`, `kd_sub_keg`, `volume`, `satuan`, `harga_satuan`, `jumlah`, `pagu`, `metode_pengadaan`, `metode_pemilihan`, `pengadaan_penyedia`, `jns_kontrak`, `renc_output`, `output`, `id_rekanan`, `nama_rekanan`, `nama_ppk`, `nip_ppk`, `nama_pptk`, `waktu_pelaksanaan`, `waktu_pemeliharaan`, `nip_pptk`, `tgl_kontrak`, `no_kontrak`, `tgl_persiapan_kont`, `no_persiapan_kont`, `tgl_spmk`, `no_spmk`, `addendum`, `tgl_undangan`, `no_undangan`, `tgl_penawaran`, `no_penawaran`, `tgl_nego`, `no_nego`, `tgl_sppbj`, `no_sppbj`, `tgl_pho`, `no_pho`, `tgl_fho`, `no_fho`, `username_insert`, `tgl_insert`, `tgl_update`, `username_update`, `keterangan`, `file_kontrak`, `file_addendum`, `file_pho`, `file_fho`, `file`, `file_laporan`, `file_dokumentasi0`, `file_dokumentasi50`, `file_dokumentasi100`, `disable`, `setujui`, `kunci`, `is_deleted`) VALUES
@@ -8842,7 +8842,7 @@ INSERT INTO `daftar_paket_neo` (`id`, `kd_rup`, `kd_paket`, `kd_wilayah`, `kd_op
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `daftar_realisasi_neo`
+-- Table structure for table `daftar_realisasi_neo`
 --
 
 CREATE TABLE `daftar_realisasi_neo` (
@@ -8881,7 +8881,7 @@ CREATE TABLE `daftar_realisasi_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `daftar_realisasi_neo`
+-- Dumping data for table `daftar_realisasi_neo`
 --
 
 INSERT INTO `daftar_realisasi_neo` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `kd_sub_keg`, `kd_akun`, `id_paket`, `kontrak_id`, `rab_id`, `ket_paket`, `id_uraian_paket`, `ket_uraian_paket`, `id_dok_anggaran`, `dok`, `vol`, `jumlah`, `tanggal`, `periode`, `progress_fisik`, `progress_keuangan`, `uraian_progress`, `nomor_bukti`, `file`, `username_insert`, `username_update`, `tgl_insert`, `tgl_update`, `keterangan`, `disable`, `is_deleted`, `setujui`, `kunci`) VALUES
@@ -8894,7 +8894,7 @@ INSERT INTO `daftar_realisasi_neo` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `kd_s
 (7, '2026', '76.01', '1.03.0.00.0.00.01.0000', 'TRACE.PH15.5', '5.1.02.02.05.0044', 1, 5, NULL, 'TRACE_TEST Paket A', 1, 'Termin I', 6, 'dppa', 1.000000000000, 47250000.000000000000, '2026-02-01', 1, 50.00, 0.00, NULL, 'TRACE/REAL/PH29/5', NULL, 'TRACE_PHASE29', NULL, '2026-08-31 11:24:56', '2026-08-31 11:24:56', 'TRACE_TEST Phase 29', 0, 0, 1, 1);
 
 --
--- Trigger `daftar_realisasi_neo`
+-- Triggers `daftar_realisasi_neo`
 --
 DELIMITER $$
 CREATE TRIGGER `trg_realisasi_validate_insert` BEFORE INSERT ON `daftar_realisasi_neo` FOR EACH ROW BEGIN
@@ -8921,7 +8921,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `daftar_uraian_paket`
+-- Table structure for table `daftar_uraian_paket`
 --
 
 CREATE TABLE `daftar_uraian_paket` (
@@ -8949,7 +8949,7 @@ CREATE TABLE `daftar_uraian_paket` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `daftar_uraian_paket`
+-- Dumping data for table `daftar_uraian_paket`
 --
 
 INSERT INTO `daftar_uraian_paket` (`id`, `id_paket`, `id_dok_anggaran`, `dok`, `tahun`, `kd_wilayah`, `kd_opd`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `jumlah_pagu`, `jumlah_kontrak`, `vol_kontrak`, `sat_kontrak`, `realisasi_vol`, `realisasi_jumlah`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
@@ -8959,7 +8959,7 @@ INSERT INTO `daftar_uraian_paket` (`id`, `id_paket`, `id_dok_anggaran`, `dok`, `
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `db_asn_pemda_neo`
+-- Table structure for table `db_asn_pemda_neo`
 --
 
 CREATE TABLE `db_asn_pemda_neo` (
@@ -9075,7 +9075,7 @@ CREATE TABLE `db_asn_pemda_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `db_asn_pemda_neo`
+-- Dumping data for table `db_asn_pemda_neo`
 --
 
 INSERT INTO `db_asn_pemda_neo` (`id`, `kd_wilayah`, `kd_opd`, `nama`, `gelar_depan`, `gelar`, `nip`, `t4_lahir`, `tgl_lahir`, `file_akta_lahir`, `golongan`, `ruang`, `agama`, `kelamin`, `jenis_kepeg`, `status_kepeg`, `jabatan`, `id_jabatan`, `no_ktp`, `file_ktp`, `no_kk`, `tgl_kk`, `file_kk`, `npwp`, `file_npwp`, `alamat`, `kontak_person`, `email`, `status`, `no_buku_nikah`, `tgl_nikah`, `file_buku_nikah`, `nama_anak`, `nik_anak`, `nama_ayah`, `nama_ibu`, `nama_pasangan`, `no_karpeg`, `tgl_karpeg`, `file_karpeg`, `no_taspen`, `tgl_taspen`, `no_karsi_karsu`, `tgl_karsi_karsu`, `file_karsi_karsu`, `nmr_sk_terakhir`, `tgl_tmt_akhir`, `pj_sk_terakhir`, `nmr_sk_cpns`, `tgl_sk_cpns`, `pj_sk_cpns`, `nmr_sk_pns`, `tgl_sk_pns`, `pj_sk_pns`, `sk_pangkat_terakhir`, `tgl_sk_terakhir`, `pend_sekolah_sd`, `pend_ijasah_sd`, `pend_tgl_tmt_sd`, `pend_t4_sd`, `pend_file_sd`, `pend_sekolah_smp`, `pend_ijasah_smp`, `pend_tgl_tmt_smp`, `pend_t4_smp`, `pend_file_smp`, `pend_sekolah_smu`, `pend_ijasah_smu`, `pend_tgl_tmt_smu`, `pend_t4_smu`, `pend_file_smu`, `pend_sekolah_s1`, `pend_ijasah_s1`, `pend_tgl_tmt_s1`, `pend_t4_s1`, `pend_file_s1`, `pend_sekolah_s2`, `pend_ijasah_s2`, `pend_tgl_tmt_s2`, `pend_t4_s2`, `pend_file_s2`, `pend_sekolah_s3`, `pend_ijasah_s3`, `pend_tgl_tmt_s3`, `pend_t4_s3`, `pend_file_s3`, `pend_sekolah_akhir`, `pend_ijasah_akhir`, `pend_tgl_tmt_akhir`, `pend_t4_akhir`, `pend_file_akhir`, `file_photo`, `gapok`, `aktif`, `no_urut`, `unit_kerja`, `no_rekening`, `nama_bank`, `urutan`, `kelompok`, `suka`, `follow`, `keterangan`, `disable`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`, `is_deleted`) VALUES
@@ -9197,7 +9197,7 @@ INSERT INTO `db_asn_pemda_neo` (`id`, `kd_wilayah`, `kd_opd`, `nama`, `gelar_dep
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `dokumen_pegawai_neo`
+-- Table structure for table `dokumen_pegawai_neo`
 --
 
 CREATE TABLE `dokumen_pegawai_neo` (
@@ -9224,7 +9224,7 @@ CREATE TABLE `dokumen_pegawai_neo` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `dpa_neo`
+-- Table structure for table `dpa_neo`
 --
 
 CREATE TABLE `dpa_neo` (
@@ -9273,7 +9273,7 @@ CREATE TABLE `dpa_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `dpa_neo`
+-- Dumping data for table `dpa_neo`
 --
 
 INSERT INTO `dpa_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -9285,7 +9285,7 @@ INSERT INTO `dpa_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`
 (6, 'rka_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 5', 'non_paket', NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 105000000.0000, 1, 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 1, 0, '2026-08-31 18:12:10', NULL, 'TRACE_PHASE15', NULL);
 
 --
--- Trigger `dpa_neo`
+-- Triggers `dpa_neo`
 --
 DELIMITER $$
 CREATE TRIGGER `trg_dpa_contract_guard_delete` BEFORE DELETE ON `dpa_neo` FOR EACH ROW BEGIN
@@ -9320,7 +9320,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `dppa_neo`
+-- Table structure for table `dppa_neo`
 --
 
 CREATE TABLE `dppa_neo` (
@@ -9379,7 +9379,7 @@ CREATE TABLE `dppa_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `dppa_neo`
+-- Dumping data for table `dppa_neo`
 --
 
 INSERT INTO `dppa_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga_awal`, `id_standar_harga_awal`, `komponen_awal`, `spesifikasi_awal`, `tkdn_awal`, `pajak_awal`, `harga_satuan_awal`, `volume_awal`, `jumlah_awal`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `status_perubahan`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -9394,7 +9394,7 @@ INSERT INTO `dppa_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd
 (9, 'dpa_neo', 6, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'TRACE.PH15.5', '5.1.02.02.05.0044', NULL, 'belanja_operasi', 'Belanja terstandar sub kegiatan 5', 'non_paket', NULL, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, 1000.0000, 105000000.0000, 'ssh', 30, 'Komponen SSH Phase 15', 'A4 80 gsm', NULL, NULL, 75000.0000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1000.0000, 105000000.0000, 1, 'awal', 'TRACE_TEST Phase 15 Sub Kegiatan 5', 0, 0, 0, 0, '2026-09-01 09:09:48', NULL, 'nabiila', NULL);
 
 --
--- Trigger `dppa_neo`
+-- Triggers `dppa_neo`
 --
 DELIMITER $$
 CREATE TRIGGER `trg_dppa_contract_guard_delete` BEFORE DELETE ON `dppa_neo` FOR EACH ROW BEGIN
@@ -9429,7 +9429,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `evaluasi_renja_neo`
+-- Table structure for table `evaluasi_renja_neo`
 --
 
 CREATE TABLE `evaluasi_renja_neo` (
@@ -9457,12 +9457,12 @@ CREATE TABLE `evaluasi_renja_neo` (
   `tgl_update` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL,
   `is_deleted` tinyint(4) NOT NULL DEFAULT 0
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `group_rekap_akun`
+-- Table structure for table `group_rekap_akun`
 --
 
 CREATE TABLE `group_rekap_akun` (
@@ -9482,7 +9482,7 @@ CREATE TABLE `group_rekap_akun` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `group_sub_kegiatan`
+-- Table structure for table `group_sub_kegiatan`
 --
 
 CREATE TABLE `group_sub_kegiatan` (
@@ -9507,7 +9507,7 @@ CREATE TABLE `group_sub_kegiatan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `group_sub_kegiatan`
+-- Dumping data for table `group_sub_kegiatan`
 --
 
 INSERT INTO `group_sub_kegiatan` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `nama_sub_keg`, `output`, `satuan_output`, `batas_anggaran`, `tahap`, `total_anggaran`, `disable`, `setujui`, `tanggal_setujui`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
@@ -9516,7 +9516,7 @@ INSERT INTO `group_sub_kegiatan` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `halaman_berita`
+-- Table structure for table `halaman_berita`
 --
 
 CREATE TABLE `halaman_berita` (
@@ -9538,16 +9538,17 @@ CREATE TABLE `halaman_berita` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `halaman_berita`
+-- Dumping data for table `halaman_berita`
 --
 
 INSERT INTO `halaman_berita` (`id`, `kd_wilayah`, `kd_opd`, `judul`, `slug`, `jenis_halaman`, `aktif`, `konten`, `gambar`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
-(1, '76.01', '1.03.0.00.0.00.01.0000', 'judul', '', 'berita', 1, '  Tutup ', '', 'keterangan', '2026-03-22 09:49:59', 'inayah', '2026-03-23 01:44:32', 'inayah', 0);
+(1, '76.01', '0', 'judul', 'judul', 'berita', 1, 'Tutup', '', 'keterangan', '2026-03-22 09:49:59', 'inayah', '2026-09-05 00:08:48', 'demo_super_admin', 0),
+(3, '76.01', '0', 'berita1', 'berita1', 'berita', 1, 'MODE: TRACE ABSOLUTEScope: file /mnt/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi, Kolom 1Kolom 2Kolom 3abBuka aplikasi Activity Monitor (bisa dicari lewat Finder &gt; Applications &gt; Utilities).Di kolom pencarian kanan atas Activity Monitor, ketik spotlight.Anda akan melihat proses bernama Spotlight atau spotlightknowledged.Klik proses tersebut, lalu klik tombol X di bagian atas jendela, dan pilih Force Quit.Proses ini akan otomatis berjalan ulang dengan bersih, dan biasanya Spotlight langsung aktif kembali.[1, 2]', NULL, 'berita', '2026-09-05 00:06:04', 'nabiila', '2026-09-05 00:38:39', 'demo_super_admin', 0);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `import_logs`
+-- Table structure for table `import_logs`
 --
 
 CREATE TABLE `import_logs` (
@@ -9567,7 +9568,7 @@ CREATE TABLE `import_logs` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `indikator_program_renstra_neo`
+-- Table structure for table `indikator_program_renstra_neo`
 --
 
 CREATE TABLE `indikator_program_renstra_neo` (
@@ -9592,7 +9593,7 @@ CREATE TABLE `indikator_program_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `indikator_program_renstra_neo`
+-- Dumping data for table `indikator_program_renstra_neo`
 --
 
 INSERT INTO `indikator_program_renstra_neo` (`id`, `program_id`, `nama_indikator`, `satuan`, `baseline`, `target_t1`, `target_t2`, `target_t3`, `target_t4`, `target_t5`, `target_akhir`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9601,7 +9602,7 @@ INSERT INTO `indikator_program_renstra_neo` (`id`, `program_id`, `nama_indikator
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `indikator_sasaran_renstra_neo`
+-- Table structure for table `indikator_sasaran_renstra_neo`
 --
 
 CREATE TABLE `indikator_sasaran_renstra_neo` (
@@ -9626,7 +9627,7 @@ CREATE TABLE `indikator_sasaran_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `indikator_sasaran_renstra_neo`
+-- Dumping data for table `indikator_sasaran_renstra_neo`
 --
 
 INSERT INTO `indikator_sasaran_renstra_neo` (`id`, `sasaran_id`, `nama_indikator`, `satuan`, `baseline`, `target_t1`, `target_t2`, `target_t3`, `target_t4`, `target_t5`, `target_akhir`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9636,7 +9637,7 @@ INSERT INTO `indikator_sasaran_renstra_neo` (`id`, `sasaran_id`, `nama_indikator
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `kd_wilayah_neo`
+-- Table structure for table `kd_wilayah_neo`
 --
 
 CREATE TABLE `kd_wilayah_neo` (
@@ -9657,7 +9658,7 @@ CREATE TABLE `kd_wilayah_neo` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `kegiatan_renstra_neo`
+-- Table structure for table `kegiatan_renstra_neo`
 --
 
 CREATE TABLE `kegiatan_renstra_neo` (
@@ -9675,7 +9676,7 @@ CREATE TABLE `kegiatan_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `kegiatan_renstra_neo`
+-- Dumping data for table `kegiatan_renstra_neo`
 --
 
 INSERT INTO `kegiatan_renstra_neo` (`id`, `program_id`, `kode_kegiatan`, `uraian`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9684,7 +9685,7 @@ INSERT INTO `kegiatan_renstra_neo` (`id`, `program_id`, `kode_kegiatan`, `uraian
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `kontrak_dokumen_neo`
+-- Table structure for table `kontrak_dokumen_neo`
 --
 
 CREATE TABLE `kontrak_dokumen_neo` (
@@ -9711,16 +9712,17 @@ CREATE TABLE `kontrak_dokumen_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `kontrak_dokumen_neo`
+-- Dumping data for table `kontrak_dokumen_neo`
 --
 
 INSERT INTO `kontrak_dokumen_neo` (`id`, `kontrak_id`, `jenis_dokumen`, `nomor_dokumen`, `tanggal_dokumen`, `judul`, `nama_file_asli`, `path_file`, `mime_type`, `ukuran`, `versi`, `keterangan`, `kd_wilayah`, `kd_opd`, `tahun`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
-(1, 1, 'LAINNYA', NULL, NULL, 'QA lifecycle', 'qa.txt', 'storage/uploads/qa/contract-delete-026fec18.txt', 'text/plain', 7, 1, NULL, '76.01', '1.03.0.00.0.00.01.0000', '2026', '2026-09-01 16:09:54', 'PHASE32', '2026-09-01 08:09:54', 'nabiila', 1);
+(1, 1, 'LAINNYA', NULL, NULL, 'QA lifecycle', 'qa.txt', 'storage/uploads/qa/contract-delete-026fec18.txt', 'text/plain', 7, 1, NULL, '76.01', '1.03.0.00.0.00.01.0000', '2026', '2026-09-01 16:09:54', 'PHASE32', '2026-09-01 08:09:54', 'nabiila', 1),
+(2, 1, 'LAINNYA', NULL, NULL, 'QA lifecycle', 'qa.txt', 'storage/uploads/qa/contract-delete-c49a5033.txt', 'text/plain', 7, 1, NULL, '76.01', '1.03.0.00.0.00.01.0000', '2026', '2026-09-05 11:18:13', 'PHASE32', '2026-09-05 03:18:13', 'nabiila', 1);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `kontrak_item_neo`
+-- Table structure for table `kontrak_item_neo`
 --
 
 CREATE TABLE `kontrak_item_neo` (
@@ -9744,7 +9746,7 @@ CREATE TABLE `kontrak_item_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data untuk tabel `kontrak_item_neo`
+-- Dumping data for table `kontrak_item_neo`
 --
 
 INSERT INTO `kontrak_item_neo` (`id`, `kontrak_id`, `tahap`, `anggaran_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `uraian`, `pagu`, `nilai_kontrak`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9755,7 +9757,7 @@ INSERT INTO `kontrak_item_neo` (`id`, `kontrak_id`, `tahap`, `anggaran_id`, `kd_
 (5, 5, 'dpa', 6, '76.01', '1.03.0.00.0.00.01.0000', 2026, 'TRACE.PH15.5', '5.1.02.02.05.0044', 'Belanja terstandar sub kegiatan 5', 105000000.00, 94500000.00, '2026-09-01 11:11:14', 'TRACE_PHASE29', NULL, NULL, 0);
 
 --
--- Trigger `kontrak_item_neo`
+-- Triggers `kontrak_item_neo`
 --
 DELIMITER $$
 CREATE TRIGGER `trg_kontrak_item_validate_insert` BEFORE INSERT ON `kontrak_item_neo` FOR EACH ROW BEGIN
@@ -9784,7 +9786,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `kontrak_jadwal_neo`
+-- Table structure for table `kontrak_jadwal_neo`
 --
 
 CREATE TABLE `kontrak_jadwal_neo` (
@@ -9810,7 +9812,7 @@ CREATE TABLE `kontrak_jadwal_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `kontrak_jadwal_neo`
+-- Dumping data for table `kontrak_jadwal_neo`
 --
 
 INSERT INTO `kontrak_jadwal_neo` (`id`, `kontrak_id`, `rab_id`, `minggu_ke`, `tanggal_mulai`, `tanggal_selesai`, `bobot_rencana`, `bobot_realisasi`, `rencana_kumulatif`, `realisasi_kumulatif`, `keterangan`, `kd_wilayah`, `kd_opd`, `tahun`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9820,7 +9822,7 @@ INSERT INTO `kontrak_jadwal_neo` (`id`, `kontrak_id`, `rab_id`, `minggu_ke`, `ta
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `kontrak_neo`
+-- Table structure for table `kontrak_neo`
 --
 
 CREATE TABLE `kontrak_neo` (
@@ -9867,7 +9869,7 @@ CREATE TABLE `kontrak_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 --
--- Dumping data untuk tabel `kontrak_neo`
+-- Dumping data for table `kontrak_neo`
 --
 
 INSERT INTO `kontrak_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `anggaran_id`, `paket_id`, `rekanan_id`, `ppk_id`, `pptk_id`, `nama_sub_keg`, `tahap`, `total_anggaran`, `nilai_kontrak`, `nomor_kontrak`, `tanggal_kontrak`, `uraian_kontrak`, `nomor_spk`, `tanggal_spk`, `nomor_spmk`, `tanggal_spmk`, `waktu_pelaksanaan`, `tanggal_mulai`, `tanggal_selesai`, `nama_ppk`, `nama_penyedia`, `nama_tim_teknis`, `tanggal_pho`, `tanggal_fho`, `tanggal_serah_terima`, `status_kontrak`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `disable`, `kunci`, `setujui`, `is_deleted`, `keterangan`) VALUES
@@ -9880,7 +9882,7 @@ INSERT INTO `kontrak_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `kop_surat_neo`
+-- Table structure for table `kop_surat_neo`
 --
 
 CREATE TABLE `kop_surat_neo` (
@@ -9909,7 +9911,7 @@ CREATE TABLE `kop_surat_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `kop_surat_neo`
+-- Dumping data for table `kop_surat_neo`
 --
 
 INSERT INTO `kop_surat_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `nama_pemerintah`, `nama_opd`, `alamat`, `telepon`, `email`, `website`, `kode_pos`, `logo_kiri`, `logo_kanan`, `gambar_kop`, `gunakan_gambar_kop`, `warna_garis`, `aktif`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -9918,7 +9920,7 @@ INSERT INTO `kop_surat_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `nama_pemeri
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `log_activity`
+-- Table structure for table `log_activity`
 --
 
 CREATE TABLE `log_activity` (
@@ -9935,7 +9937,7 @@ CREATE TABLE `log_activity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `log_activity`
+-- Dumping data for table `log_activity`
 --
 
 INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data`, `new_data`, `username`, `ip_address`, `user_agent`, `created_at`) VALUES
@@ -12150,12 +12152,22 @@ INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data
 (2191, 'master_biaya', 130, 'delete', '{\"id\":130,\"tipe\":\"hspk\",\"kode\":\"TRACE_TEST_PHASE2_HSPK\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST hspk\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
 (2192, 'master_biaya', 131, 'delete', '{\"id\":131,\"tipe\":\"asb\",\"kode\":\"TRACE_TEST_PHASE2_ASB\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST asb\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
 (2193, 'master_biaya', 132, 'delete', '{\"id\":132,\"tipe\":\"sbu\",\"kode\":\"TRACE_TEST_PHASE2_SBU\",\"kode_aset\":\"1\",\"kelompok_barang\":\"TRACE_TEST\",\"uraian\":\"TRACE TEST sbu\",\"spesifikasi\":\"Spesifikasi uji\",\"satuan_id\":1,\"harga\":\"150000.75\",\"tkdn\":\"40.00\",\"keterangan\":null,\"kd_wilayah\":\"76.01\",\"tahun\":2026,\"peraturan_id\":4,\"disable\":0,\"is_deleted\":0,\"tgl_insert\":\"2026-09-01 03:12:56\",\"username_insert\":\"phase2_test\",\"tgl_update\":\"2026-09-01 03:12:56\",\"username_update\":\"phase2_test\"}', NULL, 'phase2_test', NULL, NULL, '2026-09-01 03:12:56'),
-(2194, 'db_asn_pemda_neo', 59, 'update', '{\"id\":59,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"nama\":\"a. pajarungi\",\"gelar_depan\":\"\",\"gelar\":\"\",\"nip\":\"197707242012121003\",\"t4_lahir\":\"lariang\",\"tgl_lahir\":\"1997-07-24\",\"file_akta_lahir\":null,\"golongan\":\"2\",\"ruang\":\"b\",\"agama\":\"islam\",\"kelamin\":\"pria\",\"jenis_kepeg\":\"pnsd2\",\"status_kepeg\":\"peg_tetap\",\"jabatan\":\"Pengadministrasi Umum\",\"id_jabatan\":null,\"no_ktp\":\"7601022407770002\",\"file_ktp\":null,\"no_kk\":null,\"tgl_kk\":null,\"file_kk\":null,\"npwp\":\"550865422814000\",\"file_npwp\":null,\"alamat\":\"Jl. Muh Hatta\",\"kontak_person\":\"082290840790\",\"email\":\"andipajarungi1977pu@gmail.com\",\"status\":\"menikah\",\"no_buku_nikah\":\"kk.31.05.01\\/pw.01\\/231\\/2011\",\"tgl_nikah\":\"2011-11-16\",\"file_buku_nikah\":null,\"nama_anak\":\"andi kipra;andi kasmin;andi nur handalani;andi alif ramadhan\",\"nik_anak\":\"\",\"nama_ayah\":\"Andi Sabbi-\",\"nama_ibu\":\"Andi Ampa\",\"nama_pasangan\":\"Sunarti\",\"no_karpeg\":\"A 04001202\",\"tgl_karpeg\":\"2015-06-04\",\"file_karpeg\":null,\"no_taspen\":\"197707242012121003\",\"tgl_taspen\":\"2013-11-07\",\"no_karsi_karsu\":\"\",\"tgl_karsi_karsu\":\"1904-01-01\",\"file_karsi_karsu\":null,\"nmr_sk_terakhir\":\"823.2\\/312\\/BKPPD\",\"tgl_tmt_akhir\":\"2024-01-01\",\"pj_sk_terakhir\":\"Bupati Pasangkayu\",\"nmr_sk_cpns\":\"813.2\\/031\\/BKDD\",\"tgl_sk_cpns\":\"2013-03-04\",\"pj_sk_cpns\":\"\",\"nmr_sk_pns\":\"821.12\\/597\\/BKDD\",\"tgl_sk_pns\":\"2014-03-28\",\"pj_sk_pns\":\"\",\"sk_pangkat_terakhir\":\"\",\"tgl_sk_terakhir\":\"1970-01-01\",\"pend_sekolah_sd\":\"SD Inpres Kalukombeo\",\"pend_ijasah_sd\":\"Hilang\",\"pend_tgl_tmt_sd\":\"1904-01-01\",\"pend_t4_sd\":\"\",\"pend_file_sd\":null,\"pend_sekolah_smp\":\"SMPN 1 Banawa\",\"pend_ijasah_smp\":\"Hilang\",\"pend_tgl_tmt_smp\":\"1904-01-01\",\"pend_t4_smp\":\"\",\"pend_file_smp\":null,\"pend_sekolah_smu\":\"SMA Paket C\",\"pend_ijasah_smu\":\"\",\"pend_tgl_tmt_smu\":\"1904-01-01\",\"pend_t4_smu\":\"\",\"pend_file_smu\":null,\"pend_sekolah_s1\":null,\"pend_ijasah_s1\":null,\"pend_tgl_tmt_s1\":null,\"pend_t4_s1\":null,\"pend_file_s1\":null,\"pend_sekolah_s2\":null,\"pend_ijasah_s2\":null,\"pend_tgl_tmt_s2\":null,\"pend_t4_s2\":null,\"pend_file_s2\":null,\"pend_sekolah_s3\":null,\"pend_ijasah_s3\":null,\"pend_tgl_tmt_s3\":null,\"pend_t4_s3\":null,\"pend_file_s3\":null,\"pend_sekolah_akhir\":\"Mamuju Utara\",\"pend_ijasah_akhir\":\"33PC0500017\",\"pend_tgl_tmt_akhir\":\"2008-07-01\",\"pend_t4_akhir\":\"IPS\",\"pend_file_akhir\":null,\"file_photo\":null,\"gapok\":null,\"aktif\":null,\"no_urut\":null,\"unit_kerja\":null,\"no_rekening\":null,\"nama_bank\":null,\"urutan\":null,\"kelompok\":4,\"suka\":null,\"follow\":null,\"keterangan\":\"\",\"disable\":0,\"tgl_insert\":\"2024-04-06 16:23:40\",\"tgl_update\":\"2026-02-19 10:06:39\",\"username_insert\":\"nabiila\",\"username_update\":\"nabiila\",\"is_deleted\":0}', '{\"tgl_lahir\":\"1997-07-24 00:00:00\",\"tgl_update\":\"2026-09-02 21:52:23\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6.2 Safari/605.1.15', '2026-09-02 21:52:23');
+(2194, 'db_asn_pemda_neo', 59, 'update', '{\"id\":59,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"nama\":\"a. pajarungi\",\"gelar_depan\":\"\",\"gelar\":\"\",\"nip\":\"197707242012121003\",\"t4_lahir\":\"lariang\",\"tgl_lahir\":\"1997-07-24\",\"file_akta_lahir\":null,\"golongan\":\"2\",\"ruang\":\"b\",\"agama\":\"islam\",\"kelamin\":\"pria\",\"jenis_kepeg\":\"pnsd2\",\"status_kepeg\":\"peg_tetap\",\"jabatan\":\"Pengadministrasi Umum\",\"id_jabatan\":null,\"no_ktp\":\"7601022407770002\",\"file_ktp\":null,\"no_kk\":null,\"tgl_kk\":null,\"file_kk\":null,\"npwp\":\"550865422814000\",\"file_npwp\":null,\"alamat\":\"Jl. Muh Hatta\",\"kontak_person\":\"082290840790\",\"email\":\"andipajarungi1977pu@gmail.com\",\"status\":\"menikah\",\"no_buku_nikah\":\"kk.31.05.01\\/pw.01\\/231\\/2011\",\"tgl_nikah\":\"2011-11-16\",\"file_buku_nikah\":null,\"nama_anak\":\"andi kipra;andi kasmin;andi nur handalani;andi alif ramadhan\",\"nik_anak\":\"\",\"nama_ayah\":\"Andi Sabbi-\",\"nama_ibu\":\"Andi Ampa\",\"nama_pasangan\":\"Sunarti\",\"no_karpeg\":\"A 04001202\",\"tgl_karpeg\":\"2015-06-04\",\"file_karpeg\":null,\"no_taspen\":\"197707242012121003\",\"tgl_taspen\":\"2013-11-07\",\"no_karsi_karsu\":\"\",\"tgl_karsi_karsu\":\"1904-01-01\",\"file_karsi_karsu\":null,\"nmr_sk_terakhir\":\"823.2\\/312\\/BKPPD\",\"tgl_tmt_akhir\":\"2024-01-01\",\"pj_sk_terakhir\":\"Bupati Pasangkayu\",\"nmr_sk_cpns\":\"813.2\\/031\\/BKDD\",\"tgl_sk_cpns\":\"2013-03-04\",\"pj_sk_cpns\":\"\",\"nmr_sk_pns\":\"821.12\\/597\\/BKDD\",\"tgl_sk_pns\":\"2014-03-28\",\"pj_sk_pns\":\"\",\"sk_pangkat_terakhir\":\"\",\"tgl_sk_terakhir\":\"1970-01-01\",\"pend_sekolah_sd\":\"SD Inpres Kalukombeo\",\"pend_ijasah_sd\":\"Hilang\",\"pend_tgl_tmt_sd\":\"1904-01-01\",\"pend_t4_sd\":\"\",\"pend_file_sd\":null,\"pend_sekolah_smp\":\"SMPN 1 Banawa\",\"pend_ijasah_smp\":\"Hilang\",\"pend_tgl_tmt_smp\":\"1904-01-01\",\"pend_t4_smp\":\"\",\"pend_file_smp\":null,\"pend_sekolah_smu\":\"SMA Paket C\",\"pend_ijasah_smu\":\"\",\"pend_tgl_tmt_smu\":\"1904-01-01\",\"pend_t4_smu\":\"\",\"pend_file_smu\":null,\"pend_sekolah_s1\":null,\"pend_ijasah_s1\":null,\"pend_tgl_tmt_s1\":null,\"pend_t4_s1\":null,\"pend_file_s1\":null,\"pend_sekolah_s2\":null,\"pend_ijasah_s2\":null,\"pend_tgl_tmt_s2\":null,\"pend_t4_s2\":null,\"pend_file_s2\":null,\"pend_sekolah_s3\":null,\"pend_ijasah_s3\":null,\"pend_tgl_tmt_s3\":null,\"pend_t4_s3\":null,\"pend_file_s3\":null,\"pend_sekolah_akhir\":\"Mamuju Utara\",\"pend_ijasah_akhir\":\"33PC0500017\",\"pend_tgl_tmt_akhir\":\"2008-07-01\",\"pend_t4_akhir\":\"IPS\",\"pend_file_akhir\":null,\"file_photo\":null,\"gapok\":null,\"aktif\":null,\"no_urut\":null,\"unit_kerja\":null,\"no_rekening\":null,\"nama_bank\":null,\"urutan\":null,\"kelompok\":4,\"suka\":null,\"follow\":null,\"keterangan\":\"\",\"disable\":0,\"tgl_insert\":\"2024-04-06 16:23:40\",\"tgl_update\":\"2026-02-19 10:06:39\",\"username_insert\":\"nabiila\",\"username_update\":\"nabiila\",\"is_deleted\":0}', '{\"tgl_lahir\":\"1997-07-24 00:00:00\",\"tgl_update\":\"2026-09-02 21:52:23\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6.2 Safari/605.1.15', '2026-09-02 21:52:23'),
+(2195, 'halaman_berita', 1, 'update', '{\"id\":1,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"judul\":\"judul\",\"slug\":\"\",\"jenis_halaman\":\"berita\",\"aktif\":1,\"konten\":\"  Tutup \",\"gambar\":\"\",\"keterangan\":\"keterangan\",\"tgl_insert\":\"2026-03-22 17:49:59\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-03-23 09:44:32\",\"username_update\":\"inayah\",\"is_deleted\":0}', '{\"slug\":\"judul\",\"konten\":\"Tutup\",\"kd_opd\":\"0\",\"tgl_update\":\"2026-09-05 03:36:40\",\"username_update\":\"demo_super_admin\"}', 'demo_super_admin', '127.0.0.1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-09-05 03:36:40'),
+(2196, 'halaman_berita', 1, 'update', '{\"id\":1,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"0\",\"judul\":\"judul\",\"slug\":\"judul\",\"jenis_halaman\":\"berita\",\"aktif\":1,\"konten\":\"Tutup\",\"gambar\":\"\",\"keterangan\":\"keterangan\",\"tgl_insert\":\"2026-03-22 17:49:59\",\"username_insert\":\"inayah\",\"tgl_update\":\"2026-09-05 03:36:40\",\"username_update\":\"demo_super_admin\",\"is_deleted\":0}', '{\"tgl_update\":\"2026-09-05 08:08:48\"}', 'demo_super_admin', '127.0.0.1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36', '2026-09-05 08:08:48'),
+(2197, 'halaman_berita', 3, 'update', '{\"id\":3,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"judul\":\"berita1\",\"slug\":\"berita1\",\"jenis_halaman\":\"berita\",\"aktif\":1,\"konten\":\"MODE: TRACE ABSOLUTEScope: file \\/mnt\\/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi, contoh fiktif, atau solusi generik.Langkah:1. Baca semua file yang terkait langsung maupun tidak langsung dengan masalah.2. Petakan alur eksekusi nyata dan relasi antar file\\/state\\/service\\/UI.3. Identifikasi akar masalah berdasarkan kode aktual.4. Sebelum mengubah kode, telusuri semua caller, dependency, shared state, extension, protocol, renderer, dan platform yang memakai kode tersebut.5. Hindari perubahan global jika bug dapat diperbaiki secara lokal. Jangan mengubah shared\\/global behavior hanya untuk menutup satu kasus.6. Setelah setiap perubahan, simulasikan alur fitur yang diperbaiki DAN seluruh fitur terkait yang memakai kode yang sama. Pastikan tidak muncul regresi, perubahan perilaku, UI, state, undo\\/redo, selection, command line, UCS, renderer, atau performa.7. Pertahankan API\\/behavior lama yang tidak berhubungan dengan bug. Jika harus mengubah shared API, periksa dan sesuaikan seluruh pemakainya.8. Ikuti workflow\\/UI SAP2000, AutoCAD\\/Civil 3D, Microsoft Project\\/OmniPlan, Apple Numbers, QGIS\\/ArcGIS Pro; baca dokumentasi resmi bila diperlukan.9. Uji tidak ada error\\/warning baru dan aplikasi tetap berjalan di macOS + iPadOS.10. Jangan menambah beban pada CanvasView GPU\\/CPU, mouse move, hover, selection, zoom, pan, orbit, atau render loop.11. Perbarui Help dan knowledge Agent AI lokal jika fasilitas\\/perilaku berubah.12. Kirim hanya file yang benar-benar berubah dan sebutkan alasan perubahan tiap file.WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Masalah:\",\"gambar\":null,\"keterangan\":null,\"tgl_insert\":\"2026-09-05 08:06:04\",\"username_insert\":\"nabiila\",\"tgl_update\":null,\"username_update\":null,\"is_deleted\":0}', '{\"konten\":\"MODE: TRACE ABSOLUTEScope: file \\/mnt\\/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi, contoh fiktif, atau solusi generik.Langkah:1. Baca semua file yang terkait langsung maupun tidak langsung dengan masalah.2. Petakan alur eksekusi nyata dan relasi antar file\\/state\\/service\\/UI.3. Identifikasi akar masalah berdasarkan kode aktual.4. Sebelum mengubah kode, telusuri semua caller, dependency, shared state, extension, protocol, renderer, dan platform yang memakai kode tersebut.5. Hindari perubahan global jika bug dapat diperbaiki secara lokal. Jangan mengubah shared\\/global behavior hanya untuk menutup satu kasus.6. Setelah setiap perubahan, simulasikan alur fitur yang diperbaiki DAN seluruh fitur terkait yang memakai kode yang sama. Pastikan tidak muncul regresi, perubahan perilaku, UI, state, undo\\/redo, selection, command line, UCS, renderer, atau performa.7. Pertahankan API\\/behavior lama yang tidak berhubungan dengan bug. Jika harus mengubah shared API, periksa dan sesuaikan seluruh pemakainya.8. Ikuti workflow\\/UI SAP2000, AutoCAD\\/Civil 3D, Microsoft Project\\/OmniPlan, Apple Numbers, QGIS\\/ArcGIS Pro; baca dokumentasi resmi bila diperlukan.9. Uji tidak ada error\\/warning baru dan aplikasi tetap berjalan di macOS + iPadOS.10. Jangan menambah beban pada CanvasView GPU\\/CPU, mouse move, hover, selection, zoom, pan, orbit, atau render loop.11. Perbarui Help dan knowledge Agent AI lokal jika fasilitas\\/perilaku berubah.12. Kirim hanya file yang benar-benar berubah dan sebutkan alasan perubahan tiap file.WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Masalah:WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.\",\"tgl_update\":\"2026-09-05 08:11:24\",\"username_update\":\"nabiila\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6.2 Safari/605.1.15', '2026-09-05 08:11:24'),
+(2198, 'halaman_berita', 3, 'update', '{\"id\":3,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"judul\":\"berita1\",\"slug\":\"berita1\",\"jenis_halaman\":\"berita\",\"aktif\":1,\"konten\":\"MODE: TRACE ABSOLUTEScope: file \\/mnt\\/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi, contoh fiktif, atau solusi generik.Langkah:1. Baca semua file yang terkait langsung maupun tidak langsung dengan masalah.2. Petakan alur eksekusi nyata dan relasi antar file\\/state\\/service\\/UI.3. Identifikasi akar masalah berdasarkan kode aktual.4. Sebelum mengubah kode, telusuri semua caller, dependency, shared state, extension, protocol, renderer, dan platform yang memakai kode tersebut.5. Hindari perubahan global jika bug dapat diperbaiki secara lokal. Jangan mengubah shared\\/global behavior hanya untuk menutup satu kasus.6. Setelah setiap perubahan, simulasikan alur fitur yang diperbaiki DAN seluruh fitur terkait yang memakai kode yang sama. Pastikan tidak muncul regresi, perubahan perilaku, UI, state, undo\\/redo, selection, command line, UCS, renderer, atau performa.7. Pertahankan API\\/behavior lama yang tidak berhubungan dengan bug. Jika harus mengubah shared API, periksa dan sesuaikan seluruh pemakainya.8. Ikuti workflow\\/UI SAP2000, AutoCAD\\/Civil 3D, Microsoft Project\\/OmniPlan, Apple Numbers, QGIS\\/ArcGIS Pro; baca dokumentasi resmi bila diperlukan.9. Uji tidak ada error\\/warning baru dan aplikasi tetap berjalan di macOS + iPadOS.10. Jangan menambah beban pada CanvasView GPU\\/CPU, mouse move, hover, selection, zoom, pan, orbit, atau render loop.11. Perbarui Help dan knowledge Agent AI lokal jika fasilitas\\/perilaku berubah.12. Kirim hanya file yang benar-benar berubah dan sebutkan alasan perubahan tiap file.WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Masalah:WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.\",\"gambar\":null,\"keterangan\":null,\"tgl_insert\":\"2026-09-05 08:06:04\",\"username_insert\":\"nabiila\",\"tgl_update\":\"2026-09-05 08:11:24\",\"username_update\":\"nabiila\",\"is_deleted\":0}', '{\"konten\":\"MODE: TRACE ABSOLUTEScope: file \\/mnt\\/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi, contoh fiktif, atau solusi generik.Langkah:1. Baca semua file yang terkait langsung maupun tidak langsung dengan masalah.2. Petakan alur eksekusi nyata dan relasi antar file\\/state\\/service\\/UI.3. Identifikasi akar masalah berdasarkan kode aktual.4. Sebelum mengubah kode, telusuri semua caller, dependency, shared state, extension, protocol, renderer, dan platform yang memakai kode tersebut.5. Hindari perubahan global jika bug dapat diperbaiki secara lokal. Jangan mengubah shared\\/global behavior hanya untuk menutup satu kasus.6. Setelah setiap perubahan, simulasikan alur fitur yang diperbaiki DAN seluruh fitur terkait yang memakai kode yang sama. Pastikan tidak muncul regresi, perubahan perilaku, UI, state, undo\\/redo, selection, command line, UCS, renderer, atau performa.7. Pertahankan API\\/behavior lama yang tidak berhubungan dengan bug. Jika harus mengubah shared API, periksa dan sesuaikan seluruh pemakainya.8. Ikuti workflow\\/UI SAP2000, AutoCAD\\/Civil 3D, Microsoft Project\\/OmniPlan, Apple Numbers, QGIS\\/ArcGIS Pro; baca dokumentasi resmi bila diperlukan.9. Uji tidak ada error\\/warning baru dan aplikasi tetap berjalan di macOS + iPadOS.10. Jangan menambah beban pada CanvasView GPU\\/CPU, mouse move, hover, selection, zoom, pan, orbit, atau render loop.11. Perbarui Help dan knowledge Agent AI lokal jika fasilitas\\/perilaku berubah.12. Kirim hanya file yang benar-benar berubah dan sebutkan alasan perubahan tiap file.WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Masalah:WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Kolom 1Kolom 2Kolom 3\",\"tgl_update\":\"2026-09-05 08:12:17\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6.2 Safari/605.1.15', '2026-09-05 08:12:17');
+INSERT INTO `log_activity` (`id`, `table_name`, `record_id`, `action`, `old_data`, `new_data`, `username`, `ip_address`, `user_agent`, `created_at`) VALUES
+(2199, 'halaman_berita', 3, 'update', '{\"id\":3,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"judul\":\"berita1\",\"slug\":\"berita1\",\"jenis_halaman\":\"berita\",\"aktif\":1,\"konten\":\"MODE: TRACE ABSOLUTEScope: file \\/mnt\\/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi, contoh fiktif, atau solusi generik.Langkah:1. Baca semua file yang terkait langsung maupun tidak langsung dengan masalah.2. Petakan alur eksekusi nyata dan relasi antar file\\/state\\/service\\/UI.3. Identifikasi akar masalah berdasarkan kode aktual.4. Sebelum mengubah kode, telusuri semua caller, dependency, shared state, extension, protocol, renderer, dan platform yang memakai kode tersebut.5. Hindari perubahan global jika bug dapat diperbaiki secara lokal. Jangan mengubah shared\\/global behavior hanya untuk menutup satu kasus.6. Setelah setiap perubahan, simulasikan alur fitur yang diperbaiki DAN seluruh fitur terkait yang memakai kode yang sama. Pastikan tidak muncul regresi, perubahan perilaku, UI, state, undo\\/redo, selection, command line, UCS, renderer, atau performa.7. Pertahankan API\\/behavior lama yang tidak berhubungan dengan bug. Jika harus mengubah shared API, periksa dan sesuaikan seluruh pemakainya.8. Ikuti workflow\\/UI SAP2000, AutoCAD\\/Civil 3D, Microsoft Project\\/OmniPlan, Apple Numbers, QGIS\\/ArcGIS Pro; baca dokumentasi resmi bila diperlukan.9. Uji tidak ada error\\/warning baru dan aplikasi tetap berjalan di macOS + iPadOS.10. Jangan menambah beban pada CanvasView GPU\\/CPU, mouse move, hover, selection, zoom, pan, orbit, atau render loop.11. Perbarui Help dan knowledge Agent AI lokal jika fasilitas\\/perilaku berubah.12. Kirim hanya file yang benar-benar berubah dan sebutkan alasan perubahan tiap file.WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Masalah:WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Kolom 1Kolom 2Kolom 3\",\"gambar\":null,\"keterangan\":null,\"tgl_insert\":\"2026-09-05 08:06:04\",\"username_insert\":\"nabiila\",\"tgl_update\":\"2026-09-05 08:12:17\",\"username_update\":\"nabiila\",\"is_deleted\":0}', '{\"konten\":\"MODE: TRACE ABSOLUTEScope: file \\/mnt\\/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi, contoh fiktif, atau solusi generik.Langkah:1. Baca semua file yang terkait langsung maupun tidak langsung dengan masalah.2. Petakan alur eksekusi nyata dan relasi antar file\\/state\\/service\\/UI.3. Identifikasi akar masalah berdasarkan kode aktual.4. Sebelum mengubah kode, telusuri semua caller, dependency, shared state, extension, protocol, renderer, dan platform yang memakai kode tersebut.5. Hindari perubahan global jika bug dapat diperbaiki secara lokal. Jangan mengubah shared\\/global behavior hanya untuk menutup satu kasus.6. Setelah setiap perubahan, simulasikan alur fitur yang diperbaiki DAN seluruh fitur terkait yang memakai kode yang sama. Pastikan tidak muncul regresi, perubahan perilaku, UI, state, undo\\/redo, selection, command line, UCS, renderer, atau performa.7. Pertahankan API\\/behavior lama yang tidak berhubungan dengan bug. Jika harus mengubah shared API, periksa dan sesuaikan seluruh pemakainya.8. Ikuti workflow\\/UI SAP2000, AutoCAD\\/Civil 3D, Microsoft Project\\/OmniPlan, Apple Numbers, QGIS\\/ArcGIS Pro; baca dokumentasi resmi bila diperlukan.9. Uji tidak ada error\\/warning baru dan aplikasi tetap berjalan di macOS + iPadOS.10. Jangan menambah beban pada CanvasView GPU\\/CPU, mouse move, hover, selection, zoom, pan, orbit, atau render loop.11. Perbarui Help dan knowledge Agent AI lokal jika fasilitas\\/perilaku berubah.12. Kirim hanya file yang benar-benar berubah dan sebutkan alasan perubahan tiap file.WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Masalah:WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Kolom 1Kolom 2Kolom 3Kolom 1Kolom 2Kolom 3halooooeditWAJIB sebelum mengirim patch:Parse\\/build semaksimal yang tersedia.Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.\",\"tgl_update\":\"2026-09-05 08:13:32\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6.2 Safari/605.1.15', '2026-09-05 08:13:32'),
+(2200, 'halaman_berita', 3, 'update', '{\"id\":3,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"judul\":\"berita1\",\"slug\":\"berita1\",\"jenis_halaman\":\"berita\",\"aktif\":1,\"konten\":\"MODE: TRACE ABSOLUTEScope: file \\/mnt\\/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi, contoh fiktif, atau solusi generik.Langkah:1. Baca semua file yang terkait langsung maupun tidak langsung dengan masalah.2. Petakan alur eksekusi nyata dan relasi antar file\\/state\\/service\\/UI.3. Identifikasi akar masalah berdasarkan kode aktual.4. Sebelum mengubah kode, telusuri semua caller, dependency, shared state, extension, protocol, renderer, dan platform yang memakai kode tersebut.5. Hindari perubahan global jika bug dapat diperbaiki secara lokal. Jangan mengubah shared\\/global behavior hanya untuk menutup satu kasus.6. Setelah setiap perubahan, simulasikan alur fitur yang diperbaiki DAN seluruh fitur terkait yang memakai kode yang sama. Pastikan tidak muncul regresi, perubahan perilaku, UI, state, undo\\/redo, selection, command line, UCS, renderer, atau performa.7. Pertahankan API\\/behavior lama yang tidak berhubungan dengan bug. Jika harus mengubah shared API, periksa dan sesuaikan seluruh pemakainya.8. Ikuti workflow\\/UI SAP2000, AutoCAD\\/Civil 3D, Microsoft Project\\/OmniPlan, Apple Numbers, QGIS\\/ArcGIS Pro; baca dokumentasi resmi bila diperlukan.9. Uji tidak ada error\\/warning baru dan aplikasi tetap berjalan di macOS + iPadOS.10. Jangan menambah beban pada CanvasView GPU\\/CPU, mouse move, hover, selection, zoom, pan, orbit, atau render loop.11. Perbarui Help dan knowledge Agent AI lokal jika fasilitas\\/perilaku berubah.12. Kirim hanya file yang benar-benar berubah dan sebutkan alasan perubahan tiap file.WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Masalah:WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Kolom 1Kolom 2Kolom 3Kolom 1Kolom 2Kolom 3halooooeditWAJIB sebelum mengirim patch:Parse\\/build semaksimal yang tersedia.Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.\",\"gambar\":null,\"keterangan\":null,\"tgl_insert\":\"2026-09-05 08:06:04\",\"username_insert\":\"nabiila\",\"tgl_update\":\"2026-09-05 08:13:32\",\"username_update\":\"nabiila\",\"is_deleted\":0}', '{\"konten\":\"MODE: TRACE ABSOLUTEScope: file \\/mnt\\/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi, contoh fiktif, atau solusi generik.Langkah:1. Baca semua file yang terkait langsung maupun tidak langsung dengan masalah.2. Petakan alur eksekusi nyata dan relasi antar file\\/state\\/service\\/UI.3. Identifikasi akar masalah berdasarkan kode aktual.4. Sebelum mengubah kode, telusuri semua caller, dependency, shared state, extension, protocol, renderer, dan platform yang memakai kode tersebut.5. Hindari perubahan global jika bug dapat diperbaiki secara lokal. Jangan mengubah shared\\/global behavior hanya untuk menutup satu kasus.6. Setelah setiap perubahan, simulasikan alur fitur yang diperbaiki DAN seluruh fitur terkait yang memakai kode yang sama. Pastikan tidak muncul regresi, perubahan perilaku, UI, state, undo\\/redo, selection, command line, UCS, renderer, atau performa.7. Pertahankan API\\/behavior lama yang tidak berhubungan dengan bug. Jika harus mengubah shared API, periksa dan sesuaikan seluruh pemakainya.8. Ikuti workflow\\/UI SAP2000, AutoCAD\\/Civil 3D, Microsoft Project\\/OmniPlan, Apple Numbers, QGIS\\/ArcGIS Pro; baca dokumentasi resmi bila diperlukan.9. Uji tidak ada error\\/warning baru dan aplikasi tetap berjalan di macOS + iPadOS.10. Jangan menambah beban pada CanvasView GPU\\/CPU, mouse move, hover, selection, zoom, pan, orbit, atau render loop.11.&nbsp;Perbarui Help dan knowledge&nbsp;Agent AI lokal jika fasilitas\\/perilaku berubah.12.&nbsp;Kirim hanya file yang benar-benar berubah dan sebutkan alasan perubahan tiap file.WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Masalah:WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Kolom 1Kolom 2Kolom 3Kolom 1Kolom 2Kolom 3halooooeditWAJIB sebelum mengirim patch:Parse\\/build semaksimal yang tersedia.Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.\",\"tgl_update\":\"2026-09-05 08:18:16\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6.2 Safari/605.1.15', '2026-09-05 08:18:16'),
+(2201, 'halaman_berita', 3, 'update', '{\"id\":3,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"judul\":\"berita1\",\"slug\":\"berita1\",\"jenis_halaman\":\"berita\",\"aktif\":1,\"konten\":\"MODE: TRACE ABSOLUTEScope: file \\/mnt\\/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi, contoh fiktif, atau solusi generik.Langkah:1. Baca semua file yang terkait langsung maupun tidak langsung dengan masalah.2. Petakan alur eksekusi nyata dan relasi antar file\\/state\\/service\\/UI.3. Identifikasi akar masalah berdasarkan kode aktual.4. Sebelum mengubah kode, telusuri semua caller, dependency, shared state, extension, protocol, renderer, dan platform yang memakai kode tersebut.5. Hindari perubahan global jika bug dapat diperbaiki secara lokal. Jangan mengubah shared\\/global behavior hanya untuk menutup satu kasus.6. Setelah setiap perubahan, simulasikan alur fitur yang diperbaiki DAN seluruh fitur terkait yang memakai kode yang sama. Pastikan tidak muncul regresi, perubahan perilaku, UI, state, undo\\/redo, selection, command line, UCS, renderer, atau performa.7. Pertahankan API\\/behavior lama yang tidak berhubungan dengan bug. Jika harus mengubah shared API, periksa dan sesuaikan seluruh pemakainya.8. Ikuti workflow\\/UI SAP2000, AutoCAD\\/Civil 3D, Microsoft Project\\/OmniPlan, Apple Numbers, QGIS\\/ArcGIS Pro; baca dokumentasi resmi bila diperlukan.9. Uji tidak ada error\\/warning baru dan aplikasi tetap berjalan di macOS + iPadOS.10. Jangan menambah beban pada CanvasView GPU\\/CPU, mouse move, hover, selection, zoom, pan, orbit, atau render loop.11.&nbsp;Perbarui Help dan knowledge&nbsp;Agent AI lokal jika fasilitas\\/perilaku berubah.12.&nbsp;Kirim hanya file yang benar-benar berubah dan sebutkan alasan perubahan tiap file.WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Masalah:WAJIB sebelum mengirim patch:- Parse\\/build semaksimal yang tersedia.- Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.- Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.- Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.Kolom 1Kolom 2Kolom 3Kolom 1Kolom 2Kolom 3halooooeditWAJIB sebelum mengirim patch:Parse\\/build semaksimal yang tersedia.Simulasikan happy path, cancel\\/ESC, undo\\/redo, pergantian UCS\\/view\\/layout, dan input command line yang terkait.Lakukan regression check terhadap semua pemakai fungsi\\/state yang diubah.Jika perubahan berisiko memengaruhi fitur lain, jangan patch sampai relasi tersebut diperiksa.\",\"gambar\":null,\"keterangan\":null,\"tgl_insert\":\"2026-09-05 08:06:04\",\"username_insert\":\"nabiila\",\"tgl_update\":\"2026-09-05 08:18:16\",\"username_update\":\"nabiila\",\"is_deleted\":0}', '{\"keterangan\":\"berita\",\"konten\":\"MODE: TRACE ABSOLUTEScope: file \\/mnt\\/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi,&nbsp;Kolom 1Kolom 2Kolom 3abBuka aplikasi Activity Monitor (bisa dicari lewat Finder &gt; Applications &gt; Utilities).Di kolom pencarian kanan atas Activity Monitor, ketik spotlight.Anda akan melihat proses bernama Spotlight atau spotlightknowledged.Klik proses tersebut, lalu klik tombol X di bagian atas jendela, dan pilih Force Quit.Proses ini akan otomatis berjalan ulang dengan bersih, dan biasanya Spotlight langsung aktif kembali.[1, 2]\",\"tgl_update\":\"2026-09-05 08:24:47\"}', 'nabiila', '::1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.6.2 Safari/605.1.15', '2026-09-05 08:24:47'),
+(2202, 'halaman_berita', 3, 'update', '{\"id\":3,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"1.03.0.00.0.00.01.0000\",\"judul\":\"berita1\",\"slug\":\"berita1\",\"jenis_halaman\":\"berita\",\"aktif\":1,\"konten\":\"MODE: TRACE ABSOLUTEScope: file \\/mnt\\/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi,&nbsp;Kolom 1Kolom 2Kolom 3abBuka aplikasi Activity Monitor (bisa dicari lewat Finder &gt; Applications &gt; Utilities).Di kolom pencarian kanan atas Activity Monitor, ketik spotlight.Anda akan melihat proses bernama Spotlight atau spotlightknowledged.Klik proses tersebut, lalu klik tombol X di bagian atas jendela, dan pilih Force Quit.Proses ini akan otomatis berjalan ulang dengan bersih, dan biasanya Spotlight langsung aktif kembali.[1, 2]\",\"gambar\":null,\"keterangan\":\"berita\",\"tgl_insert\":\"2026-09-05 08:06:04\",\"username_insert\":\"nabiila\",\"tgl_update\":\"2026-09-05 08:24:47\",\"username_update\":\"nabiila\",\"is_deleted\":0}', '{\"keterangan\":\"berita-verifikasi-1629\",\"konten\":\"MODE: TRACE ABSOLUTEScope: file \\/mnt\\/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi, Kolom 1Kolom 2Kolom 3abBuka aplikasi Activity Monitor (bisa dicari lewat Finder &gt; Applications &gt; Utilities).Di kolom pencarian kanan atas Activity Monitor, ketik spotlight.Anda akan melihat proses bernama Spotlight atau spotlightknowledged.Klik proses tersebut, lalu klik tombol X di bagian atas jendela, dan pilih Force Quit.Proses ini akan otomatis berjalan ulang dengan bersih, dan biasanya Spotlight langsung aktif kembali.[1, 2]\",\"kd_opd\":\"0\",\"tgl_update\":\"2026-09-05 08:36:33\",\"username_update\":\"demo_super_admin\"}', 'demo_super_admin', '127.0.0.1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36', '2026-09-05 08:36:33'),
+(2203, 'halaman_berita', 3, 'update', '{\"id\":3,\"kd_wilayah\":\"76.01\",\"kd_opd\":\"0\",\"judul\":\"berita1\",\"slug\":\"berita1\",\"jenis_halaman\":\"berita\",\"aktif\":1,\"konten\":\"MODE: TRACE ABSOLUTEScope: file \\/mnt\\/CERMatrixLab.zip terbaru.Semua jawaban hanya berdasarkan kode aktual pada ZIP terbaru.Jangan teori, asumsi, Kolom 1Kolom 2Kolom 3abBuka aplikasi Activity Monitor (bisa dicari lewat Finder &gt; Applications &gt; Utilities).Di kolom pencarian kanan atas Activity Monitor, ketik spotlight.Anda akan melihat proses bernama Spotlight atau spotlightknowledged.Klik proses tersebut, lalu klik tombol X di bagian atas jendela, dan pilih Force Quit.Proses ini akan otomatis berjalan ulang dengan bersih, dan biasanya Spotlight langsung aktif kembali.[1, 2]\",\"gambar\":null,\"keterangan\":\"berita-verifikasi-1629\",\"tgl_insert\":\"2026-09-05 08:06:04\",\"username_insert\":\"nabiila\",\"tgl_update\":\"2026-09-05 08:36:33\",\"username_update\":\"demo_super_admin\",\"is_deleted\":0}', '{\"keterangan\":\"berita\",\"tgl_update\":\"2026-09-05 08:38:39\"}', 'demo_super_admin', '127.0.0.1', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36', '2026-09-05 08:38:39');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `master_biaya`
+-- Table structure for table `master_biaya`
 --
 
 CREATE TABLE `master_biaya` (
@@ -12182,7 +12194,7 @@ CREATE TABLE `master_biaya` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `master_biaya`
+-- Dumping data for table `master_biaya`
 --
 
 INSERT INTO `master_biaya` (`id`, `tipe`, `kode`, `kode_aset`, `kelompok_barang`, `uraian`, `spesifikasi`, `satuan_id`, `harga`, `tkdn`, `keterangan`, `kd_wilayah`, `tahun`, `peraturan_id`, `disable`, `is_deleted`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
@@ -12231,7 +12243,7 @@ INSERT INTO `master_biaya` (`id`, `tipe`, `kode`, `kode_aset`, `kelompok_barang`
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `master_biaya_akun`
+-- Table structure for table `master_biaya_akun`
 --
 
 CREATE TABLE `master_biaya_akun` (
@@ -12249,7 +12261,7 @@ CREATE TABLE `master_biaya_akun` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `master_biaya_akun`
+-- Dumping data for table `master_biaya_akun`
 --
 
 INSERT INTO `master_biaya_akun` (`id`, `master_biaya_id`, `kd_akun`, `kd_wilayah`, `peraturan_id`, `disable`, `is_deleted`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
@@ -12258,7 +12270,7 @@ INSERT INTO `master_biaya_akun` (`id`, `master_biaya_id`, `kd_akun`, `kd_wilayah
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `misi_renstra_neo`
+-- Table structure for table `misi_renstra_neo`
 --
 
 CREATE TABLE `misi_renstra_neo` (
@@ -12275,7 +12287,7 @@ CREATE TABLE `misi_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `misi_renstra_neo`
+-- Dumping data for table `misi_renstra_neo`
 --
 
 INSERT INTO `misi_renstra_neo` (`id`, `renstra_id`, `nama_misi`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -12286,7 +12298,7 @@ INSERT INTO `misi_renstra_neo` (`id`, `renstra_id`, `nama_misi`, `disable`, `ket
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `organisasi_neo`
+-- Table structure for table `organisasi_neo`
 --
 
 CREATE TABLE `organisasi_neo` (
@@ -12311,7 +12323,7 @@ CREATE TABLE `organisasi_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `organisasi_neo`
+-- Dumping data for table `organisasi_neo`
 --
 
 INSERT INTO `organisasi_neo` (`id`, `kd_wilayah`, `kode`, `uraian`, `alamat`, `nama_kepala`, `nip_kepala`, `singkatan`, `file`, `peraturan_id`, `disable`, `aksi`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -12351,7 +12363,7 @@ INSERT INTO `organisasi_neo` (`id`, `kd_wilayah`, `kode`, `uraian`, `alamat`, `n
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pejabat_tahunan_neo`
+-- Table structure for table `pejabat_tahunan_neo`
 --
 
 CREATE TABLE `pejabat_tahunan_neo` (
@@ -12377,7 +12389,7 @@ CREATE TABLE `pejabat_tahunan_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data untuk tabel `pejabat_tahunan_neo`
+-- Dumping data for table `pejabat_tahunan_neo`
 --
 
 INSERT INTO `pejabat_tahunan_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `jenis_pejabat`, `pegawai_id`, `nama_pegawai`, `nip`, `nomor_sk`, `tanggal_sk`, `berlaku_mulai`, `berlaku_sampai`, `kd_sub_keg`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -12385,7 +12397,7 @@ INSERT INTO `pejabat_tahunan_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `jenis
 (2, '76.01', '1.03.0.00.0.00.01.0000', '2026', 'PPTK', 2, 'MAHMUD', '196901272003121004', 'SK-TRACE/PPTK/2026', '2026-01-02', '2026-01-01', '2026-12-31', 'X.XX.1.2.01.1', 'Data contoh pejabat aktif Phase 9', '2026-08-31 13:25:33', 'TRACE_TEST_PHASE3', NULL, NULL, 0);
 
 --
--- Trigger `pejabat_tahunan_neo`
+-- Triggers `pejabat_tahunan_neo`
 --
 DELIMITER $$
 CREATE TRIGGER `trg_pejabat_fill_insert` BEFORE INSERT ON `pejabat_tahunan_neo` FOR EACH ROW BEGIN
@@ -12409,7 +12421,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pengaturan_neo`
+-- Table structure for table `pengaturan_neo`
 --
 
 CREATE TABLE `pengaturan_neo` (
@@ -12417,10 +12429,24 @@ CREATE TABLE `pengaturan_neo` (
   `kd_wilayah` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tahun` year(4) NOT NULL,
   `tahun_renstra` year(4) NOT NULL,
-  `ukuran_kertas` varchar(10) NOT NULL DEFAULT 'A4',
+  `ukuran_kertas` varchar(32) NOT NULL DEFAULT 'A4',
   `orientasi_kertas` enum('AUTO','P','L') NOT NULL DEFAULT 'AUTO',
   `font_pdf` varchar(20) NOT NULL DEFAULT 'helvetica',
   `ukuran_font_pdf` decimal(4,1) NOT NULL DEFAULT 10.0,
+  `lebar_kertas_mm` decimal(7,1) DEFAULT NULL,
+  `tinggi_kertas_mm` decimal(7,1) DEFAULT NULL,
+  `margin_atas_mm` decimal(5,1) NOT NULL DEFAULT 10.0,
+  `margin_kanan_mm` decimal(5,1) NOT NULL DEFAULT 10.0,
+  `margin_bawah_mm` decimal(5,1) NOT NULL DEFAULT 12.0,
+  `margin_kiri_mm` decimal(5,1) NOT NULL DEFAULT 10.0,
+  `margin_header_mm` decimal(5,1) NOT NULL DEFAULT 5.0,
+  `margin_footer_mm` decimal(5,1) NOT NULL DEFAULT 8.0,
+  `header_pdf_aktif` tinyint(1) NOT NULL DEFAULT 0,
+  `footer_pdf_aktif` tinyint(1) NOT NULL DEFAULT 0,
+  `tinggi_header_mm` decimal(5,1) NOT NULL DEFAULT 12.0,
+  `tinggi_footer_mm` decimal(5,1) NOT NULL DEFAULT 10.0,
+  `header_pdf_json` longtext DEFAULT NULL,
+  `footer_pdf_json` longtext DEFAULT NULL,
   `aturan_anggaran` varchar(255) NOT NULL,
   `aturan_organisasi` int(11) DEFAULT NULL,
   `aturan_pengadaan` varchar(255) NOT NULL,
@@ -12485,18 +12511,18 @@ CREATE TABLE `pengaturan_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `pengaturan_neo`
+-- Dumping data for table `pengaturan_neo`
 --
 
-INSERT INTO `pengaturan_neo` (`id`, `kd_wilayah`, `tahun`, `tahun_renstra`, `ukuran_kertas`, `orientasi_kertas`, `font_pdf`, `ukuran_font_pdf`, `aturan_anggaran`, `aturan_organisasi`, `aturan_pengadaan`, `aturan_akun`, `aturan_asb`, `aturan_sbu`, `aturan_ssh`, `aturan_hspk`, `aturan_sumber_dana`, `aturan_sub_kegiatan`, `rpjmd_aktif`, `awal_renja`, `akhir_renja`, `awal_dpa`, `akhir_dpa`, `awal_renja_p`, `akhir_renja_p`, `awal_dppa`, `akhir_dppa`, `awal_renstra`, `akhir_renstra`, `disable`, `kunci`, `setujui`, `kunci_renstra`, `kunci_renja`, `kunci_dpa`, `kunci_renja_p`, `kunci_dppa`, `kunci_paket`, `kunci_realisasi`, `setujui_renstra`, `setujui_renja`, `setujui_dpa`, `setujui_renja_p`, `setujui_dppa`, `setujui_paket`, `setujui_realisasi`, `id_opd_tampilkan`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`, `awal_rkpd`, `akhir_rkpd`, `awal_kua_ppas`, `akhir_kua_ppas`, `awal_rka`, `akhir_rka`, `awal_rapbd`, `akhir_rapbd`, `awal_rak`, `akhir_rak`, `awal_rkpd_perubahan`, `akhir_rkpd_perubahan`, `awal_kua_ppas_perubahan`, `akhir_kua_ppas_perubahan`, `awal_apbd_perubahan`, `akhir_apbd_perubahan`) VALUES
-(1, '76.01', '2026', '2021', 'A4', 'AUTO', 'helvetica', 10.0, '4', 4, '2', 4, 4, 4, 4, 4, 4, 4, NULL, '2024-03-31 08:00:00', '2024-04-30 07:55:00', '2024-03-31 08:00:00', '2024-04-30 07:55:00', '2024-03-31 08:00:00', '2024-04-30 07:55:00', '2024-03-31 08:00:00', '2024-04-30 07:00:00', '2024-03-31 12:00:00', '2024-04-30 07:55:00', 1, 1, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15, '2024', '2024-04-06 16:13:40', 'nabiila', '2026-03-03 09:13:53', 'inayah', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(2, '76.01', '2025', '2025', 'A4', 'AUTO', 'helvetica', 10.0, '3', 4, '1', 4, 4, 4, 4, 4, 4, 4, NULL, '2024-12-31 08:00:00', '2025-12-30 23:55:00', '2025-05-31 12:00:00', '2025-06-23 13:35:00', '2025-06-08 17:35:00', '2025-06-24 17:00:00', '2025-06-16 17:05:00', '2025-06-24 13:20:00', '2024-12-31 08:00:00', '2029-12-30 00:00:00', 1, 0, 0, 0, 1, 1, 1, 0, NULL, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, 15, 'ok', '2025-10-20 09:01:53', 'nabiila', '2025-10-20 09:01:53', 'nabiila', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(3, '76.01', '2026', '2025', 'A4', 'AUTO', 'helvetica', 10.0, '4', 4, '1', 4, 4, 4, 4, 4, 4, 4, NULL, '2025-12-31 16:00:00', '2026-12-31 15:55:00', '2025-12-31 16:00:00', '2026-12-31 15:55:00', '2026-04-30 16:00:00', '2026-12-31 15:55:00', '2026-05-31 16:55:00', '2026-12-31 15:55:00', '2024-12-31 16:00:00', '2029-12-31 15:00:00', 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, 0, 'masih harus di uodate menurut SIPD 2025', '2026-01-26 03:56:15', 'nabiila', '2026-02-26 20:37:38', 'inayah', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `pengaturan_neo` (`id`, `kd_wilayah`, `tahun`, `tahun_renstra`, `ukuran_kertas`, `orientasi_kertas`, `font_pdf`, `ukuran_font_pdf`, `lebar_kertas_mm`, `tinggi_kertas_mm`, `margin_atas_mm`, `margin_kanan_mm`, `margin_bawah_mm`, `margin_kiri_mm`, `margin_header_mm`, `margin_footer_mm`, `header_pdf_aktif`, `footer_pdf_aktif`, `tinggi_header_mm`, `tinggi_footer_mm`, `header_pdf_json`, `footer_pdf_json`, `aturan_anggaran`, `aturan_organisasi`, `aturan_pengadaan`, `aturan_akun`, `aturan_asb`, `aturan_sbu`, `aturan_ssh`, `aturan_hspk`, `aturan_sumber_dana`, `aturan_sub_kegiatan`, `rpjmd_aktif`, `awal_renja`, `akhir_renja`, `awal_dpa`, `akhir_dpa`, `awal_renja_p`, `akhir_renja_p`, `awal_dppa`, `akhir_dppa`, `awal_renstra`, `akhir_renstra`, `disable`, `kunci`, `setujui`, `kunci_renstra`, `kunci_renja`, `kunci_dpa`, `kunci_renja_p`, `kunci_dppa`, `kunci_paket`, `kunci_realisasi`, `setujui_renstra`, `setujui_renja`, `setujui_dpa`, `setujui_renja_p`, `setujui_dppa`, `setujui_paket`, `setujui_realisasi`, `id_opd_tampilkan`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`, `awal_rkpd`, `akhir_rkpd`, `awal_kua_ppas`, `akhir_kua_ppas`, `awal_rka`, `akhir_rka`, `awal_rapbd`, `akhir_rapbd`, `awal_rak`, `akhir_rak`, `awal_rkpd_perubahan`, `akhir_rkpd_perubahan`, `awal_kua_ppas_perubahan`, `akhir_kua_ppas_perubahan`, `awal_apbd_perubahan`, `akhir_apbd_perubahan`) VALUES
+(1, '76.01', '2026', '2021', 'A4', 'AUTO', 'helvetica', 10.0, NULL, NULL, 10.0, 10.0, 12.0, 10.0, 5.0, 8.0, 0, 0, 12.0, 10.0, NULL, NULL, '4', 4, '2', 4, 4, 4, 4, 4, 4, 4, NULL, '2024-03-31 08:00:00', '2024-04-30 07:55:00', '2024-03-31 08:00:00', '2024-04-30 07:55:00', '2024-03-31 08:00:00', '2024-04-30 07:55:00', '2024-03-31 08:00:00', '2024-04-30 07:00:00', '2024-03-31 12:00:00', '2024-04-30 07:55:00', 1, 1, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15, '2024', '2024-04-06 16:13:40', 'nabiila', '2026-03-03 09:13:53', 'inayah', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, '76.01', '2025', '2025', 'A4', 'AUTO', 'helvetica', 10.0, NULL, NULL, 10.0, 10.0, 12.0, 10.0, 5.0, 8.0, 0, 0, 12.0, 10.0, NULL, NULL, '3', 4, '1', 4, 4, 4, 4, 4, 4, 4, NULL, '2024-12-31 08:00:00', '2025-12-30 23:55:00', '2025-05-31 12:00:00', '2025-06-23 13:35:00', '2025-06-08 17:35:00', '2025-06-24 17:00:00', '2025-06-16 17:05:00', '2025-06-24 13:20:00', '2024-12-31 08:00:00', '2029-12-30 00:00:00', 1, 0, 0, 0, 1, 1, 1, 0, NULL, NULL, NULL, 1, 1, 1, NULL, NULL, NULL, 15, 'ok', '2025-10-20 09:01:53', 'nabiila', '2025-10-20 09:01:53', 'nabiila', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, '76.01', '2026', '2025', 'A4', 'AUTO', 'helvetica', 10.0, NULL, NULL, 10.0, 10.0, 12.0, 10.0, 5.0, 8.0, 0, 0, 12.0, 10.0, NULL, NULL, '4', 4, '1', 4, 4, 4, 4, 4, 4, 4, NULL, '2025-12-31 16:00:00', '2026-12-31 15:55:00', '2025-12-31 16:00:00', '2026-12-31 15:55:00', '2026-04-30 16:00:00', '2026-12-31 15:55:00', '2026-05-31 16:55:00', '2026-12-31 15:55:00', '2024-12-31 16:00:00', '2029-12-31 15:00:00', 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, 0, 'masih harus di uodate menurut SIPD 2025', '2026-01-26 03:56:15', 'nabiila', '2026-02-26 20:37:38', 'inayah', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `peraturan_neo`
+-- Table structure for table `peraturan_neo`
 --
 
 CREATE TABLE `peraturan_neo` (
@@ -12525,7 +12551,7 @@ CREATE TABLE `peraturan_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `peraturan_neo`
+-- Dumping data for table `peraturan_neo`
 --
 
 INSERT INTO `peraturan_neo` (`id`, `kd_wilayah`, `kode`, `type_dok`, `judul`, `judul_singkat`, `nomor`, `bentuk`, `bentuk_singkat`, `t4_penetapan`, `tgl_penetapan`, `tgl_pengundangan`, `status`, `disable`, `aksi`, `file`, `username_insert`, `tgl_insert`, `tgl_update`, `username_update`, `keterangan`, `is_deleted`) VALUES
@@ -12537,7 +12563,7 @@ INSERT INTO `peraturan_neo` (`id`, `kd_wilayah`, `kode`, `type_dok`, `judul`, `j
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `periode_rpjmd`
+-- Table structure for table `periode_rpjmd`
 --
 
 CREATE TABLE `periode_rpjmd` (
@@ -12554,7 +12580,7 @@ CREATE TABLE `periode_rpjmd` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `periode_rpjmd`
+-- Dumping data for table `periode_rpjmd`
 --
 
 INSERT INTO `periode_rpjmd` (`id`, `kd_wilayah`, `periode_mulai`, `periode_selesai`, `status_aktif`, `keterangan`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -12563,7 +12589,7 @@ INSERT INTO `periode_rpjmd` (`id`, `kd_wilayah`, `periode_mulai`, `periode_seles
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `program_renstra_neo`
+-- Table structure for table `program_renstra_neo`
 --
 
 CREATE TABLE `program_renstra_neo` (
@@ -12581,7 +12607,7 @@ CREATE TABLE `program_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `program_renstra_neo`
+-- Dumping data for table `program_renstra_neo`
 --
 
 INSERT INTO `program_renstra_neo` (`id`, `sasaran_id`, `kode_program`, `uraian`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -12590,7 +12616,7 @@ INSERT INTO `program_renstra_neo` (`id`, `sasaran_id`, `kode_program`, `uraian`,
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `rab_paket_neo`
+-- Table structure for table `rab_paket_neo`
 --
 
 CREATE TABLE `rab_paket_neo` (
@@ -12628,7 +12654,7 @@ CREATE TABLE `rab_paket_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `rab_paket_neo`
+-- Dumping data for table `rab_paket_neo`
 --
 
 INSERT INTO `rab_paket_neo` (`id`, `kontrak_id`, `kontrak_item_id`, `tahun`, `kd_wilayah`, `kd_opd`, `id_renja_p`, `id_dpa`, `id_dppa`, `nomor`, `uraian`, `satuan`, `type`, `vol_hps`, `vol_penawaran`, `vol_negoisasi`, `harga_sat_hps`, `harga_sat_penawaran`, `harga_sat_negoisasi`, `pajak`, `jumlah_hps`, `jumlah_penawaran`, `jumlah_negoisasi`, `bobot`, `KBBI`, `keterangan`, `username_insert`, `tgl_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -12643,7 +12669,7 @@ INSERT INTO `rab_paket_neo` (`id`, `kontrak_id`, `kontrak_item_id`, `tahun`, `kd
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `ref_jenis_naskah`
+-- Table structure for table `ref_jenis_naskah`
 --
 
 CREATE TABLE `ref_jenis_naskah` (
@@ -12667,7 +12693,7 @@ CREATE TABLE `ref_jenis_naskah` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `ref_jenis_naskah`
+-- Dumping data for table `ref_jenis_naskah`
 --
 
 INSERT INTO `ref_jenis_naskah` (`id`, `kelompok_id`, `nama`, `kode_form`, `sub_kategori`, `urutan`, `schema_json`, `schema_version`, `allowed_roles`, `auto_generate_nomor`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`) VALUES
@@ -12700,7 +12726,7 @@ INSERT INTO `ref_jenis_naskah` (`id`, `kelompok_id`, `nama`, `kode_form`, `sub_k
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `ref_jenis_naskah_dinas`
+-- Table structure for table `ref_jenis_naskah_dinas`
 --
 
 CREATE TABLE `ref_jenis_naskah_dinas` (
@@ -12722,7 +12748,7 @@ CREATE TABLE `ref_jenis_naskah_dinas` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `ref_kelompok_naskah`
+-- Table structure for table `ref_kelompok_naskah`
 --
 
 CREATE TABLE `ref_kelompok_naskah` (
@@ -12740,7 +12766,7 @@ CREATE TABLE `ref_kelompok_naskah` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `ref_kelompok_naskah`
+-- Dumping data for table `ref_kelompok_naskah`
 --
 
 INSERT INTO `ref_kelompok_naskah` (`id`, `kode`, `nama`, `urutan`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`) VALUES
@@ -12751,7 +12777,7 @@ INSERT INTO `ref_kelompok_naskah` (`id`, `kode`, `nama`, `urutan`, `kd_wilayah`,
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `ref_klasifikasi_keamanan`
+-- Table structure for table `ref_klasifikasi_keamanan`
 --
 
 CREATE TABLE `ref_klasifikasi_keamanan` (
@@ -12769,7 +12795,7 @@ CREATE TABLE `ref_klasifikasi_keamanan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `ref_klasifikasi_keamanan`
+-- Dumping data for table `ref_klasifikasi_keamanan`
 --
 
 INSERT INTO `ref_klasifikasi_keamanan` (`id`, `kode`, `nama`, `warna`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`) VALUES
@@ -12781,7 +12807,7 @@ INSERT INTO `ref_klasifikasi_keamanan` (`id`, `kode`, `nama`, `warna`, `kd_wilay
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `ref_template_naskah`
+-- Table structure for table `ref_template_naskah`
 --
 
 CREATE TABLE `ref_template_naskah` (
@@ -12799,7 +12825,7 @@ CREATE TABLE `ref_template_naskah` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `ref_template_naskah`
+-- Dumping data for table `ref_template_naskah`
 --
 
 INSERT INTO `ref_template_naskah` (`id`, `jenis_id`, `nama_template`, `form_schema`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`) VALUES
@@ -12808,7 +12834,7 @@ INSERT INTO `ref_template_naskah` (`id`, `jenis_id`, `nama_template`, `form_sche
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `register_naskah_dinas`
+-- Table structure for table `register_naskah_dinas`
 --
 
 CREATE TABLE `register_naskah_dinas` (
@@ -12838,7 +12864,7 @@ CREATE TABLE `register_naskah_dinas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `register_naskah_dinas`
+-- Dumping data for table `register_naskah_dinas`
 --
 
 INSERT INTO `register_naskah_dinas` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `klasifikasi_keamanan`, `jenis_naskah_dinas`, `sifat`, `sub_sifat`, `tanggal`, `nomor`, `uraian`, `jabatan`, `nama_lengkap`, `nip`, `pangkat`, `asal_surat`, `keterangan`, `file`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `disable`) VALUES
@@ -12847,7 +12873,7 @@ INSERT INTO `register_naskah_dinas` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `kla
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `rekanan_akta`
+-- Table structure for table `rekanan_akta`
 --
 
 CREATE TABLE `rekanan_akta` (
@@ -12866,7 +12892,7 @@ CREATE TABLE `rekanan_akta` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `rekanan_neo`
+-- Table structure for table `rekanan_neo`
 --
 
 CREATE TABLE `rekanan_neo` (
@@ -12903,7 +12929,7 @@ CREATE TABLE `rekanan_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `rekanan_neo`
+-- Dumping data for table `rekanan_neo`
 --
 
 INSERT INTO `rekanan_neo` (`id`, `kd_wilayah`, `nama_perusahaan`, `alamat`, `email`, `npwp`, `no_rekening`, `bank_rekening`, `atas_nama_rekening`, `direktur`, `jabatan`, `no_ktp`, `alamat_dir`, `no_akta_pendirian`, `tgl_akta_pendirian`, `lokasi_notaris_pendirian`, `nama_notaris_pendirian`, `file`, `keterangan`, `no_sortir`, `disable`, `username_insert`, `tgl_insert`, `tgl_update`, `username_update`, `is_deleted`, `no_akta_perubahan`, `tgl_akta_perubahan`, `nama_notaris_perubahan`, `lokasi_notaris_perubahan`) VALUES
@@ -13088,7 +13114,7 @@ INSERT INTO `rekanan_neo` (`id`, `kd_wilayah`, `nama_perusahaan`, `alamat`, `ema
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `rekening_kegiatan`
+-- Table structure for table `rekening_kegiatan`
 --
 
 CREATE TABLE `rekening_kegiatan` (
@@ -13110,7 +13136,7 @@ CREATE TABLE `rekening_kegiatan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `rekening_kegiatan`
+-- Dumping data for table `rekening_kegiatan`
 --
 
 INSERT INTO `rekening_kegiatan` (`id`, `kode`, `parent_kode`, `level`, `uraian`, `kd_wilayah`, `peraturan_id`, `kinerja`, `indikator`, `satuan`, `status`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
@@ -17632,7 +17658,7 @@ INSERT INTO `rekening_kegiatan` (`id`, `kode`, `parent_kode`, `level`, `uraian`,
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `rencana_realisasi_anggaran_neo`
+-- Table structure for table `rencana_realisasi_anggaran_neo`
 --
 
 CREATE TABLE `rencana_realisasi_anggaran_neo` (
@@ -17656,7 +17682,7 @@ CREATE TABLE `rencana_realisasi_anggaran_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `rencana_realisasi_anggaran_neo`
+-- Dumping data for table `rencana_realisasi_anggaran_neo`
 --
 
 INSERT INTO `rencana_realisasi_anggaran_neo` (`id`, `dokumen`, `anggaran_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `jenis`, `bulan`, `nilai`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -17676,7 +17702,7 @@ INSERT INTO `rencana_realisasi_anggaran_neo` (`id`, `dokumen`, `anggaran_id`, `k
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `rencana_rekening_anggaran_neo`
+-- Table structure for table `rencana_rekening_anggaran_neo`
 --
 
 CREATE TABLE `rencana_rekening_anggaran_neo` (
@@ -17698,7 +17724,7 @@ CREATE TABLE `rencana_rekening_anggaran_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `rencana_rekening_anggaran_neo`
+-- Dumping data for table `rencana_rekening_anggaran_neo`
 --
 
 INSERT INTO `rencana_rekening_anggaran_neo` (`id`, `dokumen`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `jenis`, `bulan`, `nilai`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -17730,7 +17756,7 @@ INSERT INTO `rencana_rekening_anggaran_neo` (`id`, `dokumen`, `kd_wilayah`, `kd_
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `renja_neo`
+-- Table structure for table `renja_neo`
 --
 
 CREATE TABLE `renja_neo` (
@@ -17779,7 +17805,7 @@ CREATE TABLE `renja_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `renja_neo`
+-- Dumping data for table `renja_neo`
 --
 
 INSERT INTO `renja_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -17793,7 +17819,7 @@ INSERT INTO `renja_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_op
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `renja_p_neo`
+-- Table structure for table `renja_p_neo`
 --
 
 CREATE TABLE `renja_p_neo` (
@@ -17852,7 +17878,7 @@ CREATE TABLE `renja_p_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `renja_p_neo`
+-- Dumping data for table `renja_p_neo`
 --
 
 INSERT INTO `renja_p_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga_awal`, `id_standar_harga_awal`, `komponen_awal`, `spesifikasi_awal`, `tkdn_awal`, `pajak_awal`, `harga_satuan_awal`, `volume_awal`, `jumlah_awal`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `status_perubahan`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -17866,7 +17892,7 @@ INSERT INTO `renja_p_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `renstra_neo`
+-- Table structure for table `renstra_neo`
 --
 
 CREATE TABLE `renstra_neo` (
@@ -17888,7 +17914,7 @@ CREATE TABLE `renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `renstra_neo`
+-- Dumping data for table `renstra_neo`
 --
 
 INSERT INTO `renstra_neo` (`id`, `kd_wilayah`, `kd_opd`, `periode_id`, `visi`, `status`, `kunci`, `setujui`, `disable`, `keterangan`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`, `is_deleted`) VALUES
@@ -17898,7 +17924,7 @@ INSERT INTO `renstra_neo` (`id`, `kd_wilayah`, `kd_opd`, `periode_id`, `visi`, `
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `riwayat_jabatan_neo`
+-- Table structure for table `riwayat_jabatan_neo`
 --
 
 CREATE TABLE `riwayat_jabatan_neo` (
@@ -17924,7 +17950,7 @@ CREATE TABLE `riwayat_jabatan_neo` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `riwayat_pangkat_neo`
+-- Table structure for table `riwayat_pangkat_neo`
 --
 
 CREATE TABLE `riwayat_pangkat_neo` (
@@ -17950,7 +17976,7 @@ CREATE TABLE `riwayat_pangkat_neo` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `rka_neo`
+-- Table structure for table `rka_neo`
 --
 
 CREATE TABLE `rka_neo` (
@@ -17999,7 +18025,7 @@ CREATE TABLE `rka_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `rka_neo`
+-- Dumping data for table `rka_neo`
 --
 
 INSERT INTO `rka_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -18013,7 +18039,7 @@ INSERT INTO `rka_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `rka_p_neo`
+-- Table structure for table `rka_p_neo`
 --
 
 CREATE TABLE `rka_p_neo` (
@@ -18072,7 +18098,7 @@ CREATE TABLE `rka_p_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `rka_p_neo`
+-- Dumping data for table `rka_p_neo`
 --
 
 INSERT INTO `rka_p_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kd_akun`, `kel_rek`, `objek_belanja`, `uraian`, `jenis_kelompok`, `kelompok`, `jenis_standar_harga_awal`, `id_standar_harga_awal`, `komponen_awal`, `spesifikasi_awal`, `tkdn_awal`, `pajak_awal`, `harga_satuan_awal`, `volume_awal`, `jumlah_awal`, `jenis_standar_harga`, `id_standar_harga`, `komponen`, `spesifikasi`, `tkdn`, `pajak`, `harga_satuan`, `vol_1`, `vol_2`, `vol_3`, `vol_4`, `vol_5`, `sat_1`, `sat_2`, `sat_3`, `sat_4`, `sat_5`, `volume`, `jumlah`, `sumber_dana_id`, `status_perubahan`, `keterangan`, `disable`, `kunci`, `setujui`, `is_deleted`, `tgl_insert`, `tgl_update`, `username_insert`, `username_update`) VALUES
@@ -18086,7 +18112,7 @@ INSERT INTO `rka_p_neo` (`id`, `source_table`, `source_id`, `kd_wilayah`, `kd_op
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `rkpd_neo`
+-- Table structure for table `rkpd_neo`
 --
 
 CREATE TABLE `rkpd_neo` (
@@ -18118,7 +18144,7 @@ CREATE TABLE `rkpd_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data untuk tabel `rkpd_neo`
+-- Dumping data for table `rkpd_neo`
 --
 
 INSERT INTO `rkpd_neo` (`id`, `renstra_sub_kegiatan_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_program`, `kd_kegiatan`, `kd_sub_keg`, `indikator`, `target`, `satuan_id`, `pagu`, `sumber_dana_id`, `lokasi`, `kelompok_sasaran`, `status`, `disable`, `kunci`, `setujui`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -18132,7 +18158,7 @@ INSERT INTO `rkpd_neo` (`id`, `renstra_sub_kegiatan_id`, `kd_wilayah`, `kd_opd`,
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `rkpd_p_neo`
+-- Table structure for table `rkpd_p_neo`
 --
 
 CREATE TABLE `rkpd_p_neo` (
@@ -18168,7 +18194,7 @@ CREATE TABLE `rkpd_p_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data untuk tabel `rkpd_p_neo`
+-- Dumping data for table `rkpd_p_neo`
 --
 
 INSERT INTO `rkpd_p_neo` (`id`, `source_rkpd_id`, `renstra_sub_kegiatan_id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_program`, `kd_kegiatan`, `kd_sub_keg`, `indikator`, `target_awal`, `pagu_awal`, `target`, `satuan_id`, `pagu`, `sumber_dana_id`, `lokasi`, `kelompok_sasaran`, `status_perubahan`, `status`, `disable`, `kunci`, `setujui`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -18182,7 +18208,7 @@ INSERT INTO `rkpd_p_neo` (`id`, `source_rkpd_id`, `renstra_sub_kegiatan_id`, `kd
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `rpjmd_kabupaten_neo`
+-- Table structure for table `rpjmd_kabupaten_neo`
 --
 
 CREATE TABLE `rpjmd_kabupaten_neo` (
@@ -18209,7 +18235,7 @@ CREATE TABLE `rpjmd_kabupaten_neo` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `sasaran_renstra_neo`
+-- Table structure for table `sasaran_renstra_neo`
 --
 
 CREATE TABLE `sasaran_renstra_neo` (
@@ -18227,7 +18253,7 @@ CREATE TABLE `sasaran_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `sasaran_renstra_neo`
+-- Dumping data for table `sasaran_renstra_neo`
 --
 
 INSERT INTO `sasaran_renstra_neo` (`id`, `tujuan_id`, `kode_sasaran`, `nama_sasaran`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -18238,7 +18264,7 @@ INSERT INTO `sasaran_renstra_neo` (`id`, `tujuan_id`, `kode_sasaran`, `nama_sasa
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `satuan_neo`
+-- Table structure for table `satuan_neo`
 --
 
 CREATE TABLE `satuan_neo` (
@@ -18258,7 +18284,7 @@ CREATE TABLE `satuan_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `satuan_neo`
+-- Dumping data for table `satuan_neo`
 --
 
 INSERT INTO `satuan_neo` (`id`, `value`, `uraian`, `sebutan_lain`, `disable`, `aksi`, `keterangan`, `peraturan_id`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -18701,7 +18727,7 @@ INSERT INTO `satuan_neo` (`id`, `value`, `uraian`, `sebutan_lain`, `disable`, `a
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `sk_asn_neo`
+-- Table structure for table `sk_asn_neo`
 --
 
 CREATE TABLE `sk_asn_neo` (
@@ -18736,7 +18762,7 @@ CREATE TABLE `sk_asn_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `sk_asn_neo`
+-- Dumping data for table `sk_asn_neo`
 --
 
 INSERT INTO `sk_asn_neo` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `nomor`, `tgl_surat_dibuat`, `tentang`, `pemberi_tgs`, `jbt_pemberi_tgs`, `pangkat_pemberi_tgs`, `nama_pemberi_tgs`, `nama_ditugaskan`, `bentuk_lampiran`, `menimbang`, `mengingat`, `menetapkan_1`, `menetapkan_2`, `menetapkan_3`, `menetapkan_4`, `tembusan`, `file`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `disable`, `is_deleted`) VALUES
@@ -18884,7 +18910,7 @@ INSERT INTO `sk_asn_neo` (`id`, `tahun`, `kd_wilayah`, `kd_opd`, `nomor`, `tgl_s
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `sk_pegawai_neo`
+-- Table structure for table `sk_pegawai_neo`
 --
 
 CREATE TABLE `sk_pegawai_neo` (
@@ -18910,7 +18936,7 @@ CREATE TABLE `sk_pegawai_neo` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `sub_kegiatan_renstra_neo`
+-- Table structure for table `sub_kegiatan_renstra_neo`
 --
 
 CREATE TABLE `sub_kegiatan_renstra_neo` (
@@ -18941,7 +18967,7 @@ CREATE TABLE `sub_kegiatan_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `sub_kegiatan_renstra_neo`
+-- Dumping data for table `sub_kegiatan_renstra_neo`
 --
 
 INSERT INTO `sub_kegiatan_renstra_neo` (`id`, `kegiatan_renstra_id`, `master_sub_kegiatan_id`, `lokasi`, `kelompok_sasaran`, `baseline`, `target_t1`, `anggaran_t1`, `target_t2`, `anggaran_t2`, `target_t3`, `anggaran_t3`, `target_t4`, `anggaran_t4`, `target_t5`, `anggaran_t5`, `target_akhir`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -18950,7 +18976,7 @@ INSERT INTO `sub_kegiatan_renstra_neo` (`id`, `kegiatan_renstra_id`, `master_sub
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `sub_keg_dpa_neo`
+-- Table structure for table `sub_keg_dpa_neo`
 --
 
 CREATE TABLE `sub_keg_dpa_neo` (
@@ -19000,7 +19026,7 @@ CREATE TABLE `sub_keg_dpa_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `sub_keg_dpa_neo`
+-- Dumping data for table `sub_keg_dpa_neo`
 --
 
 INSERT INTO `sub_keg_dpa_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kel_rek`, `uraian`, `tolak_ukur_capaian_keg`, `target_kinerja_capaian_keg`, `tolak_ukur_keluaran`, `target_kinerja_keluaran`, `tolak_ukur_hasil`, `target_kinerja_hasil`, `tolak_ukur_capaian_keg_p`, `target_kinerja_capaian_keg_p`, `tolak_ukur_keluaran_p`, `target_kinerja_keluaran_p`, `tolak_ukur_hasil_p`, `target_kinerja_hasil_p`, `sumber_dana`, `lokasi`, `keluaran_sub_keg`, `keluaran_sub_keg_p`, `awal_pelaksanaan`, `akhir_pelaksanaan`, `jumlah_pagu`, `jumlah_pagu_p`, `jumlah_rincian`, `jumlah_rincian_p`, `disable`, `aksi`, `keterangan`, `kelompok_json`, `keterangan_json`, `tgl_insert`, `tgl_update`, `username_update`, `username_insert`, `setujui`, `kunci`, `setujui_p`, `kunci_p`, `is_deleted`) VALUES
@@ -19083,7 +19109,7 @@ INSERT INTO `sub_keg_dpa_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_ke
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `sub_keg_renja_neo`
+-- Table structure for table `sub_keg_renja_neo`
 --
 
 CREATE TABLE `sub_keg_renja_neo` (
@@ -19133,7 +19159,7 @@ CREATE TABLE `sub_keg_renja_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `sub_keg_renja_neo`
+-- Dumping data for table `sub_keg_renja_neo`
 --
 
 INSERT INTO `sub_keg_renja_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_keg`, `kel_rek`, `uraian`, `tolak_ukur_capaian_keg`, `target_kinerja_capaian_keg`, `tolak_ukur_keluaran`, `target_kinerja_keluaran`, `tolak_ukur_hasil`, `target_kinerja_hasil`, `tolak_ukur_capaian_keg_p`, `target_kinerja_capaian_keg_p`, `tolak_ukur_keluaran_p`, `target_kinerja_keluaran_p`, `tolak_ukur_hasil_p`, `target_kinerja_hasil_p`, `sumber_dana`, `lokasi`, `keluaran_sub_keg`, `keluaran_sub_keg_p`, `awal_pelaksanaan`, `akhir_pelaksanaan`, `jumlah_pagu`, `jumlah_pagu_p`, `jumlah_rincian`, `jumlah_rincian_p`, `disable`, `aksi`, `keterangan`, `kelompok_json`, `keterangan_json`, `tgl_insert`, `tgl_update`, `username_update`, `username_insert`, `setujui`, `kunci`, `setujui_p`, `kunci_p`, `is_deleted`) VALUES
@@ -19368,7 +19394,7 @@ INSERT INTO `sub_keg_renja_neo` (`id`, `kd_wilayah`, `kd_opd`, `tahun`, `kd_sub_
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `sumber_dana_neo`
+-- Table structure for table `sumber_dana_neo`
 --
 
 CREATE TABLE `sumber_dana_neo` (
@@ -19393,7 +19419,7 @@ CREATE TABLE `sumber_dana_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `sumber_dana_neo`
+-- Dumping data for table `sumber_dana_neo`
 --
 
 INSERT INTO `sumber_dana_neo` (`id`, `sumber_dana`, `kelompok`, `jenis_akun`, `objek`, `rincian_objek`, `sub_rincian_objek`, `kode`, `uraian`, `peraturan_id`, `disable`, `aksi`, `keterangan`, `username_insert`, `tgl_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -19702,7 +19728,7 @@ INSERT INTO `sumber_dana_neo` (`id`, `sumber_dana`, `kelompok`, `jenis_akun`, `o
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `tapd_penugasan_neo`
+-- Table structure for table `tapd_penugasan_neo`
 --
 
 CREATE TABLE `tapd_penugasan_neo` (
@@ -19726,7 +19752,7 @@ CREATE TABLE `tapd_penugasan_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `tapd_penugasan_neo`
+-- Dumping data for table `tapd_penugasan_neo`
 --
 
 INSERT INTO `tapd_penugasan_neo` (`id`, `kd_wilayah`, `tahun`, `user_id`, `pegawai_id`, `nama`, `nip`, `jabatan`, `urutan`, `tanggal_mulai`, `tanggal_selesai`, `aktif`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -19739,7 +19765,7 @@ INSERT INTO `tapd_penugasan_neo` (`id`, `kd_wilayah`, `tahun`, `user_id`, `pegaw
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `trx_naskah_dinas`
+-- Table structure for table `trx_naskah_dinas`
 --
 
 CREATE TABLE `trx_naskah_dinas` (
@@ -19771,13 +19797,13 @@ CREATE TABLE `trx_naskah_dinas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `trx_naskah_dinas`
+-- Dumping data for table `trx_naskah_dinas`
 --
 
 INSERT INTO `trx_naskah_dinas` (`id`, `uuid`, `jenis_id`, `nomor`, `nomor_urut`, `tahun`, `klasifikasi_id`, `tanggal_surat`, `perihal`, `status`, `file_pdf`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`, `username_update`, `tgl_update`, `keterangan`, `workflow_status`, `verified_by`, `verified_at`, `signed_by`, `signed_at`, `final_at`, `document_hash`) VALUES
-(2, NULL, 5, '02 DPUPR 2026', NULL, '2026', NULL, '2026-03-24', 'PENGANGKATAN PEJABAT PENATAUSAHAAN KEUANGAN DINAS PEKERJAAN UMUM DAN PENATAAN RUANG KABUPATEN PASANGKAYU TAHUN 2026', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-03-24 04:32:12', NULL, NULL, 'oke', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
+(2, NULL, 5, '02 DPUPR 2026', NULL, '2026', NULL, '2026-03-24', 'PENGANGKATAN PEJABAT PENATAUSAHAAN KEUANGAN DINAS PEKERJAAN UMUM DAN PENATAAN RUANG KABUPATEN PASANGKAYU TAHUN 2026', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-03-24 04:32:12', 'nabiila', '2026-09-05 08:42:22', 'oke', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
 (4, NULL, 5, '05', NULL, '2026', NULL, '2026-03-26', 'perihal', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'inayah', '2026-03-26 03:12:42', NULL, NULL, '', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
-(5, 'TRACE_TEST_PHASE6', 7, 'B/TRACE/DPUPR/2026', 999, '2026', 1, '2026-08-31', 'TRACE EDIT TATA NASKAH TERSIMPAN', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'TRACE_TEST', '2026-08-31 16:08:56', 'TRACE_TEST', '2026-09-01 03:12:56', 'TRACE_TEST Phase 6', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 'TRACE_TEST_PHASE6', 7, 'B/TRACE/DPUPR/2026', 999, '2026', 1, '2026-08-31', 'Undangan Rapat Evaluasi Pelaksanaan Kegiatan', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'TRACE_TEST', '2026-08-31 16:08:56', 'nabiila', '2026-09-05 02:44:24', 'TRACE_TEST Phase 6', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
 (6, 'tnd_6a957e412f7dd6.76381103', 1, 'TRACE/001/1.03.0.00.0.00.01.0000/2026', 901, '2026', 1, '2026-08-31', 'Contoh Peraturan Arsip Nasional Republik Indonesia', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'TRACE_TEST', '2026-08-31 13:14:41', NULL, NULL, 'TRACE_SAMPLE_TND_1', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
 (7, 'tnd_6a957e412fc033.65405791', 2, 'TRACE/002/1.03.0.00.0.00.01.0000/2026', 902, '2026', 1, '2026-08-31', 'Contoh Instruksi', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'TRACE_TEST', '2026-08-31 13:14:41', NULL, NULL, 'TRACE_SAMPLE_TND_2', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
 (8, 'tnd_6a957e412febb6.21012988', 3, 'TRACE/003/1.03.0.00.0.00.01.0000/2026', 903, '2026', 1, '2026-08-31', 'Contoh Surat Edaran', 'draft', NULL, '76.01', '1.03.0.00.0.00.01.0000', 'TRACE_TEST', '2026-08-31 13:14:41', NULL, NULL, 'TRACE_SAMPLE_TND_3', 'draft', NULL, NULL, NULL, NULL, NULL, NULL),
@@ -19807,7 +19833,7 @@ INSERT INTO `trx_naskah_dinas` (`id`, `uuid`, `jenis_id`, `nomor`, `nomor_urut`,
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `trx_naskah_meta`
+-- Table structure for table `trx_naskah_meta`
 --
 
 CREATE TABLE `trx_naskah_meta` (
@@ -19822,7 +19848,7 @@ CREATE TABLE `trx_naskah_meta` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `trx_naskah_meta`
+-- Dumping data for table `trx_naskah_meta`
 --
 
 INSERT INTO `trx_naskah_meta` (`id`, `naskah_id`, `meta_key`, `meta_value`, `kd_wilayah`, `kd_opd`, `username_insert`, `tgl_insert`) VALUES
@@ -19855,7 +19881,7 @@ INSERT INTO `trx_naskah_meta` (`id`, `naskah_id`, `meta_key`, `meta_value`, `kd_
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `trx_naskah_status_history`
+-- Table structure for table `trx_naskah_status_history`
 --
 
 CREATE TABLE `trx_naskah_status_history` (
@@ -19869,7 +19895,7 @@ CREATE TABLE `trx_naskah_status_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 --
--- Dumping data untuk tabel `trx_naskah_status_history`
+-- Dumping data for table `trx_naskah_status_history`
 --
 
 INSERT INTO `trx_naskah_status_history` (`id`, `naskah_id`, `status_dari`, `status_ke`, `catatan`, `username`, `created_at`) VALUES
@@ -19878,7 +19904,7 @@ INSERT INTO `trx_naskah_status_history` (`id`, `naskah_id`, `status_dari`, `stat
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `trx_naskah_struktur`
+-- Table structure for table `trx_naskah_struktur`
 --
 
 CREATE TABLE `trx_naskah_struktur` (
@@ -19895,11 +19921,10 @@ CREATE TABLE `trx_naskah_struktur` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `trx_naskah_struktur`
+-- Dumping data for table `trx_naskah_struktur`
 --
 
 INSERT INTO `trx_naskah_struktur` (`id`, `naskah_id`, `struktur_json`, `kd_wilayah`, `kd_opd`, `tahun`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`) VALUES
-(45, 2, '{\"menimbang\":[{\"type\":\"paragraph\",\"text\":\"bahwa untuk menyediakan pengelolaan keuangan Dinas Pekerjaan Umum danPenataan Ruang Kabupaten Pasangkayu, maka dipandang perlu mengangkatPejabat Penatausahaan Keuangan pada Dinas Pekerjaan Umum dan PenataanRuang Kabupaten Pasangkayu;\",\"align\":\"justify\"},{\"type\":\"paragraph\",\"text\":\"bahwa : yang tersebut namanya dalam lampiran keputusan ini dipandang cakap&nbsp;dan mampu melaksanakan tugas;bahwa sebagaimana dimaksud pada point a perlu ditetapkan dalam keputusan Kepala Dinas Pekerjaan Umum dan Penataan Ruang.\",\"align\":\"justify\"}],\"mengingat\":[{\"type\":\"numbered\",\"text\":\"Undang-Undang : Nomor 28 Tahun 1999 tentang penyelenggaraan Negara yang&nbsp;bersih dan bebas dari korupsi dan nepotisme (Lembaran Negara Republik&nbsp;Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Nomor 3851);Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu&nbsp;Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran&nbsp;Negara. Republik Indonesia Tahun 2003 Nomor 27, Tambahan Lembaran&nbsp;Negara Nomor 4270);\",\"align\":\"justify\"}],\"menetapkan\":[{\"type\":\"paragraph\",\"text\":\"KEPUTUSAN : KEPALA DINAS PEKERJAAN UMUM DAN PENATAAN RUANG&nbsp;TENTANG PENGANGKATAN PEJABAT PENATAUSAHAAN KEUANGAN DINAS&nbsp;PEKERJAAN UMUM DAN PENATAAN RUANG KABUPATEN PASANGKAYU&nbsp;TAHUN 2026\",\"align\":\"justify\"}],\"menetapkan_1\":[{\"type\":\"paragraph\",\"text\":\"PPK SKPD mempunyai tugas dan wewenang:\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melakukan : verifikasi SPP-UP, SPP-GU, SPP-TU, dan SPP-LS beserta bukti&nbsp;kelengkapannya yang diajukan oleh Bendahara Pengeluaran;menyiapkan SPM;melakukan verifikasi laporan pertanggungjawaban Bendahara Penerimaan dan&nbsp;Bendahara Pengeluaran;melaksanakan fungsi akuntansi pada SKPD; danmenyusun laporan keuangan SKPD.\",\"align\":\"justify\"}],\"menetapkan_2\":[{\"type\":\"paragraph\",\"text\":\"Selain melaksanakan tugas dan wewenang pada angka 5, PPK SKPD&nbsp;melaksanakan tugas dan wewenang lainnya yaitu:\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melakukan : verifikasi SPP-UP, SPP-GU, SPP-TU, dan SPP-LS beserta bukti kelengkapannya yang diajukan oleh Bendahara lainnya;melakukan verifikasi surat permintaan pembayaran atas pengembalian kelebihanpendapatan daerah dari bendahara penerimaan; danmenerbitkan surat pernyataan verifikasi kelengkapan dan keabsahan SPP-UP,SPP-GU, SPP-TU dan SPP-LS beserta bukti kelengkapannya sebagai dasar penyiapan SPM.\",\"align\":\"justify\"}],\"menetapkan_3\":[{\"type\":\"paragraph\",\"text\":\"Segala : biaya yang timbul akibat keputusan ini dibebankan kepada APBD Dinas&nbsp;Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran2026.\",\"align\":\"justify\"}],\"menetapkan_4\":[{\"type\":\"paragraph\",\"text\":\"Keputusan : ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat&nbsp;kekeliruan didalamnya akan diperbaharui sebagaimana mestinya.\",\"align\":\"justify\"}],\"nama_ditugaskan\":[{\"nama\":\"SRI IRDA AYU, SP.,M.Si\",\"pangkat\":\"Pembina, IV\\/a\",\"nip\":\"198306252005022003\",\"jabatan\":\"Kepala Bidang Binamarga\",\"jabatan_sk\":\"\",\"_id\":\"198306252005022003\"}],\"tembusan\":[{\"type\":\"numbered\",\"text\":\"Bupati : Pasangkayu, di Pasangkayu;Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu;Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu;Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu;\",\"align\":\"justify\"}]}', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (47, 4, '{\"nomor\":\"05\",\"tanggal_surat\":\"26 Maret 2026\",\"file\":\"\",\"perihal\":\"perihal\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"Pembina, IV\\/a\",\"asn\":\"93\",\"keterangan\":\"\",\"jenis_id\":\"5\",\"menimbang\":[{\"type\":\"paragraph\",\"text\":\"oke\",\"align\":\"justify\"}],\"mengingat\":[{\"type\":\"paragraph\",\"text\":\"oke\",\"align\":\"justify\"}],\"menetapkan\":[],\"menetapkan_1\":[],\"menetapkan_2\":[],\"menetapkan_3\":[],\"menetapkan_4\":[],\"nama_ditugaskan\":[{\"nama\":\"Gusti Ayu Nastuti\",\"pangkat\":\"Juru Muda, I\\/a\",\"nip\":\"819950307868545000\",\"jabatan\":\"\",\"jabatan_sk\":\"\",\"_id\":\"819950307868545000\"},{\"nama\":\"Rosmayani\",\"pangkat\":\"Juru Muda, I\\/a\",\"nip\":\"352782285393646000\",\"jabatan\":\"\",\"jabatan_sk\":\"\",\"_id\":\"352782285393646000\"}],\"tembusan\":[]}', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (49, 6, '{\"nomor\":\"TRACE\\/TND\\/2026\",\"tanggal_surat\":\"2026-08-31\",\"file\":\"Contoh Pilih File Dokumen disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\",\"penanda_tangan\":\"Pejabat Contoh seSendok\",\"jabatan_penandatangan\":\"Kepala Perangkat Daerah\",\"perihal\":\"Pelaksanaan Administrasi Pemerintahan Tahun 2026\",\"penandatangan\":\"Contoh Penandatangan disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\",\"jbt_pemberi_tgs\":\"Kepala Perangkat Daerah\",\"pangkat_pemberi_tgs\":\"Contoh Pangkat disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\",\"tentang\":\"Pelaksanaan Administrasi Pemerintahan Tahun 2026\",\"menimbang\":[{\"uraian\":\"Rincian kegiatan contoh\",\"keterangan\":\"Data uji tampilan dan cetak PDF\"}],\"mengingat\":[{\"uraian\":\"Rincian kegiatan contoh\",\"keterangan\":\"Data uji tampilan dan cetak PDF\"}],\"menetapkan\":[{\"uraian\":\"Rincian kegiatan contoh\",\"keterangan\":\"Data uji tampilan dan cetak PDF\"}]}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-08-31 13:14:41', 'TRACE_TEST', NULL, NULL),
 (50, 7, '{\"nomor\":\"TRACE\\/TND\\/2026\",\"tanggal_surat\":\"2026-08-31\",\"file\":\"Contoh Pilih File Dokumen disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\",\"penanda_tangan\":\"Pejabat Contoh seSendok\",\"jabatan_penandatangan\":\"Kepala Perangkat Daerah\",\"perihal\":\"Pelaksanaan Administrasi Pemerintahan Tahun 2026\",\"penandatangan\":\"Contoh Penandatangan disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\",\"jbt_pemberi_tgs\":\"Kepala Perangkat Daerah\",\"pangkat_pemberi_tgs\":\"Contoh Pangkat disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\",\"menimbang\":[{\"uraian\":\"Rincian kegiatan contoh\",\"keterangan\":\"Data uji tampilan dan cetak PDF\"}],\"memerintahkan\":[{\"uraian\":\"Rincian kegiatan contoh\",\"keterangan\":\"Data uji tampilan dan cetak PDF\"}]}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-08-31 13:14:41', 'TRACE_TEST', NULL, NULL),
@@ -19926,12 +19951,13 @@ INSERT INTO `trx_naskah_struktur` (`id`, `naskah_id`, `struktur_json`, `kd_wilay
 (71, 28, '{\"penanda_tangan\":\"Pejabat Contoh seSendok\",\"jabatan_penandatangan\":\"Kepala Perangkat Daerah\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-08-31 13:14:41', 'TRACE_TEST', NULL, NULL),
 (72, 29, '{\"nomor\":\"TRACE\\/TND\\/2026\",\"tanggal_surat\":\"2026-08-31\",\"file\":\"Contoh Pilih File Dokumen disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\",\"penanda_tangan\":\"Pejabat Contoh seSendok\",\"jabatan_penandatangan\":\"Kepala Perangkat Daerah\",\"perihal\":\"Pelaksanaan Administrasi Pemerintahan Tahun 2026\",\"penandatangan\":\"Contoh Penandatangan disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\",\"jbt_pemberi_tgs\":\"Kepala Perangkat Daerah\",\"pangkat_pemberi_tgs\":\"Contoh Pangkat disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\",\"pelatihan\":\"Contoh Pelatihan disusun otomatis untuk menguji kelengkapan tampilan, alur kerja, dan hasil cetak Tata Naskah seSendok.\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-08-31 13:14:41', 'TRACE_TEST', NULL, NULL),
 (73, 30, '{\"penanda_tangan\":\"Pejabat Contoh seSendok\",\"jabatan_penandatangan\":\"Kepala Perangkat Daerah\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-08-31 13:25:33', 'TRACE_TEST', NULL, NULL),
-(80, 5, '{\"kepada\": \"Sekretaris dan Para Kepala Bidang\", \"dari\": \"Kepala Dinas\", \"tanggal_surat\": \"31 Agustus 2026\", \"perihal\": \"Undangan Rapat Evaluasi Pelaksanaan Kegiatan\", \"isi\": \"Sehubungan dengan pelaksanaan kegiatan Tahun Anggaran 2026, diminta menghadiri rapat evaluasi pada waktu dan tempat yang telah ditentukan.\", \"jbt_pemberi_tgs\": \"Kepala Dinas\", \"nama_penandatangan\": \"TRACE TEST PEJABAT\", \"tembusan\": [{\"text\": \"Bupati Pasangkayu sebagai laporan\"}]}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-09-01 03:12:56', 'TRACE_TEST', NULL, NULL);
+(81, 5, '{\"isi\":[{\"type\":\"paragraph\",\"text\":\"Berikan pengetahuan dasar di home opd role dan kewenangannya masing2 mulai dari tingkat daerah, TAPD, kepala opd, user opd dan user pengawas untuk misalnya inspektorat\\/BPK dan tidak bisa CRUD data hanya melihat dan export data\",\"align\":\"justify\"},{\"type\":\"list\",\"text\":\"Berikan pengetahuan dasar di home opd role dan kewenangannya masing2 mulai dari tingkat daerah, TAPD, kepala opd, user opd dan user pengawas untuk misalnya inspektorat\\/BPK dan tidak bisa CRUD data hanya melihat dan export data\",\"align\":\"justify\"},{\"type\":\"list\",\"text\":\"Berikan pengetahuan dasar di home opd role dan kewenangannya masing2 mulai dari tingkat daerah, TAPD, kepala opd, user opd dan user pengawas untuk misalnya inspektorat\\/BPK dan tidak bisa CRUD data hanya melihat dan export data\",\"align\":\"justify\"}],\"jenis_id\":7,\"nomor\":\"B\\/TRACE\\/DPUPR\\/2026\",\"klasifikasi_id\":1,\"tanggal_surat\":\"31 Agustus 2026\",\"perihal\":\"Undangan Rapat Evaluasi Pelaksanaan Kegiatan\",\"file\":\"\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"IVB\",\"tentang\":\"\"}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-09-05 02:44:24', 'nabiila', NULL, NULL),
+(83, 2, '{\"menimbang\":[{\"type\":\"paragraph\",\"text\":\"bahwa untuk menyediakan pengelolaan keuangan Dinas Pekerjaan Umum danPenataan Ruang Kabupaten Pasangkayu, maka dipandang perlu mengangkatPejabat Penatausahaan Keuangan pada Dinas Pekerjaan Umum dan PenataanRuang Kabupaten Pasangkayu;\",\"align\":\"justify\"},{\"type\":\"paragraph\",\"text\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas;bahwa sebagaimana dimaksud pada point a perlu ditetapkan dalam keputusan Kepala Dinas Pekerjaan Umum dan Penataan Ruang.\",\"align\":\"justify\"}],\"mengingat\":[{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 28 Tahun 1999 tentang penyelenggaraan Negara yang bersih dan bebas dari korupsi dan nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Nomor 3851);Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara. Republik Indonesia Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"align\":\"justify\"}],\"menetapkan\":[{\"type\":\"paragraph\",\"text\":\"KEPUTUSAN KEPALA DINAS PEKERJAAN UMUM DAN PENATAAN RUANG TENTANG PENGANGKATAN PEJABAT PENATAUSAHAAN KEUANGAN DINAS PEKERJAAN UMUM DAN PENATAAN RUANG KABUPATEN PASANGKAYU TAHUN 2026\",\"align\":\"justify\"}],\"menetapkan_1\":[{\"type\":\"paragraph\",\"text\":\"PPK SKPD mempunyai tugas dan wewenang:\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melakukan verifikasi SPP-UP, SPP-GU, SPP-TU, dan SPP-LS beserta bukti kelengkapannya yang diajukan oleh Bendahara Pengeluaran;menyiapkan SPM;melakukan verifikasi laporan pertanggungjawaban Bendahara Penerimaan dan Bendahara Pengeluaran;melaksanakan fungsi akuntansi pada SKPD; danmenyusun laporan keuangan SKPD.\",\"align\":\"justify\"}],\"menetapkan_2\":[{\"type\":\"paragraph\",\"text\":\"Selain melaksanakan tugas dan wewenang pada angka 5, PPK SKPD melaksanakan tugas dan wewenang lainnya yaitu:\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melakukan verifikasi SPP-UP, SPP-GU, SPP-TU, dan SPP-LS beserta bukti kelengkapannya yang diajukan oleh Bendahara lainnya;melakukan verifikasi surat permintaan pembayaran atas pengembalian kelebihanpendapatan daerah dari bendahara penerimaan; danmenerbitkan surat pernyataan verifikasi kelengkapan dan keabsahan SPP-UP,SPP-GU, SPP-TU dan SPP-LS beserta bukti kelengkapannya sebagai dasar penyiapan SPM.\",\"align\":\"justify\"}],\"menetapkan_3\":[{\"type\":\"paragraph\",\"text\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada APBD Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran2026.\",\"align\":\"justify\"}],\"menetapkan_4\":[{\"type\":\"paragraph\",\"text\":\"Keputusan : ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya.\",\"align\":\"justify\"}],\"nama_ditugaskan\":[{\"nama\":\"SRI IRDA AYU, SP.,M.Si\",\"pangkat\":\"Pembina, IV\\/a\",\"nip\":\"198306252005022003\",\"jabatan\":\"Kepala Bidang Binamarga\",\"jabatan_sk\":\"\",\"_id\":\"198306252005022003\"}],\"tembusan\":[{\"type\":\"numbered\",\"text\":\"Bupati Pasangkayu, di Pasangkayu;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu;\",\"align\":\"justify\"}],\"jenis_id\":\"5\",\"nomor\":\"02 DPUPR 2026\",\"tanggal_surat\":\"24 Maret 2026\",\"perihal\":\"PENGANGKATAN PEJABAT PENATAUSAHAAN KEUANGAN DINAS PEKERJAAN UMUM DAN PENATAAN RUANG KABUPATEN PASANGKAYU TAHUN 2026\",\"file\":\"\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"Pembina, IV\\/a\",\"asn\":\"111\",\"bentuk_lampiran\":0,\"keterangan\":\"oke\",\"disable\":0}', '76.01', '1.03.0.00.0.00.01.0000', 2026, '2026-09-05 08:42:22', 'nabiila', NULL, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `trx_nomor_counter`
+-- Table structure for table `trx_nomor_counter`
 --
 
 CREATE TABLE `trx_nomor_counter` (
@@ -19942,7 +19968,7 @@ CREATE TABLE `trx_nomor_counter` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `trx_nomor_counter`
+-- Dumping data for table `trx_nomor_counter`
 --
 
 INSERT INTO `trx_nomor_counter` (`id`, `klasifikasi_id`, `tahun`, `last_number`) VALUES
@@ -19952,7 +19978,7 @@ INSERT INTO `trx_nomor_counter` (`id`, `klasifikasi_id`, `tahun`, `last_number`)
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `tujuan_renstra_neo`
+-- Table structure for table `tujuan_renstra_neo`
 --
 
 CREATE TABLE `tujuan_renstra_neo` (
@@ -19970,7 +19996,7 @@ CREATE TABLE `tujuan_renstra_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `tujuan_renstra_neo`
+-- Dumping data for table `tujuan_renstra_neo`
 --
 
 INSERT INTO `tujuan_renstra_neo` (`id`, `misi_id`, `kode_tujuan`, `nama_tujuan`, `disable`, `keterangan`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `is_deleted`) VALUES
@@ -19981,7 +20007,7 @@ INSERT INTO `tujuan_renstra_neo` (`id`, `misi_id`, `kode_tujuan`, `nama_tujuan`,
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `user_sesendok_biila`
+-- Table structure for table `user_sesendok_biila`
 --
 
 CREATE TABLE `user_sesendok_biila` (
@@ -20020,12 +20046,12 @@ CREATE TABLE `user_sesendok_biila` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `user_sesendok_biila`
+-- Dumping data for table `user_sesendok_biila`
 --
 
 INSERT INTO `user_sesendok_biila` (`id`, `pegawai_id`, `username`, `email`, `nama`, `nip`, `password`, `message_public_key`, `remember_token`, `kd_opd`, `nama_org`, `kd_wilayah`, `type_user`, `photo`, `signature_image`, `signature_verified`, `tgl_daftar`, `tgl_login`, `tahun`, `kontak_person`, `alamat`, `font_size`, `theme`, `warna_tbl`, `scrolling_table`, `disable_login`, `disable_anggaran`, `disable_kontrak`, `disable_realisasi`, `disable_chat`, `ket`, `disable`) VALUES
 (1, NULL, 'alwi_mansyur', 'alwi@gmail.com', 'Alwi Mansyur', '1980', '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_wilayah', 'images/avatar/default.jpeg', NULL, 0, '2018-06-04 21:57:05', '2024-10-23 15:03:04', '2024', 'pasangkayu ji', NULL, 90.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'apa yang dapat saya berikan', 0),
-(2, NULL, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', '{\"alg\":\"RSA-OAEP-256\",\"e\":\"AQAB\",\"ext\":true,\"key_ops\":[\"encrypt\"],\"kty\":\"RSA\",\"n\":\"oYYhmKzuK3YDvMkEPC-0SR1MnZiUv7cHkpur2R1GkBiHf5U6UfXwQqJmSdrmcFoilb5B8jFAfFfk0UoBc5IPcpyRlDQT4jYh0lhvrq7eNVnMILARzW-SSyO6VTQmJwi5AC4N8QnRhihW85TSYciqjMIHJhmReHSaDreyAD2rYgCWnu7HFca8nPyWdqUthD-90w7m8Wzl7zS_sTkOWx6YffDVYrMX1jwFzSM4_ciFoI1C2-1aEnX7dDjn5CcQf8PubFmN2ARPzpRuOeXyPfTyPT1WPlFOkJxZXenARTmBAdHmtK6sfhWx4wwIwTm4Y48ta_C9I8GRExSGPWQDul9A3U3A_YfFO1enfVDna73FYC7Dy208hxLbu2tZxz5YC3kaiCO3ePBMp1qPKf6j_xA6zVJb9RbYr1_lIR4D6aulrBK-2eYz3U_vOwWovzVEo_SNZnNIKkii9JwZkH2veQ-YZHxK2s5vuOW321Zw_MoBiPXUZ4QVXBro5tNaaCEWx7p5\"}', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_opd', 'storage/uploads/76.01-1.03.0.00.0.00.01.0000/profil/user-2-a117707fbe3e.webp', NULL, 0, '2018-06-09 15:54:29', '2026-02-24 21:15:01', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
+(2, NULL, 'nabiila', 'nabiila@gmail.com', 'Najwan Nabiila', '123456789012345678', '$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy', '{\"alg\":\"RSA-OAEP-256\",\"e\":\"AQAB\",\"ext\":true,\"key_ops\":[\"encrypt\"],\"kty\":\"RSA\",\"n\":\"5-lO4BLvaK6-VSfQUi4mHW-d6o3JjY3ZG5XGQ0eD-9eNzfU5IteJKDU3-ei-Gj5CDQxgXjOeeMOvXu3GdJoPhq4vUrd1l3PXCbMf6yRF82MDsGBkgNudt1rdA_Zv2lUg5NtKUZhB4GAJSkBwD3dfV-7Wis2eN2MD8eHoJSsXVVl7_1yIcF6-j3DNzgEDWxg0yYOkHE2x4HCcY_G-LQFd19EsOwsopRZS7qSZQQaz9QS-V73wKvxAx_63HwUzyEA8idg_EDOJkQmNa5Clo-UenP4iSjth4M5Q5-ssN5a1BpgxogR0mt8ftiuHChqfddMJdy874vRTkEqr3BdnOSRwblZOhuwyQxxpEsO-tJ39J4JqZFa5t6Q_kfvVKmOCDcIYTHyKzYEEfy_KSBRDqctCqbu0HkQdesJWwfcfeViX0EvF8YmRv1C6cAtaaz9ZKd8PY63aLdUgj-LaAb97Vn4RTYK0ohJesaXX7AOviW_fXI9Ljz_UN61g6cAouaKxbMQp\"}', NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'admin_opd', 'storage/uploads/76.01-1.03.0.00.0.00.01.0000/profil/user-2-a117707fbe3e.webp', NULL, 0, '2018-06-09 15:54:29', '2026-02-24 21:15:01', '2026', '08128888', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu', 0),
 (3, NULL, 'inayah', 'inayah@gmail.com', 'Inayah Nadhilah', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '1.03.0.00.0.00.01.0000', 'DINAS PEKERJAAN UMUM DAN PENATAAN RUANG', '76.01', 'super_admin', 'images/avatar/default.jpeg', NULL, 0, '2018-06-22 22:04:17', '2020-03-08 02:30:41', '2026', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'dimana mana hatiku senang oke', 0),
 (4, NULL, 'Arlinda', 'arlinda@gmail.com', 'Arlinda Achmad', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '', 'Prof', '', 'admin_opd', 'images/avatar/default.jpeg', NULL, 0, '2018-07-10 14:27:06', '2018-10-21 12:23:09', '2024', '', NULL, 80.00, 'auto', NULL, 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk Pasangkayu.', 0),
 (5, NULL, 'administrator', 'alwi.mansyur@gmail.com', 'administrator', NULL, '$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi', NULL, NULL, '', 'administrator AHSP', '', 'user', 'images/avatar/c14719a7f71e46badf2cf93ae373ae9797281782_9.png', NULL, 0, '2023-02-09 23:41:34', '2023-02-23 00:05:26', '2024', '08128886665', NULL, 80.00, 'auto', 'non', 'short', 0, 0, 0, 0, 1, 'Apa yang dapat saya berikan untuk mu', 0),
@@ -20047,7 +20073,7 @@ INSERT INTO `user_sesendok_biila` (`id`, `pegawai_id`, `username`, `email`, `nam
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `user_subkegiatan_neo`
+-- Table structure for table `user_subkegiatan_neo`
 --
 
 CREATE TABLE `user_subkegiatan_neo` (
@@ -20073,7 +20099,7 @@ CREATE TABLE `user_subkegiatan_neo` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `usulan_pembangunan_neo`
+-- Table structure for table `usulan_pembangunan_neo`
 --
 
 CREATE TABLE `usulan_pembangunan_neo` (
@@ -20105,7 +20131,7 @@ CREATE TABLE `usulan_pembangunan_neo` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `wallchat`
+-- Table structure for table `wallchat`
 --
 
 CREATE TABLE `wallchat` (
@@ -20139,7 +20165,7 @@ CREATE TABLE `wallchat` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `wallchat`
+-- Dumping data for table `wallchat`
 --
 
 INSERT INTO `wallchat` (`id`, `user_id`, `receiver_id`, `parent_id`, `type`, `content`, `content_ciphertext`, `content_nonce`, `e2e_payload`, `encryption_version`, `is_ephemeral`, `read_at`, `deleted_by_sender`, `deleted_by_receiver`, `attachment_name`, `attachment_path`, `attachment_mime`, `attachment_size`, `theme`, `created_at`, `updated_at`, `is_deleted`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `file`) VALUES
@@ -20183,7 +20209,7 @@ INSERT INTO `wallchat` (`id`, `user_id`, `receiver_id`, `parent_id`, `type`, `co
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `wilayah_neo`
+-- Table structure for table `wilayah_neo`
 --
 
 CREATE TABLE `wilayah_neo` (
@@ -20209,7 +20235,7 @@ CREATE TABLE `wilayah_neo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
--- Dumping data untuk tabel `wilayah_neo`
+-- Dumping data for table `wilayah_neo`
 --
 
 INSERT INTO `wilayah_neo` (`id`, `kode`, `uraian`, `status`, `jml_kec`, `jml_kel`, `jml_desa`, `luas`, `penduduk`, `logo`, `peta`, `keterangan`, `disable`, `tgl_insert`, `username_insert`, `tgl_update`, `username_update`, `file`, `is_deleted`) VALUES
@@ -20222,11 +20248,11 @@ INSERT INTO `wilayah_neo` (`id`, `kode`, `uraian`, `status`, `jml_kec`, `jml_kel
 (7, '76.06', 'MAMUJU TENGAH', 'kab', 5, 0, 54, 2774.930000000000, 138231, NULL, NULL, 'Luas Wilayah Indikatif sesuai Surat Badan Informasi Geospasial No. B-8.31/PBW-BIG/IGD.04.04/6/2021 Tanggal 8 Juni 2021', 0, '2026-02-18 13:11:51', 'nabiila', '2026-02-18 13:11:51', 'nabiila', NULL, 0);
 
 --
--- Indeks untuk tabel yang dibuang
+-- Indexes for dumped tables
 --
 
 --
--- Indeks untuk tabel `absensi_pegawai_neo`
+-- Indexes for table `absensi_pegawai_neo`
 --
 ALTER TABLE `absensi_pegawai_neo`
   ADD PRIMARY KEY (`id`),
@@ -20234,63 +20260,63 @@ ALTER TABLE `absensi_pegawai_neo`
   ADD KEY `idx_absen_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`tanggal`);
 
 --
--- Indeks untuk tabel `akun_neo`
+-- Indexes for table `akun_neo`
 --
 ALTER TABLE `akun_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `analisa_rab`
+-- Indexes for table `analisa_rab`
 --
 ALTER TABLE `analisa_rab`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `anggaran_copy_log`
+-- Indexes for table `anggaran_copy_log`
 --
 ALTER TABLE `anggaran_copy_log`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `anggaran_perubahan_template`
+-- Indexes for table `anggaran_perubahan_template`
 --
 ALTER TABLE `anggaran_perubahan_template`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `anggaran_program_renstra_neo`
+-- Indexes for table `anggaran_program_renstra_neo`
 --
 ALTER TABLE `anggaran_program_renstra_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `program_id` (`program_id`);
 
 --
--- Indeks untuk tabel `anggaran_template`
+-- Indexes for table `anggaran_template`
 --
 ALTER TABLE `anggaran_template`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `anggaran_workflow_log`
+-- Indexes for table `anggaran_workflow_log`
 --
 ALTER TABLE `anggaran_workflow_log`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_workflow_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`tgl_copy`);
 
 --
--- Indeks untuk tabel `aset_neo`
+-- Indexes for table `aset_neo`
 --
 ALTER TABLE `aset_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `cache_schema_naskah`
+-- Indexes for table `cache_schema_naskah`
 --
 ALTER TABLE `cache_schema_naskah`
   ADD PRIMARY KEY (`jenis_id`,`schema_version`);
 
 --
--- Indeks untuk tabel `cuti_pegawai_neo`
+-- Indexes for table `cuti_pegawai_neo`
 --
 ALTER TABLE `cuti_pegawai_neo`
   ADD PRIMARY KEY (`id`),
@@ -20298,7 +20324,7 @@ ALTER TABLE `cuti_pegawai_neo`
   ADD KEY `idx_cuti_pegawai` (`pegawai_id`);
 
 --
--- Indeks untuk tabel `daftar_paket_neo`
+-- Indexes for table `daftar_paket_neo`
 --
 ALTER TABLE `daftar_paket_neo`
   ADD PRIMARY KEY (`id`),
@@ -20306,7 +20332,7 @@ ALTER TABLE `daftar_paket_neo`
   ADD KEY `idx_paket_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`);
 
 --
--- Indeks untuk tabel `daftar_realisasi_neo`
+-- Indexes for table `daftar_realisasi_neo`
 --
 ALTER TABLE `daftar_realisasi_neo`
   ADD PRIMARY KEY (`id`),
@@ -20316,20 +20342,20 @@ ALTER TABLE `daftar_realisasi_neo`
   ADD KEY `idx_realisasi_contract_phase27` (`kontrak_id`,`is_deleted`,`tanggal`);
 
 --
--- Indeks untuk tabel `daftar_uraian_paket`
+-- Indexes for table `daftar_uraian_paket`
 --
 ALTER TABLE `daftar_uraian_paket`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `db_asn_pemda_neo`
+-- Indexes for table `db_asn_pemda_neo`
 --
 ALTER TABLE `db_asn_pemda_neo`
   ADD UNIQUE KEY `id` (`id`),
   ADD UNIQUE KEY `nip` (`nip`);
 
 --
--- Indeks untuk tabel `dokumen_pegawai_neo`
+-- Indexes for table `dokumen_pegawai_neo`
 --
 ALTER TABLE `dokumen_pegawai_neo`
   ADD PRIMARY KEY (`id`),
@@ -20337,21 +20363,21 @@ ALTER TABLE `dokumen_pegawai_neo`
   ADD KEY `idx_dok_pegawai_scope` (`kd_wilayah`,`kd_opd`,`tahun`);
 
 --
--- Indeks untuk tabel `dpa_neo`
+-- Indexes for table `dpa_neo`
 --
 ALTER TABLE `dpa_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_dpa_source` (`source_table`,`source_id`);
 
 --
--- Indeks untuk tabel `dppa_neo`
+-- Indexes for table `dppa_neo`
 --
 ALTER TABLE `dppa_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_dppa_source` (`source_table`,`source_id`);
 
 --
--- Indeks untuk tabel `evaluasi_renja_neo`
+-- Indexes for table `evaluasi_renja_neo`
 --
 ALTER TABLE `evaluasi_renja_neo`
   ADD PRIMARY KEY (`id`),
@@ -20359,44 +20385,44 @@ ALTER TABLE `evaluasi_renja_neo`
   ADD KEY `idx_evaluasi_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`triwulan`,`is_deleted`);
 
 --
--- Indeks untuk tabel `group_rekap_akun`
+-- Indexes for table `group_rekap_akun`
 --
 ALTER TABLE `group_rekap_akun`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `group_sub_kegiatan`
+-- Indexes for table `group_sub_kegiatan`
 --
 ALTER TABLE `group_sub_kegiatan`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `halaman_berita`
+-- Indexes for table `halaman_berita`
 --
 ALTER TABLE `halaman_berita`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_halaman_publik` (`jenis_halaman`,`aktif`,`is_deleted`,`kd_wilayah`);
 
 --
--- Indeks untuk tabel `import_logs`
+-- Indexes for table `import_logs`
 --
 ALTER TABLE `import_logs`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `indikator_program_renstra_neo`
+-- Indexes for table `indikator_program_renstra_neo`
 --
 ALTER TABLE `indikator_program_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `indikator_sasaran_renstra_neo`
+-- Indexes for table `indikator_sasaran_renstra_neo`
 --
 ALTER TABLE `indikator_sasaran_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `kd_wilayah_neo`
+-- Indexes for table `kd_wilayah_neo`
 --
 ALTER TABLE `kd_wilayah_neo`
   ADD PRIMARY KEY (`id`),
@@ -20404,13 +20430,13 @@ ALTER TABLE `kd_wilayah_neo`
   ADD KEY `idx_kode_wilayah` (`kode`);
 
 --
--- Indeks untuk tabel `kegiatan_renstra_neo`
+-- Indexes for table `kegiatan_renstra_neo`
 --
 ALTER TABLE `kegiatan_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `kontrak_dokumen_neo`
+-- Indexes for table `kontrak_dokumen_neo`
 --
 ALTER TABLE `kontrak_dokumen_neo`
   ADD PRIMARY KEY (`id`),
@@ -20418,7 +20444,7 @@ ALTER TABLE `kontrak_dokumen_neo`
   ADD KEY `idx_dok_scope` (`kd_wilayah`,`kd_opd`,`tahun`);
 
 --
--- Indeks untuk tabel `kontrak_item_neo`
+-- Indexes for table `kontrak_item_neo`
 --
 ALTER TABLE `kontrak_item_neo`
   ADD PRIMARY KEY (`id`),
@@ -20427,7 +20453,7 @@ ALTER TABLE `kontrak_item_neo`
   ADD KEY `idx_kontrak_item_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`);
 
 --
--- Indeks untuk tabel `kontrak_jadwal_neo`
+-- Indexes for table `kontrak_jadwal_neo`
 --
 ALTER TABLE `kontrak_jadwal_neo`
   ADD PRIMARY KEY (`id`),
@@ -20436,7 +20462,7 @@ ALTER TABLE `kontrak_jadwal_neo`
   ADD KEY `idx_jadwal_rab` (`rab_id`,`minggu_ke`);
 
 --
--- Indeks untuk tabel `kontrak_neo`
+-- Indexes for table `kontrak_neo`
 --
 ALTER TABLE `kontrak_neo`
   ADD PRIMARY KEY (`id`),
@@ -20446,14 +20472,14 @@ ALTER TABLE `kontrak_neo`
   ADD KEY `idx_kontrak_rekanan` (`rekanan_id`);
 
 --
--- Indeks untuk tabel `kop_surat_neo`
+-- Indexes for table `kop_surat_neo`
 --
 ALTER TABLE `kop_surat_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_kop_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`aktif`);
 
 --
--- Indeks untuk tabel `log_activity`
+-- Indexes for table `log_activity`
 --
 ALTER TABLE `log_activity`
   ADD PRIMARY KEY (`id`),
@@ -20462,7 +20488,7 @@ ALTER TABLE `log_activity`
   ADD KEY `idx_action` (`action`);
 
 --
--- Indeks untuk tabel `master_biaya`
+-- Indexes for table `master_biaya`
 --
 ALTER TABLE `master_biaya`
   ADD PRIMARY KEY (`id`),
@@ -20471,7 +20497,7 @@ ALTER TABLE `master_biaya`
   ADD KEY `idx_master_biaya_kode` (`kode`);
 
 --
--- Indeks untuk tabel `master_biaya_akun`
+-- Indexes for table `master_biaya_akun`
 --
 ALTER TABLE `master_biaya_akun`
   ADD PRIMARY KEY (`id`),
@@ -20480,20 +20506,20 @@ ALTER TABLE `master_biaya_akun`
   ADD KEY `idx_master_biaya_akun_lookup` (`master_biaya_id`,`kd_akun`,`peraturan_id`,`is_deleted`);
 
 --
--- Indeks untuk tabel `misi_renstra_neo`
+-- Indexes for table `misi_renstra_neo`
 --
 ALTER TABLE `misi_renstra_neo`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uniq_misi` (`renstra_id`,`nama_misi`) USING HASH;
 
 --
--- Indeks untuk tabel `organisasi_neo`
+-- Indexes for table `organisasi_neo`
 --
 ALTER TABLE `organisasi_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `pejabat_tahunan_neo`
+-- Indexes for table `pejabat_tahunan_neo`
 --
 ALTER TABLE `pejabat_tahunan_neo`
   ADD PRIMARY KEY (`id`),
@@ -20501,31 +20527,31 @@ ALTER TABLE `pejabat_tahunan_neo`
   ADD KEY `idx_pejabat_sub` (`kd_sub_keg`,`jenis_pejabat`,`is_deleted`);
 
 --
--- Indeks untuk tabel `pengaturan_neo`
+-- Indexes for table `pengaturan_neo`
 --
 ALTER TABLE `pengaturan_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `peraturan_neo`
+-- Indexes for table `peraturan_neo`
 --
 ALTER TABLE `peraturan_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `periode_rpjmd`
+-- Indexes for table `periode_rpjmd`
 --
 ALTER TABLE `periode_rpjmd`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `program_renstra_neo`
+-- Indexes for table `program_renstra_neo`
 --
 ALTER TABLE `program_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `rab_paket_neo`
+-- Indexes for table `rab_paket_neo`
 --
 ALTER TABLE `rab_paket_neo`
   ADD PRIMARY KEY (`id`),
@@ -20533,56 +20559,56 @@ ALTER TABLE `rab_paket_neo`
   ADD KEY `idx_rab_kontrak_item` (`kontrak_item_id`);
 
 --
--- Indeks untuk tabel `ref_jenis_naskah`
+-- Indexes for table `ref_jenis_naskah`
 --
 ALTER TABLE `ref_jenis_naskah`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `ref_jenis_naskah_dinas`
+-- Indexes for table `ref_jenis_naskah_dinas`
 --
 ALTER TABLE `ref_jenis_naskah_dinas`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `ref_kelompok_naskah`
+-- Indexes for table `ref_kelompok_naskah`
 --
 ALTER TABLE `ref_kelompok_naskah`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `ref_klasifikasi_keamanan`
+-- Indexes for table `ref_klasifikasi_keamanan`
 --
 ALTER TABLE `ref_klasifikasi_keamanan`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `ref_template_naskah`
+-- Indexes for table `ref_template_naskah`
 --
 ALTER TABLE `ref_template_naskah`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `register_naskah_dinas`
+-- Indexes for table `register_naskah_dinas`
 --
 ALTER TABLE `register_naskah_dinas`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `rekanan_akta`
+-- Indexes for table `rekanan_akta`
 --
 ALTER TABLE `rekanan_akta`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_rekanan` (`rekanan_id`);
 
 --
--- Indeks untuk tabel `rekanan_neo`
+-- Indexes for table `rekanan_neo`
 --
 ALTER TABLE `rekanan_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `rekening_kegiatan`
+-- Indexes for table `rekening_kegiatan`
 --
 ALTER TABLE `rekening_kegiatan`
   ADD PRIMARY KEY (`id`),
@@ -20592,7 +20618,7 @@ ALTER TABLE `rekening_kegiatan`
   ADD KEY `idx_rekening_level` (`level`);
 
 --
--- Indeks untuk tabel `rencana_realisasi_anggaran_neo`
+-- Indexes for table `rencana_realisasi_anggaran_neo`
 --
 ALTER TABLE `rencana_realisasi_anggaran_neo`
   ADD PRIMARY KEY (`id`),
@@ -20601,7 +20627,7 @@ ALTER TABLE `rencana_realisasi_anggaran_neo`
   ADD KEY `idx_rencana_sub_akun` (`kd_sub_keg`,`kd_akun`);
 
 --
--- Indeks untuk tabel `rencana_rekening_anggaran_neo`
+-- Indexes for table `rencana_rekening_anggaran_neo`
 --
 ALTER TABLE `rencana_rekening_anggaran_neo`
   ADD PRIMARY KEY (`id`),
@@ -20609,27 +20635,27 @@ ALTER TABLE `rencana_rekening_anggaran_neo`
   ADD KEY `idx_rencana_rekening_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`dokumen`,`kd_sub_keg`,`is_deleted`);
 
 --
--- Indeks untuk tabel `renja_neo`
+-- Indexes for table `renja_neo`
 --
 ALTER TABLE `renja_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_renja_source` (`source_table`,`source_id`);
 
 --
--- Indeks untuk tabel `renja_p_neo`
+-- Indexes for table `renja_p_neo`
 --
 ALTER TABLE `renja_p_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_renja_p_source` (`source_table`,`source_id`);
 
 --
--- Indeks untuk tabel `renstra_neo`
+-- Indexes for table `renstra_neo`
 --
 ALTER TABLE `renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `riwayat_jabatan_neo`
+-- Indexes for table `riwayat_jabatan_neo`
 --
 ALTER TABLE `riwayat_jabatan_neo`
   ADD PRIMARY KEY (`id`),
@@ -20637,7 +20663,7 @@ ALTER TABLE `riwayat_jabatan_neo`
   ADD KEY `idx_rj_pegawai` (`pegawai_id`);
 
 --
--- Indeks untuk tabel `riwayat_pangkat_neo`
+-- Indexes for table `riwayat_pangkat_neo`
 --
 ALTER TABLE `riwayat_pangkat_neo`
   ADD PRIMARY KEY (`id`),
@@ -20645,21 +20671,21 @@ ALTER TABLE `riwayat_pangkat_neo`
   ADD KEY `idx_rp_pegawai` (`pegawai_id`);
 
 --
--- Indeks untuk tabel `rka_neo`
+-- Indexes for table `rka_neo`
 --
 ALTER TABLE `rka_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_rka_source` (`source_table`,`source_id`);
 
 --
--- Indeks untuk tabel `rka_p_neo`
+-- Indexes for table `rka_p_neo`
 --
 ALTER TABLE `rka_p_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_rka_p_source` (`source_table`,`source_id`);
 
 --
--- Indeks untuk tabel `rkpd_neo`
+-- Indexes for table `rkpd_neo`
 --
 ALTER TABLE `rkpd_neo`
   ADD PRIMARY KEY (`id`),
@@ -20668,7 +20694,7 @@ ALTER TABLE `rkpd_neo`
   ADD KEY `idx_rkpd_renstra` (`renstra_sub_kegiatan_id`);
 
 --
--- Indeks untuk tabel `rkpd_p_neo`
+-- Indexes for table `rkpd_p_neo`
 --
 ALTER TABLE `rkpd_p_neo`
   ADD PRIMARY KEY (`id`),
@@ -20677,32 +20703,32 @@ ALTER TABLE `rkpd_p_neo`
   ADD KEY `idx_rkpd_p_sub` (`kd_sub_keg`);
 
 --
--- Indeks untuk tabel `rpjmd_kabupaten_neo`
+-- Indexes for table `rpjmd_kabupaten_neo`
 --
 ALTER TABLE `rpjmd_kabupaten_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_rpjmd_wilayah_masa` (`kd_wilayah`,`berlaku_mulai`,`berlaku_sampai`,`is_deleted`);
 
 --
--- Indeks untuk tabel `sasaran_renstra_neo`
+-- Indexes for table `sasaran_renstra_neo`
 --
 ALTER TABLE `sasaran_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `satuan_neo`
+-- Indexes for table `satuan_neo`
 --
 ALTER TABLE `satuan_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `sk_asn_neo`
+-- Indexes for table `sk_asn_neo`
 --
 ALTER TABLE `sk_asn_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `sk_pegawai_neo`
+-- Indexes for table `sk_pegawai_neo`
 --
 ALTER TABLE `sk_pegawai_neo`
   ADD PRIMARY KEY (`id`),
@@ -20710,31 +20736,31 @@ ALTER TABLE `sk_pegawai_neo`
   ADD KEY `idx_sk_pegawai` (`pegawai_id`);
 
 --
--- Indeks untuk tabel `sub_kegiatan_renstra_neo`
+-- Indexes for table `sub_kegiatan_renstra_neo`
 --
 ALTER TABLE `sub_kegiatan_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `sub_keg_dpa_neo`
+-- Indexes for table `sub_keg_dpa_neo`
 --
 ALTER TABLE `sub_keg_dpa_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `sub_keg_renja_neo`
+-- Indexes for table `sub_keg_renja_neo`
 --
 ALTER TABLE `sub_keg_renja_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `sumber_dana_neo`
+-- Indexes for table `sumber_dana_neo`
 --
 ALTER TABLE `sumber_dana_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `tapd_penugasan_neo`
+-- Indexes for table `tapd_penugasan_neo`
 --
 ALTER TABLE `tapd_penugasan_neo`
   ADD PRIMARY KEY (`id`),
@@ -20742,46 +20768,46 @@ ALTER TABLE `tapd_penugasan_neo`
   ADD KEY `idx_tapd_pegawai` (`pegawai_id`,`kd_wilayah`);
 
 --
--- Indeks untuk tabel `trx_naskah_dinas`
+-- Indexes for table `trx_naskah_dinas`
 --
 ALTER TABLE `trx_naskah_dinas`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `trx_naskah_meta`
+-- Indexes for table `trx_naskah_meta`
 --
 ALTER TABLE `trx_naskah_meta`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `trx_naskah_status_history`
+-- Indexes for table `trx_naskah_status_history`
 --
 ALTER TABLE `trx_naskah_status_history`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_naskah_status_history` (`naskah_id`,`created_at`);
 
 --
--- Indeks untuk tabel `trx_naskah_struktur`
+-- Indexes for table `trx_naskah_struktur`
 --
 ALTER TABLE `trx_naskah_struktur`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_naskah_struktur` (`naskah_id`);
 
 --
--- Indeks untuk tabel `trx_nomor_counter`
+-- Indexes for table `trx_nomor_counter`
 --
 ALTER TABLE `trx_nomor_counter`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unik` (`klasifikasi_id`,`tahun`);
 
 --
--- Indeks untuk tabel `tujuan_renstra_neo`
+-- Indexes for table `tujuan_renstra_neo`
 --
 ALTER TABLE `tujuan_renstra_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `user_sesendok_biila`
+-- Indexes for table `user_sesendok_biila`
 --
 ALTER TABLE `user_sesendok_biila`
   ADD PRIMARY KEY (`id`),
@@ -20790,7 +20816,7 @@ ALTER TABLE `user_sesendok_biila`
   ADD KEY `idx_user_pegawai` (`pegawai_id`,`kd_wilayah`,`kd_opd`);
 
 --
--- Indeks untuk tabel `user_subkegiatan_neo`
+-- Indexes for table `user_subkegiatan_neo`
 --
 ALTER TABLE `user_subkegiatan_neo`
   ADD PRIMARY KEY (`id`),
@@ -20798,14 +20824,14 @@ ALTER TABLE `user_subkegiatan_neo`
   ADD KEY `idx_user_sub_scope` (`kd_wilayah`,`kd_opd`,`tahun`);
 
 --
--- Indeks untuk tabel `usulan_pembangunan_neo`
+-- Indexes for table `usulan_pembangunan_neo`
 --
 ALTER TABLE `usulan_pembangunan_neo`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_usulan_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`jenis_usulan`,`is_deleted`);
 
 --
--- Indeks untuk tabel `wallchat`
+-- Indexes for table `wallchat`
 --
 ALTER TABLE `wallchat`
   ADD PRIMARY KEY (`id`),
@@ -20821,543 +20847,543 @@ ALTER TABLE `wallchat`
   ADD KEY `idx_wall_private_receiver` (`type`,`is_deleted`,`receiver_id`,`deleted_by_receiver`,`created_at`);
 
 --
--- Indeks untuk tabel `wilayah_neo`
+-- Indexes for table `wilayah_neo`
 --
 ALTER TABLE `wilayah_neo`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT untuk tabel `absensi_pegawai_neo`
+-- AUTO_INCREMENT for table `absensi_pegawai_neo`
 --
 ALTER TABLE `absensi_pegawai_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `akun_neo`
+-- AUTO_INCREMENT for table `akun_neo`
 --
 ALTER TABLE `akun_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4277;
 
 --
--- AUTO_INCREMENT untuk tabel `analisa_rab`
+-- AUTO_INCREMENT for table `analisa_rab`
 --
 ALTER TABLE `analisa_rab`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `anggaran_copy_log`
+-- AUTO_INCREMENT for table `anggaran_copy_log`
 --
 ALTER TABLE `anggaran_copy_log`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `anggaran_perubahan_template`
+-- AUTO_INCREMENT for table `anggaran_perubahan_template`
 --
 ALTER TABLE `anggaran_perubahan_template`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `anggaran_program_renstra_neo`
+-- AUTO_INCREMENT for table `anggaran_program_renstra_neo`
 --
 ALTER TABLE `anggaran_program_renstra_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `anggaran_template`
+-- AUTO_INCREMENT for table `anggaran_template`
 --
 ALTER TABLE `anggaran_template`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `anggaran_workflow_log`
+-- AUTO_INCREMENT for table `anggaran_workflow_log`
 --
 ALTER TABLE `anggaran_workflow_log`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT untuk tabel `aset_neo`
+-- AUTO_INCREMENT for table `aset_neo`
 --
 ALTER TABLE `aset_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4033;
 
 --
--- AUTO_INCREMENT untuk tabel `cuti_pegawai_neo`
+-- AUTO_INCREMENT for table `cuti_pegawai_neo`
 --
 ALTER TABLE `cuti_pegawai_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `daftar_paket_neo`
+-- AUTO_INCREMENT for table `daftar_paket_neo`
 --
 ALTER TABLE `daftar_paket_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT untuk tabel `daftar_realisasi_neo`
+-- AUTO_INCREMENT for table `daftar_realisasi_neo`
 --
 ALTER TABLE `daftar_realisasi_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT untuk tabel `daftar_uraian_paket`
+-- AUTO_INCREMENT for table `daftar_uraian_paket`
 --
 ALTER TABLE `daftar_uraian_paket`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT untuk tabel `db_asn_pemda_neo`
+-- AUTO_INCREMENT for table `db_asn_pemda_neo`
 --
 ALTER TABLE `db_asn_pemda_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=113;
 
 --
--- AUTO_INCREMENT untuk tabel `dokumen_pegawai_neo`
+-- AUTO_INCREMENT for table `dokumen_pegawai_neo`
 --
 ALTER TABLE `dokumen_pegawai_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `dpa_neo`
+-- AUTO_INCREMENT for table `dpa_neo`
 --
 ALTER TABLE `dpa_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT untuk tabel `dppa_neo`
+-- AUTO_INCREMENT for table `dppa_neo`
 --
 ALTER TABLE `dppa_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT untuk tabel `evaluasi_renja_neo`
+-- AUTO_INCREMENT for table `evaluasi_renja_neo`
 --
 ALTER TABLE `evaluasi_renja_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `group_rekap_akun`
+-- AUTO_INCREMENT for table `group_rekap_akun`
 --
 ALTER TABLE `group_rekap_akun`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `group_sub_kegiatan`
+-- AUTO_INCREMENT for table `group_sub_kegiatan`
 --
 ALTER TABLE `group_sub_kegiatan`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT untuk tabel `halaman_berita`
+-- AUTO_INCREMENT for table `halaman_berita`
 --
 ALTER TABLE `halaman_berita`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT untuk tabel `import_logs`
+-- AUTO_INCREMENT for table `import_logs`
 --
 ALTER TABLE `import_logs`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `indikator_program_renstra_neo`
+-- AUTO_INCREMENT for table `indikator_program_renstra_neo`
 --
 ALTER TABLE `indikator_program_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT untuk tabel `indikator_sasaran_renstra_neo`
+-- AUTO_INCREMENT for table `indikator_sasaran_renstra_neo`
 --
 ALTER TABLE `indikator_sasaran_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT untuk tabel `kd_wilayah_neo`
+-- AUTO_INCREMENT for table `kd_wilayah_neo`
 --
 ALTER TABLE `kd_wilayah_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `kegiatan_renstra_neo`
+-- AUTO_INCREMENT for table `kegiatan_renstra_neo`
 --
 ALTER TABLE `kegiatan_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT untuk tabel `kontrak_dokumen_neo`
+-- AUTO_INCREMENT for table `kontrak_dokumen_neo`
 --
 ALTER TABLE `kontrak_dokumen_neo`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT untuk tabel `kontrak_item_neo`
+-- AUTO_INCREMENT for table `kontrak_item_neo`
 --
 ALTER TABLE `kontrak_item_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT untuk tabel `kontrak_jadwal_neo`
+-- AUTO_INCREMENT for table `kontrak_jadwal_neo`
 --
 ALTER TABLE `kontrak_jadwal_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- AUTO_INCREMENT untuk tabel `kontrak_neo`
+-- AUTO_INCREMENT for table `kontrak_neo`
 --
 ALTER TABLE `kontrak_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT untuk tabel `kop_surat_neo`
+-- AUTO_INCREMENT for table `kop_surat_neo`
 --
 ALTER TABLE `kop_surat_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT untuk tabel `log_activity`
+-- AUTO_INCREMENT for table `log_activity`
 --
 ALTER TABLE `log_activity`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2195;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2204;
 
 --
--- AUTO_INCREMENT untuk tabel `master_biaya`
+-- AUTO_INCREMENT for table `master_biaya`
 --
 ALTER TABLE `master_biaya`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
 
 --
--- AUTO_INCREMENT untuk tabel `master_biaya_akun`
+-- AUTO_INCREMENT for table `master_biaya_akun`
 --
 ALTER TABLE `master_biaya_akun`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
--- AUTO_INCREMENT untuk tabel `misi_renstra_neo`
+-- AUTO_INCREMENT for table `misi_renstra_neo`
 --
 ALTER TABLE `misi_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT untuk tabel `organisasi_neo`
+-- AUTO_INCREMENT for table `organisasi_neo`
 --
 ALTER TABLE `organisasi_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
--- AUTO_INCREMENT untuk tabel `pejabat_tahunan_neo`
+-- AUTO_INCREMENT for table `pejabat_tahunan_neo`
 --
 ALTER TABLE `pejabat_tahunan_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT untuk tabel `pengaturan_neo`
+-- AUTO_INCREMENT for table `pengaturan_neo`
 --
 ALTER TABLE `pengaturan_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT untuk tabel `peraturan_neo`
+-- AUTO_INCREMENT for table `peraturan_neo`
 --
 ALTER TABLE `peraturan_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT untuk tabel `periode_rpjmd`
+-- AUTO_INCREMENT for table `periode_rpjmd`
 --
 ALTER TABLE `periode_rpjmd`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT untuk tabel `program_renstra_neo`
+-- AUTO_INCREMENT for table `program_renstra_neo`
 --
 ALTER TABLE `program_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT untuk tabel `rab_paket_neo`
+-- AUTO_INCREMENT for table `rab_paket_neo`
 --
 ALTER TABLE `rab_paket_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
--- AUTO_INCREMENT untuk tabel `ref_jenis_naskah`
+-- AUTO_INCREMENT for table `ref_jenis_naskah`
 --
 ALTER TABLE `ref_jenis_naskah`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
--- AUTO_INCREMENT untuk tabel `ref_jenis_naskah_dinas`
+-- AUTO_INCREMENT for table `ref_jenis_naskah_dinas`
 --
 ALTER TABLE `ref_jenis_naskah_dinas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `ref_kelompok_naskah`
+-- AUTO_INCREMENT for table `ref_kelompok_naskah`
 --
 ALTER TABLE `ref_kelompok_naskah`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT untuk tabel `ref_klasifikasi_keamanan`
+-- AUTO_INCREMENT for table `ref_klasifikasi_keamanan`
 --
 ALTER TABLE `ref_klasifikasi_keamanan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT untuk tabel `ref_template_naskah`
+-- AUTO_INCREMENT for table `ref_template_naskah`
 --
 ALTER TABLE `ref_template_naskah`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT untuk tabel `register_naskah_dinas`
+-- AUTO_INCREMENT for table `register_naskah_dinas`
 --
 ALTER TABLE `register_naskah_dinas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT untuk tabel `rekanan_akta`
+-- AUTO_INCREMENT for table `rekanan_akta`
 --
 ALTER TABLE `rekanan_akta`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `rekanan_neo`
+-- AUTO_INCREMENT for table `rekanan_neo`
 --
 ALTER TABLE `rekanan_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=202;
 
 --
--- AUTO_INCREMENT untuk tabel `rekening_kegiatan`
+-- AUTO_INCREMENT for table `rekening_kegiatan`
 --
 ALTER TABLE `rekening_kegiatan`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4585;
 
 --
--- AUTO_INCREMENT untuk tabel `rencana_realisasi_anggaran_neo`
+-- AUTO_INCREMENT for table `rencana_realisasi_anggaran_neo`
 --
 ALTER TABLE `rencana_realisasi_anggaran_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
--- AUTO_INCREMENT untuk tabel `rencana_rekening_anggaran_neo`
+-- AUTO_INCREMENT for table `rencana_rekening_anggaran_neo`
 --
 ALTER TABLE `rencana_rekening_anggaran_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
 
 --
--- AUTO_INCREMENT untuk tabel `renja_neo`
+-- AUTO_INCREMENT for table `renja_neo`
 --
 ALTER TABLE `renja_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT untuk tabel `renja_p_neo`
+-- AUTO_INCREMENT for table `renja_p_neo`
 --
 ALTER TABLE `renja_p_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT untuk tabel `renstra_neo`
+-- AUTO_INCREMENT for table `renstra_neo`
 --
 ALTER TABLE `renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT untuk tabel `riwayat_jabatan_neo`
+-- AUTO_INCREMENT for table `riwayat_jabatan_neo`
 --
 ALTER TABLE `riwayat_jabatan_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `riwayat_pangkat_neo`
+-- AUTO_INCREMENT for table `riwayat_pangkat_neo`
 --
 ALTER TABLE `riwayat_pangkat_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `rka_neo`
+-- AUTO_INCREMENT for table `rka_neo`
 --
 ALTER TABLE `rka_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT untuk tabel `rka_p_neo`
+-- AUTO_INCREMENT for table `rka_p_neo`
 --
 ALTER TABLE `rka_p_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT untuk tabel `rkpd_neo`
+-- AUTO_INCREMENT for table `rkpd_neo`
 --
 ALTER TABLE `rkpd_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT untuk tabel `rkpd_p_neo`
+-- AUTO_INCREMENT for table `rkpd_p_neo`
 --
 ALTER TABLE `rkpd_p_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT untuk tabel `rpjmd_kabupaten_neo`
+-- AUTO_INCREMENT for table `rpjmd_kabupaten_neo`
 --
 ALTER TABLE `rpjmd_kabupaten_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `sasaran_renstra_neo`
+-- AUTO_INCREMENT for table `sasaran_renstra_neo`
 --
 ALTER TABLE `sasaran_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT untuk tabel `satuan_neo`
+-- AUTO_INCREMENT for table `satuan_neo`
 --
 ALTER TABLE `satuan_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=459;
 
 --
--- AUTO_INCREMENT untuk tabel `sk_asn_neo`
+-- AUTO_INCREMENT for table `sk_asn_neo`
 --
 ALTER TABLE `sk_asn_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
 
 --
--- AUTO_INCREMENT untuk tabel `sk_pegawai_neo`
+-- AUTO_INCREMENT for table `sk_pegawai_neo`
 --
 ALTER TABLE `sk_pegawai_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `sub_kegiatan_renstra_neo`
+-- AUTO_INCREMENT for table `sub_kegiatan_renstra_neo`
 --
 ALTER TABLE `sub_kegiatan_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT untuk tabel `sub_keg_dpa_neo`
+-- AUTO_INCREMENT for table `sub_keg_dpa_neo`
 --
 ALTER TABLE `sub_keg_dpa_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
--- AUTO_INCREMENT untuk tabel `sub_keg_renja_neo`
+-- AUTO_INCREMENT for table `sub_keg_renja_neo`
 --
 ALTER TABLE `sub_keg_renja_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=226;
 
 --
--- AUTO_INCREMENT untuk tabel `sumber_dana_neo`
+-- AUTO_INCREMENT for table `sumber_dana_neo`
 --
 ALTER TABLE `sumber_dana_neo`
   MODIFY `id` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=301;
 
 --
--- AUTO_INCREMENT untuk tabel `tapd_penugasan_neo`
+-- AUTO_INCREMENT for table `tapd_penugasan_neo`
 --
 ALTER TABLE `tapd_penugasan_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT untuk tabel `trx_naskah_dinas`
+-- AUTO_INCREMENT for table `trx_naskah_dinas`
 --
 ALTER TABLE `trx_naskah_dinas`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
--- AUTO_INCREMENT untuk tabel `trx_naskah_meta`
+-- AUTO_INCREMENT for table `trx_naskah_meta`
 --
 ALTER TABLE `trx_naskah_meta`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
--- AUTO_INCREMENT untuk tabel `trx_naskah_status_history`
+-- AUTO_INCREMENT for table `trx_naskah_status_history`
 --
 ALTER TABLE `trx_naskah_status_history`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT untuk tabel `trx_naskah_struktur`
+-- AUTO_INCREMENT for table `trx_naskah_struktur`
 --
 ALTER TABLE `trx_naskah_struktur`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
 
 --
--- AUTO_INCREMENT untuk tabel `trx_nomor_counter`
+-- AUTO_INCREMENT for table `trx_nomor_counter`
 --
 ALTER TABLE `trx_nomor_counter`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
--- AUTO_INCREMENT untuk tabel `tujuan_renstra_neo`
+-- AUTO_INCREMENT for table `tujuan_renstra_neo`
 --
 ALTER TABLE `tujuan_renstra_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT untuk tabel `user_sesendok_biila`
+-- AUTO_INCREMENT for table `user_sesendok_biila`
 --
 ALTER TABLE `user_sesendok_biila`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
--- AUTO_INCREMENT untuk tabel `user_subkegiatan_neo`
+-- AUTO_INCREMENT for table `user_subkegiatan_neo`
 --
 ALTER TABLE `user_subkegiatan_neo`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `usulan_pembangunan_neo`
+-- AUTO_INCREMENT for table `usulan_pembangunan_neo`
 --
 ALTER TABLE `usulan_pembangunan_neo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `wallchat`
+-- AUTO_INCREMENT for table `wallchat`
 --
 ALTER TABLE `wallchat`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
--- AUTO_INCREMENT untuk tabel `wilayah_neo`
+-- AUTO_INCREMENT for table `wilayah_neo`
 --
 ALTER TABLE `wilayah_neo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
+-- Constraints for dumped tables
 --
 
 --
--- Ketidakleluasaan untuk tabel `kontrak_item_neo`
+-- Constraints for table `kontrak_item_neo`
 --
 ALTER TABLE `kontrak_item_neo`
   ADD CONSTRAINT `fk_kontrak_item_header` FOREIGN KEY (`kontrak_id`) REFERENCES `kontrak_neo` (`id`);
 
 --
--- Ketidakleluasaan untuk tabel `master_biaya_akun`
+-- Constraints for table `master_biaya_akun`
 --
 ALTER TABLE `master_biaya_akun`
   ADD CONSTRAINT `fk_master_biaya` FOREIGN KEY (`master_biaya_id`) REFERENCES `master_biaya` (`id`);
 
 --
--- Ketidakleluasaan untuk tabel `rekanan_akta`
+-- Constraints for table `rekanan_akta`
 --
 ALTER TABLE `rekanan_akta`
   ADD CONSTRAINT `1` FOREIGN KEY (`rekanan_id`) REFERENCES `rekanan_neo` (`id`);
 
 --
--- Ketidakleluasaan untuk tabel `trx_naskah_status_history`
+-- Constraints for table `trx_naskah_status_history`
 --
 ALTER TABLE `trx_naskah_status_history`
   ADD CONSTRAINT `fk_naskah_status_history` FOREIGN KEY (`naskah_id`) REFERENCES `trx_naskah_dinas` (`id`) ON DELETE CASCADE;
 
 --
--- Ketidakleluasaan untuk tabel `trx_naskah_struktur`
+-- Constraints for table `trx_naskah_struktur`
 --
 ALTER TABLE `trx_naskah_struktur`
   ADD CONSTRAINT `fk_naskah_struktur` FOREIGN KEY (`naskah_id`) REFERENCES `trx_naskah_dinas` (`id`) ON DELETE CASCADE;
