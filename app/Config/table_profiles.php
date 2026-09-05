@@ -2082,6 +2082,10 @@ $profiles = [
     'primary_key' => 'id',
     'allowed_roles' => ['super_admin', 'admin_wilayah', 'tapd'],
 
+    'sanitize' => [
+      'konten' => ['html' => true]
+    ],
+
     // --------------------------------------------------
     // auto session
     // --------------------------------------------------
@@ -2138,6 +2142,7 @@ $profiles = [
           'aktif',
           'konten',
           'gambar',
+          'keterangan',
           'kd_wilayah',
           'kd_opd',
           'tgl_insert',
