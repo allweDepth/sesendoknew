@@ -101,7 +101,7 @@ class DocumentBuilder {
 				if (rowData.text !== undefined) {
 					row.find(".doc-editor")
 						.text(this.normalizeEditorText(rowData.text, rowData))
-						.css({ fontWeight: "normal", fontStyle: "normal", textDecoration: "none" });
+						.removeAttr("style");
 				}
 
 				// Tabel biasa tetap mengikuti mapping lama. Pada editable_table,

@@ -16,6 +16,7 @@ foreach(['data-align="left"','data-align="center"','data-align="right"','data-al
 }
 $assert(!str_contains($builder,'applyEditorAlignment'),'alignment tidak mengubah tampilan input');
 $assert(!str_contains($builder,'style="text-align:'),'editor menampilkan ketikan sebagai teks mentah');
+$assert(str_contains($builder,'removeAttr("style")'),'style lama dibersihkan dari text field plain');
 $assert(str_contains($pdfTemplate,"\$sequenceType!==\$type"),'nomor dan huruf berlanjut hanya untuk tipe yang sama');
 $assert(str_contains($pdfTemplate,"'bullet'=>'list'"),'alias bullet lama tetap didukung');
 $assert(str_contains($pdfTemplate,"\$pdf->Circle("),'bullet PDF digambar tanpa bergantung pada glyph font');
@@ -24,6 +25,13 @@ $assert(str_contains($pdfTemplate,'rtrim($text)."\\n"'),'baris terakhir justify 
 
 require_once __DIR__.'/../vendor/tecnickcom/tcpdf/tcpdf.php';
 require_once __DIR__.'/../app/Services/PdfTemplateService.php';
+require_once __DIR__.'/../app/Services/PdfService.php';
+$serviceReflection=new ReflectionClass(PdfService::class);
+$service=$serviceReflection->newInstanceWithoutConstructor();
+$fallbackMethod=$serviceReflection->getMethod('fallbackSchema');
+$fallback=$fallbackMethod->invoke($service,['isi'=>[['type'=>'list','align'=>'justify','text'=>'Butir']]]);
+$assert(($fallback[0]['type']??'')==='editable_table','fallback schema mempertahankan koleksi paragraf untuk renderer PDF');
+$assert(($fallback[0]['columns']??[])===['text'],'fallback schema tidak mencampur metadata ke kolom isi');
 $pdf=new TCPDF('P','mm','A4',true,'UTF-8',false);
 $pdf->setPrintHeader(false);$pdf->setPrintFooter(false);$pdf->SetMargins(25,20,20);$pdf->AddPage();
 $renderer=new PdfTemplateService(['font'=>'times','font_size'=>11]);

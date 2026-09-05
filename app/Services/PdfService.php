@@ -115,16 +115,7 @@ class PdfService
     // FALLBACK TEMPLATE
     // =====================================================
     if (!$schemaData) {
-
-      $schemaData = [];
-
-      foreach ($strukturData as $key => $val) {
-        $schemaData[] = [
-          'field' => $key,
-          'label' => strtoupper($key),
-          'type'  => 'text'
-        ];
-      }
+      $schemaData = $this->fallbackSchema($strukturData);
     }
 
     // =====================================================
@@ -149,5 +140,30 @@ class PdfService
     $tpl->renderOfficial($pdf, $naskah, $schemaData, $strukturData, is_file($logo)?$logo:null);
 
     return $pdf->Output('', 'S');
+  }
+
+  /**
+   * Susun schema minimum dari struktur tersimpan ketika jenis naskah lama belum
+   * memiliki schema_json. Koleksi paragraf tidak boleh diratakan menjadi string:
+   * type, alignment, style, dan format per baris dibutuhkan renderer PDF.
+   */
+  private function fallbackSchema(array $strukturData): array
+  {
+    $schema = [];
+    foreach ($strukturData as $key => $value) {
+      $isCollection = is_array($value)
+        && ($value === [] || array_is_list($value))
+        && ($value === [] || is_array($value[0] ?? null));
+
+      $schema[] = [
+        'field' => (string)$key,
+        'label' => strtoupper((string)$key),
+        'type' => $isCollection ? 'editable_table' : 'text',
+        'columns' => $isCollection && !empty($value[0])
+          ? array_values(array_filter(array_keys($value[0]), fn($column) => !in_array($column, ['type','align','style','format','_id'], true)))
+          : []
+      ];
+    }
+    return $schema;
   }
 }
