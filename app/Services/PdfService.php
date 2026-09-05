@@ -45,6 +45,7 @@ class PdfService
 
     $setup=PageSetupService::current();
     $pdf = new TCPDF(PageSetupService::orientation($setup,'P'),'mm',PageSetupService::tcpdfFormat($setup),true,'UTF-8',false);
+    PageSetupService::applyPdf($pdf,$setup,[15,15,15,15]);
     $pdf->AddPage();
     $pdf->SetFont($setup['font'], '', $setup['font_size']);
 
@@ -135,6 +136,7 @@ class PdfService
     $pdf->SetTitle(($naskah['jenis_naskah'] ?? 'Naskah Dinas').' '.$naskah['nomor']);
     $pdf->SetMargins(25, 18, 20);
     $pdf->SetAutoPageBreak(true, 22);
+    PageSetupService::applyPdf($pdf,$setup,[25,18,20,22]);
     $pdf->setPrintHeader(false);
     $pdf->setPrintFooter(false);
     $pdf->AddPage();

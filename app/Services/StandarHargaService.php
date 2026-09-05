@@ -37,6 +37,7 @@ class StandarHargaService
         $pdf->SetTitle(strtoupper($type) . ' Tahun ' . $scope['tahun']);
         $pdf->SetMargins(10, 12, 10);
         $pdf->SetAutoPageBreak(true, 12);
+        PageSetupService::applyPdf($pdf,$setup,[10,12,10,12]);
         $pdf->AddPage();
         $pdf->SetFont($setup['font'], 'B', max(10,(float)$setup['font_size']+3));
         $pdf->Cell(0, 8, 'DAFTAR ' . strtoupper($type) . ' TAHUN ' . $scope['tahun'], 0, 1, 'C');

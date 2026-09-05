@@ -58,6 +58,12 @@ class PengaturanModule {
 			this.bindSubmit();
 			this.bindPeriodTable();
 			this.initUI();
+			const toggleCustomPaper = () => {
+				const custom = $('#form-page-setup [name="ukuran_kertas"]').val() === "CUSTOM";
+				$("#custom-paper-fields").toggle(custom).find("input").prop("required", custom);
+			};
+			$('#form-page-setup [name="ukuran_kertas"]').off("change.pageSetup").on("change.pageSetup", toggleCustomPaper);
+			toggleCustomPaper();
 			if(window.location.hash==="#page-setup") $('#pengaturan-tabs .item[data-tab="page-setup"]').trigger("click");
 		});
 	}
@@ -395,10 +401,10 @@ class PengaturanModule {
 		});
 		$("#form-page-setup").on("submit", (e) => {
 			e.preventDefault();
-			if (!this.data || !this.canEdit()) return;
+			if (!this.data) return;
 			const values = Object.fromEntries($(e.currentTarget).serializeArray().map(x => [x.name, x.value]));
 			this.ajax.request({data:{action:"edit",tbl:"pengaturan",id_row:this.data.id,mode:"update",...values},success:(res)=>{
-				if(res.success){this.data={...this.data,...values};Toast.success("Page Setup global berhasil disimpan");}
+				if(res.success){this.data={...this.data,...values};Toast.show({success:true,message:"Page Setup PDF global berhasil disimpan"});}
 			}});
 		});
 	}

@@ -301,6 +301,7 @@ class KontrakRealisasiService
     $d = $data['contract'];
     $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'L'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
     $pdf->SetMargins(10, 10, 10);
+    PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[10,10,10,10]);
     $pdf->AddPage();
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->Cell(0, 7, 'RENCANA ANGGARAN BIAYA (RAB)', 0, 1, 'C');
@@ -342,6 +343,7 @@ class KontrakRealisasiService
     $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'P'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
     $pdf->SetMargins(18, 15, 18);
     $pdf->SetAutoPageBreak(true, 18);
+    PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[18,15,18,18]);
     $pdf->AddPage();
     $pdf->SetFont('helvetica', 'B', 13);
     $title = $type === 'SSKK' ? 'SYARAT-SYARAT KHUSUS KONTRAK (SSKK)' : 'SYARAT-SYARAT UMUM KONTRAK (SSUK)';
@@ -495,6 +497,7 @@ class KontrakRealisasiService
     if (!$d) throw new RuntimeException('Kontrak tidak ditemukan');
     $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'P'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
     $pdf->SetMargins(18, 15, 18);
+    PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[18,15,18,15]);
     $pdf->AddPage();
     $pdf->SetFont('helvetica', 'B', 14);
     $pdf->Cell(0, 8, 'SURAT PERJANJIAN / KONTRAK', 0, 1, 'C');
@@ -532,6 +535,7 @@ class KontrakRealisasiService
     $summary = $this->summary();
     $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'L'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
     $pdf->SetMargins(8, 10, 8);
+    PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[8,10,8,10]);
     $pdf->AddPage();
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->Cell(0, 7, 'LAPORAN KONTRAK DAN REALISASI TAHUN ' . $y, 0, 1, 'C');
@@ -763,6 +767,7 @@ class KontrakRealisasiService
     $title = ['spj' => 'FORMAT SPJ BENDAHARA', 'lra' => 'LAPORAN REALISASI ANGGARAN', 'bulanan_fisik_keuangan' => 'LAPORAN BULANAN FISIK DAN KEUANGAN'][$format];
     $pdf = new TCPDF(PageSetupService::orientation(PageSetupService::current($this->user),'L'), 'mm', PageSetupService::tcpdfFormat(PageSetupService::current($this->user)), true, 'UTF-8');
     $pdf->SetMargins(8, 10, 8);
+    PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[8,10,8,10]);
     $pdf->AddPage();
     $pdf->SetFont('helvetica', 'B', 13);
     $pdf->Cell(0, 8, $title . ' TAHUN ' . $year, 0, 1, 'C');

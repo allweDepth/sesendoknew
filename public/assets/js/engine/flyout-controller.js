@@ -47,6 +47,7 @@ class FlyoutController {
 		$(document).off("click.openForm");
 
 		$(document).on("click.openForm", '[data-ui="open-form"]', function (e) {
+			if ($(this).data("tbl") === "halaman_berita") return;
 			// 🔥 FIX: BYPASS CUSTOM MODULE
 			if ($(this).data("custom-form") === true) {
 				// 🔥 FIX: trigger manual ke module

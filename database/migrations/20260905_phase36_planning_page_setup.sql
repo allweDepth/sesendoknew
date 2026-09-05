@@ -1,8 +1,18 @@
 ALTER TABLE pengaturan_neo
-  ADD COLUMN IF NOT EXISTS ukuran_kertas VARCHAR(10) NOT NULL DEFAULT 'A4' AFTER tahun_renstra,
+  ADD COLUMN IF NOT EXISTS ukuran_kertas VARCHAR(32) NOT NULL DEFAULT 'A4' AFTER tahun_renstra,
   ADD COLUMN IF NOT EXISTS orientasi_kertas ENUM('AUTO','P','L') NOT NULL DEFAULT 'AUTO' AFTER ukuran_kertas,
   ADD COLUMN IF NOT EXISTS font_pdf VARCHAR(20) NOT NULL DEFAULT 'helvetica' AFTER orientasi_kertas,
-  ADD COLUMN IF NOT EXISTS ukuran_font_pdf DECIMAL(4,1) NOT NULL DEFAULT 10.0 AFTER font_pdf;
+  ADD COLUMN IF NOT EXISTS ukuran_font_pdf DECIMAL(4,1) NOT NULL DEFAULT 10.0 AFTER font_pdf,
+  ADD COLUMN IF NOT EXISTS lebar_kertas_mm DECIMAL(7,1) NULL AFTER ukuran_font_pdf,
+  ADD COLUMN IF NOT EXISTS tinggi_kertas_mm DECIMAL(7,1) NULL AFTER lebar_kertas_mm,
+  ADD COLUMN IF NOT EXISTS margin_atas_mm DECIMAL(5,1) NOT NULL DEFAULT 10.0 AFTER tinggi_kertas_mm,
+  ADD COLUMN IF NOT EXISTS margin_kanan_mm DECIMAL(5,1) NOT NULL DEFAULT 10.0 AFTER margin_atas_mm,
+  ADD COLUMN IF NOT EXISTS margin_bawah_mm DECIMAL(5,1) NOT NULL DEFAULT 12.0 AFTER margin_kanan_mm,
+  ADD COLUMN IF NOT EXISTS margin_kiri_mm DECIMAL(5,1) NOT NULL DEFAULT 10.0 AFTER margin_bawah_mm,
+  ADD COLUMN IF NOT EXISTS margin_header_mm DECIMAL(5,1) NOT NULL DEFAULT 5.0 AFTER margin_kiri_mm,
+  ADD COLUMN IF NOT EXISTS margin_footer_mm DECIMAL(5,1) NOT NULL DEFAULT 8.0 AFTER margin_header_mm;
+
+ALTER TABLE pengaturan_neo MODIFY COLUMN ukuran_kertas VARCHAR(32) NOT NULL DEFAULT 'A4';
 
 CREATE TABLE IF NOT EXISTS rpjmd_kabupaten_neo (
  id BIGINT AUTO_INCREMENT PRIMARY KEY, kd_wilayah VARCHAR(60) NOT NULL,
