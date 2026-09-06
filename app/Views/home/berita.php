@@ -1,18 +1,17 @@
 <?php $active = 'berita'; ?>
 
-<div class="ui container" style="margin-top:50px; max-width:1100px">
+<div class="ui container" style="padding:55px 0;max-width:1180px">
 
   <!-- HEADER -->
   <div class="ui center aligned basic segment">
-    <h1 class="ui header" style="font-weight:600;">
-      Berita seSendok
-    </h1>
+    <span class="ui tiny blue label">PORTAL INFORMASI</span><h1 class="ui header" style="font-weight:800;font-size:2.6rem">Berita seSendok</h1>
     <div class="ui grey text">
       Informasi pembangunan dan perencanaan daerah
     </div>
   </div>
 
   <div class="ui hidden divider"></div>
+  <div class="ui fluid large icon input" style="margin-bottom:24px"><input id="newsSearch" placeholder="Cari judul, kategori, atau isi berita..."><i class="search icon"></i></div>
 
   <?php if (!empty($berita)): ?>
 
@@ -142,5 +141,5 @@
 .berita-full-content{clear:both;line-height:1.6;margin-top:16px;overflow:auto}.berita-full-content img{max-width:100%;height:auto}.berita-full-content table{width:100%;border-collapse:collapse;margin:16px 0}.berita-full-content td,.berita-full-content th{border:1px solid #d5dde5;padding:8px}.berita-full-content .rde-chart{height:210px;display:flex;align-items:flex-end;gap:12px;padding:24px 20px 30px;border:1px solid #dfe8f0;border-radius:8px}.berita-full-content .rde-chart span{flex:1;min-width:24px;background:linear-gradient(#54c8ff,#2185d0);text-align:center;color:#fff;position:relative}.berita-full-content .rde-chart small{position:absolute;bottom:-22px;left:0;right:0;color:#555}.berita-full-content .rde-shape{display:flex;align-items:center;justify-content:center;padding:12px}.berita-full-content .circle{border-radius:50%}.berita-full-content .pill{border-radius:999px}
 </style>
 <script>
-document.addEventListener('click',function(e){const button=e.target.closest('.berita-more');if(!button)return;const card=button.closest('.berita-card');const content=card.querySelector('.berita-full-content');content.style.display=content.style.display==='none'?'block':'none';button.textContent=content.style.display==='none'?'Selengkapnya':'Tutup';});
+document.addEventListener('click',function(e){const button=e.target.closest('.berita-more');if(!button)return;const card=button.closest('.berita-card');const content=card.querySelector('.berita-full-content');content.style.display=content.style.display==='none'?'block':'none';button.textContent=content.style.display==='none'?'Selengkapnya':'Tutup';});document.querySelector('#newsSearch')?.addEventListener('input',function(){const q=this.value.toLowerCase();document.querySelectorAll('.berita-card').forEach(c=>c.closest('.column').style.display=c.innerText.toLowerCase().includes(q)?'':'none')});
 </script>
