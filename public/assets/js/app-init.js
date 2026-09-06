@@ -11,7 +11,7 @@ $(document).ready(function () {
 		if (path.startsWith("/standar_harga")) return result(role === "tapd");
 		if (path.startsWith("/mapping")) return result(role === "tapd");
 		if (path.startsWith("/referensi")) {
-			if (["iku_opd","pohon_kinerja","perjanjian_kinerja","perjanjian_kinerja_detail","pengukuran_kinerja","evaluasi_renstra","renja_kinerja"].includes(tbl)) {
+			if (["iku_opd","pohon_kinerja","perjanjian_kinerja","perjanjian_kinerja_detail","pengukuran_kinerja","evaluasi_renstra","evaluasi_renja","renja_kinerja"].includes(tbl)) {
 				const allowed=["admin_opd","kepala_opd","pa_kpa"].includes(role);
 				return {add:allowed,edit:allowed,delete:allowed,import:false};
 			}

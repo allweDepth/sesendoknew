@@ -505,7 +505,7 @@
 
 
   <!-- ================= ENTRY POINT ================= -->
-  <script src="/assets/js/app-init.js"></script>
+  <script src="/assets/js/app-init.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/app-init.js') ?>"></script>
 
   <script>
     window.CSRF_TOKEN = "<?= $_SESSION['csrf_token'] ?? '' ?>";

@@ -632,7 +632,7 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
         if(!in_array($role,['admin_wilayah','admin_opd'],true))throw new Exception('Data kepegawaian hanya dapat dikelola Admin Wilayah atau Admin OPD sesuai lingkupnya.');
         return;
       }
-      $sakipProfiles=['iku_opd','pohon_kinerja','perjanjian_kinerja','perjanjian_kinerja_detail','pengukuran_kinerja','evaluasi_renstra','renja_kinerja'];
+      $sakipProfiles=['iku_opd','pohon_kinerja','perjanjian_kinerja','perjanjian_kinerja_detail','pengukuran_kinerja','evaluasi_renstra','evaluasi_renja','renja_kinerja'];
       if(in_array($referenceProfile,$sakipProfiles,true)) {
         if(!in_array($role,['admin_opd','kepala_opd','pa_kpa'],true))throw new Exception('Dokumen SAKIP hanya dapat dikelola pengelola OPD; role lain memperoleh akses baca sesuai lingkup.');
         return;

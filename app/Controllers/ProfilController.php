@@ -91,10 +91,11 @@ class ProfilController extends Controller
           if (!$allowed) throw new RuntimeException('Periode tersebut bukan Renstra aktif OPD pengguna');
         }
         $data['tahun'] = $tahun;
+        $data['periode_aktif_id'] = $periodeId;
       }
 
       $db->update('user_sesendok_biila', $data, 'WHERE id=?', [$id]);
-      $saved = $db->query('SELECT id,nama,nip,email,kontak_person,font_size,theme,warna_tbl,ket,tahun FROM user_sesendok_biila WHERE id=? LIMIT 1', [$id])->fetch();
+      $saved = $db->query('SELECT id,nama,nip,email,kontak_person,font_size,theme,warna_tbl,ket,tahun,periode_aktif_id FROM user_sesendok_biila WHERE id=? LIMIT 1', [$id])->fetch();
       if (!$saved) throw new RuntimeException('Profil gagal diverifikasi setelah penyimpanan');
 
       foreach ($saved as $key => $value) $_SESSION['user'][$key] = $value;
@@ -160,7 +161,10 @@ class ProfilController extends Controller
         $params = [$u['kd_wilayah'], $u['kd_opd']];
       }
       $sql .= ' WHERE COALESCE(p.status_aktif,1)=1 ORDER BY p.periode_mulai DESC';
-      return ['scope' => $regional ? 'RPJMD' : 'RENSTRA', 'periods' => $db->query($sql, $params)->fetchAll(), 'selected_year' => (int)$u['tahun']];
+      $periods=$db->query($sql, $params)->fetchAll();
+      $selectedId=(int)($u['periode_aktif_id']??0);
+      if(!$selectedId)foreach($periods as $period)if((int)$u['tahun']>=(int)$period['periode_mulai']&&(int)$u['tahun']<=(int)$period['periode_selesai']){$selectedId=(int)$period['id'];break;}
+      return ['scope' => $regional ? 'RPJMD' : 'RENSTRA', 'periods' => $periods, 'selected_year' => (int)$u['tahun'], 'selected_period_id'=>$selectedId];
     });
   }
 
@@ -180,7 +184,8 @@ class ProfilController extends Controller
       }
       $_SESSION['user']['tahun'] = $year;
       $_SESSION['user']['periode_id'] = $id;
-      $db->update('user_sesendok_biila', ['tahun' => $year], 'WHERE id=?', [(int)$u['id']]);
+      $_SESSION['user']['periode_aktif_id'] = $id;
+      $db->update('user_sesendok_biila', ['tahun' => $year,'periode_aktif_id'=>$id], 'WHERE id=?', [(int)$u['id']]);
       return ['tahun' => $year, 'periode_id' => $id];
     });
   }

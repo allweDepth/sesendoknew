@@ -88,7 +88,7 @@ class ProfilModule {
 			$("#card_login").text(form.find('[name="tgl_login"]').val() || "-");
 		};
 
-		form.on("change keyup", "input,textarea", syncCard);
+		form.on("change keyup", "input,textarea,select", syncCard);
 
 		setTimeout(syncCard, 300);
 	}
@@ -168,31 +168,29 @@ class ProfilModule {
 				const data = res.data || {},
 					period = $("#planningPeriod"),
 					year = $("#budgetYear");
+				period.dropdown("destroy");
+				year.dropdown("destroy");
 				period.empty().append('<option value="">Pilih rentang</option>');
 				(data.periods || []).forEach((p) =>
 					period.append(
 						`<option value="${p.id}" data-start="${p.periode_mulai}" data-end="${p.periode_selesai}">${data.scope} ${p.periode_mulai}–${p.periode_selesai}${p.keterangan ? " · " + p.keterangan : ""}</option>`,
 					),
 				);
-				period.dropdown("refresh");
-				const selected = (data.periods || []).find(
-					(p) =>
-						Number(data.selected_year) >= Number(p.periode_mulai) &&
-						Number(data.selected_year) <= Number(p.periode_selesai),
-				);
-				if (selected) period.dropdown("set selected", String(selected.id));
+				const selected = (data.periods || []).find((p) => Number(p.id) === Number(data.selected_period_id)) ||
+					(data.periods || []).find((p) => Number(data.selected_year) >= Number(p.periode_mulai) && Number(data.selected_year) <= Number(p.periode_selesai));
+				if (selected) period.val(String(selected.id));
 				const fill = () => {
 					const option = period.find("option:selected"),
 						start = Number(option.data("start")),
 						end = Number(option.data("end"));
 					year.empty().append('<option value="">Pilih tahun</option>');
 					if (start && end) for (let y = start; y <= end; y++) year.append(`<option value="${y}">${y}</option>`);
-					year.dropdown("refresh");
-					if (data.selected_year >= start && data.selected_year <= end)
-						year.dropdown("set selected", String(data.selected_year));
+					if (data.selected_year >= start && data.selected_year <= end) year.val(String(data.selected_year));
 				};
 				period.off("change.period").on("change.period", fill);
 				fill();
+				period.dropdown();
+				year.dropdown();
 				year.off("change.period").on("change.period", () => {
 					if (!period.val() || !year.val()) return;
 					this.ajax.request({
@@ -234,7 +232,7 @@ class ProfilModule {
 					else field.val(data[k]);
 				});
 
-				form.trigger("change");
+				form.find("input,textarea,select").first().trigger("change");
 			},
 		});
 	}

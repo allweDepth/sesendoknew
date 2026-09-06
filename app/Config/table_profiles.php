@@ -1594,6 +1594,7 @@ $profiles = [
         'select' => [
           'id',
           'tahun',
+          'periode_aktif_id',
           'nama_sub_keg',
           'tahap',
           'total_anggaran',
