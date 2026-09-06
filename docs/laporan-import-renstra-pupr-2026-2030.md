@@ -67,4 +67,10 @@ IKU dihubungkan ke Renstra, sasaran strategis, dan program terkait jika indikato
 
 ## Status dokumen tahunan
 
-Renja sampai DPPA belum diberi baris belanja otomatis. Keputusan ini menjaga pemisahan antara pagu indikatif Renstra dan rincian anggaran tahunan. Pengguna OPD dapat menyusun rincian, tetapi sistem akan menolak total yang melewati batas pagu yang ditetapkan TAPD.
+Dataset contoh 2025–2026 telah dibuat dengan `scripts/seed_pupr_documents_2025_2026.php`. Semua baris berstatus **draft**, realisasi nol, dan ditandai `SEED_PUPR_DOC_2025_2026` agar tidak dianggap sebagai dokumen resmi.
+
+Untuk setiap tahun tersedia 73 baris per subkegiatan pada RKPD, Renja, RKA, DPA, RKPD Perubahan, Renja Perubahan, RKA Perubahan, dan DPPA. Total setiap dokumen adalah **Rp241.474.151.501**. Batas pagu TAPD juga tersedia untuk Renja, RKA, DPA, Renja Perubahan, RKA Perubahan, dan DPPA.
+
+Dokumen PDF memuat target kinerja 2025, tetapi kolom pendanaannya baru dimulai pada 2026. Oleh sebab itu pagu 2025 merupakan **data transisi dummy/provisional** yang memakai pagu indikatif 2026, bukan pagu resmi 2025.
+
+Data SAKIP per tahun meliputi 73 target kinerja subkegiatan Renja, 292 evaluasi Renja (empat triwulan), 7 simpul pohon kinerja strategis, 1 Perjanjian Kinerja dengan 7 detail, 28 pengukuran triwulanan, dan 7 evaluasi Renstra. Rantai sumber dokumen dapat ditelusuri dari RKPD → Renja → RKA → DPA serta Renja → Renja Perubahan → RKA Perubahan → DPPA.
