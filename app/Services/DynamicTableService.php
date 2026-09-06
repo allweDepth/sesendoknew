@@ -632,6 +632,11 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
         if(!in_array($role,['admin_wilayah','admin_opd'],true))throw new Exception('Data kepegawaian hanya dapat dikelola Admin Wilayah atau Admin OPD sesuai lingkupnya.');
         return;
       }
+      $sakipProfiles=['iku_opd','pohon_kinerja','perjanjian_kinerja','perjanjian_kinerja_detail','pengukuran_kinerja','evaluasi_renstra','renja_kinerja'];
+      if(in_array($referenceProfile,$sakipProfiles,true)) {
+        if(!in_array($role,['admin_opd','kepala_opd','pa_kpa'],true))throw new Exception('Dokumen SAKIP hanya dapat dikelola pengelola OPD; role lain memperoleh akses baca sesuai lingkup.');
+        return;
+      }
     }
     if (!in_array($action, $matrix[$role]['actions'] ?? [],true)) {
       throw new Exception("Role ".($matrix[$role]['label']??$role)." tidak diizinkan melakukan aksi $action. Lingkup akses: ".($matrix[$role]['scope']??'tidak ditentukan'));
@@ -692,6 +697,25 @@ AUDIT TRAIL (TIDAK DIUBAH)
     $code=trim((string)($data['kd_sub_keg']??''));if($code==='')return;
     $locked=$this->db->query("SELECT id FROM `$table` WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND (COALESCE(kunci,0)=1 OR COALESCE(setujui,0)=1) AND is_deleted=0 LIMIT 1",[$this->user['kd_wilayah']??'',$this->user['kd_opd']??'',(int)($this->user['tahun']??date('Y')),$code])->fetch();
     if($locked)throw new Exception('Dokumen sub kegiatan telah disetujui dan dikunci. Buka persetujuan terlebih dahulu untuk mengubah rincian.');
+  }
+  private function normalizeSakipMetrics(string $table,array $data):array
+  {
+    if($table==='pengukuran_kinerja_neo'){
+      $limits=['bulanan'=>12,'triwulanan'=>4,'semesteran'=>2,'tahunan'=>1];$period=(string)($data['periode']??'');$number=(int)($data['nomor_periode']??0);
+      if(isset($limits[$period])&&($number<1||$number>$limits[$period]))throw new InvalidArgumentException('Nomor periode tidak sesuai dengan jenis periode pengukuran.');
+      $target=(float)($data['target_periode']??0);$realization=(float)($data['realisasi_kumulatif']??$data['realisasi_periode']??0);$polarity='maksimal';
+      if(!empty($data['perjanjian_kinerja_detail_id'])){$row=$this->db->query('SELECT COALESCE(i.polaritas,"maksimal") polaritas FROM perjanjian_kinerja_detail_neo d LEFT JOIN iku_opd_neo i ON i.id=d.iku_id AND i.is_deleted=0 WHERE d.id=? AND d.is_deleted=0 LIMIT 1',[(int)$data['perjanjian_kinerja_detail_id']])->fetch();$polarity=$row['polaritas']??'maksimal';}
+      $data['capaian_persen']=$this->performancePercentage($target,$realization,$polarity);
+    }
+    if($table==='evaluasi_renstra_neo'){$target=(float)($data['target_kumulatif']??$data['target_tahunan']??0);$realization=(float)($data['realisasi_kumulatif']??$data['realisasi_tahunan']??0);$polarity='maksimal';if(!empty($data['iku_id'])){$row=$this->db->query('SELECT polaritas FROM iku_opd_neo WHERE id=? AND is_deleted=0 LIMIT 1',[(int)$data['iku_id']])->fetch();$polarity=$row['polaritas']??'maksimal';}$data['capaian_persen']=$this->performancePercentage($target,$realization,$polarity);}
+    return$data;
+  }
+  private function performancePercentage(float $target,float $realization,string $polarity):float
+  {
+    if($target==0.0)return $realization==0.0?100.0:0.0;
+    if($polarity==='minimal')return $realization==0.0?100.0:round(($target/$realization)*100,4);
+    if($polarity==='stabil'){if($realization==0.0)return 0.0;return round((min($target,$realization)/max($target,$realization))*100,4);}
+    return round(($realization/$target)*100,4);
   }
   /* =========================================================
 INSERT (FULL IDENTIK LOGIC ASLI)
@@ -939,6 +963,7 @@ kd_sub_keg → nama_sub_keg
         ===================================================== */
     $filtered = $this->sanitizer()->applySanitization($table, $filtered);
     $filtered = $this->injectAudit($filtered, 'insert');
+    $filtered=$this->normalizeSakipMetrics($table,$filtered);
     $this->enforceSubActivityAssignment($table, $filtered, 'add');
     $this->enforceDocumentRowLock($table, $filtered);
 
@@ -1218,6 +1243,7 @@ IGNORE SYSTEM FIELD
         $filtered[$field] = $value;
       }
     }
+    $filtered=$this->normalizeSakipMetrics($table,$filtered);
     $this->enforceSubActivityAssignment($table, $filtered, 'edit');
     $this->enforceDocumentRowLock($table, $filtered);
     if($table==='rpjmd_kabupaten_neo'&&($filtered['berlaku_mulai']??'')>($filtered['berlaku_sampai']??'')){

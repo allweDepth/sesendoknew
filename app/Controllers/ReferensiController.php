@@ -21,7 +21,9 @@ class ReferensiController extends Controller
         'wilayah',
         'rpjmd_kabupaten',
         'usulan_pembangunan',
-        'evaluasi_renja'
+        'evaluasi_renja',
+        'iku_opd','pohon_kinerja','perjanjian_kinerja','perjanjian_kinerja_detail',
+        'pengukuran_kinerja','evaluasi_renstra','renja_kinerja'
     ];
 
 

@@ -141,6 +141,19 @@ $opdManager = in_array($sidebarRole, ['super_admin', 'admin_wilayah', 'admin_opd
       </div>
     </div>
 
+    <div class="item">
+      <div class="title"><i class="dropdown icon"></i> <i class="bullseye icon"></i> SAKIP &amp; Kinerja</div>
+      <div class="content">
+        <a class="item" href="/referensi?tbl=iku_opd" data-spa="client" data-title="SAKIP/Indikator Kinerja Utama"><i class="chart line icon"></i> IKU OPD</a>
+        <a class="item" href="/referensi?tbl=pohon_kinerja" data-spa="client" data-title="SAKIP/Pohon Kinerja"><i class="sitemap icon"></i> Pohon Kinerja</a>
+        <a class="item" href="/referensi?tbl=renja_kinerja" data-spa="client" data-title="SAKIP/Kinerja Renja"><i class="tasks icon"></i> Target Renja</a>
+        <a class="item" href="/referensi?tbl=perjanjian_kinerja" data-spa="client" data-title="SAKIP/Perjanjian Kinerja"><i class="handshake icon"></i> Perjanjian Kinerja</a>
+        <a class="item" href="/referensi?tbl=perjanjian_kinerja_detail" data-spa="client" data-title="SAKIP/Indikator PK"><i class="list alternate icon"></i> Indikator PK</a>
+        <a class="item" href="/referensi?tbl=pengukuran_kinerja" data-spa="client" data-title="SAKIP/Pengukuran Kinerja"><i class="tachometer alternate icon"></i> Pengukuran Kinerja</a>
+        <a class="item" href="/referensi?tbl=evaluasi_renstra" data-spa="client" data-title="SAKIP/Evaluasi Renstra"><i class="clipboard check icon"></i> Evaluasi Renstra</a>
+      </div>
+    </div>
+
     <!-- PENGANGGARAN (dimulai dari daftar sub kegiatan) -->
     <div class="item">
       <div class="title"><i class="dropdown icon"></i> <i class="shopping cart icon"></i> Penganggaran</div>
