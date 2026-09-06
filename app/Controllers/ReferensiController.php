@@ -48,12 +48,7 @@ class ReferensiController extends Controller
 
     public function store()
     {
-        $db = DB::getInstance();
-        $tbl = $_POST['tbl'];
-
-        $db->insert($tbl, $_POST['data']);
-
-        echo json_encode(['status' => 'ok']);
+        $this->legacyMutationDisabled();
     }
     public function load()
     {
@@ -64,28 +59,16 @@ class ReferensiController extends Controller
     }
     public function update()
     {
-        $db = DB::getInstance();
-
-        $db->update(
-            $_POST['tbl'],
-            $_POST['data'],
-            "WHERE id = ?",
-            [$_POST['id']]
-        );
-
-        echo json_encode(['status' => 'ok']);
+        $this->legacyMutationDisabled();
     }
 
     public function delete()
     {
-        $db = DB::getInstance();
-
-        $db->delete(
-            $_POST['tbl'],
-            "WHERE id = ?",
-            [$_POST['id']]
-        );
-
-        echo json_encode(['status' => 'ok']);
+        $this->legacyMutationDisabled();
+    }
+    private function legacyMutationDisabled():void
+    {
+        http_response_code(403);header('Content-Type: application/json;charset=UTF-8');
+        echo json_encode(['success'=>false,'message'=>'Mutasi referensi harus melalui engine berizin sesuai role.']);
     }
 }

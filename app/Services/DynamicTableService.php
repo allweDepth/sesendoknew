@@ -627,6 +627,11 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
         if($action==='delete'||$role!=='super_admin')throw new Exception('Referensi wilayah hanya dapat ditambah atau diubah oleh Super Admin.');
         return;
       }
+      $personnelProfiles=['asn','pppk','riwayat_jabatan','riwayat_pangkat','cuti','sk_pegawai','absensi','dokumen_pegawai'];
+      if(in_array($referenceProfile,$personnelProfiles,true)) {
+        if(!in_array($role,['admin_wilayah','admin_opd'],true))throw new Exception('Data kepegawaian hanya dapat dikelola Admin Wilayah atau Admin OPD sesuai lingkupnya.');
+        return;
+      }
     }
     if (!in_array($action, $matrix[$role]['actions'] ?? [],true)) {
       throw new Exception("Role ".($matrix[$role]['label']??$role)." tidak diizinkan melakukan aksi $action. Lingkup akses: ".($matrix[$role]['scope']??'tidak ditentukan'));
@@ -642,7 +647,7 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
       }
     }
     if (in_array($table, ['user_subkegiatan_neo','pejabat_tahunan_neo'], true) && in_array($action,['add','edit','delete'],true)) {
-      if (!in_array($role,['super_admin','admin_wilayah','kepala_opd'],true)) {
+      if (!in_array($role,['admin_wilayah','kepala_opd'],true)) {
         throw new Exception('Penetapan pejabat dan sub kegiatan hanya menjadi kewenangan Kepala OPD atau administrator regional.');
       }
     }

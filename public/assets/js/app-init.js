@@ -7,7 +7,7 @@ $(document).ready(function () {
 	window.moduleMutationPolicy = function (tbl, req) {
 		const role = window.app?.user?.type_user || "viewer";
 		const path = window.location.pathname.replace(window.APP_BASE_PATH || "", "");
-		const result = (allowed) => ({ add: allowed, edit: allowed, delete: false, import: allowed });
+		const result = (allowed) => ({ add: allowed, edit: allowed, delete: false, import: false });
 		if (path.startsWith("/standar_harga")) return result(role === "tapd");
 		if (path.startsWith("/mapping")) return result(role === "tapd");
 		if (path.startsWith("/referensi")) {
@@ -15,6 +15,11 @@ $(document).ready(function () {
 			if (tbl === "wilayah") return result(role === "super_admin");
 			if (["rekening_kegiatan", "satuan", "aset", "akun", "sumber_dana"].includes(tbl)) return result(role === "tapd");
 			return result(false);
+		}
+		if (path.startsWith("/kepegawaian")) {
+			if (["pejabat_tahunan", "penugasan_subkegiatan"].includes(tbl)) return { add:["admin_wilayah","kepala_opd"].includes(role), edit:["admin_wilayah","kepala_opd"].includes(role), delete:["admin_wilayah","kepala_opd"].includes(role), import:false };
+			const allowed=["admin_wilayah","admin_opd"].includes(role);
+			return { add:allowed, edit:allowed, delete:allowed, import:allowed };
 		}
 		return null;
 	};

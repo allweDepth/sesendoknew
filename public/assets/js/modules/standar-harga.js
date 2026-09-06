@@ -18,14 +18,14 @@ class StandarHargaModule extends BaseCrudModule {
     }
 
     buildActionButtons(tbl) {
+        const canManage = window.app?.user?.type_user === "tapd";
         return `${super.buildActionButtons(tbl)}
             <div class="ui right floated basic icon buttons" style="margin-top:10px;margin-right:8px;">
-                <button class="ui button" data-standard-action="copy-year" data-tbl="${tbl}" title="Salin ke tahun lain">
+                ${canManage ? `<button class="ui button" data-standard-action="copy-year" data-tbl="${tbl}" title="Salin ke tahun lain">
                     <i class="copy outline icon"></i>
-                </button>
-                <button class="ui button" data-standard-action="mapping" data-tbl="${tbl}" title="Mapping akun">
+                </button><button class="ui button" data-standard-action="mapping" data-tbl="${tbl}" title="Mapping akun">
                     <i class="sitemap icon"></i>
-                </button>
+                </button>` : ""}
                 <button class="ui button" data-standard-action="export-pdf" data-tbl="${tbl}" title="Download PDF">
                     <i class="file pdf outline icon"></i>
                 </button>

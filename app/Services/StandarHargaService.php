@@ -72,9 +72,7 @@ class StandarHargaService
     public function copyYear(string $type, int $targetYear, array $onlyIds = []): array
     {
         $type = $this->validateType($type);
-        if (!in_array($this->user['type_user'] ?? '', ['super_admin', 'admin_wilayah'], true)) {
-            throw new Exception('Tidak memiliki hak akses untuk copy tahun');
-        }
+        if (($this->user['type_user'] ?? '') !== 'tapd') throw new Exception('Hanya TAPD yang dapat menyalin standar harga antar-tahun');
         if ($targetYear < 2000 || $targetYear > 2100) {
             throw new Exception('Tahun tujuan tidak valid');
         }
