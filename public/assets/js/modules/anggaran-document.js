@@ -80,7 +80,8 @@ class AnggaranDocumentModule extends BaseCrudModule {
 				body += `<tr class="budget-level kegiatan"><td colspan="7"><i class="sitemap icon"></i>${this.escape(kegiatan)}</td></tr>`;
 				lastKegiatan = kegiatan;
 			}
-			body += `<tr class="budget-group" data-search="${this.escape([r.kd_sub_keg, r.nama_sub_kegiatan, program, kegiatan].join(" "))}"><td><button class="ui violet icon button" title="Lihat rincian" data-budget-action="details" data-code="${this.escape(r.kd_sub_keg)}"><i class="list icon"></i></button></td><td><a data-budget-action="details" data-code="${this.escape(r.kd_sub_keg)}"><b>${this.escape(r.kd_sub_keg)}</b> ${this.escape(r.nama_sub_kegiatan || "Sub Kegiatan")}</a></td><td class="center aligned"><span class="ui tiny label">${r.jumlah_uraian}</span></td><td class="center aligned ${Number(r.kunci) ? "negative" : ""}">${Number(r.kunci) ? "DIKUNCI" : "Terbuka"}</td><td class="center aligned ${Number(r.setujui) ? "positive" : ""}">${Number(r.setujui) ? "DISETUJUI" : "Draft"}</td><td class="right aligned"><b>${this.money(r.total)}</b></td><td class="right aligned">0%</td></tr>`;
+			const canApprove = ["super_admin", "admin_wilayah", "tapd", "kepala_opd", "pa_kpa"].includes(window.app?.user?.type_user || "");
+			body += `<tr class="budget-group" data-search="${this.escape([r.kd_sub_keg, r.nama_sub_kegiatan, program, kegiatan].join(" "))}"><td><button class="ui violet icon button" title="Lihat rincian" data-budget-action="details" data-code="${this.escape(r.kd_sub_keg)}"><i class="list icon"></i></button>${canApprove ? `<button class="ui ${Number(r.setujui) ? "orange" : "green"} icon button" title="${Number(r.setujui) ? "Buka persetujuan" : "Setujui dan kunci"}" data-budget-action="approval" data-code="${this.escape(r.kd_sub_keg)}" data-approved="${Number(r.setujui) ? 0 : 1}"><i class="${Number(r.setujui) ? "unlock" : "check"} icon"></i></button>` : ""}</td><td><a data-budget-action="details" data-code="${this.escape(r.kd_sub_keg)}"><b>${this.escape(r.kd_sub_keg)}</b> ${this.escape(r.nama_sub_kegiatan || "Sub Kegiatan")}</a></td><td class="center aligned"><span class="ui tiny label">${r.jumlah_uraian}</span></td><td class="center aligned ${Number(r.kunci) ? "negative" : ""}">${Number(r.kunci) ? "DIKUNCI" : "Terbuka"}</td><td class="center aligned ${Number(r.setujui) ? "positive" : ""}">${Number(r.setujui) ? "DISETUJUI" : "Draft"}</td><td class="right aligned"><b>${this.money(r.total)}</b></td><td class="right aligned">0%</td></tr>`;
 		});
 		$("#budgetGroupList").html(
 			`<div class="ui segment table-wrapper"><table class="ui very basic striped table budget-tree-table"><thead><tr><th>Aksi</th><th>Uraian</th><th>Rincian</th><th>Status Sub Kegiatan</th><th>Status Rincian</th><th class="right aligned">Pagu</th><th>Realisasi</th></tr></thead><tbody>${body}</tbody></table></div>`,
@@ -131,6 +132,14 @@ class AnggaranDocumentModule extends BaseCrudModule {
 					a = b.data("budget-action");
 				if (a === "details") this.loadDetails(String(b.data("code")));
 				else if (a === "back") this.loadGroups();
+				else if (a === "approval") {
+					window.Ajax.request({
+						url: "/anggaran/approval",
+						method: "POST",
+						data: { tbl: this.table, kd_sub_keg: b.data("code"), approved: b.data("approved") },
+						success: (r) => { if (r?.success) this.loadGroups(); },
+					});
+				}
 				else if (a === "pdf") this.download(`/anggaran/export_pdf?tbl=${this.table}`);
 				else if (a === "delete") {
 					if (!window.confirm("Hapus uraian ini? Data yang telah berkontrak akan ditolak sistem.")) return;

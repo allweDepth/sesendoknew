@@ -665,6 +665,13 @@ AUDIT TRAIL (TIDAK DIUBAH)
     $assignment=$this->db->query("SELECT id FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND `$flag`=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0 LIMIT 1",[(int)($this->user['id']??0),$this->user['kd_wilayah']??'', $this->user['kd_opd']??'', $this->user['tahun']??date('Y'),$data['kd_sub_keg']])->fetch();
     if(!$assignment)throw new Exception('Anda tidak memiliki izin '.$action.' untuk sub kegiatan ini.');
   }
+  private function enforceDocumentRowLock(string $table,array $data):void
+  {
+    if(!in_array($table,['rkpd_neo','renja_neo','rka_neo','dpa_neo','rkpd_p_neo','renja_p_neo','rka_p_neo','dppa_neo'],true))return;
+    $code=trim((string)($data['kd_sub_keg']??''));if($code==='')return;
+    $locked=$this->db->query("SELECT id FROM `$table` WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND (COALESCE(kunci,0)=1 OR COALESCE(setujui,0)=1) AND is_deleted=0 LIMIT 1",[$this->user['kd_wilayah']??'',$this->user['kd_opd']??'',(int)($this->user['tahun']??date('Y')),$code])->fetch();
+    if($locked)throw new Exception('Dokumen sub kegiatan telah disetujui dan dikunci. Buka persetujuan terlebih dahulu untuk mengubah rincian.');
+  }
   /* =========================================================
 INSERT (FULL IDENTIK LOGIC ASLI)
 ========================================================= */
@@ -912,6 +919,7 @@ kd_sub_keg → nama_sub_keg
     $filtered = $this->sanitizer()->applySanitization($table, $filtered);
     $filtered = $this->injectAudit($filtered, 'insert');
     $this->enforceSubActivityAssignment($table, $filtered, 'add');
+    $this->enforceDocumentRowLock($table, $filtered);
 
     /* =====================================================
         9️⃣ HYBRID VALIDATION (SCHEMA + PROFILE)
@@ -1190,6 +1198,7 @@ IGNORE SYSTEM FIELD
       }
     }
     $this->enforceSubActivityAssignment($table, $filtered, 'edit');
+    $this->enforceDocumentRowLock($table, $filtered);
     if($table==='rpjmd_kabupaten_neo'&&($filtered['berlaku_mulai']??'')>($filtered['berlaku_sampai']??'')){
       return JsonResponse::error('Tanggal akhir RPJMD harus sesudah tanggal mulai');
     }
@@ -1308,6 +1317,7 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     )->fetch();
 
     $this->enforceSubActivityAssignment($table, $oldData ?: [], 'delete');
+    $this->enforceDocumentRowLock($table, $oldData ?: []);
 
     if (in_array($table, ['dpa_neo', 'dppa_neo'], true)) {
       $stage = $table === 'dpa_neo' ? 'dpa' : 'dppa';

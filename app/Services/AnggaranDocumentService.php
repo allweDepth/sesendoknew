@@ -10,6 +10,7 @@ class AnggaranDocumentService
     private DB $db; private array $user; private ?string $currentSubCode=null;
     private const TABLES=['rkpd'=>'rkpd_neo','renja'=>'renja_neo','rka'=>'rka_neo','dpa'=>'dpa_neo','rkpd_p'=>'rkpd_p_neo','renja_p'=>'renja_p_neo','rka_p'=>'rka_p_neo','dppa'=>'dppa_neo'];
     public function __construct(array $user){$this->db=DB::getInstance();$this->user=Auth::scopedUser() ?: $user;}
+    private function assertCanWrite():void{if(in_array($this->user['type_user']??'viewer',['tapd','viewer'],true))throw new RuntimeException('Role ini hanya memiliki akses baca pada dokumen anggaran');}
     private function table(string $logical):string{if(!isset(self::TABLES[$logical]))throw new InvalidArgumentException('Dokumen anggaran tidak valid');return self::TABLES[$logical];}
     private function scope(string $alias='a'):array{$w=$this->user['kd_wilayah']??'';$o=$this->user['kd_opd']??'';$y=(int)($this->user['tahun']??0);if(!$w||!$y)throw new RuntimeException('Scope pengguna tidak lengkap');$sql="$alias.kd_wilayah=? AND $alias.tahun=? AND $alias.is_deleted=0";$p=[$w,$y];if($o&&$o!=='0'){$sql.=" AND $alias.kd_opd=?";$p[]=$o;}return[$sql,$p];}
     public function groups(string $logical):array
@@ -85,6 +86,7 @@ class AnggaranDocumentService
     }
     public function saveMonthlyPlan(string $logical,int $anggaranId,array $months):array
     {
+        $this->assertCanWrite();
         $plan=$this->monthlyPlan($logical,$anggaranId);$values=[];for($m=1;$m<=12;$m++){$v=(float)($months[$m]??$months[(string)$m]??0);if($v<0)throw new InvalidArgumentException('Nilai rencana bulanan tidak boleh negatif');$values[$m]=$v;}if(array_sum($values)>(float)$plan['item']['jumlah']+0.01)throw new InvalidArgumentException('Total rencana bulanan melebihi pagu rincian');$u=$this->user['username']??'system';$this->db->begin();try{foreach($values as $m=>$v)$this->db->query('INSERT INTO rencana_realisasi_anggaran_neo(dokumen,anggaran_id,kd_wilayah,kd_opd,tahun,kd_sub_keg,kd_akun,jenis,bulan,nilai,username_insert,is_deleted) VALUES(?,?,?,?,?,?,?,?,?,?,?,0) ON DUPLICATE KEY UPDATE nilai=VALUES(nilai),tgl_update=NOW(),username_update=VALUES(username_insert),is_deleted=0',[$logical,$anggaranId,$this->user['kd_wilayah'],$this->user['kd_opd'],$this->user['tahun'],$plan['item']['kd_sub_keg'],$plan['item']['kd_akun'],'belanja',$m,$v,$u]);$this->db->commit();}catch(Throwable $e){$this->db->rollback();throw $e;}return $this->monthlyPlan($logical,$anggaranId);
     }
 
@@ -98,10 +100,23 @@ class AnggaranDocumentService
 
     public function saveAccountMonthly(string $logical,string $subCode,string $account,array $months,string $kind='belanja'):array
     {
+        $this->assertCanWrite();
         if($kind!=='belanja')throw new InvalidArgumentException('Rencana pendapatan akan mengikuti rekening pendapatan pada DPA Pendapatan; rincian ini adalah rekening belanja');
         $rows=$this->accountMonthlyRows($logical,$subCode);$target=null;foreach($rows as $row)if($row['kd_akun']===$account){$target=$row;break;}if(!$target)throw new RuntimeException('Kode rekening level akhir tidak ditemukan pada sub kegiatan');
         $values=[];for($month=1;$month<=12;$month++){$value=(float)($months[$month]??$months[(string)$month]??0);if($value<0)throw new InvalidArgumentException('Nilai bulanan tidak boleh negatif');$values[$month]=$value;}if(array_sum($values)>$target['pagu']+0.01)throw new InvalidArgumentException('Total pembagian bulanan melebihi pagu rekening Rp '.number_format($target['pagu'],0,',','.'));
         $this->db->begin();try{foreach($values as $month=>$value)$this->db->query('INSERT INTO rencana_rekening_anggaran_neo(dokumen,kd_wilayah,kd_opd,tahun,kd_sub_keg,kd_akun,jenis,bulan,nilai,username_insert,is_deleted) VALUES(?,?,?,?,?,?,?,?,?,?,0) ON DUPLICATE KEY UPDATE nilai=VALUES(nilai),tgl_update=NOW(),username_update=VALUES(username_insert),is_deleted=0',[$logical,$this->user['kd_wilayah'],$this->user['kd_opd'],$this->user['tahun'],$subCode,$account,$kind,$month,$value,$this->user['username']??'system']);$this->db->commit();}catch(Throwable $e){$this->db->rollback();throw$e;}return$this->accountMonthlyRows($logical,$subCode);
+    }
+    public function setApproval(string $logical,string $subCode,bool $approved):array
+    {
+        $role=$this->user['type_user']??'viewer';
+        if(!in_array($role,['super_admin','admin_wilayah','tapd','kepala_opd','pa_kpa'],true))throw new RuntimeException('Role tidak memiliki kewenangan persetujuan dokumen');
+        if(in_array($role,['super_admin','admin_wilayah','tapd'],true)&&(($this->user['kd_opd']??'0')==='0'))throw new RuntimeException('Pilih satu OPD terlebih dahulu sebelum memberikan persetujuan');
+        $subCode=trim($subCode);if($subCode==='')throw new InvalidArgumentException('Sub kegiatan wajib dipilih');
+        $table=$this->table($logical);[$scope,$params]=$this->scope('a');$params[]=$subCode;
+        $found=$this->db->query("SELECT COUNT(*) jumlah FROM `$table` a WHERE $scope AND a.kd_sub_keg=?",$params)->fetch();
+        if((int)($found['jumlah']??0)<1)throw new RuntimeException('Sub kegiatan tidak ditemukan dalam lingkup pengguna');
+        $this->db->query("UPDATE `$table` a SET setujui=?,kunci=?,tgl_update=?,username_update=? WHERE $scope AND a.kd_sub_keg=?",[$approved?1:0,$approved?1:0,date('Y-m-d H:i:s'),$this->user['username']??'system',...$params]);
+        return ['kd_sub_keg'=>$subCode,'setujui'=>$approved?1:0,'kunci'=>$approved?1:0];
     }
     public function activeTapd(?string $date=null):array
     {

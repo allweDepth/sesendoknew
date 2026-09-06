@@ -252,4 +252,5 @@ return [
   '/anggaran/tapd/save' => ['AnggaranController', 'tapdSave'],
   '/anggaran/groups'       => ['AnggaranController', 'groups'],
   '/anggaran/details'      => ['AnggaranController', 'details'],
+  '/anggaran/approval'     => ['AnggaranController', 'approval'],
 ];

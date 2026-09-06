@@ -37,6 +37,14 @@ class AnggaranController extends Controller
 
     public function groups(): void { $this->documentJson('groups'); }
     public function details(): void { $this->documentJson('details'); }
+    public function approval():void
+    {
+        header('Content-Type: application/json;charset=UTF-8');
+        if(!Auth::check()){echo JsonResponse::error('Unauthorized',401);return;}
+        if($_SERVER['REQUEST_METHOD']!=='POST'){echo JsonResponse::error('Method tidak diizinkan',405);return;}
+        if(empty($_SESSION['csrf_token'])||($_SERVER['HTTP_X_CSRF_TOKEN']??'')!==$_SESSION['csrf_token']){echo JsonResponse::error('CSRF validation gagal',403);return;}
+        try{$data=(new AnggaranDocumentService(Auth::scopedUser()))->setApproval((string)($_POST['tbl']??''),(string)($_POST['kd_sub_keg']??''),!empty($_POST['approved']));echo JsonResponse::success(!empty($_POST['approved'])?'Dokumen disetujui dan dikunci':'Persetujuan dokumen dibuka kembali',[],$data);}catch(Throwable $e){echo JsonResponse::error($e->getMessage(),400);}
+    }
     private function documentJson(string $action): void
     {
         header('Content-Type: application/json;charset=UTF-8');
