@@ -125,6 +125,8 @@ return [
   '/pengaturan/current' => ['PengaturanController', 'current'],
   '/pengaturan/batas-pagu' => ['PengaturanController', 'paguLimits'],
   '/pengaturan/batas-pagu/save' => ['PengaturanController', 'savePaguLimit'],
+  '/scope/opds' => ['ScopeController', 'options'],
+  '/scope/select' => ['ScopeController', 'select'],
   '/user_opd' => ['UserOpdController', 'index'],
   '/user_opd/list' => ['UserOpdController', 'list'],
   '/user_opd/employees' => ['UserOpdController', 'employees'],

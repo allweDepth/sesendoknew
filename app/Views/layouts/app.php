@@ -1,3 +1,4 @@
+<?php require_once __DIR__.'/../../Core/Auth.php'; ?>
 <!DOCTYPE html>
 <html>
 
@@ -413,6 +414,11 @@
           <div class="header" id="dynamicHeaderTitle">DASHBOARD</div>
           <div class="pDashboard">seSendok</div>
         </div>
+        <?php if (in_array($_SESSION['user']['type_user'] ?? '', ['super_admin','admin_wilayah','tapd'], true)): ?>
+        <div class="ui compact form" id="regionalScopePicker" style="margin-left:auto;min-width:320px">
+          <div class="field"><label>OPD yang ditampilkan</label><div class="ui fluid search selection dropdown"><input type="hidden" name="scope_kd_opd"><i class="dropdown icon"></i><div class="default text">Seluruh OPD</div><div class="menu"></div></div></div>
+        </div>
+        <?php endif; ?>
       </div>
     </div>
     <div class="content-scroll">
@@ -433,7 +439,7 @@
   </script>
   <script>
     window.app = window.app || {};
-    window.app.user = <?= json_encode($_SESSION['user'] ?? []); ?>;
+    window.app.user = <?= json_encode(Auth::scopedUser()); ?>;
   </script>
   <!-- LIBRARY -->
   <script src="/assets/js/jquery.min.js"></script>

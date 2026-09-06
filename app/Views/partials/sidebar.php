@@ -1,3 +1,8 @@
+<?php
+$sidebarRole = (string) ($_SESSION['user']['type_user'] ?? 'viewer');
+$regionalAdmin = in_array($sidebarRole, ['super_admin', 'admin_wilayah'], true);
+$opdManager = in_array($sidebarRole, ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd'], true);
+?>
 <!-- SIDEBAR WRAPPER -->
 <div class="ui bottom attached segment pushable" id="mainContext">
 
@@ -22,6 +27,7 @@
       <i class="home icon"></i> Dashboard
     </a>
 
+    <?php if ($regionalAdmin): ?>
     <!-- REFERENSI -->
     <div class="item">
       <div class="title">
@@ -90,7 +96,9 @@
         </a>
       </div>
     </div>
+    <?php endif; ?>
 
+    <?php if ($regionalAdmin): ?>
     <!-- STANDAR HARGA -->
     <div class="item">
       <div class="title">
@@ -114,6 +122,7 @@
         </a>
       </div>
     </div>
+    <?php endif; ?>
 
     <!-- PERENCANAAN (dokumen sumber) -->
     <div class="item">
@@ -140,8 +149,10 @@
     <div class="item">
       <div class="title"><i class="dropdown icon"></i> <i class="shopping cart icon"></i> Penganggaran</div>
       <div class="content">
-        <a class="item" href="/pengaturan" data-spa="client" data-title="Penganggaran/Jadwal"><i
-            class="clock outline icon"></i> Jadwal Penganggaran</a>
+        <?php if ($regionalAdmin): ?>
+          <a class="item" href="/pengaturan" data-spa="client" data-title="Penganggaran/Jadwal"><i
+              class="clock outline icon"></i> Jadwal Penganggaran</a>
+        <?php endif; ?>
         <div class="item"><strong><i class="list alternate outline icon"></i> Sub Kegiatan Belanja</strong></div>
         <a class="item" href="/rka" data-spa="client" data-title="Anggaran/RKA"><i class="calculator icon"></i> RKA</a>
         <a class="item" href="/dpa" data-spa="client" data-title="Anggaran/DPA"><i
@@ -179,6 +190,7 @@
       </div>
     </div>
 
+    <?php if ($opdManager): ?>
     <!-- KEPEGAWAIAN -->
     <div class="item">
       <div class="title">
@@ -225,6 +237,7 @@
         </a>
       </div>
     </div>
+    <?php endif; ?>
 
     <!-- TATA NASKAH -->
     <div class="item">
@@ -248,7 +261,7 @@
       </div>
     </div>
 
-    <?php if (($_SESSION['user']['type_user'] ?? '') !== 'viewer'): ?>
+    <?php if ($regionalAdmin): ?>
       <a class="item" href="/halaman_berita" data-spa="client" data-title="Halaman Berita">
         <i class="newspaper icon"></i> Halaman Berita
       </a>
@@ -257,7 +270,7 @@
         <i class="toolbox icon"></i> Pengaturan
       </a>
     <?php endif; ?>
-    <?php if (in_array(($_SESSION['user']['type_user'] ?? ''), ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd'], true)): ?>
+    <?php if ($opdManager): ?>
       <a class="item" href="/user_opd" data-spa="server" data-title="Pengaturan User dan Role OPD"><i
           class="users cog icon"></i> User &amp; Role OPD</a>
     <?php endif; ?>

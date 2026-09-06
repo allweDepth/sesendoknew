@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__.'/../Core/DB.php';
+require_once __DIR__.'/../Core/Auth.php';
 require_once __DIR__.'/../../vendor/autoload.php';
 require_once __DIR__.'/PageSetupService.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;use PhpOffice\PhpSpreadsheet\Writer\Xlsx;use PhpOffice\PhpSpreadsheet\Style\Alignment;use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -8,7 +9,7 @@ class AnggaranDocumentService
 {
     private DB $db; private array $user; private ?string $currentSubCode=null;
     private const TABLES=['rkpd'=>'rkpd_neo','renja'=>'renja_neo','rka'=>'rka_neo','dpa'=>'dpa_neo','rkpd_p'=>'rkpd_p_neo','renja_p'=>'renja_p_neo','rka_p'=>'rka_p_neo','dppa'=>'dppa_neo'];
-    public function __construct(array $user){$this->db=DB::getInstance();$this->user=$user;}
+    public function __construct(array $user){$this->db=DB::getInstance();$this->user=Auth::scopedUser() ?: $user;}
     private function table(string $logical):string{if(!isset(self::TABLES[$logical]))throw new InvalidArgumentException('Dokumen anggaran tidak valid');return self::TABLES[$logical];}
     private function scope(string $alias='a'):array{$w=$this->user['kd_wilayah']??'';$o=$this->user['kd_opd']??'';$y=(int)($this->user['tahun']??0);if(!$w||!$y)throw new RuntimeException('Scope pengguna tidak lengkap');$sql="$alias.kd_wilayah=? AND $alias.tahun=? AND $alias.is_deleted=0";$p=[$w,$y];if($o&&$o!=='0'){$sql.=" AND $alias.kd_opd=?";$p[]=$o;}return[$sql,$p];}
     public function groups(string $logical):array

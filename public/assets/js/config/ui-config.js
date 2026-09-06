@@ -1654,7 +1654,7 @@ UIConfig.absensi={validation:{pegawai_id:{required:true},tanggal:{required:true}
 	{tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan",atribut:'rows="3"'}}
 ]}};
 UIConfig.penugasan_subkegiatan={form:{elements:[
-	{tag:"input",prop:{label:"ID User",name:"user_id",type:"number"}},{tag:"input",prop:{label:"Kode Sub Kegiatan",name:"kd_sub_keg"}},
+	{tag:"fieldDropdown",prop:{label:"Pegawai/User",name:"user_id",source:"user_opd_dropdown",search:true}},{tag:"fieldDropdown",prop:{label:"Sub Kegiatan",name:"kd_sub_keg",source:"sub_kegiatan_penugasan",search:true}},
 	{tag:"fieldDropdown",prop:{label:"Peran",name:"peran",options:["KEPALA_OPD","PA_KPA","PPK","PPTK","PPK_SKPD","BENDAHARA","PEJABAT_PENGADAAN","STAF","VIEWER"].map(x=>({value:x,text:x.replaceAll('_',' ')}))}},
 	{tag:"fieldCheckbox",prop:{label:"Dapat melihat",name:"dapat_lihat"}},{tag:"fieldCheckbox",prop:{label:"Dapat input",name:"dapat_input"}},{tag:"fieldCheckbox",prop:{label:"Dapat menyetujui",name:"dapat_setujui"}},{tag:"fieldCheckbox",prop:{label:"Dapat menghapus",name:"dapat_hapus"}},
 	{tag:"fieldCalendar",prop:{label:"Berlaku Mulai",name:"berlaku_mulai",calendarType:"date"}},{tag:"fieldCalendar",prop:{label:"Berlaku Sampai",name:"berlaku_sampai",calendarType:"date"}}

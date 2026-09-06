@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/../Core/Auth.php';
 require_once __DIR__.'/../Core/DB.php';
 require_once __DIR__.'/../../vendor/autoload.php';
 require_once __DIR__.'/PageSetupService.php';
@@ -11,7 +12,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 class RenstraExportService
 {
     private DB $db; private array $user;
-    public function __construct(array $user){$this->db=DB::getInstance();$this->user=$user;}
+    public function __construct(array $user){$this->db=DB::getInstance();$this->user=Auth::scopedUser() ?: $user;}
     private function scope():array{$w=(string)($this->user['kd_wilayah']??'');$o=(string)($this->user['kd_opd']??'');if($w==='')throw new RuntimeException('Scope wilayah pengguna tidak lengkap');$sql='r.kd_wilayah=? AND r.is_deleted=0';$p=[$w];if($o!==''&&$o!=='0'){$sql.=' AND r.kd_opd=?';$p[]=$o;}return[$sql,$p];}
     public function header():array{[$scope,$p]=$this->scope();$sql="SELECT r.*,pr.periode_mulai,pr.periode_selesai,COALESCE(o.uraian,r.kd_opd) nama_opd,o.nama_kepala,o.nip_kepala FROM renstra_neo r LEFT JOIN periode_rpjmd pr ON pr.id=r.periode_id LEFT JOIN organisasi_neo o ON o.kode=r.kd_opd AND o.kd_wilayah=r.kd_wilayah AND o.is_deleted=0 WHERE $scope ORDER BY r.id DESC LIMIT 1";$row=$this->db->query($sql,$p)->fetch();if(!$row)throw new RuntimeException('Data induk Renstra belum tersedia');return$row;}
     public function strategyRows(int $id):array{return $this->db->query("SELECT m.nama_misi,t.kode_tujuan,t.nama_tujuan,s.kode_sasaran,s.nama_sasaran,i.nama_indikator,i.satuan,i.baseline,i.target_t1,i.target_t2,i.target_t3,i.target_t4,i.target_t5,i.target_akhir FROM misi_renstra_neo m LEFT JOIN tujuan_renstra_neo t ON t.misi_id=m.id AND t.is_deleted=0 LEFT JOIN sasaran_renstra_neo s ON s.tujuan_id=t.id AND s.is_deleted=0 LEFT JOIN indikator_sasaran_renstra_neo i ON i.sasaran_id=s.id AND i.is_deleted=0 WHERE m.renstra_id=? AND m.is_deleted=0 ORDER BY m.id,t.id,s.id,i.id",[$id])->fetchAll();}

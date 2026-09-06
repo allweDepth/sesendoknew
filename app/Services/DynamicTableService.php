@@ -56,6 +56,7 @@ require_once __DIR__ . '/JsonResponse.php';
  */
 require_once __DIR__ . '/DynamicTable/autoload.php';
 require_once __DIR__ . '/PaguLimitService.php';
+require_once __DIR__ . '/../Core/Auth.php';
 
 use App\Services\DynamicTable\DynamicImportHelper;
 
@@ -97,7 +98,7 @@ INTERNAL CACHE (ANTI DOUBLE QUERY)
   {
     $this->db = DB::getInstance();
     $this->profiles = require __DIR__ . '/../Config/table_profiles.php';
-    $this->user = $_SESSION['user'] ?? [];
+    $this->user = Auth::scopedUser();
   }
   private function importHelper() // //
   {
@@ -624,6 +625,11 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
         throw new Exception('Hanya Kepala OPD/PA/KPA yang dapat mengelola daftar subkegiatan.');
       }
     }
+    if (in_array($table, ['user_subkegiatan_neo','pejabat_tahunan_neo'], true) && in_array($action,['add','edit','delete'],true)) {
+      if (!in_array($role,['super_admin','admin_wilayah','kepala_opd'],true)) {
+        throw new Exception('Penetapan pejabat dan sub kegiatan hanya menjadi kewenangan Kepala OPD atau administrator regional.');
+      }
+    }
     if ($table === 'rpjmd_kabupaten_neo' && in_array($action,['add','edit','delete'],true)
         && !in_array($role,['super_admin','admin_wilayah'],true)) {
       throw new Exception('RPJMD Kabupaten hanya dapat dikelola Admin Kabupaten; pengguna lain hanya dapat melihat.');
@@ -649,6 +655,15 @@ AUDIT TRAIL (TIDAK DIUBAH)
     }
 
     return $data;
+  }
+
+  private function enforceSubActivityAssignment(string $table, array $data, string $action): void
+  {
+    $role=$this->user['type_user']??'viewer';
+    if(!in_array($role,['ppk','pptk','staf_opd'],true) || empty($data['kd_sub_keg']))return;
+    $flag=$action==='delete'?'dapat_hapus':'dapat_input';
+    $assignment=$this->db->query("SELECT id FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND `$flag`=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0 LIMIT 1",[(int)($this->user['id']??0),$this->user['kd_wilayah']??'', $this->user['kd_opd']??'', $this->user['tahun']??date('Y'),$data['kd_sub_keg']])->fetch();
+    if(!$assignment)throw new Exception('Anda tidak memiliki izin '.$action.' untuk sub kegiatan ini.');
   }
   /* =========================================================
 INSERT (FULL IDENTIK LOGIC ASLI)
@@ -896,6 +911,7 @@ kd_sub_keg → nama_sub_keg
         ===================================================== */
     $filtered = $this->sanitizer()->applySanitization($table, $filtered);
     $filtered = $this->injectAudit($filtered, 'insert');
+    $this->enforceSubActivityAssignment($table, $filtered, 'add');
 
     /* =====================================================
         9️⃣ HYBRID VALIDATION (SCHEMA + PROFILE)
@@ -1173,6 +1189,7 @@ IGNORE SYSTEM FIELD
         $filtered[$field] = $value;
       }
     }
+    $this->enforceSubActivityAssignment($table, $filtered, 'edit');
     if($table==='rpjmd_kabupaten_neo'&&($filtered['berlaku_mulai']??'')>($filtered['berlaku_sampai']??'')){
       return JsonResponse::error('Tanggal akhir RPJMD harus sesudah tanggal mulai');
     }
@@ -1289,6 +1306,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
       "SELECT * FROM `$table` WHERE `$primaryKey` = ?",
       [$id]
     )->fetch();
+
+    $this->enforceSubActivityAssignment($table, $oldData ?: [], 'delete');
 
     if (in_array($table, ['dpa_neo', 'dppa_neo'], true)) {
       $stage = $table === 'dpa_neo' ? 'dpa' : 'dppa';
@@ -1913,7 +1932,7 @@ HANYA PERIODE AKTIF DI-CACHE
   {
     $role = $this->user['type_user'] ?? 'viewer';
 
-    if ($role === 'super_admin') {
+    if ($role === 'super_admin' && empty($this->user['scope_selected'])) {
       return [[], []];
     }
 
@@ -1927,6 +1946,17 @@ HANYA PERIODE AKTIF DI-CACHE
       if (in_array('kd_wilayah', $columns)) {
         $whereParts[] = "`kd_wilayah` = ?";
         $params[] = $this->user['kd_wilayah'] ?? null;
+      }
+    }
+
+    if (in_array($role,['super_admin','admin_wilayah','tapd'],true) && !empty($this->user['scope_selected'])) {
+      if (in_array('kd_opd', $columns)) {
+        $whereParts[] = "`kd_opd` = ?";
+        $params[] = $this->user['kd_opd'];
+      }
+      if ($role === 'super_admin' && in_array('kd_wilayah', $columns)) {
+        $whereParts[] = "`kd_wilayah` = ?";
+        $params[] = $this->user['kd_wilayah'];
       }
     }
 
@@ -3628,14 +3658,24 @@ LIMIT 1",
 
     $role = $this->user['type_user'] ?? 'viewer';
 
-    if ($role !== 'super_admin') {
+    if ($role !== 'super_admin' || !empty($this->user['scope_selected'])) {
 
-      if ($role === 'admin_wilayah' && in_array('kd_wilayah', $columns)) {
+      if (in_array($role, ['super_admin','admin_wilayah','tapd'], true) && in_array('kd_wilayah', $columns)) {
         $where[] = "`kd_wilayah` = ?";
         $params[] = $this->user['kd_wilayah'];
       }
 
-      if ($role === 'admin_opd') {
+      if (in_array($role, ['super_admin','admin_wilayah','tapd'], true)
+          && !empty($this->user['scope_selected']) && in_array('kd_opd', $columns)) {
+        $where[] = "`kd_opd` = ?";
+        $params[] = $this->user['kd_opd'];
+      }
+      if (in_array($role, ['admin_wilayah','tapd'], true) && in_array('tahun', $columns) && isset($this->user['tahun'])) {
+        $where[] = "`tahun` = ?";
+        $params[] = $this->user['tahun'];
+      }
+
+      if (in_array($role, ['admin_opd','kepala_opd','pa_kpa','ppk','pptk','ppk_skpd','bendahara','pejabat_pengadaan','staf_opd','viewer','user'], true)) {
 
         foreach (['kd_opd', 'kd_wilayah', 'tahun'] as $field) {
 
@@ -3648,6 +3688,11 @@ LIMIT 1",
             $where[] = "`$field` = ?";
             $params[] = $this->user[$field];
           }
+        }
+
+        if (in_array($role,['ppk','pptk','staf_opd','viewer','user'],true) && in_array('kd_sub_keg',$columns,true)) {
+          $assignments=$this->db->query('SELECT kd_sub_keg FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND dapat_lihat=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0',[(int)($this->user['id']??0),$this->user['kd_wilayah']??'', $this->user['kd_opd']??'', $this->user['tahun']??date('Y')])->fetchAll(PDO::FETCH_COLUMN);
+          if(!$assignments){$where[]='1=0';}else{$where[]='`kd_sub_keg` IN ('.implode(',',array_fill(0,count($assignments),'?')).')';array_push($params,...$assignments);}
         }
       }
     }

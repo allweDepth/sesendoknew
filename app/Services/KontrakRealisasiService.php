@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../Core/DB.php';
+require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
 require_once __DIR__ . '/PageSetupService.php';
 
@@ -23,7 +24,7 @@ class KontrakRealisasiService
   public function __construct(array $user)
   {
     $this->db = DB::getInstance();
-    $this->user = $user;
+    $this->user = Auth::scopedUser() ?: $user;
   }
 
   private function scope(): array
@@ -33,6 +34,11 @@ class KontrakRealisasiService
     $y = (int)($this->user['tahun'] ?? 0);
     if (!$w || !$y) throw new RuntimeException('Scope pengguna tidak lengkap');
     return [$w, $o, $y];
+  }
+
+  private function assertCanWrite(): void
+  {
+    if (in_array($this->user['type_user']??'viewer',['tapd','viewer'],true)) throw new RuntimeException('Role ini hanya dapat membaca dan mengekspor data kontrak/realisasi.');
   }
 
   public function summary(): array
@@ -110,6 +116,7 @@ class KontrakRealisasiService
 
   public function saveRab(int $contractId, array $items): array
   {
+    $this->assertCanWrite();
     $header = $this->contractHeader($contractId);
     if (!$items) throw new InvalidArgumentException('RAB minimal memiliki satu uraian');
     $existing = $this->db->query('SELECT * FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0', [$contractId])->fetchAll();
@@ -163,6 +170,7 @@ class KontrakRealisasiService
 
   public function saveSchedule(int $contractId, array $weeks): array
   {
+    $this->assertCanWrite();
     $header = $this->contractHeader($contractId);
     if (!$weeks) throw new InvalidArgumentException('Time schedule minimal memiliki satu periode pada item RAB');
     $rabRows = $this->db->query('SELECT id,bobot,nomor,uraian FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0', [$contractId])->fetchAll();
@@ -275,6 +283,7 @@ class KontrakRealisasiService
 
   public function importRab(int $contractId, string $filePath): array
   {
+    $this->assertCanWrite();
     if (!is_file($filePath)) throw new InvalidArgumentException('File RAB tidak ditemukan');
     $sheet = IOFactory::load($filePath)->getActiveSheet();
     $rows = $sheet->toArray(null, true, true, true);
@@ -364,6 +373,7 @@ class KontrakRealisasiService
 
   public function uploadDocument(int $contractId, array $meta, array $file): array
   {
+    $this->assertCanWrite();
     $header = $this->contractHeader($contractId);
     $types = ['KONTRAK', 'SPK', 'SPMK', 'SSKK', 'SSUK', 'RAB', 'JADWAL', 'KURVA_S', 'GAMBAR', 'BAST', 'PHO', 'FHO', 'ADENDUM', 'JAMINAN', 'LAPORAN', 'LAINNYA'];
     $type = strtoupper((string)($meta['jenis_dokumen'] ?? ''));
@@ -401,6 +411,7 @@ class KontrakRealisasiService
 
   public function deleteDocument(int $id): array
   {
+    $this->assertCanWrite();
     $document = $this->document($id);
     $root = realpath(dirname(__DIR__, 2) . '/storage/uploads');
     $path = realpath(dirname(__DIR__, 2) . '/' . ltrim((string)$document['path_file'], '/'));
@@ -424,6 +435,7 @@ class KontrakRealisasiService
 
   public function saveContractItems(int $contractId, array $items): array
   {
+    $this->assertCanWrite();
     $header = $this->contractHeader($contractId);
     if (!$items) throw new InvalidArgumentException('Pilih minimal satu uraian DPA/DPPA untuk kontrak');
     $seen = [];

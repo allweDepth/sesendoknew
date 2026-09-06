@@ -44,6 +44,18 @@ $(document).ready(function () {
 		closable: true,
 	});
 	$(".ui.dropdown").dropdown();
+	const scopePicker = $("#regionalScopePicker .dropdown");
+	if (scopePicker.length) {
+		window.Ajax.request({url:"/scope/opds",method:"GET",success:(res)=>{
+			const data=res.data||{},menu=scopePicker.find(".menu").empty();
+			menu.append('<div class="item" data-value="0">Seluruh OPD</div>');
+			(data.rows||[]).forEach(row=>menu.append($("<div>",{class:"item","data-value":row.kode,text:`${row.kd_wilayah} — ${row.kode} — ${row.uraian}`})));
+			scopePicker.dropdown({onChange:(value)=>{
+				if(String(value)===String(data.selected_opd||"0"))return;
+				window.Ajax.request({url:"/scope/select",method:"POST",data:{kd_opd:value||"0"},success:()=>window.location.reload()});
+			}}).dropdown("set selected",data.selected_opd||"0");
+		}});
+	}
 
 	// Toolbar atas berlaku pada tabel aktif. TableManager menangani tabel server;
 	// fallback ini menyaring tabel/list khusus yang dirender oleh modul sendiri.

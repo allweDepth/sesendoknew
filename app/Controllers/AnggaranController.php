@@ -30,7 +30,7 @@ class AnggaranController extends Controller
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { echo JsonResponse::error('Method tidak diizinkan', 405); return; }
         if (empty($_SESSION['csrf_token']) || ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '') !== $_SESSION['csrf_token']) { echo JsonResponse::error('CSRF validation gagal', 403); return; }
         try {
-            $result = (new AnggaranCopyService($_SESSION['user'] ?? []))->copy($_POST['from'] ?? '', $_POST['to'] ?? '', (int)($_POST['tahun'] ?? 0), !empty($_POST['source_id']) ? (int)$_POST['source_id'] : null);
+            $result = (new AnggaranCopyService(Auth::scopedUser()))->copy($_POST['from'] ?? '', $_POST['to'] ?? '', (int)($_POST['tahun'] ?? 0), !empty($_POST['source_id']) ? (int)$_POST['source_id'] : null);
             echo JsonResponse::success('Dokumen berhasil diproses', $result);
         } catch (Throwable $e) { echo JsonResponse::error($e->getMessage(), 400); }
     }
@@ -41,14 +41,14 @@ class AnggaranController extends Controller
     {
         header('Content-Type: application/json;charset=UTF-8');
         if(!Auth::check()){echo JsonResponse::error('Unauthorized',401);return;}
-        try{$service=new AnggaranDocumentService($_SESSION['user']??[]);$data=$action==='groups'?$service->groups($_GET['tbl']??''):$service->details($_GET['tbl']??'',$_GET['kd_sub_keg']??'');echo JsonResponse::success('Data dokumen berhasil dimuat',[],$data);}catch(Throwable $e){echo JsonResponse::error($e->getMessage(),400);}
+        try{$service=new AnggaranDocumentService(Auth::scopedUser());$data=$action==='groups'?$service->groups($_GET['tbl']??''):$service->details($_GET['tbl']??'',$_GET['kd_sub_keg']??'');echo JsonResponse::success('Data dokumen berhasil dimuat',[],$data);}catch(Throwable $e){echo JsonResponse::error($e->getMessage(),400);}
     }
 
     public function exportPdf(): void
     {
         try {
             if (!Auth::check()) throw new RuntimeException('Sesi login tidak valid');
-            $logical=(string)($_GET['tbl']??'');$pdf=(new AnggaranDocumentService($_SESSION['user']??[]))->exportRegulatoryPdf($logical);
+            $logical=(string)($_GET['tbl']??'');$pdf=(new AnggaranDocumentService(Auth::scopedUser()))->exportRegulatoryPdf($logical);
             header('Content-Type: application/pdf');header('Content-Disposition: attachment; filename="'.$logical.'-per-sub-kegiatan.pdf"');echo $pdf;
         } catch (Throwable $e) { http_response_code(400); echo $e->getMessage(); }
         exit;
@@ -62,6 +62,6 @@ class AnggaranController extends Controller
     public function tapdList():void{header('Content-Type: application/json;charset=UTF-8');try{if(!Auth::check())throw new RuntimeException('Sesi login tidak valid');$rows=(new AnggaranDocumentService($_SESSION['user']??[]))->activeTapd($_GET['tanggal']??null);echo JsonResponse::success('Daftar TAPD aktif',[],$rows);}catch(Throwable $e){echo JsonResponse::error($e->getMessage(),400);}}
     public function tapdSave():void
     {
-        header('Content-Type: application/json;charset=UTF-8');try{if(!Auth::check())throw new RuntimeException('Sesi login tidak valid');$user=$_SESSION['user'];$role=$user['type_user']??'';if(!in_array($role,['super_admin','admin_wilayah','tapd'],true))throw new RuntimeException('Hanya administrator daerah/TAPD yang dapat mengatur penugasan');$start=(string)($_POST['tanggal_mulai']??'');$end=(string)($_POST['tanggal_selesai']??'');$employeeId=(int)($_POST['pegawai_id']??0);if(!$start||!$end||$start>$end||!$employeeId)throw new InvalidArgumentException('Pegawai dan masa berlaku penugasan wajib valid');$db=DB::getInstance();$employee=$db->query('SELECT id,CONCAT_WS(" ",gelar_depan,nama,gelar) nama,nip FROM db_asn_pemda_neo WHERE id=? AND kd_wilayah=? AND is_deleted=0 AND disable=0 AND COALESCE(aktif,1)=1 LIMIT 1',[$employeeId,$user['kd_wilayah']])->fetch();if(!$employee)throw new RuntimeException('Pegawai aktif tidak ditemukan pada wilayah pengguna');$db->insert('tapd_penugasan_neo',['kd_wilayah'=>$user['kd_wilayah'],'tahun'=>$user['tahun'],'user_id'=>null,'pegawai_id'=>$employeeId,'nama'=>$employee['nama'],'nip'=>$employee['nip'],'jabatan'=>trim((string)($_POST['jabatan']??'Anggota')),'urutan'=>(int)($_POST['urutan']??1),'tanggal_mulai'=>$start,'tanggal_selesai'=>$end,'aktif'=>1,'username_insert'=>$user['username']??'system','is_deleted'=>0]);echo JsonResponse::success('Penugasan TAPD tersimpan dari master pegawai wilayah');}catch(Throwable$e){echo JsonResponse::error($e->getMessage(),400);}
+        header('Content-Type: application/json;charset=UTF-8');try{if(!Auth::check())throw new RuntimeException('Sesi login tidak valid');$user=Auth::scopedUser();$role=$user['type_user']??'';if(!in_array($role,['super_admin','admin_wilayah'],true))throw new RuntimeException('Hanya super admin atau admin wilayah yang dapat mengatur penugasan TAPD');$start=(string)($_POST['tanggal_mulai']??'');$end=(string)($_POST['tanggal_selesai']??'');$employeeId=(int)($_POST['pegawai_id']??0);if(!$start||!$end||$start>$end||!$employeeId)throw new InvalidArgumentException('Pegawai dan masa berlaku penugasan wajib valid');$db=DB::getInstance();$employee=$db->query('SELECT id,CONCAT_WS(" ",gelar_depan,nama,gelar) nama,nip FROM db_asn_pemda_neo WHERE id=? AND kd_wilayah=? AND is_deleted=0 AND disable=0 AND COALESCE(aktif,1)=1 LIMIT 1',[$employeeId,$user['kd_wilayah']])->fetch();if(!$employee)throw new RuntimeException('Pegawai aktif tidak ditemukan pada wilayah pengguna');$db->insert('tapd_penugasan_neo',['kd_wilayah'=>$user['kd_wilayah'],'tahun'=>$user['tahun'],'user_id'=>null,'pegawai_id'=>$employeeId,'nama'=>$employee['nama'],'nip'=>$employee['nip'],'jabatan'=>trim((string)($_POST['jabatan']??'Anggota')),'urutan'=>(int)($_POST['urutan']??1),'tanggal_mulai'=>$start,'tanggal_selesai'=>$end,'aktif'=>1,'username_insert'=>$user['username']??'system','is_deleted'=>0]);echo JsonResponse::success('Penugasan TAPD tersimpan dari master pegawai wilayah');}catch(Throwable$e){echo JsonResponse::error($e->getMessage(),400);}
     }
 }

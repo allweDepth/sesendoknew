@@ -69,6 +69,18 @@ class Auth
         return $_SESSION['user'] ?? null;
     }
 
+    public static function scopedUser(): array
+    {
+        $user = $_SESSION['user'] ?? [];
+        if (in_array($user['type_user'] ?? '', ['super_admin','admin_wilayah','tapd'], true)) {
+            $user['scope_selected'] = !empty($_SESSION['scope_kd_opd']);
+            if (!empty($_SESSION['scope_kd_wilayah'])) $user['kd_wilayah'] = $_SESSION['scope_kd_wilayah'];
+            $user['kd_opd'] = $_SESSION['scope_kd_opd'] ?? '0';
+            $user['scope_kd_opd'] = $user['kd_opd'];
+        }
+        return $user;
+    }
+
     // ==========================================
     // CHECK LOGIN + TIMEOUT
     // ==========================================

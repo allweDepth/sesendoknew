@@ -2338,7 +2338,7 @@ $documentProfile = static function (string $table, array $searchable = ['kd_sub_
         'select' => ['*'],
         'searchable' => $searchable,
         'order_by' => 'id DESC',
-        'where' => ['kd_wilayah' => 'user', 'kd_opd' => 'user', 'tahun' => 'user', 'is_deleted' => 0]
+        'where' => ['is_deleted' => 0]
       ],
       'edit' => ['select' => ['*'], 'searchable' => $searchable, 'order_by' => 'id ASC']
     ]
@@ -2370,7 +2370,7 @@ $profiles['kontrak'] = [
     'default' => [
       'select' => ['kontrak_neo.id', 'kontrak_neo.tahap', 'kontrak_neo.kd_sub_keg', 'kontrak_neo.nomor_spk', 'kontrak_neo.nomor_spmk', 'kontrak_neo.nomor_kontrak', 'kontrak_neo.uraian_kontrak', 'rekanan_neo.nama_perusahaan AS penyedia', 'kontrak_neo.total_anggaran', 'kontrak_neo.nilai_kontrak', 'kontrak_neo.tanggal_mulai', 'kontrak_neo.tanggal_selesai', 'kontrak_neo.status_kontrak'],
       'searchable' => ['kontrak_neo.nomor_spk', 'kontrak_neo.nomor_spmk', 'kontrak_neo.nomor_kontrak', 'kontrak_neo.uraian_kontrak', 'rekanan_neo.nama_perusahaan'],
-      'where' => ['kontrak_neo.kd_wilayah' => 'user', 'kontrak_neo.kd_opd' => 'user', 'kontrak_neo.tahun' => 'user', 'kontrak_neo.is_deleted' => 0],
+      'where' => ['kontrak_neo.is_deleted' => 0],
       'order_by' => 'kontrak_neo.id DESC'
     ],
     'edit' => ['select' => ['kontrak_neo.*'], 'searchable' => ['kontrak_neo.nomor_kontrak'], 'order_by' => 'kontrak_neo.id ASC']
@@ -2386,7 +2386,7 @@ $profiles['realisasi'] = [
   'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1],
   'validation' => ['kontrak_id' => ['required', 'numeric'], 'tanggal' => ['required'], 'jumlah' => ['required', 'numeric'], 'progress_fisik' => ['required', 'numeric']],
   'modes' => [
-    'default' => ['select' => ['daftar_realisasi_neo.id', 'kontrak_neo.nomor_kontrak', 'daftar_realisasi_neo.tanggal', 'daftar_realisasi_neo.periode', 'daftar_realisasi_neo.kd_sub_keg', 'daftar_realisasi_neo.kd_akun', 'daftar_realisasi_neo.jumlah', 'daftar_realisasi_neo.progress_fisik', 'daftar_realisasi_neo.nomor_bukti', 'daftar_realisasi_neo.keterangan'], 'searchable' => ['kontrak_neo.nomor_kontrak', 'daftar_realisasi_neo.kd_sub_keg', 'daftar_realisasi_neo.nomor_bukti', 'daftar_realisasi_neo.keterangan'], 'where' => ['daftar_realisasi_neo.kd_wilayah' => 'user', 'daftar_realisasi_neo.kd_opd' => 'user', 'daftar_realisasi_neo.tahun' => 'user', 'daftar_realisasi_neo.is_deleted' => 0], 'order_by' => 'daftar_realisasi_neo.tanggal DESC'],
+    'default' => ['select' => ['daftar_realisasi_neo.id', 'kontrak_neo.nomor_kontrak', 'daftar_realisasi_neo.tanggal', 'daftar_realisasi_neo.periode', 'daftar_realisasi_neo.kd_sub_keg', 'daftar_realisasi_neo.kd_akun', 'daftar_realisasi_neo.jumlah', 'daftar_realisasi_neo.progress_fisik', 'daftar_realisasi_neo.nomor_bukti', 'daftar_realisasi_neo.keterangan'], 'searchable' => ['kontrak_neo.nomor_kontrak', 'daftar_realisasi_neo.kd_sub_keg', 'daftar_realisasi_neo.nomor_bukti', 'daftar_realisasi_neo.keterangan'], 'where' => ['daftar_realisasi_neo.is_deleted' => 0], 'order_by' => 'daftar_realisasi_neo.tanggal DESC'],
     'edit' => ['select' => ['daftar_realisasi_neo.*'], 'searchable' => ['daftar_realisasi_neo.keterangan'], 'order_by' => 'daftar_realisasi_neo.id ASC']
   ],
   'join' => [['table' => 'kontrak_neo', 'on' => 'kontrak_neo.id = daftar_realisasi_neo.kontrak_id']]
@@ -2432,7 +2432,15 @@ $profiles['penugasan_subkegiatan'] = [
   'where' => ['is_deleted' => 0],
   'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1],
   'validation' => ['user_id' => ['required', 'numeric'], 'kd_sub_keg' => ['required'], 'peran' => ['required'], 'berlaku_mulai' => ['required'], 'berlaku_sampai' => ['required']],
-  'modes' => ['default' => ['select' => ['*'], 'searchable' => ['kd_sub_keg', 'peran', 'keterangan'], 'where' => ['kd_wilayah' => 'user', 'kd_opd' => 'user', 'tahun' => 'user', 'is_deleted' => 0], 'order_by' => 'id DESC']]
+  'modes' => ['default' => ['select' => ['user_subkegiatan_neo.*', "CASE WHEN EXISTS (SELECT 1 FROM sub_kegiatan_renstra_neo sr JOIN rekening_kegiatan rr ON rr.id=sr.master_sub_kegiatan_id JOIN kegiatan_renstra_neo kr ON kr.id=sr.kegiatan_renstra_id AND kr.is_deleted=0 JOIN program_renstra_neo pr ON pr.id=kr.program_id AND pr.is_deleted=0 JOIN sasaran_renstra_neo sa ON sa.id=pr.sasaran_id AND sa.is_deleted=0 JOIN tujuan_renstra_neo tr ON tr.id=sa.tujuan_id AND tr.is_deleted=0 JOIN misi_renstra_neo mr ON mr.id=tr.misi_id AND mr.is_deleted=0 JOIN renstra_neo re ON re.id=mr.renstra_id AND re.is_deleted=0 WHERE sr.is_deleted=0 AND rr.kode=user_subkegiatan_neo.kd_sub_keg AND re.kd_wilayah=user_subkegiatan_neo.kd_wilayah AND re.kd_opd=user_subkegiatan_neo.kd_opd) THEN 'Ada dalam Renstra' ELSE 'Tidak ada dalam Renstra' END AS status_renstra"], 'searchable' => ['kd_sub_keg', 'peran', 'keterangan'], 'where' => ['kd_wilayah' => 'user', 'kd_opd' => 'user', 'tahun' => 'user', 'is_deleted' => 0], 'order_by' => 'id DESC']]
+];
+$profiles['user_opd_dropdown'] = [
+  'table'=>'user_sesendok_biila','primary_key'=>'id','where'=>['disable'=>0],
+  'dropdown'=>['value'=>'id','label'=>'nama','label_fields'=>['nama','type_user'],'searchable'=>['nama','nip','username']]
+];
+$profiles['sub_kegiatan_penugasan'] = [
+  'table'=>'rekening_kegiatan','primary_key'=>'id','where'=>['level'=>'sub_kegiatan'],
+  'dropdown'=>['value'=>'kode','label'=>'uraian','label_fields'=>['kode','uraian'],'searchable'=>['kode','uraian']]
 ];
 $profiles['kop_surat'] = ['table' => 'kop_surat_neo', 'primary_key' => 'id', 'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd'], 'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'], 'where' => ['is_deleted' => 0], 'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1], 'validation' => ['nama_pemerintah' => ['required'], 'nama_opd' => ['required']], 'modes' => ['default' => ['select' => ['*'], 'searchable' => ['nama_pemerintah', 'nama_opd', 'alamat'], 'where' => ['kd_wilayah' => 'user', 'kd_opd' => 'user', 'tahun' => 'user', 'is_deleted' => 0], 'order_by' => 'id DESC']]];
 
