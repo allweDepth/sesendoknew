@@ -5025,6 +5025,8 @@ AND is_deleted = 0
 
       $columns = $this->getTableColumns($table);
     }
+    $joinSQL='';$knownDropdownTables=[$table];
+    foreach(($profile['join']??[]) as $join){$joinTable=$join['table']??'';$on=$join['on']??'';if(!preg_match('/^[A-Za-z0-9_]+$/',$joinTable)||$on==='')continue;$joinSQL.=" LEFT JOIN `$joinTable` ON $on";$knownDropdownTables[]=$joinTable;}
 
     // =====================================================
     // 🔥 APPLY FILTERS (LEVEL DLL)
@@ -5075,13 +5077,14 @@ AND is_deleted = 0
     if (!empty($profile['where'])) {
 
       foreach ($profile['where'] as $col => $val) {
-
-        if (!in_array($col, $columns)) continue;
-
-        $mandatoryWhere[] = "`$table`.`$col` = ?";
+        $columnName=$col;$columnTable=$table;
+        if(str_contains($col,'.'))[$columnTable,$columnName]=explode('.',$col,2);
+        if(!preg_match('/^[A-Za-z0-9_]+$/',$columnName)||!in_array($columnTable,$knownDropdownTables,true))continue;
+        if($columnTable===$table&&!in_array($columnName,$columns,true))continue;
+        $mandatoryWhere[] = "`$columnTable`.`$columnName` = ?";
 
         if ($val === 'user') {
-          $params[] = $this->user[$col] ?? null;
+          $params[] = $this->user[$columnName] ?? null;
         } else {
           $params[] = $val;
         }
@@ -5200,6 +5203,7 @@ AND is_deleted = 0
       `$table`.`$valueField` AS value,
       $textExpression AS text
     FROM `$table`
+    $joinSQL
     $where
     ORDER BY `$table`.`$labelField` ASC
     LIMIT $limit
