@@ -27,7 +27,6 @@ $opdManager = in_array($sidebarRole, ['super_admin', 'admin_wilayah', 'admin_opd
       <i class="home icon"></i> Dashboard
     </a>
 
-    <?php if ($regionalAdmin): ?>
     <!-- REFERENSI -->
     <div class="item">
       <div class="title">
@@ -96,9 +95,7 @@ $opdManager = in_array($sidebarRole, ['super_admin', 'admin_wilayah', 'admin_opd
         </a>
       </div>
     </div>
-    <?php endif; ?>
 
-    <?php if ($regionalAdmin): ?>
     <!-- STANDAR HARGA -->
     <div class="item">
       <div class="title">
@@ -122,7 +119,6 @@ $opdManager = in_array($sidebarRole, ['super_admin', 'admin_wilayah', 'admin_opd
         </a>
       </div>
     </div>
-    <?php endif; ?>
 
     <!-- PERENCANAAN (dokumen sumber) -->
     <div class="item">

@@ -275,26 +275,13 @@ INISIALISASI TABLE
 		// buat atribut req hanya jika ada nilainya
 		const reqAttr = req ? `data-req="${req}"` : "";
 
+		const policy = window.moduleMutationPolicy?.(tbl, this.state.req);
+		const addButtons = policy && !policy.add ? "" : `
+			<button class="ui button" data-ui="open-form" data-container="flyout" data-action="add" data-tbl="${tbl}" ${reqAttr}><i class="plus icon"></i></button>
+			${policy && !policy.import ? "" : `<button class="ui button" data-ui="open-form" data-container="flyout" data-action="${importType}" data-tbl="${tbl}" ${reqAttr}><i class="${importIcon} icon"></i></button>`}`;
 		return `
         <div class="ui right floated basic icon buttons" style="margin-top:10px;">
-
-            <button class="ui button"
-                data-ui="open-form"
-								data-container="flyout"
-								data-action="add"
-								data-tbl="${tbl}"
-                ${reqAttr}>
-                <i class="plus icon"></i>
-            </button>
-
-            <button class="ui button"
-                data-ui="open-form"
-								data-container="flyout"
-								data-action="${importType}"
-								data-tbl="${tbl}"
-                ${reqAttr}>
-                <i class="${importIcon} icon"></i>
-            </button>
+            ${addButtons}
 
             <button class="ui icon button"
                 data-action="export"

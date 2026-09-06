@@ -612,6 +612,22 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
     $matrix=require __DIR__.'/../Config/role_matrix.php';
     if($role==='editor')$role='staf_opd';
     if($role==='user')$role='viewer';
+    if (in_array($action,['add','edit','delete'],true)) {
+      $technicalProfiles=['rekening_kegiatan','satuan','mapping','aset','akun','sumber_dana','ssh','hspk','asb','sbu'];
+      $referenceProfile=$this->activeProfileKey;
+      if(in_array($referenceProfile,$technicalProfiles,true)) {
+        if($action==='delete'||$role!=='tapd')throw new Exception('Referensi teknis hanya dapat ditambah atau diubah oleh TAPD; role lain hanya dapat melihat.');
+        return;
+      }
+      if($referenceProfile==='organisasi') {
+        if($action==='delete'||$role!=='admin_wilayah')throw new Exception('Referensi OPD hanya dapat ditambah atau diubah oleh Admin Wilayah.');
+        return;
+      }
+      if($referenceProfile==='wilayah') {
+        if($action==='delete'||$role!=='super_admin')throw new Exception('Referensi wilayah hanya dapat ditambah atau diubah oleh Super Admin.');
+        return;
+      }
+    }
     if (!in_array($action, $matrix[$role]['actions'] ?? [],true)) {
       throw new Exception("Role ".($matrix[$role]['label']??$role)." tidak diizinkan melakukan aksi $action. Lingkup akses: ".($matrix[$role]['scope']??'tidak ditentukan'));
     }

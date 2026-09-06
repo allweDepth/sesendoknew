@@ -363,28 +363,18 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 				customAttr = 'data-custom-form="true"';
 				action = "edit_json"; // 🔥 FIX
 			}
+			const mutationPolicy = window.moduleMutationPolicy?.(this.state.tbl, this.state.req);
+			const editButton = mutationPolicy && !mutationPolicy.edit ? "" : `<button class="ui button"
+							data-ui="open-form" data-action="${action}" data-tbl="${this.state.tbl}" ${customAttr}
+							${this.state.req ? `data-req="${this.state.req}"` : ``} ${this.mode === "modal" ? `data-container="modal"` : ""}
+							data-id="${id}"><i class="blue edit icon"></i></button>`;
+			const deleteButton = mutationPolicy && !mutationPolicy.delete ? "" : `<button class="ui red button" data-action="delete" ${this.state.req ? `data-req="${this.state.req}"` : ``}><i class="red trash icon"></i></button>`;
 			html += `
 					<td class="collapsing">
 						<div class="ui mini basic icon buttons">
-							<button class="ui button"
-							data-ui="open-form"
-							data-action="${action}"
-							data-tbl="${this.state.tbl}"
-              ${customAttr}
-							${this.state.req ? `data-req="${this.state.req}"` : ``}
-							${this.mode === "modal" ? `data-container="modal"` : ""}
-data-id="${id}">
-								<i class="blue edit icon"></i>
-							</button>
-
+							${editButton}
 							${btnExtra}
-
-							<button class="ui red button"
-								data-action="delete"
-								${this.state.req ? `data-req="${this.state.req}"` : ``}>
-								<i class="red trash icon"></i>
-							</button>
-
+							${deleteButton}
 						</div>
 					</td>
 				`;

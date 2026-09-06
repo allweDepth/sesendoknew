@@ -4,6 +4,20 @@ $(document).ready(function () {
 	// ===============================
 	window.app = new App();
 	window.app.init();
+	window.moduleMutationPolicy = function (tbl, req) {
+		const role = window.app?.user?.type_user || "viewer";
+		const path = window.location.pathname.replace(window.APP_BASE_PATH || "", "");
+		const result = (allowed) => ({ add: allowed, edit: allowed, delete: false, import: allowed });
+		if (path.startsWith("/standar_harga")) return result(role === "tapd");
+		if (path.startsWith("/mapping")) return result(role === "tapd");
+		if (path.startsWith("/referensi")) {
+			if (tbl === "organisasi") return result(role === "admin_wilayah");
+			if (tbl === "wilayah") return result(role === "super_admin");
+			if (["rekening_kegiatan", "satuan", "aset", "akun", "sumber_dana"].includes(tbl)) return result(role === "tapd");
+			return result(false);
+		}
+		return null;
+	};
 
 	const $context = $("#mainContext");
 
