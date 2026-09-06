@@ -223,9 +223,16 @@ class FormEngine {
 				if (!$dropdown.hasClass("active")) return;
 
 				const timer = setTimeout(() => {
-					self.loadDropdown($dropdown, {
-						search: keyword,
-					});
+					const parentName = $dropdown.data("parent");
+					const params = { search: keyword };
+
+					if (parentName) {
+						params.parent = parentName;
+						params.parent_field = $dropdown.data("parent-field");
+						params.parent_value = $(`${self.formSelector} [name="${parentName}"]`).val();
+					}
+
+					self.loadDropdown($dropdown, params);
 				}, 300);
 
 				$dropdown.data("search-timer", timer);
@@ -721,6 +728,24 @@ class FormEngine {
 			3: "three",
 			4: "four",
 		};
+		const widthMap = {
+			1: "one",
+			2: "two",
+			3: "three",
+			4: "four",
+			5: "five",
+			6: "six",
+			7: "seven",
+			8: "eight",
+			9: "nine",
+			10: "ten",
+			11: "eleven",
+			12: "twelve",
+			13: "thirteen",
+			14: "fourteen",
+			15: "fifteen",
+			16: "sixteen",
+		};
 
 		// ambil jumlah kolom dari layout
 		const columns = layout.columns || 1;
@@ -736,7 +761,7 @@ class FormEngine {
 			// element khusus tidak dibungkus kolom
 			if (["alert", "progress", "divider"].includes(el.tag)) {
 				html += `
-			<div class="16 wide column">
+			<div class="sixteen wide column">
 				${this.element(el)}
 			</div>
 			`;
@@ -745,7 +770,9 @@ class FormEngine {
 			}
 
 			// jika element punya width
-			const widthClass = el.prop?.width ? `${el.prop.width} wide column` : "column";
+			const configuredWidth = el.prop?.width;
+			const semanticWidth = widthMap[configuredWidth] || configuredWidth;
+			const widthClass = semanticWidth ? `${semanticWidth} wide column` : "column";
 
 			html += `
 		<div class="${widthClass}">

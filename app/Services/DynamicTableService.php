@@ -2290,6 +2290,30 @@ BUILD RULE DARI SCHEMA DATABASE
       return $this->loadDropdownGeneric($profileKey, $parentValue, $filters);
     }
 
+    // Dropdown sub-kegiatan Renstra menerima ID kegiatan Renstra dari form,
+    // sedangkan hierarchy rekening_kegiatan berelasi melalui kode kegiatan.
+    if ($parentValue !== null && $parentValue !== ''
+      && !empty($this->profiles[$profileKey]['dropdown_parent_lookup'])) {
+      $lookup = $this->profiles[$profileKey]['dropdown_parent_lookup'];
+      $lookupTable = $lookup['table'] ?? null;
+      $lookupKey = $lookup['key'] ?? null;
+      $lookupValue = $lookup['value'] ?? null;
+
+      if ($lookupTable && $lookupKey && $lookupValue) {
+        $parentRow = $this->db->query(
+          "SELECT `$lookupValue` FROM `$lookupTable` WHERE `$lookupKey` = ? LIMIT 1",
+          [$parentValue]
+        )->fetch();
+        $parentValue = $parentRow[$lookupValue] ?? null;
+      }
+
+      if ($parentValue === null || $parentValue === '') {
+        return JsonResponse::success("Dropdown kosong", [], []);
+      }
+
+      return $this->loadDropdownGeneric($profileKey, $parentValue);
+    }
+
     if ($parentValue !== null && $parentValue !== '') {
       return $this->loadDropdownHierarchy($parentValue, $req);
     }

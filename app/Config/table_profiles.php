@@ -1247,6 +1247,30 @@ $profiles = [
     ]
   ],
 
+  'referensi_sub_kegiatan_renstra' => [
+    'table' => 'rekening_kegiatan',
+    'primary_key' => 'id',
+    'dropdown' => [
+      'value' => 'id',
+      'label' => 'uraian',
+      'label_fields' => ['kode', 'uraian'],
+      'searchable' => ['kode', 'uraian']
+    ],
+    'where' => [
+      'level' => 'sub_kegiatan'
+    ],
+    'relations' => [
+      [
+        'local_key' => 'parent_kode'
+      ]
+    ],
+    'dropdown_parent_lookup' => [
+      'table' => 'kegiatan_renstra_neo',
+      'key' => 'id',
+      'value' => 'kode_kegiatan'
+    ]
+  ],
+
   'renstra_neo' => [
     'table' => 'renstra_neo',
     'primary_key' => 'id',
