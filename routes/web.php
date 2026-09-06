@@ -123,6 +123,8 @@ return [
   '/pengaturan'        => ['PengaturanController', 'index'],
   '/pengaturan/fragment' => ['PengaturanController', 'fragment'],
   '/pengaturan/current' => ['PengaturanController', 'current'],
+  '/pengaturan/batas-pagu' => ['PengaturanController', 'paguLimits'],
+  '/pengaturan/batas-pagu/save' => ['PengaturanController', 'savePaguLimit'],
   '/user_opd' => ['UserOpdController', 'index'],
   '/user_opd/list' => ['UserOpdController', 'list'],
   '/user_opd/employees' => ['UserOpdController', 'employees'],

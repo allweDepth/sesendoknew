@@ -55,6 +55,7 @@ require_once __DIR__ . '/JsonResponse.php';
  * ============================================================
  */
 require_once __DIR__ . '/DynamicTable/autoload.php';
+require_once __DIR__ . '/PaguLimitService.php';
 
 use App\Services\DynamicTable\DynamicImportHelper;
 
@@ -937,6 +938,7 @@ kd_sub_keg → nama_sub_keg
     ========================================= */
 
       // menggunakan safe insert
+      (new PaguLimitService($this->user))->validate($table, $filtered);
       $id = $this->insertSafe($table, $filtered);
       $profile = $this->getProfileByTable($table);
 
@@ -1231,6 +1233,8 @@ UPDATE DATA DENGAN DUPLICATE HANDLER
 ========================================= */
 
       try {
+
+        (new PaguLimitService($this->user))->validate($table, array_merge($oldData, $diff), (int)$id);
 
         $this->db->update(
           $table,
@@ -3247,6 +3251,7 @@ LIMIT 1",
           // INSERT DATABASE
           // ==================================================
 
+          (new PaguLimitService($this->user))->validate($table, $data);
           $this->db->insert($table, $data);
 
           $successRows++;

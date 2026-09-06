@@ -56,6 +56,7 @@ class PengaturanModule {
 			});
 
 			this.bindSubmit();
+			this.initPaguLimits();
 			this.bindPeriodTable();
 			this.initUI();
 			this.bindPageSectionEditors();
@@ -443,6 +444,46 @@ class PengaturanModule {
 				if(res.success){this.data={...this.data,...values};Toast.show({success:true,message:"Page Setup PDF global berhasil disimpan"});}
 			}});
 		});
+	}
+
+	initPaguLimits() {
+		const form = $("#form-batas-pagu");
+		const table = $("#batas-pagu-table tbody");
+		if (!table.length) return;
+		const escape = (value) => $("<div>").text(value ?? "").html();
+		const labels = { renja:"Renja", rka:"RKA", dpa:"DPA", renja_p:"Renja Perubahan", rka_p:"RKA Perubahan", dppa:"DPPA" };
+		const money = (value) => new Intl.NumberFormat("id-ID", { style:"currency", currency:"IDR", maximumFractionDigits:0 }).format(Number(value || 0));
+
+		const load = () => this.ajax.request({
+			url: "/pengaturan/batas-pagu",
+			method: "GET",
+			success: (res) => {
+				if (!res.success) return;
+				const payload = res.data || {};
+				const opdMenu = $("#batas-pagu-opd .menu").empty();
+				(payload.opd || []).forEach((row) => opdMenu.append(`<div class="item" data-value="${escape(row.kode)}">${escape(row.kode)} — ${escape(row.uraian)}</div>`));
+				$("#batas-pagu-opd").dropdown("refresh");
+				const rows = payload.rows || [];
+				table.html(rows.length ? rows.map((row, index) => `<tr><td><b>${escape(row.kd_opd)}</b><br>${escape(row.nama_opd)}</td><td>${escape(labels[row.dokumen] || row.dokumen)}</td><td class="right aligned"><b>${money(row.pagu_maksimal)}</b></td><td class="right aligned">${money(row.terpakai)}</td><td class="right aligned ${Number(row.sisa) <= 0 ? "negative" : "positive"}">${money(row.sisa)}</td><td>${escape(row.keterangan || "-")}</td>${form.length ? `<td><button type="button" class="ui mini blue icon button edit-batas-pagu" data-index="${index}" title="Ubah"><i class="edit icon"></i></button></td>` : ""}</tr>`).join("") : `<tr><td colspan="${form.length ? 7 : 6}" class="center aligned">Belum ada batas pagu untuk tahun aktif.</td></tr>`);
+				table.data("rows", rows);
+			},
+		});
+
+		form.off("submit.paguLimit").on("submit.paguLimit", (event) => {
+			event.preventDefault();
+			const values = Object.fromEntries(form.serializeArray().map((item) => [item.name, item.value]));
+			this.ajax.request({url:"/pengaturan/batas-pagu/save",method:"POST",data:values,success:(res)=>{if(res.success){Toast.show({success:true,message:res.message || "Batas pagu berhasil disimpan"});form[0].reset();form.find(".ui.dropdown").dropdown("clear");load();}}});
+		});
+		$(document).off("click.paguLimit", ".edit-batas-pagu").on("click.paguLimit", ".edit-batas-pagu", (event) => {
+			const row = table.data("rows")?.[Number($(event.currentTarget).data("index"))];
+			if (!row || !form.length) return;
+			form.find('[name="kd_opd"]').closest(".dropdown").dropdown("set selected", row.kd_opd);
+			form.find('[name="dokumen"]').closest(".dropdown").dropdown("set selected", row.dokumen);
+			form.find('[name="pagu_maksimal"]').val(row.pagu_maksimal);
+			form.find('[name="keterangan"]').val(row.keterangan || "");
+		});
+		form.find("select.ui.dropdown").dropdown();
+		load();
 	}
 
 	destroy() {

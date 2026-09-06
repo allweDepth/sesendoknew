@@ -2,6 +2,7 @@
 $user = $_SESSION['user'] ?? [];
 $type = strtolower(str_replace(' ', '_', $user['type_user'] ?? ''));
 $canEdit = in_array($type, ['super_admin', 'admin_wilayah']);
+$canManagePagu = $type === 'admin_wilayah';
 $disabled = $canEdit ? '' : 'disabled';
 $tahunLabel = $user['tahun'] ?? '-';
 ?>
@@ -35,6 +36,7 @@ $tahunLabel = $user['tahun'] ?? '-';
         <a class="active item" data-tab="pengaturan">Pengaturan Wilayah</a>
         <a class="item" data-tab="periode">Periode RPJMD</a>
         <a class="item" data-tab="page-setup">Page Setup PDF</a>
+        <a class="item" data-tab="batas-pagu">Batas Pagu OPD</a>
     </div>
 
     <!-- TAB 1 -->
@@ -236,6 +238,25 @@ $tahunLabel = $user['tahun'] ?? '-';
             </div>
             <button class="ui primary button"><i class="save icon"></i>Simpan Page Setup PDF</button>
         </form>
+    </div>
+
+    <div class="ui bottom attached tab segment" data-tab="batas-pagu">
+        <div class="ui blue icon message"><i class="shield alternate icon"></i><div class="content"><div class="header">Plafon dokumen per OPD</div><p>Total seluruh rincian pada setiap dokumen tidak boleh melewati batas wilayah untuk tahun aktif.</p></div></div>
+        <?php if ($canManagePagu): ?>
+        <form class="ui form" id="form-batas-pagu">
+            <div class="four fields">
+                <div class="field"><label>OPD</label><div class="ui fluid search selection dropdown" id="batas-pagu-opd"><input type="hidden" name="kd_opd" required><i class="dropdown icon"></i><div class="default text">Pilih OPD</div><div class="menu"></div></div></div>
+                <div class="field"><label>Dokumen</label><select class="ui fluid dropdown" name="dokumen" required><option value="">Pilih dokumen</option><option value="renja">Renja</option><option value="rka">RKA</option><option value="dpa">DPA</option><option value="renja_p">Renja Perubahan</option><option value="rka_p">RKA Perubahan</option><option value="dppa">DPPA</option></select></div>
+                <div class="field"><label>Pagu Maksimal</label><div class="ui left labeled input"><div class="ui label">Rp</div><input type="number" name="pagu_maksimal" min="0" step="0.01" required></div></div>
+                <div class="field"><label>Keterangan</label><input type="text" name="keterangan" maxlength="500"></div>
+            </div>
+            <button class="ui primary button" type="submit"><i class="save icon"></i>Simpan Batas Pagu</button>
+        </form>
+        <div class="ui divider"></div>
+        <?php else: ?>
+        <div class="ui warning message">Batas pagu hanya dapat ditetapkan oleh admin wilayah bersangkutan.</div>
+        <?php endif; ?>
+        <div class="table-wrapper"><table class="ui compact celled striped table" id="batas-pagu-table"><thead><tr><th>OPD</th><th>Dokumen</th><th class="right aligned">Pagu Maksimal</th><th class="right aligned">Terpakai</th><th class="right aligned">Sisa</th><th>Keterangan</th><?php if ($canManagePagu): ?><th class="collapsing">Aksi</th><?php endif; ?></tr></thead><tbody><tr><td colspan="<?= $canManagePagu ? 7 : 6 ?>" class="center aligned">Memuat data...</td></tr></tbody></table></div>
     </div>
 
 </div>

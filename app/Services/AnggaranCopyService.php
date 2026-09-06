@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../Core/DB.php';
+require_once __DIR__ . '/PaguLimitService.php';
 
 class AnggaranCopyService
 {
@@ -38,7 +39,9 @@ class AnggaranCopyService
                 $linkParams = $to === 'rkpd_p' ? [(int)$row['id']] : [$sourceTable, (int)$row['id']];
                 $linkWhere = $to === 'rkpd_p' ? 'source_rkpd_id = ?' : 'source_table = ? AND source_id = ?';
                 if ($this->db->query("SELECT id FROM `$targetTable` WHERE $linkWhere AND is_deleted = 0 LIMIT 1", $linkParams)->fetch()) { $skipped++; continue; }
-                $this->db->insert($targetTable, $this->mapRow($from, $to, $sourceTable, $row, $columns)); $copied++;
+                $payload = $this->mapRow($from, $to, $sourceTable, $row, $columns);
+                (new PaguLimitService($this->user))->validate($targetTable, $payload);
+                $this->db->insert($targetTable, $payload); $copied++;
             }
             $this->db->insert('anggaran_workflow_log', ['source_table'=>$sourceTable,'target_table'=>$targetTable,'tahun'=>$tahun,'kd_wilayah'=>$wilayah,'kd_opd'=>$opd ?: null,'jumlah_data'=>$copied,'username'=>$this->user['username'] ?? 'system','tgl_copy'=>date('Y-m-d H:i:s')]);
             $this->db->commit();
