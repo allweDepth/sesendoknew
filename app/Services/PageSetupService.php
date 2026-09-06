@@ -10,10 +10,13 @@ final class PageSetupService
         $user=$user??($_SESSION['user']??[]);
         $defaults=['paper'=>'A4','orientation'=>'AUTO','font'=>'helvetica','font_size'=>10.0,'paper_width'=>null,'paper_height'=>null,'margin_top'=>10.0,'margin_right'=>10.0,'margin_bottom'=>12.0,'margin_left'=>10.0,'margin_header'=>5.0,'margin_footer'=>8.0,
             'header_enabled'=>false,'footer_enabled'=>false,'header_height'=>12.0,'footer_height'=>10.0,
+            'signature_height'=>35.0,'signature_position'=>'kanan','signature_text'=>'',
             'header'=>self::sectionDefaults('header'),'footer'=>self::sectionDefaults('footer')];
         try{
-            $row=DB::getInstance()->query(
-                'SELECT ukuran_kertas,orientasi_kertas,font_pdf,ukuran_font_pdf,lebar_kertas_mm,tinggi_kertas_mm,margin_atas_mm,margin_kanan_mm,margin_bawah_mm,margin_kiri_mm,margin_header_mm,margin_footer_mm,header_pdf_aktif,footer_pdf_aktif,tinggi_header_mm,tinggi_footer_mm,header_pdf_json,footer_pdf_json FROM pengaturan_neo WHERE kd_wilayah=? AND tahun=? AND is_deleted=0 ORDER BY id DESC LIMIT 1',
+            $opd=(string)($user['kd_opd']??'0');$row=null;
+            if($opd!==''&&$opd!=='0')$row=DB::getInstance()->query('SELECT * FROM page_setup_opd_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 LIMIT 1',[$user['kd_wilayah']??'',$opd,(int)($user['tahun']??date('Y'))])->fetch();
+            if(!$row)$row=DB::getInstance()->query(
+                'SELECT * FROM pengaturan_neo WHERE kd_wilayah=? AND tahun=? AND is_deleted=0 ORDER BY id DESC LIMIT 1',
                 [$user['kd_wilayah']??'',(int)($user['tahun']??date('Y'))]
             )->fetch();
             if(!$row)return$defaults;
@@ -30,7 +33,8 @@ final class PageSetupService
                 'margin_header'=>$number($row['margin_header_mm']??null,5),'margin_footer'=>$number($row['margin_footer_mm']??null,8),
                 'header_enabled'=>(bool)($row['header_pdf_aktif']??false),'footer_enabled'=>(bool)($row['footer_pdf_aktif']??false),
                 'header_height'=>$number($row['tinggi_header_mm']??null,12,4,80),'footer_height'=>$number($row['tinggi_footer_mm']??null,10,4,80),
-                'header'=>self::decodeSection($row['header_pdf_json']??null,'header'),'footer'=>self::decodeSection($row['footer_pdf_json']??null,'footer')];
+                'header'=>self::decodeSection($row['header_pdf_json']??null,'header'),'footer'=>self::decodeSection($row['footer_pdf_json']??null,'footer'),
+                'signature_height'=>$number($row['tinggi_tanda_tangan_mm']??null,35,10,120),'signature_position'=>$row['posisi_tanda_tangan']??'kanan','signature_text'=>$row['teks_tanda_tangan']??''];
         }catch(Throwable){return$defaults;}
     }
 

@@ -4,10 +4,11 @@ class PdfTemplateService
 {
   private string $font='times';
   private float $baseSize=11.0;
+  private array $pageSetup=[];
 
   public function __construct(?array $pageSetup=null)
   {
-    if($pageSetup){$this->font=(string)($pageSetup['font']??'times');$this->baseSize=max(6,min(18,(float)($pageSetup['font_size']??11)));}
+    $this->pageSetup=$pageSetup??[];if($pageSetup){$this->font=(string)($pageSetup['font']??'times');$this->baseSize=max(6,min(18,(float)($pageSetup['font_size']??11)));}
   }
 
   private function fs(float $delta=0):float{return max(5,$this->baseSize+$delta);}
@@ -41,7 +42,7 @@ class PdfTemplateService
     $jabatan=$this->findValue($data,['jabatan_penandatangan','jabatan_pejabat','jbt_pemberi_tgs']);
     $pangkat=$this->findValue($data,['pangkat_penandatangan','pangkat_pemberi_tgs']);
     $nip=$this->findValue($data,['nip_penandatangan','nip_pemberi_tgs']);
-    if($penanda||$jabatan){$pdf->Ln(9);$pdf->SetX(112);$pdf->SetFont($this->font,'',$this->fs());$pdf->MultiCell(75,6,(string)$jabatan,0,'C');$pdf->Ln(16);$pdf->SetX(112);$pdf->SetFont($this->font,'B',$this->fs());$pdf->MultiCell(75,6,strtoupper((string)$penanda),0,'C');if($pangkat!==''){$pdf->SetX(112);$pdf->SetFont($this->font,'',$this->fs(-1));$pdf->MultiCell(75,5,(string)$pangkat,0,'C');}if($nip!==''){$pdf->SetX(112);$pdf->SetFont($this->font,'',$this->fs(-1));$pdf->MultiCell(75,5,'NIP. '.(string)$nip,0,'C');}}
+    if($penanda||$jabatan){$height=max(10,(float)($this->pageSetup['signature_height']??35));$position=(string)($this->pageSetup['signature_position']??'kanan');$x=$position==='kiri'?25:($position==='tengah'?70:112);$caption=trim((string)($this->pageSetup['signature_text']??''));$pdf->Ln(9);$pdf->SetX($x);$pdf->SetFont($this->font,'',$this->fs());$pdf->MultiCell(75,6,$caption!==''?$caption:(string)$jabatan,0,'C');$pdf->Ln(max(8,$height-12));$pdf->SetX($x);$pdf->SetFont($this->font,'B',$this->fs());$pdf->MultiCell(75,6,strtoupper((string)$penanda),0,'C');if($pangkat!==''){$pdf->SetX($x);$pdf->SetFont($this->font,'',$this->fs(-1));$pdf->MultiCell(75,5,(string)$pangkat,0,'C');}if($nip!==''){$pdf->SetX($x);$pdf->SetFont($this->font,'',$this->fs(-1));$pdf->MultiCell(75,5,'NIP. '.(string)$nip,0,'C');}}
     $this->renderAssignmentAttachment($pdf,$header,$data);
   }
 
@@ -143,7 +144,7 @@ class PdfTemplateService
   private function attachmentSignature(array $data):string
   {
     $name=$this->escape($this->findValue($data,['nama_penandatangan','penanda_tangan','nama_pejabat','nama_pemberi_tugas']));$position=$this->escape($this->findValue($data,['jabatan_penandatangan','jabatan_pejabat','jbt_pemberi_tgs']));$rank=$this->escape($this->findValue($data,['pangkat_penandatangan','pangkat_pemberi_tgs']));$nip=$this->escape($this->findValue($data,['nip_penandatangan','nip_pemberi_tgs']));
-    return '<table cellpadding="2"><tr><td width="60%"></td><td width="40%">Ditetapkan di '.htmlspecialchars((string)($_SESSION['user']['nama_wilayah']??'Pasangkayu'),ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8').'<br>'.$position.'<br><br><br><b><u>'.strtoupper($name).'</u></b>'.($rank!==''?'<br>'.$rank:'').($nip!==''?'<br>NIP. '.$nip:'').'</td></tr></table>';
+    $where=(string)($this->pageSetup['signature_position']??'kanan');$left=$where==='kiri'?'0%':($where==='tengah'?'30%':'60%');$space=max(2,(int)round(((float)($this->pageSetup['signature_height']??35))/7));$caption=$this->escape(trim((string)($this->pageSetup['signature_text']??'')));return '<table cellpadding="2"><tr><td width="'.$left.'"></td><td width="40%">Ditetapkan di '.htmlspecialchars((string)($_SESSION['user']['nama_wilayah']??'Pasangkayu'),ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8').'<br>'.($caption!==''?$caption:$position).'<br>'.str_repeat('<br>',$space).'<b><u>'.strtoupper($name).'</u></b>'.($rank!==''?'<br>'.$rank:'').($nip!==''?'<br>NIP. '.$nip:'').'</td></tr></table>';
   }
 
   private function truthy(mixed $value):bool{return in_array(strtolower(trim((string)$value)),['1','true','yes','on','tabel'],true);}

@@ -60,6 +60,7 @@ class PengaturanModule {
 			this.bindPeriodTable();
 			this.initUI();
 			this.bindPageSectionEditors();
+			this.initIdentityImages();
 			const toggleCustomPaper = () => {
 				const custom = $('#form-page-setup [name="ukuran_kertas"]').val() === "CUSTOM";
 				$("#custom-paper-fields").toggle(custom).find("input").prop("required", custom);
@@ -440,10 +441,15 @@ class PengaturanModule {
 			$(e.currentTarget).find('[data-page-section]').each((_,panel)=>this.syncPageSection($(panel)));
 			const values = Object.fromEntries($(e.currentTarget).serializeArray().map(x => [x.name, x.value]));
 			["header_pdf_aktif","footer_pdf_aktif"].forEach(name=>values[name]=$(e.currentTarget).find(`[name="${name}"]`).prop('checked')?1:0);
-			this.ajax.request({data:{action:"edit",tbl:"pengaturan",id_row:this.data.id,mode:"update",...values},success:(res)=>{
-				if(res.success){this.data={...this.data,...values};Toast.show({success:true,message:"Page Setup PDF global berhasil disimpan"});}
+			this.ajax.request({url:"/pengaturan/page-setup/save",method:"POST",data:values,success:(res)=>{
+				if(res.success){this.data={...this.data,...values};Toast.show({success:true,message:"Page Setup PDF OPD berhasil disimpan"});}
 			}});
 		});
+	}
+	initIdentityImages(){
+		const setPreview=(data)=>{["logo","peta"].forEach(field=>{const value=data?.[field];if(value)$(`#wilayah-${field}-preview`).attr("src",window.appUrl("/"+String(value).replace(/^\//,""))).show();else $(`#wilayah-${field}-preview`).hide();});};
+		if($(".identity-image-form").length)this.ajax.request({url:"/pengaturan/identity",method:"GET",success:r=>setPreview(r.data||{})});
+		$(document).off("submit.identityImage",".identity-image-form").on("submit.identityImage",".identity-image-form",e=>{e.preventDefault();const form=e.currentTarget,data=new FormData(form);data.append("field",$(form).data("field"));$.ajax({url:window.appUrl("/pengaturan/identity/upload"),method:"POST",data,processData:false,contentType:false,headers:{"X-CSRF-TOKEN":window.CSRF_TOKEN},success:r=>{if(r?.success){setPreview(r.data||{});Toast.show({success:true,message:r.message});}}});});
 	}
 
 	initPaguLimits() {

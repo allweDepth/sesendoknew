@@ -3,6 +3,8 @@ $user = $_SESSION['user'] ?? [];
 $type = strtolower(str_replace(' ', '_', $user['type_user'] ?? ''));
 $canEdit = in_array($type, ['super_admin', 'admin_wilayah']);
 $canManagePagu = $type === 'admin_wilayah';
+$isRegional = in_array($type,['super_admin','admin_wilayah'],true);
+$canPageEdit = !in_array($type,['viewer','tapd'],true);
 $disabled = $canEdit ? '' : 'disabled';
 $tahunLabel = $user['tahun'] ?? '-';
 ?>
@@ -33,14 +35,15 @@ $tahunLabel = $user['tahun'] ?? '-';
 
     <!-- TAB MENU -->
     <div class="ui top attached tabular menu" id="pengaturan-tabs">
-        <a class="active item" data-tab="pengaturan">Pengaturan Wilayah</a>
-        <a class="item" data-tab="periode">Periode RPJMD</a>
+        <a class="active item" data-tab="pengaturan"><?= $isRegional?'Pengaturan Wilayah':'Jadwal Anggaran' ?></a>
+        <?php if($isRegional): ?><a class="item" data-tab="periode">Periode RPJMD</a><?php endif; ?>
         <a class="item" data-tab="page-setup">Page Setup PDF</a>
-        <a class="item" data-tab="batas-pagu">Batas Pagu OPD</a>
+        <?php if($isRegional): ?><a class="item" data-tab="identitas">Logo &amp; Peta Daerah</a><a class="item" data-tab="batas-pagu">Batas Pagu OPD</a><?php endif; ?>
     </div>
 
     <!-- TAB 1 -->
-    <div class="ui bottom attached tab segment active" data-tab="pengaturan">
+    <div class="ui bottom attached tab segment active <?= !$isRegional?'opd-schedule-only':'' ?>" data-tab="pengaturan">
+        <?php if(!$isRegional): ?><style>.opd-schedule-only #form-pengaturan>*{display:none!important}.opd-schedule-only #form-pengaturan>#schedule-status-cards{display:flex!important}.opd-schedule-only:before{content:'Jadwal input ditetapkan oleh Admin Wilayah. OPD hanya melihat status dan rentang waktu dokumen.';display:block;padding:12px;margin-bottom:12px;background:#eaf6ff;border-radius:6px}</style><?php endif; ?>
 
         <form class="ui form" id="form-pengaturan">
 
@@ -203,7 +206,7 @@ $tahunLabel = $user['tahun'] ?? '-';
 
     <div class="ui bottom attached tab segment" data-tab="page-setup">
         <form class="ui form" id="form-page-setup">
-            <div class="ui info message"><i class="file pdf outline icon"></i>Berlaku global hanya untuk seluruh ekspor PDF pada wilayah dan tahun aktif.</div>
+            <div class="ui info message"><i class="file pdf outline icon"></i>Pengaturan ini khusus untuk OPD dan tahun aktif. Jika belum disimpan, format wilayah digunakan sebagai bawaan.</div>
             <div class="four fields">
                 <div class="field"><label>Ukuran Kertas</label><select class="ui search dropdown" name="ukuran_kertas">
                     <optgroup label="ISO A"><option value="A0">A0 - 841 x 1189 mm</option><option value="A1">A1 - 594 x 841 mm</option><option value="A2">A2 - 420 x 594 mm</option><option value="A3">A3 - 297 x 420 mm</option><option value="A3PLUS">A3+ - 329 x 483 mm</option><option value="A4">A4 - 210 x 297 mm</option><option value="A5">A5 - 148 x 210 mm</option><option value="A6">A6 - 105 x 148 mm</option></optgroup>
@@ -236,9 +239,16 @@ $tahunLabel = $user['tahun'] ?? '-';
                 </div>
                 <?php endforeach;?>
             </div>
-            <button class="ui primary button"><i class="save icon"></i>Simpan Page Setup PDF</button>
+            <h4 class="ui dividing header">Ruang Tanda Tangan Pejabat Tata Naskah</h4>
+            <div class="three fields"><div class="field"><label>Tinggi ruang tanda tangan</label><div class="ui right labeled input"><input type="number" min="10" max="120" step="0.5" name="tinggi_tanda_tangan_mm" value="35"><div class="ui label">mm</div></div></div><div class="field"><label>Posisi</label><select class="ui dropdown" name="posisi_tanda_tangan"><option value="kiri">Kiri</option><option value="tengah">Tengah</option><option value="kanan">Kanan</option><option value="dua_kolom">Dua Kolom</option></select></div><div class="field"><label>Teks/Keterangan Default</label><input name="teks_tanda_tangan" maxlength="500" placeholder="Contoh: Kepala Perangkat Daerah"></div></div>
+            <?php if($canPageEdit): ?><button class="ui primary button"><i class="save icon"></i>Simpan Page Setup PDF</button><?php else: ?><div class="ui grey label">Page Setup hanya dapat diubah pengelola OPD.</div><?php endif; ?>
         </form>
     </div>
+
+    <?php if($isRegional): ?><div class="ui bottom attached tab segment" data-tab="identitas">
+      <div class="ui info message">Unggah logo/lambang dan peta daerah. Format PNG, JPG, atau WebP; maksimal 3 MB.</div>
+      <div class="ui two stackable cards"><div class="card"><div class="content"><div class="header">Logo/Lambang Daerah</div><img id="wilayah-logo-preview" class="ui small centered image" alt="Logo daerah"></div><div class="extra content"><form class="ui form identity-image-form" data-field="logo"><input type="file" name="image" accept="image/png,image/jpeg,image/webp" required><button class="ui primary fluid button" type="submit">Upload Logo</button></form></div></div><div class="card"><div class="content"><div class="header">Peta Daerah</div><img id="wilayah-peta-preview" class="ui medium centered image" alt="Peta daerah"></div><div class="extra content"><form class="ui form identity-image-form" data-field="peta"><input type="file" name="image" accept="image/png,image/jpeg,image/webp" required><button class="ui primary fluid button" type="submit">Upload Peta</button></form></div></div></div>
+    </div><?php endif; ?>
 
     <div class="ui bottom attached tab segment" data-tab="batas-pagu">
         <div class="ui blue icon message"><i class="shield alternate icon"></i><div class="content"><div class="header">Plafon dokumen per OPD</div><p>Total seluruh rincian pada setiap dokumen tidak boleh melewati batas wilayah untuk tahun aktif.</p></div></div>
