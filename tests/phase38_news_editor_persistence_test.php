@@ -31,9 +31,9 @@ $news=file_get_contents(__DIR__.'/../public/assets/js/modules/halaman_berita.js'
 $editor=file_get_contents(__DIR__.'/../public/assets/js/ui/rich-document-editor.js');
 $assert(str_contains($profile,"'konten' => ['html' => true]"),'sanitasi HTML hanya diaktifkan untuk konten berita');
 $assert(str_contains($profile,"'keterangan',"),'keterangan dipilih kembali pada daftar berita');
-$assert(str_contains($news,'news-editor-sidebar'),'mode khusus sidebar berita tersedia');
+$assert(str_contains($news,'news-editor-workspace'),'workspace khusus editor berita tersedia');
 $assert(!str_contains($news,'$(".sidebarkanan .flyout-footer").show()'),'footer Submit tidak ditampilkan saat animasi penutupan');
-$assert(str_contains($news,'onHidden:()=>this.restoreSidebar()'),'footer dipulihkan sesudah sidebar benar-benar tertutup');
-$assert(str_contains($editor,'max-height:none!important'),'menu dropdown berita tidak dipotong tinggi panel');
+$assert(!str_contains($news,'sidebar("show")'),'sidebar CRUD global tidak dibuka oleh editor berita');
+$assert(str_contains($editor,'.news-editor-workspace .rde-inspector'),'inspector lokal berita memiliki layout khusus');
 
 echo "PHASE 38 NEWS EDITOR PERSISTENCE TESTS COMPLETE\n";

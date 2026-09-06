@@ -16,7 +16,7 @@ $assert(str_contains($service,'Page Setup global sengaja hanya memengaruhi PDF')
 $assert(str_contains($layout,'rich-document-editor.js'),'editor global dimuat aplikasi');
 foreach(['data-insert="table"','data-insert="chart"','data-insert="image"','data-insert="shape"','data-table-size="rows"','data-table-size="cols"','data-rde-wrap','data-style="columnCount"'] as $feature)$assert(str_contains($editor,$feature),"editor global memiliki $feature");
 $assert(str_contains($news,'Kembali ke Tabel Halaman Berita')||str_contains($editor,'Kembali ke Tabel Halaman Berita'),'editor berita memiliki navigasi kembali');
-$assert(str_contains($news,'inspectorContainer:".sidebarkanan #form_flyout"'),'editor berita memakai sidebar kanan global');
+$assert(str_contains($news,'class="news-editor-workspace"')&&!str_contains($news,'inspectorContainer:".sidebarkanan #form_flyout"'),'editor berita memakai workspace dan inspector khusus');
 $assert(str_contains($news,'{mode:"update"}'),'edit berita mengirim mode update yang diwajibkan backend');
 
 require_once __DIR__.'/../vendor/tecnickcom/tcpdf/tcpdf.php';
