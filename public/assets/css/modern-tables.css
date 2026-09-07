@@ -98,6 +98,13 @@ body.resizing-table-row, body.resizing-table-row * { cursor: row-resize !importa
 .modern-data-table .table-col-date { min-width: 125px; width: 13%; white-space: nowrap; }
 .modern-data-table .table-col-compact { min-width: 105px; width: 12%; }
 .modern-data-table .table-col-normal { min-width: 135px; }
+.budget-tree-table .budget-pagu-column,
+.budget-detail-table .budget-pagu-column {
+  min-width: 170px !important;
+  width: 170px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
 .modern-data-table tbody tr { transition: background .12s ease; }
 .modern-data-table tbody tr:hover { background: #f7fbff !important; }
 .data-table-title { margin-top: 1rem !important; }
