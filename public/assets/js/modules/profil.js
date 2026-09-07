@@ -10,6 +10,8 @@ class ProfilModule {
 		this.ajax = window.app.ajax;
 
 		this.mainContainer = "#main-content";
+		this.pendingPhoto = null;
+		this.pendingPhotoPreview = null;
 
 		this.state.module = "profil";
 		this.state.setTable("profil");
@@ -99,6 +101,7 @@ class ProfilModule {
 			e.preventDefault();
 			if (window.FormValidation && !FormValidation.validate(form)) return;
 			const button = form.find('button[type="submit"], button:not([type])').last();
+			const finish = () => button.removeClass("loading disabled").prop("disabled", false);
 			this.ajax.request({
 				url: "/profil/save",
 				method: "POST",
@@ -110,8 +113,31 @@ class ProfilModule {
 					$("#card_nama").text(data.nama || "-");
 					$("#card_tahun").text(data.tahun || "-");
 					$(".dash_header .label").text(data.tahun || "");
+					if (!this.pendingPhoto) {
+						finish();
+						return;
+					}
+					const photo = new FormData();
+					photo.append("photo", this.pendingPhoto);
+					this.ajax.request({
+						url: "/profil/upload-photo",
+						method: "POST",
+						data: photo,
+						processData: false,
+						contentType: false,
+						success: (photoRes) => {
+							const finalUrl = `${photoRes.data.url}${photoRes.data.url.includes("?") ? "&" : "?"}v=${Date.now()}`;
+							$("#preview_photo").attr("src", finalUrl);
+							$("img[data-user-avatar]").attr("src", finalUrl);
+							if (this.pendingPhotoPreview) URL.revokeObjectURL(this.pendingPhotoPreview);
+							this.pendingPhoto = null;
+							this.pendingPhotoPreview = null;
+							$("#profilePhotoInput").val("");
+						},
+						complete: finish,
+					});
 				},
-				complete: () => button.removeClass("loading disabled").prop("disabled", false),
+				error: finish,
 			});
 		});
 	}
@@ -134,29 +160,10 @@ class ProfilModule {
 					e.target.value = "";
 					return;
 				}
-				const preview = URL.createObjectURL(file);
-				$("#preview_photo").attr("src", preview);
-				const data = new FormData();
-				data.append("photo", file);
-				this.ajax.request({
-					url: "/profil/upload-photo",
-					method: "POST",
-					data,
-					processData: false,
-					contentType: false,
-					beforeSend: () => $("#chooseProfilePhoto").addClass("loading"),
-					success: (res) => {
-						const finalUrl = `${res.data.url}${res.data.url.includes("?") ? "&" : "?"}v=${Date.now()}`;
-						$("#preview_photo").attr("src", finalUrl);
-						$("img[data-user-avatar]").attr("src", finalUrl);
-						URL.revokeObjectURL(preview);
-					},
-					error: () => URL.revokeObjectURL(preview),
-					complete: () => {
-						$("#chooseProfilePhoto").removeClass("loading");
-						e.target.value = "";
-					},
-				});
+				if (this.pendingPhotoPreview) URL.revokeObjectURL(this.pendingPhotoPreview);
+				this.pendingPhoto = file;
+				this.pendingPhotoPreview = URL.createObjectURL(file);
+				$("#preview_photo").attr("src", this.pendingPhotoPreview);
 			});
 	}
 
@@ -192,16 +199,7 @@ class ProfilModule {
 				period.dropdown();
 				year.dropdown();
 				year.off("change.period").on("change.period", () => {
-					if (!period.val() || !year.val()) return;
-					this.ajax.request({
-						url: "/profil/select-period",
-						method: "POST",
-						data: { periode_id: period.val(), tahun: year.val() },
-						success: () => {
-							$("#card_tahun").text(year.val());
-							$(".dash_header .label").text(year.val());
-						},
-					});
+					$("#card_tahun").text(year.val() || "-");
 				});
 			},
 		});
@@ -209,6 +207,7 @@ class ProfilModule {
 
 	destroy() {
 		$(document).off("upload:success");
+		if (this.pendingPhotoPreview) URL.revokeObjectURL(this.pendingPhotoPreview);
 	}
 	loadData() {
 		this.ajax.request({

@@ -212,7 +212,7 @@
       <div class="ui error message" role="alert"></div>
       <div class="ui success message" role="status"></div>
 
-      <button class="ui primary right floated button">
+      <button type="submit" class="ui primary right floated button">
         <i class="save icon"></i>
         Simpan Perubahan
       </button>

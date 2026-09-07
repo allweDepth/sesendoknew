@@ -87,7 +87,7 @@ class ProfilController extends Controller
         }
         $regional = in_array($u['type_user'] ?? '', ['super_admin', 'admin_wilayah', 'tapd'], true);
         if (!$regional) {
-          $allowed = $db->query('SELECT 1 FROM renstra_neo WHERE periode_id=? AND kd_wilayah=? AND kd_opd=? LIMIT 1', [$periodeId, $u['kd_wilayah'], $u['kd_opd']])->fetchColumn();
+          $allowed = $db->query('SELECT 1 FROM renstra_neo WHERE periode_id=? AND kd_wilayah=? AND kd_opd=? AND is_deleted=0 LIMIT 1', [$periodeId, $u['kd_wilayah'], $u['kd_opd']])->fetchColumn();
           if (!$allowed) throw new RuntimeException('Periode tersebut bukan Renstra aktif OPD pengguna');
         }
         $data['tahun'] = $tahun;
@@ -157,7 +157,7 @@ class ProfilController extends Controller
       $sql = 'SELECT DISTINCT p.id,p.periode_mulai,p.periode_selesai,p.keterangan FROM periode_rpjmd p';
       $params = [];
       if (!$regional) {
-        $sql .= ' INNER JOIN renstra_neo r ON r.periode_id=p.id AND r.kd_wilayah=? AND r.kd_opd=?';
+        $sql .= ' INNER JOIN renstra_neo r ON r.periode_id=p.id AND r.kd_wilayah=? AND r.kd_opd=? AND r.is_deleted=0';
         $params = [$u['kd_wilayah'], $u['kd_opd']];
       }
       $sql .= ' WHERE COALESCE(p.status_aktif,1)=1 ORDER BY p.periode_mulai DESC';
@@ -179,7 +179,7 @@ class ProfilController extends Controller
       if (!$p || $year < (int)$p['periode_mulai'] || $year > (int)$p['periode_selesai']) throw new InvalidArgumentException('Tahun harus berada dalam rentang periode aktif');
       $regional = in_array($u['type_user'] ?? '', ['super_admin', 'admin_wilayah', 'tapd'], true);
       if (!$regional) {
-        $allowed = $db->query('SELECT 1 FROM renstra_neo WHERE periode_id=? AND kd_wilayah=? AND kd_opd=? LIMIT 1', [$id, $u['kd_wilayah'], $u['kd_opd']])->fetchColumn();
+        $allowed = $db->query('SELECT 1 FROM renstra_neo WHERE periode_id=? AND kd_wilayah=? AND kd_opd=? AND is_deleted=0 LIMIT 1', [$id, $u['kd_wilayah'], $u['kd_opd']])->fetchColumn();
         if (!$allowed) throw new RuntimeException('Periode tersebut bukan Renstra aktif OPD pengguna');
       }
       $_SESSION['user']['tahun'] = $year;
