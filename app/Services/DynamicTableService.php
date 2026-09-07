@@ -1493,14 +1493,16 @@ DELETE (FULL IDENTIK LOGIC ASLI)
         ====================================================== */
 
     // jumlah data per halaman
-    $limit = max(1, (int)($request['rows'] ?? 10));
+    // Toolbar hanya menyediakan 5-100 baris. Batas server mencegah request
+    // buatan tangan memaksa hasil sangat besar ke browser.
+    $limit = min(100, max(1, (int)($request['rows'] ?? 10)));
 
     // halaman aktif
     $page = max(1, (int)($request['halaman'] ?? 1));
 
     // keyword pencarian
     $search = isset($request['cari']) && is_string($request['cari'])
-      ? trim($request['cari'])
+      ? mb_substr(trim($request['cari']), 0, 100)
       : '';
 
     // offset SQL
@@ -1711,11 +1713,31 @@ DELETE (FULL IDENTIK LOGIC ASLI)
         🔟 ORDER BY
         ====================================================== */
 
-    // ambil konfigurasi order_by dari profile
+    // Urutan dari browser hanya diterima bila nama kolom/alias benar-benar
+    // tersedia pada profile atau tabel. Arah urutan juga dibatasi ASC/DESC.
     $orderBy = $modeConfig['order_by'] ?? "`$primaryKey` DESC";
 
     // ambil semua kolom tabel
     $columns = $this->getTableColumns($table);
+
+    $requestedSort = isset($request['sort_by']) && is_string($request['sort_by'])
+      ? trim($request['sort_by']) : '';
+    $requestedDirection = strtoupper((string)($request['sort_dir'] ?? 'ASC')) === 'DESC' ? 'DESC' : 'ASC';
+    $selectAliases = [];
+    foreach (($modeConfig['select'] ?? []) as $selectField) {
+      $selectField = trim((string)$selectField);
+      if (preg_match('/\s+AS\s+`?([a-zA-Z0-9_]+)`?$/i', $selectField, $alias)) {
+        $selectAliases[] = $alias[1];
+      } elseif (preg_match('/^(?:`?[a-zA-Z0-9_]+`?\.)?`?([a-zA-Z0-9_]+)`?$/', $selectField, $plain)) {
+        $selectAliases[] = $plain[1];
+      }
+    }
+    if ($requestedSort !== '' && preg_match('/^[a-zA-Z0-9_]+$/', $requestedSort)
+      && (in_array($requestedSort, $columns, true) || in_array($requestedSort, $selectAliases, true))) {
+      $orderBy = in_array($requestedSort, $columns, true) && !empty($profile['join'])
+        ? "`$table`.`$requestedSort` $requestedDirection"
+        : "`$requestedSort` $requestedDirection";
+    }
 
     // extract nama kolom dari order_by
     preg_match('/`?([a-zA-Z0-9_]+)`?/i', $orderBy, $match);
@@ -1725,11 +1747,13 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     // jika kolom tidak ada di tabel maka fallback
     $knownJoinTables = array_column($profile['join'] ?? [], 'table');
     $qualifiedJoinOrder = false;
+    $qualifiedBaseOrder = false;
     if (preg_match('/^`?([a-zA-Z0-9_]+)`?\.`?([a-zA-Z0-9_]+)`?\s+(ASC|DESC)$/i', trim($orderBy), $orderMatch)) {
       $qualifiedJoinOrder = in_array($orderMatch[1], $knownJoinTables, true);
+      $qualifiedBaseOrder = $orderMatch[1] === $table && in_array($orderMatch[2], $columns, true);
     }
 
-    if (!in_array($orderColumn, $columns) && !$qualifiedJoinOrder) {
+    if (!in_array($orderColumn, $columns) && !$qualifiedJoinOrder && !$qualifiedBaseOrder) {
 
       $orderBy = "`$primaryKey` DESC";
     }

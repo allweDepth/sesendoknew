@@ -211,22 +211,23 @@ RESET SEARCH FIELD SAAT TAB MENU BERUBAH
 		// ====================================================
 		// RENDER HEADER TABEL
 		// ====================================================
-		const title = this.formatTitle(tbl); // format nama tabel
+		const menuLabel = this.menuItems.find(item => item.tbl === tbl && (item.req ?? null) === (req ?? null))?.label;
+		const title = menuLabel || window.UIConfig?.[req || tbl]?.table?.title || window.UIConfig?.[req || tbl]?.title || this.formatTitle(req || tbl);
 
 		const actionHtml = `
         ${this.buildActionButtons(tbl)} 
         <div class="ui hidden divider"></div>
-        <h3 class="ui dividing header">
-            <i class="left align icon"></i>
-            Tabel ${title}
-        </h3>
+		<h3 class="ui dividing header data-table-title">
+			<i class="left align icon"></i>
+			<div class="content">${title}<div class="sub header">Data aktif—klik judul kolom untuk mengurutkan.</div></div>
+		</h3>
     `;
 
 		$("#crud-table-container").html(`
         ${actionHtml}
 
         <div class="table-wrapper">
-            <table class="ui very compact celled striped table">
+			<table class="ui compact celled striped selectable table modern-data-table">
                 <thead></thead>
                 <tbody id="crud-tbody"></tbody>
                 <tfoot>
@@ -297,8 +298,11 @@ INISIALISASI TABLE
 	/* 🔥 TAMBAHKAN DI SINI */
 	formatTitle(text) {
 		if (!text) return "";
-
+		const aliases = { rekanan: "Daftar Rekanan", kontrak: "Daftar Kontrak", trx_naskah_dinas: "Daftar Tata Naskah" };
+		if (aliases[text]) return aliases[text];
 		return text
+			.replace(/^(trx_|ref_)/, "")
+			.replace(/_neo$/, "")
 			.replace(/_/g, " ")
 			.toLowerCase()
 			.replace(/\b\w/g, (char) => char.toUpperCase());

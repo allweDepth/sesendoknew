@@ -21,15 +21,15 @@ $totalCol = $totalCol ?? 5;
 
   </div>
 
-  <h3 class="ui dividing header">
+  <h3 class="ui dividing header data-table-title">
     <i class="file alternate icon"></i>
-    Tabel <?= $tbl ?>
+    <div class="content">Daftar Dokumen Tata Naskah<div class="sub header">Klik judul kolom untuk mengurutkan data.</div></div>
   </h3>
 
   <div class="ui hidden divider"></div>
 
   <div class="table-wrapper">
-    <table class="ui very compact celled striped unstackable table">
+    <table class="ui compact celled striped selectable unstackable table modern-data-table">
       <thead>
         <tr>
           <th>No</th>

@@ -82,8 +82,27 @@ $(document).ready(function () {
 
 	// Toolbar atas berlaku pada tabel aktif. TableManager menangani tabel server;
 	// fallback ini menyaring tabel/list khusus yang dirender oleh modul sendiri.
+	const hasSearchableUi = () => $('#main-content table:visible').filter(function () {
+		return !$(this).closest('.ui.form, .document-preview, .doc-editor').length && $(this).find('tbody').length;
+	}).length > 0 || $('#main-content [data-global-search-item]:visible').length > 0;
+	const syncGlobalToolbar = () => {
+		$('#main-content table:visible:not([data-managed-table])').filter(function () {
+			return !$(this).closest('.ui.form, .document-preview, .doc-editor').length && $(this).find('tbody').length;
+		}).addClass('sortable modern-data-table').find('thead th:not([data-sort-disabled])').attr({tabindex:'0','aria-sort':'none'});
+		const managerHasTable = Boolean(window.tableManager && window.TableManager?.instances?.[window.tableManager.tbl]
+			&& $(window.tableManager.tbody).closest('table:visible').length);
+		const active = managerHasTable || hasSearchableUi();
+		const input = $('#cari_data');
+		input.prop('disabled', !active).attr('aria-disabled', active ? 'false' : 'true')
+			.attr('placeholder', active ? 'Cari data pada tabel…' : 'Pencarian tidak tersedia');
+		input.closest('.ui.input').toggleClass('disabled', !active);
+		return active;
+	};
+	window.syncGlobalTableToolbar = syncGlobalToolbar;
 	const filterActiveUi = () => {
-		if (window.tableManager && window.TableManager?.instances?.[window.tableManager.tbl]) return;
+		if (!syncGlobalToolbar()) return;
+		if (window.tableManager && window.TableManager?.instances?.[window.tableManager.tbl]
+			&& $(window.tableManager.tbody).closest('table:visible').length) return;
 		const query = String($('#cari_data').val() || '').toLowerCase().trim();
 		const rawLimit = $('#countRow').dropdown('get value') || '5';
 		const limit = rawLimit === 'all' ? Number.MAX_SAFE_INTEGER : (parseInt(rawLimit, 10) || 5);
@@ -103,9 +122,31 @@ $(document).ready(function () {
 	};
 	let toolbarTimer;
 	$(document).off('.globalTableToolbar')
-		.on('input.globalTableToolbar', '#cari_data', () => { clearTimeout(toolbarTimer); toolbarTimer = setTimeout(filterActiveUi, 180); })
+		.on('input.globalTableToolbar', '#cari_data', () => { clearTimeout(toolbarTimer); toolbarTimer = setTimeout(filterActiveUi, 450); })
 		.on('click.globalTableToolbar', '.cari_data .search.icon', filterActiveUi);
 	$('#countRow').dropdown({ onChange: () => setTimeout(filterActiveUi, 0) });
+	let toolbarSyncTimer;
+	new MutationObserver(() => {
+		clearTimeout(toolbarSyncTimer);
+		toolbarSyncTimer = setTimeout(syncGlobalToolbar, 80);
+	}).observe(document.getElementById('main-content'), { childList: true, subtree: true });
+	syncGlobalToolbar();
+
+	// Tabel khusus yang tidak memakai TableManager tetap mendapat sortir lokal.
+	$(document).off('.clientTableSort')
+		.on('click.clientTableSort keydown.clientTableSort', '#main-content table:not([data-managed-table]) thead th', function (event) {
+			if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
+			if ($(this).is('[data-sort-disabled]')) return;
+			event.preventDefault();
+			const table=$(this).closest('table'), body=table.children('tbody'), index=this.cellIndex;
+			const ascending=!$(this).hasClass('sorted') || !$(this).hasClass('ascending');
+			const value=row=>$(row.cells[index]).text().trim();
+			const normalized=text=>{const numeric=/^(?:rp\s*)?[0-9.,\-\s]+$/i.test(text);const number=Number(text.replace(/[^0-9,.-]/g,'').replace(/\./g,'').replace(',','.'));return numeric&&Number.isFinite(number)?number:text.toLocaleLowerCase('id');};
+			const rows=body.children('tr').get().sort((a,b)=>{const av=normalized(value(a)),bv=normalized(value(b));return (typeof av==='number'&&typeof bv==='number'?av-bv:String(av).localeCompare(String(bv),'id',{numeric:true}))*(ascending?1:-1);});
+			table.addClass('sortable modern-data-table').find('thead th').removeClass('sorted ascending descending').attr('aria-sort','none');
+			$(this).addClass(`sorted ${ascending?'ascending':'descending'}`).attr('aria-sort',ascending?'ascending':'descending');
+			body.append(rows);
+		});
 
 	// Tema pengguna persisten dan tetap aktif setelah navigasi SPA/refresh.
 	const applyTheme = (dark) => {

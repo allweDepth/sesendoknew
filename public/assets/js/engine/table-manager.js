@@ -49,6 +49,8 @@ class TableManager {
 
 		// search state
 		this.searchQuery = "";
+		this.searchTimer = null;
+		this.pendingRequest = null;
 
 		// data hasil fetch
 		this.data = [];
@@ -77,6 +79,7 @@ class TableManager {
 		if (this.initialized) return;
 
 		this.initialized = true;
+		this.setToolbarAvailability($(this.tbody).closest("table").length > 0);
 
 		// bind event table
 		this.bindEvents();
@@ -155,7 +158,8 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		//AJAX REQUEST
 		//===================================================== */
 		// console.log("Payload:", payload);
-		this.ajax.request({
+		if (this.pendingRequest && this.pendingRequest.readyState !== 4) this.pendingRequest.abort();
+		this.pendingRequest = this.ajax.request({
 			method: "POST",
 			data: payload,
 			success: (res) => {
@@ -178,6 +182,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			error: () => {
 				Toast.error("Terjadi kesalahan sistem");
 			},
+			complete: () => { this.pendingRequest = null; },
 		});
 	}
 
@@ -218,18 +223,49 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		const config = window.UIConfig?.[configKey];
 		if (!config || !config.form?.elements) return [];
 
-		return config.form.elements
+		const availableKeys = new Set(Object.keys(this.data[0] || {}));
+		const candidates = config.form.elements
 			.filter(
 				(item) =>
 					item.prop?.name &&
 					item.prop?.table !== false &&
+					(!availableKeys.size || availableKeys.has(item.prop.name)) &&
 					!["divider", "header", "fieldHidden", "fieldCustom"].includes(item.tag),
 			)
 			.map((item) => ({
 				key: item.prop.name,
 				label: item.prop.label || item.prop.name,
 				format: item.prop.format || null,
+				priority: Number(item.prop.tablePriority || 0),
+				width: item.prop.tableWidth || this.inferColumnWidth(item.prop.name),
 			}));
+
+		const configuredMaximum = Number(config.table?.maxColumns || config.tableMaxColumns || 7);
+		if (candidates.length <= configuredMaximum) return candidates;
+		const score = (column, index) => {
+			const key = column.key.toLowerCase();
+			let value = column.priority * 1000 - index;
+			if (/^(nama|judul|uraian|kode|nomor|npwp|nip)/.test(key)) value += 180;
+			if (/(nilai|jumlah|total|pagu|tanggal|status|tahun|tahap)/.test(key)) value += 100;
+			if (/(file|upload|alamat_dir|notaris|akta|ktp|rekening|keterangan|disable|setujui|kunci)/.test(key)) value -= 170;
+			return value;
+		};
+		const selected = candidates
+			.map((column, index) => ({ column, index, score: score(column, index) }))
+			.sort((a, b) => b.score - a.score)
+			.slice(0, configuredMaximum)
+			.sort((a, b) => a.index - b.index)
+			.map(entry => entry.column);
+		return selected;
+	}
+
+	inferColumnWidth(key) {
+		key = String(key || "").toLowerCase();
+		if (/(uraian|nama|alamat|keterangan|nomor_kontrak|nomor_spmk)/.test(key)) return "wide";
+		if (/(nilai|jumlah|total|pagu|harga)/.test(key)) return "money";
+		if (/(tanggal|periode|tahun)/.test(key)) return "date";
+		if (/(status|tahap|kode|npwp|nip)/.test(key)) return "compact";
+		return "normal";
 	}
 
 	/* =====================================================
@@ -242,12 +278,14 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		let html = "<tr>";
 
 		columns.forEach((col) => {
-			html += `<th>${col.label}</th>`;
+			const active = this.sortBy === col.key;
+			const direction = active ? this.sortDir : "none";
+			html += `<th class="table-sortable table-col-${col.width} ${active ? `sorted ${this.sortDir === "asc" ? "ascending" : "descending"}` : ""}" data-sort-key="${this.escapeHtml(col.key)}" aria-sort="${direction === "none" ? "none" : direction === "asc" ? "ascending" : "descending"}" tabindex="0">${this.escapeHtml(col.label)}<i class="sort icon" aria-hidden="true"></i></th>`;
 		});
 
 		html += "<th class='collapsing'>Aksi</th></tr>";
 
-		$(this.tbody).closest("table").find("thead").html(html);
+		$(this.tbody).closest("table").attr("data-managed-table", this.tbl).addClass("sortable modern-data-table").find("thead").html(html);
 	}
 
 	/* =====================================================
@@ -285,7 +323,11 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			if (value == 0 || value === "nonaktif") return `<div class="ui red basic label">Non Aktif</div>`;
 		}
 
-		return value;
+		return this.escapeHtml(String(value));
+	}
+
+	escapeHtml(value) {
+		return $("<div>").text(String(value ?? "")).html();
 	}
 
 	/* =====================================================
@@ -364,7 +406,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			columns.forEach((col) => {
 				let value = row[col.key] ?? "";
 				value = this.formatValue(value, col.format);
-				html += `<td>${value}</td>`;
+				html += `<td class="table-col-${col.width}" data-label="${this.escapeHtml(col.label)}">${value}</td>`;
 			});
 			// 🔥 FIX: hanya untuk tata_naskah + edit
 			let customAttr = "";
@@ -497,29 +539,55 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			this.handleAction(action, id, e.currentTarget);
 		});
 
+		const sortSelector = `table[data-managed-table="${this.tbl}"] thead [data-sort-key]`;
+		$(document)
+			.off(`click.tableSort.${this.tbl} keydown.tableSort.${this.tbl}`, sortSelector)
+			.on(`click.tableSort.${this.tbl}`, sortSelector, e => this.changeSort($(e.currentTarget).data("sort-key")))
+			.on(`keydown.tableSort.${this.tbl}`, sortSelector, e => {
+				if (!["Enter", " "].includes(e.key)) return;
+				e.preventDefault(); this.changeSort($(e.currentTarget).data("sort-key"));
+			});
+
 		// =====================================================
 		// SEARCH EVENT
 		// =====================================================
 
 		const namespace = `.tableToolbar.${this.tbl}`;
 		$(document).off(namespace);
-		const runSearch = () => {
+		const runSearch = (immediate = false) => {
 			clearTimeout(this.searchTimer);
-			this.searchTimer = setTimeout(() => {
+			const execute = () => {
 				this.searchQuery = String($("#cari_data").val() || '').trim();
 				this.currentPage = 1;
 				this.fetchData();
-			}, 280);
+			};
+			if (immediate) execute(); else this.searchTimer = setTimeout(execute, 450);
 		};
 		$(document)
-			.on(`input${namespace}`, "#cari_data", runSearch)
-			.on(`keydown${namespace}`, "#cari_data", e => { if (e.key === 'Enter') { e.preventDefault(); runSearch(); } })
-			.on(`click${namespace}`, ".cari_data .search.icon", runSearch)
+			.on(`input${namespace}`, "#cari_data", () => runSearch(false))
+			.on(`keydown${namespace}`, "#cari_data", e => { if (e.key === 'Enter') { e.preventDefault(); runSearch(true); } })
+			.on(`click${namespace}`, ".cari_data .search.icon", () => runSearch(true))
 			.on(`change${namespace}`, "#countRow input[name=countRow]", () => {
 				this.syncLimitFromNavbar();
 				this.currentPage = 1;
 				this.fetchData();
 			});
+	}
+
+	changeSort(key) {
+		if (!this.getColumnsFromConfig().some(column => column.key === key)) return;
+		this.sortDir = this.sortBy === key && this.sortDir === "asc" ? "desc" : "asc";
+		this.sortBy = key;
+		this.currentPage = 1;
+		this.fetchData();
+	}
+
+	setToolbarAvailability(active) {
+		const input = $("#cari_data");
+		input.prop("disabled", !active)
+			.attr("aria-disabled", active ? "false" : "true")
+			.attr("placeholder", active ? "Cari data pada tabel…" : "Pencarian tidak tersedia");
+		input.closest(".ui.input").toggleClass("disabled", !active);
 	}
 
 	/* =====================================================
@@ -655,7 +723,10 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		$(document).off(`click.tableAction.${this.state.tbl}`);
 
 		$(document).off(`.tableToolbar.${this.tbl}`);
+		$(document).off(`.tableSort.${this.tbl}`);
 		clearTimeout(this.searchTimer);
+		if (this.pendingRequest && this.pendingRequest.readyState !== 4) this.pendingRequest.abort();
+		this.setToolbarAvailability(false);
 
 		// bersihkan DOM
 		$(this.tbody).empty();

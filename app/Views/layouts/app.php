@@ -7,6 +7,7 @@
   <title>seSendok</title>
 
   <link rel="stylesheet" href="/assets/css/fomantic.min.css">
+  <link rel="stylesheet" href="/assets/css/modern-tables.css?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/css/modern-tables.css') ?>">
   <link rel="stylesheet" href="/assets/css/dark.css">
   <style>
     .table-content-excerpt {

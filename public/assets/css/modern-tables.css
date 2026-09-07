@@ -1,0 +1,70 @@
+:root {
+  --table-border: #dfe7ef;
+  --table-head: #f6f8fb;
+  --table-accent: #2185d0;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--table-border);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.table-wrapper > .ui.table.modern-data-table {
+  width: 100%;
+  min-width: 760px;
+  margin: 0;
+  border: 0;
+  table-layout: auto;
+}
+
+.modern-data-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--table-head) !important;
+  color: #263746 !important;
+  white-space: normal;
+  vertical-align: middle;
+}
+
+.modern-data-table th.table-sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color .15s ease, background .15s ease;
+}
+
+.modern-data-table th.table-sortable:hover,
+.modern-data-table th.table-sortable:focus {
+  color: var(--table-accent) !important;
+  background: #edf6fd !important;
+  outline: none;
+}
+
+.modern-data-table th .sort.icon { opacity: .28; margin-left: .45rem; }
+.modern-data-table th.sorted .sort.icon { opacity: 1; color: var(--table-accent); }
+.modern-data-table th.sorted.descending .sort.icon { transform: rotate(180deg); }
+.modern-data-table td { line-height: 1.35; overflow-wrap: anywhere; }
+.modern-data-table .table-col-wide { min-width: 220px; width: 30%; }
+.modern-data-table .table-col-money { min-width: 145px; width: 15%; text-align: right; font-variant-numeric: tabular-nums; }
+.modern-data-table .table-col-date { min-width: 125px; width: 13%; white-space: nowrap; }
+.modern-data-table .table-col-compact { min-width: 105px; width: 12%; }
+.modern-data-table .table-col-normal { min-width: 135px; }
+.modern-data-table tbody tr { transition: background .12s ease; }
+.modern-data-table tbody tr:hover { background: #f7fbff !important; }
+.data-table-title { margin-top: 1rem !important; }
+.data-table-title .sub.header { margin-top: .25rem; font-weight: 400; }
+
+#cari_data:disabled { cursor: not-allowed; }
+.cari_data.disabled .search.icon { pointer-events: none; opacity: .35; }
+
+body.dark-mode .table-wrapper { background: #1e293b; border-color: #334155; }
+body.dark-mode .modern-data-table thead th { background: #162033 !important; }
+body.dark-mode .modern-data-table tbody tr:hover { background: #263449 !important; }
+
+@media (max-width: 767px) {
+  .table-wrapper > .ui.table.modern-data-table { min-width: 680px; }
+  .modern-data-table .table-col-wide { min-width: 190px; }
+}

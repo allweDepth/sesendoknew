@@ -8,7 +8,6 @@
             <div class="ui inline item dropdown" id="countRow"><span><i class="list icon"></i></span><input type="hidden" name="countRow" value="5">
                 <div class="text">5</div>
                 <div class="menu">
-                    <div class="item" data-value="all">All</div>
                     <div class="item selected" data-value="5">5</div>
                     <div class="item" data-value="10">10</div>
                     <div class="item" data-value="15">15</div>
@@ -21,7 +20,7 @@
             </div>
             <div class="item">
                 <div class="ui cari_data transparent icon input">
-                    <input type="text" placeholder="Search..." name="cari_data" id="cari_data">
+                    <input type="search" maxlength="100" autocomplete="off" placeholder="Pencarian tidak tersedia" name="cari_data" id="cari_data" disabled aria-label="Cari data pada tabel" aria-disabled="true">
                     <i class="search link icon"></i>
                 </div>
             </div>

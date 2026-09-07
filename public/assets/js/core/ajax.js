@@ -154,6 +154,9 @@ class AjaxEngine {
 			 * Jika terjadi error (HTTP 4xx / 5xx)
 			 */
 			error: function (xhr, textStatus, errorThrown) {
+				// Permintaan tabel lama dibatalkan ketika pengguna melanjutkan mengetik.
+				// Ini bukan kegagalan server dan tidak boleh menghasilkan toast.
+				if (textStatus === "abort") return;
 				let response = xhr.responseJSON;
 
 				// Jika server mengirim JSON error
