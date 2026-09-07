@@ -107,15 +107,20 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		if (["rkpd", "rkpd_p"].includes(this.table)) return this.renderRkpdDetails(code, rows);
 		const changed = rows.some((r) => r.jumlah_awal !== undefined && r.jumlah_awal !== null),
 			canPlan = ["dpa", "dppa"].includes(this.table);
-		let lastGroup = "",
+		let lastGroup = "", lastDetailGroup = "",
 			cells = "";
 		rows.forEach((r) => {
 			const group = [r.kel_rek, r.jenis_kelompok, r.kelompok].filter(Boolean).join(" — ");
 			if (group && group !== lastGroup) {
 				cells += `<tr class="budget-level account"><td colspan="${changed ? 9 : 6}"><i class="folder icon"></i>${this.escape(group)}</td></tr>`;
 				lastGroup = group;
+				lastDetailGroup = "";
 			}
-			cells += `<tr data-id="${r.id}"><td>${this.escape(r.kd_akun || "-")}</td><td><b>${this.escape(r.komponen || r.uraian)}</b>${r.spesifikasi ? `<div class="ui tiny grey text">${this.escape(r.spesifikasi)}</div>` : ""}</td>${changed ? `<td class="right aligned">${this.escape(r.volume_awal || 0)}</td><td class="right aligned">${this.money(r.harga_satuan_awal || 0)}</td><td class="right aligned">${this.money(r.jumlah_awal || 0)}</td>` : ""}<td class="right aligned">${this.escape(r.volume || 0)}</td><td class="right aligned">${this.money(r.harga_satuan || 0)}</td><td class="right aligned"><b>${this.money(r.jumlah || 0)}</b></td><td>${this.canWrite ? `<div class="ui mini basic icon buttons">${canPlan ? `<button class="ui teal button" title="Rencana bulanan" data-budget-action="monthly" data-id="${r.id}"><i class="calendar alternate icon"></i></button>` : ""}<button class="ui button" title="Edit rincian" data-ui="open-form" data-action="edit" data-tbl="${this.table}" data-id="${r.id}"><i class="blue edit icon"></i></button><button class="ui red button" title="Hapus rincian" data-budget-action="delete" data-id="${r.id}"><i class="trash icon"></i></button></div>` : '<span class="ui grey label">Baca</span>'}</td></tr>`;
+			if (r.uraian && r.uraian !== lastDetailGroup) {
+				cells += `<tr class="budget-level subgroup"><td></td><td colspan="${changed ? 8 : 5}"><i class="angle right icon"></i><b>[ - ] ${this.escape(r.uraian)}</b>${r.sumber_dana_teks ? `<div class="ui tiny grey text">Sumber Dana: ${this.escape(r.sumber_dana_teks)}</div>` : ""}</td></tr>`;
+				lastDetailGroup = r.uraian;
+			}
+			cells += `<tr data-id="${r.id}"><td>${this.escape(r.kd_akun || "-")}</td><td><b>${this.escape(r.komponen_asli || r.komponen || r.uraian)}</b>${r.spesifikasi ? `<div class="ui tiny grey text">${this.escape(r.spesifikasi)}</div>` : ""}</td>${changed ? `<td class="right aligned">${this.escape(r.volume_awal || 0)}</td><td class="right aligned">${this.money(r.harga_satuan_awal || 0)}</td><td class="right aligned">${this.money(r.jumlah_awal || 0)}</td>` : ""}<td class="right aligned">${this.escape(r.koefisien_keterangan || r.volume || 0)}</td><td class="right aligned">${this.money(r.harga_satuan || 0)}</td><td class="right aligned"><b>${this.money(r.jumlah || 0)}</b></td><td>${this.canWrite ? `<div class="ui mini basic icon buttons">${canPlan ? `<button class="ui teal button" title="Rencana bulanan" data-budget-action="monthly" data-id="${r.id}"><i class="calendar alternate icon"></i></button>` : ""}<button class="ui button" title="Edit rincian" data-ui="open-form" data-action="edit" data-tbl="${this.table}" data-id="${r.id}"><i class="blue edit icon"></i></button><button class="ui red button" title="Hapus rincian" data-budget-action="delete" data-id="${r.id}"><i class="trash icon"></i></button></div>` : '<span class="ui grey label">Baca</span>'}</td></tr>`;
 		});
 		const before = changed ? '<th colspan="3" class="center aligned">Sebelum Perubahan</th>' : "",
 			cols = changed

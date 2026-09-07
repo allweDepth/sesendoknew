@@ -1302,7 +1302,7 @@ const phase3BudgetForm = { layout:{columns:1}, validation:{kd_sub_keg:{required:
 	{ tag: "fieldDropdown", prop: { label: "Objek Belanja", name: "objek_belanja", options:[{value:"belanja_operasi",text:"Belanja Operasi"},{value:"belanja_modal",text:"Belanja Modal"},{value:"belanja_tidak_terduga",text:"Belanja Tidak Terduga"}] } },
 	{ tag: "fieldDropdown", prop: { label: "Pengelompokan Belanja / Paket Pekerjaan", name: "jenis_kelompok", options:[{value:"pemaketan",text:"Pemaketan Kerja"},{value:"non_paket",text:"Non Paket"}] } },
 	{ tag: "input", prop: { label: "Uraian Paket Pekerjaan", name: "kelompok" } },
-	{ tag: "fieldTextarea", prop: { label: "Uraian Rincian Belanja", name: "uraian", atribut: `rows="2"` } },
+	{ tag: "fieldTextarea", prop: { label: "Uraian Pengelompokan Belanja / Paket Pekerjaan", name: "uraian", atribut: `rows="2"` } },
 	{ tag: "fieldDropdown", prop: { label: "Jenis Standar Harga", name: "jenis_standar_harga", options:[{value:"SSH",text:"SSH"},{value:"HSPK",text:"HSPK"},{value:"ASB",text:"ASB"},{value:"SBU",text:"SBU"}] } },
 	{ tag: "fieldDropdown", prop: { label: "Komponen Standar Harga", name: "id_standar_harga", source:"ssh", search:true } },
 	{ tag: "input", prop: { label: "Komponen", name: "komponen", atribut:"readonly" } },
@@ -1324,6 +1324,7 @@ const phase3BudgetForm = { layout:{columns:1}, validation:{kd_sub_keg:{required:
 	{ tag: "input", prop: { label: "Koefisien (Keterangan Jumlah)", name: "koefisien_keterangan", atribut:"readonly" } },
 	{ tag: "input", prop: { label: "Total Belanja", name: "jumlah", type: "number" } },
 	{ tag: "fieldDropdown", prop: { label: "Sumber Dana", name: "sumber_dana_id", source: "sumber_dana" } },
+	{ tag: "input", prop: { label: "Nama Sumber Dana (sesuai dokumen)", name: "sumber_dana_teks" } },
 	...phase3Flags,
 ] } };
 ["renja", "rka", "dpa", "renja_p", "rka_p", "dppa"].forEach((key) => { UIConfig[key] = phase3BudgetForm; });
