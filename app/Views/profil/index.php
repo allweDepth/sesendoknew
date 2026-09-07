@@ -104,15 +104,21 @@
 
         <div class="required field">
           <label>Rentang Dokumen Aktif</label>
-          <select class="ui search dropdown" id="planningPeriod" name="periode_id" required>
-            <option value="">Memuat periode…</option>
-          </select>
+          <div class="ui fluid search selection dropdown" id="planningPeriod">
+            <input type="hidden" name="periode_id" required>
+            <i class="dropdown icon"></i>
+            <div class="default text">Memuat periode…</div>
+            <div class="menu"></div>
+          </div>
         </div>
         <div class="required field">
           <label>Tahun Anggaran Aktif</label>
-          <select class="ui search dropdown" id="budgetYear" name="tahun" required>
-            <option value="">Pilih rentang dahulu</option>
-          </select>
+          <div class="ui fluid search selection dropdown" id="budgetYear">
+            <input type="hidden" name="tahun" required>
+            <i class="dropdown icon"></i>
+            <div class="default text">Pilih rentang dahulu</div>
+            <div class="menu"></div>
+          </div>
         </div>
 
         <div class="field">

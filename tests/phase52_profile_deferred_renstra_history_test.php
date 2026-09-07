@@ -12,6 +12,7 @@ $ok(!str_contains($photoWatcher,'this.ajax.request'),'pemilihan foto hanya membu
 $ok(!str_contains($periodSelector,'/profil/select-period'),'perubahan periode tidak langsung disimpan');
 $ok(str_contains($submit,'/profil/save')&&str_contains($submit,'/profil/upload-photo'),'profil dan foto disimpan melalui tombol submit');
 $ok(str_contains($view,'button type="submit"'),'tombol Simpan Perubahan bertipe submit eksplisit');
+$ok(substr_count($view,'class="ui fluid search selection dropdown"')>=2&&substr_count($profile,'action: "activate"')>=2,'dropdown periode dan tahun memakai struktur Fomantic native yang menutup setelah dipilih');
 
 $db=DB::getInstance();$w='76.01';$o='1.03.0.00.0.00.01.0000';
 $period=$db->query('SELECT id,status_aktif FROM periode_rpjmd WHERE kd_wilayah=? AND periode_mulai=2020 AND periode_selesai=2025',[$w])->fetch();

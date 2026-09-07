@@ -67,7 +67,7 @@ class ProfilModule {
 	// ======================================================
 
 	initUI() {
-		$(".ui.dropdown").dropdown();
+		$(".ui.dropdown").not("#planningPeriod, #budgetYear").dropdown();
 
 		$(".blurring.dimmable.image").dimmer({
 			on: "hover",
@@ -174,33 +174,51 @@ class ProfilModule {
 			success: (res) => {
 				const data = res.data || {},
 					period = $("#planningPeriod"),
-					year = $("#budgetYear");
+					year = $("#budgetYear"),
+					periods = data.periods || [],
+					periodMenu = period.find(".menu"),
+					yearMenu = year.find(".menu");
 				period.dropdown("destroy");
 				year.dropdown("destroy");
-				period.empty().append('<option value="">Pilih rentang</option>');
-				(data.periods || []).forEach((p) =>
-					period.append(
-						`<option value="${p.id}" data-start="${p.periode_mulai}" data-end="${p.periode_selesai}">${data.scope} ${p.periode_mulai}–${p.periode_selesai}${p.keterangan ? " · " + p.keterangan : ""}</option>`,
+				periodMenu.empty();
+				yearMenu.empty();
+				periods.forEach((p) =>
+					periodMenu.append(
+						$("<div>", {
+							class: "item",
+							"data-value": String(p.id),
+							text: `${data.scope} ${p.periode_mulai}–${p.periode_selesai}${p.keterangan ? " · " + p.keterangan : ""}`,
+						}),
 					),
 				);
 				const selected = (data.periods || []).find((p) => Number(p.id) === Number(data.selected_period_id)) ||
 					(data.periods || []).find((p) => Number(data.selected_year) >= Number(p.periode_mulai) && Number(data.selected_year) <= Number(p.periode_selesai));
-				if (selected) period.val(String(selected.id));
-				const fill = () => {
-					const option = period.find("option:selected"),
-						start = Number(option.data("start")),
-						end = Number(option.data("end"));
-					year.empty().append('<option value="">Pilih tahun</option>');
-					if (start && end) for (let y = start; y <= end; y++) year.append(`<option value="${y}">${y}</option>`);
-					if (data.selected_year >= start && data.selected_year <= end) year.val(String(data.selected_year));
+				const fillYears = (periodId, preferredYear = null) => {
+					const chosen = periods.find((p) => Number(p.id) === Number(periodId)),
+						start = Number(chosen?.periode_mulai),
+						end = Number(chosen?.periode_selesai);
+					year.dropdown("clear");
+					yearMenu.empty();
+					if (start && end) for (let value = start; value <= end; value++) {
+						yearMenu.append($("<div>", { class: "item", "data-value": String(value), text: String(value) }));
+					}
+					year.dropdown("refresh");
+					if (preferredYear && preferredYear >= start && preferredYear <= end) year.dropdown("set selected", String(preferredYear));
 				};
-				period.off("change.period").on("change.period", fill);
-				fill();
-				period.dropdown();
-				year.dropdown();
-				year.off("change.period").on("change.period", () => {
-					$("#card_tahun").text(year.val() || "-");
+				year.dropdown({
+					action: "activate",
+					onShow: () => { period.dropdown("hide"); return true; },
+					onChange: (value) => $("#card_tahun").text(value || "-"),
 				});
+				period.dropdown({
+					action: "activate",
+					onShow: () => { year.dropdown("hide"); return true; },
+					onChange: (value) => fillYears(value),
+				});
+				if (selected) {
+					period.dropdown("set selected", String(selected.id));
+					fillYears(selected.id, Number(data.selected_year));
+				}
 			},
 		});
 	}
