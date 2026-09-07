@@ -45,7 +45,7 @@ def parse_factors(coefficient, unit):
     return volume, ([v for v,_ in factors]+[0]*5)[:5], (units+[""]*5)[:5]
 
 def extract_pdf(path: Path):
-    result={"source_file":path.name,"sub_kegiatan":"","program":"","kegiatan":"","lokasi":"","indikator":"","target":"","sumber_pendanaan":"","items":[],"monthly":{}}
+    result={"source_file":path.name,"sub_kegiatan":"","program":"","kegiatan":"","lokasi":"","indikator":"","target":"","sumber_pendanaan":"","accounts":{},"items":[],"monthly":{}}
     account=""; package=""; detail_group=""; fund=""
     with pdfplumber.open(path) as document:
         full_text="\n".join(page.extract_text() or "" for page in document.pages)
@@ -86,7 +86,9 @@ def extract_pdf(path: Path):
                 for row in table[header+1:]:
                     if not row or len(row)<=amount_i: continue
                     code=clean(row[0]); desc=clean(row[desc_i]); coeff=clean(row[coeff_i]); price=clean(row[price_i]); amount=clean(row[amount_i])
-                    if CODE.match(code): account=code
+                    if CODE.match(code):
+                        account=code
+                        if desc: result["accounts"][code]=desc
                     if desc.startswith("[ # ]"):
                         raw=str(row[desc_i] or ""); chunks=re.split(r"\nSumber Dana:\s*",raw,maxsplit=1,flags=re.I)
                         package=clean(chunks[0].replace("[ # ]","",1)); fund=clean(chunks[1]) if len(chunks)>1 else ""; detail_group=""; continue

@@ -51,7 +51,7 @@ class AnggaranDocumentService
     private function accountHierarchy(string $code):array
     {
         $parts=array_values(array_filter(explode('.',$code),fn($v)=>$v!==''));$prefixes=[];$current='';foreach($parts as $part){$current=$current===''?$part:$current.'.'.$part;$prefixes[]=$current;}if(!$prefixes)return[];
-        $holders=implode(',',array_fill(0,count($prefixes),'?'));$rows=$this->db->query("SELECT kode,uraian FROM akun_neo WHERE kode IN ($holders) AND is_deleted=0 ORDER BY CHAR_LENGTH(kode),kode",$prefixes)->fetchAll();$map=[];foreach($rows as $r)$map[$r['kode']]=$r['uraian'];$out=[];foreach($prefixes as $prefix)$out[]=['kode'=>$prefix,'uraian'=>$map[$prefix]??('Rekening '.$prefix)];return$out;
+        $holders=implode(',',array_fill(0,count($prefixes),'?'));$rows=$this->db->query("SELECT kode,uraian FROM akun_neo WHERE kode IN ($holders) AND is_deleted=0 ORDER BY CHAR_LENGTH(kode),kode",$prefixes)->fetchAll();$map=[];foreach($rows as $r)$map[$r['kode']]=$r['uraian'];$out=[];foreach($prefixes as $prefix)$out[]=['kode'=>$prefix,'uraian'=>$map[$prefix]??('Uraian rekening belum tersedia')];return$out;
     }
     private function hierarchyTotals(array $details,string $amountField):array
     {
