@@ -30,6 +30,52 @@
   vertical-align: middle;
 }
 
+.resizable-data-table th { position: relative; }
+.column-resize-handle {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  z-index: 5;
+  width: 9px;
+  height: 100%;
+  cursor: col-resize;
+  touch-action: none;
+}
+.column-resize-handle::after {
+  content: "";
+  position: absolute;
+  top: 22%;
+  bottom: 22%;
+  left: 4px;
+  width: 1px;
+  background: transparent;
+}
+.column-resize-handle:hover::after,
+body.resizing-table-column .column-resize-handle::after { background: var(--table-accent); }
+.row-resize-anchor { position: relative; }
+.row-resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: -4px;
+  z-index: 4;
+  width: 100%;
+  height: 9px;
+  cursor: row-resize;
+  touch-action: none;
+}
+body.resizing-table-column, body.resizing-table-column * { cursor: col-resize !important; user-select: none !important; }
+body.resizing-table-row, body.resizing-table-row * { cursor: row-resize !important; user-select: none !important; }
+.modern-data-table th.table-action-column,
+.modern-data-table td.table-action-column,
+.modern-data-table th.collapsing:last-child,
+.modern-data-table td.collapsing:last-child {
+  width: 1%;
+  min-width: max-content;
+  white-space: nowrap;
+}
+.modern-data-table td.table-action-column .ui.buttons,
+.modern-data-table td.collapsing:last-child .ui.buttons { flex-wrap: nowrap; }
+
 .modern-data-table th.table-sortable {
   cursor: pointer;
   user-select: none;

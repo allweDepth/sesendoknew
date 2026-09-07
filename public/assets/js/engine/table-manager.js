@@ -283,7 +283,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			html += `<th class="table-sortable table-col-${col.width} ${active ? `sorted ${this.sortDir === "asc" ? "ascending" : "descending"}` : ""}" data-sort-key="${this.escapeHtml(col.key)}" aria-sort="${direction === "none" ? "none" : direction === "asc" ? "ascending" : "descending"}" tabindex="0">${this.escapeHtml(col.label)}<i class="sort icon" aria-hidden="true"></i></th>`;
 		});
 
-		html += "<th class='collapsing'>Aksi</th></tr>";
+		html += "<th class='collapsing table-action-column'>Aksi</th></tr>";
 
 		$(this.tbody).closest("table").attr("data-managed-table", this.tbl).addClass("sortable modern-data-table").find("thead").html(html);
 	}
@@ -425,7 +425,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 							data-id="${id}"><i class="blue edit icon"></i></button>`;
 			const deleteButton = mutationPolicy && !mutationPolicy.delete ? "" : `<button class="ui red button" data-action="delete" ${this.state.req ? `data-req="${this.state.req}"` : ``}><i class="red trash icon"></i></button>`;
 			html += `
-					<td class="collapsing">
+					<td class="collapsing table-action-column">
 						<div class="ui mini basic icon buttons">
 							${editButton}
 							${btnExtra}

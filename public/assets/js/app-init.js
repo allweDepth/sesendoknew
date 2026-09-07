@@ -4,6 +4,8 @@ $(document).ready(function () {
 	// ===============================
 	window.app = new App();
 	window.app.init();
+	window.modernTableResizer = new ModernTableResizer();
+	window.modernTableResizer.init();
 	window.moduleMutationPolicy = function (tbl, req) {
 		const role = window.app?.user?.type_user || "viewer";
 		const path = window.location.pathname.replace(window.APP_BASE_PATH || "", "");
