@@ -103,12 +103,15 @@ def extract_pdf(path: Path):
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument("input_dir");parser.add_argument("output_json")
+    parser.add_argument("--year",type=int,default=2026)
+    parser.add_argument("--kd-wilayah",default="76.01")
+    parser.add_argument("--kd-opd",default="1.03.0.00.0.00.01.0000")
     args=parser.parse_args(); docs=[]
     for path in sorted(Path(args.input_dir).glob("*.pdf")):
         if not re.match(r"^1\.03\.",path.name): continue
         parsed=extract_pdf(path)
         if parsed: docs.append(parsed)
-    payload={"format":"SIPD DPA Rincian Belanja","tahun":2026,"kd_wilayah":"76.01","kd_opd":"1.03.0.00.0.00.01.0000","documents":docs,"total_items":sum(x["total_items"] for x in docs),"total_amount":sum(x["total_amount"] for x in docs)}
+    payload={"format":"SIPD DPA Rincian Belanja","tahun":args.year,"kd_wilayah":args.kd_wilayah,"kd_opd":args.kd_opd,"documents":docs,"total_items":sum(x["total_items"] for x in docs),"total_amount":sum(x["total_amount"] for x in docs)}
     Path(args.output_json).write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding="utf-8")
     print(json.dumps({"documents":len(docs),"items":payload["total_items"],"amount":payload["total_amount"]},ensure_ascii=False))
 if __name__=="__main__": main()

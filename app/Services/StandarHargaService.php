@@ -285,9 +285,10 @@ class StandarHargaService
     private function resolvePeraturan(string $type, int $year, string $kdWilayah): int
     {
         $column = 'aturan_' . $this->validateType($type);
+        $activeFilter = !empty($this->user['_allow_disabled_settings']) ? '' : ' AND disable = 0';
         $row = $this->db->query(
             "SELECT `$column` AS peraturan_id FROM pengaturan_neo
-             WHERE kd_wilayah = ? AND tahun = ? AND disable = 0 AND is_deleted = 0
+             WHERE kd_wilayah = ? AND tahun = ? AND is_deleted = 0 $activeFilter
              ORDER BY id DESC LIMIT 1",
             [$kdWilayah, $year]
         )->fetch();
