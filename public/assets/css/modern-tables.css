@@ -48,7 +48,7 @@
 .modern-data-table th.sorted.descending .sort.icon { transform: rotate(180deg); }
 .modern-data-table td { line-height: 1.35; overflow-wrap: anywhere; }
 .modern-data-table .table-col-wide { min-width: 220px; width: 30%; }
-.modern-data-table .table-col-money { min-width: 145px; width: 15%; text-align: right; font-variant-numeric: tabular-nums; }
+.modern-data-table .table-col-money { min-width: 118px; width: 12%; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .modern-data-table .table-col-date { min-width: 125px; width: 13%; white-space: nowrap; }
 .modern-data-table .table-col-compact { min-width: 105px; width: 12%; }
 .modern-data-table .table-col-normal { min-width: 135px; }

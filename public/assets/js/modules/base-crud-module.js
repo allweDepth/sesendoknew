@@ -219,7 +219,7 @@ RESET SEARCH FIELD SAAT TAB MENU BERUBAH
         <div class="ui hidden divider"></div>
 		<h3 class="ui dividing header data-table-title">
 			<i class="left align icon"></i>
-			<div class="content">${title}<div class="sub header">Data aktif—klik judul kolom untuk mengurutkan.</div></div>
+			<div class="content">${title}</div>
 		</h3>
     `;
 

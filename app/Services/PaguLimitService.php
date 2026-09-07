@@ -37,6 +37,25 @@ class PaguLimitService
         }
         if ($amount < 0) throw new InvalidArgumentException('Nilai pagu tidak boleh negatif.');
 
+        // Pagu sebuah uraian DPA/DPPA tidak boleh diturunkan melewati jumlah
+        // alokasi kontrak yang sudah disetujui. Draft tidak mengunci pagu.
+        if ($excludeId && in_array($table, ['dpa_neo', 'dppa_neo'], true)) {
+            $stage = $table === 'dpa_neo' ? 'dpa' : 'dppa';
+            $contracted = (float)($this->db->query(
+                'SELECT COALESCE(SUM(ci.nilai_kontrak),0) total
+                   FROM kontrak_item_neo ci
+                   JOIN kontrak_neo k ON k.id=ci.kontrak_id AND k.is_deleted=0 AND k.setujui=1
+                  WHERE ci.tahap=? AND ci.anggaran_id=? AND ci.is_deleted=0',
+                [$stage, $excludeId]
+            )->fetch()['total'] ?? 0);
+            if ($amount + 0.01 < $contracted) {
+                throw new RuntimeException(
+                    'Pagu ' . strtoupper($stage) . ' tidak boleh lebih kecil dari akumulasi kontrak yang telah disetujui Rp ' .
+                    number_format($contracted, 2, ',', '.') . '.'
+                );
+            }
+        }
+
         $limit = $this->db->query(
             'SELECT pagu_maksimal FROM batas_pagu_opd_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND dokumen=? AND is_deleted=0 LIMIT 1 FOR UPDATE',
             [$wilayah, $opd, $tahun, $document]

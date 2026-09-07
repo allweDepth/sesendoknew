@@ -235,7 +235,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			.map((item) => ({
 				key: item.prop.name,
 				label: item.prop.label || item.prop.name,
-				format: item.prop.format || null,
+				format: item.prop.format || (/(nilai|jumlah|total|pagu|harga|anggaran)/i.test(item.prop.name) ? "currency" : null),
 				priority: Number(item.prop.tablePriority || 0),
 				width: item.prop.tableWidth || this.inferColumnWidth(item.prop.name),
 			}));
@@ -315,6 +315,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 				style: "currency",
 				currency: "IDR",
 				minimumFractionDigits: 0,
+				maximumFractionDigits: 2,
 			}).format(value);
 		}
 

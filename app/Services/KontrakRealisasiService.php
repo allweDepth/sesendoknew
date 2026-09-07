@@ -88,11 +88,12 @@ class KontrakRealisasiService
                     COALESCE(ci.nilai_terpakai,0) nilai_terpakai,
                     GREATEST(b.jumlah-COALESCE(ci.nilai_terpakai,0),0) pagu_tersedia
               FROM $table b
-              LEFT JOIN (SELECT tahap,anggaran_id,SUM(nilai_kontrak) nilai_terpakai
-                         FROM kontrak_item_neo WHERE is_deleted=0" . ($contractId > 0 ? ' AND kontrak_id<>' . (int)$contractId : '') . "
-                         GROUP BY tahap,anggaran_id) ci ON ci.tahap='$stage' AND ci.anggaran_id=b.id
+              LEFT JOIN (SELECT i.tahap,i.anggaran_id,SUM(i.nilai_kontrak) nilai_terpakai
+                         FROM kontrak_item_neo i JOIN kontrak_neo k ON k.id=i.kontrak_id AND k.is_deleted=0 AND k.setujui=1
+                         WHERE i.is_deleted=0" . ($contractId > 0 ? ' AND i.kontrak_id<>' . (int)$contractId : '') . "
+                         GROUP BY i.tahap,i.anggaran_id) ci ON ci.tahap='$stage' AND ci.anggaran_id=b.id
              WHERE $scope AND (?='' OR b.kd_sub_keg=?) AND (b.kd_sub_keg LIKE ? OR b.kd_akun LIKE ? OR b.uraian LIKE ? OR CAST(b.jumlah AS CHAR) LIKE ?)
-               AND ci.nilai_terpakai IS NULL";
+               AND GREATEST(b.jumlah-COALESCE(ci.nilai_terpakai,0),0)>0";
     };
     $dpaParams = array_merge($params, [$subActivity, $subActivity, $needle, $needle, $needle, $needle]);
     $dppaParams = array_merge($params, [$subActivity, $subActivity, $needle, $needle, $needle, $needle]);
@@ -459,7 +460,7 @@ class KontrakRealisasiService
       }
       $budget = $this->db->query("SELECT id,kd_sub_keg,kd_akun,uraian,jumlah FROM $table WHERE id=? AND kd_wilayah=? AND tahun=?$opdSql AND setujui=1 AND is_deleted=0 LIMIT 1", $params)->fetch();
       if (!$budget) throw new InvalidArgumentException('Uraian kontrak ke-' . ($index + 1) . ' tidak ditemukan atau DPA/DPPA belum disetujui');
-      $used = (float)($this->db->query('SELECT COALESCE(SUM(nilai_kontrak),0) total FROM kontrak_item_neo WHERE tahap=? AND anggaran_id=? AND kontrak_id<>? AND is_deleted=0', [$stage, $budgetId, $contractId])->fetch()['total'] ?? 0);
+      $used = (float)($this->db->query('SELECT COALESCE(SUM(ci.nilai_kontrak),0) total FROM kontrak_item_neo ci JOIN kontrak_neo k ON k.id=ci.kontrak_id AND k.is_deleted=0 AND k.setujui=1 WHERE ci.tahap=? AND ci.anggaran_id=? AND ci.kontrak_id<>? AND ci.is_deleted=0', [$stage, $budgetId, $contractId])->fetch()['total'] ?? 0);
       $available = (float)$budget['jumlah'] - $used;
       if ($value > $available) throw new InvalidArgumentException('Nilai kontrak untuk ' . $budget['kd_sub_keg'] . ' / ' . $budget['uraian'] . ' melebihi pagu tersedia Rp ' . number_format($available, 0, ',', '.'));
       $validated[] = ['tahap' => $stage, 'anggaran_id' => $budgetId, 'kd_sub_keg' => $budget['kd_sub_keg'], 'kd_akun' => $budget['kd_akun'], 'uraian' => $budget['uraian'], 'pagu' => (float)$budget['jumlah'], 'nilai_kontrak' => $value];

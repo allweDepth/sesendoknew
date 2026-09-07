@@ -23,7 +23,7 @@ $totalCol = $totalCol ?? 5;
 
   <h3 class="ui dividing header data-table-title">
     <i class="file alternate icon"></i>
-    <div class="content">Daftar Dokumen Tata Naskah<div class="sub header">Klik judul kolom untuk mengurutkan data.</div></div>
+    <div class="content">Daftar Dokumen Tata Naskah</div>
   </h3>
 
   <div class="ui hidden divider"></div>
