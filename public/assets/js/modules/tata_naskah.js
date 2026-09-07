@@ -260,6 +260,7 @@ class TataNaskahModule {
 			method: "POST",
 			data,
 			success: () => {
+				Toast.success(editing ? "Naskah berhasil diperbarui." : "Naskah berhasil disimpan.");
 				$(document).trigger(`form:success.${this.state.tbl}.table`);
 			},
 			complete: () => {

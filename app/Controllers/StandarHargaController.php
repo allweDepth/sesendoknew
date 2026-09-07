@@ -54,4 +54,30 @@ class StandarHargaController extends Controller
             echo JsonResponse::error($exception->getMessage());
         }
     }
+
+    public function importSipd()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo JsonResponse::error('Method tidak diizinkan');
+            return;
+        }
+        if (empty($_FILES['file']['tmp_name'])) {
+            http_response_code(422);
+            echo JsonResponse::error('Workbook SIPD belum dipilih');
+            return;
+        }
+        try {
+            $result = (new StandarHargaService($_SESSION['user'] ?? []))->importSipd(
+                (string)($_POST['tbl'] ?? ''),
+                $_FILES['file']['tmp_name'],
+                (int)($_POST['tahun'] ?? ($_SESSION['user']['tahun'] ?? 0))
+            );
+            echo JsonResponse::success('Import SIPD selesai', $result, []);
+        } catch (Throwable $exception) {
+            http_response_code(422);
+            echo JsonResponse::error($exception->getMessage());
+        }
+    }
 }

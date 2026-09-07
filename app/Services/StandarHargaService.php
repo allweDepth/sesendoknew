@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
 require_once __DIR__ . '/PageSetupService.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 class StandarHargaService
 {
@@ -151,6 +152,122 @@ class StandarHargaService
             $this->db->rollback();
             throw $exception;
         }
+    }
+
+    /** Impor format ekspor SIPD 9 kolom sekaligus dengan mapping rekeningnya. */
+    public function importSipd(string $type, string $file, int $year): array
+    {
+        $type = $this->validateType($type);
+        if (($this->user['type_user'] ?? '') !== 'tapd') {
+            throw new Exception('Hanya TAPD yang dapat mengimpor standar harga SIPD');
+        }
+        if ($year < 2000 || $year > 2100) throw new Exception('Tahun impor tidak valid');
+        if (!is_file($file)) throw new Exception('File impor tidak ditemukan');
+
+        $kdWilayah = (string)($this->user['kd_wilayah'] ?? '');
+        if ($kdWilayah === '') throw new Exception('Wilayah pengguna tidak tersedia');
+        $peraturanId = $this->resolvePeraturan($type, $year, $kdWilayah);
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file);
+        $reader->setReadDataOnly(true);
+        $sheet = $reader->load($file)->getActiveSheet();
+        $expected = [
+            'kodekelompokbarang','uraiankelompokbarang','idstandarharga','kodebarang',
+            'uraianbarang','spesifikasi','satuan','hargasatuan','koderekening'
+        ];
+        $headers = [];
+        foreach ($sheet->rangeToArray('A1:I1', null, true, true, false)[0] as $index => $header) {
+            $headers[$this->normalizeSipdHeader((string)$header)] = $index;
+        }
+        foreach ($expected as $header) if (!array_key_exists($header, $headers)) {
+            throw new Exception("Format SIPD tidak valid: kolom {$header} tidak ditemukan");
+        }
+
+        $stats = ['total'=>0,'inserted'=>0,'updated'=>0,'mapped'=>0,'unmapped_accounts'=>0,'skipped'=>0,'tahun'=>$year,'tipe'=>$type];
+        $unitCache = [];
+        $this->db->begin();
+        try {
+            for ($rowNumber = 2, $last = $sheet->getHighestDataRow(); $rowNumber <= $last; $rowNumber++) {
+                $values = $sheet->rangeToArray("A{$rowNumber}:I{$rowNumber}", null, true, true, false)[0];
+                $code = trim((string)$values[$headers['kodebarang']]);
+                $name = trim((string)$values[$headers['uraianbarang']]);
+                if ($code === '' && $name === '') { $stats['skipped']++; continue; }
+                if ($code === '' || $name === '') throw new Exception("Baris {$rowNumber}: kode dan uraian barang wajib diisi");
+                $stats['total']++;
+                $unitName = trim((string)$values[$headers['satuan']]);
+                $unitId = $this->resolveOrCreateUnit($unitName, $peraturanId, $unitCache);
+                $sipdId = trim((string)$values[$headers['idstandarharga']]);
+                $price = $this->parseSipdNumber($values[$headers['hargasatuan']], $rowNumber);
+                $data = [
+                    'sipd_id'=>$sipdId !== '' ? $sipdId : null,
+                    'kode'=>$code,
+                    'kode_aset'=>trim((string)$values[$headers['kodekelompokbarang']]) ?: null,
+                    'kode_kelompok'=>trim((string)$values[$headers['kodekelompokbarang']]) ?: null,
+                    'kelompok_barang'=>trim((string)$values[$headers['uraiankelompokbarang']]) ?: null,
+                    'uraian'=>$name,
+                    'spesifikasi'=>trim((string)$values[$headers['spesifikasi']]) ?: null,
+                    'satuan_id'=>$unitId,
+                    'harga'=>$price,
+                    'disable'=>0,'is_deleted'=>0,
+                    'tgl_update'=>date('Y-m-d H:i:s'),
+                    'username_update'=>$this->user['username'] ?? 'IMPORT_SIPD'
+                ];
+                $existing = $this->db->query(
+                    "SELECT id FROM master_biaya WHERE tipe=? AND kd_wilayah=? AND tahun=? AND peraturan_id=? AND is_deleted=0 AND (kode=? OR (sipd_id IS NOT NULL AND sipd_id=?)) ORDER BY id LIMIT 1",
+                    [$type,$kdWilayah,$year,$peraturanId,$code,$sipdId]
+                )->fetch();
+                if ($existing) {
+                    $masterId=(int)$existing['id'];
+                    $this->db->update('master_biaya',$data,'WHERE id=?',[$masterId]);
+                    $stats['updated']++;
+                } else {
+                    $data += ['tipe'=>$type,'kd_wilayah'=>$kdWilayah,'tahun'=>$year,'peraturan_id'=>$peraturanId,'tgl_insert'=>date('Y-m-d H:i:s'),'username_insert'=>$this->user['username'] ?? 'IMPORT_SIPD'];
+                    unset($data['tgl_update'],$data['username_update']);
+                    $masterId=(int)$this->db->insert('master_biaya',$data);
+                    $stats['inserted']++;
+                }
+                $accounts = preg_split('/\s*,\s*/', trim((string)$values[$headers['koderekening']]), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+                foreach (array_unique($accounts) as $account) {
+                    if (!$this->db->query('SELECT id FROM akun_neo WHERE kode=? AND is_deleted=0 LIMIT 1',[$account])->fetch()) $stats['unmapped_accounts']++;
+                    $mapping=$this->db->query('SELECT id,is_deleted FROM master_biaya_akun WHERE master_biaya_id=? AND kd_akun=? AND peraturan_id=? LIMIT 1',[$masterId,$account,$peraturanId])->fetch();
+                    if ($mapping) {
+                        $this->db->update('master_biaya_akun',['is_deleted'=>0,'disable'=>0,'kd_wilayah'=>$kdWilayah,'tgl_update'=>date('Y-m-d H:i:s'),'username_update'=>$this->user['username'] ?? 'IMPORT_SIPD'],'WHERE id=?',[(int)$mapping['id']]);
+                    } else {
+                        $this->db->insert('master_biaya_akun',['master_biaya_id'=>$masterId,'kd_akun'=>$account,'kd_wilayah'=>$kdWilayah,'peraturan_id'=>$peraturanId,'disable'=>0,'is_deleted'=>0,'tgl_insert'=>date('Y-m-d H:i:s'),'username_insert'=>$this->user['username'] ?? 'IMPORT_SIPD']);
+                    }
+                    $stats['mapped']++;
+                }
+            }
+            $this->db->commit();
+            return $stats;
+        } catch (Throwable $exception) {
+            $this->db->rollback();
+            throw $exception;
+        }
+    }
+
+    private function normalizeSipdHeader(string $header): string
+    {
+        return strtolower((string)preg_replace('/[^a-z0-9]/i','',trim($header)));
+    }
+
+    private function parseSipdNumber(mixed $value, int $row): float
+    {
+        if (is_numeric($value)) return (float)$value;
+        $normalized = preg_replace('/[^0-9,.-]/','',(string)$value);
+        if (str_contains($normalized, ',') && !str_contains($normalized, '.')) $normalized=str_replace(',','.',$normalized);
+        else $normalized=str_replace(',','',$normalized);
+        if (!is_numeric($normalized)) throw new Exception("Baris {$row}: harga satuan tidak valid");
+        return (float)$normalized;
+    }
+
+    private function resolveOrCreateUnit(string $name, int $peraturanId, array &$cache): int
+    {
+        $key=mb_strtolower(trim($name));
+        if ($key==='') throw new Exception('Satuan kosong pada workbook SIPD');
+        if (isset($cache[$key])) return $cache[$key];
+        $row=$this->db->query('SELECT id FROM satuan_neo WHERE peraturan_id=? AND is_deleted=0 AND (LOWER(TRIM(uraian))=? OR LOWER(TRIM(value))=? OR FIND_IN_SET(?,LOWER(REPLACE(sebutan_lain," ","")))>0) ORDER BY id LIMIT 1',[$peraturanId,$key,$key,str_replace(' ','',$key)])->fetch();
+        if ($row) return $cache[$key]=(int)$row['id'];
+        return $cache[$key]=(int)$this->db->insert('satuan_neo',['value'=>$name,'uraian'=>$name,'sebutan_lain'=>'','disable'=>0,'keterangan'=>'Dibuat otomatis dari impor SIPD','peraturan_id'=>$peraturanId,'tgl_insert'=>date('Y-m-d H:i:s'),'username_insert'=>$this->user['username'] ?? 'IMPORT_SIPD','is_deleted'=>0]);
     }
 
     private function scope(): array

@@ -2276,6 +2276,14 @@ BUILD RULE DARI SCHEMA DATABASE
     $mode = $_POST['mode'] ?? null;
     $id   = $_POST['id'] ?? $_POST['id_row'] ?? null; // // 🔥 FIX: ambil dari id_row juga
 
+    // Jalur generik mampu menampilkan nilai aktif di luar 20 hasil pertama dan
+    // membentuk label gabungan dari tabel join. Gunakan jalur yang sama saat
+    // edit agar opsi tidak berubah menjadi ID mentah.
+    if ($mode === 'edit' && !empty($id)) {
+      $_POST['value'] = $_POST['value'] ?? $id;
+      $mode = null;
+    }
+
     // 🔥 NORMALISASI
     if (!$id && empty($_POST['value'])) {
       $mode = null; // // tetap sama
@@ -5167,8 +5175,11 @@ AND is_deleted = 0
     if ($cari) {
       $searchFields = $profile['dropdown']['searchable'] ?? [$labelField];
       foreach ($searchFields as $searchField) {
-        if (!in_array($searchField, $columns, true)) continue;
-        $optionalWhere[] = "`$table`.`$searchField` LIKE ?";
+        $searchTable=$table;$searchColumn=$searchField;
+        if(str_contains($searchField,'.'))[$searchTable,$searchColumn]=explode('.',$searchField,2);
+        if(!in_array($searchTable,$knownDropdownTables,true)||!preg_match('/^[A-Za-z0-9_]+$/',$searchColumn))continue;
+        if($searchTable===$table&&!in_array($searchColumn,$columns,true))continue;
+        $optionalWhere[] = "`$searchTable`.`$searchColumn` LIKE ?";
         $params[] = "%$cari%";
       }
     }
@@ -5200,13 +5211,16 @@ AND is_deleted = 0
     // =====================================================
     // QUERY
     // =====================================================
-    $labelFields = array_values(array_filter(
-      $profile['dropdown']['label_fields'] ?? [],
-      static fn($field) => in_array($field, $columns, true)
-    ));
+    $normalizeDropdownField = static function (string $field) use ($table, $knownDropdownTables): ?array {
+      $fieldTable=$table;$fieldName=$field;
+      if(str_contains($field,'.'))[$fieldTable,$fieldName]=explode('.',$field,2);
+      if(!in_array($fieldTable,$knownDropdownTables,true)||!preg_match('/^[A-Za-z0-9_]+$/',$fieldName))return null;
+      return[$fieldTable,$fieldName];
+    };
+    $labelFields = array_values(array_filter(array_map($normalizeDropdownField,$profile['dropdown']['label_fields'] ?? [])));
     $textExpression = "`$table`.`$labelField`";
     if (count($labelFields) > 1) {
-      $quotedLabelFields = array_map(static fn($field) => "`$table`.`$field`", $labelFields);
+      $quotedLabelFields = array_map(static fn($field) => "`{$field[0]}`.`{$field[1]}`", $labelFields);
       $textExpression = "CONCAT_WS(' — ', " . implode(', ', $quotedLabelFields) . ')';
     }
 

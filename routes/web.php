@@ -114,6 +114,11 @@ return [
   '/standar_harga'        => ['StandarHargaController', 'index'],
   '/standar_harga/export_pdf' => ['StandarHargaController', 'exportPdf'],
   '/standar_harga/copy_year' => ['StandarHargaController', 'copyYear'],
+  '/standar_harga/import_sipd' => ['StandarHargaController', 'importSipd'],
+
+  /* Laporan SAKIP menampilkan uraian relasi, bukan ID/kode mentah. */
+  '/sakip/export_pdf' => ['SakipController', 'exportPdf'],
+  '/sakip/pohon_kinerja_pdf' => ['SakipController', 'performanceTreePdf'],
 
   /*
     |--------------------------------------------------------------------------
