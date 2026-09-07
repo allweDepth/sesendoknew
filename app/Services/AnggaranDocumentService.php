@@ -28,7 +28,8 @@ class AnggaranDocumentService
         $table=$this->table($logical);[$scope,$params]=$this->scope();$params[]=$code;
         if(str_starts_with($logical,'rkpd'))$select='a.id,a.kd_sub_keg,a.indikator AS uraian,a.target AS volume,a.pagu AS jumlah,a.lokasi,a.kelompok_sasaran,a.kunci,a.setujui,a.keterangan';
         else {$columns=array_column($this->db->query("SHOW COLUMNS FROM `$table`")->fetchAll(),'Field');$awal=in_array('jumlah_awal',$columns,true)?'a.volume_awal,a.harga_satuan_awal,a.jumlah_awal,':'NULL volume_awal,NULL harga_satuan_awal,NULL jumlah_awal,';$select="a.id,a.kd_sub_keg,a.kd_akun,a.kel_rek,a.jenis_kelompok,a.kelompok,a.komponen,a.spesifikasi,a.uraian,a.volume,a.sat_1,a.harga_satuan,a.jumlah,$awal a.sumber_dana_id,a.kunci,a.setujui,a.keterangan";}
-        $rows=$this->db->query("SELECT $select FROM `$table` a WHERE $scope AND a.kd_sub_keg=? ORDER BY a.kd_akun,a.id",$params)->fetchAll();foreach($rows as &$row)$row['akun_hierarchy']=$this->accountHierarchy((string)($row['kd_akun']??''));unset($row);return$rows;
+        $order=str_starts_with($logical,'rkpd')?'a.id':'a.kd_akun,a.id';
+        $rows=$this->db->query("SELECT $select FROM `$table` a WHERE $scope AND a.kd_sub_keg=? ORDER BY $order",$params)->fetchAll();foreach($rows as &$row)$row['akun_hierarchy']=$this->accountHierarchy((string)($row['kd_akun']??''));unset($row);return$rows;
     }
 
     private function isChange(string $logical):bool{return in_array($logical,['rkpd_p','renja_p','rka_p','dppa'],true);}

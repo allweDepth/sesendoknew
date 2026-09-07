@@ -260,6 +260,18 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 	formatValue(value, format) {
 		if (value == null) return "";
 
+		if (format === "excerpt") {
+			const parser = document.createElement("div");
+			parser.innerHTML = String(value);
+			const plainText = (parser.textContent || "").replace(/\s+/g, " ").trim();
+			const limit = 90;
+			const excerpt = plainText.length > limit
+				? `${plainText.slice(0, limit).trimEnd()}\u2026`
+				: plainText;
+			const safeText = $("<div>").text(excerpt || "Belum ada konten").html();
+			return `<div class="table-content-excerpt" title="Cuplikan konten">${safeText}</div>`;
+		}
+
 		if (format === "currency") {
 			return new Intl.NumberFormat("id-ID", {
 				style: "currency",

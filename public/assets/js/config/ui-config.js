@@ -1625,6 +1625,7 @@ UIConfig.halaman_berita = {
 				prop: {
 					label: "Konten",
 					name: "konten",
+					format: "excerpt",
 					atribut: `rows="5"`,
 				},
 			},

@@ -9,6 +9,20 @@
   <link rel="stylesheet" href="/assets/css/fomantic.min.css">
   <link rel="stylesheet" href="/assets/css/dark.css">
   <style>
+    .table-content-excerpt {
+      display: -webkit-box;
+      max-width: 320px;
+      overflow: hidden;
+      color: #52606d;
+      line-height: 1.45;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    body.dark-mode .table-content-excerpt {
+      color: #cbd5e1;
+    }
+
     #mainContext {
       min-height: calc(100vh - 40px);
     }
