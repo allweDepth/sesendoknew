@@ -146,12 +146,12 @@
     /* TOAST */
     #toastContainer {
       position: fixed;
-      /* FIX: keluar dari stacking context parent */
-      top: 5px;
+      /* Toast tidak menutupi header, pencarian, dan dropdown utama. */
+      top: auto;
+      bottom: 20px;
       right: 20px;
       width: 350px;
       z-index: 99999;
-      /* FIX: pastikan di atas dimmer */
     }
 
     #toastContainer:empty {
