@@ -106,7 +106,14 @@ class DynamicResolver
       throw new \Exception("Mapping peraturan_id tidak ditemukan untuk $profileKey");
     }
 
-    return (int)$pengaturan[$map[$profileKey]];
+    $column = $map[$profileKey];
+    $peraturanId = (int)($pengaturan[$column] ?? 0);
+    if ($peraturanId <= 0) {
+      $year = (int)($pengaturan['tahun'] ?? 0);
+      throw new \Exception("Peraturan untuk {$profileKey} tahun {$year} belum ditetapkan pada pengaturan.");
+    }
+
+    return $peraturanId;
   }
 
   // =======================================

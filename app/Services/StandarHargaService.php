@@ -20,7 +20,7 @@ class StandarHargaService
     public function exportPdf(string $type): string
     {
         $type = $this->validateType($type);
-        $scope = $this->scope();
+        $scope = $this->scope($type);
         $rows = $this->db->query(
             "SELECT mb.kode, mb.kode_aset, mb.uraian, mb.spesifikasi,
                     s.uraian AS satuan, mb.harga, mb.tkdn
@@ -78,7 +78,7 @@ class StandarHargaService
             throw new Exception('Tahun tujuan tidak valid');
         }
 
-        $source = $this->scope();
+        $source = $this->scope($type);
         if ($targetYear === $source['tahun']) {
             throw new Exception('Tahun tujuan harus berbeda dari tahun sumber');
         }
@@ -270,7 +270,7 @@ class StandarHargaService
         return $cache[$key]=(int)$this->db->insert('satuan_neo',['value'=>$name,'uraian'=>$name,'sebutan_lain'=>'','disable'=>0,'keterangan'=>'Dibuat otomatis dari impor SIPD','peraturan_id'=>$peraturanId,'tgl_insert'=>date('Y-m-d H:i:s'),'username_insert'=>$this->user['username'] ?? 'IMPORT_SIPD','is_deleted'=>0]);
     }
 
-    private function scope(): array
+    private function scope(?string $type = null): array
     {
         $kdWilayah = $this->user['kd_wilayah'] ?? null;
         $tahun = (int)($this->user['tahun'] ?? 0);
@@ -278,18 +278,17 @@ class StandarHargaService
         return [
             'kd_wilayah' => $kdWilayah,
             'tahun' => $tahun,
-            'peraturan_id' => $this->resolvePeraturan($this->user['_standar_type'] ?? 'ssh', $tahun, $kdWilayah)
+            'peraturan_id' => $this->resolvePeraturan($type ?? ($this->user['_standar_type'] ?? 'ssh'), $tahun, $kdWilayah)
         ];
     }
 
     private function resolvePeraturan(string $type, int $year, string $kdWilayah): int
     {
         $column = 'aturan_' . $this->validateType($type);
-        $activeFilter = !empty($this->user['_allow_disabled_settings']) ? '' : ' AND disable = 0';
         $row = $this->db->query(
             "SELECT `$column` AS peraturan_id FROM pengaturan_neo
-             WHERE kd_wilayah = ? AND tahun = ? AND is_deleted = 0 $activeFilter
-             ORDER BY id DESC LIMIT 1",
+             WHERE kd_wilayah = ? AND tahun = ? AND is_deleted = 0
+             ORDER BY CASE WHEN disable = 0 THEN 0 ELSE 1 END, id DESC LIMIT 1",
             [$kdWilayah, $year]
         )->fetch();
         if (!$row || empty($row['peraturan_id'])) {

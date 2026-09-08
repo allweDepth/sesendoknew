@@ -579,8 +579,24 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		if (!this.getColumnsFromConfig().some(column => column.key === key)) return;
 		this.sortDir = this.sortBy === key && this.sortDir === "asc" ? "desc" : "asc";
 		this.sortBy = key;
+		this.syncClearSortButton();
 		this.currentPage = 1;
 		this.fetchData();
+	}
+
+	clearSort() {
+		if (!this.sortBy) return;
+		this.sortBy = null;
+		this.sortDir = "asc";
+		this.currentPage = 1;
+		this.syncClearSortButton();
+		this.fetchData();
+	}
+
+	syncClearSortButton() {
+		const button = $("#clearTableSort");
+		const active = Boolean(this.sortBy) && $(this.tbody).closest("table:visible").length > 0;
+		button.prop("disabled", !active).attr("aria-disabled", active ? "false" : "true");
 	}
 
 	setToolbarAvailability(active) {
@@ -589,6 +605,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			.attr("aria-disabled", active ? "false" : "true")
 			.attr("placeholder", active ? "Cari data pada tabel…" : "Pencarian tidak tersedia");
 		input.closest(".ui.input").toggleClass("disabled", !active);
+		if (!active) $("#clearTableSort").prop("disabled", true).attr("aria-disabled", "true");
 	}
 
 	/* =====================================================

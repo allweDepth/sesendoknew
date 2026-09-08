@@ -32,8 +32,9 @@ class DynamicConfigService
       SELECT *
       FROM pengaturan_neo
       WHERE kd_wilayah = ?
-      AND tahun = ?
-      AND disable = 0
+        AND tahun = ?
+        AND is_deleted = 0
+      ORDER BY CASE WHEN disable = 0 THEN 0 ELSE 1 END, id DESC
       LIMIT 1
       ", [$kd_wilayah, $tahun])->fetch(); // //
 

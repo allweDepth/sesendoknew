@@ -24,6 +24,11 @@
                     <i class="search link icon"></i>
                 </div>
             </div>
+            <div class="item">
+                <button type="button" class="ui basic icon button" id="clearTableSort" disabled aria-disabled="true" aria-label="Bersihkan sortir tabel" title="Bersihkan sortir tabel">
+                    <i class="undo alternate icon"></i>
+                </button>
+            </div>
             <div class="right menu">
                 <div class="ui dropdown item" id="userMenu" aria-label="Menu pengguna"><span><i class="user icon"></i></span><i class="dropdown icon"></i>
                     <div class="menu">

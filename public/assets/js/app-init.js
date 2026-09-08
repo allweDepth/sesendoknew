@@ -88,9 +88,17 @@ $(document).ready(function () {
 		return !$(this).closest('.ui.form, .document-preview, .doc-editor').length && $(this).find('tbody').length;
 	}).length > 0 || $('#main-content [data-global-search-item]:visible').length > 0;
 	const syncGlobalToolbar = () => {
-		$('#main-content table:visible:not([data-managed-table])').filter(function () {
+		const unmanagedTables = $('#main-content table:visible:not([data-managed-table])').filter(function () {
 			return !$(this).closest('.ui.form, .document-preview, .doc-editor').length && $(this).find('tbody').length;
-		}).addClass('sortable modern-data-table').find('thead th:not([data-sort-disabled])').attr({tabindex:'0','aria-sort':'none'});
+		});
+		unmanagedTables.addClass('sortable modern-data-table').each(function () {
+			$(this).find('tbody > tr').each(function (index) {
+				if ($(this).attr('data-original-sort-index') === undefined) $(this).attr('data-original-sort-index', index);
+			});
+		}).find('thead th:not([data-sort-disabled])').each(function () {
+			if (!$(this).hasClass('sorted')) $(this).attr('aria-sort','none');
+			$(this).attr('tabindex','0');
+		});
 		const managerHasTable = Boolean(window.tableManager && window.TableManager?.instances?.[window.tableManager.tbl]
 			&& $(window.tableManager.tbody).closest('table:visible').length);
 		const active = managerHasTable || hasSearchableUi();
@@ -98,6 +106,10 @@ $(document).ready(function () {
 		input.prop('disabled', !active).attr('aria-disabled', active ? 'false' : 'true')
 			.attr('placeholder', active ? 'Cari data pada tabel…' : 'Pencarian tidak tersedia');
 		input.closest('.ui.input').toggleClass('disabled', !active);
+		const hasSort = managerHasTable
+			? Boolean(window.tableManager.sortBy)
+			: unmanagedTables.find('thead th.sorted').length > 0;
+		$('#clearTableSort').prop('disabled', !hasSort).attr('aria-disabled', hasSort ? 'false' : 'true');
 		return active;
 	};
 	window.syncGlobalTableToolbar = syncGlobalToolbar;
@@ -148,7 +160,23 @@ $(document).ready(function () {
 			table.addClass('sortable modern-data-table').find('thead th').removeClass('sorted ascending descending').attr('aria-sort','none');
 			$(this).addClass(`sorted ${ascending?'ascending':'descending'}`).attr('aria-sort',ascending?'ascending':'descending');
 			body.append(rows);
+			syncGlobalToolbar();
 		});
+
+	$(document).off('click.clearTableSort', '#clearTableSort').on('click.clearTableSort', '#clearTableSort', function () {
+		const manager = window.tableManager;
+		if (manager && window.TableManager?.instances?.[manager.tbl] && $(manager.tbody).closest('table:visible').length) {
+			manager.clearSort();
+			return;
+		}
+		$('#main-content table:visible:not([data-managed-table])').each(function () {
+			const table=$(this), body=table.children('tbody');
+			const rows=body.children('tr').get().sort((a,b)=>Number($(a).attr('data-original-sort-index'))-Number($(b).attr('data-original-sort-index')));
+			table.find('thead th').removeClass('sorted ascending descending').attr('aria-sort','none');
+			body.append(rows);
+		});
+		syncGlobalToolbar();
+	});
 
 	// Tema pengguna persisten dan tetap aktif setelah navigasi SPA/refresh.
 	const applyTheme = (dark) => {
