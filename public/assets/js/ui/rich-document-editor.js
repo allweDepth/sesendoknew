@@ -10,6 +10,7 @@ class RichDocumentEditor {
 
 	mount(html = "") {
 		this.injectStyles();
+		if (!document.getElementById("rdeDropdownFixStyles")) $("head").append('<style id="rdeDropdownFixStyles">.rde-insertbar{overflow:visible!important}.rde-insertbar .rde-ui-insert{position:relative;z-index:101}.rde-insertbar .rde-ui-insert .menu{z-index:10020!important}</style>');
 		this.root.html(`<div class="rde-workspace">
 			<div class="ui clearing segment rde-topbar">
 				<button type="button" class="ui left floated basic button" data-rde="back"><i class="arrow left icon"></i>Kembali ke Tabel Halaman Berita</button>

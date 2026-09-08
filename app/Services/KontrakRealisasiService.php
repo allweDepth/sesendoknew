@@ -598,6 +598,8 @@ class KontrakRealisasiService
     }
     $d = $this->db->query($sql, $params)->fetch();
     if (!$d) throw new RuntimeException('Kontrak tidak ditemukan');
+    $d['nomor_spk'] = $d['nomor_kontrak'];
+    $d['tanggal_spk'] = $d['tanggal_kontrak'];
     $pdf = PageSetupService::createPdf(PageSetupService::current($this->user),'P');
     $pdf->SetMargins(18, 15, 18);
     PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[18,15,18,15]);

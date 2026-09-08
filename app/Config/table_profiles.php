@@ -2366,13 +2366,13 @@ $profiles['kontrak'] = [
   'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1],
   'not_duplicate' => ['kd_wilayah', 'kd_opd', 'tahun', 'nomor_kontrak'],
   'lookup' => ['nama_ppk' => ['table' => 'pejabat_tahunan_neo', 'value_field' => 'nama_pegawai', 'match' => ['id' => 'ppk_id']]],
-  'validation' => ['rekanan_id' => ['required', 'numeric'], 'nomor_spk' => ['required'], 'nomor_spmk' => ['required'], 'nomor_kontrak' => ['required']],
+  'validation' => ['rekanan_id' => ['required', 'numeric'], 'nomor_spmk' => ['required'], 'nomor_kontrak' => ['required']],
   'req_filters' => ['kontrak_dpa' => ['where' => ['tahap' => 'dpa']], 'kontrak_dppa' => ['where' => ['tahap' => 'dppa']]],
   'dropdown' => ['value' => 'id', 'label' => 'nomor_kontrak'],
   'modes' => [
     'default' => [
-      'select' => ['kontrak_neo.id', 'kontrak_neo.tahap', 'kontrak_neo.kd_sub_keg', 'kontrak_neo.nomor_spk', 'kontrak_neo.nomor_spmk', 'kontrak_neo.nomor_kontrak', 'kontrak_neo.uraian_kontrak', 'rekanan_neo.nama_perusahaan AS penyedia', 'kontrak_neo.total_anggaran', 'kontrak_neo.nilai_kontrak', 'kontrak_neo.tanggal_mulai', 'kontrak_neo.tanggal_selesai', 'kontrak_neo.status_kontrak'],
-      'searchable' => ['kontrak_neo.nomor_spk', 'kontrak_neo.nomor_spmk', 'kontrak_neo.nomor_kontrak', 'kontrak_neo.uraian_kontrak', 'rekanan_neo.nama_perusahaan'],
+      'select' => ['kontrak_neo.id', 'kontrak_neo.tahap', 'kontrak_neo.kd_sub_keg', 'kontrak_neo.nomor_spmk', 'kontrak_neo.nomor_kontrak', 'kontrak_neo.uraian_kontrak', 'rekanan_neo.nama_perusahaan AS penyedia', 'kontrak_neo.total_anggaran', 'kontrak_neo.nilai_kontrak', 'kontrak_neo.tanggal_mulai', 'kontrak_neo.tanggal_selesai', 'kontrak_neo.status_kontrak'],
+      'searchable' => ['kontrak_neo.nomor_spmk', 'kontrak_neo.nomor_kontrak', 'kontrak_neo.uraian_kontrak', 'rekanan_neo.nama_perusahaan'],
       'where' => ['kontrak_neo.is_deleted' => 0],
       'order_by' => 'kontrak_neo.id DESC'
     ],
