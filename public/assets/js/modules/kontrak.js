@@ -223,8 +223,10 @@ class KontrakModule extends BaseCrudModule {
 								.join(""),
 					)
 					.dropdown("destroy")
-					.dropdown({ fullTextSearch: true });
-				if (!(r.data || []).length) Toast.show({ success: false, message: "Belum ada sub kegiatan DPA/DPPA yang disetujui dan dikunci. Kontrak belum dapat menggunakan anggaran ini." });
+									.dropdown({ fullTextSearch: true, onNoResults: () => Toast.show({ success: false, message: "Sub kegiatan tidak ditemukan pada tahun aktif. Cari dengan kode atau nama sub kegiatan." }) });
+								const count = (r.data || []).length;
+								$("#contractSubFilterStatus").text(count ? `${count} sub kegiatan DPA/DPPA tersedia pada tahun aktif.` : "Tidak ada sub kegiatan DPA/DPPA yang disetujui dan dikunci pada tahun aktif.").toggleClass("ui negative message", !count).toggleClass("ui small basic message", !!count);
+								if (!count) Toast.show({ success: false, message: "Belum ada sub kegiatan DPA/DPPA yang disetujui dan dikunci pada tahun aktif." });
 			},
 		});
 		if (id) window.Ajax.request({ url: `/kontrak/items?contract_id=${id}`, method: "GET", success: (r) => { this.contractItems = (r.data || []).map((x) => ({ ...x, pagu: Number(x.pagu), nilai_kontrak: Number(x.nilai_kontrak) })); this.renderSelected(); this.renderAvailable(); } });
@@ -320,7 +322,7 @@ class KontrakModule extends BaseCrudModule {
 	ensureModal() {
 		if ($("#contractItemsModal").length) return;
 		$("body").append(
-			`<div class="ui large modal" id="contractItemsModal"><i class="close icon"></i><div class="header"><i class="violet list alternate outline icon"></i> Rincian Uraian Kontrak</div><div class="content"><div class="ui info message"><div class="header">Multi sub kegiatan dan multi uraian</div><p>Pilih subkegiatan, lalu cari uraian, kode rekening, atau nilai pagu. Maksimal 50 hasil per pencarian agar tetap ringan.</p></div><div class="contract-item-grid"><section><div class="field"><label>Sub Kegiatan</label><select class="ui fluid search dropdown" id="contractSubFilter"><option value="">Pilih sub kegiatan dahulu</option></select></div><div class="ui fluid icon input" style="margin-top:9px"><input id="contractItemSearch" placeholder="Cari uraian, rekening, atau nilai anggaran..."><i class="search icon"></i></div><div id="contractAvailableList" class="contract-scroll"><div class="ui message">Pilih sub kegiatan untuk menampilkan uraian.</div></div></section><section><h4 class="ui header">Uraian terpilih</h4><div id="contractSelectedList" class="contract-scroll"></div></section></div></div><div class="actions"><button class="ui deny button">Tutup</button><button class="ui positive violet button" data-contract-item-action="save"><i class="save icon"></i>Simpan Rincian</button></div></div>`,
+			`<div class="ui large modal" id="contractItemsModal"><i class="close icon"></i><div class="header"><i class="violet list alternate outline icon"></i> Rincian Uraian Kontrak</div><div class="content"><div class="ui info message"><div class="header">Multi sub kegiatan dan multi uraian</div><p>Pilih subkegiatan berdasarkan kode atau nama, lalu cari uraian, kode rekening, atau nilai pagu. Maksimal 50 hasil per pencarian agar tetap ringan.</p></div><div class="contract-item-grid"><section><div class="field"><label>Sub Kegiatan</label><select class="ui fluid search dropdown" id="contractSubFilter"><option value="">Pilih sub kegiatan dahulu</option></select><div id="contractSubFilterStatus" class="ui small basic message">Memuat sub kegiatan tahun aktif...</div></div><div class="ui fluid icon input" style="margin-top:9px"><input id="contractItemSearch" placeholder="Cari uraian, rekening, atau nilai anggaran..."><i class="search icon"></i></div><div id="contractAvailableList" class="contract-scroll"><div class="ui message">Pilih sub kegiatan untuk menampilkan uraian.</div></div></section><section><h4 class="ui header">Uraian terpilih</h4><div id="contractSelectedList" class="contract-scroll"></div></section></div></div><div class="actions"><button class="ui deny button">Tutup</button><button class="ui positive violet button" data-contract-item-action="save"><i class="save icon"></i>Simpan Rincian</button></div></div>`,
 		);
 		$("#contractSubFilter").dropdown();
 	}
