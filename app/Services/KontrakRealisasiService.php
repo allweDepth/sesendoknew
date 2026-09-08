@@ -200,7 +200,7 @@ class KontrakRealisasiService
   private function hierarchyLabel(string $code, string $level): string
   {
     $condition = $level === 'sub_kegiatan' ? 'r.kode=?' : "? LIKE CONCAT(r.kode,'.%')";
-    return (string)($this->db->query("SELECT CONCAT(r.kode,' ',r.uraian) label FROM rekening_kegiatan r WHERE r.level=? AND $condition AND r.is_deleted=0 ORDER BY CHAR_LENGTH(r.kode) DESC LIMIT 1", [$level, $code])->fetch()['label'] ?? '');
+    return (string)($this->db->query("SELECT CONCAT(r.kode,' ',r.uraian) label FROM rekening_kegiatan r WHERE r.level=? AND $condition ORDER BY CHAR_LENGTH(r.kode) DESC LIMIT 1", [$level, $code])->fetch()['label'] ?? '');
   }
 
   public function delivery(int $contractId): array

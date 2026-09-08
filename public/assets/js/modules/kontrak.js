@@ -119,9 +119,6 @@ class KontrakModule extends BaseCrudModule {
 			.off("click.realizationAdd", "[data-realization-add]")
 			.on("click.realizationAdd", "[data-realization-add]", () => this.openRealization());
 		$(document)
-			.off("change.realizationContract", "#realizationContract")
-			.on("change.realizationContract", "#realizationContract", (e) => this.loadRealizationContract(Number(e.target.value || 0)));
-		$(document)
 			.off("click.realizationItems", "#realizationItemsButton")
 			.on("click.realizationItems", "#realizationItemsButton", () => this.openRealizationItems());
 		$(document)
@@ -259,13 +256,17 @@ class KontrakModule extends BaseCrudModule {
 		$(".sidebarkanan").addClass("realization-sidebar-active");
 		$(".flyout-footer").hide();
 		$("#form_flyout").html(`<div class="ui form" id="realizationSidebarForm"><div class="field required"><label>Kontrak</label><select class="ui fluid search dropdown" id="realizationContract"><option value="">Pilih kontrak</option></select></div><div class="two fields"><div class="field required"><label>Tanggal Transaksi</label><input type="date" id="realizationDate"></div><div class="field"><label>Realisasi sampai sekarang</label><input type="text" id="realizationPrevious" disabled value="Rp 0"></div></div><div class="field required"><label>Uraian Transaksi</label><textarea id="realizationDescription" rows="2" placeholder="Contoh: Pembayaran termin pekerjaan..."></textarea></div><div class="field required"><label>Jumlah Realisasi</label><input type="number" id="realizationTotal" min="0" step="any" inputmode="decimal" placeholder="0"></div><button type="button" class="ui fluid violet button" id="realizationItemsButton" disabled><i class="list alternate outline icon"></i>Atur Uraian Realisasi</button><div class="field"><label>Keterangan</label><textarea id="realizationNote" rows="2"></textarea></div><div class="ui info message">Masukkan nilai per uraian melalui tombol <b>Atur Uraian Realisasi</b>. Totalnya harus sama dengan jumlah realisasi transaksi.</div><button type="button" class="ui fluid teal button" id="realizationSubmit"><i class="check icon"></i>Simpan Realisasi</button></div>`);
-		$("#realizationContract").dropdown({ fullTextSearch: true });
 		$(".sidebarkanan").sidebar("show");
 		window.Ajax.request({ url: "/kontrak/realization-contracts", method: "GET", success: (r) => {
 			this.realizationContracts = r.data || [];
 			const select = $("#realizationContract");
 			select.html('<option value="">Pilih kontrak</option>' + this.realizationContracts.map((x) => `<option value="${x.id}">${this.esc(x.nomor_kontrak)} · ${this.money(x.nilai_kontrak)}</option>`).join(""));
-			select.dropdown("destroy").dropdown({ fullTextSearch: true });
+			if (select.hasClass("noselection")) select.dropdown("destroy");
+			select.dropdown({
+				fullTextSearch: true,
+				highlightMatches: true,
+				onChange: (value) => this.loadRealizationContract(Number(value || 0)),
+			});
 		} });
 	}
 
