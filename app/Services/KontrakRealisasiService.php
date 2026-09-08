@@ -63,8 +63,8 @@ class KontrakRealisasiService
     if ($opd) $dpaParams[] = $o;
     $dppaParams = [$w, $y];
     if ($opd) $dppaParams[] = $o;
-    $sql = "SELECT b.kd_sub_keg,COUNT(*) jumlah_uraian,SUM(b.jumlah) pagu,'dppa' sumber FROM dppa_neo b WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0 GROUP BY b.kd_sub_keg
-              UNION ALL SELECT b.kd_sub_keg,COUNT(*),SUM(b.jumlah),'dpa' FROM dpa_neo b WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0 AND NOT EXISTS (SELECT 1 FROM dppa_neo p WHERE p.kd_wilayah=b.kd_wilayah AND p.kd_opd=b.kd_opd AND p.tahun=b.tahun AND p.kd_sub_keg=b.kd_sub_keg AND p.setujui=1 AND p.kunci=1 AND p.is_deleted=0) GROUP BY b.kd_sub_keg";
+    $sql = "SELECT b.kd_sub_keg,MAX(COALESCE(r.uraian,'')) nama_sub_kegiatan,COUNT(*) jumlah_uraian,SUM(b.jumlah) pagu,'dppa' sumber FROM dppa_neo b LEFT JOIN rekening_kegiatan r ON r.kode=b.kd_sub_keg AND r.level='sub_kegiatan' WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0 GROUP BY b.kd_sub_keg
+          UNION ALL SELECT b.kd_sub_keg,MAX(COALESCE(r.uraian,'')),COUNT(*),SUM(b.jumlah),'dpa' FROM dpa_neo b LEFT JOIN rekening_kegiatan r ON r.kode=b.kd_sub_keg AND r.level='sub_kegiatan' WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0 AND NOT EXISTS (SELECT 1 FROM dppa_neo p WHERE p.kd_wilayah=b.kd_wilayah AND p.kd_opd=b.kd_opd AND p.tahun=b.tahun AND p.kd_sub_keg=b.kd_sub_keg AND p.setujui=1 AND p.kunci=1 AND p.is_deleted=0) GROUP BY b.kd_sub_keg";
     $rows = $this->db->query("SELECT kd_sub_keg,SUM(jumlah_uraian) jumlah_uraian,SUM(pagu) pagu,MAX(sumber) sumber FROM ($sql) x GROUP BY kd_sub_keg ORDER BY kd_sub_keg", array_merge($dppaParams, $dpaParams))->fetchAll();
     return $rows;
   }

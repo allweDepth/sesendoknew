@@ -210,7 +210,7 @@ class KontrakModule extends BaseCrudModule {
 							(r.data || [])
 								.map(
 									(x) =>
-											`<option value="${this.esc(x.kd_sub_keg)}">${this.esc(x.kd_sub_keg)} · ${(x.sumber || "").toUpperCase()} · ${x.jumlah_uraian} uraian · ${this.money(x.pagu)}</option>`,
+											`<option value="${this.esc(x.kd_sub_keg)}">${this.esc(x.kd_sub_keg)} · ${this.esc(x.nama_sub_kegiatan || "")} · ${(x.sumber || "").toUpperCase()} · ${x.jumlah_uraian} uraian · ${this.money(x.pagu)}</option>`,
 								)
 								.join(""),
 					)
