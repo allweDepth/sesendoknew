@@ -19,7 +19,7 @@ class KontrakController extends Controller
   }
   public function availableSubActivities()
   {
-    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->availableSubActivities((int)($_GET['contract_id'] ?? 0)));
+    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->availableSubActivities((int)($_GET['contract_id'] ?? 0), (string)($_GET['q'] ?? '')));
   }
   public function availableItems()
   {
