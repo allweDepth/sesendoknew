@@ -1558,7 +1558,6 @@ UIConfig.kontrak = {
 			{ tag:"fieldTextarea", prop:{label:"Nama/Ruang Lingkup Pekerjaan",name:"uraian_kontrak",atribut:`rows="2"`} },
 			{ tag:"input", prop:{label:"Total Pagu Terpilih (otomatis dari rincian)",name:"total_anggaran",type:"number",atribut:"readonly"} },
 			{ tag:"input", prop:{label:"Nilai Kontrak (otomatis dari rincian)",name:"nilai_kontrak",type:"number",atribut:"readonly"} },
-			{ tag:"fieldCalendar", prop:{label:"Tanggal SPK",name:"tanggal_spk",calendarType:"date"} },
 			{ tag:"input", prop:{label:"Nomor Kontrak / SPK",name:"nomor_kontrak"} },
 			{ tag:"fieldCalendar", prop:{label:"Tanggal Kontrak",name:"tanggal_kontrak",calendarType:"date"} },
 			{ tag:"input", prop:{label:"Nomor SPMK",name:"nomor_spmk"} },
