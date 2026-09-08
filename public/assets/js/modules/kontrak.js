@@ -186,7 +186,8 @@ class KontrakModule extends BaseCrudModule {
 								)
 								.join(""),
 					)
-					.dropdown("refresh");
+					.dropdown("destroy")
+					.dropdown({ fullTextSearch: true });
 			},
 		});
 		window.Ajax.request({

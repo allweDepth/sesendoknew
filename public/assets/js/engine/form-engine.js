@@ -888,6 +888,9 @@ class FormEngine {
 			case "field":
 				return this.fieldWrapper(this.input(prop), prop);
 
+			case "input":
+				return this.fieldWrapper(this.input(prop), prop);
+
 			case "fieldTextarea":
 				return this.fieldWrapper(`<textarea name="${prop.name}" ${prop.atribut || ""}></textarea>`, prop);
 

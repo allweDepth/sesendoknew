@@ -32,6 +32,7 @@ class ModernTableResizer {
 					handle.className = "column-resize-handle";
 					handle.title = "Seret untuk mengubah lebar; klik ganda untuk otomatis";
 					handle.addEventListener("pointerdown", event => this.startColumn(event, table, columnIndex));
+					handle.addEventListener("click", event => { event.preventDefault(); event.stopPropagation(); });
 					handle.addEventListener("dblclick", event => { event.preventDefault(); event.stopPropagation(); this.autoColumn(table, columnIndex); });
 					header.appendChild(handle);
 				}
