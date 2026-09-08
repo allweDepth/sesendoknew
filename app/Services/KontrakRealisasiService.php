@@ -106,6 +106,96 @@ class KontrakRealisasiService
     }, $rows);
   }
 
+  public function realizationContracts(): array
+  {
+    [$w, $o, $y] = $this->scope();
+    $params = [$w, $y];
+    $opd = '';
+    if ($o && $o !== '0') {
+      $opd = ' AND k.kd_opd=?';
+      $params[] = $o;
+    }
+    return $this->db->query("SELECT k.id,k.nomor_kontrak,k.uraian_kontrak,k.nilai_kontrak,COALESCE(SUM(dr.jumlah),0) realisasi FROM kontrak_neo k LEFT JOIN daftar_realisasi_neo dr ON dr.kontrak_id=k.id AND dr.is_deleted=0 WHERE k.kd_wilayah=? AND k.tahun=?$opd AND k.is_deleted=0 GROUP BY k.id ORDER BY k.nomor_kontrak", $params)->fetchAll();
+  }
+
+  public function realizationItems(int $contractId): array
+  {
+    $header = $this->contractHeader($contractId);
+    $items = $this->contractItems($contractId);
+    foreach ($items as &$item) {
+      $sum = $this->db->query('SELECT COALESCE(SUM(jumlah),0) total FROM daftar_realisasi_neo WHERE kontrak_id=? AND dok=? AND id_dok_anggaran=? AND is_deleted=0', [$contractId, $item['tahap'], $item['anggaran_id']])->fetch();
+      $item['realisasi'] = (float)($sum['total'] ?? 0);
+      $item['nilai_kontrak'] = (float)$item['nilai_kontrak'];
+      $item['pagu'] = (float)$item['pagu'];
+      $item['persen_keuangan'] = $item['nilai_kontrak'] > 0 ? round($item['realisasi'] / $item['nilai_kontrak'] * 100, 2) : 0;
+      $item['program'] = $this->hierarchyLabel($item['kd_sub_keg'], 'program');
+      $item['kegiatan'] = $this->hierarchyLabel($item['kd_sub_keg'], 'kegiatan');
+      $item['sub_kegiatan'] = $this->hierarchyLabel($item['kd_sub_keg'], 'sub_kegiatan');
+      $account = $this->db->query('SELECT CONCAT(kode," ",uraian) label FROM akun_neo WHERE kode=? AND is_deleted=0 LIMIT 1', [$item['kd_akun']])->fetch();
+      $item['rekening'] = $account['label'] ?? $item['kd_akun'];
+    }
+    unset($item);
+    return ['contract' => ['id' => $header['id'], 'nomor_kontrak' => $header['nomor_kontrak'], 'nilai_kontrak' => (float)$header['nilai_kontrak']], 'items' => $items];
+  }
+
+  public function saveRealization(array $payload, array $items): array
+  {
+    $this->assertCanWrite();
+    $contractId = (int)($payload['contract_id'] ?? 0);
+    $date = trim((string)($payload['tanggal'] ?? ''));
+    $description = trim((string)($payload['uraian_transaksi'] ?? ''));
+    $note = trim((string)($payload['keterangan'] ?? ''));
+    if (!$contractId || !$date || !$description) throw new InvalidArgumentException('Kontrak, tanggal, dan uraian transaksi wajib diisi');
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) throw new InvalidArgumentException('Tanggal transaksi tidak valid');
+    $header = $this->contractHeader($contractId);
+    $contractItems = $this->contractItems($contractId);
+    $lookup = [];
+    foreach ($contractItems as $item) $lookup[$item['tahap'] . ':' . $item['anggaran_id']] = $item;
+    $total = 0.0;
+    $rows = [];
+    foreach ($items as $index => $item) {
+      $stage = strtolower(trim((string)($item['tahap'] ?? '')));
+      $budgetId = (int)($item['anggaran_id'] ?? 0);
+      $amount = (float)($item['jumlah'] ?? 0);
+      $physical = (float)($item['progress_fisik'] ?? 0);
+      $key = $stage . ':' . $budgetId;
+      if (!$amount) continue;
+      if (!isset($lookup[$key])) throw new InvalidArgumentException('Uraian realisasi ke-' . ($index + 1) . ' bukan bagian dari kontrak');
+      if ($amount < 0) throw new InvalidArgumentException('Jumlah realisasi tidak boleh negatif');
+      if ($physical < 0 || $physical > 100) throw new InvalidArgumentException('Persentase fisik harus 0 sampai 100');
+      $total += $amount;
+      $rows[] = ['item' => $lookup[$key], 'jumlah' => $amount, 'progress_fisik' => $physical];
+    }
+    if (!$rows) throw new InvalidArgumentException('Isi jumlah realisasi minimal pada satu uraian');
+    $existing = (float)($this->db->query('SELECT COALESCE(SUM(jumlah),0) total FROM daftar_realisasi_neo WHERE kontrak_id=? AND is_deleted=0', [$contractId])->fetch()['total'] ?? 0);
+    if ($existing + $total > (float)$header['nilai_kontrak'] + 0.01) throw new InvalidArgumentException('Total realisasi melebihi nilai kontrak');
+    $this->db->begin();
+    try {
+      foreach ($rows as $row) {
+        $item = $row['item'];
+        $this->db->insert('daftar_realisasi_neo', [
+          'tahun' => $header['tahun'], 'kd_wilayah' => $header['kd_wilayah'], 'kd_opd' => $header['kd_opd'],
+          'kd_sub_keg' => $item['kd_sub_keg'], 'kd_akun' => $item['kd_akun'], 'id_paket' => 0, 'kontrak_id' => $contractId,
+          'ket_paket' => (string)($header['uraian_kontrak'] ?? ''), 'id_uraian_paket' => $item['id'], 'id_dok_anggaran' => $item['anggaran_id'], 'dok' => $item['tahap'],
+          'vol' => 0, 'jumlah' => $row['jumlah'], 'tanggal' => $date, 'periode' => (int)date('n', strtotime($date)),
+          'progress_fisik' => $row['progress_fisik'], 'uraian_progress' => $description, 'ket_uraian_paket' => $description,
+          'keterangan' => $note, 'username_insert' => $this->user['username'] ?? 'system', 'is_deleted' => 0
+        ]);
+      }
+      $this->db->commit();
+    } catch (Throwable $e) {
+      $this->db->rollback();
+      throw $e;
+    }
+    return ['contract_id' => $contractId, 'jumlah' => $total, 'realisasi_sebelumnya' => $existing, 'realisasi_sekarang' => $existing + $total];
+  }
+
+  private function hierarchyLabel(string $code, string $level): string
+  {
+    $condition = $level === 'sub_kegiatan' ? 'r.kode=?' : "? LIKE CONCAT(r.kode,'.%')";
+    return (string)($this->db->query("SELECT CONCAT(r.kode,' ',r.uraian) label FROM rekening_kegiatan r WHERE r.level=? AND $condition AND r.is_deleted=0 ORDER BY CHAR_LENGTH(r.kode) DESC LIMIT 1", [$level, $code])->fetch()['label'] ?? '');
+  }
+
   public function delivery(int $contractId): array
   {
     $header = $this->contractHeader($contractId);

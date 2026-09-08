@@ -20,6 +20,7 @@ class BeritaModel
             SELECT id,kd_wilayah,judul,slug AS id_pengenal,
                    COALESCE(NULLIF(keterangan,''),'Informasi') AS kelompok,
                    konten AS uraian_html,
+                   html_aktif,
                    LEFT(TRIM(REGEXP_REPLACE(konten,'<[^>]*>',' ')),220) AS uraian_singkat,
                    COALESCE(tgl_update,tgl_insert) AS tanggal,
                    gambar,tgl_insert,tgl_update,username_insert,username_update,keterangan,0 AS urutan

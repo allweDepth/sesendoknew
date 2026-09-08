@@ -22,6 +22,9 @@
         <?php
           $judul = htmlspecialchars($item['judul'] ?? '');
           $kelompok = htmlspecialchars($item['kelompok'] ?? '');
+          $konten = !empty($item['html_aktif'])
+                    ? ($item['uraian_html'] ?? '')
+                    : nl2br(htmlspecialchars(strip_tags($item['uraian_html'] ?? ''), ENT_QUOTES, 'UTF-8'));
           $ringkas = $item['uraian_singkat']
                       ? htmlspecialchars($item['uraian_singkat'])
                       : substr(strip_tags($item['uraian_html'] ?? ''), 0, 150) . '...';
@@ -66,7 +69,7 @@
               <div class="description berita-desc">
                 <?= $ringkas ?>
               </div>
-              <div class="berita-full-content" style="display:none"><?= $item['uraian_html'] ?? '' ?></div>
+              <div class="berita-full-content" style="display:none"><?= $konten ?></div>
 
             </div>
 

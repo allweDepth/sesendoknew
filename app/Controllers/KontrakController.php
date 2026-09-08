@@ -25,6 +25,22 @@ class KontrakController extends Controller
   {
     $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->availableItems((string)($_GET['q'] ?? ''), (int)($_GET['contract_id'] ?? 0), (string)($_GET['kd_sub_keg'] ?? ''), (int)($_GET['limit'] ?? 50)));
   }
+  public function realizationContracts()
+  {
+    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->realizationContracts());
+  }
+  public function realizationItems()
+  {
+    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->realizationItems((int)($_GET['contract_id'] ?? 0)));
+  }
+  public function saveRealization()
+  {
+    $payload = json_decode((string)file_get_contents('php://input'), true);
+    if (!is_array($payload)) $payload = $_POST;
+    $items = $payload['items'] ?? [];
+    if (is_string($items)) $items = json_decode($items, true);
+    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->saveRealization($payload, is_array($items) ? $items : []), 'Realisasi berhasil disimpan');
+  }
   public function items()
   {
     $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->contractItems((int)($_GET['contract_id'] ?? 0)));

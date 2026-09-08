@@ -13,6 +13,8 @@ class KontrakModule extends BaseCrudModule {
 		this.availableItems = [];
 		this.contractId = null;
 		this.deliveryData = null;
+		this.realizationItems = [];
+		this.realizationContracts = [];
 	}
 
 	init() {
@@ -99,6 +101,9 @@ class KontrakModule extends BaseCrudModule {
 	}
 
 	buildActionButtons(tbl) {
+		if (tbl === "realisasi") {
+			return `<div class="ui right floated basic buttons" style="margin-top:10px"><button class="ui teal button" data-realization-add><i class="plus icon"></i>Input Realisasi</button><button class="ui icon button" data-action="export" data-tbl="${tbl}" title="Export"><i class="alternate download icon"></i></button></div>`;
+		}
 		return `${super.buildActionButtons(tbl)}<div class="ui right floated basic icon buttons" style="margin-top:10px;margin-right:8px">${tbl === "kontrak" ? '<button class="ui button" data-p4="contract-pdf" title="PDF kontrak"><i class="file pdf icon"></i></button>' : ""}<button class="ui button" data-p4="report-excel" title="Laporan Excel"><i class="file excel icon"></i></button><button class="ui button" data-p4="report-pdf" title="Laporan PDF"><i class="chart bar icon"></i></button></div>`;
 	}
 
@@ -110,6 +115,29 @@ class KontrakModule extends BaseCrudModule {
 	}
 
 	bindActions() {
+		$(document)
+			.off("click.realizationAdd", "[data-realization-add]")
+			.on("click.realizationAdd", "[data-realization-add]", () => this.openRealization());
+		$(document)
+			.off("change.realizationContract", "#realizationContract")
+			.on("change.realizationContract", "#realizationContract", (e) => this.loadRealizationContract(Number(e.target.value || 0)));
+		$(document)
+			.off("click.realizationItems", "#realizationItemsButton")
+			.on("click.realizationItems", "#realizationItemsButton", () => this.openRealizationItems());
+		$(document)
+			.off("input.realizationAmount", "[data-realization-amount], #realizationTotal")
+			.on("input.realizationAmount", "[data-realization-amount], #realizationTotal", (e) => {
+				if ($(e.target).is("[data-realization-amount]")) this.syncRealizationTotal();
+			});
+		$(document)
+			.off("click.realizationDetail", "[data-realization-detail]")
+			.on("click.realizationDetail", "[data-realization-detail]", (e) => this.showRealizationDetail(Number($(e.currentTarget).data("realization-detail"))));
+		$(document)
+			.off("click.realizationSave", "#realizationSubmit")
+			.on("click.realizationSave", "#realizationSubmit", () => this.saveRealization());
+		$(document)
+			.off("click.realizationClose", ".sidebarkanan .btnFlyoutClose")
+			.on("click.realizationClose", ".sidebarkanan .btnFlyoutClose", () => this.resetRealizationSidebar());
 		$(document)
 			.off("click.phase4", "[data-p4]")
 			.on("click.phase4", "[data-p4]", (e) => {
@@ -203,6 +231,92 @@ class KontrakModule extends BaseCrudModule {
 				this.renderAvailable();
 			},
 		});
+	}
+
+	openRealization() {
+		this.realizationItems = [];
+		this.realizationContracts = [];
+		this.resetRealizationSidebar();
+		$("#content_flyout").text("Input Realisasi Kontrak");
+		$("#icon_flyout").attr("class", "chart line icon");
+		$(".sidebarkanan").addClass("realization-sidebar-active");
+		$(".flyout-footer").hide();
+		$("#form_flyout").html(`<div class="ui form" id="realizationSidebarForm"><div class="field required"><label>Kontrak</label><select class="ui fluid search dropdown" id="realizationContract"><option value="">Pilih kontrak</option></select></div><div class="two fields"><div class="field required"><label>Tanggal Transaksi</label><input type="date" id="realizationDate"></div><div class="field"><label>Realisasi sampai sekarang</label><input type="text" id="realizationPrevious" disabled value="Rp 0"></div></div><div class="field required"><label>Uraian Transaksi</label><textarea id="realizationDescription" rows="2" placeholder="Contoh: Pembayaran termin pekerjaan..."></textarea></div><div class="field required"><label>Jumlah Realisasi</label><input type="number" id="realizationTotal" min="0" step="any" inputmode="decimal" placeholder="0"></div><button type="button" class="ui fluid violet button" id="realizationItemsButton" disabled><i class="list alternate outline icon"></i>Atur Uraian Realisasi</button><div class="field"><label>Keterangan</label><textarea id="realizationNote" rows="2"></textarea></div><div class="ui info message">Masukkan nilai per uraian melalui tombol <b>Atur Uraian Realisasi</b>. Totalnya harus sama dengan jumlah realisasi transaksi.</div><button type="button" class="ui fluid teal button" id="realizationSubmit"><i class="check icon"></i>Simpan Realisasi</button></div>`);
+		$("#realizationContract").dropdown({ fullTextSearch: true });
+		$(".sidebarkanan").sidebar("show");
+		window.Ajax.request({ url: "/kontrak/realization-contracts", method: "GET", success: (r) => {
+			this.realizationContracts = r.data || [];
+			const select = $("#realizationContract");
+			select.html('<option value="">Pilih kontrak</option>' + this.realizationContracts.map((x) => `<option value="${x.id}">${this.esc(x.nomor_kontrak)} · ${this.money(x.nilai_kontrak)}</option>`).join(""));
+			select.dropdown("destroy").dropdown({ fullTextSearch: true });
+		} });
+	}
+
+	loadRealizationContract(id) {
+		this.contractId = id || null;
+		$("#realizationItemsButton").prop("disabled", !id);
+		if (!id) {
+			$("#realizationPrevious").val("Rp 0");
+			this.realizationItems = [];
+			return;
+		}
+		const contract = this.realizationContracts.find((x) => Number(x.id) === id);
+		$("#realizationPrevious").val(this.money(contract?.realisasi || 0));
+		window.Ajax.request({ url: `/kontrak/realization-items?contract_id=${id}`, method: "GET", success: (r) => {
+			this.realizationItems = (r.data?.items || []).map((x) => ({ ...x, jumlah_sekarang: 0, progress_fisik: 0 }));
+			const current = Number(r.data?.contract?.nilai_kontrak || contract?.nilai_kontrak || 0);
+			$("#realizationPrevious").val(this.money(this.realizationItems.reduce((sum, x) => sum + Number(x.realisasi || 0), 0)));
+			$("#realizationTotal").attr("max", Math.max(0, current));
+		} });
+	}
+
+	openRealizationItems() {
+		if (!this.contractId || !this.realizationItems.length) return Toast.error("Pilih kontrak yang memiliki uraian kontrak");
+		if (!(Number($("#realizationTotal").val()) > 0)) Toast.show({ success: false, message: "Isi jumlah realisasi transaksi terlebih dahulu atau masukkan nilainya dari tabel uraian." });
+		this.ensureRealizationModal();
+		this.renderRealizationItems();
+		$("#realizationItemsModal").modal({ closable: false, allowMultiple: true }).modal("show");
+	}
+
+	ensureRealizationModal() {
+		if ($("#realizationItemsModal").length) return;
+		$("body").append(`<div class="ui large modal" id="realizationItemsModal"><i class="close icon"></i><div class="header"><i class="list alternate outline icon"></i> Uraian Realisasi per Kontrak</div><div class="content"><div class="ui info message">Nilai realisasi dan persentase fisik diisi per uraian. Persentase keuangan dihitung otomatis dari nilai kontrak.</div><div class="table-wrapper realization-items-table-wrapper"><table class="ui compact celled striped table"><thead><tr><th>DPA/DPPA</th><th>Anggaran</th><th>Nilai Kontrak</th><th>Realisasi Sekarang</th><th>Realisasi</th><th>% Keuangan</th><th>% Fisik</th><th>Aksi</th></tr></thead><tbody id="realizationItemsBody"></tbody><tfoot><tr><th colspan="3" class="right aligned">Total</th><th id="realizationItemsTotal" class="right aligned">Rp 0</th><th colspan="4"></th></tr></tfoot></table></div></div><div class="actions"><button class="ui deny button">Tutup</button><button class="ui violet button" data-realization-items-done><i class="check icon"></i>Selesai</button></div></div>`);
+		$(document).off("click.realizationItemsDone", "[data-realization-items-done]").on("click.realizationItemsDone", "[data-realization-items-done]", () => { this.syncRealizationTotal(); $("#realizationItemsModal").modal("hide"); });
+	}
+
+	renderRealizationItems() {
+		$("#realizationItemsBody").html(this.realizationItems.map((x, i) => `<tr><td><span class="ui tiny ${x.tahap === "dppa" ? "orange" : "blue"} label">${this.esc(x.tahap.toUpperCase())}</span><br><small>${this.esc(x.kd_sub_keg)}</small></td><td><b>${this.esc(x.kd_akun)}</b><br>${this.esc(x.uraian)}<br><small>${this.money(x.pagu)}</small></td><td class="right aligned">${this.money(x.nilai_kontrak)}</td><td><input class="ui input" type="number" min="0" max="${Math.max(0, Number(x.nilai_kontrak) - Number(x.realisasi || 0))}" step="any" inputmode="decimal" data-realization-amount="${i}" value="${Number(x.jumlah_sekarang || 0)}"></td><td class="right aligned">${this.money(x.realisasi)}</td><td class="right aligned" data-realization-percent="${i}">${Number(x.persen_keuangan || 0).toFixed(2)}%</td><td><input class="ui input" type="number" min="0" max="100" step="0.01" data-realization-physical="${i}" value="${Number(x.progress_fisik || 0)}"></td><td><button type="button" class="ui mini basic teal button" data-realization-detail="${i}"><i class="info circle icon"></i>Detail</button></td></tr>`).join(""));
+		$("[data-realization-amount]").on("input", (e) => { const i = Number($(e.currentTarget).data("realization-amount")); this.realizationItems[i].jumlah_sekarang = Number(e.currentTarget.value || 0); const total = Number(this.realizationItems[i].realisasi || 0) + this.realizationItems[i].jumlah_sekarang; $("[data-realization-percent='" + i + "']").text((this.realizationItems[i].nilai_kontrak > 0 ? total / this.realizationItems[i].nilai_kontrak * 100 : 0).toFixed(2) + "%"); this.syncRealizationTotal(); });
+		$("[data-realization-physical]").on("input", (e) => { const i = Number($(e.currentTarget).data("realization-physical")); this.realizationItems[i].progress_fisik = Number(e.currentTarget.value || 0); });
+		this.syncRealizationTotal();
+	}
+
+	syncRealizationTotal() {
+		const total = this.realizationItems.reduce((sum, x) => sum + Number(x.jumlah_sekarang || 0), 0);
+		$("#realizationItemsTotal").text(this.money(total));
+		if ($("#realizationTotal").length && document.activeElement?.id !== "realizationTotal") $("#realizationTotal").val(total ? total : "");
+	}
+
+	showRealizationDetail(index) {
+		const x = this.realizationItems[index];
+		if (!x) return;
+		$("#realizationDetailModal").remove();
+		$("body").append(`<div class="ui small modal" id="realizationDetailModal"><i class="close icon"></i><div class="header"><i class="sitemap icon"></i> Detail Uraian Belanja</div><div class="content"><table class="ui definition compact table"><tbody><tr><td>Program</td><td>${this.esc(x.program || "-")}</td></tr><tr><td>Kegiatan</td><td>${this.esc(x.kegiatan || "-")}</td></tr><tr><td>Sub Kegiatan</td><td>${this.esc(x.sub_kegiatan || x.kd_sub_keg || "-")}</td></tr><tr><td>Kode Rekening Belanja</td><td>${this.esc(x.rekening || x.kd_akun || "-")}</td></tr><tr><td>Uraian</td><td>${this.esc(x.uraian || "-")}</td></tr><tr><td>Realisasi transaksi</td><td>${this.money(x.jumlah_sekarang)}</td></tr></tbody></table></div><div class="actions"><button class="ui approve teal button">Tutup</button></div></div>`);
+		$("#realizationDetailModal").modal("show");
+	}
+
+	saveRealization() {
+		const contractId = Number($("#realizationContract").val() || 0), total = Number($("#realizationTotal").val() || 0), rows = this.realizationItems.map((x) => ({ tahap: x.tahap, anggaran_id: x.anggaran_id, jumlah: Number(x.jumlah_sekarang || 0), progress_fisik: Number(x.progress_fisik || 0) }));
+		const distributed = rows.reduce((sum, x) => sum + x.jumlah, 0);
+		if (!contractId || !$("#realizationDate").val() || !String($("#realizationDescription").val() || "").trim()) return Toast.error("Kontrak, tanggal, uraian transaksi, dan uraian per item wajib diisi");
+		if (total <= 0 || Math.abs(total - distributed) > 0.01) return Toast.error("Jumlah realisasi harus sama dengan total pembagian pada uraian");
+		const button = $("#realizationSubmit").addClass("loading disabled");
+		window.Ajax.request({ url: "/kontrak/realization/save", method: "POST", data: { contract_id: contractId, tanggal: $("#realizationDate").val(), uraian_transaksi: $("#realizationDescription").val(), keterangan: $("#realizationNote").val(), items: JSON.stringify(rows) }, success: () => { this.resetRealizationSidebar(); $(".sidebarkanan").sidebar("hide"); window.tableManager?.fetchData(); }, complete: () => button.removeClass("loading disabled") });
+	}
+
+	resetRealizationSidebar() {
+		$(".sidebarkanan").removeClass("realization-sidebar-active");
+		$(".flyout-footer").show();
 	}
 
 	ensureModal() {
