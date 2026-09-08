@@ -1052,6 +1052,10 @@ kd_sub_keg → nama_sub_keg
         $profile
       );
 
+      if ($table === 'kontrak_neo') {
+        $this->saveContractItemsFromRequest($id, $request, $filtered);
+      }
+
       // =====================================================
       // COUNTER
       // =====================================================
@@ -1098,6 +1102,42 @@ kd_sub_keg → nama_sub_keg
       );
     });
   }
+
+  private function saveContractItemsFromRequest(int $contractId, array $request, array $header): void
+  {
+    $raw = $request['contract_items'] ?? '';
+    if (!$raw) return;
+    $items = is_array($raw) ? $raw : json_decode((string)$raw, true);
+    if (!is_array($items) || !$items) throw new InvalidArgumentException('Rincian uraian kontrak tidak valid');
+    $username = (string)($this->user['username'] ?? 'system');
+    foreach ($items as $item) {
+      $stage = strtolower((string)($item['tahap'] ?? ''));
+      $budgetId = (int)($item['anggaran_id'] ?? 0);
+      $value = (float)($item['nilai_kontrak'] ?? 0);
+      if (!in_array($stage, ['dpa', 'dppa'], true) || !$budgetId || $value <= 0) {
+        throw new InvalidArgumentException('Setiap rincian kontrak wajib memiliki DPA/DPPA dan nilai yang valid');
+      }
+      $table = $stage === 'dppa' ? 'dppa_neo' : 'dpa_neo';
+      $budget = $this->db->query("SELECT kd_sub_keg,kd_akun,uraian,jumlah FROM `$table` WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1", [$budgetId, $header['kd_wilayah'], $header['kd_opd'], $header['tahun']])->fetch();
+      if (!$budget) throw new InvalidArgumentException('Rincian DPA/DPPA tidak ditemukan, belum disetujui, atau belum dikunci');
+      $this->db->insert('kontrak_item_neo', [
+        'kontrak_id' => $contractId,
+        'tahap' => $stage,
+        'anggaran_id' => $budgetId,
+        'kd_wilayah' => $header['kd_wilayah'],
+        'kd_opd' => $header['kd_opd'],
+        'tahun' => $header['tahun'],
+        'kd_sub_keg' => $budget['kd_sub_keg'],
+        'kd_akun' => $budget['kd_akun'] ?? '',
+        'uraian' => $budget['uraian'] ?? '',
+        'pagu' => (float)$budget['jumlah'],
+        'nilai_kontrak' => $value,
+        'username_insert' => $username,
+        'is_deleted' => 0,
+      ]);
+    }
+  }
+
   /* ======================================================
 REQUEST GUARD (ANTI DOUBLE SUBMIT)
 --------------------------------------------------------

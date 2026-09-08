@@ -155,6 +155,12 @@ class KontrakModule extends BaseCrudModule {
 				this.openItems(Number($(e.currentTarget).data("contract-items"))),
 			);
 		$(document)
+			.off("click.contractDetailButton", "[data-contract-detail-button]")
+			.on("click.contractDetailButton", "[data-contract-detail-button]", () => {
+				const id = Number($("#form_flyout [name=id_row]").val() || 0);
+				this.openItems(id);
+			});
+		$(document)
 			.off("click.contractDelivery", "[data-contract-delivery]")
 			.on("click.contractDelivery", "[data-contract-delivery]", (e) =>
 				this.openDelivery(Number($(e.currentTarget).data("contract-delivery"))),
@@ -198,6 +204,8 @@ class KontrakModule extends BaseCrudModule {
 	openItems(id) {
 		this.contractId = id;
 		this.ensureModal();
+		const draft = $("#form_flyout [name=contract_items]").val();
+		this.contractItems = !id && draft ? (() => { try { return JSON.parse(draft).map((x) => ({ ...x, pagu: Number(x.pagu), nilai_kontrak: Number(x.nilai_kontrak) })); } catch (e) { return []; } })() : [];
 		$("#contractItemsModal").modal({ closable: false, allowMultiple: true }).modal("show");
 		$("#contractSelectedList").html('<div class="ui active centered inline loader"></div>');
 		window.Ajax.request({
@@ -219,19 +227,8 @@ class KontrakModule extends BaseCrudModule {
 				if (!(r.data || []).length) Toast.show({ success: false, message: "Belum ada sub kegiatan DPA/DPPA yang disetujui dan dikunci. Kontrak belum dapat menggunakan anggaran ini." });
 			},
 		});
-		window.Ajax.request({
-			url: `/kontrak/items?contract_id=${id}`,
-			method: "GET",
-			success: (r) => {
-				this.contractItems = (r.data || []).map((x) => ({
-					...x,
-					pagu: Number(x.pagu),
-					nilai_kontrak: Number(x.nilai_kontrak),
-				}));
-				this.renderSelected();
-				this.renderAvailable();
-			},
-		});
+		if (id) window.Ajax.request({ url: `/kontrak/items?contract_id=${id}`, method: "GET", success: (r) => { this.contractItems = (r.data || []).map((x) => ({ ...x, pagu: Number(x.pagu), nilai_kontrak: Number(x.nilai_kontrak) })); this.renderSelected(); this.renderAvailable(); } });
+		else { this.renderSelected(); this.renderAvailable(); }
 	}
 
 	openRealization() {
@@ -356,7 +353,7 @@ class KontrakModule extends BaseCrudModule {
 			rows
 				.map(
 					(x) =>
-						`<article class="contract-item-card"><div><span class="ui tiny ${x.tahap === "dppa" ? "orange" : "blue"} label">${this.esc(x.tahap.toUpperCase())}</span><b>${this.esc(x.kd_sub_keg)}</b><small>${this.esc(x.kd_akun || "Tanpa kode akun")}</small><p>${this.esc(x.uraian)}</p><strong>Pagu tersedia ${this.money(x.pagu_tersedia)}</strong></div><button class="ui mini violet icon button" data-contract-item-action="add" data-index="${x._index}"><i class="plus icon"></i></button></article>`,
+						`<article class="contract-item-card"><div><span class="ui tiny ${x.tahap === "dppa" ? "orange" : "blue"} label">${this.esc(x.tahap.toUpperCase())}</span><b>${this.esc(x.kd_sub_keg)}</b><small>${this.esc(x.kd_akun || "Tanpa kode akun")}</small><p>${this.esc(x.uraian)}</p><small>Pagu ${this.money(x.pagu)} · Sudah berkontrak ${this.money(x.nilai_terpakai)} · Sisa ${this.money(x.pagu_tersedia)}</small><strong>Sisa pagu ${this.money(x.pagu_tersedia)}</strong></div><button class="ui mini violet icon button" data-contract-item-action="add" data-index="${x._index}"><i class="plus icon"></i></button></article>`,
 				)
 				.join("") || '<div class="ui message">Tidak ada uraian lain yang tersedia.</div>',
 		);
@@ -369,7 +366,7 @@ class KontrakModule extends BaseCrudModule {
 			.map((x, i) => {
 				pagu += Number(x.pagu || 0);
 				value += Number(x.nilai_kontrak || 0);
-				return `<article class="contract-selected-card"><button class="ui mini red basic icon button" data-contract-item-action="remove" data-index="${i}"><i class="trash icon"></i></button><div><b>${this.esc(x.kd_sub_keg)} · ${this.esc(x.kd_akun || "")}</b><p>${this.esc(x.uraian)}</p><small>Pagu ${this.money(x.pagu)}</small><div class="ui right labeled fluid input"><label class="ui label">Nilai</label><input type="number" min="1" max="${Number(x.pagu_tersedia || x.pagu)}" value="${Number(x.nilai_kontrak || 0)}" data-contract-value="${i}"><div class="ui label">IDR</div></div></div></article>`;
+				return `<article class="contract-selected-card"><button class="ui mini red basic icon button" data-contract-item-action="remove" data-index="${i}"><i class="trash icon"></i></button><div><b>${this.esc(x.kd_sub_keg)} · ${this.esc(x.kd_akun || "")}</b><p>${this.esc(x.uraian)}</p><small>Pagu ${this.money(x.pagu)} · Sudah berkontrak ${this.money(x.nilai_terpakai || 0)} · Sisa tersedia ${this.money(x.pagu_tersedia || x.pagu)}</small><div class="ui right labeled fluid input"><label class="ui label">Nilai</label><input type="number" min="1" max="${Number(x.pagu_tersedia || x.pagu)}" value="${Number(x.nilai_kontrak || 0)}" data-contract-value="${i}"><div class="ui label">IDR</div></div></div></article>`;
 			})
 			.join("");
 		$("#contractSelectedList").html(
@@ -399,12 +396,29 @@ class KontrakModule extends BaseCrudModule {
 				Toast.error("Pilih minimal satu uraian kontrak");
 				return;
 			}
-			btn.addClass("loading disabled");
 			const items = this.contractItems.map((x) => ({
 				tahap: x.tahap,
 				anggaran_id: x.anggaran_id,
+				kd_sub_keg: x.kd_sub_keg,
+				kd_akun: x.kd_akun,
+				uraian: x.uraian,
+				pagu: Number(x.pagu || 0),
+				nilai_terpakai: Number(x.nilai_terpakai || 0),
+				pagu_tersedia: Number(x.pagu_tersedia || x.pagu || 0),
 				nilai_kontrak: Number(x.nilai_kontrak || 0),
 			}));
+			if (!this.contractId) {
+				const first = this.contractItems[0];
+				$("#form_flyout [name=contract_items]").val(JSON.stringify(items));
+				$("#form_flyout [name=tahap]").val(first.tahap);
+				$("#form_flyout [name=anggaran_id]").val(first.anggaran_id);
+				$("#form_flyout [name=kd_sub_keg]").val(first.kd_sub_keg);
+				$("#form_flyout [name=total_anggaran]").val(this.contractItems.reduce((sum, x) => sum + Number(x.pagu || 0), 0));
+				$("#form_flyout [name=nilai_kontrak]").val(this.contractItems.reduce((sum, x) => sum + Number(x.nilai_kontrak || 0), 0));
+				$("#contractItemsModal").modal("hide");
+				return;
+			}
+			btn.addClass("loading disabled");
 			window.Ajax.request({
 				url: "/kontrak/items/save",
 				method: "POST",

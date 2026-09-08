@@ -227,6 +227,15 @@ ISI FIELD TIPE UNTUK MODULE MAPPING
 
 		FormEngine.render($(formSelector), config.elements, this.formEngine, config.layout || {});
 
+		if (tbl === "kontrak" && formSelector === "#form_flyout") {
+			const form = $(formSelector);
+			if (!form.find("[name=contract_items]").length) form.prepend('<input type="hidden" name="contract_items">');
+			if (!form.find("[name=tahap]").length) form.prepend('<input type="hidden" name="tahap">');
+			if (!form.find("[name=anggaran_id]").length) form.prepend('<input type="hidden" name="anggaran_id">');
+			if (!form.find("[name=kd_sub_keg]").length) form.prepend('<input type="hidden" name="kd_sub_keg">');
+			form.find('[name="uraian_kontrak"]').closest(".field").after('<div class="field"><button type="button" class="ui fluid violet button" data-contract-detail-button><i class="list alternate outline icon"></i>Rincian Uraian Kontrak</button><small class="form-help">Pilih satu atau beberapa uraian DPA/DPPA. Sisa pagu dihitung otomatis.</small></div>');
+		}
+
 		// Form rincian anggaran yang dibuka dari sebuah sub kegiatan harus
 		// membawa konteks sub kegiatan tersebut, bukan meminta pengguna
 		// mengetik ulang kode yang rawan salah.
