@@ -953,6 +953,21 @@ INSERT (FIXED STABLE VERSION v3.1)
 ===================================================== */
     $filtered = $this->resolver()->resolvePeraturan($table, $filtered, $this->activeProfileKey);
 
+    if ($table === 'kontrak_neo') {
+      $stage = strtolower((string)($filtered['tahap'] ?? ''));
+      $budgetId = (int)($filtered['anggaran_id'] ?? 0);
+      if (!in_array($stage, ['dpa', 'dppa'], true) || !$budgetId) {
+        return JsonResponse::error('Kontrak wajib memakai satu uraian final dari DPA/DPPA yang disetujui dan dikunci.');
+      }
+      $budgetTable = $stage === 'dppa' ? 'dppa_neo' : 'dpa_neo';
+      $budget = $this->db->query("SELECT kd_sub_keg FROM `$budgetTable` WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1", [$budgetId, $filtered['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? '', $filtered['kd_opd'] ?? $this->user['kd_opd'] ?? '', (int)($filtered['tahun'] ?? $this->user['tahun'] ?? date('Y'))])->fetch();
+      if (!$budget) return JsonResponse::error('Uraian DPA/DPPA belum disetujui dan dikunci. Kontrak belum dapat dibuat.');
+      if ($stage === 'dpa' && !empty($budget['kd_sub_keg'])) {
+        $dppa = $this->db->query('SELECT id FROM dppa_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1', [$filtered['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? '', $filtered['kd_opd'] ?? $this->user['kd_opd'] ?? '', (int)($filtered['tahun'] ?? $this->user['tahun'] ?? date('Y')), $budget['kd_sub_keg']])->fetch();
+        if ($dppa) return JsonResponse::error('Gunakan uraian DPPA final untuk sub kegiatan ini.');
+      }
+    }
+
     /* =====================================================
 🔥 LOOKUP RESOLUTION
 Digunakan untuk mengisi field turunan otomatis

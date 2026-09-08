@@ -210,12 +210,13 @@ class KontrakModule extends BaseCrudModule {
 							(r.data || [])
 								.map(
 									(x) =>
-										`<option value="${this.esc(x.kd_sub_keg)}">${this.esc(x.kd_sub_keg)} · ${x.jumlah_uraian} uraian · ${this.money(x.pagu)}</option>`,
+											`<option value="${this.esc(x.kd_sub_keg)}">${this.esc(x.kd_sub_keg)} · ${(x.sumber || "").toUpperCase()} · ${x.jumlah_uraian} uraian · ${this.money(x.pagu)}</option>`,
 								)
 								.join(""),
 					)
 					.dropdown("destroy")
 					.dropdown({ fullTextSearch: true });
+				if (!(r.data || []).length) Toast.show({ success: false, message: "Belum ada sub kegiatan DPA/DPPA yang disetujui dan dikunci. Kontrak belum dapat menggunakan anggaran ini." });
 			},
 		});
 		window.Ajax.request({

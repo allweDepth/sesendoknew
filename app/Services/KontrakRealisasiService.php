@@ -58,15 +58,14 @@ class KontrakRealisasiService
   public function availableSubActivities(int $contractId = 0): array
   {
     [$w, $o, $y] = $this->scope();
-    $params = [$w, $y];
-    $opd = '';
-    if ($o && $o !== '0') {
-      $opd = ' AND b.kd_opd=?';
-      $params[] = $o;
-    }
-    $sql = "SELECT b.kd_sub_keg,COUNT(*) jumlah_uraian,SUM(b.jumlah) pagu FROM dpa_neo b WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.is_deleted=0 GROUP BY b.kd_sub_keg
-              UNION ALL SELECT b.kd_sub_keg,COUNT(*),SUM(b.jumlah) FROM dppa_neo b WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.is_deleted=0 GROUP BY b.kd_sub_keg";
-    $rows = $this->db->query("SELECT kd_sub_keg,SUM(jumlah_uraian) jumlah_uraian,SUM(pagu) pagu FROM ($sql) x GROUP BY kd_sub_keg ORDER BY kd_sub_keg", array_merge($params, $params))->fetchAll();
+    $opd = ($o && $o !== '0') ? ' AND b.kd_opd=?' : '';
+    $dpaParams = [$w, $y];
+    if ($opd) $dpaParams[] = $o;
+    $dppaParams = [$w, $y];
+    if ($opd) $dppaParams[] = $o;
+    $sql = "SELECT b.kd_sub_keg,COUNT(*) jumlah_uraian,SUM(b.jumlah) pagu,'dppa' sumber FROM dppa_neo b WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0 GROUP BY b.kd_sub_keg
+              UNION ALL SELECT b.kd_sub_keg,COUNT(*),SUM(b.jumlah),'dpa' FROM dpa_neo b WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0 AND NOT EXISTS (SELECT 1 FROM dppa_neo p WHERE p.kd_wilayah=b.kd_wilayah AND p.kd_opd=b.kd_opd AND p.tahun=b.tahun AND p.kd_sub_keg=b.kd_sub_keg AND p.setujui=1 AND p.kunci=1 AND p.is_deleted=0) GROUP BY b.kd_sub_keg";
+    $rows = $this->db->query("SELECT kd_sub_keg,SUM(jumlah_uraian) jumlah_uraian,SUM(pagu) pagu,MAX(sumber) sumber FROM ($sql) x GROUP BY kd_sub_keg ORDER BY kd_sub_keg", array_merge($dppaParams, $dpaParams))->fetchAll();
     return $rows;
   }
 
@@ -74,7 +73,7 @@ class KontrakRealisasiService
   {
     [$w, $o, $y] = $this->scope();
     $params = [];
-    $scope = 'b.kd_wilayah=? AND b.tahun=? AND b.setujui=1 AND b.is_deleted=0';
+    $scope = 'b.kd_wilayah=? AND b.tahun=? AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0';
     $params[] = $w;
     $params[] = $y;
     if ($o && $o !== '0') {
@@ -84,6 +83,9 @@ class KontrakRealisasiService
     $needle = '%' . trim($search) . '%';
     $limit = max(10, min($limit, 100));
     $sql = function (string $table, string $stage) use ($scope, $contractId): string {
+      $fallback = $stage === 'dpa'
+        ? " AND NOT EXISTS (SELECT 1 FROM dppa_neo p WHERE p.kd_wilayah=b.kd_wilayah AND p.kd_opd=b.kd_opd AND p.tahun=b.tahun AND p.kd_sub_keg=b.kd_sub_keg AND p.setujui=1 AND p.kunci=1 AND p.is_deleted=0)"
+        : '';
       return "SELECT '$stage' tahap,b.id anggaran_id,b.kd_sub_keg,b.kd_akun,b.uraian,b.jumlah pagu,
                     COALESCE(ci.nilai_terpakai,0) nilai_terpakai,
                     GREATEST(b.jumlah-COALESCE(ci.nilai_terpakai,0),0) pagu_tersedia
@@ -92,7 +94,7 @@ class KontrakRealisasiService
                          FROM kontrak_item_neo i JOIN kontrak_neo k ON k.id=i.kontrak_id AND k.is_deleted=0 AND k.setujui=1
                          WHERE i.is_deleted=0" . ($contractId > 0 ? ' AND i.kontrak_id<>' . (int)$contractId : '') . "
                          GROUP BY i.tahap,i.anggaran_id) ci ON ci.tahap='$stage' AND ci.anggaran_id=b.id
-             WHERE $scope AND (?='' OR b.kd_sub_keg=?) AND (b.kd_sub_keg LIKE ? OR b.kd_akun LIKE ? OR b.uraian LIKE ? OR CAST(b.jumlah AS CHAR) LIKE ?)
+             WHERE $scope$fallback AND (?='' OR b.kd_sub_keg=?) AND (b.kd_sub_keg LIKE ? OR b.kd_akun LIKE ? OR b.uraian LIKE ? OR CAST(b.jumlah AS CHAR) LIKE ?)
                AND GREATEST(b.jumlah-COALESCE(ci.nilai_terpakai,0),0)>0";
     };
     $dpaParams = array_merge($params, [$subActivity, $subActivity, $needle, $needle, $needle, $needle]);
@@ -548,8 +550,12 @@ class KontrakRealisasiService
         $opdSql = ' AND kd_opd=?';
         $params[] = $header['kd_opd'];
       }
-      $budget = $this->db->query("SELECT id,kd_sub_keg,kd_akun,uraian,jumlah FROM $table WHERE id=? AND kd_wilayah=? AND tahun=?$opdSql AND setujui=1 AND is_deleted=0 LIMIT 1", $params)->fetch();
-      if (!$budget) throw new InvalidArgumentException('Uraian kontrak ke-' . ($index + 1) . ' tidak ditemukan atau DPA/DPPA belum disetujui');
+      $budget = $this->db->query("SELECT id,kd_sub_keg,kd_akun,uraian,jumlah FROM $table WHERE id=? AND kd_wilayah=? AND tahun=?$opdSql AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1", $params)->fetch();
+      if (!$budget) throw new InvalidArgumentException('Uraian kontrak ke-' . ($index + 1) . ' tidak ditemukan atau DPA/DPPA belum disetujui dan dikunci');
+      if ($stage === 'dpa') {
+        $dppaFinal = $this->db->query('SELECT id FROM dppa_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1', [$header['kd_wilayah'], $header['kd_opd'], $header['tahun'], $budget['kd_sub_keg']])->fetch();
+        if ($dppaFinal) throw new InvalidArgumentException('Gunakan uraian DPPA final untuk sub kegiatan ' . $budget['kd_sub_keg']);
+      }
       $used = (float)($this->db->query('SELECT COALESCE(SUM(ci.nilai_kontrak),0) total FROM kontrak_item_neo ci JOIN kontrak_neo k ON k.id=ci.kontrak_id AND k.is_deleted=0 AND k.setujui=1 WHERE ci.tahap=? AND ci.anggaran_id=? AND ci.kontrak_id<>? AND ci.is_deleted=0', [$stage, $budgetId, $contractId])->fetch()['total'] ?? 0);
       $available = (float)$budget['jumlah'] - $used;
       if ($value > $available) throw new InvalidArgumentException('Nilai kontrak untuk ' . $budget['kd_sub_keg'] . ' / ' . $budget['uraian'] . ' melebihi pagu tersedia Rp ' . number_format($available, 0, ',', '.'));
