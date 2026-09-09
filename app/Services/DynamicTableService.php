@@ -698,6 +698,34 @@ AUDIT TRAIL (TIDAK DIUBAH)
     $locked=$this->db->query("SELECT id FROM `$table` WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND (COALESCE(kunci,0)=1 OR COALESCE(setujui,0)=1) AND is_deleted=0 LIMIT 1",[$this->user['kd_wilayah']??'',$this->user['kd_opd']??'',(int)($this->user['tahun']??date('Y')),$code])->fetch();
     if($locked)throw new Exception('Dokumen sub kegiatan telah disetujui dan dikunci. Buka persetujuan terlebih dahulu untuk mengubah rincian.');
   }
+
+  private function applyChangeDocumentRules(string $table, array $oldData, array &$data): void
+  {
+    if (!in_array($table, ['renja_p_neo','rka_p_neo','dppa_neo'], true)) return;
+
+    if ((int)($oldData['source_id'] ?? 0) <= 0) {
+      if (($data['status_perubahan'] ?? '') === '') $data['status_perubahan'] = 'tambah';
+      return;
+    }
+
+    $protected = [
+      'kd_sub_keg','kd_akun','kel_rek','objek_belanja','uraian','jenis_kelompok','kelompok',
+      'jenis_standar_harga','id_standar_harga','komponen','spesifikasi','tkdn','pajak',
+      'harga_satuan','sat_1','sat_2','sat_3','sat_4','sat_5','sumber_dana_id','sumber_dana_teks'
+    ];
+    foreach ($protected as $field) {
+      if (array_key_exists($field, $data) && array_key_exists($field, $oldData)
+          && $data[$field] != $oldData[$field]) {
+        throw new RuntimeException('Baris dari dokumen sebelumnya hanya boleh diubah volumenya. Nolkan volume baris lama, lalu tambahkan komponen baru.');
+      }
+    }
+
+    $volume = (float)($data['volume'] ?? $oldData['volume'] ?? 0);
+    $oldVolume = (float)($oldData['volume'] ?? 0);
+    if (abs($volume) < 0.000001) $data['status_perubahan'] = 'hapus';
+    elseif (abs($volume - $oldVolume) >= 0.000001) $data['status_perubahan'] = 'ubah';
+    else $data['status_perubahan'] = $oldData['status_perubahan'] ?? 'awal';
+  }
   private function normalizeSakipMetrics(string $table,array $data):array
   {
     $scope=[$this->user['kd_wilayah']??'',$this->user['kd_opd']??'',(int)($this->user['tahun']??date('Y'))];
@@ -827,6 +855,9 @@ INSERT (FIXED STABLE VERSION v3.1)
 3️⃣ AUTO FIELD RESOLUTION (SCOPE)
 ===================================================== */
     $filtered = $this->resolveAutoFields($table, $filtered);
+    if (in_array($table, ['renja_p_neo','rka_p_neo','dppa_neo'], true)) {
+      $this->applyChangeDocumentRules($table, [], $filtered);
+    }
     if ($table === 'master_biaya') {
       try {
         $filtered['kode_aset'] = $this->validateAssetCode($filtered['kode_aset'] ?? null);
@@ -1242,6 +1273,9 @@ IGNORE SYSTEM FIELD
     if (!$oldData) {
       return JsonResponse::error("Data tidak ditemukan");
     }
+    if (!$this->checkAccess($table, $id)) {
+      return JsonResponse::error('Data tidak berada dalam lingkup wilayah, OPD, tahun, atau penugasan pengguna.');
+    }
     // ======================================================
     // 🔥 CEK PERUBAHAN NOMOR + TANGGAL
     // ======================================================
@@ -1310,6 +1344,7 @@ IGNORE SYSTEM FIELD
         $filtered[$field] = $value;
       }
     }
+    $this->applyChangeDocumentRules($table, $oldData, $filtered);
     $filtered=$this->normalizeSakipMetrics($table,$filtered);
     $this->enforceSubActivityAssignment($table, $filtered, 'edit');
     $this->enforceDocumentRowLock($table, $filtered);
@@ -1432,6 +1467,28 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
     $this->enforceSubActivityAssignment($table, $oldData ?: [], 'delete');
     $this->enforceDocumentRowLock($table, $oldData ?: []);
+
+    if (in_array($table, ['renja_p_neo','rka_p_neo','dppa_neo'], true)
+        && (int)($oldData['source_id'] ?? 0) > 0) {
+      if ($table === 'dppa_neo') {
+        $contractSql = $this->tableExists('kontrak_item_neo')
+          ? "SELECT COALESCE(SUM(nilai_kontrak),0) total FROM kontrak_item_neo WHERE tahap='dppa' AND anggaran_id=? AND is_deleted=0"
+          : "SELECT COALESCE(SUM(nilai_kontrak),0) total FROM kontrak_neo WHERE tahap='dppa' AND anggaran_id=? AND is_deleted=0";
+        $contractTotal = (float)($this->db->query($contractSql, [$id])->fetch()['total'] ?? 0);
+        if ($contractTotal > 0) {
+          return JsonResponse::error('Volume DPPA tidak dapat dinolkan karena sudah dipakai kontrak.');
+        }
+      }
+      $zero = ['volume'=>0,'jumlah'=>0,'status_perubahan'=>'hapus'];
+      foreach (['vol_1','vol_2','vol_3','vol_4','vol_5'] as $field) {
+        if (array_key_exists($field, $oldData)) $zero[$field] = 0;
+      }
+      if (array_key_exists('tgl_update', $oldData)) $zero['tgl_update'] = date('Y-m-d H:i:s');
+      if (array_key_exists('username_update', $oldData)) $zero['username_update'] = $this->user['username'] ?? 'system';
+      $this->db->update($table, $zero, "WHERE `$primaryKey`=?", [$id]);
+      $this->logActivity($table, $id, 'zero-volume', $oldData, $zero);
+      return JsonResponse::success('Baris asal dokumen sebelumnya dipertahankan dengan volume nol.');
+    }
 
     if (in_array($table, ['dpa_neo', 'dppa_neo'], true)) {
       $stage = $table === 'dpa_neo' ? 'dpa' : 'dppa';
@@ -2958,14 +3015,24 @@ menentukan parent table dan cara validasi relasinya
         'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
       ],
 
+      'rka_neo' => [
+        'parent_table' => 'renja_neo',
+        'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
+      ],
+
+      'rka_p_neo' => [
+        'parent_table' => 'renja_p_neo',
+        'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
+      ],
+
       // DPA
       'dpa_neo' => [
         'parent_table' => 'renja_neo',
         'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
       ],
 
-      'dpppa_neo' => [
-        'parent_table' => 'dpa_neo',
+      'dppa_neo' => [
+        'parent_table' => 'rka_p_neo',
         'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
       ],
     ];
@@ -4143,7 +4210,7 @@ LIMIT 1",
         'lock'  => 'kunci_dpa'
       ],
 
-      'dpppa_neo' => [
+      'dppa_neo' => [
         'start' => 'awal_dppa',
         'end'   => 'akhir_dppa',
         'lock'  => 'kunci_dppa'
@@ -5165,6 +5232,13 @@ AND is_deleted = 0
 
       list($scopeWhere, $scopeParams) =
         $this->resolveScope($table, $profile, 'dropdown');
+
+      if ($joinSQL !== '') {
+        $scopeWhere = array_map(
+          fn($condition) => $this->qualifyBaseTableColumns($condition, $table),
+          $scopeWhere
+        );
+      }
 
       $mandatoryWhere = array_merge($mandatoryWhere, $scopeWhere);
       $params = array_merge($params, $scopeParams);

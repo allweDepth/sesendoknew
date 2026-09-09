@@ -5,8 +5,9 @@ require_once __DIR__.'/../app/Services/DynamicTableService.php';
 
 $ok=static function(bool $value,string $message):void{if(!$value)throw new RuntimeException('FAIL: '.$message);echo "PASS: {$message}\n";};
 $db=DB::getInstance();
-$user=$db->query("SELECT * FROM user_sesendok_biila WHERE tahun=? AND disable=0 ORDER BY id LIMIT 1",[2025])->fetch();
-$ok((bool)$user,'pengguna tahun 2025 tersedia dari database');
+$user=$db->query("SELECT * FROM user_sesendok_biila WHERE disable=0 AND kd_wilayah<>'' ORDER BY id LIMIT 1")->fetch();
+$ok((bool)$user,'pengguna berscope wilayah tersedia dari database');
+$user['tahun']=2025;
 $_SESSION['user']=$user;
 $response=json_decode((new DynamicTableService())->handle(['action'=>'list','tbl'=>'hspk','halaman'=>1,'rows'=>5]),true);
 $ok(($response['success']??false)===true,'listing HSPK 2025 berhasil');

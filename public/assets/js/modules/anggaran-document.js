@@ -14,7 +14,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		const table = $("#anggaranDocument").data("table") || paths[path] || "rkpd";
 		super({ moduleName: "anggaran", menuItems: [], useMenu: false });
 		this.table = table;
-		this.next = { renja: "rkpd", rka: "dpa", dpa: "dppa" };
+		this.next = { renja: "rka", rka: "dpa", renja_p: "rka_p", rka_p: "dppa", dpa: "dppa" };
 		this.changes = { rkpd: "rkpd_p", renja: "renja_p", rka: "rka_p" };
 	}
 	init() {
@@ -106,7 +106,8 @@ class AnggaranDocumentModule extends BaseCrudModule {
 	renderDetails(code, rows) {
 		if (["rkpd", "rkpd_p"].includes(this.table)) return this.renderRkpdDetails(code, rows);
 		const changed = rows.some((r) => r.jumlah_awal !== undefined && r.jumlah_awal !== null),
-			canPlan = ["dpa", "dppa"].includes(this.table);
+			canPlan = ["dpa", "dppa"].includes(this.table),
+			groupLocked = rows.some((r) => Number(r.kunci) || Number(r.setujui));
 		let lastGroup = "", lastDetailGroup = "",
 			cells = "";
 		rows.forEach((r) => {
@@ -120,14 +121,15 @@ class AnggaranDocumentModule extends BaseCrudModule {
 				cells += `<tr class="budget-level subgroup"><td></td><td colspan="${changed ? 8 : 5}"><i class="angle right icon"></i><b>[ - ] ${this.escape(r.uraian)}</b>${r.sumber_dana_teks ? `<div class="ui tiny grey text">Sumber Dana: ${this.escape(r.sumber_dana_teks)}</div>` : ""}</td></tr>`;
 				lastDetailGroup = r.uraian;
 			}
-			cells += `<tr data-id="${r.id}"><td>${this.escape(r.kd_akun || "-")}</td><td><b>${this.escape(r.komponen_asli || r.komponen || r.uraian)}</b>${r.spesifikasi ? `<div class="ui tiny grey text">${this.escape(r.spesifikasi)}</div>` : ""}</td>${changed ? `<td class="right aligned">${this.escape(r.volume_awal || 0)}</td><td class="right aligned">${this.money(r.harga_satuan_awal || 0)}</td><td class="right aligned budget-pagu-column">${this.money(r.jumlah_awal || 0)}</td>` : ""}<td class="right aligned">${this.escape(r.koefisien_keterangan || r.volume || 0)}</td><td class="right aligned">${this.money(r.harga_satuan || 0)}</td><td class="right aligned budget-pagu-column"><b>${this.money(r.jumlah || 0)}</b></td><td>${this.canWrite ? `<div class="ui mini basic icon buttons">${canPlan ? `<button class="ui teal button" title="Rencana bulanan" data-budget-action="monthly" data-id="${r.id}"><i class="calendar alternate icon"></i></button>` : ""}<button class="ui button" title="Edit rincian" data-ui="open-form" data-action="edit" data-tbl="${this.table}" data-id="${r.id}"><i class="blue edit icon"></i></button><button class="ui red button" title="Hapus rincian" data-budget-action="delete" data-id="${r.id}"><i class="trash icon"></i></button></div>` : '<span class="ui grey label">Baca</span>'}</td></tr>`;
+			const inherited = Number(r.source_id) > 0;
+			cells += `<tr data-id="${r.id}"><td>${this.escape(r.kd_akun || "-")}</td><td><b>${this.escape(r.komponen_asli || r.komponen || r.uraian)}</b>${r.spesifikasi ? `<div class="ui tiny grey text">${this.escape(r.spesifikasi)}</div>` : ""}</td>${changed ? `<td class="right aligned">${this.escape(r.volume_awal || 0)}</td><td class="right aligned">${this.money(r.harga_satuan_awal || 0)}</td><td class="right aligned budget-pagu-column">${this.money(r.jumlah_awal || 0)}</td>` : ""}<td class="right aligned">${this.escape(r.koefisien_keterangan || r.volume || 0)}</td><td class="right aligned">${this.money(r.harga_satuan || 0)}</td><td class="right aligned budget-pagu-column"><b>${this.money(r.jumlah || 0)}</b></td><td>${this.canWrite && !groupLocked ? `<div class="ui mini basic icon buttons">${canPlan ? `<button class="ui teal button" title="Rencana bulanan" data-budget-action="monthly" data-id="${r.id}"><i class="calendar alternate icon"></i></button>` : ""}<button class="ui button" title="Edit rincian" data-ui="open-form" data-action="edit" data-tbl="${this.table}" data-id="${r.id}"><i class="blue edit icon"></i></button><button class="ui ${inherited ? "orange" : "red"} button" title="${inherited ? "Nolkan volume" : "Hapus rincian"}" data-budget-action="delete" data-id="${r.id}"><i class="${inherited ? "ban" : "trash"} icon"></i></button></div>` : '<span class="ui grey label">Dikunci</span>'}</td></tr>`;
 		});
 		const before = changed ? '<th colspan="3" class="center aligned">Sebelum Perubahan</th>' : "",
 			cols = changed
 				? '<colgroup><col style="width:11%"><col style="width:24%"><col style="width:7%"><col style="width:9%"><col style="width:13%"><col style="width:7%"><col style="width:9%"><col style="width:15%"><col style="width:5%"></colgroup>'
 				: '<colgroup><col style="width:15%"><col style="width:34%"><col style="width:12%"><col style="width:15%"><col style="width:19%"><col style="width:5%"></colgroup>';
 		$("#budgetGroupList").html(
-			`<div class="ui segment"><button class="ui basic button" data-budget-action="back"><i class="arrow left icon"></i> Daftar Sub Kegiatan</button><span class="ui blue label">${this.escape(code)}</span>${this.canWrite ? `<button class="ui right floated primary button" data-ui="open-form" data-action="add" data-tbl="${this.table}" data-budget-code="${this.escape(code)}"><i class="plus icon"></i> Tambah Rincian Belanja</button>` : ""}</div><div class="ui segment table-wrapper"><table class="ui celled striped fixed table budget-detail-table">${cols}<thead>${changed ? `<tr><th colspan="2"></th>${before}<th colspan="3" class="center aligned">Sesudah Perubahan</th><th></th></tr>` : ""}<tr><th>Kode Akun</th><th>Uraian/Komponen</th>${changed ? "<th>Volume</th><th>Harga</th><th class=\"budget-pagu-column\">Jumlah</th>" : ""}<th>Volume/Target</th><th>Harga Satuan</th><th class="budget-pagu-column">Jumlah/Pagu</th><th>Aksi</th></tr></thead><tbody>${cells || `<tr><td colspan="${changed ? 9 : 6}" class="center aligned">Belum ada rincian</td></tr>`}</tbody></table></div>`,
+			`<div class="ui segment"><button class="ui basic button" data-budget-action="back"><i class="arrow left icon"></i> Daftar Sub Kegiatan</button><span class="ui blue label">${this.escape(code)}</span>${this.canWrite && !groupLocked ? `<button class="ui right floated primary button" data-ui="open-form" data-action="add" data-tbl="${this.table}" data-budget-code="${this.escape(code)}"><i class="plus icon"></i> Tambah Rincian Belanja</button>` : ""}</div><div class="ui segment table-wrapper"><table class="ui celled striped fixed table budget-detail-table">${cols}<thead>${changed ? `<tr><th colspan="2"></th>${before}<th colspan="3" class="center aligned">Sesudah Perubahan</th><th></th></tr>` : ""}<tr><th>Kode Akun</th><th>Uraian/Komponen</th>${changed ? "<th>Volume</th><th>Harga</th><th class=\"budget-pagu-column\">Jumlah</th>" : ""}<th>Volume/Target</th><th>Harga Satuan</th><th class="budget-pagu-column">Jumlah/Pagu</th><th>Aksi</th></tr></thead><tbody>${cells || `<tr><td colspan="${changed ? 9 : 6}" class="center aligned">Belum ada rincian</td></tr>`}</tbody></table></div>`,
 		);
 	}
 	renderRkpdDetails(code, rows) {
@@ -153,7 +155,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 				}
 				else if (a === "pdf") this.download(`/anggaran/export_pdf?tbl=${this.table}`);
 				else if (a === "delete") {
-					if (!window.confirm("Hapus uraian ini? Data yang telah berkontrak akan ditolak sistem.")) return;
+					if (!window.confirm("Lanjutkan? Baris turunan dokumen sebelumnya akan dipertahankan dengan volume nol; hanya baris baru yang dapat dihapus.")) return;
 					window.Ajax.request({
 						method: "POST",
 						data: { action: "delete", tbl: this.table, id_row: b.data("id") },

@@ -7,7 +7,7 @@ class AnggaranCopyService
     private DB $db;
     private array $user;
     private const TABLES = ['rkpd'=>'rkpd_neo','renja'=>'renja_neo','rka'=>'rka_neo','dpa'=>'dpa_neo','rkpd_p'=>'rkpd_p_neo','renja_p'=>'renja_p_neo','rka_p'=>'rka_p_neo','dppa'=>'dppa_neo'];
-    private const TRANSITIONS = ['rkpd:renja','renja:rkpd','renja:rka','rka:dpa','rkpd:rkpd_p','renja:renja_p','rka:rka_p','dpa:dppa'];
+    private const TRANSITIONS = ['rkpd:renja','renja:rkpd','renja:rka','rka:dpa','rkpd:rkpd_p','renja:renja_p','rka:rka_p','renja_p:rka_p','rka_p:dppa','dpa:dppa'];
 
     public function __construct(array $user = []) { $this->db = DB::getInstance(); $this->user = $user; }
     public static function table(string $logical): string
