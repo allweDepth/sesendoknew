@@ -186,10 +186,14 @@ PERUBAHAN:
   private function explainThrowable(\Throwable $e, string $action, string $profileKey): string
   {
     $operation = [
-      'add' => 'menambah', 'add_json' => 'menambah',
-      'edit' => 'mengubah', 'edit_json' => 'mengubah',
-      'delete' => 'menghapus', 'list' => 'memuat',
-      'dropdown' => 'memuat pilihan', 'import' => 'mengimpor',
+      'add' => 'menambah',
+      'add_json' => 'menambah',
+      'edit' => 'mengubah',
+      'edit_json' => 'mengubah',
+      'delete' => 'menghapus',
+      'list' => 'memuat',
+      'dropdown' => 'memuat pilihan',
+      'import' => 'mengimpor',
       'export' => 'mengekspor',
     ][$action] ?? 'memproses';
     $target = $profileKey !== '' ? " pada modul {$profileKey}" : '';
@@ -331,18 +335,22 @@ PERUBAHAN:
 
   private function enforceBudgetSchedule(string $table): void
   {
-    $role=strtolower(str_replace(' ','_', (string)($this->user['type_user']??'')));
-    if($role!=='admin_opd')return;
-    $map=['rkpd_neo'=>'rkpd','renja_neo'=>'renja','rka_neo'=>'rka','dpa_neo'=>'dpa','rkpd_p_neo'=>'rkpd_perubahan','renja_p_neo'=>'renja_p','rka_p_neo'=>'renja_p','dppa_neo'=>'dppa'];
-    $stage=$map[$table]??null;if(!$stage)return;
-    $columns=$this->getTableColumns('pengaturan_neo');$start='awal_'.$stage;$end='akhir_'.$stage;
-    if(!in_array($start,$columns,true)||!in_array($end,$columns,true))throw new RuntimeException('Jadwal '.$stage.' belum dikonfigurasi oleh administrator wilayah');
-    $lockMap=['renja'=>'kunci_renja','rka'=>'kunci_renja','dpa'=>'kunci_dpa','rkpd_perubahan'=>'kunci_renja_p','renja_p'=>'kunci_renja_p','dppa'=>'kunci_dppa'];
-    $lock=$lockMap[$stage]??'kunci';
-    $row=$this->db->query("SELECT `$start` mulai,`$end` selesai,COALESCE(`$lock`,0) dikunci FROM pengaturan_neo WHERE kd_wilayah=? AND tahun=? AND is_deleted=0 ORDER BY id DESC LIMIT 1",[$this->user['kd_wilayah']??'',(int)($this->user['tahun']??date('Y'))])->fetch();
-    if(!$row||empty($row['mulai'])||empty($row['selesai']))throw new RuntimeException('Jadwal '.strtoupper($stage).' belum ditetapkan. Hubungi admin wilayah.');
-    if((int)$row['dikunci']===1)throw new RuntimeException('Input '.strtoupper($stage).' sedang dikunci oleh admin wilayah.');
-    $now=time();if($now<strtotime($row['mulai'])||$now>strtotime($row['selesai']))throw new RuntimeException('Periode input '.strtoupper($stage).' hanya dibuka '.date('d-m-Y H:i',strtotime($row['mulai'])).' s.d. '.date('d-m-Y H:i',strtotime($row['selesai'])).'.');
+    $role = strtolower(str_replace(' ', '_', (string)($this->user['type_user'] ?? '')));
+    if ($role !== 'admin_opd') return;
+    $map = ['rkpd_neo' => 'rkpd', 'renja_neo' => 'renja', 'rka_neo' => 'rka', 'dpa_neo' => 'dpa', 'rkpd_p_neo' => 'rkpd_perubahan', 'renja_p_neo' => 'renja_p', 'rka_p_neo' => 'renja_p', 'dppa_neo' => 'dppa'];
+    $stage = $map[$table] ?? null;
+    if (!$stage) return;
+    $columns = $this->getTableColumns('pengaturan_neo');
+    $start = 'awal_' . $stage;
+    $end = 'akhir_' . $stage;
+    if (!in_array($start, $columns, true) || !in_array($end, $columns, true)) throw new RuntimeException('Jadwal ' . $stage . ' belum dikonfigurasi oleh administrator wilayah');
+    $lockMap = ['renja' => 'kunci_renja', 'rka' => 'kunci_renja', 'dpa' => 'kunci_dpa', 'rkpd_perubahan' => 'kunci_renja_p', 'renja_p' => 'kunci_renja_p', 'dppa' => 'kunci_dppa'];
+    $lock = $lockMap[$stage] ?? 'kunci';
+    $row = $this->db->query("SELECT `$start` mulai,`$end` selesai,COALESCE(`$lock`,0) dikunci FROM pengaturan_neo WHERE kd_wilayah=? AND tahun=? AND is_deleted=0 ORDER BY id DESC LIMIT 1", [$this->user['kd_wilayah'] ?? '', (int)($this->user['tahun'] ?? date('Y'))])->fetch();
+    if (!$row || empty($row['mulai']) || empty($row['selesai'])) throw new RuntimeException('Jadwal ' . strtoupper($stage) . ' belum ditetapkan. Hubungi admin wilayah.');
+    if ((int)$row['dikunci'] === 1) throw new RuntimeException('Input ' . strtoupper($stage) . ' sedang dikunci oleh admin wilayah.');
+    $now = time();
+    if ($now < strtotime($row['mulai']) || $now > strtotime($row['selesai'])) throw new RuntimeException('Periode input ' . strtoupper($stage) . ' hanya dibuka ' . date('d-m-Y H:i', strtotime($row['mulai'])) . ' s.d. ' . date('d-m-Y H:i', strtotime($row['selesai'])) . '.');
   }
   /* =========================================================
 GET SINGLE ROW
@@ -588,17 +596,20 @@ GET SINGLE ROW
   /** Memulihkan field klasifikasi yang kosong pada data anggaran legacy. */
   private function normalizeBudgetEditRow(string $table, array $row): array
   {
-    $budgetTables=['renja_neo','rka_neo','dpa_neo','renja_p_neo','rka_p_neo','dppa_neo'];
-    if(!in_array($table,$budgetTables,true))return $row;
-    $sourceMap=['renja_p_neo'=>'renja_neo','rka_p_neo'=>'rka_neo','dppa_neo'=>'dpa_neo'];
-    if(isset($sourceMap[$table])&&!empty($row['source_id'])){
-      $source=$this->db->query("SELECT objek_belanja,jenis_kelompok,jenis_standar_harga,id_standar_harga,kelompok FROM `{$sourceMap[$table]}` WHERE id=? AND is_deleted=0 LIMIT 1",[(int)$row['source_id']])->fetch();
-      if($source)foreach(['objek_belanja','jenis_kelompok','jenis_standar_harga','id_standar_harga','kelompok'] as $field)if(($row[$field]??null)===null||$row[$field]==='')$row[$field]=$source[$field]??null;
+    $budgetTables = ['renja_neo', 'rka_neo', 'dpa_neo', 'renja_p_neo', 'rka_p_neo', 'dppa_neo'];
+    if (!in_array($table, $budgetTables, true)) return $row;
+    $sourceMap = ['renja_p_neo' => 'renja_neo', 'rka_p_neo' => 'rka_neo', 'dppa_neo' => 'dpa_neo'];
+    if (isset($sourceMap[$table]) && !empty($row['source_id'])) {
+      $source = $this->db->query("SELECT objek_belanja,jenis_kelompok,jenis_standar_harga,id_standar_harga,kelompok FROM `{$sourceMap[$table]}` WHERE id=? AND is_deleted=0 LIMIT 1", [(int)$row['source_id']])->fetch();
+      if ($source) foreach (['objek_belanja', 'jenis_kelompok', 'jenis_standar_harga', 'id_standar_harga', 'kelompok'] as $field) if (($row[$field] ?? null) === null || $row[$field] === '') $row[$field] = $source[$field] ?? null;
     }
-    $account=(string)($row['kd_akun']??'');
-    if(empty($row['objek_belanja']))$row['objek_belanja']=str_starts_with($account,'5.2.')?'belanja_modal':(str_starts_with($account,'5.3.')?'belanja_tidak_terduga':'belanja_operasi');
-    if(empty($row['jenis_kelompok']))$row['jenis_kelompok']=empty($row['kelompok'])?'non_paket':'pemaketan';
-    if(empty($row['jenis_standar_harga'])&&!empty($row['id_standar_harga'])){$standard=$this->db->query('SELECT tipe FROM master_biaya WHERE id=? AND is_deleted=0 LIMIT 1',[(int)$row['id_standar_harga']])->fetch();$row['jenis_standar_harga']=$standard['tipe']??'ssh';}
+    $account = (string)($row['kd_akun'] ?? '');
+    if (empty($row['objek_belanja'])) $row['objek_belanja'] = str_starts_with($account, '5.2.') ? 'belanja_modal' : (str_starts_with($account, '5.3.') ? 'belanja_tidak_terduga' : 'belanja_operasi');
+    if (empty($row['jenis_kelompok'])) $row['jenis_kelompok'] = empty($row['kelompok']) ? 'non_paket' : 'pemaketan';
+    if (empty($row['jenis_standar_harga']) && !empty($row['id_standar_harga'])) {
+      $standard = $this->db->query('SELECT tipe FROM master_biaya WHERE id=? AND is_deleted=0 LIMIT 1', [(int)$row['id_standar_harga']])->fetch();
+      $row['jenis_standar_harga'] = $standard['tipe'] ?? 'ssh';
+    }
     return $row;
   }
 
@@ -609,37 +620,37 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
   {
     $role = $this->user['type_user'] ?? 'viewer';
 
-    $matrix=require __DIR__.'/../Config/role_matrix.php';
-    if($role==='editor')$role='staf_opd';
-    if($role==='user')$role='viewer';
-    if (in_array($action,['add','edit','delete'],true)) {
-      $technicalProfiles=['rekening_kegiatan','satuan','mapping','aset','akun','sumber_dana','ssh','hspk','asb','sbu'];
-      $referenceProfile=$this->activeProfileKey;
-      if(in_array($referenceProfile,$technicalProfiles,true)) {
-        if($action==='delete'||$role!=='tapd')throw new Exception('Referensi teknis hanya dapat ditambah atau diubah oleh TAPD; role lain hanya dapat melihat.');
+    $matrix = require __DIR__ . '/../Config/role_matrix.php';
+    if ($role === 'editor') $role = 'staf_opd';
+    if ($role === 'user') $role = 'viewer';
+    if (in_array($action, ['add', 'edit', 'delete'], true)) {
+      $technicalProfiles = ['rekening_kegiatan', 'satuan', 'mapping', 'aset', 'akun', 'sumber_dana', 'ssh', 'hspk', 'asb', 'sbu'];
+      $referenceProfile = $this->activeProfileKey;
+      if (in_array($referenceProfile, $technicalProfiles, true)) {
+        if ($action === 'delete' || $role !== 'tapd') throw new Exception('Referensi teknis hanya dapat ditambah atau diubah oleh TAPD; role lain hanya dapat melihat.');
         return;
       }
-      if($referenceProfile==='organisasi') {
-        if($action==='delete'||$role!=='admin_wilayah')throw new Exception('Referensi OPD hanya dapat ditambah atau diubah oleh Admin Wilayah.');
+      if ($referenceProfile === 'organisasi') {
+        if ($action === 'delete' || $role !== 'admin_wilayah') throw new Exception('Referensi OPD hanya dapat ditambah atau diubah oleh Admin Wilayah.');
         return;
       }
-      if($referenceProfile==='wilayah') {
-        if($action==='delete'||$role!=='super_admin')throw new Exception('Referensi wilayah hanya dapat ditambah atau diubah oleh Super Admin.');
+      if ($referenceProfile === 'wilayah') {
+        if ($action === 'delete' || $role !== 'super_admin') throw new Exception('Referensi wilayah hanya dapat ditambah atau diubah oleh Super Admin.');
         return;
       }
-      $personnelProfiles=['asn','pppk','riwayat_jabatan','riwayat_pangkat','cuti','sk_pegawai','absensi','dokumen_pegawai'];
-      if(in_array($referenceProfile,$personnelProfiles,true)) {
-        if(!in_array($role,['admin_wilayah','admin_opd','kepala_opd','pa_kpa'],true))throw new Exception('Data kepegawaian hanya dapat dikelola Admin Wilayah, Admin OPD, Kepala OPD, atau PA/KPA sesuai lingkupnya.');
+      $personnelProfiles = ['asn', 'pppk', 'riwayat_jabatan', 'riwayat_pangkat', 'cuti', 'sk_pegawai', 'absensi', 'dokumen_pegawai'];
+      if (in_array($referenceProfile, $personnelProfiles, true)) {
+        if (!in_array($role, ['admin_wilayah', 'admin_opd', 'kepala_opd', 'pa_kpa'], true)) throw new Exception('Data kepegawaian hanya dapat dikelola Admin Wilayah, Admin OPD, Kepala OPD, atau PA/KPA sesuai lingkupnya.');
         return;
       }
-      $sakipProfiles=['iku_opd','pohon_kinerja','perjanjian_kinerja','perjanjian_kinerja_detail','pengukuran_kinerja','evaluasi_renstra','evaluasi_renja','renja_kinerja'];
-      if(in_array($referenceProfile,$sakipProfiles,true)) {
-        if(!in_array($role,['admin_opd','kepala_opd','pa_kpa'],true))throw new Exception('Dokumen SAKIP hanya dapat dikelola pengelola OPD; role lain memperoleh akses baca sesuai lingkup.');
+      $sakipProfiles = ['iku_opd', 'pohon_kinerja', 'perjanjian_kinerja', 'perjanjian_kinerja_detail', 'pengukuran_kinerja', 'evaluasi_renstra', 'evaluasi_renja', 'renja_kinerja'];
+      if (in_array($referenceProfile, $sakipProfiles, true)) {
+        if (!in_array($role, ['admin_opd', 'kepala_opd', 'pa_kpa'], true)) throw new Exception('Dokumen SAKIP hanya dapat dikelola pengelola OPD; role lain memperoleh akses baca sesuai lingkup.');
         return;
       }
     }
-    if (!in_array($action, $matrix[$role]['actions'] ?? [],true)) {
-      throw new Exception("Role ".($matrix[$role]['label']??$role)." tidak diizinkan melakukan aksi $action. Lingkup akses: ".($matrix[$role]['scope']??'tidak ditentukan'));
+    if (!in_array($action, $matrix[$role]['actions'] ?? [], true)) {
+      throw new Exception("Role " . ($matrix[$role]['label'] ?? $role) . " tidak diizinkan melakukan aksi $action. Lingkup akses: " . ($matrix[$role]['scope'] ?? 'tidak ditentukan'));
     }
 
     // Membuat/mengubah daftar subkegiatan adalah kewenangan PA/KPA atau
@@ -651,13 +662,15 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
         throw new Exception('Hanya Kepala OPD/PA/KPA yang dapat mengelola daftar subkegiatan.');
       }
     }
-    if (in_array($table, ['user_subkegiatan_neo','pejabat_tahunan_neo'], true) && in_array($action,['add','edit','delete'],true)) {
-      if (!in_array($role,['admin_wilayah','kepala_opd'],true)) {
+    if (in_array($table, ['user_subkegiatan_neo', 'pejabat_tahunan_neo'], true) && in_array($action, ['add', 'edit', 'delete'], true)) {
+      if (!in_array($role, ['admin_wilayah', 'kepala_opd'], true)) {
         throw new Exception('Penetapan pejabat dan sub kegiatan hanya menjadi kewenangan Kepala OPD atau administrator regional.');
       }
     }
-    if ($table === 'rpjmd_kabupaten_neo' && in_array($action,['add','edit','delete'],true)
-        && !in_array($role,['super_admin','admin_wilayah'],true)) {
+    if (
+      $table === 'rpjmd_kabupaten_neo' && in_array($action, ['add', 'edit', 'delete'], true)
+      && !in_array($role, ['super_admin', 'admin_wilayah'], true)
+    ) {
       throw new Exception('RPJMD Kabupaten hanya dapat dikelola Admin Kabupaten; pengguna lain hanya dapat melihat.');
     }
   }
@@ -685,23 +698,24 @@ AUDIT TRAIL (TIDAK DIUBAH)
 
   private function enforceSubActivityAssignment(string $table, array $data, string $action): void
   {
-    $role=$this->user['type_user']??'viewer';
-    if(!in_array($role,['ppk','pptk','staf_opd'],true) || empty($data['kd_sub_keg']))return;
-    $flag=$action==='delete'?'dapat_hapus':'dapat_input';
-    $assignment=$this->db->query("SELECT id FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND `$flag`=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0 LIMIT 1",[(int)($this->user['id']??0),$this->user['kd_wilayah']??'', $this->user['kd_opd']??'', $this->user['tahun']??date('Y'),$data['kd_sub_keg']])->fetch();
-    if(!$assignment)throw new Exception('Anda tidak memiliki izin '.$action.' untuk sub kegiatan ini.');
+    $role = $this->user['type_user'] ?? 'viewer';
+    if (!in_array($role, ['ppk', 'pptk', 'staf_opd'], true) || empty($data['kd_sub_keg'])) return;
+    $flag = $action === 'delete' ? 'dapat_hapus' : 'dapat_input';
+    $assignment = $this->db->query("SELECT id FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND `$flag`=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0 LIMIT 1", [(int)($this->user['id'] ?? 0), $this->user['kd_wilayah'] ?? '', $this->user['kd_opd'] ?? '', $this->user['tahun'] ?? date('Y'), $data['kd_sub_keg']])->fetch();
+    if (!$assignment) throw new Exception('Anda tidak memiliki izin ' . $action . ' untuk sub kegiatan ini.');
   }
-  private function enforceDocumentRowLock(string $table,array $data):void
+  private function enforceDocumentRowLock(string $table, array $data): void
   {
-    if(!in_array($table,['rkpd_neo','renja_neo','rka_neo','dpa_neo','rkpd_p_neo','renja_p_neo','rka_p_neo','dppa_neo'],true))return;
-    $code=trim((string)($data['kd_sub_keg']??''));if($code==='')return;
-    $locked=$this->db->query("SELECT id FROM `$table` WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND (COALESCE(kunci,0)=1 OR COALESCE(setujui,0)=1) AND is_deleted=0 LIMIT 1",[$this->user['kd_wilayah']??'',$this->user['kd_opd']??'',(int)($this->user['tahun']??date('Y')),$code])->fetch();
-    if($locked)throw new Exception('Dokumen sub kegiatan telah disetujui dan dikunci. Buka persetujuan terlebih dahulu untuk mengubah rincian.');
+    if (!in_array($table, ['rkpd_neo', 'renja_neo', 'rka_neo', 'dpa_neo', 'rkpd_p_neo', 'renja_p_neo', 'rka_p_neo', 'dppa_neo'], true)) return;
+    $code = trim((string)($data['kd_sub_keg'] ?? ''));
+    if ($code === '') return;
+    $locked = $this->db->query("SELECT id FROM `$table` WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND (COALESCE(kunci,0)=1 OR COALESCE(setujui,0)=1) AND is_deleted=0 LIMIT 1", [$this->user['kd_wilayah'] ?? '', $this->user['kd_opd'] ?? '', (int)($this->user['tahun'] ?? date('Y')), $code])->fetch();
+    if ($locked) throw new Exception('Dokumen sub kegiatan telah disetujui dan dikunci. Buka persetujuan terlebih dahulu untuk mengubah rincian.');
   }
 
   private function applyChangeDocumentRules(string $table, array $oldData, array &$data): void
   {
-    if (!in_array($table, ['renja_p_neo','rka_p_neo','dppa_neo'], true)) return;
+    if (!in_array($table, ['renja_p_neo', 'rka_p_neo', 'dppa_neo'], true)) return;
 
     if ((int)($oldData['source_id'] ?? 0) <= 0) {
       if (($data['status_perubahan'] ?? '') === '') $data['status_perubahan'] = 'tambah';
@@ -709,13 +723,33 @@ AUDIT TRAIL (TIDAK DIUBAH)
     }
 
     $protected = [
-      'kd_sub_keg','kd_akun','kel_rek','objek_belanja','uraian','jenis_kelompok','kelompok',
-      'jenis_standar_harga','id_standar_harga','komponen','spesifikasi','tkdn','pajak',
-      'harga_satuan','sat_1','sat_2','sat_3','sat_4','sat_5','sumber_dana_id','sumber_dana_teks'
+      'kd_sub_keg',
+      'kd_akun',
+      'kel_rek',
+      'objek_belanja',
+      'uraian',
+      'jenis_kelompok',
+      'kelompok',
+      'jenis_standar_harga',
+      'id_standar_harga',
+      'komponen',
+      'spesifikasi',
+      'tkdn',
+      'pajak',
+      'harga_satuan',
+      'sat_1',
+      'sat_2',
+      'sat_3',
+      'sat_4',
+      'sat_5',
+      'sumber_dana_id',
+      'sumber_dana_teks'
     ];
     foreach ($protected as $field) {
-      if (array_key_exists($field, $data) && array_key_exists($field, $oldData)
-          && $data[$field] != $oldData[$field]) {
+      if (
+        array_key_exists($field, $data) && array_key_exists($field, $oldData)
+        && $data[$field] != $oldData[$field]
+      ) {
         throw new RuntimeException('Baris dari dokumen sebelumnya hanya boleh diubah volumenya. Nolkan volume baris lama, lalu tambahkan komponen baru.');
       }
     }
@@ -726,36 +760,103 @@ AUDIT TRAIL (TIDAK DIUBAH)
     elseif (abs($volume - $oldVolume) >= 0.000001) $data['status_perubahan'] = 'ubah';
     else $data['status_perubahan'] = $oldData['status_perubahan'] ?? 'awal';
   }
-  private function normalizeSakipMetrics(string $table,array $data):array
+  private function normalizeSakipMetrics(string $table, array $data): array
   {
-    $scope=[$this->user['kd_wilayah']??'',$this->user['kd_opd']??'',(int)($this->user['tahun']??date('Y'))];
-    if($table==='pohon_kinerja_neo'&&!empty($data['sumber_kinerja_key'])&&preg_match('/^(sasaran_renstra|program_renstra|kegiatan_renstra|sub_kegiatan_renstra):(\d+)$/',(string)$data['sumber_kinerja_key'],$m)){$data['sumber_ref']=$m[1];$data['sumber_id']=(int)$m[2];}
-    if($table==='pohon_kinerja_neo'&&!empty($data['iku_id'])){$r=$this->db->query('SELECT nama_indikator,satuan,target_akhir FROM iku_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND is_deleted=0 LIMIT 1',[(int)$data['iku_id'],$scope[0],$scope[1]])->fetch();if($r){if(empty($data['indikator']))$data['indikator']=$r['nama_indikator'];if(empty($data['satuan']))$data['satuan']=$r['satuan'];if(($data['target']??'')==='')$data['target']=$r['target_akhir']??0;}}
-    if($table==='renja_sub_kegiatan_kinerja_neo'&&!empty($data['sub_kegiatan_renstra_id'])){$r=$this->db->query('SELECT rk.kode,sk.lokasi,sk.kelompok_sasaran,sk.target_akhir FROM sub_kegiatan_renstra_neo sk JOIN rekening_kegiatan rk ON rk.id=sk.master_sub_kegiatan_id WHERE sk.id=? AND sk.is_deleted=0 LIMIT 1',[(int)$data['sub_kegiatan_renstra_id']])->fetch();if($r){$data['kd_sub_keg']=$r['kode'];foreach(['lokasi','kelompok_sasaran'] as $f)if(empty($data[$f]))$data[$f]=$r[$f]??null;if(($data['target']??'')==='')$data['target']=$r['target_akhir']??0;}}
-    if($table==='perjanjian_kinerja_detail_neo'){
-      $r=null;if(!empty($data['pohon_kinerja_id']))$r=$this->db->query('SELECT uraian_kinerja sasaran,indikator,satuan,target,iku_id FROM pohon_kinerja_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 LIMIT 1',[(int)$data['pohon_kinerja_id'],...$scope])->fetch();elseif(!empty($data['iku_id']))$r=$this->db->query('SELECT nama_indikator sasaran,nama_indikator indikator,satuan,target_akhir target,id iku_id FROM iku_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND is_deleted=0 LIMIT 1',[(int)$data['iku_id'],$scope[0],$scope[1]])->fetch();
-      if($r){$data['iku_id']=$data['iku_id']??$r['iku_id'];if(empty($data['sasaran_kinerja']))$data['sasaran_kinerja']=$r['sasaran'];if(empty($data['indikator_kinerja']))$data['indikator_kinerja']=$r['indikator'];if(empty($data['satuan']))$data['satuan']=$r['satuan'];if(($data['target']??'')==='')$data['target']=$r['target']??0;}
-      if(!empty($data['kd_sub_keg'])&&in_array($data['sumber_anggaran']??'',['renja','rka','dpa'],true)){$t=$data['sumber_anggaran'].'_neo';$sum=$this->db->query("SELECT COALESCE(SUM(jumlah),0) total FROM `$t` WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND is_deleted=0",[...$scope,$data['kd_sub_keg']])->fetch();$data['anggaran']=(float)($sum['total']??0);}
+    $scope = [$this->user['kd_wilayah'] ?? '', $this->user['kd_opd'] ?? '', (int)($this->user['tahun'] ?? date('Y'))];
+    if ($table === 'pohon_kinerja_neo' && !empty($data['sumber_kinerja_key']) && preg_match('/^(sasaran_renstra|program_renstra|kegiatan_renstra|sub_kegiatan_renstra):(\d+)$/', (string)$data['sumber_kinerja_key'], $m)) {
+      $data['sumber_ref'] = $m[1];
+      $data['sumber_id'] = (int)$m[2];
     }
-    if($table==='pengukuran_kinerja_neo'&&!empty($data['perjanjian_kinerja_detail_id'])&&($data['target_periode']??'')===''){$r=$this->db->query('SELECT target FROM perjanjian_kinerja_detail_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 LIMIT 1',[(int)$data['perjanjian_kinerja_detail_id'],...$scope])->fetch();if($r)$data['target_periode']=$r['target'];}
-    if($table==='evaluasi_renstra_neo'&&!empty($data['iku_id'])){$r=$this->db->query('SELECT nama_indikator,satuan,target_akhir FROM iku_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND is_deleted=0 LIMIT 1',[(int)$data['iku_id'],$scope[0],$scope[1]])->fetch();if($r){if(empty($data['indikator']))$data['indikator']=$r['nama_indikator'];if(empty($data['satuan']))$data['satuan']=$r['satuan'];if(($data['target_kumulatif']??'')==='')$data['target_kumulatif']=$r['target_akhir'];}}
-    if($table==='evaluasi_renja_neo'&&!empty($data['renja_kinerja_id'])){$r=$this->db->query('SELECT kd_sub_keg,indikator_keluaran,satuan,target,pagu_indikatif FROM renja_sub_kegiatan_kinerja_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 LIMIT 1',[(int)$data['renja_kinerja_id'],...$scope])->fetch();if($r){$data['kd_sub_keg']=$r['kd_sub_keg'];$data['indikator']=$r['indikator_keluaran'];$data['satuan']=$r['satuan'];$data['target_tahunan']=$r['target'];$data['pagu_anggaran']=$r['pagu_indikatif'];}}
-    if($table==='pengukuran_kinerja_neo'){
-      $limits=['bulanan'=>12,'triwulanan'=>4,'semesteran'=>2,'tahunan'=>1];$period=(string)($data['periode']??'');$number=(int)($data['nomor_periode']??0);
-      if(isset($limits[$period])&&($number<1||$number>$limits[$period]))throw new InvalidArgumentException('Nomor periode tidak sesuai dengan jenis periode pengukuran.');
-      $target=(float)($data['target_periode']??0);$realization=(float)($data['realisasi_kumulatif']??$data['realisasi_periode']??0);$polarity='maksimal';
-      if(!empty($data['perjanjian_kinerja_detail_id'])){$row=$this->db->query('SELECT COALESCE(i.polaritas,"maksimal") polaritas FROM perjanjian_kinerja_detail_neo d LEFT JOIN iku_opd_neo i ON i.id=d.iku_id AND i.is_deleted=0 WHERE d.id=? AND d.is_deleted=0 LIMIT 1',[(int)$data['perjanjian_kinerja_detail_id']])->fetch();$polarity=$row['polaritas']??'maksimal';}
-      $data['capaian_persen']=$this->performancePercentage($target,$realization,$polarity);
+    if ($table === 'pohon_kinerja_neo' && !empty($data['iku_id'])) {
+      $r = $this->db->query('SELECT nama_indikator,satuan,target_akhir FROM iku_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND is_deleted=0 LIMIT 1', [(int)$data['iku_id'], $scope[0], $scope[1]])->fetch();
+      if ($r) {
+        if (empty($data['indikator'])) $data['indikator'] = $r['nama_indikator'];
+        if (empty($data['satuan'])) $data['satuan'] = $r['satuan'];
+        if (($data['target'] ?? '') === '') $data['target'] = $r['target_akhir'] ?? 0;
+      }
     }
-    if($table==='evaluasi_renstra_neo'){$target=(float)($data['target_kumulatif']??$data['target_tahunan']??0);$realization=(float)($data['realisasi_kumulatif']??$data['realisasi_tahunan']??0);$polarity='maksimal';if(!empty($data['iku_id'])){$row=$this->db->query('SELECT polaritas FROM iku_opd_neo WHERE id=? AND is_deleted=0 LIMIT 1',[(int)$data['iku_id']])->fetch();$polarity=$row['polaritas']??'maksimal';}$data['capaian_persen']=$this->performancePercentage($target,$realization,$polarity);}
-    return$data;
+    if ($table === 'renja_sub_kegiatan_kinerja_neo' && !empty($data['sub_kegiatan_renstra_id'])) {
+      $r = $this->db->query('SELECT rk.kode,sk.lokasi,sk.kelompok_sasaran,sk.target_akhir FROM sub_kegiatan_renstra_neo sk JOIN rekening_kegiatan rk ON rk.id=sk.master_sub_kegiatan_id WHERE sk.id=? AND sk.is_deleted=0 LIMIT 1', [(int)$data['sub_kegiatan_renstra_id']])->fetch();
+      if ($r) {
+        $data['kd_sub_keg'] = $r['kode'];
+        foreach (['lokasi', 'kelompok_sasaran'] as $f) if (empty($data[$f])) $data[$f] = $r[$f] ?? null;
+        if (($data['target'] ?? '') === '') $data['target'] = $r['target_akhir'] ?? 0;
+      }
+    }
+    if ($table === 'perjanjian_kinerja_detail_neo') {
+      $r = null;
+      if (!empty($data['pohon_kinerja_id'])) $r = $this->db->query('SELECT uraian_kinerja sasaran,indikator,satuan,target,iku_id FROM pohon_kinerja_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 LIMIT 1', [(int)$data['pohon_kinerja_id'], ...$scope])->fetch();
+      elseif (!empty($data['iku_id'])) $r = $this->db->query('SELECT nama_indikator sasaran,nama_indikator indikator,satuan,target_akhir target,id iku_id FROM iku_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND is_deleted=0 LIMIT 1', [(int)$data['iku_id'], $scope[0], $scope[1]])->fetch();
+      if ($r) {
+        $data['iku_id'] = $data['iku_id'] ?? $r['iku_id'];
+        if (empty($data['sasaran_kinerja'])) $data['sasaran_kinerja'] = $r['sasaran'];
+        if (empty($data['indikator_kinerja'])) $data['indikator_kinerja'] = $r['indikator'];
+        if (empty($data['satuan'])) $data['satuan'] = $r['satuan'];
+        if (($data['target'] ?? '') === '') $data['target'] = $r['target'] ?? 0;
+      }
+      if (!empty($data['kd_sub_keg']) && in_array($data['sumber_anggaran'] ?? '', ['renja', 'rka', 'dpa'], true)) {
+        $t = $data['sumber_anggaran'] . '_neo';
+        $sum = $this->db->query("SELECT COALESCE(SUM(jumlah),0) total FROM `$t` WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND is_deleted=0", [...$scope, $data['kd_sub_keg']])->fetch();
+        $data['anggaran'] = (float)($sum['total'] ?? 0);
+      }
+    }
+    if ($table === 'pengukuran_kinerja_neo' && !empty($data['perjanjian_kinerja_detail_id']) && ($data['target_periode'] ?? '') === '') {
+      $r = $this->db->query('SELECT target FROM perjanjian_kinerja_detail_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 LIMIT 1', [(int)$data['perjanjian_kinerja_detail_id'], ...$scope])->fetch();
+      if ($r) $data['target_periode'] = $r['target'];
+    }
+    if ($table === 'evaluasi_renstra_neo' && !empty($data['iku_id'])) {
+      $r = $this->db->query('SELECT nama_indikator,satuan,target_akhir FROM iku_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND is_deleted=0 LIMIT 1', [(int)$data['iku_id'], $scope[0], $scope[1]])->fetch();
+      if ($r) {
+        if (empty($data['indikator'])) $data['indikator'] = $r['nama_indikator'];
+        if (empty($data['satuan'])) $data['satuan'] = $r['satuan'];
+        if (($data['target_kumulatif'] ?? '') === '') $data['target_kumulatif'] = $r['target_akhir'];
+      }
+    }
+    if ($table === 'evaluasi_renja_neo' && !empty($data['renja_kinerja_id'])) {
+      $r = $this->db->query('SELECT kd_sub_keg,indikator_keluaran,satuan,target,pagu_indikatif FROM renja_sub_kegiatan_kinerja_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 LIMIT 1', [(int)$data['renja_kinerja_id'], ...$scope])->fetch();
+      if ($r) {
+        $data['kd_sub_keg'] = $r['kd_sub_keg'];
+        $data['indikator'] = $r['indikator_keluaran'];
+        $data['satuan'] = $r['satuan'];
+        $data['target_tahunan'] = $r['target'];
+        $data['pagu_anggaran'] = $r['pagu_indikatif'];
+      }
+    }
+    if ($table === 'pengukuran_kinerja_neo') {
+      $limits = ['bulanan' => 12, 'triwulanan' => 4, 'semesteran' => 2, 'tahunan' => 1];
+      $period = (string)($data['periode'] ?? '');
+      $number = (int)($data['nomor_periode'] ?? 0);
+      if (isset($limits[$period]) && ($number < 1 || $number > $limits[$period])) throw new InvalidArgumentException('Nomor periode tidak sesuai dengan jenis periode pengukuran.');
+      $target = (float)($data['target_periode'] ?? 0);
+      $realization = (float)($data['realisasi_kumulatif'] ?? $data['realisasi_periode'] ?? 0);
+      $polarity = 'maksimal';
+      if (!empty($data['perjanjian_kinerja_detail_id'])) {
+        $row = $this->db->query('SELECT COALESCE(i.polaritas,"maksimal") polaritas FROM perjanjian_kinerja_detail_neo d LEFT JOIN iku_opd_neo i ON i.id=d.iku_id AND i.is_deleted=0 WHERE d.id=? AND d.is_deleted=0 LIMIT 1', [(int)$data['perjanjian_kinerja_detail_id']])->fetch();
+        $polarity = $row['polaritas'] ?? 'maksimal';
+      }
+      $data['capaian_persen'] = $this->performancePercentage($target, $realization, $polarity);
+    }
+    if ($table === 'evaluasi_renstra_neo') {
+      $target = (float)($data['target_kumulatif'] ?? $data['target_tahunan'] ?? 0);
+      $realization = (float)($data['realisasi_kumulatif'] ?? $data['realisasi_tahunan'] ?? 0);
+      $polarity = 'maksimal';
+      if (!empty($data['iku_id'])) {
+        $row = $this->db->query('SELECT polaritas FROM iku_opd_neo WHERE id=? AND is_deleted=0 LIMIT 1', [(int)$data['iku_id']])->fetch();
+        $polarity = $row['polaritas'] ?? 'maksimal';
+      }
+      $data['capaian_persen'] = $this->performancePercentage($target, $realization, $polarity);
+    }
+    return $data;
   }
-  private function performancePercentage(float $target,float $realization,string $polarity):float
+  private function performancePercentage(float $target, float $realization, string $polarity): float
   {
-    if($target==0.0)return $realization==0.0?100.0:0.0;
-    if($polarity==='minimal')return $realization==0.0?100.0:round(($target/$realization)*100,4);
-    if($polarity==='stabil'){if($realization==0.0)return 0.0;return round((min($target,$realization)/max($target,$realization))*100,4);}
-    return round(($realization/$target)*100,4);
+    if ($target == 0.0) return $realization == 0.0 ? 100.0 : 0.0;
+    if ($polarity === 'minimal') return $realization == 0.0 ? 100.0 : round(($target / $realization) * 100, 4);
+    if ($polarity === 'stabil') {
+      if ($realization == 0.0) return 0.0;
+      return round((min($target, $realization) / max($target, $realization)) * 100, 4);
+    }
+    return round(($realization / $target) * 100, 4);
   }
   /* =========================================================
 INSERT (FULL IDENTIK LOGIC ASLI)
@@ -855,7 +956,7 @@ INSERT (FIXED STABLE VERSION v3.1)
 3️⃣ AUTO FIELD RESOLUTION (SCOPE)
 ===================================================== */
     $filtered = $this->resolveAutoFields($table, $filtered);
-    if (in_array($table, ['renja_p_neo','rka_p_neo','dppa_neo'], true)) {
+    if (in_array($table, ['renja_p_neo', 'rka_p_neo', 'dppa_neo'], true)) {
       $this->applyChangeDocumentRules($table, [], $filtered);
     }
     if ($table === 'master_biaya') {
@@ -936,10 +1037,10 @@ INSERT (FIXED STABLE VERSION v3.1)
         $filtered['status_aktif'] = 0;
       }
     }
-    if($table==='rpjmd_kabupaten_neo'){
-      $start=(string)($filtered['berlaku_mulai']??'');
-      if($start!==''&&empty($filtered['berlaku_sampai']))$filtered['berlaku_sampai']=date('Y-m-d',strtotime($start.' +5 years -1 day'));
-      if($start===''||$filtered['berlaku_sampai']<$start)return JsonResponse::error('Masa berlaku RPJMD tidak valid');
+    if ($table === 'rpjmd_kabupaten_neo') {
+      $start = (string)($filtered['berlaku_mulai'] ?? '');
+      if ($start !== '' && empty($filtered['berlaku_sampai'])) $filtered['berlaku_sampai'] = date('Y-m-d', strtotime($start . ' +5 years -1 day'));
+      if ($start === '' || $filtered['berlaku_sampai'] < $start) return JsonResponse::error('Masa berlaku RPJMD tidak valid');
     }
 
     // 🔥 Auto periode untuk renstra
@@ -1021,7 +1122,7 @@ kd_sub_keg → nama_sub_keg
         ===================================================== */
     $filtered = $this->sanitizer()->applySanitization($table, $filtered);
     $filtered = $this->injectAudit($filtered, 'insert');
-    $filtered=$this->normalizeSakipMetrics($table,$filtered);
+    $filtered = $this->normalizeSakipMetrics($table, $filtered);
     $this->enforceSubActivityAssignment($table, $filtered, 'add');
     $this->enforceDocumentRowLock($table, $filtered);
 
@@ -1048,7 +1149,7 @@ kd_sub_keg → nama_sub_keg
         if (!$klasifikasiId) throw new InvalidArgumentException('Klasifikasi keamanan wajib dipilih');
         $klasifikasi = $this->db->query('SELECT kode FROM ref_klasifikasi_keamanan WHERE id=?', [$klasifikasiId])->fetch();
         if (!$klasifikasi) throw new InvalidArgumentException('Klasifikasi keamanan tidak ditemukan');
-        $this->db->query('INSERT INTO trx_nomor_counter (klasifikasi_id,tahun,last_number) VALUES (?,?,LAST_INSERT_ID(1)) ON DUPLICATE KEY UPDATE last_number=LAST_INSERT_ID(last_number+1)', [$klasifikasiId,$tahun]);
+        $this->db->query('INSERT INTO trx_nomor_counter (klasifikasi_id,tahun,last_number) VALUES (?,?,LAST_INSERT_ID(1)) ON DUPLICATE KEY UPDATE last_number=LAST_INSERT_ID(last_number+1)', [$klasifikasiId, $tahun]);
         $number = (int)$this->db->query('SELECT LAST_INSERT_ID() number')->fetch()['number'];
         $filtered['nomor_urut'] = $number;
         $filtered['nomor'] = sprintf('%s/%03d/%s/%d', $klasifikasi['kode'], $number, $_SESSION['user']['kd_opd'], $tahun);
@@ -1345,10 +1446,10 @@ IGNORE SYSTEM FIELD
       }
     }
     $this->applyChangeDocumentRules($table, $oldData, $filtered);
-    $filtered=$this->normalizeSakipMetrics($table,$filtered);
+    $filtered = $this->normalizeSakipMetrics($table, $filtered);
     $this->enforceSubActivityAssignment($table, $filtered, 'edit');
     $this->enforceDocumentRowLock($table, $filtered);
-    if($table==='rpjmd_kabupaten_neo'&&($filtered['berlaku_mulai']??'')>($filtered['berlaku_sampai']??'')){
+    if ($table === 'rpjmd_kabupaten_neo' && ($filtered['berlaku_mulai'] ?? '') > ($filtered['berlaku_sampai'] ?? '')) {
       return JsonResponse::error('Tanggal akhir RPJMD harus sesudah tanggal mulai');
     }
 
@@ -1468,8 +1569,10 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     $this->enforceSubActivityAssignment($table, $oldData ?: [], 'delete');
     $this->enforceDocumentRowLock($table, $oldData ?: []);
 
-    if (in_array($table, ['renja_p_neo','rka_p_neo','dppa_neo'], true)
-        && (int)($oldData['source_id'] ?? 0) > 0) {
+    if (
+      in_array($table, ['renja_p_neo', 'rka_p_neo', 'dppa_neo'], true)
+      && (int)($oldData['source_id'] ?? 0) > 0
+    ) {
       if ($table === 'dppa_neo') {
         $contractSql = $this->tableExists('kontrak_item_neo')
           ? "SELECT COALESCE(SUM(nilai_kontrak),0) total FROM kontrak_item_neo WHERE tahap='dppa' AND anggaran_id=? AND is_deleted=0"
@@ -1479,8 +1582,8 @@ DELETE (FULL IDENTIK LOGIC ASLI)
           return JsonResponse::error('Volume DPPA tidak dapat dinolkan karena sudah dipakai kontrak.');
         }
       }
-      $zero = ['volume'=>0,'jumlah'=>0,'status_perubahan'=>'hapus'];
-      foreach (['vol_1','vol_2','vol_3','vol_4','vol_5'] as $field) {
+      $zero = ['volume' => 0, 'jumlah' => 0, 'status_perubahan' => 'hapus'];
+      foreach (['vol_1', 'vol_2', 'vol_3', 'vol_4', 'vol_5'] as $field) {
         if (array_key_exists($field, $oldData)) $zero[$field] = 0;
       }
       if (array_key_exists('tgl_update', $oldData)) $zero['tgl_update'] = date('Y-m-d H:i:s');
@@ -1844,8 +1947,10 @@ DELETE (FULL IDENTIK LOGIC ASLI)
         $selectAliases[] = $plain[1];
       }
     }
-    if ($requestedSort !== '' && preg_match('/^[a-zA-Z0-9_]+$/', $requestedSort)
-      && (in_array($requestedSort, $columns, true) || in_array($requestedSort, $selectAliases, true))) {
+    if (
+      $requestedSort !== '' && preg_match('/^[a-zA-Z0-9_]+$/', $requestedSort)
+      && (in_array($requestedSort, $columns, true) || in_array($requestedSort, $selectAliases, true))
+    ) {
       $orderBy = in_array($requestedSort, $columns, true) && !empty($profile['join'])
         ? "`$table`.`$requestedSort` $requestedDirection"
         : "`$requestedSort` $requestedDirection";
@@ -2065,7 +2170,7 @@ GET ALL RAW DATA (UNTUK EXPORT / REPORT)
         $this->getTableColumns($table),
         $table,
         fn($field, $value, $targetTable) =>
-          $this->resolver()->resolveField($field, $value, $targetTable, $this->user, $this->activeProfileKey)
+        $this->resolver()->resolveField($field, $value, $targetTable, $this->user, $this->activeProfileKey)
       );
       if ($extraWhere) {
         $userWhere[] = !empty($profile['join'])
@@ -2146,7 +2251,7 @@ HANYA PERIODE AKTIF DI-CACHE
     $whereParts = [];
     $params     = [];
 
-    if (in_array($role,['admin_wilayah','tapd'],true)) {
+    if (in_array($role, ['admin_wilayah', 'tapd'], true)) {
 
       if (in_array('kd_wilayah', $columns)) {
         $whereParts[] = "`kd_wilayah` = ?";
@@ -2154,7 +2259,7 @@ HANYA PERIODE AKTIF DI-CACHE
       }
     }
 
-    if (in_array($role,['super_admin','admin_wilayah','tapd'],true) && !empty($this->user['scope_selected'])) {
+    if (in_array($role, ['super_admin', 'admin_wilayah', 'tapd'], true) && !empty($this->user['scope_selected'])) {
       if (in_array('kd_opd', $columns)) {
         $whereParts[] = "`kd_opd` = ?";
         $params[] = $this->user['kd_opd'];
@@ -2165,7 +2270,7 @@ HANYA PERIODE AKTIF DI-CACHE
       }
     }
 
-    if (in_array($role,['admin_opd','kepala_opd','pa_kpa','ppk','pptk','ppk_skpd','bendahara','pejabat_pengadaan','staf_opd','viewer','user'],true)) {
+    if (in_array($role, ['admin_opd', 'kepala_opd', 'pa_kpa', 'ppk', 'pptk', 'ppk_skpd', 'bendahara', 'pejabat_pengadaan', 'staf_opd', 'viewer', 'user'], true)) {
 
       if (in_array('kd_opd', $columns)) {
         $whereParts[] = "`kd_opd` = ?";
@@ -2192,9 +2297,14 @@ HANYA PERIODE AKTIF DI-CACHE
         }
       }
 
-      if (in_array($role,['ppk','pptk','staf_opd','viewer','user'],true) && in_array('kd_sub_keg',$columns,true)) {
-        $assignments=$this->db->query('SELECT kd_sub_keg FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND dapat_lihat=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0',[(int)($this->user['id']??0),$this->user['kd_wilayah']??'', $this->user['kd_opd']??'', $this->user['tahun']??date('Y')])->fetchAll(PDO::FETCH_COLUMN);
-        if(!$assignments){$whereParts[]='1=0';}else{$whereParts[]='`kd_sub_keg` IN ('.implode(',',array_fill(0,count($assignments),'?')).')';array_push($params,...$assignments);}
+      if (in_array($role, ['ppk', 'pptk', 'staf_opd', 'viewer', 'user'], true) && in_array('kd_sub_keg', $columns, true)) {
+        $assignments = $this->db->query('SELECT kd_sub_keg FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND dapat_lihat=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0', [(int)($this->user['id'] ?? 0), $this->user['kd_wilayah'] ?? '', $this->user['kd_opd'] ?? '', $this->user['tahun'] ?? date('Y')])->fetchAll(PDO::FETCH_COLUMN);
+        if (!$assignments) {
+          $whereParts[] = '1=0';
+        } else {
+          $whereParts[] = '`kd_sub_keg` IN (' . implode(',', array_fill(0, count($assignments), '?')) . ')';
+          array_push($params, ...$assignments);
+        }
       }
     }
 
@@ -2539,8 +2649,10 @@ BUILD RULE DARI SCHEMA DATABASE
 
     // Dropdown sub-kegiatan Renstra menerima ID kegiatan Renstra dari form,
     // sedangkan hierarchy rekening_kegiatan berelasi melalui kode kegiatan.
-    if ($parentValue !== null && $parentValue !== ''
-      && !empty($this->profiles[$profileKey]['dropdown_parent_lookup'])) {
+    if (
+      $parentValue !== null && $parentValue !== ''
+      && !empty($this->profiles[$profileKey]['dropdown_parent_lookup'])
+    ) {
       $lookup = $this->profiles[$profileKey]['dropdown_parent_lookup'];
       $lookupTable = $lookup['table'] ?? null;
       $lookupKey = $lookup['key'] ?? null;
@@ -2577,9 +2689,11 @@ BUILD RULE DARI SCHEMA DATABASE
   ========================================================= */
   public function getProfileByTable(string $table): array
   {
-    if ($this->activeProfileKey !== null
+    if (
+      $this->activeProfileKey !== null
       && isset($this->profiles[$this->activeProfileKey])
-      && ($this->profiles[$this->activeProfileKey]['table'] ?? null) === $table) {
+      && ($this->profiles[$this->activeProfileKey]['table'] ?? null) === $table
+    ) {
       return $this->profiles[$this->activeProfileKey];
     }
     foreach ($this->profiles as $profile) {
@@ -2960,8 +3074,10 @@ Tujuan:
       return JsonResponse::error('Kode harus merupakan turunan dari kode induk ' . $parentKode);
     }
 
-    if (!empty($data['peraturan_id']) && !empty($parent['peraturan_id']) &&
-        (int)$data['peraturan_id'] !== (int)$parent['peraturan_id']) {
+    if (
+      !empty($data['peraturan_id']) && !empty($parent['peraturan_id']) &&
+      (int)$data['peraturan_id'] !== (int)$parent['peraturan_id']
+    ) {
       return JsonResponse::error('Induk dan turunan harus berasal dari peraturan yang sama');
     }
 
@@ -3007,7 +3123,15 @@ menentukan parent table dan cara validasi relasinya
       // Renja
       'renja_neo' => [
         'parent_table' => 'renstra_neo',
-        'match_scope' => ['tahun', 'kd_opd', 'kd_wilayah']
+        'match_scope' => ['kd_opd', 'kd_wilayah'],
+        'period_scope' => [
+          'child_year' => 'tahun',
+          'parent_period' => 'periode_id',
+          'period_table' => 'periode_rpjmd',
+          'period_key' => 'id',
+          'period_start' => 'periode_mulai',
+          'period_end' => 'periode_selesai'
+        ]
       ],
 
       'renja_p_neo' => [
@@ -3131,6 +3255,45 @@ renja harus sesuai tahun + opd + wilayah
 
       // ambil kolom parent
       $parentColumns = $this->getTableColumns($parent);
+
+      /* ==================================================
+🔥 Scope periode tahunan
+--------------------------------------------------
+Renstra menyimpan periode melalui periode_id, bukan kolom tahun.
+Untuk Renja, tahun harus berada di rentang periode RPJMD parent.
+================================================== */
+      if (isset($rule['period_scope'])) {
+        $periodScope = $rule['period_scope'];
+        $childYear = $periodScope['child_year'];
+        $parentPeriod = $periodScope['parent_period'];
+        $periodTable = $periodScope['period_table'];
+        $periodKey = $periodScope['period_key'];
+        $periodStart = $periodScope['period_start'];
+        $periodEnd = $periodScope['period_end'];
+
+        if (!isset($data[$childYear])) {
+          throw new Exception("Field $childYear wajib ada.");
+        }
+
+        if (!in_array($parentPeriod, $parentColumns, true)) {
+          throw new Exception("Kolom periode $parentPeriod tidak tersedia pada parent $parent.");
+        }
+
+        $year = filter_var($data[$childYear], FILTER_VALIDATE_INT, [
+          'options' => ['min_range' => 1901, 'max_range' => 2155]
+        ]);
+        if ($year === false) {
+          throw new Exception("Field $childYear harus berupa tahun 4 digit yang valid.");
+        }
+
+        $where[] = "`$parentPeriod` IN (
+SELECT `$periodKey` FROM `$periodTable`
+WHERE CAST(`$periodStart` AS UNSIGNED) <= ?
+AND CAST(`$periodEnd` AS UNSIGNED) >= ?
+)";
+        $params[] = $year;
+        $params[] = $year;
+      }
 
       /* ==================================================
 🔥 Scope peraturan versi baru
@@ -3835,7 +3998,7 @@ LIMIT 1",
 
     $role = $this->user['type_user'] ?? 'viewer';
 
-    $effectiveRole=in_array($role,['kepala_opd','pa_kpa'],true)?'admin_opd':$role;
+    $effectiveRole = in_array($role, ['kepala_opd', 'pa_kpa'], true) ? 'admin_opd' : $role;
     if (!in_array($effectiveRole, $config['allowed_roles'] ?? [])) {
       throw new Exception("Role tidak diizinkan untuk import.");
     }
@@ -3883,22 +4046,24 @@ LIMIT 1",
 
     if ($role !== 'super_admin' || !empty($this->user['scope_selected'])) {
 
-      if (in_array($role, ['super_admin','admin_wilayah','tapd'], true) && in_array('kd_wilayah', $columns)) {
+      if (in_array($role, ['super_admin', 'admin_wilayah', 'tapd'], true) && in_array('kd_wilayah', $columns)) {
         $where[] = "`kd_wilayah` = ?";
         $params[] = $this->user['kd_wilayah'];
       }
 
-      if (in_array($role, ['super_admin','admin_wilayah','tapd'], true)
-          && !empty($this->user['scope_selected']) && in_array('kd_opd', $columns)) {
+      if (
+        in_array($role, ['super_admin', 'admin_wilayah', 'tapd'], true)
+        && !empty($this->user['scope_selected']) && in_array('kd_opd', $columns)
+      ) {
         $where[] = "`kd_opd` = ?";
         $params[] = $this->user['kd_opd'];
       }
-      if (in_array($role, ['admin_wilayah','tapd'], true) && in_array('tahun', $columns) && isset($this->user['tahun'])) {
+      if (in_array($role, ['admin_wilayah', 'tapd'], true) && in_array('tahun', $columns) && isset($this->user['tahun'])) {
         $where[] = "`tahun` = ?";
         $params[] = $this->user['tahun'];
       }
 
-      if (in_array($role, ['admin_opd','kepala_opd','pa_kpa','ppk','pptk','ppk_skpd','bendahara','pejabat_pengadaan','staf_opd','viewer','user'], true)) {
+      if (in_array($role, ['admin_opd', 'kepala_opd', 'pa_kpa', 'ppk', 'pptk', 'ppk_skpd', 'bendahara', 'pejabat_pengadaan', 'staf_opd', 'viewer', 'user'], true)) {
 
         foreach (['kd_opd', 'kd_wilayah', 'tahun'] as $field) {
 
@@ -3913,9 +4078,14 @@ LIMIT 1",
           }
         }
 
-        if (in_array($role,['ppk','pptk','staf_opd','viewer','user'],true) && in_array('kd_sub_keg',$columns,true)) {
-          $assignments=$this->db->query('SELECT kd_sub_keg FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND dapat_lihat=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0',[(int)($this->user['id']??0),$this->user['kd_wilayah']??'', $this->user['kd_opd']??'', $this->user['tahun']??date('Y')])->fetchAll(PDO::FETCH_COLUMN);
-          if(!$assignments){$where[]='1=0';}else{$where[]='`kd_sub_keg` IN ('.implode(',',array_fill(0,count($assignments),'?')).')';array_push($params,...$assignments);}
+        if (in_array($role, ['ppk', 'pptk', 'staf_opd', 'viewer', 'user'], true) && in_array('kd_sub_keg', $columns, true)) {
+          $assignments = $this->db->query('SELECT kd_sub_keg FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND dapat_lihat=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0', [(int)($this->user['id'] ?? 0), $this->user['kd_wilayah'] ?? '', $this->user['kd_opd'] ?? '', $this->user['tahun'] ?? date('Y')])->fetchAll(PDO::FETCH_COLUMN);
+          if (!$assignments) {
+            $where[] = '1=0';
+          } else {
+            $where[] = '`kd_sub_keg` IN (' . implode(',', array_fill(0, count($assignments), '?')) . ')';
+            array_push($params, ...$assignments);
+          }
         }
       }
     }
@@ -4052,10 +4222,11 @@ LIMIT 1",
     // FIX: support datetime + timestamp
     $type = strtolower($columns['Type']);
 
-    // FIX: support semua tipe tanggal
+    // YEAR adalah scope anggaran 4 digit, bukan nilai tanggal/datetime.
+    // Menormalisasi YEAR melalui strtotime() mengubah "2026" menjadi datetime
+    // sehingga validasi hierarchy menerima nilai yang salah.
     return str_contains($type, 'date')
-      || str_contains($type, 'time')
-      || str_contains($type, 'year'); // // FIX
+      || str_contains($type, 'time');
   }
   private function normalizeToMySQLDateTime(?string $value): string
   {
@@ -5191,8 +5362,15 @@ AND is_deleted = 0
 
       $columns = $this->getTableColumns($table);
     }
-    $joinSQL='';$knownDropdownTables=[$table];
-    foreach(($profile['join']??[]) as $join){$joinTable=$join['table']??'';$on=$join['on']??'';if(!preg_match('/^[A-Za-z0-9_]+$/',$joinTable)||$on==='')continue;$joinSQL.=" LEFT JOIN `$joinTable` ON $on";$knownDropdownTables[]=$joinTable;}
+    $joinSQL = '';
+    $knownDropdownTables = [$table];
+    foreach (($profile['join'] ?? []) as $join) {
+      $joinTable = $join['table'] ?? '';
+      $on = $join['on'] ?? '';
+      if (!preg_match('/^[A-Za-z0-9_]+$/', $joinTable) || $on === '') continue;
+      $joinSQL .= " LEFT JOIN `$joinTable` ON $on";
+      $knownDropdownTables[] = $joinTable;
+    }
 
     // =====================================================
     // 🔥 APPLY FILTERS (LEVEL DLL)
@@ -5250,10 +5428,11 @@ AND is_deleted = 0
     if (!empty($profile['where'])) {
 
       foreach ($profile['where'] as $col => $val) {
-        $columnName=$col;$columnTable=$table;
-        if(str_contains($col,'.'))[$columnTable,$columnName]=explode('.',$col,2);
-        if(!preg_match('/^[A-Za-z0-9_]+$/',$columnName)||!in_array($columnTable,$knownDropdownTables,true))continue;
-        if($columnTable===$table&&!in_array($columnName,$columns,true))continue;
+        $columnName = $col;
+        $columnTable = $table;
+        if (str_contains($col, '.')) [$columnTable, $columnName] = explode('.', $col, 2);
+        if (!preg_match('/^[A-Za-z0-9_]+$/', $columnName) || !in_array($columnTable, $knownDropdownTables, true)) continue;
+        if ($columnTable === $table && !in_array($columnName, $columns, true)) continue;
         $mandatoryWhere[] = "`$columnTable`.`$columnName` = ?";
 
         if ($val === 'user') {
@@ -5328,10 +5507,11 @@ AND is_deleted = 0
     if ($cari) {
       $searchFields = $profile['dropdown']['searchable'] ?? [$labelField];
       foreach ($searchFields as $searchField) {
-        $searchTable=$table;$searchColumn=$searchField;
-        if(str_contains($searchField,'.'))[$searchTable,$searchColumn]=explode('.',$searchField,2);
-        if(!in_array($searchTable,$knownDropdownTables,true)||!preg_match('/^[A-Za-z0-9_]+$/',$searchColumn))continue;
-        if($searchTable===$table&&!in_array($searchColumn,$columns,true))continue;
+        $searchTable = $table;
+        $searchColumn = $searchField;
+        if (str_contains($searchField, '.')) [$searchTable, $searchColumn] = explode('.', $searchField, 2);
+        if (!in_array($searchTable, $knownDropdownTables, true) || !preg_match('/^[A-Za-z0-9_]+$/', $searchColumn)) continue;
+        if ($searchTable === $table && !in_array($searchColumn, $columns, true)) continue;
         $optionalWhere[] = "`$searchTable`.`$searchColumn` LIKE ?";
         $params[] = "%$cari%";
       }
@@ -5365,12 +5545,13 @@ AND is_deleted = 0
     // QUERY
     // =====================================================
     $normalizeDropdownField = static function (string $field) use ($table, $knownDropdownTables): ?array {
-      $fieldTable=$table;$fieldName=$field;
-      if(str_contains($field,'.'))[$fieldTable,$fieldName]=explode('.',$field,2);
-      if(!in_array($fieldTable,$knownDropdownTables,true)||!preg_match('/^[A-Za-z0-9_]+$/',$fieldName))return null;
-      return[$fieldTable,$fieldName];
+      $fieldTable = $table;
+      $fieldName = $field;
+      if (str_contains($field, '.')) [$fieldTable, $fieldName] = explode('.', $field, 2);
+      if (!in_array($fieldTable, $knownDropdownTables, true) || !preg_match('/^[A-Za-z0-9_]+$/', $fieldName)) return null;
+      return [$fieldTable, $fieldName];
     };
-    $labelFields = array_values(array_filter(array_map($normalizeDropdownField,$profile['dropdown']['label_fields'] ?? [])));
+    $labelFields = array_values(array_filter(array_map($normalizeDropdownField, $profile['dropdown']['label_fields'] ?? [])));
     $textExpression = "`$table`.`$labelField`";
     if (count($labelFields) > 1) {
       $quotedLabelFields = array_map(static fn($field) => "`{$field[0]}`.`{$field[1]}`", $labelFields);
@@ -5854,15 +6035,29 @@ AND is_deleted = 0
       $this->db->begin();
       try {
         $this->db->delete($relTable, "WHERE `$fk` = ?", [$id]);
-        $relation=['naskah_id'=>$id,$jsonField=>json_encode($json,JSON_UNESCAPED_UNICODE),'kd_wilayah'=>$old['kd_wilayah']??null,'kd_opd'=>$old['kd_opd']??null,'tahun'=>$old['tahun']??null,'tgl_insert'=>date('Y-m-d H:i:s'),'username_insert'=>$this->user['username']??'system'];
-        $relationColumns=$this->getTableColumns($relTable);$relation=array_intersect_key($relation,array_flip($relationColumns));
-        $this->db->insert($relTable,$relation);
-        $header=[];foreach(['jenis_id','nomor','klasifikasi_id','tanggal_surat','perihal'] as $field)if(array_key_exists($field,$json)&&in_array($field,$this->getTableColumns($table),true))$header[$field]=$json[$field];
-        if(isset($header['tanggal_surat'])){$parsed=strtotime((string)$header['tanggal_surat']);if($parsed===false)unset($header['tanggal_surat']);else$header['tanggal_surat']=date('Y-m-d',$parsed);}
-        if($header){$header['tgl_update']=date('Y-m-d H:i:s');$header['username_update']=$this->user['username']??'system';$header=array_intersect_key($header,array_flip($this->getTableColumns($table)));$this->db->update($table,$header,"WHERE `$primaryKey` = ?",[$id]);}
+        $relation = ['naskah_id' => $id, $jsonField => json_encode($json, JSON_UNESCAPED_UNICODE), 'kd_wilayah' => $old['kd_wilayah'] ?? null, 'kd_opd' => $old['kd_opd'] ?? null, 'tahun' => $old['tahun'] ?? null, 'tgl_insert' => date('Y-m-d H:i:s'), 'username_insert' => $this->user['username'] ?? 'system'];
+        $relationColumns = $this->getTableColumns($relTable);
+        $relation = array_intersect_key($relation, array_flip($relationColumns));
+        $this->db->insert($relTable, $relation);
+        $header = [];
+        foreach (['jenis_id', 'nomor', 'klasifikasi_id', 'tanggal_surat', 'perihal'] as $field) if (array_key_exists($field, $json) && in_array($field, $this->getTableColumns($table), true)) $header[$field] = $json[$field];
+        if (isset($header['tanggal_surat'])) {
+          $parsed = strtotime((string)$header['tanggal_surat']);
+          if ($parsed === false) unset($header['tanggal_surat']);
+          else $header['tanggal_surat'] = date('Y-m-d', $parsed);
+        }
+        if ($header) {
+          $header['tgl_update'] = date('Y-m-d H:i:s');
+          $header['username_update'] = $this->user['username'] ?? 'system';
+          $header = array_intersect_key($header, array_flip($this->getTableColumns($table)));
+          $this->db->update($table, $header, "WHERE `$primaryKey` = ?", [$id]);
+        }
         $this->db->commit();
-      } catch(Throwable $e) {$this->db->rollback();throw $e;}
-      return JsonResponse::success("Perubahan naskah berhasil disimpan",['id'=>$id]);
+      } catch (Throwable $e) {
+        $this->db->rollback();
+        throw $e;
+      }
+      return JsonResponse::success("Perubahan naskah berhasil disimpan", ['id' => $id]);
     }
 
     // =====================================
