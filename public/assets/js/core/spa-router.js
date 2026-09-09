@@ -11,6 +11,7 @@ class SpaRouter {
 	// ================================
 	resolveMode(url) {
 		const routeUrl = window.appRoutePath ? window.appRoutePath(url) : url;
+		if (routeUrl.split(/[?#]/)[0] === "/kepegawaian/struktur") return "server";
 		const firstSegment = "/" + routeUrl.split("/")[1];
 
 		// Jika ada module JS untuk segment ini → client
@@ -161,8 +162,10 @@ class SpaRouter {
 				window.tableManager = null;
 				$("#main-content").html(html);
 
-				// 🔥 memastikan module JS tersedia
-				if (window.app?.loadModule) {
+				// Struktur organisasi is a complete server-rendered page. Loading the
+				// generic Kepegawaian module here would replace its fragment.
+				const routeUrl = window.appRoutePath ? window.appRoutePath(url) : url;
+				if (routeUrl.split(/[?#]/)[0] !== "/kepegawaian/struktur" && window.app?.loadModule) {
 					window.app.loadModule(url);
 				}
 

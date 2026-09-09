@@ -45,11 +45,16 @@ class KepegawaianController extends Controller
         return $user;
     }
 
+    private function canManageStructure(array $user): bool
+    {
+        return in_array($user['type_user'] ?? '', ['admin_opd', 'kepala_opd', 'pa_kpa'], true);
+    }
+
     public function structure(): void
     {
         try { $user = $this->structureUser(); }
         catch (Throwable $e) { http_response_code(403); echo htmlspecialchars($e->getMessage()); return; }
-        $this->view('kepegawaian/struktur', ['canManage'=>in_array($user['type_user'] ?? '', ['kepala_opd','pa_kpa'], true)], 'app');
+        $this->view('kepegawaian/struktur', ['canManage'=>$this->canManageStructure($user)], 'app');
     }
 
     public function structureData(): void
@@ -68,7 +73,7 @@ class KepegawaianController extends Controller
         header('Content-Type: application/json;charset=UTF-8');
         try {
             $u=$this->structureUser();
-            if(!in_array($u['type_user']??'', ['kepala_opd','pa_kpa'], true)) throw new RuntimeException('Struktur jabatan hanya dapat diatur Kepala OPD/PA/KPA');
+            if(!$this->canManageStructure($u)) throw new RuntimeException('Struktur jabatan hanya dapat diatur Admin OPD, Kepala OPD, atau PA/KPA');
             if(empty($_SESSION['csrf_token'])||($_SERVER['HTTP_X_CSRF_TOKEN']??'')!==$_SESSION['csrf_token']) throw new RuntimeException('CSRF validation gagal');
             $id=(int)($_POST['id']??0); $employeeId=(int)($_POST['pegawai_id']??0); $name=trim((string)($_POST['nama_jabatan']??''));
             if(!$employeeId||$name==='') throw new InvalidArgumentException('Jabatan dan pejabat ASN wajib dipilih');
@@ -87,6 +92,6 @@ class KepegawaianController extends Controller
     public function structureDelete(): void
     {
         header('Content-Type: application/json;charset=UTF-8');
-        try {$u=$this->structureUser();if(!in_array($u['type_user']??'', ['kepala_opd','pa_kpa'],true))throw new RuntimeException('Hanya Kepala OPD/PA/KPA yang dapat menghapus jabatan');if(empty($_SESSION['csrf_token'])||($_SERVER['HTTP_X_CSRF_TOKEN']??'')!==$_SESSION['csrf_token'])throw new RuntimeException('CSRF validation gagal');$id=(int)($_POST['id']??0);$db=DB::getInstance();$db->begin();try{$db->query('UPDATE struktur_jabatan_opd_neo SET parent_id=NULL,tgl_update=NOW(),username_update=? WHERE parent_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0',[$u['username']??'system',$id,$u['kd_wilayah'],$u['kd_opd'],$u['tahun']]);$db->query('UPDATE struktur_jabatan_opd_neo SET is_deleted=1,tgl_update=NOW(),username_update=? WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=?',[$u['username']??'system',$id,$u['kd_wilayah'],$u['kd_opd'],$u['tahun']]);$db->commit();}catch(Throwable$e){$db->rollback();throw$e;}echo json_encode(['success'=>true,'message'=>'Jabatan dihapus']);}catch(Throwable$e){http_response_code(400);echo json_encode(['success'=>false,'message'=>$e->getMessage()]);}
+        try {$u=$this->structureUser();if(!$this->canManageStructure($u))throw new RuntimeException('Hanya Admin OPD, Kepala OPD, atau PA/KPA yang dapat menghapus jabatan');if(empty($_SESSION['csrf_token'])||($_SERVER['HTTP_X_CSRF_TOKEN']??'')!==$_SESSION['csrf_token'])throw new RuntimeException('CSRF validation gagal');$id=(int)($_POST['id']??0);$db=DB::getInstance();$db->begin();try{$db->query('UPDATE struktur_jabatan_opd_neo SET parent_id=NULL,tgl_update=NOW(),username_update=? WHERE parent_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0',[$u['username']??'system',$id,$u['kd_wilayah'],$u['kd_opd'],$u['tahun']]);$db->query('UPDATE struktur_jabatan_opd_neo SET is_deleted=1,tgl_update=NOW(),username_update=? WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=?',[$u['username']??'system',$id,$u['kd_wilayah'],$u['kd_opd'],$u['tahun']]);$db->commit();}catch(Throwable$e){$db->rollback();throw$e;}echo json_encode(['success'=>true,'message'=>'Jabatan dihapus']);}catch(Throwable$e){http_response_code(400);echo json_encode(['success'=>false,'message'=>$e->getMessage()]);}
     }
 }
