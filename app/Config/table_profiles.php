@@ -802,7 +802,7 @@ $profiles = [
   'tujuan_sasaran_renstra' => [
     'table' => 'tujuan_sasaran_renstra_neo',
     'primary_key' => 'id',
-    'allowed_roles' => ['admin_opd'],
+    'allowed_roles' => ['admin_wilayah', 'admin_opd', 'kepala_opd', 'pa_kpa'],
     'soft_lock' => true,
     'auto_session' => ['kd_wilayah', 'tahun', 'kd_opd'],
     'modes' => [
@@ -865,7 +865,7 @@ $profiles = [
       ],
       'default' => [
         'select' => ['*'],
-        'searchable' => ['id', 'kd_opd', 'uraian', 'nip', 'npwp'],
+        'searchable' => ['id', 'kd_opd', 'nama', 'nip', 'jabatan', 'kelompok', 'npwp'],
         'order_by' => 'nama ASC'
       ],
       'kepegawaian' => [

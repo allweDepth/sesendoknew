@@ -629,7 +629,7 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
       }
       $personnelProfiles=['asn','pppk','riwayat_jabatan','riwayat_pangkat','cuti','sk_pegawai','absensi','dokumen_pegawai'];
       if(in_array($referenceProfile,$personnelProfiles,true)) {
-        if(!in_array($role,['admin_wilayah','admin_opd'],true))throw new Exception('Data kepegawaian hanya dapat dikelola Admin Wilayah atau Admin OPD sesuai lingkupnya.');
+        if(!in_array($role,['admin_wilayah','admin_opd','kepala_opd','pa_kpa'],true))throw new Exception('Data kepegawaian hanya dapat dikelola Admin Wilayah, Admin OPD, Kepala OPD, atau PA/KPA sesuai lingkupnya.');
         return;
       }
       $sakipProfiles=['iku_opd','pohon_kinerja','perjanjian_kinerja','perjanjian_kinerja_detail','pengukuran_kinerja','evaluasi_renstra','evaluasi_renja','renja_kinerja'];

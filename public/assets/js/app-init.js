@@ -24,7 +24,7 @@ $(document).ready(function () {
 		}
 		if (path.startsWith("/kepegawaian")) {
 			if (["pejabat_tahunan", "penugasan_subkegiatan"].includes(tbl)) return { add:["admin_wilayah","kepala_opd"].includes(role), edit:["admin_wilayah","kepala_opd"].includes(role), delete:["admin_wilayah","kepala_opd"].includes(role), import:false };
-			const allowed=["admin_wilayah","admin_opd"].includes(role);
+			const allowed=["admin_wilayah","admin_opd","kepala_opd","pa_kpa"].includes(role);
 			return { add:allowed, edit:allowed, delete:allowed, import:allowed };
 		}
 		return null;
