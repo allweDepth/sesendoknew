@@ -48,33 +48,40 @@ class SpaRouter {
 			const target = new URL(link.href, window.location.origin);
 			if (target.pathname !== currentPath) return;
 			const matches = [...target.searchParams].every(([key, value]) => currentParams.get(key) === value);
-			if (matches && (!bestMatch || target.searchParams.size > bestMatch.params)) bestMatch = { link, params: target.searchParams.size };
+			if (matches && (!bestMatch || target.searchParams.size > bestMatch.params))
+				bestMatch = { link, params: target.searchParams.size };
 		});
 		if (bestMatch) this.updateHeader(bestMatch.link);
 	}
 
 	updateHeader(link) {
-		const $link = $(link), title = $link.data('title') || 'Dashboard';
-		const icon = $link.find('i.icon').last().attr('class') || 'home icon';
-		const description = $link.data('description') || `Kelola ${String(title).replaceAll('/', ' — ')} pada tahun anggaran aktif.`;
-		$('#dynamicHeaderTitle').text(title);
-		$('#dynamicHeaderIcon').attr('class', icon).addClass('circular blue');
-		$('#dynamicHeader .pDashboard').text(description);
-		$('.sidebarutama a.item').removeClass('active');
-		$link.addClass('active').parents('.content').show().siblings('.title').addClass('active');
+		const $link = $(link),
+			title = $link.data("title") || "Dashboard";
+		const icon = $link.find("i.icon").last().attr("class") || "home icon";
+		const description =
+			$link.data("description") || `Kelola ${String(title).replaceAll("/", " — ")} pada tahun anggaran aktif.`;
+		$("#dynamicHeaderTitle").text(title);
+		$("#dynamicHeaderIcon").attr("class", icon).addClass("circular blue");
+		$("#dynamicHeader .pDashboard").text(description);
+		$(".sidebarutama a.item").removeClass("active");
+		$link.addClass("active").parents(".content").show().siblings(".title").addClass("active");
 	}
 
 	async ensureSession() {
 		if (this.sessionLocked) return false;
 		try {
-			const response = await fetch('/session/status', { headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }, cache: 'no-store' });
+			const response = await fetch("/session/status", {
+				headers: { "X-Requested-With": "XMLHttpRequest", Accept: "application/json" },
+				cache: "no-store",
+			});
 			const payload = await response.json().catch(() => ({}));
-			if (!response.ok || payload.expired || payload.success !== true) throw new Error(payload.message || 'Session habis');
+			if (!response.ok || payload.expired || payload.success !== true)
+				throw new Error(payload.message || "Session habis");
 			return true;
 		} catch (_) {
 			this.sessionLocked = true;
-			$('body').addClass('session-expired');
-			window.location.replace(window.appUrl ? window.appUrl('/') : '/');
+			$("body").addClass("session-expired");
+			window.location.replace(window.appUrl ? window.appUrl("/") : "/");
 			return false;
 		}
 	}
