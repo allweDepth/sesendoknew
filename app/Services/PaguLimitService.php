@@ -8,6 +8,8 @@ class PaguLimitService
     private array $user;
 
     private const DOCUMENTS = [
+        'rkpd_neo' => 'rkpd',
+        'rkpd_p_neo' => 'rkpd_p',
         'renja_neo' => 'renja',
         'rka_neo' => 'rka',
         'dpa_neo' => 'dpa',
@@ -30,7 +32,7 @@ class PaguLimitService
         $wilayah = (string)($data['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? '');
         $opd = (string)($data['kd_opd'] ?? $this->user['kd_opd'] ?? '');
         $tahun = (int)($data['tahun'] ?? $this->user['tahun'] ?? 0);
-        $amount = (float)($data['jumlah'] ?? 0);
+        $amount = (float)($data[in_array($table,['rkpd_neo','rkpd_p_neo'],true)?'pagu':'jumlah'] ?? 0);
 
         if ($wilayah === '' || $opd === '' || $opd === '0' || !$tahun) {
             throw new RuntimeException('Scope wilayah, OPD, dan tahun untuk validasi pagu tidak lengkap.');
@@ -64,7 +66,8 @@ class PaguLimitService
             throw new RuntimeException('Batas pagu ' . strtoupper($document) . ' untuk OPD ini belum ditetapkan admin wilayah.');
         }
 
-        $sql = "SELECT COALESCE(SUM(jumlah),0) total FROM `$table` WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0";
+        $amountField=in_array($table,['rkpd_neo','rkpd_p_neo'],true)?'pagu':'jumlah';
+        $sql = "SELECT COALESCE(SUM(`$amountField`),0) total FROM `$table` WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0";
         $params = [$wilayah, $opd, $tahun];
         if ($excludeId) {
             $sql .= ' AND id<>?';

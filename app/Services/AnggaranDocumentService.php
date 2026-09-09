@@ -123,6 +123,7 @@ class AnggaranDocumentService
     {
         $role=$this->user['type_user']??'viewer';
         if(!in_array($role,['super_admin','admin_wilayah','tapd','kepala_opd','pa_kpa'],true))throw new RuntimeException('Role tidak memiliki kewenangan persetujuan dokumen');
+        if(in_array($logical,['rkpd','rkpd_p'],true)&&!in_array($role,['super_admin','admin_wilayah','tapd'],true))throw new RuntimeException('Validasi pagu RKPD merupakan kewenangan TAPD');
         if(in_array($role,['super_admin','admin_wilayah','tapd'],true)&&(($this->user['kd_opd']??'0')==='0'))throw new RuntimeException('Pilih satu OPD terlebih dahulu sebelum memberikan persetujuan');
         $subCode=trim($subCode);if($subCode==='')throw new InvalidArgumentException('Sub kegiatan wajib dipilih');
         $table=$this->table($logical);[$scope,$params]=$this->scope('a');$params[]=$subCode;

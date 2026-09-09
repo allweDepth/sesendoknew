@@ -109,6 +109,10 @@ return [
     |--------------------------------------------------------------------------
     */
   '/kepegawaian'        => ['KepegawaianController', 'index'],
+  '/kepegawaian/struktur' => ['KepegawaianController', 'structure'],
+  '/kepegawaian/struktur/data' => ['KepegawaianController', 'structureData'],
+  '/kepegawaian/struktur/save' => ['KepegawaianController', 'structureSave'],
+  '/kepegawaian/struktur/delete' => ['KepegawaianController', 'structureDelete'],
   /*
     |--------------------------------------------------------------------------
     | 💰 STANDAR HARGA

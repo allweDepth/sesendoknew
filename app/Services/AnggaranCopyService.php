@@ -7,7 +7,7 @@ class AnggaranCopyService
     private DB $db;
     private array $user;
     private const TABLES = ['rkpd'=>'rkpd_neo','renja'=>'renja_neo','rka'=>'rka_neo','dpa'=>'dpa_neo','rkpd_p'=>'rkpd_p_neo','renja_p'=>'renja_p_neo','rka_p'=>'rka_p_neo','dppa'=>'dppa_neo'];
-    private const TRANSITIONS = ['rkpd:renja','renja:rka','rka:dpa','rkpd:rkpd_p','renja:renja_p','rka:rka_p','dpa:dppa'];
+    private const TRANSITIONS = ['rkpd:renja','renja:rkpd','renja:rka','rka:dpa','rkpd:rkpd_p','renja:renja_p','rka:rka_p','dpa:dppa'];
 
     public function __construct(array $user = []) { $this->db = DB::getInstance(); $this->user = $user; }
     public static function table(string $logical): string
@@ -18,7 +18,7 @@ class AnggaranCopyService
 
     public function copy(string $from, string $to, int $tahun, ?int $sourceId = null): array
     {
-        if (!in_array($this->user['type_user'] ?? '', ['super_admin','admin_wilayah','admin_opd'], true)) throw new RuntimeException('Tidak memiliki hak untuk memproses dokumen');
+        if (!in_array($this->user['type_user'] ?? '', ['super_admin','admin_wilayah','admin_opd','kepala_opd','pa_kpa'], true)) throw new RuntimeException('Tidak memiliki hak untuk memproses dokumen');
         if (!in_array("$from:$to", self::TRANSITIONS, true)) throw new InvalidArgumentException('Urutan dokumen tidak diizinkan');
         if ($tahun < 2000 || $tahun > 2100) throw new InvalidArgumentException('Tahun tidak valid');
         $sourceTable = self::table($from); $targetTable = self::table($to);
@@ -31,13 +31,13 @@ class AnggaranCopyService
         $this->db->begin();
         try {
             $rows = $this->db->query("SELECT * FROM `$sourceTable` WHERE $where FOR UPDATE", $params)->fetchAll();
+            if($from==='renja'&&$to==='rkpd'){$grouped=[];foreach($rows as $row){$code=(string)$row['kd_sub_keg'];if(!isset($grouped[$code])){$row['pagu']=0;$row['indikator']=$row['uraian']??'';$row['target']=$row['volume']??0;$grouped[$code]=$row;}$grouped[$code]['pagu']+=(float)($row['jumlah']??0);}$rows=array_values($grouped);}
             if (!$rows) throw new RuntimeException('Tidak ada dokumen sumber yang telah disetujui');
             $columns = array_column($this->db->query("SHOW COLUMNS FROM `$targetTable`")->fetchAll(), 'Field');
             $copied = 0; $skipped = 0;
             foreach ($rows as $row) {
-                $linkField = $to === 'rkpd_p' ? 'source_rkpd_id' : 'source_id';
-                $linkParams = $to === 'rkpd_p' ? [(int)$row['id']] : [$sourceTable, (int)$row['id']];
-                $linkWhere = $to === 'rkpd_p' ? 'source_rkpd_id = ?' : 'source_table = ? AND source_id = ?';
+                if($to==='rkpd'){$linkParams=[$row['kd_wilayah'],$row['kd_opd'],$row['tahun'],$row['kd_sub_keg']];$linkWhere='kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=?';}
+                else {$linkParams = $to === 'rkpd_p' ? [(int)$row['id']] : [$sourceTable, (int)$row['id']];$linkWhere = $to === 'rkpd_p' ? 'source_rkpd_id = ?' : 'source_table = ? AND source_id = ?';}
                 if ($this->db->query("SELECT id FROM `$targetTable` WHERE $linkWhere AND is_deleted = 0 LIMIT 1", $linkParams)->fetch()) { $skipped++; continue; }
                 $payload = $this->mapRow($from, $to, $sourceTable, $row, $columns);
                 (new PaguLimitService($this->user))->validate($targetTable, $payload);
@@ -54,6 +54,7 @@ class AnggaranCopyService
         $payload = ['source_table'=>$sourceTable,'source_id'=>(int)$row['id']];
         foreach ($columns as $column) if (!in_array($column, ['id','source_table','source_id','tgl_update','username_update'], true) && array_key_exists($column, $row)) $payload[$column] = $row[$column];
         if ($from === 'rkpd' && $to === 'renja') $payload += ['kd_wilayah'=>$row['kd_wilayah'],'kd_opd'=>$row['kd_opd'],'tahun'=>$row['tahun'],'kd_sub_keg'=>$row['kd_sub_keg'],'uraian'=>$row['indikator'] ?: 'Rincian dari RKPD','volume'=>$row['target'] ?: 1,'jumlah'=>$row['pagu'],'harga_satuan'=>$row['pagu'],'sumber_dana_id'=>$row['sumber_dana_id'],'keterangan'=>$row['keterangan']];
+        if ($from === 'renja' && $to === 'rkpd') $payload += ['kd_wilayah'=>$row['kd_wilayah'],'kd_opd'=>$row['kd_opd'],'tahun'=>$row['tahun'],'kd_sub_keg'=>$row['kd_sub_keg'],'indikator'=>$row['indikator']??$row['uraian']??'','target'=>$row['target']??$row['volume']??0,'pagu'=>$row['pagu']??$row['jumlah']??0,'sumber_dana_id'=>$row['sumber_dana_id']??null,'keterangan'=>$row['keterangan']??null];
         if (str_ends_with($to, '_p') || $to === 'dppa') {
             foreach (['jenis_standar_harga','id_standar_harga','komponen','spesifikasi','tkdn','pajak','harga_satuan','volume','jumlah'] as $field) if (array_key_exists($field, $row) && in_array($field.'_awal', $columns, true)) $payload[$field.'_awal'] = $row[$field];
             if (in_array('status_perubahan', $columns, true)) $payload['status_perubahan'] = 'awal';

@@ -256,7 +256,7 @@ $tahunLabel = $user['tahun'] ?? '-';
         <form class="ui form" id="form-batas-pagu">
             <div class="four fields">
                 <div class="field"><label>OPD</label><div class="ui fluid search selection dropdown" id="batas-pagu-opd"><input type="hidden" name="kd_opd" required><i class="dropdown icon"></i><div class="default text">Pilih OPD</div><div class="menu"></div></div></div>
-                <div class="field"><label>Dokumen</label><select class="ui fluid dropdown" name="dokumen" required><option value="">Pilih dokumen</option><option value="renja">Renja</option><option value="rka">RKA</option><option value="dpa">DPA</option><option value="renja_p">Renja Perubahan</option><option value="rka_p">RKA Perubahan</option><option value="dppa">DPPA</option></select></div>
+                <div class="field"><label>Dokumen</label><select class="ui fluid dropdown" name="dokumen" required><option value="">Pilih dokumen</option><option value="rkpd">RKPD</option><option value="rkpd_p">RKPD Perubahan</option><option value="renja">Renja</option><option value="rka">RKA</option><option value="dpa">DPA</option><option value="renja_p">Renja Perubahan</option><option value="rka_p">RKA Perubahan</option><option value="dppa">DPPA</option></select></div>
                 <div class="field"><label>Pagu Maksimal</label><div class="ui left labeled input"><div class="ui label">Rp</div><input type="number" name="pagu_maksimal" min="0" step="0.01" required></div></div>
                 <div class="field"><label>Keterangan</label><input type="text" name="keterangan" maxlength="500"></div>
             </div>

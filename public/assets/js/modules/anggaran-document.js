@@ -14,7 +14,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		const table = $("#anggaranDocument").data("table") || paths[path] || "rkpd";
 		super({ moduleName: "anggaran", menuItems: [], useMenu: false });
 		this.table = table;
-		this.next = { rkpd: "renja", renja: "rka", rka: "dpa", dpa: "dppa" };
+		this.next = { renja: "rkpd", rka: "dpa", dpa: "dppa" };
 		this.changes = { rkpd: "rkpd_p", renja: "renja_p", rka: "rka_p" };
 	}
 	init() {
@@ -81,7 +81,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 				body += `<tr class="budget-level kegiatan"><td colspan="7"><i class="sitemap icon"></i>${this.escape(kegiatan)}</td></tr>`;
 				lastKegiatan = kegiatan;
 			}
-			const canApprove = ["super_admin", "admin_wilayah", "tapd", "kepala_opd", "pa_kpa"].includes(window.app?.user?.type_user || "");
+			const approvalRole=window.app?.user?.type_user || "", canApprove = ["rkpd","rkpd_p"].includes(this.table)?["super_admin","admin_wilayah","tapd"].includes(approvalRole):["super_admin", "admin_wilayah", "tapd", "kepala_opd", "pa_kpa"].includes(approvalRole);
 			body += `<tr class="budget-group" data-search="${this.escape([r.kd_sub_keg, r.nama_sub_kegiatan, program, kegiatan].join(" "))}"><td><button class="ui violet icon button" title="Lihat rincian" data-budget-action="details" data-code="${this.escape(r.kd_sub_keg)}"><i class="list icon"></i></button>${canApprove ? `<button class="ui ${Number(r.setujui) ? "orange" : "green"} icon button" title="${Number(r.setujui) ? "Buka persetujuan" : "Setujui dan kunci"}" data-budget-action="approval" data-code="${this.escape(r.kd_sub_keg)}" data-approved="${Number(r.setujui) ? 0 : 1}"><i class="${Number(r.setujui) ? "unlock" : "check"} icon"></i></button>` : ""}</td><td><a data-budget-action="details" data-code="${this.escape(r.kd_sub_keg)}"><b>${this.escape(r.kd_sub_keg)}</b> ${this.escape(r.nama_sub_kegiatan || "Sub Kegiatan")}</a></td><td class="center aligned"><span class="ui tiny label">${r.jumlah_uraian}</span></td><td class="center aligned ${Number(r.kunci) ? "negative" : ""}">${Number(r.kunci) ? "DIKUNCI" : "Terbuka"}</td><td class="center aligned ${Number(r.setujui) ? "positive" : ""}">${Number(r.setujui) ? "DISETUJUI" : "Draft"}</td><td class="right aligned budget-pagu-column"><b>${this.money(r.total)}</b></td><td class="right aligned">0%</td></tr>`;
 		});
 		$("#budgetGroupList").html(

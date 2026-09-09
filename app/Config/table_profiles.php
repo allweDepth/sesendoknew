@@ -2348,8 +2348,11 @@ $documentProfile = static function (string $table, array $searchable = ['kd_sub_
   ];
 };
 $profiles['rkpd'] = $documentProfile('rkpd_neo', ['kd_program', 'kd_kegiatan', 'kd_sub_keg', 'indikator', 'lokasi']);
+$profiles['rkpd']['allowed_roles'] = ['super_admin','admin_wilayah','admin_opd','kepala_opd','pa_kpa'];
 $profiles['rkpd']['validation'] = ['kd_sub_keg' => ['required'], 'target' => ['required', 'numeric'], 'pagu' => ['required', 'numeric']];
 $profiles['rkpd_p'] = $documentProfile('rkpd_p_neo', ['kd_program', 'kd_kegiatan', 'kd_sub_keg', 'indikator', 'lokasi']);
+$profiles['rkpd_p']['allowed_roles'] = ['super_admin','admin_wilayah','admin_opd','kepala_opd','pa_kpa'];
+$profiles['rkpd_p']['validation'] = ['kd_sub_keg' => ['required'], 'target' => ['required', 'numeric'], 'pagu' => ['required', 'numeric'], 'status_perubahan'=>['required']];
 $profiles['renja'] = $documentProfile('renja_neo');
 $profiles['rka'] = $documentProfile('rka_neo');
 $profiles['dpa'] = $documentProfile('dpa_neo');

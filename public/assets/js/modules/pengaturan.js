@@ -457,7 +457,7 @@ class PengaturanModule {
 		const table = $("#batas-pagu-table tbody");
 		if (!table.length) return;
 		const escape = (value) => $("<div>").text(value ?? "").html();
-		const labels = { renja:"Renja", rka:"RKA", dpa:"DPA", renja_p:"Renja Perubahan", rka_p:"RKA Perubahan", dppa:"DPPA" };
+		const labels = { rkpd:"RKPD", rkpd_p:"RKPD Perubahan", renja:"Renja", rka:"RKA", dpa:"DPA", renja_p:"Renja Perubahan", rka_p:"RKA Perubahan", dppa:"DPPA" };
 		const money = (value) => new Intl.NumberFormat("id-ID", { style:"currency", currency:"IDR", maximumFractionDigits:0 }).format(Number(value || 0));
 
 		const load = () => this.ajax.request({
