@@ -31,7 +31,12 @@ class AnggaranController extends Controller
         if (empty($_SESSION['csrf_token']) || ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '') !== $_SESSION['csrf_token']) { echo JsonResponse::error('CSRF validation gagal', 403); return; }
         try {
             $result = (new AnggaranCopyService(Auth::scopedUser()))->copy($_POST['from'] ?? '', $_POST['to'] ?? '', (int)($_POST['tahun'] ?? 0), !empty($_POST['source_id']) ? (int)$_POST['source_id'] : null);
-            echo JsonResponse::success('Dokumen berhasil diproses', $result);
+            $pesan = sprintf(
+                'Sinkronisasi %s ke %s selesai: %d baris baru, %d baris diperbarui, %d baris dinonaktifkan, %d baris tidak berubah.',
+                strtoupper((string)$result['from']), strtoupper((string)$result['to']),
+                (int)$result['copied'], (int)$result['updated'], (int)$result['removed'], (int)$result['unchanged']
+            );
+            echo JsonResponse::success($pesan, $result);
         } catch (Throwable $e) { echo JsonResponse::error($e->getMessage(), 400); }
     }
 
