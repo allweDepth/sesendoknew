@@ -3,6 +3,7 @@ require_once __DIR__.'/../Core/DB.php';
 require_once __DIR__.'/../Core/Auth.php';
 require_once __DIR__.'/PageSetupService.php';
 require_once __DIR__.'/OfficialLetterheadPdfService.php';
+require_once __DIR__.'/ProcurementFixedPdfService.php';
 
 /** Master + snapshot dokumen pengadaan yang dapat diedit tanpa mengubah master. */
 final class ProcurementDocumentService
@@ -88,6 +89,7 @@ final class ProcurementDocumentService
     public function pdf(int $id):string
     {
         $d=$this->detail($id);$c=$this->contract((int)$d['kontrak_id']);$setup=PageSetupService::current($this->user);$pdf=PageSetupService::createPdf($setup,($d['orientasi']??'P'));
+        return(new ProcurementFixedPdfService($this->user))->render($d,$c,$setup);
         PageSetupService::applyPdf($pdf,$setup,[18,15,18,18]);$pdf->SetTitle($d['judul']);$vars=$this->variables($d,$c);
         if(str_starts_with((string)$d['kode_dokumen'],'SPK_')){$pdf->AddPage();$cover='<table border="1" cellpadding="8"><tr style="background-color:#d9ead3"><td align="center"><b style="font-size:15px">SURAT PERINTAH KERJA</b><br><b>{{nama_opd}}</b></td></tr><tr><td align="center"><br><b style="font-size:13px">{{nama_paket}}</b><br><br></td></tr><tr><td><table cellpadding="5"><tr><td width="32%">Nomor SPK</td><td width="68%">: {{nomor_dokumen}}</td></tr><tr><td>Tanggal</td><td>: {{tanggal_dokumen}}</td></tr><tr><td>Sumber Dana</td><td>: {{sumber_dana}}</td></tr><tr><td>Nilai</td><td>: Rp {{nilai_kontrak}}</td></tr><tr><td>Waktu Pelaksanaan</td><td>: '.htmlspecialchars((string)($c['waktu_pelaksanaan']??'-'),ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8').' hari kalender</td></tr><tr><td>Penyedia</td><td>: {{nama_penyedia}}</td></tr></table></td></tr><tr style="background-color:#fff2cc"><td align="center"><b>TAHUN ANGGARAN '.(int)$c['tahun'].'</b></td></tr></table>';$pdf->SetFont($setup['font']??'helvetica','',10);$pdf->writeHTML($this->sanitizeHtml($this->renderVariables($cover,$vars)),true,false,true,false,'');}
         $pdf->AddPage();OfficialLetterheadPdfService::draw($pdf,$this->user);$pdf->SetFont($setup['font']??'helvetica','B',13);$pdf->MultiCell(0,7,strtoupper((string)$d['judul']),0,'C');$pdf->SetFont($setup['font']??'helvetica','',9);$pdf->MultiCell(0,5,'Nomor: '.($d['nomor_dokumen']?:'-').' | Tanggal: '.$d['tanggal_dokumen'],0,'C');$pdf->Ln(4);

@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
 require_once __DIR__ . '/PageSetupService.php';
 require_once __DIR__ . '/ProcurementDocumentService.php';
 require_once __DIR__ . '/OfficialLetterheadPdfService.php';
+require_once __DIR__ . '/ProcurementFixedPdfService.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -480,6 +481,17 @@ class KontrakRealisasiService
     if (!in_array($type, ['SSKK', 'SSUK'], true)) throw new InvalidArgumentException('Jenis syarat kontrak tidak valid');
     $data = $this->delivery($contractId);
     $d = $data['contract'];
+    $master = $this->db->query('SELECT id,kode,nama,orientasi FROM master_dokumen_pengadaan_neo WHERE kode=? AND aktif=1 AND is_deleted=0 ORDER BY id DESC LIMIT 1', [$type])->fetch() ?: [];
+    $sections = $master ? $this->db->query('SELECT kode_bagian,judul,urutan,isi_template isi FROM master_dokumen_pengadaan_bagian_neo WHERE master_id=? AND is_deleted=0 ORDER BY urutan,id', [(int)$master['id']])->fetchAll() : [];
+    $document = [
+      'kode_dokumen' => $type,
+      'judul' => $type === 'SSKK' ? 'Syarat-Syarat Khusus Kontrak' : 'Syarat-Syarat Umum SPK',
+      'nomor_dokumen' => $d['nomor_kontrak'] ?? null,
+      'tanggal_dokumen' => $d['tanggal_kontrak'] ?? date('Y-m-d'),
+      'orientasi' => $master['orientasi'] ?? 'P',
+      'sections' => $sections,
+    ];
+    return (new ProcurementFixedPdfService($this->user))->render($document, $d, PageSetupService::current($this->user));
     $pdf = PageSetupService::createPdf(PageSetupService::current($this->user),'P');
     $pdf->SetMargins(18, 15, 18);
     $pdf->SetAutoPageBreak(true, 18);
@@ -644,6 +656,7 @@ class KontrakRealisasiService
     }
     $d = $this->db->query($sql, $params)->fetch();
     if (!$d) throw new RuntimeException('Kontrak tidak ditemukan');
+    return (new ProcurementFixedPdfService($this->user))->directContract($d,PageSetupService::current($this->user));
     $d['nomor_spk'] = $d['nomor_kontrak'];
     $d['tanggal_spk'] = $d['tanggal_kontrak'];
     $pdf = PageSetupService::createPdf(PageSetupService::current($this->user),'P');
