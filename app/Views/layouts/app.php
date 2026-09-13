@@ -516,8 +516,8 @@
   <!-- UI COMPONENTS -->
   <script src="/assets/js/ui/ui-components.js"></script>
   <script src="/assets/js/ui/ui-extensions.js"></script>
-  <!-- ENGINE -->
-  <!-- <script src="/assets/js/engine/document/document_builder.js"></script> -->
+  <!-- ENGINE: wajib tersedia sebelum modul Kontrak/Tata Naskah diinisialisasi. -->
+  <script src="/assets/js/engine/document/document_builder.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/engine/document/document_builder.js') ?>"></script>
 
 
   <!-- ================= ENTRY POINT ================= -->

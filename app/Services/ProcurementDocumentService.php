@@ -4,6 +4,7 @@ require_once __DIR__.'/../Core/Auth.php';
 require_once __DIR__.'/PageSetupService.php';
 require_once __DIR__.'/OfficialLetterheadPdfService.php';
 require_once __DIR__.'/ProcurementFixedPdfService.php';
+require_once __DIR__.'/ProcurementReferenceTermsService.php';
 
 /** Master + snapshot dokumen pengadaan yang dapat diedit tanpa mengubah master. */
 final class ProcurementDocumentService
@@ -83,7 +84,7 @@ final class ProcurementDocumentService
 
     public function draft(int $contractId,int $masterId):array
     {
-        $c=$this->contract($contractId);$m=$this->db->query('SELECT * FROM master_dokumen_pengadaan_neo WHERE id=? AND aktif=1 AND is_deleted=0',[$masterId])->fetch();if(!$m)throw new RuntimeException('Master dokumen tidak ditemukan');$sections=$this->db->query('SELECT kode_bagian,judul,urutan,isi_template isi,petunjuk_edit,wajib FROM master_dokumen_pengadaan_bagian_neo WHERE master_id=? AND is_deleted=0 ORDER BY urutan,id',[$masterId])->fetchAll();return['contract'=>$c,'master'=>$m,'sections'=>$sections,'attachments'=>[],'recommended_form'=>self::recommendForm((string)($c['cara_pengadaan']??'PENYEDIA'),(string)($c['jenis_pengadaan']??'BARANG'),(string)($c['metode_pemilihan']??''),(float)($c['nilai_kontrak']??0),$c['tipe_swakelola']??null)];
+        $c=$this->contract($contractId);$m=$this->db->query('SELECT * FROM master_dokumen_pengadaan_neo WHERE id=? AND aktif=1 AND is_deleted=0',[$masterId])->fetch();if(!$m)throw new RuntimeException('Master dokumen tidak ditemukan');$sections=$this->db->query('SELECT kode_bagian,judul,urutan,isi_template isi,petunjuk_edit,wajib FROM master_dokumen_pengadaan_bagian_neo WHERE master_id=? AND is_deleted=0 ORDER BY urutan,id',[$masterId])->fetchAll();$code=strtoupper((string)($m['kode']??''));if(in_array($code,['SURAT_PERJANJIAN','SSKK','SSUK'],true)){$reference=ProcurementReferenceTermsService::rows($code,$c);if($reference){if(!$sections)$sections=[['kode_bagian'=>'ISI','judul'=>$code==='SSKK'?'Butir Syarat Khusus Kontrak':($code==='SSUK'?'Klausul Syarat Umum SPK':'Paragraf Surat Perjanjian'),'urutan'=>1,'petunjuk_edit'=>'Sunting setiap paragraf tanpa kode HTML.','wajib'=>1]];$sections[0]['isi']=json_encode($reference,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);}}return['contract'=>$c,'master'=>$m,'sections'=>$sections,'attachments'=>[],'recommended_form'=>self::recommendForm((string)($c['cara_pengadaan']??'PENYEDIA'),(string)($c['jenis_pengadaan']??'BARANG'),(string)($c['metode_pemilihan']??''),(float)($c['nilai_kontrak']??0),$c['tipe_swakelola']??null)];
     }
 
     public function delete(int $id):array

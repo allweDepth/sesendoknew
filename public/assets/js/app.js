@@ -182,6 +182,9 @@ class App {
 		// Editor paragraf dipakai Tata Naskah dan dokumen kontrak SSKK/SSUK.
 		if (["tata_naskah", "kontrak"].includes(moduleName)) {
 			// jika module tata naskah
+			if (typeof DocumentBuilder === "function" && !this.loadedModules.includes("document_builder")) {
+				this.loadedModules.push("document_builder");
+			}
 
 			if (!this.loadedModules.includes("document_schema")) {
 				// cek schema belum dimuat

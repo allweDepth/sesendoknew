@@ -458,7 +458,7 @@ class KontrakModule extends BaseCrudModule {
 			window.appUrl ? window.appUrl(`/kontrak?detail=${id}`) : `/kontrak?detail=${id}`,
 		);
 		$("#crud-table-container").html(
-			`<div class="contract-delivery-page"><div class="ui clearing segment contract-delivery-toolbar"><button class="ui left floated basic button" data-contract-delivery-back><i class="arrow left icon"></i>Kembali ke Tabel Kontrak</button><div class="ui right floated buttons"><input type="file" id="rabImportFile" accept=".xlsx,.xls" hidden><button class="ui button" data-delivery-action="import"><i class="upload icon"></i>Import RAB</button><button class="ui green button" data-delivery-action="excel"><i class="file excel icon"></i>Excel</button><button class="ui red button" data-delivery-action="pdf"><i class="file pdf icon"></i>PDF</button></div></div><div id="contractDeliveryContent"><div class="ui active centered inline loader"></div></div></div>`,
+			`<div class="contract-delivery-page"><div class="ui clearing segment contract-delivery-toolbar"><button class="ui left floated basic button" data-contract-delivery-back><i class="arrow left icon"></i>Kembali ke Tabel Kontrak</button><div class="ui right floated buttons"><input type="file" id="rabImportFile" accept=".xlsx,.xls" hidden><button class="ui violet button" data-delivery-action="sskk"><i class="file alternate outline icon"></i>Buat SSKK</button><button class="ui purple button" data-delivery-action="ssuk"><i class="file alternate icon"></i>Buat SSUK</button><button class="ui button" data-delivery-action="import"><i class="upload icon"></i>Import RAB</button><button class="ui green button" data-delivery-action="excel"><i class="file excel icon"></i>Excel</button><button class="ui red button" data-delivery-action="pdf"><i class="file pdf icon"></i>PDF</button></div></div><div id="contractDeliveryContent"><div class="ui active centered inline loader"></div></div></div>`,
 		);
 		window.Ajax.request({
 			url: `/kontrak/delivery?contract_id=${id}`,
@@ -578,6 +578,10 @@ class KontrakModule extends BaseCrudModule {
 	}
 
 	deliveryAction(a, button) {
+		if (a === "sskk" || a === "ssuk") {
+			this.download(`/kontrak/terms_pdf?contract_id=${this.contractId}&type=${a.toUpperCase()}`);
+			return;
+		}
 		if (a === "excel") {
 			this.download(`/kontrak/rab_excel?contract_id=${this.contractId}`);
 			return;

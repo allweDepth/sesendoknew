@@ -2,6 +2,7 @@
 require_once __DIR__.'/PageSetupService.php';
 require_once __DIR__.'/OfficialLetterheadPdfService.php';
 require_once __DIR__.'/ProcurementZipPdfService.php';
+require_once __DIR__.'/ProcurementReferenceTermsService.php';
 
 /** Renderer tata letak dokumen pengadaan. Pengguna tidak pernah mengedit HTML. */
 final class ProcurementFixedPdfService
@@ -39,7 +40,7 @@ final class ProcurementFixedPdfService
     private function money($value):string{return number_format((float)$value,2,',','.');}
     private function paragraphs(array $document,array $contract,bool $jsonOnly=false):array
     {
-        $out=[];foreach($document['sections']??[] as $section){$raw=$section['isi']??$section['isi_template']??'';$decoded=is_string($raw)?json_decode($raw,true):$raw;if(is_array($decoded)){foreach($decoded as $row){if(is_string($row))$row=['text'=>$row];if(!is_array($row)||trim((string)($row['text']??''))==='')continue;$row['text']=$this->variables((string)$row['text'],$document,$contract);$out[]=$row;}continue;}if($jsonOnly)continue;$text=preg_replace('/\s+/u',' ',html_entity_decode(strip_tags(str_replace(['</p>','</li>','<br>','<br/>','<br />'],"\n",(string)$raw)),ENT_QUOTES|ENT_HTML5,'UTF-8'));foreach(preg_split('/\n+/',$text)?:[] as $line)if(trim($line)!=='')$out[]=['type'=>'paragraph','align'=>'justify','text'=>$this->variables(trim($line),$document,$contract)];}return$out;
+        $code=strtoupper((string)($document['kode_dokumen']??''));if(empty($document['id'])&&in_array($code,['SURAT_PERJANJIAN','SSKK','SSUK'],true)){$reference=ProcurementReferenceTermsService::rows($code,$contract);foreach($reference as &$row)$row['text']=$this->variables((string)($row['text']??''),$document,$contract);unset($row);if($reference)return$reference;}$out=[];foreach($document['sections']??[] as $section){$raw=$section['isi']??$section['isi_template']??'';$decoded=is_string($raw)?json_decode($raw,true):$raw;if(is_array($decoded)){foreach($decoded as $row){if(is_string($row))$row=['text'=>$row];if(!is_array($row)||trim((string)($row['text']??''))==='')continue;$row['text']=$this->variables((string)$row['text'],$document,$contract);$out[]=$row;}continue;}if($jsonOnly)continue;$text=preg_replace('/\s+/u',' ',html_entity_decode(strip_tags(str_replace(['</p>','</li>','<br>','<br/>','<br />'],"\n",(string)$raw)),ENT_QUOTES|ENT_HTML5,'UTF-8'));foreach(preg_split('/\n+/',$text)?:[] as $line)if(trim($line)!=='')$out[]=['type'=>'paragraph','align'=>'justify','text'=>$this->variables(trim($line),$document,$contract)];}return$out;
     }
     private function variables(string $text,array $d,array $c):string
     {
@@ -47,12 +48,28 @@ final class ProcurementFixedPdfService
     }
     private function writeParagraphs(TCPDF $pdf,array $rows):void
     {
-        $sequence=[];foreach($rows as $row){$type=$row['type']??'paragraph';$style=is_array($row['style']??null)?$row['style']:[];$font=(in_array('bold',$style,true)?'B':'').(in_array('italic',$style,true)?'I':'').(in_array('underline',$style,true)?'U':'');$pdf->SetFont($this->font,$font,$this->baseSize);$align=['left'=>'L','center'=>'C','right'=>'R','justify'=>'J'][$row['align']??'justify']??'J';$prefix='';if($type==='list')$prefix='- ';elseif(in_array($type,['numbered','alpha'],true)){$sequence[$type]=($sequence[$type]??0)+1;$prefix=$type==='alpha'?chr(96+$sequence[$type]).'. ':$sequence[$type].'. ';}$text=$prefix.(string)$row['text'].($align==='J'?"\n":'');$pdf->MultiCell(0,5.2,$text,0,$align,false,1,'','',true,0,false,true);$pdf->Ln(1.2);}
+        $sequence=[];foreach($rows as $row){$format=(string)($row['format']??'');if(in_array($format,['clause-heading','hanging-list','body'],true)){$this->writeTermsParagraphs($pdf,[$row]);continue;}$type=$row['type']??'paragraph';$style=is_array($row['style']??null)?$row['style']:[];$font=(in_array('bold',$style,true)?'B':'').(in_array('italic',$style,true)?'I':'').(in_array('underline',$style,true)?'U':'');$pdf->SetFont($this->font,$font,$this->baseSize);$align=['left'=>'L','center'=>'C','right'=>'R','justify'=>'J'][$row['align']??'justify']??'J';$prefix='';if($type==='list')$prefix='- ';elseif(in_array($type,['numbered','alpha'],true)){$sequence[$type]=($sequence[$type]??0)+1;$prefix=$type==='alpha'?chr(96+$sequence[$type]).'. ':$sequence[$type].'. ';}$text=$prefix.(string)$row['text'].($align==='J'?"\n":'');$pdf->MultiCell(0,5.2,$text,0,$align,false,1,'','',true,0,false,true);$pdf->Ln(1.2);}
     }
     private function writeJustified(TCPDF $pdf,string $text,float $height=5.0):void
     {
         // TCPDF needs a trailing line break so the last visual line is not stretched.
         $pdf->MultiCell(0,$height,rtrim($text)."\n",0,'J',false,1,'','',true,0,false,true);
+    }
+    private function writeTermsParagraphs(TCPDF $pdf,array $rows):void
+    {
+        foreach($rows as $row){
+            $text=trim((string)($row['text']??''));if($text==='')continue;
+            $format=(string)($row['format']??'body');
+            if($format==='clause-heading'){$pdf->Ln(1.5);$pdf->SetFont($this->font,'B',$this->baseSize);$pdf->MultiCell(0,5.2,$text,0,'L',false,1);continue;}
+            $pdf->SetFont($this->font,'',$this->baseSize);
+            if($format==='hanging-list'&&preg_match('/^(\([a-z0-9]+\)|\d+\.)\s+(.+)$/isu',$text,$m)){
+                $margin=$pdf->getMargins();$x=$margin['left'];$y=$pdf->GetY();$pdf->SetXY($x,$y);$pdf->Cell(8,5.0,$m[1],0,0,'R');$pdf->SetXY($x+10,$y);$pdf->MultiCell($pdf->getPageWidth()-$margin['right']-($x+10),5.0,rtrim($m[2])."\n",0,'J',false,1);continue;
+            }
+            if($format==='hanging-list'&&preg_match('/^((?:[a-z]\.|\d+\)|[ivx]+\.))\s+(.+)$/isu',$text,$m)){
+                $margin=$pdf->getMargins();$x=$margin['left'];$y=$pdf->GetY();$pdf->SetXY($x,$y);$pdf->Cell(8,5.0,$m[1],0,0,'R');$pdf->SetXY($x+10,$y);$pdf->MultiCell($pdf->getPageWidth()-$margin['right']-($x+10),5.0,rtrim($m[2])."\n",0,'J',false,1);continue;
+            }
+            $pdf->MultiCell(0,5.0,rtrim($text)."\n",0,'J',false,1,'','',true,0,false,true);$pdf->Ln(.8);
+        }
     }
     private function footerPages(TCPDF $pdf,string $label):void
     {
@@ -89,11 +106,11 @@ final class ProcurementFixedPdfService
 
     private function sskk(array $d,array $c,array $setup):string
     {
-        $pdf=$this->pdf($setup,'P');$pdf->AddPage();$pdf->SetFont($this->font,'B',$this->baseSize+5);$pdf->MultiCell(0,8,'SYARAT-SYARAT KHUSUS KONTRAK',0,'C');$rows=$this->paragraphs($d,$c);if(!$rows)$rows=[['text'=>'4.1 & 4.2 | Korespondensi | Alamat para pihak dan wakil sah mengikuti data kontrak.'],['text'=>'27.1 | Masa Pelaksanaan | Masa pelaksanaan '.$this->value($c,'waktu_pelaksanaan').' hari kalender sejak SPMK.'],['text'=>'45.b | Pembayaran Tagihan | Pembayaran dilakukan atas prestasi pekerjaan yang terverifikasi.'],['text'=>'70.4 | Denda Keterlambatan | Denda sebesar 1/1000 per hari sesuai bagian kontrak yang belum diserahterimakan.'],['text'=>'Lainnya | Penyelesaian Perselisihan | Diselesaikan melalui musyawarah atau layanan penyelesaian sengketa yang disepakati.']];$html='<table cellpadding="3"><thead><tr style="font-weight:bold"><th width="13%">Pasal dalam SSUK</th><th width="22%">Ketentuan</th><th width="65%">Data</th></tr></thead><tbody>';foreach($rows as $row){$parts=array_map('trim',explode('|',(string)$row['text'],3));$html.='<tr><td width="13%"><b>'.$this->e($parts[0]??'').'</b></td><td width="22%"><b>'.$this->e($parts[1]??'').'</b></td><td width="65%">'.$this->e($parts[2]??$parts[0]??'').'</td></tr>';}$html.='</tbody></table>';$pdf->SetFont($this->font,'',max(6,$this->baseSize-0.5));$pdf->writeHTML($html,true,false,true,false,'');$this->footerPages($pdf,'syarat-syarat khusus kontrak');return$pdf->Output('','S');
+        $pdf=$this->pdf($setup,'P');$pdf->AddPage();$pdf->SetFont($this->font,'B',$this->baseSize+5);$pdf->MultiCell(0,8,'SYARAT-SYARAT KHUSUS KONTRAK',0,'C');$rows=$this->paragraphs($d,$c);if(empty($d['id']))$rows=ProcurementReferenceTermsService::rows('SSKK',$c);if(!$rows)$rows=ProcurementReferenceTermsService::rows('SSKK',$c);foreach($rows as &$row)$row['text']=$this->variables((string)($row['text']??''),$d,$c);unset($row);$html='<table cellpadding="3"><thead><tr style="font-weight:bold"><th width="13%">Pasal dalam SSUK</th><th width="22%">Ketentuan</th><th width="65%">Data</th></tr></thead><tbody>';foreach($rows as $row){$parts=array_map('trim',explode('|',(string)$row['text'],3));$html.='<tr><td width="13%"><b>'.nl2br($this->e($parts[0]??''),false).'</b></td><td width="22%"><b>'.nl2br($this->e($parts[1]??''),false).'</b></td><td width="65%">'.nl2br($this->e($parts[2]??$parts[0]??''),false).'</td></tr>';}$html.='</tbody></table>';$pdf->SetFont($this->font,'',max(6,$this->baseSize-0.5));$pdf->writeHTML($html,true,false,true,false,'');$this->footerPages($pdf,'syarat-syarat khusus kontrak');return$pdf->Output('','S');
     }
     private function ssuk(array $d,array $c,array $setup):string
     {
-        $pdf=$this->pdf($setup,'P');$pdf->AddPage();$pdf->SetFont($this->font,'B',$this->baseSize+5);$pdf->MultiCell(0,7,"SYARAT UMUM\nSURAT PERINTAH KERJA (SPK)",0,'C');$rows=$this->paragraphs($d,$c);if(!$rows)$rows=[['type'=>'numbered','style'=>['bold'],'text'=>'LINGKUP PEKERJAAN'],['text'=>'Penyedia wajib menyelesaikan pekerjaan sesuai volume, KAK/spesifikasi, mutu, waktu, dan harga dalam SPK.'],['type'=>'numbered','style'=>['bold'],'text'=>'HUKUM YANG BERLAKU'],['text'=>'Keabsahan, interpretasi, dan pelaksanaan SPK didasarkan pada hukum Republik Indonesia.'],['type'=>'numbered','style'=>['bold'],'text'=>'LARANGAN KKN DAN PENIPUAN'],['text'=>'Para pihak dilarang melakukan korupsi, kolusi, nepotisme, penyalahgunaan wewenang, benturan kepentingan, dan penipuan.']];$this->writeParagraphs($pdf,$rows);$this->footerPages($pdf,'syarat umum spk');return$pdf->Output('','S');
+        $pdf=$this->pdf($setup,'P');$pdf->AddPage();$pdf->SetFont($this->font,'B',$this->baseSize+5);$pdf->MultiCell(0,7,"SYARAT UMUM\nSURAT PERINTAH KERJA (SPK)",0,'C');$rows=$this->paragraphs($d,$c);if(empty($d['id']))$rows=ProcurementReferenceTermsService::rows('SSUK',$c);if(!$rows)$rows=ProcurementReferenceTermsService::rows('SSUK',$c);$this->writeTermsParagraphs($pdf,$rows);$this->footerPages($pdf,'syarat umum spk');return$pdf->Output('','S');
     }
     private function officialLetter(array $d,array $c,array $setup):string
     {
