@@ -39,13 +39,50 @@ $verifyPayload($change, 'perubahan');
 $db = DB::getInstance();
 $scope = [$wilayah, $opd, $year];
 $username = 'IMPORT_DOKUMEN_SIPD_PUPR_PASANGKAYU_' . $year;
+$normalize = static fn(string $value): string => mb_strtolower(trim((string)preg_replace('/\s+/u', ' ', $value)), 'UTF-8');
+$standardKey = static function (array $item) use ($normalize): string {
+    return implode('|', [
+        $normalize((string)($item['komponen'] ?? '')),
+        $normalize((string)($item['spesifikasi'] ?? '')),
+        number_format((float)($item['harga_satuan'] ?? 0), 2, '.', ''),
+        $normalize((string)($item['satuan'] ?? '')),
+    ]);
+};
+$standardRows = [];
+foreach ([$initial, $change] as $payload) foreach (($payload['documents'] ?? []) as $document) foreach (($document['items'] ?? []) as $item) {
+    $key = $standardKey($item);
+    if ($key !== '|||0.00|') $standardRows[$key] = $item;
+}
+$existingStandardRows = $db->query(
+    'SELECT mb.id,mb.uraian,mb.spesifikasi,mb.harga,mb.satuan_id,COALESCE(s.uraian,\'\') satuan FROM master_biaya mb LEFT JOIN satuan_neo s ON s.id=mb.satuan_id WHERE mb.kd_wilayah=? AND mb.tahun=? AND mb.is_deleted=0',
+    [$wilayah, $year]
+)->fetchAll();
+$existingStandards = [];
+foreach ($existingStandardRows as $row) {
+    $existingStandards[$normalize((string)$row['uraian']) . '|' . $normalize((string)$row['spesifikasi']) . '|' . number_format((float)$row['harga'], 2, '.', '') . '|' . $normalize((string)$row['satuan'])] = $row;
+}
+$standardSeeded = 0;
+foreach ($standardRows as $key => $item) {
+    $existing = $existingStandards[$key] ?? null;
+    if ($existing) continue;
+    $code = 'DPA-' . $year . '-' . strtoupper(substr(sha1($key), 0, 32));
+    $id = (int)$db->insert('master_biaya', [
+        'tipe'=>'ssh','sipd_id'=>$code,'kode'=>$code,'kode_aset'=>(string)($item['kd_akun'] ?? ''),
+        'kode_kelompok'=>mb_substr((string)($item['kelompok'] ?? ''),0,100),'kelompok_barang'=>mb_substr((string)($item['uraian_kelompok'] ?? ''),0,255),
+        'uraian'=>(string)($item['komponen'] ?? ''),'spesifikasi'=>(string)($item['spesifikasi'] ?? ''),
+        'harga'=>(float)($item['harga_satuan'] ?? 0),'tkdn'=>0,'keterangan'=>'Harga satuan dari rincian DPA/DPPA ' . $year,
+        'kd_wilayah'=>$wilayah,'tahun'=>$year,'peraturan_id'=>null,'disable'=>0,'is_deleted'=>0,
+        'tgl_insert'=>date('Y-m-d H:i:s'),'username_insert'=>$username,
+    ]);
+    $existingStandards[$key] = ['id'=>$id,'uraian'=>$item['komponen'] ?? '','spesifikasi'=>$item['spesifikasi'] ?? '','harga'=>$item['harga_satuan'] ?? 0,'satuan_id'=>null];
+    $standardSeeded++;
+}
 $initialTables = ['renja_neo','rka_neo','dpa_neo'];
 $changeTables = ['renja_p_neo','rka_p_neo','dppa_neo'];
 $tables = array_merge($initialTables, $changeTables);
 $columns = [];
 foreach ($tables as $table) $columns[$table] = array_flip(array_column($db->query("SHOW COLUMNS FROM `$table`")->fetchAll(), 'Field'));
 $filter = static fn(array $row, array $allowed): array => array_intersect_key($row, $allowed);
-$normalize = static fn(string $value): string => mb_strtolower(trim((string)preg_replace('/\s+/u', ' ', $value)), 'UTF-8');
 $matchKey = static function(string $subCode, array $item) use ($normalize): string {
     return implode('|', [
         $subCode, (string)($item['kd_akun'] ?? ''),
@@ -58,7 +95,7 @@ $matchKey = static function(string $subCode, array $item) use ($normalize): stri
 };
 
 $standards = [];
-foreach ($db->query('SELECT id,tipe,uraian,harga,tkdn FROM master_biaya WHERE kd_wilayah=? AND tahun=? AND is_deleted=0', [$wilayah,$year])->fetchAll() as $row) {
+foreach ($db->query('SELECT id,tipe,uraian,spesifikasi,harga,tkdn FROM master_biaya WHERE kd_wilayah=? AND tahun=? AND is_deleted=0', [$wilayah,$year])->fetchAll() as $row) {
     $standards[$normalize((string)$row['uraian']).'|'.number_format((float)$row['harga'],2,'.','')][] = $row;
 }
 $funds = $db->query('SELECT id,uraian FROM sumber_dana_neo WHERE is_deleted=0')->fetchAll();
@@ -153,7 +190,17 @@ try {
         $insertCash('dpa',$document);
     }
 
-    foreach ($change['documents'] as $document) {
+    $changeDocuments = $change['documents'];
+    $changedCodes = array_fill_keys(array_map(static fn(array $document): string => (string)$document['sub_kegiatan'], $changeDocuments), true);
+    foreach ($initial['documents'] as $document) {
+        if (!isset($changedCodes[(string)$document['sub_kegiatan']])) {
+            $document['source_file'] = 'DPA pokok diwariskan ke DPPA karena tidak berubah';
+            $changeDocuments[] = $document;
+        }
+    }
+    $effectiveChangeTotal = 0.0;
+    foreach ($changeDocuments as $document) foreach (($document['items'] ?? []) as $item) $effectiveChangeTotal += (float)($item['jumlah'] ?? 0);
+    foreach ($changeDocuments as $document) {
         foreach ($document['items'] as $item) {
             $current = $baseRow($document,$item);
             if ($current['id_standar_harga']) $stats['standard_matched_change']++;
@@ -186,7 +233,7 @@ try {
         $stats['deleted']++;
     }
 
-    $stageTotals = ['renja'=>(float)$initial['total_amount'],'rka'=>(float)$initial['total_amount'],'dpa'=>(float)$initial['total_amount'],'renja_p'=>(float)$change['total_amount'],'rka_p'=>(float)$change['total_amount'],'dppa'=>(float)$change['total_amount']];
+    $stageTotals = ['renja'=>(float)$initial['total_amount'],'rka'=>(float)$initial['total_amount'],'dpa'=>(float)$initial['total_amount'],'renja_p'=>$effectiveChangeTotal,'rka_p'=>$effectiveChangeTotal,'dppa'=>$effectiveChangeTotal];
     foreach ($stageTotals as $document=>$total) {
         $limit=$db->query('SELECT id FROM batas_pagu_opd_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND dokumen=? LIMIT 1', [...$scope,$document])->fetch();
         $limitData=['pagu_maksimal'=>$total,'keterangan'=>'Total rincian dokumen SIPD PUPR Pasangkayu '.$year,'tgl_update'=>date('Y-m-d H:i:s'),'username_update'=>$username,'is_deleted'=>0];

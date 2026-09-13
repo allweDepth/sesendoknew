@@ -1557,7 +1557,7 @@ UIConfig.kontrak = {
 		elements: [
 			{ tag:"fieldDropdown", prop:{label:"Cara Pengadaan",name:"cara_pengadaan",options:[{value:"PENYEDIA",text:"Melalui Penyedia"},{value:"SWAKELOLA",text:"Swakelola"}]} },
 			{ tag:"fieldDropdown", prop:{label:"Jenis Pengadaan",name:"jenis_pengadaan",options:["BARANG","PEKERJAAN_KONSTRUKSI","JASA_LAINNYA","KONSULTANSI_KONSTRUKSI","KONSULTANSI_NON_KONSTRUKSI"].map(x=>({value:x,text:x.replaceAll("_"," ")}))} },
-			{ tag:"fieldDropdown", prop:{label:"Tipe Swakelola (wajib untuk swakelola)",name:"tipe_swakelola",options:["I","II","III","IV"].map(x=>({value:x,text:"Tipe "+x}))} },
+			{ tag:"fieldDropdown", prop:{label:"Tipe Swakelola (wajib untuk swakelola)",name:"tipe_swakelola",classField:"contract-swakelola-field",options:["I","II","III","IV"].map(x=>({value:x,text:"Tipe "+x}))} },
 			{ tag:"input", prop:{label:"Metode Pemilihan / E-purchasing",name:"metode_pemilihan"} },
 			{ tag:"input", prop:{label:"Nomor RUP",name:"nomor_rup"} },
 			{ tag:"input", prop:{label:"Nilai HPS",name:"nilai_hps",type:"number"} },

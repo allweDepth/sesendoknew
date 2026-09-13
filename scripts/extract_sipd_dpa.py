@@ -30,6 +30,23 @@ def split_description(value):
     parts=re.split(r"\n?Spesifikasi:\s*", raw, maxsplit=1, flags=re.I)
     return clean(parts[0]), clean(parts[1]) if len(parts)>1 else ""
 
+def fallback_text_items(full_text, account):
+    text=SPACE.sub(" ", full_text)
+    items=[]
+    pattern=re.compile(r"Rp([\d.]+)\s+\d+(?:[.,]\d+)?%\s+Rp([\d.]+)", re.I)
+    for match in pattern.finditer(text):
+        description=clean(text[max(0,match.start()-220):match.start()])
+        if any(x in description.lower() for x in ["kode rekening", "jumlah anggaran", "rencana realisasi", "belanja daerah"]): continue
+        before=text[max(0,match.start()-100):match.start()]
+        volume_matches=re.findall(r"(?:^|\s)(\d+(?:[.,]\d+)?)\s+[A-Za-z]", before)
+        volume=float(volume_matches[-1].replace(",", ".")) if volume_matches else 1.0
+        price=money(match.group(1)); amount=money(match.group(2))
+        if volume<=0 or price<=0 or amount<=0: continue
+        description=re.sub(r"^.*?(?:\[ - \]|\[ # \])\s*", "", description)
+        component=description[-180:]
+        items.append({"kd_akun":account,"jenis_kelompok":"pemaketan","kelompok":"Rincian PDF","uraian_kelompok":"Rincian PDF","sumber_dana":"","komponen":component,"spesifikasi":"","koefisien_keterangan":str(volume),"factors":[volume,0,0,0,0],"factor_units":["Unit","","","",""],"volume":volume,"satuan":"Unit","harga_satuan":price,"pajak":0,"jumlah":amount})
+    return items
+
 def parse_factors(coefficient, unit):
     raw=clean(coefficient)
     factors=[]
@@ -54,6 +71,10 @@ def extract_pdf(path: Path):
             if found:
                 if key=="sub": result["sub_kegiatan"],result["nama_sub_kegiatan"]=found.group(1),clean(found.group(2))
                 else: result[key]=clean(found.group(1))
+        sub_full=re.search(r"Sub Kegiatan\s*:\s*([\d.]+)\s*-\s*(.*?)\s*Sumber Pendanaan\s*:",full_text,re.I|re.S)
+        if sub_full:
+            result["sub_kegiatan"]=sub_full.group(1)
+            result["nama_sub_kegiatan"]=clean(sub_full.group(2))
         funding=re.search(r"Sumber Pendanaan\s*:\s*(.*?)(?:\nLokasi\s*:)",full_text,re.I|re.S)
         if funding: result["sumber_pendanaan"]=clean(funding.group(1).replace("\n:","; "))
         target=re.search(r"Keluaran Sub Kegiatan\s*:\s*[^\n]+.*?Target Kinerja\s*:?\s*([^\n]+)",full_text,re.I|re.S)
@@ -73,9 +94,12 @@ def extract_pdf(path: Path):
                 width=max(len(row or []) for row in table)
                 header_rows=table[header:min(header+3,len(table))]
                 def column(label, fallback):
+                    matches=[]
                     for header_row in header_rows:
                         for idx,value in enumerate(header_row or []):
-                            if label in clean(value).lower(): return idx
+                            if label in clean(value).lower(): matches.append(idx)
+                    if matches:
+                        return matches[-1] if width>=13 else matches[0]
                     return fallback
                 desc_i=column("uraian",1)
                 coeff_i=column("koefisien",4 if width>=9 else 2)
@@ -97,6 +121,10 @@ def extract_pdf(path: Path):
                     if not account or not coeff or not price or not amount or desc in ("Uraian","Rincian Perhitungan"): continue
                     component,specification=split_description(row[desc_i]); volume,factor_values,factor_units=parse_factors(coeff,row[unit_i])
                     result["items"].append({"kd_akun":account,"jenis_kelompok":"pemaketan","kelompok":package,"uraian_kelompok":detail_group,"sumber_dana":fund,"komponen":component,"spesifikasi":specification,"koefisien_keterangan":coeff,"factors":factor_values,"factor_units":factor_units,"volume":volume,"satuan":clean(row[unit_i]),"harga_satuan":money(price),"pajak":number(row[tax_i]),"jumlah":money(amount)})
+    if not result["items"]:
+        code_matches=re.findall(r"Kode Rekening.*?((?:5\.)\d+(?:\.\d+){3,5})",full_text,re.I|re.S)
+        account=code_matches[-1] if code_matches else "5.1.02.99.99.9999"
+        result["items"]=fallback_text_items(full_text,account)
     if not result["sub_kegiatan"]: return None
     result["total_items"]=len(result["items"]);result["total_amount"]=sum(x["jumlah"] for x in result["items"])
     return result
@@ -108,7 +136,6 @@ def main():
     parser.add_argument("--kd-opd",default="1.03.0.00.0.00.01.0000")
     args=parser.parse_args(); docs=[]
     for path in sorted(Path(args.input_dir).glob("*.pdf")):
-        if not re.match(r"^1\.03\.",path.name): continue
         parsed=extract_pdf(path)
         if parsed: docs.append(parsed)
     payload={"format":"SIPD DPA Rincian Belanja","tahun":args.year,"kd_wilayah":args.kd_wilayah,"kd_opd":args.kd_opd,"documents":docs,"total_items":sum(x["total_items"] for x in docs),"total_amount":sum(x["total_amount"] for x in docs)}

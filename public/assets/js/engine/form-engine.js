@@ -790,6 +790,18 @@ class FormEngine {
 		// init dropdown fomantic
 		$(target).find(".ui.dropdown").dropdown();
 
+		const toggleSwakelolaField = () => {
+			const way = String($(target).find('[name="cara_pengadaan"]').val() || "PENYEDIA").toUpperCase();
+			const field = $(target).find(".contract-swakelola-field");
+			const dropdown = field.find(".ui.dropdown");
+			const visible = way === "SWAKELOLA";
+			field.toggle(visible);
+			if (!visible) dropdown.dropdown("clear");
+		};
+		$(target).off("change.contractProcurement", '[name="cara_pengadaan"]')
+			.on("change.contractProcurement", '[name="cara_pengadaan"]', toggleSwakelolaField);
+		setTimeout(toggleSwakelolaField, 0);
+
 		/**
 		 * =====================================================
 		 * APPLY DEFAULT VALUE

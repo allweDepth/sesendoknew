@@ -17,11 +17,11 @@ class AnggaranDocumentService
     {
         $table=$this->table($logical);[$scope,$params]=$this->scope();$amount=str_starts_with($logical,'rkpd')?'a.pagu':'a.jumlah';$description=str_starts_with($logical,'rkpd')?'MAX(a.indikator)':'MAX(a.uraian)';
         $prefix="CONVERT(a.kd_sub_keg USING utf8mb4) COLLATE utf8mb4_general_ci";
-        return $this->db->query("SELECT a.kd_sub_keg,COALESCE(r.uraian,$description) nama_sub_kegiatan,COUNT(*) jumlah_uraian,COALESCE(SUM($amount),0) total,MAX(a.setujui) setujui,MAX(a.kunci) kunci,
-          (SELECT CONCAT(x.kode,' ',x.uraian) FROM rekening_kegiatan x WHERE x.level='program' AND $prefix LIKE CONCAT(x.kode,'.%') COLLATE utf8mb4_general_ci ORDER BY CHAR_LENGTH(x.kode) DESC LIMIT 1) program,
-          (SELECT CONCAT(x.kode,' ',x.uraian) FROM rekening_kegiatan x WHERE x.level='kegiatan' AND $prefix LIKE CONCAT(x.kode,'.%') COLLATE utf8mb4_general_ci ORDER BY CHAR_LENGTH(x.kode) DESC LIMIT 1) kegiatan,
-          (SELECT CONCAT(x.kode,' ',x.uraian) FROM rekening_kegiatan x WHERE x.level='bidang' AND $prefix LIKE CONCAT(x.kode,'.%') COLLATE utf8mb4_general_ci ORDER BY CHAR_LENGTH(x.kode) DESC LIMIT 1) bidang
-          FROM `$table` a LEFT JOIN rekening_kegiatan r ON r.kode=$prefix AND r.level='sub_kegiatan' WHERE $scope GROUP BY a.kd_sub_keg,r.uraian ORDER BY a.kd_sub_keg",$params)->fetchAll();
+                return $this->db->query("SELECT a.kd_sub_keg,COALESCE(h.uraian,r.uraian,$description) nama_sub_kegiatan,COUNT(*) jumlah_uraian,COALESCE(SUM($amount),0) total,MAX(a.setujui) setujui,MAX(a.kunci) kunci,
+                      (SELECT CONCAT(x.kode,' ',x.uraian) FROM rekening_kegiatan_historis x WHERE x.tahun=a.tahun AND CONVERT(x.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(a.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci AND x.level='program' AND $prefix LIKE CONCAT(CONVERT(x.kode USING utf8mb4) COLLATE utf8mb4_general_ci,'.%') ORDER BY CHAR_LENGTH(x.kode) DESC LIMIT 1) program,
+                      (SELECT CONCAT(x.kode,' ',x.uraian) FROM rekening_kegiatan_historis x WHERE x.tahun=a.tahun AND CONVERT(x.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(a.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci AND x.level='kegiatan' AND $prefix LIKE CONCAT(CONVERT(x.kode USING utf8mb4) COLLATE utf8mb4_general_ci,'.%') ORDER BY CHAR_LENGTH(x.kode) DESC LIMIT 1) kegiatan,
+                      (SELECT CONCAT(x.kode,' ',x.uraian) FROM rekening_kegiatan x WHERE x.level='bidang' AND $prefix LIKE CONCAT(CONVERT(x.kode USING utf8mb4) COLLATE utf8mb4_general_ci,'.%') ORDER BY CHAR_LENGTH(x.kode) DESC LIMIT 1) bidang
+                      FROM `$table` a LEFT JOIN rekening_kegiatan r ON CONVERT(r.kode USING utf8mb4) COLLATE utf8mb4_general_ci=$prefix AND r.level='sub_kegiatan' LEFT JOIN rekening_kegiatan_historis h ON h.tahun=a.tahun AND CONVERT(h.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(a.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci AND CONVERT(h.kode USING utf8mb4) COLLATE utf8mb4_general_ci=$prefix AND h.level='sub_kegiatan' WHERE $scope GROUP BY a.kd_sub_keg,h.uraian,r.uraian ORDER BY a.kd_sub_keg",$params)->fetchAll();
     }
     public function details(string $logical,string $code):array
     {
