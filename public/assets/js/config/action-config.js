@@ -20,6 +20,7 @@ const ActionConfig = {
 			ppk_skpd: ["edit"],
 			bendahara: ["edit"],
 			pejabat_pengadaan: ["edit"],
+			pokja_ulp: ["edit"],
 			staf_opd: ["edit"],
 			editor: ["edit"],
 			viewer: [],

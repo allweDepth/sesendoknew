@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/JsonResponse.php';
+require_once __DIR__ . '/ProcurementDocumentService.php';
 
 /**
  * ============================================================
@@ -715,7 +716,7 @@ AUDIT TRAIL (TIDAK DIUBAH)
 
   private function applyChangeDocumentRules(string $table, array $oldData, array &$data): void
   {
-    if (!in_array($table, ['renja_p_neo', 'rka_p_neo', 'dppa_neo'], true)) return;
+    if (!in_array($table, ['renja_p_neo','rka_p_neo','dppa_neo'], true)) return;
 
     if ((int)($oldData['source_id'] ?? 0) <= 0) {
       if (($data['status_perubahan'] ?? '') === '') $data['status_perubahan'] = 'tambah';
@@ -763,6 +764,40 @@ AUDIT TRAIL (TIDAK DIUBAH)
   private function normalizeSakipMetrics(string $table, array $data): array
   {
     $scope = [$this->user['kd_wilayah'] ?? '', $this->user['kd_opd'] ?? '', (int)($this->user['tahun'] ?? date('Y'))];
+    if (in_array($table, ['iku_opd_neo', 'pohon_kinerja_neo', 'perjanjian_kinerja_neo'], true)) {
+      $effectiveDate = (string)($data['tanggal_dokumen'] ?? $data['tanggal_penetapan'] ?? date('Y-m-d'));
+      if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $effectiveDate)) $effectiveDate = date('Y-m-d');
+      $structure = function (?int $id, bool $parent = false) use ($scope, $effectiveDate): ?array {
+        $params = [$scope[0], $scope[2], $effectiveDate, $effectiveDate];
+        $sql = "SELECT s.id,s.pegawai_id,s.nama_jabatan,s.parent_id,s.parent_kd_opd FROM struktur_jabatan_opd_neo s WHERE s.kd_wilayah=? AND s.tahun=? AND s.is_deleted=0 AND s.status_jabatan='AKTIF' AND s.berlaku_mulai<=? AND (s.berlaku_sampai IS NULL OR s.berlaku_sampai>=?)";
+        if ($id) { $sql .= ' AND s.id=? AND s.kd_opd=?'; $params[] = $id; $params[] = $scope[1]; }
+        else {
+          $sql .= ' AND s.kd_opd=?'; $params[] = $scope[1];
+          $sql .= $parent ? ' AND s.parent_id IS NOT NULL' : " ORDER BY (s.parent_id IS NULL) DESC,(LOWER(s.nama_jabatan) REGEXP 'kepala|direktur|camat|sekretaris daerah') DESC,s.urutan,s.id LIMIT 1";
+        }
+        $row = $this->db->query($sql . ($id ? ' LIMIT 1' : ($parent ? ' ORDER BY s.urutan,s.id LIMIT 1' : '')), $params)->fetch();
+        if (!$row) return null;
+        if ($parent && !$id && !empty($row['parent_id'])) {
+          $parentOpd = $row['parent_kd_opd'] ?: $scope[1];
+          return $this->db->query("SELECT id,pegawai_id,nama_jabatan,parent_id,parent_kd_opd FROM struktur_jabatan_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 AND status_jabatan='AKTIF' AND berlaku_mulai<=? AND (berlaku_sampai IS NULL OR berlaku_sampai>=?) LIMIT 1", [(int)$row['parent_id'], $scope[0], $parentOpd, $scope[2], $effectiveDate, $effectiveDate])->fetch() ?: null;
+        }
+        return $row;
+      };
+      if (in_array($table, ['iku_opd_neo', 'pohon_kinerja_neo'], true)) {
+        $s = $structure(!empty($data['penanggung_jawab_struktur_id']) ? (int)$data['penanggung_jawab_struktur_id'] : null);
+        if (!$s) throw new InvalidArgumentException('Struktur organisasi aktif untuk penanggung jawab belum tersedia pada tanggal dokumen');
+        $data['penanggung_jawab_struktur_id'] = (int)$s['id'];
+        $data['penanggung_jawab_pegawai_id'] = (int)$s['pegawai_id'];
+      } else {
+        $first = $structure(!empty($data['pihak_pertama_struktur_id']) ? (int)$data['pihak_pertama_struktur_id'] : null);
+        if (!$first) throw new InvalidArgumentException('Struktur aktif pihak pertama belum tersedia pada tanggal dokumen');
+        $parentOpd = $first['parent_kd_opd'] ?: $scope[1];
+        $second = !empty($first['parent_id']) ? $this->db->query("SELECT id,pegawai_id,nama_jabatan,parent_id,parent_kd_opd FROM struktur_jabatan_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 AND status_jabatan='AKTIF' AND berlaku_mulai<=? AND (berlaku_sampai IS NULL OR berlaku_sampai>=?) LIMIT 1", [(int)$first['parent_id'], $scope[0], $parentOpd, $scope[2], $effectiveDate, $effectiveDate])->fetch() : null;
+        if (!$second) throw new InvalidArgumentException('Atasan aktif pihak kedua belum tersedia pada struktur organisasi');
+        $data['pihak_pertama_struktur_id'] = (int)$first['id']; $data['pihak_pertama_pegawai_id'] = (int)$first['pegawai_id']; $data['pihak_pertama_jabatan'] = $first['nama_jabatan'];
+        $data['pihak_kedua_struktur_id'] = (int)$second['id']; $data['pihak_kedua_pegawai_id'] = (int)$second['pegawai_id']; $data['pihak_kedua_jabatan'] = $second['nama_jabatan'];
+      }
+    }
     if ($table === 'pohon_kinerja_neo' && !empty($data['sumber_kinerja_key']) && preg_match('/^(sasaran_renstra|program_renstra|kegiatan_renstra|sub_kegiatan_renstra):(\d+)$/', (string)$data['sumber_kinerja_key'], $m)) {
       $data['sumber_ref'] = $m[1];
       $data['sumber_id'] = (int)$m[2];
@@ -846,6 +881,28 @@ AUDIT TRAIL (TIDAK DIUBAH)
       }
       $data['capaian_persen'] = $this->performancePercentage($target, $realization, $polarity);
     }
+    return $data;
+  }
+
+  private function normalizeContractProcurement(string $table, array $data): array
+  {
+    if ($table !== 'kontrak_neo') return $data;
+    $way = strtoupper((string)($data['cara_pengadaan'] ?? 'PENYEDIA'));
+    $kind = strtoupper((string)($data['jenis_pengadaan'] ?? 'BARANG'));
+    $method = trim((string)($data['metode_pemilihan'] ?? ''));
+    $value = (float)($data['nilai_kontrak'] ?? $data['nilai_hps'] ?? 0);
+    if (!in_array($way, ['PENYEDIA', 'SWAKELOLA'], true)) throw new InvalidArgumentException('Cara pengadaan tidak valid');
+    if ($way === 'SWAKELOLA') {
+      if (!in_array((string)($data['tipe_swakelola'] ?? ''), ['I', 'II', 'III', 'IV'], true)) throw new InvalidArgumentException('Tipe Swakelola I, II, III, atau IV wajib dipilih');
+      $data['rekanan_id'] = null;
+    } elseif (empty($data['rekanan_id'])) {
+      throw new InvalidArgumentException('Penyedia wajib dipilih untuk pengadaan melalui penyedia');
+    } else {
+      $data['tipe_swakelola'] = null;
+    }
+    $data['cara_pengadaan'] = $way;
+    $data['jenis_pengadaan'] = $kind;
+    $data['bentuk_kontrak'] = ProcurementDocumentService::recommendForm($way, $kind, $method, $value, $data['tipe_swakelola'] ?? null);
     return $data;
   }
   private function performancePercentage(float $target, float $realization, string $polarity): float
@@ -1123,6 +1180,7 @@ kd_sub_keg → nama_sub_keg
     $filtered = $this->sanitizer()->applySanitization($table, $filtered);
     $filtered = $this->injectAudit($filtered, 'insert');
     $filtered = $this->normalizeSakipMetrics($table, $filtered);
+    $filtered = $this->normalizeContractProcurement($table, $filtered);
     $this->enforceSubActivityAssignment($table, $filtered, 'add');
     $this->enforceDocumentRowLock($table, $filtered);
 
@@ -1447,6 +1505,7 @@ IGNORE SYSTEM FIELD
     }
     $this->applyChangeDocumentRules($table, $oldData, $filtered);
     $filtered = $this->normalizeSakipMetrics($table, $filtered);
+    $filtered = $this->normalizeContractProcurement($table, $filtered);
     $this->enforceSubActivityAssignment($table, $filtered, 'edit');
     $this->enforceDocumentRowLock($table, $filtered);
     if ($table === 'rpjmd_kabupaten_neo' && ($filtered['berlaku_mulai'] ?? '') > ($filtered['berlaku_sampai'] ?? '')) {
@@ -1582,7 +1641,7 @@ DELETE (FULL IDENTIK LOGIC ASLI)
           return JsonResponse::error('Volume DPPA tidak dapat dinolkan karena sudah dipakai kontrak.');
         }
       }
-      $zero = ['volume' => 0, 'jumlah' => 0, 'status_perubahan' => 'hapus'];
+      $zero = ['volume'=>0, 'jumlah'=>0, 'status_perubahan'=>'hapus'];
       foreach (['vol_1', 'vol_2', 'vol_3', 'vol_4', 'vol_5'] as $field) {
         if (array_key_exists($field, $oldData)) $zero[$field] = 0;
       }
@@ -2270,7 +2329,7 @@ HANYA PERIODE AKTIF DI-CACHE
       }
     }
 
-    if (in_array($role, ['admin_opd', 'kepala_opd', 'pa_kpa', 'ppk', 'pptk', 'ppk_skpd', 'bendahara', 'pejabat_pengadaan', 'staf_opd', 'viewer', 'user'], true)) {
+    if (in_array($role, ['admin_opd', 'kepala_opd', 'pa_kpa', 'ppk', 'pptk', 'ppk_skpd', 'bendahara', 'pejabat_pengadaan', 'pokja_ulp', 'staf_opd', 'viewer', 'user'], true)) {
 
       if (in_array('kd_opd', $columns)) {
         $whereParts[] = "`kd_opd` = ?";
@@ -4063,7 +4122,7 @@ LIMIT 1",
         $params[] = $this->user['tahun'];
       }
 
-      if (in_array($role, ['admin_opd', 'kepala_opd', 'pa_kpa', 'ppk', 'pptk', 'ppk_skpd', 'bendahara', 'pejabat_pengadaan', 'staf_opd', 'viewer', 'user'], true)) {
+      if (in_array($role, ['admin_opd', 'kepala_opd', 'pa_kpa', 'ppk', 'pptk', 'ppk_skpd', 'bendahara', 'pejabat_pengadaan', 'pokja_ulp', 'staf_opd', 'viewer', 'user'], true)) {
 
         foreach (['kd_opd', 'kd_wilayah', 'tahun'] as $field) {
 

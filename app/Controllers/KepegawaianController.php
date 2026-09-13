@@ -75,7 +75,7 @@ class KepegawaianController extends Controller
       $scopeOpds = (($u['structure_scope'] ?? '') === 'regional') ? ['BUPATI', 'SETDA'] : [$u['kd_opd'], 'SETDA', 'BUPATI'];
       $marks = implode(',', array_fill(0, count($scopeOpds), '?'));
       $rowParams = array_merge([$u['kd_wilayah'], $u['tahun']], $scopeOpds);
-      $rows = $db->query("SELECT s.*,CONCAT_WS(' ',a.gelar_depan,a.nama,a.gelar) nama_pegawai,a.nip,CONCAT(s.kd_opd,':',s.id) struktur_key,CONCAT(COALESCE(s.parent_kd_opd,s.kd_opd),':',COALESCE(s.parent_id,0)) parent_key FROM struktur_jabatan_opd_neo s LEFT JOIN db_asn_pemda_neo a ON a.id=s.pegawai_id AND a.is_deleted=0 WHERE s.kd_wilayah=? AND s.tahun=? AND s.kd_opd IN ($marks) AND s.is_deleted=0 ORDER BY s.kd_opd,s.urutan,s.id", $rowParams)->fetchAll();
+      $rows = $db->query("SELECT s.*,CONCAT_WS(' ',a.gelar_depan,a.nama,a.gelar) nama_pegawai,a.nip,CONCAT(s.kd_opd,':',s.id) struktur_key,CONCAT(COALESCE(s.parent_kd_opd,s.kd_opd),':',COALESCE(s.parent_id,0)) parent_key FROM struktur_jabatan_opd_neo s LEFT JOIN db_asn_pemda_neo a ON a.id=s.pegawai_id AND a.is_deleted=0 WHERE s.kd_wilayah=? AND s.tahun=? AND s.kd_opd IN ($marks) AND s.status_jabatan='AKTIF' AND s.berlaku_mulai<=CURDATE() AND (s.berlaku_sampai IS NULL OR s.berlaku_sampai>=CURDATE()) AND s.is_deleted=0 ORDER BY s.kd_opd,s.urutan,s.id", $rowParams)->fetchAll();
       $employeeOpds = (($u['structure_scope'] ?? '') === 'regional') ? ['BUPATI', 'SETDA'] : [$u['kd_opd']];
       $marks = implode(',', array_fill(0, count($employeeOpds), '?'));
       $employees = $db->query("SELECT id,CONCAT_WS(' ',gelar_depan,nama,gelar) nama,nip,jabatan,kd_opd FROM db_asn_pemda_neo WHERE kd_wilayah=? AND kd_opd IN ($marks) AND is_deleted=0 AND disable=0 AND COALESCE(aktif,1)=1 ORDER BY nama", array_merge([$u['kd_wilayah']], $employeeOpds))->fetchAll();
@@ -106,27 +106,35 @@ class KepegawaianController extends Controller
       $parentParts = $parentToken !== '' ? explode(':', $parentToken, 2) : [];
       $parent = !empty($parentParts[1]) ? (int)$parentParts[1] : null;
       $parentOpd = trim((string)($_POST['parent_kd_opd'] ?? ($parentParts[0] ?? $targetOpd)));
-      if ($parent && !$db->query('SELECT id FROM struktur_jabatan_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0', [$parent, $u['kd_wilayah'], $parentOpd, $u['tahun']])->fetch()) throw new RuntimeException('Atasan langsung tidak valid');
+      if ($parent && !$db->query("SELECT id FROM struktur_jabatan_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND status_jabatan='AKTIF' AND is_deleted=0", [$parent, $u['kd_wilayah'], $parentOpd, $u['tahun']])->fetch()) throw new RuntimeException('Atasan langsung tidak valid');
       if ($parent === $id && $id) throw new InvalidArgumentException('Jabatan tidak dapat menjadi atasan dirinya sendiri');
       $skNumber = trim((string)($_POST['nomor_sk_pengangkatan'] ?? ''));
       $skDate = trim((string)($_POST['tanggal_sk_pengangkatan'] ?? ''));
       $tmt = trim((string)($_POST['tmt_jabatan'] ?? $skDate));
       if ($skNumber === '' || $skDate === '') throw new InvalidArgumentException('Nomor dan tanggal SK pengangkatan wajib diisi');
+      $effective = $tmt ?: $skDate;
       $existing = $id ? $db->query('SELECT * FROM struktur_jabatan_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0', [$id, $u['kd_wilayah'], $targetOpd, $u['tahun']])->fetch() : null;
-      $data = ['pegawai_id' => $employeeId, 'parent_id' => $parent, 'parent_kd_opd' => $parent ? $parentOpd : null, 'nama_jabatan' => $name, 'kelompok_jabatan' => trim((string)($_POST['kelompok_jabatan'] ?? '')), 'eselon' => trim((string)($_POST['eselon'] ?? '')), 'nomor_sk_pengangkatan' => $skNumber, 'tanggal_sk_pengangkatan' => $skDate, 'tmt_jabatan' => $tmt ?: $skDate, 'urutan' => max(1, (int)($_POST['urutan'] ?? 1)), 'keterangan' => trim((string)($_POST['keterangan'] ?? ''))];
-      if ($id) {
-        $data += ['tgl_update' => date('Y-m-d H:i:s'), 'username_update' => $u['username'] ?? 'system'];
-        $db->update('struktur_jabatan_opd_neo', $data, 'WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0', [$id, $u['kd_wilayah'], $targetOpd, $u['tahun']]);
-      } else {
-        $data += ['kd_wilayah' => $u['kd_wilayah'], 'kd_opd' => $targetOpd, 'tahun' => $u['tahun'], 'tgl_insert' => date('Y-m-d H:i:s'), 'username_insert' => $u['username'] ?? 'system', 'is_deleted' => 0];
-        $id = $db->insert('struktur_jabatan_opd_neo', $data);
-      }
-      if (!$existing || (int)$existing['pegawai_id'] !== $employeeId || ($existing['nomor_sk_pengangkatan'] ?? '') !== $skNumber) {
-        if ($existing) {
-          $db->query('UPDATE riwayat_jabatan_neo SET tanggal_selesai=DATE_SUB(?,INTERVAL 1 DAY),tgl_update=NOW(),username_update=? WHERE sumber_struktur_id=? AND is_deleted=0 AND tanggal_selesai IS NULL', [$skDate, $u['username'] ?? 'system', $id]);
+      $data = ['pegawai_id' => $employeeId, 'parent_id' => $parent, 'parent_kd_opd' => $parent ? $parentOpd : null, 'nama_jabatan' => $name, 'kelompok_jabatan' => trim((string)($_POST['kelompok_jabatan'] ?? '')), 'eselon' => trim((string)($_POST['eselon'] ?? '')), 'nomor_sk_pengangkatan' => $skNumber, 'tanggal_sk_pengangkatan' => $skDate, 'tmt_jabatan' => $effective, 'berlaku_mulai' => $effective, 'berlaku_sampai' => null, 'status_jabatan' => 'AKTIF', 'urutan' => max(1, (int)($_POST['urutan'] ?? 1)), 'keterangan' => trim((string)($_POST['keterangan'] ?? ''))];
+      $newPeriod = !$existing || (int)$existing['pegawai_id'] !== $employeeId || ($existing['nomor_sk_pengangkatan'] ?? '') !== $skNumber || ($existing['berlaku_mulai'] ?? '') !== $effective;
+      $db->begin();
+      try {
+        if ($newPeriod) {
+          $old = $existing ?: $db->query("SELECT * FROM struktur_jabatan_opd_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND nama_jabatan=? AND status_jabatan='AKTIF' AND is_deleted=0 ORDER BY berlaku_mulai DESC,id DESC LIMIT 1", [$u['kd_wilayah'], $targetOpd, $u['tahun'], $name])->fetch();
+          $oldId = (int)($old['id'] ?? 0);
+          if ($oldId) {
+            $db->query("UPDATE struktur_jabatan_opd_neo SET berlaku_sampai=DATE_SUB(?,INTERVAL 1 DAY),status_jabatan='BERAKHIR',tgl_update=NOW(),username_update=? WHERE id=?", [$effective, $u['username'] ?? 'system', $oldId]);
+            $db->query('UPDATE riwayat_jabatan_neo SET tanggal_selesai=DATE_SUB(?,INTERVAL 1 DAY),tgl_update=NOW(),username_update=? WHERE sumber_struktur_id=? AND is_deleted=0 AND tanggal_selesai IS NULL', [$effective, $u['username'] ?? 'system', $oldId]);
+          }
+          $data += ['kd_wilayah' => $u['kd_wilayah'], 'kd_opd' => $targetOpd, 'tahun' => $u['tahun'], 'tgl_insert' => date('Y-m-d H:i:s'), 'username_insert' => $u['username'] ?? 'system', 'is_deleted' => 0];
+          $id = $db->insert('struktur_jabatan_opd_neo', $data);
+          if ($oldId) $db->query('UPDATE struktur_jabatan_opd_neo SET parent_id=?,tgl_update=NOW(),username_update=? WHERE parent_id=? AND parent_kd_opd=? AND kd_wilayah=? AND tahun=? AND status_jabatan=\'AKTIF\' AND is_deleted=0', [$id, $u['username'] ?? 'system', $oldId, $targetOpd, $u['kd_wilayah'], $u['tahun']]);
+          $db->insert('riwayat_jabatan_neo', ['tahun' => $u['tahun'], 'kd_wilayah' => $u['kd_wilayah'], 'kd_opd' => $targetOpd, 'pegawai_id' => $employeeId, 'sumber_struktur_id' => $id, 'nomor_sk' => $skNumber, 'jabatan' => $name, 'unit_kerja' => $targetOpd, 'tmt' => $effective, 'keterangan' => $data['keterangan'], 'username_insert' => $u['username'] ?? 'system']);
+        } else {
+          $data += ['tgl_update' => date('Y-m-d H:i:s'), 'username_update' => $u['username'] ?? 'system'];
+          $db->update('struktur_jabatan_opd_neo', $data, 'WHERE id=?', [$id]);
         }
-        $db->insert('riwayat_jabatan_neo', ['tahun' => $u['tahun'], 'kd_wilayah' => $u['kd_wilayah'], 'kd_opd' => $targetOpd, 'pegawai_id' => $employeeId, 'sumber_struktur_id' => $id, 'nomor_sk' => $skNumber, 'jabatan' => $name, 'unit_kerja' => $targetOpd, 'tmt' => $tmt ?: $skDate, 'keterangan' => trim((string)($_POST['keterangan'] ?? '')), 'username_insert' => $u['username'] ?? 'system']);
-      }
+        $db->commit();
+      } catch (Throwable $e) { $db->rollback(); throw $e; }
       echo json_encode(['success' => true, 'message' => 'Struktur jabatan berhasil disimpan', 'data' => ['id' => $id]], JSON_UNESCAPED_UNICODE);
     } catch (Throwable $e) {
       http_response_code(400);
@@ -148,13 +156,14 @@ class KepegawaianController extends Controller
       $db->begin();
       try {
         $db->query('UPDATE struktur_jabatan_opd_neo SET parent_id=NULL,parent_kd_opd=NULL,tgl_update=NOW(),username_update=? WHERE parent_id=? AND parent_kd_opd=? AND kd_wilayah=? AND tahun=? AND is_deleted=0', [$u['username'] ?? 'system', $id, $targetOpd, $u['kd_wilayah'], $u['tahun']]);
-        $db->query('UPDATE struktur_jabatan_opd_neo SET is_deleted=1,tgl_update=NOW(),username_update=? WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=?', [$u['username'] ?? 'system', $id, $u['kd_wilayah'], $targetOpd, $u['tahun']]);
+        $db->query("UPDATE struktur_jabatan_opd_neo SET berlaku_sampai=CURDATE(),status_jabatan='BERAKHIR',tgl_update=NOW(),username_update=? WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=?", [$u['username'] ?? 'system', $id, $u['kd_wilayah'], $targetOpd, $u['tahun']]);
+        $db->query('UPDATE riwayat_jabatan_neo SET tanggal_selesai=CURDATE(),tgl_update=NOW(),username_update=? WHERE sumber_struktur_id=? AND is_deleted=0 AND tanggal_selesai IS NULL', [$u['username'] ?? 'system', $id]);
         $db->commit();
       } catch (Throwable $e) {
         $db->rollback();
         throw $e;
       }
-      echo json_encode(['success' => true, 'message' => 'Jabatan dihapus']);
+      echo json_encode(['success' => true, 'message' => 'Masa berlaku jabatan diakhiri; riwayat tetap tersimpan']);
     } catch (Throwable $e) {
       http_response_code(400);
       echo json_encode(['success' => false, 'message' => $e->getMessage()]);

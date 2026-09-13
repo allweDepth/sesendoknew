@@ -3,7 +3,7 @@ require_once __DIR__.'/../Core/Auth.php';require_once __DIR__.'/../Core/DB.php';
 class UserOpdController extends Controller
 {
   private array $managers=['super_admin','admin_wilayah','admin_opd','kepala_opd','pa_kpa'];
-  private array $assignable=['pa_kpa','ppk','pptk','ppk_skpd','bendahara','pejabat_pengadaan','staf_opd','viewer'];
+  private array $assignable=['pa_kpa','ppk','pptk','ppk_skpd','bendahara','pejabat_pengadaan','pokja_ulp','staf_opd','viewer'];
   private function guard():array{if(!Auth::check())throw new RuntimeException('Unauthorized');$u=$_SESSION['user'];if(!in_array($u['type_user']??'',$this->managers,true))throw new RuntimeException('Hanya kepala OPD atau administrator yang dapat mengatur user');return$u;}
   private function roles(array $u):array{$role=$u['type_user']??'';if(in_array($role,['super_admin','admin_wilayah'],true))return array_merge(['admin_opd','kepala_opd'],$this->assignable);if($role==='pa_kpa')return array_values(array_diff($this->assignable,['pa_kpa']));return $this->assignable;}
   public function index(){try{$u=$this->guard();$this->view('pengaturan/user_opd',['roles'=>$this->roles($u),'user'=>$u,'regional'=>in_array($u['type_user']??'',['super_admin','admin_wilayah'],true)]);}catch(Throwable$e){http_response_code(403);echo htmlspecialchars($e->getMessage());}}

@@ -56,6 +56,7 @@ class Auth
             'ppk_skpd',
             'bendahara',
             'pejabat_pengadaan',
+            'pokja_ulp',
             'staf_opd'
             ,'tapd'
         ];

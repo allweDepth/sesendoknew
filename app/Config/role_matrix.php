@@ -11,6 +11,7 @@ return [
   'ppk_skpd'=>['label'=>'Pejabat Penatausahaan Keuangan','scope'=>'satu OPD dan tahun','actions'=>['view','add','edit','approve_finance']],
   'bendahara'=>['label'=>'Bendahara','scope'=>'satu OPD dan tahun','actions'=>['view','add','edit','spj']],
   'pejabat_pengadaan'=>['label'=>'Pejabat Pengadaan','scope'=>'paket yang ditugaskan','actions'=>['view','add','edit']],
+  'pokja_ulp'=>['label'=>'Pokja Pemilihan/ULP','scope'=>'paket yang ditugaskan','actions'=>['view','add','edit']],
   'staf_opd'=>['label'=>'Staf OPD','scope'=>'subkegiatan yang ditugaskan','actions'=>['view','add','edit']],
   'viewer'=>['label'=>'Viewer','scope'=>'data yang ditugaskan','actions'=>['view']],
 ];

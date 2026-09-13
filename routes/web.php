@@ -37,6 +37,11 @@ return [
   '/kontrak/laporan_excel' => ['KontrakController', 'reportExcel'],
   '/kontrak/financial_excel' => ['KontrakController', 'financialExcel'],
   '/kontrak/financial_pdf' => ['KontrakController', 'financialPdf'],
+  '/kontrak/procurement/templates' => ['KontrakController', 'procurementTemplates'],
+  '/kontrak/procurement/documents' => ['KontrakController', 'procurementDocuments'],
+  '/kontrak/procurement/draft' => ['KontrakController', 'procurementDraft'],
+  '/kontrak/procurement/save' => ['KontrakController', 'procurementSave'],
+  '/kontrak/procurement/pdf' => ['KontrakController', 'procurementPdf'],
   '/halaman_berita' => ['HalamanBeritaController', 'index'], //Controller hanya return HTML shell BUKAN data tabel
   /*
     |--------------------------------------------------------------------------
@@ -261,6 +266,7 @@ return [
   '/anggaran/export_excel' => ['AnggaranController', 'exportExcel'],
   '/anggaran/export_rekap_excel' => ['AnggaranController', 'exportRecapExcel'],
   '/anggaran/export_rekap_pdf' => ['AnggaranController', 'exportRecapPdf'],
+  '/anggaran/export_harga_sama_excel' => ['AnggaranController', 'exportSamePriceExcel'],
   '/anggaran/rencana_bulanan' => ['AnggaranController', 'monthlyPlan'],
   '/anggaran/rencana-rekening/data' => ['AnggaranController', 'monthlyAccounts'],
   '/anggaran/tapd' => ['AnggaranController', 'tapdList'],

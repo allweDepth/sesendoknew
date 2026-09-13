@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../Services/KontrakRealisasiService.php';
 require_once __DIR__ . '/../Services/JsonResponse.php';
+require_once __DIR__ . '/../Services/ProcurementDocumentService.php';
 
 class KontrakController extends Controller
 {
@@ -208,6 +209,29 @@ class KontrakController extends Controller
       echo $e->getMessage();
     }
     exit;
+  }
+  public function procurementTemplates()
+  {
+    $this->json(fn() => (new ProcurementDocumentService($_SESSION['user'] ?? []))->templates((int)($_GET['contract_id'] ?? 0)));
+  }
+  public function procurementDocuments()
+  {
+    $service = new ProcurementDocumentService($_SESSION['user'] ?? []);
+    $this->json(fn() => !empty($_GET['id']) ? $service->detail((int)$_GET['id']) : $service->list((int)($_GET['contract_id'] ?? 0)));
+  }
+  public function procurementDraft()
+  {
+    $this->json(fn() => (new ProcurementDocumentService($_SESSION['user'] ?? []))->draft((int)($_GET['contract_id'] ?? 0), (int)($_GET['master_id'] ?? 0)));
+  }
+  public function procurementSave()
+  {
+    $p = $this->payload();
+    $this->json(fn() => (new ProcurementDocumentService($_SESSION['user'] ?? []))->save($p), 'Dokumen pengadaan berhasil disimpan sebagai snapshot yang dapat diedit');
+  }
+  public function procurementPdf()
+  {
+    $id=(int)($_GET['id']??0);
+    try{$body=(new ProcurementDocumentService($_SESSION['user']??[]))->pdf($id);header('Content-Type: application/pdf');header('Content-Disposition: attachment; filename="dokumen-pengadaan-'.$id.'.pdf"');echo$body;}catch(Throwable $e){http_response_code(400);echo$e->getMessage();}exit;
   }
   private function json(callable $callback, string $message = 'Data berhasil dimuat'): void
   {

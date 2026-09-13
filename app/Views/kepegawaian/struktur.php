@@ -51,8 +51,8 @@ $scopeOpd = $scopeOpd ?? ''; ?>
       </div>
       <div class="three fields">
         <div class="required field"><label>Nomor SK Pengangkatan</label><input name="nomor_sk_pengangkatan" maxlength="150" required placeholder="Contoh: SK-001/2026"></div>
-        <div class="required field"><label>Tanggal SK</label><input type="date" name="tanggal_sk_pengangkatan" required></div>
-        <div class="required field"><label>TMT Jabatan</label><input type="date" name="tmt_jabatan" required></div>
+        <div class="required field"><label>Tanggal SK</label><div class="ui calendar structure-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" name="tanggal_sk_pengangkatan" required autocomplete="off"></div></div></div>
+        <div class="required field"><label>TMT/Berlaku Mulai</label><div class="ui calendar structure-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" name="tmt_jabatan" required autocomplete="off"></div></div></div>
       </div>
       <div class="field"><label>Atasan Langsung</label><input type="hidden" name="parent_kd_opd"><select class="ui fluid search dropdown" name="parent_id">
           <option value="">Tidak ada (pimpinan tertinggi)</option>
@@ -71,6 +71,8 @@ $scopeOpd = $scopeOpd ?? ''; ?>
       employees: []
     };
     const esc = s => $('<div>').text(s ?? '').html();
+    const pad=n=>String(n).padStart(2,'0');
+    $('#strukturForm .structure-calendar').calendar({type:'date',firstDayOfWeek:1,formatter:{date:d=>d?`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`:''}});
 
     function load() {
       Ajax.request({
@@ -102,7 +104,7 @@ $scopeOpd = $scopeOpd ?? ''; ?>
       const byParent = {},
         keys = new Set(data.rows.map(x => x.struktur_key));
       data.rows.forEach(x => (byParent[x.parent_key] ??= []).push(x));
-      const branch = (parentKey, depth = 0) => (byParent[parentKey] || []).map(x => `<div class="ui segment" style="margin-left:${Math.min(depth,5)*28}px;border-left:4px solid ${depth?'#21ba45':'#2185d0'}"><div class="ui right floated buttons">${canManage?`<button class="ui mini basic blue icon button edit-struktur" data-id="${x.id}" data-kd-opd="${esc(x.kd_opd)}"><i class="edit icon"></i></button><button class="ui mini basic red icon button hapus-struktur" data-id="${x.id}" data-kd-opd="${esc(x.kd_opd)}"><i class="trash icon"></i></button>`:''}</div><div class="ui ${depth?'teal':'blue'} label">${esc(x.eselon||'Non-eselon')}</div> <b>${esc(x.nama_jabatan)}</b><div class="ui small header" style="margin:8px 0 2px">${esc(x.nama_pegawai||'Belum ditetapkan')}</div><div class="meta">NIP ${esc(x.nip||'-')} · ${esc(x.nomor_sk_pengangkatan||'SK belum diisi')} · ${esc(x.tanggal_sk_pengangkatan||'-')} · ${esc(x.kelompok_jabatan||'Kelompok belum diisi')}</div></div>${branch(x.struktur_key,depth+1)}`).join('');
+      const branch = (parentKey, depth = 0) => (byParent[parentKey] || []).map(x => `<div class="ui segment" style="margin-left:${Math.min(depth,5)*28}px;border-left:4px solid ${depth?'#21ba45':'#2185d0'}"><div class="ui right floated buttons">${canManage?`<button class="ui mini basic blue icon button edit-struktur" data-id="${x.id}" data-kd-opd="${esc(x.kd_opd)}"><i class="edit icon"></i></button><button class="ui mini basic red icon button hapus-struktur" title="Akhiri masa berlaku" data-id="${x.id}" data-kd-opd="${esc(x.kd_opd)}"><i class="calendar times icon"></i></button>`:''}</div><div class="ui ${depth?'teal':'blue'} label">${esc(x.eselon||'Non-eselon')}</div> <b>${esc(x.nama_jabatan)}</b><div class="ui small header" style="margin:8px 0 2px">${esc(x.nama_pegawai||'Belum ditetapkan')}</div><div class="meta">NIP ${esc(x.nip||'-')} · ${esc(x.nomor_sk_pengangkatan||'SK belum diisi')} · SK ${esc(x.tanggal_sk_pengangkatan||'-')} · Berlaku ${esc(x.berlaku_mulai||x.tmt_jabatan||'-')} s.d. ${esc(x.berlaku_sampai||'sekarang')}</div></div>${branch(x.struktur_key,depth+1)}`).join('');
       const roots = [...new Set(data.rows.map(x => x.parent_key).filter(key => !keys.has(key)))];
       $('#strukturList').html(roots.map(key => branch(key)).join('') || '<div class="ui warning message">Belum ada struktur jabatan pada scope ini.</div>');
     }
@@ -139,7 +141,7 @@ $scopeOpd = $scopeOpd ?? ''; ?>
         }
       }
     })).on('click.struktur', '.hapus-struktur', function() {
-      if (!confirm('Hapus jabatan ini dari struktur?')) return;
+      if (!confirm('Akhiri masa berlaku jabatan ini hari ini? Riwayat SK tetap disimpan.')) return;
       Ajax.request({
         url: '/kepegawaian/struktur/delete',
         method: 'POST',

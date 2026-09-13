@@ -14,7 +14,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		const table = $("#anggaranDocument").data("table") || paths[path] || "rkpd";
 		super({ moduleName: "anggaran", menuItems: [], useMenu: false });
 		this.table = table;
-		this.next = { renja: "rka", rka: "dpa", renja_p: "rka_p", rka_p: "dppa", dpa: "dppa" };
+		this.next = { renja: "rka", rka: "dpa", dpa: "renja_p", renja_p: "rka_p", rka_p: "dppa" };
 		this.changes = { rkpd: "rkpd_p", renja: "renja_p", rka: "rka_p" };
 	}
 	init() {
@@ -26,7 +26,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		this.bindPhase3Actions();
 		this.bindAuxActions();
 		this.bindBudgetForm();
-		$(document)
+			$(document)
 			.off(`form:success.${this.table}.budget`)
 			.on(`form:success.${this.table}.budget`, () => this.loadGroups());
 	}
@@ -35,14 +35,15 @@ class AnggaranDocumentModule extends BaseCrudModule {
 			isRkpd = ["rkpd", "rkpd_p"].includes(this.table),
 			next = this.next[this.table],
 			change = this.changes[this.table],
-			official = ["dpa", "dppa"].includes(this.table),
+			official = !isRkpd,
 			role = window.app?.user?.type_user || "viewer",
 			canWrite = !["tapd", "viewer"].includes(role),
 			canAdvance = ["super_admin", "admin_wilayah", "admin_opd", "kepala_opd", "pa_kpa"].includes(role);
 		this.canWrite = canWrite;
 		$(this.container).html(
-			`<div class="ui container anggaran-hierarchy"><div class="anggaran-hero"><div><small>DOKUMEN PERENCANAAN & ANGGARAN</small><h2>${label} — ${isRkpd ? "Target dan Pagu Sub Kegiatan" : "Rincian Belanja Sub Kegiatan"}</h2><p>${isRkpd ? "RKPD merangkum prioritas, indikator, target, lokasi, kelompok sasaran, dan pagu usulan OPD. Rincian akun disusun pada Renja/RKA hingga DPA." : (canWrite ? "Daftar dimulai dari sub kegiatan. Buka aksi untuk melihat dan mengubah rincian belanja." : "Mode baca regional. Pilih OPD pada bagian atas untuk meninjau dokumen.")}</p></div><div class="ui compact buttons">${canWrite ? `<button class="ui primary button" data-ui="open-form" data-action="add" data-tbl="${this.table}"><i class="plus icon"></i> Tambah Data</button>` : ""}${canAdvance && next ? `<button class="ui teal button" data-phase3-action="advance" data-from="${this.table}" data-to="${next}"><i class="arrow right icon"></i> Proses ${next.toUpperCase()}</button>` : ""}${canAdvance && change ? `<button class="ui orange button" data-phase3-action="advance" data-from="${this.table}" data-to="${change}"><i class="sync icon"></i> Perubahan</button>` : ""}${official ? `<button class="ui button" data-budget-action="recap-excel"><i class="file excel icon"></i> Rekap Excel</button><button class="ui button" data-budget-action="recap-pdf"><i class="file pdf icon"></i> Rekap PDF</button>` : `<button class="ui button" data-budget-action="excel"><i class="file excel icon"></i> Excel</button><button class="ui button" data-budget-action="pdf"><i class="file pdf icon"></i> PDF</button>`}</div></div>${official ? `<div class="ui tiny buttons budget-secondary-export"><button class="ui basic button" data-budget-action="excel"><i class="table icon"></i>Rincian per Sub Kegiatan (Excel)</button><button class="ui basic button" data-budget-action="pdf"><i class="file pdf outline icon"></i>Rincian per Sub Kegiatan (PDF)</button><button class="ui basic button" data-budget-action="tapd"><i class="users icon"></i>Tim Anggaran Daerah</button></div>` : ""}<div id="budgetSummary" class="ui four stackable statistics budget-summary"></div><div class="ui fluid icon input budget-search"><input placeholder="Cari kode atau nama sub kegiatan..."><i class="search icon"></i></div><div id="budgetGroupList"><div class="ui segment"><div class="ui active centered inline loader"></div></div></div></div><div class="ui modal" id="monthlyPlanModal"><i class="close icon"></i><div class="header">Rencana Penarikan Dana per Bulan</div><div class="content"><form class="ui form" id="monthlyPlanForm"><input type="hidden" name="id" required><div class="ui info message" id="monthlyPlanInfo"></div><div class="four fields monthly-fields"></div><div class="ui right labeled input"><input readonly id="monthlyPlanTotal"><div class="ui label">Total Rencana</div></div></form></div><div class="actions"><button class="ui deny button">Batal</button>${canWrite ? '<button class="ui primary button" id="saveMonthlyPlan">Simpan Rencana</button>' : ""}</div></div><div class="ui modal" id="tapdModal"><i class="close icon"></i><div class="header">Tim Anggaran Pemerintah Daerah yang Berlaku</div><div class="content"><div id="tapdActiveList" class="ui relaxed divided list"></div><div class="ui message">Penugasan dipilih otomatis berdasarkan tanggal cetak dan masa berlaku awal-akhir.</div></div></div>`,
+			`<div class="ui container anggaran-hierarchy"><div class="anggaran-hero"><div><small>DOKUMEN PERENCANAAN & ANGGARAN</small><h2>${label} — ${isRkpd ? "Target dan Pagu Sub Kegiatan" : "Rincian Belanja Sub Kegiatan"}</h2><p>${isRkpd ? "RKPD merangkum prioritas, indikator, target, lokasi, kelompok sasaran, dan pagu usulan OPD. Rincian akun disusun pada Renja/RKA hingga DPA." : (canWrite ? "Daftar dimulai dari sub kegiatan. Buka aksi untuk melihat dan mengubah rincian belanja." : "Mode baca regional. Pilih OPD pada bagian atas untuk meninjau dokumen.")}</p></div><div class="ui compact buttons">${canWrite ? `<button class="ui primary button" data-ui="open-form" data-action="add" data-tbl="${this.table}"><i class="plus icon"></i> Tambah Data</button>` : ""}${canAdvance && next ? `<button class="ui teal button" data-phase3-action="advance" data-from="${this.table}" data-to="${next}"><i class="arrow right icon"></i> Proses ${next.toUpperCase()}</button>` : ""}${canAdvance && change ? `<button class="ui orange button" data-phase3-action="advance" data-from="${this.table}" data-to="${change}"><i class="sync icon"></i> Perubahan</button>` : ""}${official ? `<button class="ui button" data-budget-action="recap-excel"><i class="file excel icon"></i> Rekap Excel</button><button class="ui button" data-budget-action="recap-pdf"><i class="file pdf icon"></i> Rekap PDF</button>` : `<button class="ui button" data-budget-action="excel"><i class="file excel icon"></i> Excel</button><button class="ui button" data-budget-action="pdf"><i class="file pdf icon"></i> PDF</button>`}</div></div>${official ? `<div class="ui tiny buttons budget-secondary-export"><button class="ui basic button" data-budget-action="excel"><i class="table icon"></i>Rincian per Sub Kegiatan (Excel)</button><button class="ui basic button" data-budget-action="pdf"><i class="file pdf outline icon"></i>Rincian per Sub Kegiatan (PDF)</button><button class="ui basic button" data-budget-action="tapd"><i class="users icon"></i>Tim Anggaran Daerah</button></div>` : ""}<div id="budgetSummary" class="ui four stackable statistics budget-summary"></div><div class="ui fluid icon input budget-search"><input placeholder="Cari kode atau nama sub kegiatan..."><i class="search icon"></i></div><div id="budgetGroupList"><div class="ui segment"><div class="ui active centered inline loader"></div></div></div></div><div class="ui modal" id="monthlyPlanModal"><i class="close icon"></i><div class="header">Rencana Penarikan Dana per Bulan</div><div class="content"><form class="ui form" id="monthlyPlanForm"><input type="hidden" name="id" required><div class="ui info message" id="monthlyPlanInfo"></div><div class="four fields monthly-fields"></div><div class="ui right labeled input"><input readonly id="monthlyPlanTotal"><div class="ui label">Total Rencana</div></div></form></div><div class="actions"><button class="ui deny button">Batal</button>${canWrite ? '<button class="ui primary button" id="saveMonthlyPlan">Simpan Rencana</button>' : ""}</div></div><div class="ui modal" id="tapdModal"><i class="close icon"></i><div class="header">Tim Anggaran Pemerintah Daerah yang Berlaku</div><div class="content"><div id="tapdActiveList" class="ui relaxed divided list"></div><div class="ui message">Penugasan dipilih otomatis berdasarkan tanggal cetak dan masa berlaku awal-akhir.</div></div></div><div class="ui small modal" id="tapdApprovalModal"><i class="close icon"></i><div class="header">Persetujuan TAPD per Sub Kegiatan</div><div class="content"><input type="hidden" id="approvalSubCode"><div class="ui info message" id="approvalFlowInfo"></div><div class="ui fluid vertical labeled icon buttons"><button class="ui green button" data-approval-scenario="KUNCI"><i class="lock icon"></i>Setujui dan kunci saja</button><button class="ui teal button" data-approval-scenario="KUNCI_SALIN"><i class="copy icon"></i>Setujui, kunci, dan salin/sinkronkan ke dokumen berikutnya</button><button class="ui orange button" data-approval-scenario="KUNCI_GANTI_TUJUAN"><i class="exchange icon"></i>Setujui, kunci, hapus isi lama tujuan, lalu salin ulang</button></div><div class="ui warning message"><b>Ganti tujuan</b> hanya dapat dilakukan bila sub kegiatan pada dokumen tujuan belum dikunci.</div></div><div class="actions"><button class="ui deny button">Batal</button></div></div>`,
 		);
+		if(official) $('.budget-secondary-export [data-budget-action="tapd"]').before('<button class="ui basic button" data-budget-action="same-price-excel"><i class="clone outline icon"></i>Rekap Harga Sama (Excel)</button>');
 	}
 	loadGroups() {
 		window.Ajax.request({
@@ -146,6 +147,9 @@ class AnggaranDocumentModule extends BaseCrudModule {
 				if (a === "details") this.loadDetails(String(b.data("code")));
 				else if (a === "back") this.loadGroups();
 				else if (a === "approval") {
+					if (Number(b.data("approved")) && ["super_admin","admin_wilayah","tapd"].includes(window.app?.user?.type_user || "")) {
+						const next=this.next[this.table];$("#approvalSubCode").val(b.data("code"));$("#approvalFlowInfo").html(`<b>${this.escape(b.data("code"))}</b><br>${next?`${this.table.toUpperCase()} → ${next.toUpperCase()}`:"Tahap terakhir: hanya dapat dikunci."}`);$("#tapdApprovalModal [data-approval-scenario]").not('[data-approval-scenario="KUNCI"]').toggleClass("disabled",!next);$("#tapdApprovalModal").modal("show");return;
+					}
 					window.Ajax.request({
 						url: "/anggaran/approval",
 						method: "POST",
@@ -165,6 +169,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 					});
 				}
 			});
+		$(document).off("click.tapdScenario","[data-approval-scenario]").on("click.tapdScenario","[data-approval-scenario]",e=>{const b=$(e.currentTarget);if(b.hasClass("disabled"))return;const scenario=b.data("approval-scenario");if(scenario==="KUNCI_GANTI_TUJUAN"&&!window.confirm("Isi lama sub kegiatan pada dokumen tujuan akan dinonaktifkan dan diganti dari sumber yang disetujui. Lanjutkan?"))return;window.Ajax.request({url:"/anggaran/approval",method:"POST",data:{tbl:this.table,kd_sub_keg:$("#approvalSubCode").val(),approved:1,scenario},success:r=>{if(r?.success){$("#tapdApprovalModal").modal("hide");this.loadGroups();}}});});
 		$(document)
 			.off("input.budgetSearch", ".budget-search input")
 			.on("input.budgetSearch", ".budget-search input", (e) => {
@@ -256,6 +261,9 @@ class AnggaranDocumentModule extends BaseCrudModule {
 			.on("click.budgetAux", '[data-budget-action="recap-pdf"]', () =>
 				this.download(`/anggaran/export_rekap_pdf?tbl=${this.table}`),
 			)
+			.on("click.budgetAux", '[data-budget-action="same-price-excel"]', () =>
+				this.download(`/anggaran/export_harga_sama_excel?tbl=${this.table}`),
+			)
 			.on("click.budgetAux", '[data-budget-action="monthly"]', (e) => {
 				const id = Number($(e.currentTarget).data("id"));
 				window.Ajax.request({
@@ -322,8 +330,10 @@ class AnggaranDocumentModule extends BaseCrudModule {
 	addTapdAdminForm() {
 		if (!["super_admin", "admin_wilayah"].includes(window.app?.user?.type_user || "")) return;
 		$("#tapdModal .content").append(
-			'<div class="ui divider"></div><form class="ui small form" id="tapdAssignmentForm"><h4 class="ui header">Tambah Penugasan TAPD</h4><div class="three fields"><div class="field"><label>Nama</label><input name="nama" required></div><div class="field"><label>NIP</label><input name="nip"></div><div class="field"><label>Jabatan</label><input name="jabatan" required></div></div><div class="three fields"><div class="field"><label>Berlaku mulai</label><input type="date" name="tanggal_mulai" required></div><div class="field"><label>Sampai</label><input type="date" name="tanggal_selesai" required></div><div class="field"><label>&nbsp;</label><button class="ui primary button">Simpan Penugasan</button></div></div></form>',
+			'<div class="ui divider"></div><form class="ui small form" id="tapdAssignmentForm"><h4 class="ui header">Tambah Penugasan TAPD</h4><div class="three fields"><div class="field"><label>Nama</label><input name="nama" required></div><div class="field"><label>NIP</label><input name="nip"></div><div class="field"><label>Jabatan</label><input name="jabatan" required></div></div><div class="three fields"><div class="field"><label>Berlaku mulai</label><div class="ui calendar budget-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" name="tanggal_mulai" required autocomplete="off"></div></div></div><div class="field"><label>Sampai</label><div class="ui calendar budget-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" name="tanggal_selesai" required autocomplete="off"></div></div></div><div class="field"><label>&nbsp;</label><button class="ui primary button">Simpan Penugasan</button></div></div></form>',
 		);
+		const pad=n=>String(n).padStart(2,"0");
+		$("#tapdAssignmentForm .ui.calendar").calendar({type:"date",firstDayOfWeek:1,formatter:{date:d=>d?`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`:""}});
 		$(document)
 			.off("submit.tapd", "#tapdAssignmentForm")
 			.on("submit.tapd", "#tapdAssignmentForm", (e) => {

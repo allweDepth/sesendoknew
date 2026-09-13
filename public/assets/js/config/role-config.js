@@ -34,5 +34,6 @@ const RoleConfig = {
 	ppk_skpd: { canAdd:true, canEdit:true, canDelete:false, canUpload:true, canApprove:true },
 	bendahara: { canAdd:true, canEdit:true, canDelete:false, canUpload:true },
 	pejabat_pengadaan: { canAdd:true, canEdit:true, canDelete:false, canUpload:true },
+	pokja_ulp: { canAdd:true, canEdit:true, canDelete:false, canUpload:true },
 	staf_opd: { canAdd:true, canEdit:true, canDelete:false, canUpload:true },
 };

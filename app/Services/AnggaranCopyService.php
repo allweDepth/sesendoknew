@@ -40,7 +40,7 @@ class AnggaranCopyService
     ];
 
     private const TRANSITIONS = [
-        'rkpd:renja', 'renja:rkpd', 'renja:rka', 'rka:dpa',
+        'rkpd:renja', 'renja:rkpd', 'renja:rka', 'rka:dpa', 'dpa:renja_p',
         'rkpd:rkpd_p', 'renja:renja_p', 'rka:rka_p',
         'renja_p:rka_p', 'rka_p:dppa', 'dpa:dppa',
     ];
@@ -65,9 +65,9 @@ class AnggaranCopyService
     | Sinkronisasi tahap sumber -> tahap tujuan
     |--------------------------------------------------------------------------
     */
-    public function copy(string $from, string $to, int $tahun, ?int $sourceId = null): array
+    public function copy(string $from, string $to, int $tahun, ?int $sourceId = null, ?string $subCode = null, bool $replaceTarget = false): array
     {
-        if (!in_array($this->user['type_user'] ?? '', ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd', 'pa_kpa'], true)) {
+        if (!in_array($this->user['type_user'] ?? '', ['super_admin', 'admin_wilayah', 'tapd', 'admin_opd', 'kepala_opd', 'pa_kpa'], true)) {
             throw new RuntimeException('Tidak memiliki hak untuk memproses dokumen');
         }
         if (!in_array("$from:$to", self::TRANSITIONS, true)) throw new InvalidArgumentException('Urutan dokumen tidak diizinkan');
@@ -85,6 +85,7 @@ class AnggaranCopyService
         $where  = 'tahun = ? AND kd_wilayah = ? AND kd_opd = ? AND is_deleted = 0 AND setujui = 1';
         $params = [$tahun, $wilayah, $opd];
         if ($sourceId) { $where .= ' AND id = ?'; $params[] = $sourceId; }
+        if ($subCode !== null && trim($subCode) !== '') { $where .= ' AND kd_sub_keg = ?'; $params[] = trim($subCode); }
 
         $this->db->begin();
         try {
@@ -112,7 +113,15 @@ class AnggaranCopyService
             $codes = array_values(array_unique(array_map(fn($r) => (string)$r['kd_sub_keg'], $rows)));
 
             $this->assertTargetOpen($targetTable, $tahun, $wilayah, $opd, $codes);
-            $this->assertSinglePath($to, $targetTable, $sourceTable, $tahun, $wilayah, $opd, $codes);
+            if (!$replaceTarget) $this->assertSinglePath($to, $targetTable, $sourceTable, $tahun, $wilayah, $opd, $codes);
+
+            $replaced=0;
+            if($replaceTarget){
+                $holders=implode(',',array_fill(0,count($codes),'?'));
+                $existing=$this->db->query("SELECT COUNT(*) n FROM `$targetTable` WHERE tahun=? AND kd_wilayah=? AND kd_opd=? AND kd_sub_keg IN ($holders) AND is_deleted=0",array_merge([$tahun,$wilayah,$opd],$codes))->fetch();
+                $replaced=(int)($existing['n']??0);
+                $this->db->query("UPDATE `$targetTable` SET is_deleted=1,tgl_update=NOW(),username_update=? WHERE tahun=? AND kd_wilayah=? AND kd_opd=? AND kd_sub_keg IN ($holders) AND is_deleted=0",array_merge([$this->user['username']??'system',$tahun,$wilayah,$opd],$codes));
+            }
 
             $copied = 0; $updated = 0; $unchanged = 0;
             $keptIds = [];
@@ -141,7 +150,7 @@ class AnggaranCopyService
             }
 
             // Baris tahap tujuan yang sumbernya sudah tidak disetujui / sudah dihapus.
-            $removed = $sourceId ? 0 : $this->sweepOrphans($to, $targetTable, $sourceTable, $tahun, $wilayah, $opd, $keptIds, $columns);
+            $removed = $replaceTarget ? $replaced : ($sourceId ? 0 : $this->sweepOrphans($to, $targetTable, $sourceTable, $tahun, $wilayah, $opd, $keptIds, $columns));
 
             $this->db->insert('anggaran_workflow_log', [
                 'source_table' => $sourceTable,

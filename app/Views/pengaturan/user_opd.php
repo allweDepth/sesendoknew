@@ -44,8 +44,8 @@
           <div class="field"><label>Urutan</label><input type="number" min="1" name="urutan" value="1"></div>
         </div>
         <div class="three fields">
-          <div class="required field"><label>Berlaku mulai</label><input type="date" name="tanggal_mulai"></div>
-          <div class="required field"><label>Berlaku sampai</label><input type="date" name="tanggal_selesai"></div>
+          <div class="required field"><label>Berlaku mulai</label><div class="ui calendar user-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" name="tanggal_mulai" autocomplete="off"></div></div></div>
+          <div class="required field"><label>Berlaku sampai</label><div class="ui calendar user-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" name="tanggal_selesai" autocomplete="off"></div></div></div>
           <div class="field"><label>&nbsp;</label><button class="ui primary button" type="submit">Simpan
               Penugasan</button></div>
         </div>
@@ -84,6 +84,8 @@
 <script>
   $(function() {
     const esc = v => $('<div>').text(v ?? '').html();
+    const pad=n=>String(n).padStart(2,'0');
+    $('.user-calendar').calendar({type:'date',firstDayOfWeek:1,formatter:{date:d=>d?`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`:''}});
     let employees = [];
     const fillEmployees = () => {
         $('.employeeOptions').each(function() {

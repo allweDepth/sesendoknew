@@ -4,6 +4,7 @@ require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
 require_once __DIR__ . '/PageSetupService.php';
+require_once __DIR__ . '/ProcurementDocumentService.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -575,7 +576,8 @@ class KontrakRealisasiService
         $this->db->insert('kontrak_item_neo', array_merge($row, ['kontrak_id' => $contractId, 'kd_wilayah' => $header['kd_wilayah'], 'kd_opd' => $header['kd_opd'], 'tahun' => $header['tahun'], 'username_insert' => $this->user['username'] ?? 'system', 'is_deleted' => 0]));
       }
       $first = $validated[0];
-      $this->db->update('kontrak_neo', ['tahap' => $first['tahap'], 'anggaran_id' => $first['anggaran_id'], 'kd_sub_keg' => $first['kd_sub_keg'], 'total_anggaran' => $totalPagu, 'nilai_kontrak' => $totalContract, 'tgl_update' => date('Y-m-d H:i:s'), 'username_update' => $this->user['username'] ?? 'system'], 'WHERE id=?', [$contractId]);
+      $form = ProcurementDocumentService::recommendForm((string)($header['cara_pengadaan'] ?? 'PENYEDIA'), (string)($header['jenis_pengadaan'] ?? 'BARANG'), (string)($header['metode_pemilihan'] ?? ''), $totalContract, $header['tipe_swakelola'] ?? null);
+      $this->db->update('kontrak_neo', ['tahap' => $first['tahap'], 'anggaran_id' => $first['anggaran_id'], 'kd_sub_keg' => $first['kd_sub_keg'], 'total_anggaran' => $totalPagu, 'nilai_kontrak' => $totalContract, 'bentuk_kontrak' => $form, 'tgl_update' => date('Y-m-d H:i:s'), 'username_update' => $this->user['username'] ?? 'system'], 'WHERE id=?', [$contractId]);
       $this->db->commit();
     } catch (Throwable $e) {
       $this->db->rollback();
