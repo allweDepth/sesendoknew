@@ -44,6 +44,7 @@ return [
   '/kontrak/procurement/documents' => ['KontrakController', 'procurementDocuments'],
   '/kontrak/procurement/draft' => ['KontrakController', 'procurementDraft'],
   '/kontrak/procurement/save' => ['KontrakController', 'procurementSave'],
+  '/kontrak/procurement/delete' => ['KontrakController', 'procurementDelete'],
   '/kontrak/procurement/pdf' => ['KontrakController', 'procurementPdf'],
   '/halaman_berita' => ['HalamanBeritaController', 'index'], //Controller hanya return HTML shell BUKAN data tabel
   /*

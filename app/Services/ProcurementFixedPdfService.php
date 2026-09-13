@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__.'/PageSetupService.php';
 require_once __DIR__.'/OfficialLetterheadPdfService.php';
+require_once __DIR__.'/ProcurementZipPdfService.php';
 
 /** Renderer tata letak dokumen pengadaan. Pengguna tidak pernah mengedit HTML. */
 final class ProcurementFixedPdfService
@@ -18,6 +19,8 @@ final class ProcurementFixedPdfService
         if($code==='SURAT_PERJANJIAN')return $this->contract($document,$contract,$setup);
         if($code==='SSKK')return $this->sskk($document,$contract,$setup);
         if($code==='SSUK')return $this->ssuk($document,$contract,$setup);
+        $zipRenderer=new ProcurementZipPdfService($this->user);
+        if($zipRenderer->supports($code))return $zipRenderer->render($code,$document,$contract,$setup);
         return $this->officialLetter($document,$contract,$setup);
     }
 

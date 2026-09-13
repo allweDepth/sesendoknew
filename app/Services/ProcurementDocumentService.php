@@ -86,6 +86,18 @@ final class ProcurementDocumentService
         $c=$this->contract($contractId);$m=$this->db->query('SELECT * FROM master_dokumen_pengadaan_neo WHERE id=? AND aktif=1 AND is_deleted=0',[$masterId])->fetch();if(!$m)throw new RuntimeException('Master dokumen tidak ditemukan');$sections=$this->db->query('SELECT kode_bagian,judul,urutan,isi_template isi,petunjuk_edit,wajib FROM master_dokumen_pengadaan_bagian_neo WHERE master_id=? AND is_deleted=0 ORDER BY urutan,id',[$masterId])->fetchAll();return['contract'=>$c,'master'=>$m,'sections'=>$sections,'attachments'=>[],'recommended_form'=>self::recommendForm((string)($c['cara_pengadaan']??'PENYEDIA'),(string)($c['jenis_pengadaan']??'BARANG'),(string)($c['metode_pemilihan']??''),(float)($c['nilai_kontrak']??0),$c['tipe_swakelola']??null)];
     }
 
+    public function delete(int $id):array
+    {
+        $this->canEdit();$document=$this->detail($id);$username=$this->user['username']??'system';$now=date('Y-m-d H:i:s');
+        $this->db->begin();try{
+            $this->db->query('UPDATE dokumen_pengadaan_bagian_neo SET is_deleted=1,tgl_update=?,username_update=? WHERE dokumen_id=? AND is_deleted=0',[$now,$username,$id]);
+            $this->db->query('UPDATE dokumen_pengadaan_lampiran_neo SET is_deleted=1 WHERE dokumen_id=? AND is_deleted=0',[$id]);
+            $this->db->query('UPDATE dokumen_pengadaan_neo SET is_deleted=1,tgl_update=?,username_update=? WHERE id=? AND is_deleted=0',[$now,$username,$id]);
+            $this->db->commit();
+        }catch(Throwable $e){$this->db->rollback();throw$e;}
+        return['id'=>$id,'judul'=>$document['judul'],'deleted'=>true];
+    }
+
     public function pdf(int $id):string
     {
         $d=$this->detail($id);$c=$this->contract((int)$d['kontrak_id']);$setup=PageSetupService::current($this->user);$pdf=PageSetupService::createPdf($setup,($d['orientasi']??'P'));

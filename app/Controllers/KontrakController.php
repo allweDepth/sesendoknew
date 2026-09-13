@@ -235,6 +235,10 @@ class KontrakController extends Controller
     $p = $this->payload();
     $this->json(fn() => (new ProcurementDocumentService($_SESSION['user'] ?? []))->save($p), 'Dokumen pengadaan berhasil disimpan sebagai snapshot yang dapat diedit');
   }
+  public function procurementDelete()
+  {
+    $this->json(fn() => (new ProcurementDocumentService($_SESSION['user'] ?? []))->delete((int)($_POST['id'] ?? 0)), 'Dokumen hasil kontrak berhasil dihapus');
+  }
   public function procurementPdf()
   {
     $id=(int)($_GET['id']??0);
