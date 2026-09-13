@@ -179,8 +179,8 @@ class App {
 			return; // tidak perlu load script lagi
 		}
 
-		// Dependency khusus Tata Naskah
-		if (moduleName === "tata_naskah") {
+		// Editor paragraf dipakai Tata Naskah dan dokumen kontrak SSKK/SSUK.
+		if (["tata_naskah", "kontrak"].includes(moduleName)) {
 			// jika module tata naskah
 
 			if (!this.loadedModules.includes("document_schema")) {
