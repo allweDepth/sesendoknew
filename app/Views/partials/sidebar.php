@@ -48,7 +48,7 @@ $group = static function (string $title, string $icon, array $items): void {
       $pegawaiItems = array_merge($pegawaiItems, array_map(fn($x) => [$x[1], '/kepegawaian?tbl=' . $x[0], 'Kepegawaian/' . $x[1]], [['asn', 'Data ASN'], ['pppk', 'PPPK'], ['riwayat_jabatan', 'Riwayat Jabatan'], ['riwayat_pangkat', 'Riwayat Pangkat'], ['cuti', 'Cuti & Izin'], ['sk_pegawai', 'SK Pegawai'], ['pejabat_tahunan', 'Pejabat Tahunan'], ['absensi', 'Absensi'], ['penugasan_subkegiatan', 'Role & Sub Kegiatan']]));
       $group('Kepegawaian', 'users', $pegawaiItems);
     }
-    $group('Tata Naskah', 'file alternate', [['Dashboard', '/tata_naskah/dokumen', 'Tata Naskah/Dashboard'], ['Buat Naskah', '/tata_naskah/buat', 'Tata Naskah/Buat'], ['Daftar Naskah', '/tata_naskah/daftar', 'Tata Naskah/Daftar'], ['Kop Surat Resmi', '/kop_surat', 'Tata Naskah/Kop Surat']]); ?>
+    $group('Tata Naskah', 'file alternate', [['Dashboard', '/tata_naskah/dokumen', 'Tata Naskah/Dashboard'], ['Buat Naskah', '/tata_naskah/buat', 'Tata Naskah/Buat'], ['Daftar Naskah', '/tata_naskah/daftar', 'Tata Naskah/Daftar']]); ?>
     <?php if ($manager) $group('User & Role OPD', 'users cog', [['Kelola User & Role', '/user_opd', 'User & Role OPD/Kelola']]); ?>
     <a class="item" href="/pengaturan" data-spa="client" data-title="Pengaturan"><i class="toolbox icon"></i> Pengaturan</a>
     <?php if ($manager) $group('Berita', 'newspaper', [['Kelola Konten', '/halaman_berita', 'Berita/Kelola Konten']]); ?>

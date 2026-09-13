@@ -61,6 +61,7 @@ class PengaturanModule {
 			this.initUI();
 			this.bindPageSectionEditors();
 			this.initIdentityImages();
+			this.bindOfficialLetterhead();
 			const toggleCustomPaper = () => {
 				const custom = $('#form-page-setup [name="ukuran_kertas"]').val() === "CUSTOM";
 				$("#custom-paper-fields").toggle(custom).find("input").prop("required", custom);
@@ -70,6 +71,9 @@ class PengaturanModule {
 			if(this.data)this.populate();
 			if(window.location.hash==="#page-setup") $('#pengaturan-tabs .item[data-tab="page-setup"]').trigger("click");
 		});
+	}
+	bindOfficialLetterhead(){
+		$(document).off("submit.officialLetterhead","#officialLetterheadForm").on("submit.officialLetterhead","#officialLetterheadForm",e=>{e.preventDefault();const form=e.currentTarget,button=$(form).find('button[type="submit"]').addClass("loading disabled");this.ajax.request({url:"/kop_surat/save",method:"POST",data:new FormData(form),processData:false,contentType:false,success:r=>{if(r.success){$(form).find('[name="id"]').val(r.data?.id||"");Toast.show({success:true,message:r.message});}},complete:()=>button.removeClass("loading disabled")});});
 	}
 
 	bindPeriodTable() {

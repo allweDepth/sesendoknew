@@ -15,6 +15,8 @@ class KontrakModule extends BaseCrudModule {
 		this.deliveryData = null;
 		this.realizationItems = [];
 		this.realizationContracts = [];
+		this.realizationId = 0;
+		this.realizationFiles = [];
 	}
 
 	init() {
@@ -104,14 +106,13 @@ class KontrakModule extends BaseCrudModule {
 		if (tbl === "realisasi") {
 			return `<div class="ui right floated basic buttons" style="margin-top:10px"><button class="ui teal button" data-realization-add><i class="plus icon"></i>Input Realisasi</button><button class="ui icon button" data-action="export" data-tbl="${tbl}" title="Export"><i class="alternate download icon"></i></button></div>`;
 		}
-		return `${super.buildActionButtons(tbl)}<div class="ui right floated basic icon buttons" style="margin-top:10px;margin-right:8px">${tbl === "kontrak" ? '<button class="ui button" data-p4="contract-pdf" title="PDF kontrak"><i class="file pdf icon"></i></button>' : ""}<button class="ui button" data-p4="report-excel" title="Laporan Excel"><i class="file excel icon"></i></button><button class="ui button" data-p4="report-pdf" title="Laporan PDF"><i class="chart bar icon"></i></button></div>`;
+		return `${super.buildActionButtons(tbl)}<div class="ui right floated basic icon buttons" style="margin-top:10px;margin-right:8px"><button class="ui button" data-p4="report-excel" title="Laporan Excel"><i class="file excel icon"></i></button><button class="ui button" data-p4="report-pdf" title="Laporan PDF"><i class="chart bar icon"></i></button></div>`;
 	}
 
 	rowAction() {
-		window.TableRowInjector = (c) =>
-			c.tbl === "kontrak"
-				? `<button class="ui violet button" data-contract-items="${c.id}" title="Kelola uraian kontrak"><i class="list alternate outline icon"></i></button><button class="ui teal button" data-contract-delivery="${c.id}" title="RAB, Time Schedule, Kurva S, dan dokumen"><i class="tasks icon"></i></button>`
-				: "";
+		window.TableRowInjector = (c) => c.tbl === "kontrak"
+			? `<button class="ui violet button" data-contract-items="${c.id}" title="Kelola uraian kontrak"><i class="list alternate outline icon"></i></button><button class="ui teal button" data-contract-delivery="${c.id}" title="RAB, Time Schedule, Kurva S, dan dokumen"><i class="tasks icon"></i></button><button class="ui red button" data-contract-pdf="${c.id}" title="Unduh PDF kontrak"><i class="file pdf icon"></i></button>`
+			: c.tbl === "realisasi" ? `<button class="ui blue button" data-realization-edit="${c.id}" title="Ubah transaksi dengan rincian lengkap"><i class="edit icon"></i></button>` : "";
 	}
 
 	bindActions() {
@@ -123,7 +124,10 @@ class KontrakModule extends BaseCrudModule {
 			.off("click.procurementSave","#saveProcurementDocument").on("click.procurementSave","#saveProcurementDocument",()=>this.saveProcurementDocument());
 		$(document)
 			.off("click.realizationAdd", "[data-realization-add]")
-			.on("click.realizationAdd", "[data-realization-add]", () => this.openRealization());
+			.on("click.realizationAdd", "[data-realization-add]", () => this.openRealization(0));
+		$(document).off("click.realizationEdit","[data-realization-edit]").on("click.realizationEdit","[data-realization-edit]",e=>this.openRealization(Number($(e.currentTarget).data("realization-edit"))));
+		$(document).off("click.contractPdf","[data-contract-pdf]").on("click.contractPdf","[data-contract-pdf]",e=>this.download(`/kontrak/pdf?id=${Number($(e.currentTarget).data("contract-pdf"))}`));
+		$(document).off("click.realizationFileDelete","[data-realization-file-delete]").on("click.realizationFileDelete","[data-realization-file-delete]",e=>{if(!confirm("Hapus file transaksi ini?"))return;window.Ajax.request({url:"/kontrak/realization/file/delete",method:"POST",data:{id:Number($(e.currentTarget).data("realization-file-delete"))},success:()=>this.openRealization(this.realizationId)});});
 		$(document)
 			.off("click.realizationItems", "#realizationItemsButton")
 			.on("click.realizationItems", "#realizationItemsButton", () => this.openRealizationItems());
@@ -145,11 +149,6 @@ class KontrakModule extends BaseCrudModule {
 			.off("click.phase4", "[data-p4]")
 			.on("click.phase4", "[data-p4]", (e) => {
 				const a = $(e.currentTarget).data("p4");
-				if (a === "contract-pdf") {
-					const id = window.prompt("ID kontrak yang akan dicetak:");
-					if (id) this.download(`/kontrak/pdf?id=${encodeURIComponent(id)}`);
-					return;
-				}
 				this.download(a === "report-excel" ? "/kontrak/laporan_excel" : "/kontrak/laporan_pdf");
 			});
 		$(document)
@@ -253,31 +252,18 @@ class KontrakModule extends BaseCrudModule {
 		});
 	}
 
-	openRealization() {
-		this.realizationItems = [];
-		this.realizationContracts = [];
-		this.resetRealizationSidebar();
-		$("#content_flyout").text("Input Realisasi Kontrak");
-		$("#icon_flyout").attr("class", "chart line icon");
-		$(".sidebarkanan").addClass("realization-sidebar-active");
-		$(".flyout-footer").hide();
-		$("#form_flyout").html(`<div class="ui form" id="realizationSidebarForm"><div class="field required"><label>Kontrak</label><select class="ui fluid search dropdown" id="realizationContract"><option value="">Pilih kontrak</option></select></div><div class="two fields"><div class="field required"><label>Tanggal Transaksi</label><div class="ui calendar contract-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" id="realizationDate" placeholder="YYYY-MM-DD" autocomplete="off"></div></div></div><div class="field"><label>Realisasi sampai sekarang</label><input type="text" id="realizationPrevious" disabled value="Rp 0"></div></div><div class="field required"><label>Uraian Transaksi</label><textarea id="realizationDescription" rows="2" placeholder="Contoh: Pembayaran termin pekerjaan..."></textarea></div><div class="field required"><label>Jumlah Realisasi</label><input type="number" id="realizationTotal" min="0" step="any" inputmode="decimal" placeholder="0"></div><button type="button" class="ui fluid violet button" id="realizationItemsButton" disabled><i class="list alternate outline icon"></i>Atur Uraian Realisasi</button><div class="field"><label>Keterangan</label><textarea id="realizationNote" rows="2"></textarea></div><div class="ui info message">Masukkan nilai per uraian melalui tombol <b>Atur Uraian Realisasi</b>. Totalnya harus sama dengan jumlah realisasi transaksi.</div><button type="button" class="ui fluid teal button" id="realizationSubmit"><i class="check icon"></i>Simpan Realisasi</button></div>`);
-		this.initContractCalendars($("#form_flyout"));
-		$(".sidebarkanan").sidebar("show");
-		window.Ajax.request({ url: "/kontrak/realization-contracts", method: "GET", success: (r) => {
-			this.realizationContracts = r.data || [];
-			const select = $("#realizationContract");
-			select.html('<option value="">Pilih kontrak</option>' + this.realizationContracts.map((x) => `<option value="${x.id}">${this.esc(x.nomor_kontrak)} · ${this.money(x.nilai_kontrak)}</option>`).join(""));
-			if (select.hasClass("noselection")) select.dropdown("destroy");
-			select.dropdown({
-				fullTextSearch: true,
-				highlightMatches: true,
-				onChange: (value) => this.loadRealizationContract(Number(value || 0)),
-			});
-		} });
+	openRealization(id = 0) {
+		this.realizationId = Number(id || 0);this.realizationItems=[];this.realizationContracts=[];this.realizationFiles=[];this.resetRealizationSidebar();
+		$("#content_flyout").text(this.realizationId ? "Ubah Realisasi Kontrak" : "Input Realisasi Kontrak");$("#icon_flyout").attr("class","chart line icon");$(".sidebarkanan").addClass("realization-sidebar-active");$(".flyout-footer").hide();
+		$("#form_flyout").html(`<div class="ui form" id="realizationSidebarForm"><div class="field required"><label>Kontrak</label><select class="ui fluid search dropdown" id="realizationContract"><option value="">Pilih kontrak</option></select></div><div class="two fields"><div class="field required"><label>Tanggal Transaksi</label><div class="ui calendar contract-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" id="realizationDate" placeholder="YYYY-MM-DD" autocomplete="off"></div></div></div><div class="field"><label>Realisasi kontrak di luar transaksi ini</label><input type="text" id="realizationPrevious" disabled value="Rp 0"></div></div><div class="field required"><label>Uraian Transaksi</label><textarea id="realizationDescription" rows="2" placeholder="Contoh: Pembayaran termin pekerjaan..."></textarea></div><div class="field required"><label>Jumlah Realisasi</label><input type="number" id="realizationTotal" min="0" step="any" inputmode="decimal" placeholder="0"></div><button type="button" class="ui fluid violet button" id="realizationItemsButton" disabled><i class="list alternate outline icon"></i>Atur Uraian Realisasi</button><div class="field"><label>Keterangan</label><textarea id="realizationNote" rows="2"></textarea></div><div class="field ${this.realizationId?'':'required'}"><label>File Transaksi (PDF/gambar/XLSX/DOCX, masing-masing maks. 15 MB)</label><input type="file" id="realizationFiles" multiple ${this.realizationId?'':'required'} accept=".pdf,.jpg,.jpeg,.png,.webp,.xlsx,.docx"><div id="realizationExistingFiles" class="ui relaxed divided list"></div></div><div class="ui info message">Tambah dan edit memakai properti yang sama. Nilai per uraian diatur melalui tombol di atas; file lama dapat diunduh atau dihapus lalu diganti.</div><button type="button" class="ui fluid teal button" id="realizationSubmit"><i class="check icon"></i>${this.realizationId?'Simpan Perubahan':'Simpan Realisasi'}</button></div>`);
+		this.initContractCalendars($("#form_flyout"));$(".sidebarkanan").sidebar("show");
+		const load=(detail=null)=>window.Ajax.request({url:"/kontrak/realization-contracts",method:"GET",success:r=>{this.realizationContracts=r.data||[];const select=$("#realizationContract");select.html('<option value="">Pilih kontrak</option>'+this.realizationContracts.map(x=>`<option value="${x.id}">${this.esc(x.nomor_kontrak)} · ${this.money(x.nilai_kontrak)}</option>`).join(""));if(select.hasClass("noselection"))select.dropdown("destroy");select.dropdown({fullTextSearch:true,highlightMatches:true,onChange:value=>this.loadRealizationContract(Number(value||0),detail)});if(detail){select.dropdown("set selected",String(detail.contract_id));select.closest('.field').toggleClass('disabled',true);select.prop('disabled',true);}}});
+		if(this.realizationId)window.Ajax.request({url:`/kontrak/realization/detail?id=${this.realizationId}`,method:"GET",success:r=>{const d=r.data||{};this.realizationFiles=d.files||[];$("#realizationDate").val(d.tanggal||"");$("#realizationDescription").val(d.uraian_transaksi||"");$("#realizationNote").val(d.keterangan||"");$("#realizationTotal").val(Number(d.jumlah||0));this.renderRealizationFiles();load(d);}});else load();
 	}
 
-	loadRealizationContract(id) {
+	renderRealizationFiles(){const list=$("#realizationExistingFiles");if(!list.length)return;list.html(this.realizationFiles.length?this.realizationFiles.map(f=>`<div class="item"><i class="file outline icon"></i><div class="content"><div class="header">${this.esc(f.nama_file_asli)}</div><div class="description">${this.money(Number(f.ukuran||0)/1024).replace('Rp','')} KB &nbsp; <a href="${window.appUrl?window.appUrl(`/kontrak/realization/file/download?id=${f.id}`):`/kontrak/realization/file/download?id=${f.id}`}"><i class="download icon"></i>Unduh</a> &nbsp; <a href="#" data-realization-file-delete="${f.id}"><i class="trash icon"></i>Hapus</a></div></div></div>`).join(""):'<div class="ui tiny warning message">Belum ada file transaksi.</div>');}
+
+	loadRealizationContract(id, detail = null) {
 		this.contractId = id || null;
 		$("#realizationItemsButton").prop("disabled", !id);
 		if (!id) {
@@ -289,6 +275,7 @@ class KontrakModule extends BaseCrudModule {
 		$("#realizationPrevious").val(this.money(contract?.realisasi || 0));
 		window.Ajax.request({ url: `/kontrak/realization-items?contract_id=${id}`, method: "GET", success: (r) => {
 			this.realizationItems = (r.data?.items || []).map((x) => ({ ...x, jumlah_sekarang: 0, progress_fisik: 0 }));
+			if(detail){const chosen=new Map((detail.items||[]).map(x=>[`${x.tahap}:${x.anggaran_id}`,x]));this.realizationItems.forEach(x=>{const old=chosen.get(`${x.tahap}:${x.anggaran_id}`);if(old){x.realisasi=Math.max(0,Number(x.realisasi||0)-Number(old.jumlah||0));x.jumlah_sekarang=Number(old.jumlah||0);x.progress_fisik=Number(old.progress_fisik||0);}});}
 			const current = Number(r.data?.contract?.nilai_kontrak || contract?.nilai_kontrak || 0);
 			$("#realizationPrevious").val(this.money(this.realizationItems.reduce((sum, x) => sum + Number(x.realisasi || 0), 0)));
 			$("#realizationTotal").attr("max", Math.max(0, current));
@@ -335,8 +322,10 @@ class KontrakModule extends BaseCrudModule {
 		const distributed = rows.reduce((sum, x) => sum + x.jumlah, 0);
 		if (!contractId || !$("#realizationDate").val() || !String($("#realizationDescription").val() || "").trim()) return Toast.error("Kontrak, tanggal, uraian transaksi, dan uraian per item wajib diisi");
 		if (total <= 0 || Math.abs(total - distributed) > 0.01) return Toast.error("Jumlah realisasi harus sama dengan total pembagian pada uraian");
+		const selected=Array.from($("#realizationFiles")[0]?.files||[]);if(!this.realizationId&&!selected.length)return Toast.error("File transaksi wajib ditambahkan saat input realisasi");
+		const form=new FormData();form.set("realization_id",this.realizationId);form.set("contract_id",contractId);form.set("tanggal",$("#realizationDate").val());form.set("uraian_transaksi",$("#realizationDescription").val());form.set("keterangan",$("#realizationNote").val());form.set("items",JSON.stringify(rows));selected.forEach(file=>form.append("transaction_files[]",file));
 		const button = $("#realizationSubmit").addClass("loading disabled");
-		window.Ajax.request({ url: "/kontrak/realization/save", method: "POST", data: { contract_id: contractId, tanggal: $("#realizationDate").val(), uraian_transaksi: $("#realizationDescription").val(), keterangan: $("#realizationNote").val(), items: JSON.stringify(rows) }, success: () => { this.resetRealizationSidebar(); $(".sidebarkanan").sidebar("hide"); window.tableManager?.fetchData(); }, complete: () => button.removeClass("loading disabled") });
+		window.Ajax.request({ url: "/kontrak/realization/save", method: "POST", data:form,processData:false,contentType:false, success: () => { this.resetRealizationSidebar(); $(".sidebarkanan").sidebar("hide"); window.tableManager?.fetchData(); }, complete: () => button.removeClass("loading disabled") });
 	}
 
 	resetRealizationSidebar() {

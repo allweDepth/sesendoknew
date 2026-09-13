@@ -34,14 +34,21 @@ class KontrakController extends Controller
   {
     $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->realizationItems((int)($_GET['contract_id'] ?? 0)));
   }
+  public function realizationDetail()
+  {
+    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->realizationDetail((int)($_GET['id'] ?? 0)));
+  }
   public function saveRealization()
   {
     $payload = json_decode((string)file_get_contents('php://input'), true);
     if (!is_array($payload)) $payload = $_POST;
     $items = $payload['items'] ?? [];
     if (is_string($items)) $items = json_decode($items, true);
-    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->saveRealization($payload, is_array($items) ? $items : []), 'Realisasi berhasil disimpan');
+    $files=[];$upload=$_FILES['transaction_files']??[];if(isset($upload['name'])&&is_array($upload['name']))foreach($upload['name'] as $i=>$name)$files[]=['name'=>$name,'type'=>$upload['type'][$i]??'','tmp_name'=>$upload['tmp_name'][$i]??'','error'=>$upload['error'][$i]??UPLOAD_ERR_NO_FILE,'size'=>$upload['size'][$i]??0];elseif(!empty($upload))$files[]=$upload;
+    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->saveRealization($payload, is_array($items) ? $items : [],$files), 'Realisasi berhasil disimpan');
   }
+  public function deleteRealizationDocument(){ $this->json(fn()=>(new KontrakRealisasiService($_SESSION['user']??[]))->deleteRealizationDocument((int)($_POST['id']??0)),'File transaksi berhasil dihapus'); }
+  public function downloadRealizationDocument(){try{$d=(new KontrakRealisasiService($_SESSION['user']??[]))->realizationDocument((int)($_GET['id']??0));$path=dirname(__DIR__,2).'/'.$d['path_file'];if(!is_file($path))throw new RuntimeException('File fisik transaksi tidak ditemukan');header('Content-Type: '.$d['mime_type']);header('Content-Disposition: attachment; filename="'.rawurlencode($d['nama_file_asli']).'"');header('Content-Length: '.filesize($path));readfile($path);}catch(Throwable $e){http_response_code(404);echo$e->getMessage();}exit;}
   public function items()
   {
     $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->contractItems((int)($_GET['contract_id'] ?? 0)));

@@ -27,6 +27,7 @@ $(document).ready(function () {
 			const allowed=["admin_wilayah","admin_opd","kepala_opd","pa_kpa"].includes(role);
 			return { add:allowed, edit:allowed, delete:allowed, import:allowed };
 		}
+		if(path.startsWith("/kontrak")&&tbl==="realisasi")return {add:false,edit:false,delete:false,import:false};
 		return null;
 	};
 

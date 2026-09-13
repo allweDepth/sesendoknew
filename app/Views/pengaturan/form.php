@@ -38,6 +38,7 @@ $tahunLabel = $user['tahun'] ?? '-';
         <a class="active item" data-tab="pengaturan"><?= $isRegional?'Pengaturan Wilayah':'Jadwal Anggaran' ?></a>
         <?php if($isRegional): ?><a class="item" data-tab="periode">Periode RPJMD</a><?php endif; ?>
         <a class="item" data-tab="page-setup">Page Setup PDF</a>
+        <a class="item" data-tab="kop-surat">Kop Surat Resmi</a>
         <?php if($isRegional): ?><a class="item" data-tab="identitas">Logo &amp; Peta Daerah</a><a class="item" data-tab="batas-pagu">Batas Pagu OPD</a><?php endif; ?>
     </div>
 
@@ -243,6 +244,10 @@ $tahunLabel = $user['tahun'] ?? '-';
             <div class="three fields"><div class="field"><label>Tinggi ruang tanda tangan</label><div class="ui right labeled input"><input type="number" min="10" max="120" step="0.5" name="tinggi_tanda_tangan_mm" value="35"><div class="ui label">mm</div></div></div><div class="field"><label>Posisi</label><select class="ui dropdown" name="posisi_tanda_tangan"><option value="kiri">Kiri</option><option value="tengah">Tengah</option><option value="kanan">Kanan</option><option value="dua_kolom">Dua Kolom</option></select></div><div class="field"><label>Teks/Keterangan Default</label><input name="teks_tanda_tangan" maxlength="500" placeholder="Contoh: Kepala Perangkat Daerah"></div></div>
             <?php if($canPageEdit): ?><button class="ui primary button"><i class="save icon"></i>Simpan Page Setup PDF</button><?php else: ?><div class="ui grey label">Page Setup hanya dapat diubah pengelola OPD.</div><?php endif; ?>
         </form>
+    </div>
+
+    <div class="ui bottom attached tab segment" data-tab="kop-surat">
+        <?php require __DIR__.'/_kop_surat.php'; ?>
     </div>
 
     <?php if($isRegional): ?><div class="ui bottom attached tab segment" data-tab="identitas">

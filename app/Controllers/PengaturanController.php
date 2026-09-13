@@ -16,7 +16,12 @@ class PengaturanController extends Controller
     }
     public function fragment()
     {
-        $this->view('pengaturan/form');
+        $this->view('pengaturan/form', ['kop'=>$this->letterhead()]);
+    }
+    private function letterhead():array
+    {
+        $u=Auth::scopedUser();$row=DB::getInstance()->query('SELECT * FROM kop_surat_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 ORDER BY aktif DESC,id DESC LIMIT 1',[$u['kd_wilayah'],$u['kd_opd'],$u['tahun']])->fetch()?:[];
+        return array_merge(['nama_pemerintah'=>$u['nama_pemda']??$u['nama_org']??'PEMERINTAH DAERAH','nama_opd'=>$u['nama_opd']??$u['nama_org']??'PERANGKAT DAERAH','alamat'=>$u['alamat']??''],$row);
     }
     public function current()
     {

@@ -5,6 +5,7 @@ require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
 require_once __DIR__ . '/PageSetupService.php';
 require_once __DIR__ . '/ProcurementDocumentService.php';
+require_once __DIR__ . '/OfficialLetterheadPdfService.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -146,10 +147,20 @@ class KontrakRealisasiService
     return ['contract' => ['id' => $header['id'], 'nomor_kontrak' => $header['nomor_kontrak'], 'nilai_kontrak' => (float)$header['nilai_kontrak']], 'items' => $items];
   }
 
-  public function saveRealization(array $payload, array $items): array
+  public function realizationDetail(int $id): array
+  {
+    [$w,$o,$y]=$this->scope();$params=[$id,$w,$y];$sql='SELECT * FROM daftar_realisasi_neo WHERE id=? AND kd_wilayah=? AND tahun=? AND is_deleted=0';
+    if($o&&$o!=='0'){$sql.=' AND kd_opd=?';$params[]=$o;}$anchor=$this->db->query($sql.' LIMIT 1',$params)->fetch();if(!$anchor)throw new RuntimeException('Transaksi realisasi tidak ditemukan');
+    $uuid=(string)($anchor['transaksi_uuid']??'');$rows=$uuid!==''?$this->db->query('SELECT * FROM daftar_realisasi_neo WHERE transaksi_uuid=? AND kontrak_id=? AND is_deleted=0 ORDER BY id',[$uuid,$anchor['kontrak_id']])->fetchAll():[$anchor];
+    $files=$uuid!==''?$this->db->query('SELECT id,nama_file_asli,mime_type,ukuran,tgl_insert FROM realisasi_dokumen_neo WHERE transaksi_uuid=? AND kontrak_id=? AND is_deleted=0 ORDER BY id DESC',[$uuid,$anchor['kontrak_id']])->fetchAll():[];
+    return ['id'=>$id,'transaksi_uuid'=>$uuid,'contract_id'=>(int)$anchor['kontrak_id'],'tanggal'=>$anchor['tanggal'],'uraian_transaksi'=>$anchor['uraian_progress']?:$anchor['ket_uraian_paket'],'keterangan'=>$anchor['keterangan'],'jumlah'=>array_sum(array_map(fn($r)=>(float)$r['jumlah'],$rows)),'items'=>array_map(fn($r)=>['tahap'=>$r['dok'],'anggaran_id'=>(int)$r['id_dok_anggaran'],'jumlah'=>(float)$r['jumlah'],'progress_fisik'=>(float)$r['progress_fisik']],$rows),'files'=>$files];
+  }
+
+  public function saveRealization(array $payload, array $items, array $files=[]): array
   {
     $this->assertCanWrite();
-    $contractId = (int)($payload['contract_id'] ?? 0);
+    $realizationId=(int)($payload['realization_id']??0);$editing=$realizationId>0;$old=$editing?$this->realizationDetail($realizationId):null;
+    $contractId = $editing?(int)$old['contract_id']:(int)($payload['contract_id'] ?? 0);
     $date = trim((string)($payload['tanggal'] ?? ''));
     $description = trim((string)($payload['uraian_transaksi'] ?? ''));
     $note = trim((string)($payload['keterangan'] ?? ''));
@@ -175,28 +186,49 @@ class KontrakRealisasiService
       $rows[] = ['item' => $lookup[$key], 'jumlah' => $amount, 'progress_fisik' => $physical];
     }
     if (!$rows) throw new InvalidArgumentException('Isi jumlah realisasi minimal pada satu uraian');
-    $existing = (float)($this->db->query('SELECT COALESCE(SUM(jumlah),0) total FROM daftar_realisasi_neo WHERE kontrak_id=? AND is_deleted=0', [$contractId])->fetch()['total'] ?? 0);
+    $oldTotal=$editing?(float)$old['jumlah']:0.0;
+    $existing = (float)($this->db->query('SELECT COALESCE(SUM(jumlah),0) total FROM daftar_realisasi_neo WHERE kontrak_id=? AND is_deleted=0', [$contractId])->fetch()['total'] ?? 0)-$oldTotal;
     if ($existing + $total > (float)$header['nilai_kontrak'] + 0.01) throw new InvalidArgumentException('Total realisasi melebihi nilai kontrak');
+    $transactionUuid=$editing&&$old['transaksi_uuid']!==''?$old['transaksi_uuid']:$this->uuid();$stored=$this->storeRealizationFiles($header,$transactionUuid,$files);
     $this->db->begin();
     try {
+      if($editing){if($old['transaksi_uuid']!=='')$this->db->update('daftar_realisasi_neo',['is_deleted'=>1,'tgl_update'=>date('Y-m-d H:i:s'),'username_update'=>$this->user['username']??'system'],'WHERE transaksi_uuid=? AND kontrak_id=?',[$old['transaksi_uuid'],$contractId]);else $this->db->update('daftar_realisasi_neo',['is_deleted'=>1,'tgl_update'=>date('Y-m-d H:i:s'),'username_update'=>$this->user['username']??'system'],'WHERE id=?',[$realizationId]);}
       foreach ($rows as $row) {
         $item = $row['item'];
         $this->db->insert('daftar_realisasi_neo', [
           'tahun' => $header['tahun'], 'kd_wilayah' => $header['kd_wilayah'], 'kd_opd' => $header['kd_opd'],
-          'kd_sub_keg' => $item['kd_sub_keg'], 'kd_akun' => $item['kd_akun'], 'id_paket' => 0, 'kontrak_id' => $contractId,
+          'kd_sub_keg' => $item['kd_sub_keg'], 'kd_akun' => $item['kd_akun'], 'id_paket' => 0, 'kontrak_id' => $contractId, 'transaksi_uuid'=>$transactionUuid,
           'ket_paket' => (string)($header['uraian_kontrak'] ?? ''), 'id_uraian_paket' => $item['id'], 'id_dok_anggaran' => $item['anggaran_id'], 'dok' => $item['tahap'],
           'vol' => 0, 'jumlah' => $row['jumlah'], 'tanggal' => $date, 'periode' => (int)date('n', strtotime($date)),
           'progress_fisik' => $row['progress_fisik'], 'uraian_progress' => $description, 'ket_uraian_paket' => $description,
           'keterangan' => $note, 'username_insert' => $this->user['username'] ?? 'system', 'is_deleted' => 0
         ]);
       }
+      foreach($stored as $file)$this->db->insert('realisasi_dokumen_neo',array_merge($file,['transaksi_uuid'=>$transactionUuid,'kontrak_id'=>$contractId,'kd_wilayah'=>$header['kd_wilayah'],'kd_opd'=>$header['kd_opd'],'tahun'=>$header['tahun'],'username_insert'=>$this->user['username']??'system','is_deleted'=>0]));
       $this->db->commit();
     } catch (Throwable $e) {
       $this->db->rollback();
+      foreach($stored as $file)if(is_file(dirname(__DIR__,2).'/'.$file['path_file']))@unlink(dirname(__DIR__,2).'/'.$file['path_file']);
       throw $e;
     }
-    return ['contract_id' => $contractId, 'jumlah' => $total, 'realisasi_sebelumnya' => $existing, 'realisasi_sekarang' => $existing + $total];
+    return ['id'=>$realizationId,'transaksi_uuid'=>$transactionUuid,'contract_id' => $contractId, 'jumlah' => $total, 'realisasi_sebelumnya' => $existing, 'realisasi_sekarang' => $existing + $total];
   }
+
+  public function realizationDocument(int $id):array
+  {
+    [$w,$o,$y]=$this->scope();$params=[$id,$w,$y];$sql='SELECT * FROM realisasi_dokumen_neo WHERE id=? AND kd_wilayah=? AND tahun=? AND is_deleted=0';if($o&&$o!=='0'){$sql.=' AND kd_opd=?';$params[]=$o;}$row=$this->db->query($sql.' LIMIT 1',$params)->fetch();if(!$row)throw new RuntimeException('File transaksi tidak ditemukan');return$row;
+  }
+  public function deleteRealizationDocument(int $id):array
+  {
+    $this->assertCanWrite();$row=$this->realizationDocument($id);$this->db->update('realisasi_dokumen_neo',['is_deleted'=>1,'tgl_update'=>date('Y-m-d H:i:s'),'username_update'=>$this->user['username']??'system'],'WHERE id=?',[$id]);$path=dirname(__DIR__,2).'/'.$row['path_file'];if(is_file($path))@unlink($path);return['id'=>$id];
+  }
+  private function storeRealizationFiles(array $header,string $uuid,array $files):array
+  {
+    $stored=[];$allowed=['application/pdf','image/jpeg','image/png','image/webp','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    foreach($files as $file){if(($file['error']??UPLOAD_ERR_NO_FILE)===UPLOAD_ERR_NO_FILE)continue;if(($file['error']??UPLOAD_ERR_NO_FILE)!==UPLOAD_ERR_OK)throw new InvalidArgumentException('Upload file transaksi gagal');if((int)($file['size']??0)>15*1024*1024)throw new InvalidArgumentException('Setiap file transaksi maksimal 15 MB');$mime=(new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);if(!in_array($mime,$allowed,true))throw new InvalidArgumentException('File transaksi harus PDF, JPG, PNG, WebP, XLSX, atau DOCX');$scope=preg_replace('/[^A-Za-z0-9._-]/','_',($header['kd_wilayah']??'wilayah').'-'.($header['kd_opd']??'opd'));$relative='storage/uploads/'.$scope.'/'.$header['tahun'].'/realisasi/'.$uuid;$directory=dirname(__DIR__,2).'/'.$relative;if(!is_dir($directory)&&!mkdir($directory,0770,true))throw new RuntimeException('Folder file transaksi tidak dapat dibuat');$ext=strtolower(pathinfo((string)($file['name']??''),PATHINFO_EXTENSION));$name=date('YmdHis').'-'.bin2hex(random_bytes(6)).($ext?'.'.$ext:'');if(!move_uploaded_file($file['tmp_name'],$directory.'/'.$name))throw new RuntimeException('File transaksi gagal disimpan');$stored[]=['nama_file_asli'=>basename((string)$file['name']),'path_file'=>$relative.'/'.$name,'mime_type'=>$mime,'ukuran'=>(int)$file['size']];}
+    return$stored;
+  }
+  private function uuid():string{$b=random_bytes(16);$b[6]=chr((ord($b[6])&0x0f)|0x40);$b[8]=chr((ord($b[8])&0x3f)|0x80);$h=bin2hex($b);return substr($h,0,8).'-'.substr($h,8,4).'-'.substr($h,12,4).'-'.substr($h,16,4).'-'.substr($h,20);}
 
   private function hierarchyLabel(string $code, string $level): string
   {
@@ -453,6 +485,7 @@ class KontrakRealisasiService
     $pdf->SetAutoPageBreak(true, 18);
     PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[18,15,18,18]);
     $pdf->AddPage();
+    OfficialLetterheadPdfService::draw($pdf,$this->user);
     $pdf->SetFont('helvetica', 'B', 13);
     $title = $type === 'SSKK' ? 'SYARAT-SYARAT KHUSUS KONTRAK (SSKK)' : 'SYARAT-SYARAT UMUM KONTRAK (SSUK)';
     $pdf->MultiCell(0, 7, $title, 0, 'C');
@@ -617,6 +650,7 @@ class KontrakRealisasiService
     $pdf->SetMargins(18, 15, 18);
     PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[18,15,18,15]);
     $pdf->AddPage();
+    OfficialLetterheadPdfService::draw($pdf,$this->user);
     $pdf->SetFont('helvetica', 'B', 14);
     $pdf->Cell(0, 8, 'SURAT PERJANJIAN / KONTRAK', 0, 1, 'C');
     $pdf->SetFont('helvetica', '', 10);

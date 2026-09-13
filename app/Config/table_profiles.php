@@ -2384,7 +2384,7 @@ $profiles['kontrak'] = [
   'join' => [['table' => 'rekanan_neo', 'on' => 'rekanan_neo.id = kontrak_neo.rekanan_id']]
 ];
 $profiles['realisasi'] = [
-  'table' => 'daftar_realisasi_neo',
+  'table' => 'daftar_realisasi_transaksi_neo',
   'primary_key' => 'id',
   'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd'],
   'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
@@ -2392,10 +2392,10 @@ $profiles['realisasi'] = [
   'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1],
   'validation' => ['kontrak_id' => ['required', 'numeric'], 'tanggal' => ['required'], 'jumlah' => ['required', 'numeric'], 'progress_fisik' => ['required', 'numeric']],
   'modes' => [
-    'default' => ['select' => ['daftar_realisasi_neo.id', 'kontrak_neo.nomor_kontrak', 'daftar_realisasi_neo.tanggal', 'daftar_realisasi_neo.periode', 'daftar_realisasi_neo.kd_sub_keg', 'daftar_realisasi_neo.kd_akun', 'daftar_realisasi_neo.jumlah', 'daftar_realisasi_neo.progress_fisik', 'daftar_realisasi_neo.nomor_bukti', 'daftar_realisasi_neo.keterangan'], 'searchable' => ['kontrak_neo.nomor_kontrak', 'daftar_realisasi_neo.kd_sub_keg', 'daftar_realisasi_neo.nomor_bukti', 'daftar_realisasi_neo.keterangan'], 'where' => ['daftar_realisasi_neo.is_deleted' => 0], 'order_by' => 'daftar_realisasi_neo.tanggal DESC'],
+    'default' => ['select' => ['daftar_realisasi_transaksi_neo.id', 'kontrak_neo.nomor_kontrak', 'daftar_realisasi_transaksi_neo.tanggal', 'daftar_realisasi_transaksi_neo.periode', 'daftar_realisasi_transaksi_neo.kd_sub_keg', 'daftar_realisasi_transaksi_neo.kd_akun', 'daftar_realisasi_transaksi_neo.jumlah', 'daftar_realisasi_transaksi_neo.progress_fisik', 'daftar_realisasi_transaksi_neo.nomor_bukti', 'daftar_realisasi_transaksi_neo.keterangan'], 'searchable' => ['kontrak_neo.nomor_kontrak', 'daftar_realisasi_transaksi_neo.kd_sub_keg', 'daftar_realisasi_transaksi_neo.nomor_bukti', 'daftar_realisasi_transaksi_neo.keterangan'], 'where' => ['daftar_realisasi_transaksi_neo.is_deleted' => 0], 'order_by' => 'daftar_realisasi_transaksi_neo.tanggal DESC'],
     'edit' => ['select' => ['daftar_realisasi_neo.*'], 'searchable' => ['daftar_realisasi_neo.keterangan'], 'order_by' => 'daftar_realisasi_neo.id ASC']
   ],
-  'join' => [['table' => 'kontrak_neo', 'on' => 'kontrak_neo.id = daftar_realisasi_neo.kontrak_id']]
+  'join' => [['table' => 'kontrak_neo', 'on' => 'kontrak_neo.id = daftar_realisasi_transaksi_neo.kontrak_id']]
 ];
 $profiles['rab_kontrak'] = ['table' => 'rab_paket_neo', 'primary_key' => 'id', 'dropdown' => ['value' => 'id', 'label' => 'uraian', 'searchable' => ['nomor', 'uraian'], 'order_by' => 'nomor ASC'], 'modes' => ['dropdown' => ['select' => ['id', 'kontrak_id', 'nomor', 'uraian', 'satuan', 'jumlah_negoisasi', 'bobot'], 'searchable' => ['nomor', 'uraian'], 'where' => ['kd_wilayah' => 'user', 'kd_opd' => 'user', 'tahun' => 'user', 'is_deleted' => 0], 'order_by' => 'nomor ASC']]];
 foreach (['dpa', 'dppa'] as $budgetDropdown) {
