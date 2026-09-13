@@ -24,4 +24,4 @@ return [
         'perubahan' => 'dppa_neo'
     ]
 
-];
+]; 
