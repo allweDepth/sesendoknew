@@ -1,7 +1,7 @@
 <?php
 $role = (string)($_SESSION['user']['type_user'] ?? 'viewer');
-$regional = in_array($role, ['super_admin', 'admin_wilayah'], true);
-$manager = in_array($role, ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd', 'pa_kpa'], true);
+$regional = in_array($role, ['super_admin', 'admin_wilayah', 'tapd'], true);
+$manager = in_array($role, ['super_admin', 'admin_wilayah', 'tapd', 'admin_opd', 'kepala_opd', 'pa_kpa'], true);
 $group = static function (string $title, string $icon, array $items): void {
   $mods = ['Referensi' => 'referensi', 'Standar Harga' => 'standar_harga', 'Usulan' => 'usulan', 'Perencanaan' => 'perencanaan', 'Penganggaran' => 'penganggaran', 'Kontrak' => 'kontrak', 'Realisasi' => 'realisasi', 'SAKIP & Kinerja' => 'sakip', 'Kepegawaian' => 'kepegawaian', 'Tata Naskah' => 'tata_naskah', 'User & Role OPD' => 'user_role', 'Berita' => 'berita', 'Pesan' => 'pesan', 'Profil' => 'profil'];
   $items = array_values(array_filter($items, fn($x) => strtolower($x[0]) !== 'dashboard'));

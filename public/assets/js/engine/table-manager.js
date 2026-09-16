@@ -234,11 +234,16 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			)
 			.map((item) => ({
 				key: item.prop.name,
-				label: item.prop.label || item.prop.name,
+				label: item.prop.tableLabel || item.prop.label || item.prop.name,
 				format: item.prop.format || (/(nilai|jumlah|total|pagu|harga|anggaran)/i.test(item.prop.name) ? "currency" : null),
 				priority: Number(item.prop.tablePriority || 0),
 				width: item.prop.tableWidth || this.inferColumnWidth(item.prop.name),
 			}));
+		const columnOrder = config.table?.columnOrder || [];
+		if (columnOrder.length) {
+			const order = new Map(columnOrder.map((key, index) => [key, index]));
+			candidates.sort((a, b) => (order.get(a.key) ?? columnOrder.length) - (order.get(b.key) ?? columnOrder.length));
+		}
 
 		const configuredMaximum = Number(config.table?.maxColumns || config.tableMaxColumns || 7);
 		if (candidates.length <= configuredMaximum) return candidates;

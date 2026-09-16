@@ -58,6 +58,8 @@ AUTO DETECT SOCKET JIKA BELUM ADA
       if (!$socket) {
 
         $possibleSockets = [
+          '/var/packages/MariaDB10/target/usr/local/mariadb10/var/mysql.sock',
+          '/var/packages/MariaDB10/target/usr/local/mariadb10/var/run/mysqld.sock',
           '/run/mysqld/mysqld.sock',
           '/run/mysqld/mysqld10.sock',
           '/var/run/mysqld/mysqld.sock'

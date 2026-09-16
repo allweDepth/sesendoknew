@@ -2300,6 +2300,8 @@ HANYA PERIODE AKTIF DI-CACHE
   private function applyUserScope(string $table): array
   {
     $role = $this->user['type_user'] ?? 'viewer';
+    $personnelTables = ['db_asn_pemda_neo', 'riwayat_jabatan_neo', 'riwayat_pangkat_neo', 'cuti_pegawai_neo', 'sk_pegawai_neo', 'absensi_pegawai_neo', 'dokumen_pegawai_neo'];
+    $isPersonnelTable = in_array($table, $personnelTables, true);
 
     if ($role === 'super_admin' && empty($this->user['scope_selected'])) {
       return [[], []];
@@ -2318,7 +2320,20 @@ HANYA PERIODE AKTIF DI-CACHE
       }
     }
 
-    if (in_array($role, ['super_admin', 'admin_wilayah', 'tapd'], true) && !empty($this->user['scope_selected'])) {
+    if ($role === 'tapd' && $isPersonnelTable && in_array('kd_opd', $columns, true)) {
+      $opds = array_values(array_unique(array_filter([
+        $this->user['registered_kd_opd'] ?? null,
+        !empty($this->user['scope_selected']) ? ($this->user['kd_opd'] ?? null) : null,
+        'BUPATI',
+        'SETDA'
+      ], static fn($value) => $value !== null && $value !== '' && $value !== '0')));
+      if ($opds) {
+        $whereParts[] = '`kd_opd` IN (' . implode(',', array_fill(0, count($opds), '?')) . ')';
+        array_push($params, ...$opds);
+      } else {
+        $whereParts[] = '1=0';
+      }
+    } elseif (in_array($role, ['super_admin', 'admin_wilayah', 'tapd'], true) && !empty($this->user['scope_selected'])) {
       if (in_array('kd_opd', $columns)) {
         $whereParts[] = "`kd_opd` = ?";
         $params[] = $this->user['kd_opd'];
@@ -4102,6 +4117,8 @@ LIMIT 1",
     $params = [];
 
     $role = $this->user['type_user'] ?? 'viewer';
+    $personnelTables = ['db_asn_pemda_neo', 'riwayat_jabatan_neo', 'riwayat_pangkat_neo', 'cuti_pegawai_neo', 'sk_pegawai_neo', 'absensi_pegawai_neo', 'dokumen_pegawai_neo'];
+    $isPersonnelTable = in_array($table, $personnelTables, true);
 
     if ($role !== 'super_admin' || !empty($this->user['scope_selected'])) {
 
@@ -4110,7 +4127,20 @@ LIMIT 1",
         $params[] = $this->user['kd_wilayah'];
       }
 
-      if (
+      if ($role === 'tapd' && $isPersonnelTable && in_array('kd_opd', $columns, true)) {
+        $opds = array_values(array_unique(array_filter([
+          $this->user['registered_kd_opd'] ?? null,
+          !empty($this->user['scope_selected']) ? ($this->user['kd_opd'] ?? null) : null,
+          'BUPATI',
+          'SETDA'
+        ], static fn($value) => $value !== null && $value !== '' && $value !== '0')));
+        if ($opds) {
+          $where[] = '`kd_opd` IN (' . implode(',', array_fill(0, count($opds), '?')) . ')';
+          array_push($params, ...$opds);
+        } else {
+          $where[] = '1=0';
+        }
+      } elseif (
         in_array($role, ['super_admin', 'admin_wilayah', 'tapd'], true)
         && !empty($this->user['scope_selected']) && in_array('kd_opd', $columns)
       ) {

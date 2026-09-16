@@ -1552,6 +1552,10 @@ UIConfig.__akunMapFactory = function (entityName) {
 	};
 };
 UIConfig.kontrak = {
+	table: {
+		maxColumns: 7,
+		columnOrder: ["uraian_kontrak", "nilai_hps", "nilai_kontrak", "total_anggaran", "nomor_kontrak", "tanggal_kontrak", "status_kontrak"]
+	},
 	validation: { cara_pengadaan:{required:true},jenis_pengadaan:{required:true},nomor_kontrak:{required:true} },
 	form: {
 		elements: [
@@ -1560,11 +1564,11 @@ UIConfig.kontrak = {
 			{ tag:"fieldDropdown", prop:{label:"Tipe Swakelola (wajib untuk swakelola)",name:"tipe_swakelola",classField:"contract-swakelola-field",options:["I","II","III","IV"].map(x=>({value:x,text:"Tipe "+x}))} },
 			{ tag:"input", prop:{label:"Metode Pemilihan / E-purchasing",name:"metode_pemilihan"} },
 			{ tag:"input", prop:{label:"Nomor RUP",name:"nomor_rup"} },
-			{ tag:"input", prop:{label:"Nilai HPS",name:"nilai_hps",type:"number"} },
+			{ tag:"input", prop:{label:"Nilai HPS",tableLabel:"Nilai HPS",tableWidth:"money",tablePriority:20,name:"nilai_hps",type:"number"} },
 			{ tag:"input", prop:{label:"Bentuk Kontrak (ditentukan otomatis)",name:"bentuk_kontrak",atribut:"readonly"} },
-			{ tag:"fieldTextarea", prop:{label:"Nama/Ruang Lingkup Pekerjaan",name:"uraian_kontrak",atribut:`rows="2"`} },
-			{ tag:"input", prop:{label:"Total Pagu Terpilih (otomatis dari rincian)",name:"total_anggaran",type:"number",atribut:"readonly"} },
-			{ tag:"input", prop:{label:"Nilai Kontrak (otomatis dari rincian)",name:"nilai_kontrak",type:"number",atribut:"readonly"} },
+			{ tag:"fieldTextarea", prop:{label:"Nama/Ruang Lingkup Pekerjaan",tableLabel:"Nama/Ruang Lingkup Pekerjaan",tableWidth:"wide",tablePriority:30,name:"uraian_kontrak",atribut:`rows="2"`} },
+			{ tag:"input", prop:{label:"Total Pagu Terpilih (otomatis dari rincian)",tableLabel:"Total Pagu",tableWidth:"money",tablePriority:18,name:"total_anggaran",type:"number",atribut:"readonly"} },
+			{ tag:"input", prop:{label:"Nilai Kontrak (otomatis dari rincian)",tableLabel:"Nilai Kontrak",tableWidth:"money",tablePriority:19,name:"nilai_kontrak",type:"number",atribut:"readonly"} },
 			{ tag:"input", prop:{label:"Nomor Kontrak / SPK",name:"nomor_kontrak"} },
 			{ tag:"fieldCalendar", prop:{label:"Tanggal Kontrak",name:"tanggal_kontrak",calendarType:"date"} },
 			{ tag:"input", prop:{label:"Nomor SPMK",name:"nomor_spmk"} },
