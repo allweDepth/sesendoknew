@@ -49,7 +49,7 @@ Prioritas:
 3. Fallback ke TCP host
 ================================================== */
 
-      $socket = $config['socket'] ?? null;
+      $socket = trim((string)($config['socket'] ?? ''));
 
       /* =========================================
 AUTO DETECT SOCKET JIKA BELUM ADA
@@ -62,15 +62,14 @@ AUTO DETECT SOCKET JIKA BELUM ADA
           '/var/packages/MariaDB10/target/usr/local/mariadb10/var/run/mysqld.sock',
           '/run/mysqld/mysqld.sock',
           '/run/mysqld/mysqld10.sock',
-          '/var/run/mysqld/mysqld.sock'
+          '/var/run/mysqld/mysqld.sock',
+          '/tmp/mysql.sock',
+          '/Applications/MAMP/tmp/mysql/mysql.sock'
         ];
 
         foreach ($possibleSockets as $s) {
 
-          // cek apakah file socket ada di server
-          if (file_exists($s)) {
-
-            // gunakan socket tersebut
+          if (is_string($s) && file_exists($s)) {
             $socket = $s;
             break;
           }
@@ -81,14 +80,31 @@ AUTO DETECT SOCKET JIKA BELUM ADA
 BUILD DSN BERDASARKAN SOCKET / HOST
 ========================================= */
 
-      if ($socket) {
+      $dsnCandidates = [];
 
-        // koneksi menggunakan unix socket
-        $dsn = "mysql:unix_socket={$socket};dbname={$config['dbname']};charset=utf8mb4";
-      } else {
+      if ($socket && file_exists($socket)) {
+        $dsnCandidates[] = "mysql:unix_socket={$socket};dbname={$config['dbname']};charset=utf8mb4";
+      }
 
-        // fallback menggunakan TCP host
-        $dsn = "mysql:host={$config['host']};dbname={$config['dbname']};charset=utf8mb4";
+      $dsnCandidates[] = "mysql:host={$config['host']};dbname={$config['dbname']};charset=utf8mb4";
+
+      $dsn = null;
+      foreach ($dsnCandidates as $candidate) {
+        try {
+          $testPdo = new PDO($candidate, $config['username'], $config['password'], [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_TIMEOUT => 5,
+          ]);
+          $testPdo = null;
+          $dsn = $candidate;
+          break;
+        } catch (PDOException $e) {
+          continue;
+        }
+      }
+
+      if (!$dsn) {
+        $dsn = $dsnCandidates[count($dsnCandidates) - 1];
       }
 
       // ==================================================
