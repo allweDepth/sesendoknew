@@ -104,7 +104,16 @@ $scopeOpd = $scopeOpd ?? ''; ?>
       const byParent = {},
         keys = new Set(data.rows.map(x => x.struktur_key));
       data.rows.forEach(x => (byParent[x.parent_key] ??= []).push(x));
-      const branch = (parentKey, depth = 0) => (byParent[parentKey] || []).map(x => `<div class="ui segment" style="margin-left:${Math.min(depth,5)*28}px;border-left:4px solid ${depth?'#21ba45':'#2185d0'}"><div class="ui right floated buttons">${canManage?`<button class="ui mini basic blue icon button edit-struktur" data-id="${x.id}" data-kd-opd="${esc(x.kd_opd)}"><i class="edit icon"></i></button><button class="ui mini basic red icon button hapus-struktur" title="Akhiri masa berlaku" data-id="${x.id}" data-kd-opd="${esc(x.kd_opd)}"><i class="calendar times icon"></i></button>`:''}</div><div class="ui ${depth?'teal':'blue'} label">${esc(x.eselon||'Non-eselon')}</div> <b>${esc(x.nama_jabatan)}</b><div class="ui small header" style="margin:8px 0 2px">${esc(x.nama_pegawai||'Belum ditetapkan')}</div><div class="meta">NIP ${esc(x.nip||'-')} · ${esc(x.nomor_sk_pengangkatan||'SK belum diisi')} · SK ${esc(x.tanggal_sk_pengangkatan||'-')} · Berlaku ${esc(x.berlaku_mulai||x.tmt_jabatan||'-')} s.d. ${esc(x.berlaku_sampai||'sekarang')}</div></div>${branch(x.struktur_key,depth+1)}`).join('');
+      const normalizeTitle = (name, fallback = 'Kepala OPD') => {
+        const raw = String(name ?? '').trim();
+        if (!raw) return fallback;
+        const lower = raw.toLowerCase();
+        return lower.includes('penanggung jawab') || lower.includes('penanggungjawab') || lower.includes('penanggungjawab /') ? fallback : raw;
+      };
+      const branch = (parentKey, depth = 0) => (byParent[parentKey] || []).map(x => {
+        const title = normalizeTitle(x.nama_jabatan_display || x.nama_jabatan, 'Kepala OPD');
+        return `<div class="ui segment" style="margin-left:${Math.min(depth,5)*28}px;border-left:4px solid ${depth?'#21ba45':'#2185d0'}"><div class="ui right floated buttons">${canManage?`<button class="ui mini basic blue icon button edit-struktur" data-id="${x.id}" data-kd-opd="${esc(x.kd_opd)}"><i class="edit icon"></i></button><button class="ui mini basic red icon button hapus-struktur" title="Akhiri masa berlaku" data-id="${x.id}" data-kd-opd="${esc(x.kd_opd)}"><i class="calendar times icon"></i></button>`:''}</div><div class="ui ${depth?'teal':'blue'} label">${esc(x.eselon||'Non-eselon')}</div> <b>${esc(title)}</b><div class="ui small header" style="margin:8px 0 2px">${esc(x.nama_pegawai||'Belum ditetapkan')}</div><div class="meta">NIP ${esc(x.nip||'-')} · ${esc(x.nomor_sk_pengangkatan||'SK belum diisi')} · SK ${esc(x.tanggal_sk_pengangkatan||'-')} · Berlaku ${esc(x.berlaku_mulai||x.tmt_jabatan||'-')} s.d. ${esc(x.berlaku_sampai||'sekarang')}</div></div>${branch(x.struktur_key,depth+1)}`;
+      }).join('');
       const roots = [...new Set(data.rows.map(x => x.parent_key).filter(key => !keys.has(key)))];
       $('#strukturList').html(roots.map(key => branch(key)).join('') || '<div class="ui warning message">Belum ada struktur jabatan pada scope ini.</div>');
     }
