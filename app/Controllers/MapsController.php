@@ -88,9 +88,14 @@ class MapsController extends Controller
                 'fill_color' => $this->validColor($style['fill_color'] ?? null),
                 'fill_opacity' => $this->boundedNumber($style['fill_opacity'] ?? null, 0, 1),
                 'weight' => $this->boundedNumber($style['weight'] ?? null, 0.5, 10),
+                'line_style' => $this->validLineStyle($style['line_style'] ?? 'solid'),
                 'point_radius' => $this->boundedNumber($style['point_radius'] ?? null, 2, 16),
                 'label_field' => $this->validFieldName($style['label_field'] ?? ''),
                 'show_labels' => !empty($style['show_labels']),
+                'label_font' => $this->validLabelFont($style['label_font'] ?? 'Arial, sans-serif'),
+                'label_size' => $this->boundedNumber($style['label_size'] ?? 12, 8, 24),
+                'label_color' => $this->validColor($style['label_color'] ?? '#1f2937'),
+                'label_bold' => !empty($style['label_bold']),
                 'category_field' => $this->validFieldName($style['category_field'] ?? ''),
                 'categories' => $this->validateCategories($style['categories'] ?? []),
             ];
@@ -322,6 +327,8 @@ class MapsController extends Controller
     {
         $archive = new ZipArchive();
         if ($archive->open($path) !== true) throw new InvalidArgumentException('Paket ZIP tidak dapat dibuka.');
+        $componentExtensions = self::SHAPEFILE_COMPONENTS;
+        usort($componentExtensions, static fn(string $left, string $right): int => strlen($right) <=> strlen($left));
         try {
             if ($archive->numFiles < 1 || $archive->numFiles > 64) {
                 throw new InvalidArgumentException('Paket ZIP harus berisi maksimal 64 berkas.');
@@ -332,10 +339,12 @@ class MapsController extends Controller
             foreach (range(0, $archive->numFiles - 1) as $index) {
                 $stat = $archive->statIndex($index);
                 if (!$stat || str_ends_with((string)$stat['name'], '/')) continue;
-                $name = basename(str_replace('\\', '/', (string)$stat['name']));
+                $archiveName = str_replace('\\', '/', (string)$stat['name']);
+                $name = basename($archiveName);
+                if (str_starts_with($name, '._') || str_contains('/' . $archiveName, '/__MACOSX/')) continue;
                 $lowerName = strtolower($name);
                 $extension = null;
-                foreach (self::SHAPEFILE_COMPONENTS as $candidate) {
+                foreach ($componentExtensions as $candidate) {
                     if (str_ends_with($lowerName, '.' . $candidate)) {
                         $extension = $candidate;
                         break;
@@ -376,8 +385,8 @@ class MapsController extends Controller
 
     private function validateCategories($categories): array
     {
-        if (!is_array($categories) || count($categories) > 100) {
-            throw new InvalidArgumentException('Kategori harus berupa daftar maksimal 100 nilai.');
+        if (!is_array($categories) || count($categories) > 1000) {
+            throw new InvalidArgumentException('Kategori harus berupa daftar maksimal 1.000 nilai.');
         }
         $validated = [];
         $seen = [];
@@ -390,7 +399,12 @@ class MapsController extends Controller
                 throw new InvalidArgumentException('Nilai kategori terlalu panjang atau duplikat.');
             }
             $seen[$value] = true;
-            $validated[] = ['value' => $value, 'color' => $this->validColor($category['color'] ?? null)];
+            $validated[] = [
+                'value' => $value,
+                'color' => $this->validColor($category['color'] ?? null),
+                'line_style' => $this->validLineStyle($category['line_style'] ?? 'solid'),
+                'weight' => $this->boundedNumber($category['weight'] ?? 2, 0.5, 10),
+            ];
         }
         return $validated;
     }
@@ -400,6 +414,24 @@ class MapsController extends Controller
         $value = (string)$value;
         if (!preg_match('/^#[0-9a-fA-F]{6}$/', $value)) throw new InvalidArgumentException('Warna simbologi tidak valid.');
         return strtolower($value);
+    }
+
+    private function validLineStyle($value): string
+    {
+        $value = (string)$value;
+        if (!in_array($value, ['solid', 'dash', 'dot', 'dash-dot'], true)) {
+            throw new InvalidArgumentException('Jenis garis simbologi tidak valid.');
+        }
+        return $value;
+    }
+
+    private function validLabelFont($value): string
+    {
+        $value = (string)$value;
+        if (!in_array($value, ['Arial, sans-serif', 'Verdana, sans-serif', 'Georgia, serif', 'monospace'], true)) {
+            throw new InvalidArgumentException('Jenis font label tidak valid.');
+        }
+        return $value;
     }
 
     private function boundedNumber($value, float $min, float $max): float

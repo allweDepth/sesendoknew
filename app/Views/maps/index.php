@@ -8,8 +8,12 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
       <label for="mapsBasemap">Peta dasar</label>
       <select id="mapsBasemap" aria-label="Pilih peta dasar">
         <option value="osm">OpenStreetMap</option>
+        <option value="open-topo">OpenTopoMap</option>
+        <option value="carto-positron">CARTO Positron (terang)</option>
+        <option value="carto-dark">CARTO Dark Matter (gelap)</option>
+        <option value="esri-street">Esri World Street Map</option>
         <option value="esri-terrain">Esri Terrain / Topographic</option>
-        <option value="esri-satellite">Esri Satellite</option>
+        <option value="esri-satellite">Esri World Imagery (Satellite)</option>
         <option value="google-roadmap" <?= empty($googleMapsApiKey) ? 'disabled' : '' ?>>Google Roadmap<?= empty($googleMapsApiKey) ? ' (perlu API key)' : '' ?></option>
         <option value="google-satellite" <?= empty($googleMapsApiKey) ? 'disabled' : '' ?>>Google Satellite<?= empty($googleMapsApiKey) ? ' (perlu API key)' : '' ?></option>
         <option value="google-hybrid" <?= empty($googleMapsApiKey) ? 'disabled' : '' ?>>Google Hybrid<?= empty($googleMapsApiKey) ? ' (perlu API key)' : '' ?></option>
@@ -26,6 +30,10 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
     <div class="maps-full-shell">
       <div id="mapsViewport" class="maps-viewport" role="application" aria-label="Peta interaktif"></div>
       <div id="googleMapsViewport" class="maps-viewport" role="application" aria-label="Google Maps" hidden></div>
+      <section id="mapsFeatureProperties" class="maps-feature-properties" aria-live="polite" hidden>
+        <div class="maps-feature-properties-heading"><strong id="mapsFeatureTitle">Properti feature</strong><button type="button" id="closeMapsFeatureProperties" aria-label="Tutup properti feature">&times;</button></div>
+        <div id="mapsFeatureFields" class="maps-feature-properties-fields"></div>
+      </section>
       <aside class="maps-floating-layers">
         <h3><i class="layers icon"></i> Layer OPD</h3>
         <div id="mapLayersList" class="maps-layers-list"><div class="ui active inline loader"></div> Memuat layer…</div>
@@ -38,7 +46,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
     <div class="maps-layout">
       <aside class="ui segment maps-panel">
         <div class="maps-basemap-field"><label for="mapsBasemap">Peta dasar</label><select id="mapsBasemap" class="ui fluid dropdown">
-          <option value="osm">OpenStreetMap</option><option value="esri-terrain">Esri Terrain / Topographic</option><option value="esri-satellite">Esri Satellite</option>
+          <option value="osm">OpenStreetMap</option><option value="open-topo">OpenTopoMap</option><option value="carto-positron">CARTO Positron (terang)</option><option value="carto-dark">CARTO Dark Matter (gelap)</option><option value="esri-street">Esri World Street Map</option><option value="esri-terrain">Esri Terrain / Topographic</option><option value="esri-satellite">Esri World Imagery (Satellite)</option>
           <option value="google-roadmap" <?= empty($googleMapsApiKey) ? 'disabled' : '' ?>>Google Roadmap<?= empty($googleMapsApiKey) ? ' (perlu API key)' : '' ?></option>
           <option value="google-satellite" <?= empty($googleMapsApiKey) ? 'disabled' : '' ?>>Google Satellite<?= empty($googleMapsApiKey) ? ' (perlu API key)' : '' ?></option>
           <option value="google-hybrid" <?= empty($googleMapsApiKey) ? 'disabled' : '' ?>>Google Hybrid<?= empty($googleMapsApiKey) ? ' (perlu API key)' : '' ?></option>
@@ -52,15 +60,29 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
           <div class="field"><label for="mapsRenderer">Metode simbologi</label><select id="mapsRenderer" class="ui fluid dropdown"><option value="simple">Simbol tunggal</option><option value="categorized">Kategori berdasarkan field</option></select></div>
           <div id="mapsCategorySettings" hidden>
             <div class="field"><label for="mapsCategoryField">Field kategori</label><select id="mapsCategoryField" class="ui fluid dropdown"><option value="">Pilih field</option></select></div>
-            <button class="ui small basic button" id="classifyMapsCategories" type="button">Klasifikasikan nilai unik</button>
-            <div id="mapsCategoriesLegend" class="maps-categories-legend"></div>
+            <div class="maps-category-toolbar">
+              <button class="ui small primary button" id="classifyMapsCategories" type="button">Klasifikasikan nilai unik</button>
+              <button class="ui small basic button" id="toggleMapsCategories" type="button" aria-expanded="false">Tampilkan tabel</button>
+            </div>
+            <div class="field maps-category-search-field"><label for="mapsCategorySearch">Cari kategori</label><input id="mapsCategorySearch" type="search" placeholder="Ketik nilai untuk memfilter" autocomplete="off"></div>
+            <div id="mapsCategoryCount" class="maps-category-count" aria-live="polite"></div>
+            <div id="mapsCategoriesLegend" class="maps-categories-legend" hidden></div>
           </div>
           <label class="maps-setting-toggle"><input id="mapsShowLabels" type="checkbox"> Tampilkan label</label>
           <div class="field"><label for="mapsLabelField">Field label</label><select id="mapsLabelField" class="ui fluid dropdown"><option value="">Tidak ada label</option></select></div>
+          <div id="mapsLabelStyle" class="maps-label-style">
+            <div class="field"><label for="mapsLabelFont">Jenis font label</label><select id="mapsLabelFont" class="ui fluid dropdown"><option value="Arial, sans-serif">Arial</option><option value="Verdana, sans-serif">Verdana</option><option value="Georgia, serif">Georgia</option><option value="monospace">Monospace</option></select></div>
+            <div class="maps-style-grid">
+              <div class="field"><label for="mapsLabelColor">Warna font</label><input id="mapsLabelColor" type="color" value="#1f2937"></div>
+              <div class="field"><label for="mapsLabelSize">Ukuran font</label><input id="mapsLabelSize" type="number" min="8" max="24" step="1" value="12"></div>
+            </div>
+            <label class="maps-setting-toggle"><input id="mapsLabelBold" type="checkbox"> Tebalkan label</label>
+          </div>
           <div class="maps-style-grid">
             <div class="field"><label for="mapsLineColor">Warna garis/titik</label><input id="mapsLineColor" type="color" value="#138a72"></div>
             <div class="field"><label for="mapsFillColor">Warna isi</label><input id="mapsFillColor" type="color" value="#138a72"></div>
             <div class="field"><label for="mapsFillOpacity">Opasitas isi</label><input id="mapsFillOpacity" type="range" min="0" max="1" step=".05" value=".3"></div>
+            <div class="field"><label for="mapsLineStyle">Jenis garis</label><select id="mapsLineStyle" class="ui fluid dropdown"><option value="solid">Utuh</option><option value="dash">Putus-putus</option><option value="dot">Titik-titik</option><option value="dash-dot">Garis-titik</option></select></div>
             <div class="field"><label for="mapsLineWeight">Tebal garis</label><input id="mapsLineWeight" type="range" min=".5" max="10" step=".5" value="2"></div>
             <div class="field"><label for="mapsPointRadius">Ukuran titik</label><input id="mapsPointRadius" type="range" min="2" max="16" step="1" value="5"></div>
           </div>
@@ -102,7 +124,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
         <div id="mapsViewport" class="maps-viewport" role="application" aria-label="Pratinjau peta"></div>
         <div id="googleMapsViewport" class="maps-viewport" role="application" aria-label="Pratinjau Google Maps" hidden></div>
         <label class="maps-upload-basemap" for="mapsBasemap">Peta dasar</label>
-        <select id="mapsBasemap"><option value="osm">OpenStreetMap</option><option value="esri-terrain">Esri Terrain</option><option value="esri-satellite">Esri Satellite</option>
+        <select id="mapsBasemap"><option value="osm">OpenStreetMap</option><option value="open-topo">OpenTopoMap</option><option value="carto-positron">CARTO Positron (terang)</option><option value="carto-dark">CARTO Dark Matter (gelap)</option><option value="esri-street">Esri World Street Map</option><option value="esri-terrain">Esri Terrain</option><option value="esri-satellite">Esri World Imagery (Satellite)</option>
           <option value="google-roadmap" <?= empty($googleMapsApiKey) ? 'disabled' : '' ?>>Google Roadmap<?= empty($googleMapsApiKey) ? ' (perlu API key)' : '' ?></option>
           <option value="google-satellite" <?= empty($googleMapsApiKey) ? 'disabled' : '' ?>>Google Satellite<?= empty($googleMapsApiKey) ? ' (perlu API key)' : '' ?></option>
           <option value="google-hybrid" <?= empty($googleMapsApiKey) ? 'disabled' : '' ?>>Google Hybrid<?= empty($googleMapsApiKey) ? ' (perlu API key)' : '' ?></option>
@@ -116,7 +138,9 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
 </section>
 <style>
   .maps-page { width: 100%; max-width: none !important; height: 100%; min-height: 0; padding: 0 !important; }
-  .maps-mode-map { display: flex; flex-direction: column; gap: 8px; height: 100%; min-height: 520px; }
+  #mainContext .content-scroll:has(.maps-mode-map) { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+  #mainContext .content-scroll:has(.maps-mode-map) #main-content { display: flex; flex: 1 1 auto; width: 100%; min-height: 0; }
+  .maps-mode-map { display: flex; flex: 1 1 auto; flex-direction: column; gap: 8px; height: auto; min-height: 0; }
   .maps-full-toolbar { display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 6px 10px; background: var(--surface, #fff); border: 1px solid #d9e2ec; border-radius: 8px; }
   .maps-full-toolbar label { white-space: nowrap; font-weight: 700; }
   .maps-full-toolbar select { max-width: 230px; min-height: 34px; border: 1px solid #cbd5e1; border-radius: 5px; padding: 5px 8px; }
@@ -125,9 +149,17 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
   .maps-google-note { color: #697586; font-size: .85em; }
   .maps-full-shell { position: relative; flex: 1; min-height: 0; overflow: hidden; border: 1px solid #d9e2ec; border-radius: 9px; }
   .maps-viewport { width: 100%; height: 100%; min-height: 330px; overflow: hidden; background: #eef3f6; }
+  .maps-mode-map .maps-full-shell > .maps-viewport { position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; }
   .maps-viewport .leaflet-container { width: 100%; height: 100%; font: inherit; }
   #googleMapsViewport[hidden] { display: none; }
   .maps-floating-layers { position: absolute; z-index: 500; top: 12px; right: 12px; width: min(300px, 38vw); max-height: calc(100% - 24px); padding: 13px; overflow: auto; background: rgba(255,255,255,.96); border: 1px solid #d9e2ec; border-radius: 9px; box-shadow: 0 3px 18px rgba(0,0,0,.18); }
+  .maps-feature-properties { position: absolute; z-index: 510; left: 12px; bottom: 12px; width: min(390px, calc(100% - 340px)); max-height: min(48%, 420px); padding: 12px; overflow: auto; background: rgba(255,255,255,.97); border: 1px solid #b9c8d8; border-radius: 9px; box-shadow: 0 3px 18px rgba(0,0,0,.2); }
+  .maps-feature-properties-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+  .maps-feature-properties-heading button { border: 0; background: transparent; cursor: pointer; font-size: 1.5rem; line-height: 1; }
+  .maps-feature-properties-fields { overflow-wrap: anywhere; }
+  .maps-feature-properties-fields table { width: 100%; border-collapse: collapse; }
+  .maps-feature-properties-fields th, .maps-feature-properties-fields td { padding: 5px 7px; border-bottom: 1px solid #d9e2ec; text-align: left; vertical-align: top; }
+  .maps-feature-properties-fields th { width: 40%; }
   .maps-floating-layers h3 { margin: 0 0 10px; font-size: 1rem; }
   .maps-layers-list { display: grid; gap: 7px; max-height: 38vh; overflow-y: auto; }
   .maps-layer-row { display: flex; align-items: flex-start; gap: 8px; padding: 8px; border: 1px solid #d9e2ec; border-radius: 7px; }
@@ -150,10 +182,27 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
   .maps-mode-layers .maps-viewport { height: min(72vh, 820px); min-height: 480px; border-radius: 7px; }
   .maps-layer-settings { margin-top: 12px; }
   .maps-layer-settings h3 { overflow-wrap: anywhere; }
+  .maps-category-toolbar { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .maps-category-toolbar .button { margin: 0 !important; }
+  .maps-category-search-field { margin: 8px 0 4px !important; }
+  .maps-category-count { margin: 4px 0 7px; color: #64748b; font-size: .85rem; }
+  .maps-categories-legend { max-height: 310px; overflow: auto; border: 1px solid #d9e2ec; border-radius: 7px; }
+  .maps-categories-legend table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+  .maps-categories-legend th, .maps-categories-legend td { padding: 5px 6px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+  .maps-categories-legend thead { position: sticky; top: 0; z-index: 1; background: #f8fafc; }
+  .maps-categories-legend input[type=color] { width: 38px; height: 30px; padding: 1px; }
+  .maps-categories-legend input[type=number] { width: 62px; min-width: 0; padding: 5px; }
+  .maps-categories-legend select { min-width: 105px; padding: 5px; }
+  .maps-category-value { overflow-wrap: anywhere; }
+  body.dark-mode .maps-categories-legend { border-color: #475569; }
+  body.dark-mode .maps-categories-legend thead { background: #1e293b; }
+  body.dark-mode .maps-categories-legend th, body.dark-mode .maps-categories-legend td { border-color: #334155; }
+  body.dark-mode .maps-category-count { color: #cbd5e1; }
   .maps-setting-toggle { display: flex; align-items: center; gap: 7px; margin: 12px 0; }
   .maps-style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .maps-style-grid .field { margin: 0 !important; }
   .maps-style-grid input[type=color] { width: 100%; height: 34px; padding: 2px; }
+  .maps-label-style[hidden] { display: none !important; }
   .maps-dbf-fields { max-height: 250px; overflow: auto; font-size: .88em; }
   .maps-dbf-fields table { width: 100%; border-collapse: collapse; }
   .maps-dbf-fields th, .maps-dbf-fields td { padding: 5px; border-bottom: 1px solid #d9e2ec; text-align: left; overflow-wrap: anywhere; }
@@ -169,5 +218,6 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
   body.dark-mode .maps-floating-layers { background: rgba(20,30,40,.96); color: #e2e8f0; }
   body.dark-mode .maps-layer-label small, body.dark-mode .maps-page-heading p, body.dark-mode .maps-google-note, body.dark-mode .maps-upload-form .field small { color: #cbd5e1; }
   @media (max-width: 900px) { .maps-layout, .maps-upload-layout { grid-template-columns: 1fr; } .maps-mode-layers .maps-viewport, .maps-upload-layout .maps-viewport { min-height: 380px; height: 55vh; } }
-  @media (max-width: 600px) { .maps-full-toolbar { flex-wrap: wrap; } .maps-full-toolbar select { max-width: 100%; flex: 1; } .maps-floating-layers { width: min(260px, 60vw); } .maps-layer-shortcut { display: none !important; } }
+  body.dark-mode .maps-feature-properties { background: rgba(20,30,40,.97); color: #e2e8f0; border-color: #475569; }
+  @media (max-width: 600px) { .maps-full-toolbar { flex-wrap: wrap; } .maps-full-toolbar select { max-width: 100%; flex: 1; } .maps-floating-layers { width: min(260px, 60vw); } .maps-feature-properties { left: 8px; bottom: 8px; width: min(270px, calc(100% - 285px)); max-height: 45%; padding: 8px; font-size: .85rem; } .maps-layer-shortcut { display: none !important; } }
 </style>

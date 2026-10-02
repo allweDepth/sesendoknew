@@ -7,7 +7,7 @@ $group = static function (string $title, string $icon, array $items): void {
   $items = array_values(array_filter($items, fn($x) => strtolower($x[0]) !== 'dashboard'));
   if (isset($mods[$title])) array_unshift($items, ['Dashboard', '/dashboard?mod=' . $mods[$title], $title . '/Dashboard']); ?><div class="item">
     <div class="title"><i class="dropdown icon"></i> <i class="<?= $icon ?> icon"></i> <?= $title ?></div>
-    <div class="content"><?php foreach ($items as [$label, $url, $page]): ?><a class="item" href="<?= $url ?>" data-spa="<?= str_starts_with($url, '/dashboard') || $url === '/kepegawaian/struktur' ? 'server' : 'client' ?>" data-title="<?= $page ?>"><?= $label ?></a><?php endforeach; ?></div>
+    <div class="content"><?php foreach ($items as [$label, $url, $page]): ?><a class="item" href="<?= $url ?>" data-spa="<?= str_starts_with($url, '/dashboard') || str_starts_with($url, '/maps') || $url === '/kepegawaian/struktur' ? 'server' : 'client' ?>" data-title="<?= $page ?>"><?= $label ?></a><?php endforeach; ?></div>
   </div><?php };
         ?>
 <div class="ui bottom attached segment pushable" id="mainContext">

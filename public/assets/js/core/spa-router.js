@@ -175,7 +175,8 @@ class SpaRouter {
 				// Struktur organisasi is a complete server-rendered page. Loading the
 				// generic Kepegawaian module here would replace its fragment.
 				const routeUrl = window.appRoutePath ? window.appRoutePath(url) : url;
-				if (routeUrl.split(/[?#]/)[0] !== "/kepegawaian/struktur" && window.app?.loadModule) {
+				const routePath = routeUrl.split(/[?#]/)[0];
+				if (routePath !== "/kepegawaian/struktur" && !routePath.startsWith("/maps") && window.app?.loadModule) {
 					window.app.loadModule(url);
 				}
 

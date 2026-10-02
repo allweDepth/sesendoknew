@@ -12,6 +12,24 @@
       maxZoom: 19,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>'
     }),
+    "open-topo": () => L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+      maxZoom: 17,
+      attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
+    }),
+    "carto-positron": () => L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+      subdomains: "abcd",
+      maxZoom: 20,
+      attribution: '&copy; OpenStreetMap contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    }),
+    "carto-dark": () => L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      subdomains: "abcd",
+      maxZoom: 20,
+      attribution: '&copy; OpenStreetMap contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    }),
+    "esri-street": () => L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+      maxZoom: 19,
+      attribution: "Tiles &copy; Esri and its contributors"
+    }),
     "esri-terrain": () => L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
       maxZoom: 19,
       attribution: "Tiles &copy; Esri — Sources: Esri, USGS, NOAA"
@@ -261,6 +279,7 @@
     const statusBox = page.querySelector("#shapefileStatus");
     const coords = page.querySelector("#mapCoordinates");
     const googleViewport = page.querySelector("#googleMapsViewport");
+    const featurePropertiesPanel = page.querySelector("#mapsFeatureProperties");
     const mode = page.dataset.mode || "map";
     const settingsPanel = page.querySelector("#mapsLayerSettings");
     const byId = new Map();
@@ -273,6 +292,8 @@
     let usingGoogle = false;
     let mapFitBounds = null;
     let currentSettingsEntry = null;
+    let selectedFeatureLayerId = null;
+    let categoriesExpanded = false;
     const showMessage = (target, message) => {
       errorBox.classList.add("hidden");
       statusBox.classList.add("hidden");
@@ -281,6 +302,39 @@
         target.classList.remove("hidden");
       }
     };
+    const showFeatureProperties = (feature, layerId, layerName) => {
+      if (!featurePropertiesPanel) return;
+      selectedFeatureLayerId = layerId;
+      const fields = page.querySelector("#mapsFeatureFields");
+      const title = page.querySelector("#mapsFeatureTitle");
+      const properties = feature?.properties || {};
+      title.textContent = `${layerName} · Properti feature`;
+      fields.replaceChildren();
+      const entries = Object.entries(properties);
+      if (!entries.length) {
+        fields.textContent = "Feature ini tidak memiliki atribut.";
+      } else {
+        const table = document.createElement("table");
+        const body = document.createElement("tbody");
+        entries.forEach(([key, rawValue]) => {
+          const row = document.createElement("tr");
+          const name = document.createElement("th");
+          name.scope = "row";
+          name.textContent = key;
+          const value = document.createElement("td");
+          value.textContent = rawValue == null || rawValue === "" ? "—" : typeof rawValue === "object" ? JSON.stringify(rawValue) : String(rawValue);
+          row.append(name, value);
+          body.append(row);
+        });
+        table.append(body);
+        fields.append(table);
+      }
+      featurePropertiesPanel.hidden = false;
+    };
+    page.querySelector("#closeMapsFeatureProperties")?.addEventListener("click", () => {
+      featurePropertiesPanel.hidden = true;
+      selectedFeatureLayerId = null;
+    });
 
     function setBase(name) {
       if (activeBase) map.removeLayer(activeBase);
@@ -317,7 +371,7 @@
         const featureStyle = getFeatureStyle(props, style);
         return {
           strokeColor: featureStyle.color,
-          strokeWeight: style.weight,
+          strokeWeight: featureStyle.weight,
           fillColor: featureStyle.fillColor,
           fillOpacity: style.fill_opacity,
           clickable: true
@@ -326,9 +380,13 @@
       dataLayer.addListener("click", (event) => {
         const properties = {};
         event.feature.forEachProperty((value, key) => { properties[key] = value; });
-        googleInfoWindow.setContent(featurePopup({ properties }));
-        googleInfoWindow.setPosition(event.latLng);
-        googleInfoWindow.open({ map: googleMap });
+        if (featurePropertiesPanel) {
+          showFeatureProperties({ properties }, id, entry.name);
+        } else {
+          googleInfoWindow.setContent(featurePopup({ properties }));
+          googleInfoWindow.setPosition(event.latLng);
+          googleInfoWindow.open({ map: googleMap });
+        }
       });
       entry.googleLayer = dataLayer;
       renderGoogleLabels(entry);
@@ -347,7 +405,13 @@
             map: googleMap,
             position: { lat: center[1], lng: center[0] },
             title: String(value),
-            label: { text: String(value), color: entry.style.color, fontSize: "12px", fontWeight: "700" },
+            label: {
+              text: String(value),
+              color: entry.style.label_color || "#1f2937",
+              fontSize: `${entry.style.label_size || 12}px`,
+              fontWeight: entry.style.label_bold ? "700" : "400",
+              fontFamily: entry.style.label_font || "Arial, sans-serif"
+            },
             icon: { path: google.maps.SymbolPath.CIRCLE, scale: 0, fillOpacity: 0, strokeOpacity: 0 }
           }));
         });
@@ -458,26 +522,44 @@
         fill_color: row.style?.fill_color || row.style?.color || defaultColor,
         fill_opacity: Number(row.style?.fill_opacity ?? .3),
         weight: Number(row.style?.weight ?? 2),
+        line_style: row.style?.line_style || "solid",
         point_radius: Number(row.style?.point_radius ?? 5),
         label_field: row.style?.label_field || "",
-        show_labels: Boolean(row.style?.show_labels)
+        show_labels: Boolean(row.style?.show_labels),
+        label_font: row.style?.label_font || "Arial, sans-serif",
+        label_size: Number(row.style?.label_size ?? 12),
+        label_color: row.style?.label_color || "#1f2937",
+        label_bold: Boolean(row.style?.label_bold)
       };
+      updateLabelFontStyle(style);
       const layer = L.geoJSON(geoJson, {
         style: (feature) => {
           const featureStyle = getFeatureStyle(feature.properties, style);
-          return { color: featureStyle.color, weight: style.weight, fillColor: featureStyle.fillColor, fillOpacity: style.fill_opacity };
+          return {
+            color: featureStyle.color, weight: featureStyle.weight,
+            dashArray: lineDashArray(featureStyle.line_style),
+            fillColor: featureStyle.fillColor, fillOpacity: style.fill_opacity
+          };
         },
         pointToLayer: (feature, latlng) => {
           const featureStyle = getFeatureStyle(feature.properties, style);
           return L.circleMarker(latlng, {
-            radius: style.point_radius, color: featureStyle.color, weight: style.weight,
+            radius: style.point_radius, color: featureStyle.color, weight: featureStyle.weight,
+            dashArray: lineDashArray(featureStyle.line_style),
             fillColor: featureStyle.fillColor, fillOpacity: style.fill_opacity
           });
         },
         onEachFeature: (feature, featureLayer) => {
-          featureLayer.bindPopup(featurePopup(feature), { maxWidth: 380 });
+          if (featurePropertiesPanel) {
+            featureLayer.on("click", () => showFeatureProperties(feature, id, row.nama_layer));
+          } else {
+            featureLayer.bindPopup(featurePopup(feature), { maxWidth: 380 });
+          }
           if (style.show_labels && style.label_field && feature.properties[style.label_field] != null) {
-            featureLayer.bindTooltip(String(feature.properties[style.label_field]), { permanent: true, direction: "center", className: "maps-feature-label" });
+            featureLayer.bindTooltip(String(feature.properties[style.label_field]), {
+              permanent: true, direction: "center", className: "maps-feature-label",
+              ...labelTooltipOptions(style)
+            });
           }
         }
       });
@@ -490,9 +572,40 @@
       if (style.renderer === "categorized" && style.category_field) {
         const value = properties?.[style.category_field];
         const category = style.categories.find((item) => item.value === String(value ?? ""));
-        if (category) return { color: category.color, fillColor: category.color };
+        if (category) {
+          return {
+            color: category.color,
+            fillColor: category.color,
+            weight: Number(category.weight ?? style.weight),
+            line_style: category.line_style || "solid"
+          };
+        }
       }
-      return { color: style.color, fillColor: style.fill_color };
+      return { color: style.color, fillColor: style.fill_color, weight: style.weight, line_style: style.line_style || "solid" };
+    }
+
+    function lineDashArray(lineStyle) {
+      return ({ dash: "8 5", dot: "2 5", "dash-dot": "8 4 2 4" })[lineStyle] || null;
+    }
+
+    function labelTooltipOptions(style) {
+      return {
+        direction: "center",
+        className: "maps-feature-label"
+      };
+    }
+
+    function updateLabelFontStyle(style) {
+      let styleElement = document.getElementById("mapsDynamicLabelStyle");
+      if (!styleElement) {
+        styleElement = document.createElement("style");
+        styleElement.id = "mapsDynamicLabelStyle";
+        document.head.append(styleElement);
+      }
+      const font = style.label_font || "Arial, sans-serif";
+      const fontSize = Math.min(24, Math.max(8, Number(style.label_size) || 12));
+      const color = /^#[0-9a-f]{6}$/i.test(style.label_color) ? style.label_color : "#1f2937";
+      styleElement.textContent = `.maps-feature-label{font-family:${font};font-size:${fontSize}px;color:${color};font-weight:${style.label_bold ? "700" : "400"}}`;
     }
 
     function categoryColor(index) {
@@ -509,31 +622,74 @@
 
     function renderCategoryLegend(categories) {
       const target = page.querySelector("#mapsCategoriesLegend");
-      if (!target) return;
+      const search = page.querySelector("#mapsCategorySearch");
+      const count = page.querySelector("#mapsCategoryCount");
+      const toggle = page.querySelector("#toggleMapsCategories");
+      if (!target || !search || !count || !toggle) return;
+      target.hidden = !categoriesExpanded;
+      toggle.textContent = categoriesExpanded ? "Ciutkan tabel" : "Tampilkan tabel";
+      toggle.setAttribute("aria-expanded", categoriesExpanded ? "true" : "false");
       target.replaceChildren();
       if (!categories.length) {
-        target.textContent = "Belum ada kategori. Klasifikasikan field untuk membuat legenda.";
+        count.textContent = "Belum ada kategori. Klasifikasikan field untuk membuat legenda.";
         return;
       }
       const table = document.createElement("table");
+      const head = document.createElement("thead");
+      head.innerHTML = "<tr><th>Nilai</th><th>Warna</th><th>Jenis garis</th><th>Tebal</th></tr>";
+      const body = document.createElement("tbody");
+      const query = search.value.trim().toLocaleLowerCase("id");
+      let visibleCount = 0;
       categories.forEach((category) => {
         const row = document.createElement("tr");
+        const categoryValue = category.value === "" ? "(kosong)" : category.value;
+        row.hidden = query !== "" && !categoryValue.toLocaleLowerCase("id").includes(query);
+        if (!row.hidden) visibleCount++;
+        const label = document.createElement("td");
+        label.className = "maps-category-value";
+        label.textContent = categoryValue;
         const colorCell = document.createElement("td");
         const color = document.createElement("input");
         color.type = "color";
         color.value = category.color;
-        color.setAttribute("aria-label", `Warna kategori ${category.value || "(kosong)"}`);
+        color.setAttribute("aria-label", `Warna kategori ${categoryValue}`);
         color.addEventListener("input", () => {
           category.color = color.value;
           if (currentSettingsEntry) applyEntryStyle(currentSettingsEntry, currentSettingsEntry.style);
         });
         colorCell.append(color);
-        const label = document.createElement("td");
-        label.textContent = category.value === "" ? "(kosong)" : category.value;
-        row.append(colorCell, label);
-        table.append(row);
+        const lineCell = document.createElement("td");
+        const lineStyle = document.createElement("select");
+        lineStyle.setAttribute("aria-label", `Jenis garis kategori ${categoryValue}`);
+        [["solid", "Utuh"], ["dash", "Putus-putus"], ["dot", "Titik-titik"], ["dash-dot", "Garis-titik"]]
+          .forEach(([value, text]) => lineStyle.add(new Option(text, value)));
+        lineStyle.value = category.line_style || "solid";
+        lineStyle.addEventListener("change", () => {
+          category.line_style = lineStyle.value;
+          if (currentSettingsEntry) applyEntryStyle(currentSettingsEntry, currentSettingsEntry.style);
+        });
+        lineCell.append(lineStyle);
+        const weightCell = document.createElement("td");
+        const weight = document.createElement("input");
+        weight.type = "number";
+        weight.min = "0.5";
+        weight.max = "10";
+        weight.step = "0.5";
+        weight.value = String(category.weight ?? 2);
+        weight.setAttribute("aria-label", `Ketebalan garis kategori ${categoryValue}`);
+        weight.addEventListener("input", () => {
+          const value = Number(weight.value);
+          if (!Number.isFinite(value) || value < 0.5 || value > 10) return;
+          category.weight = value;
+          if (currentSettingsEntry) applyEntryStyle(currentSettingsEntry, currentSettingsEntry.style);
+        });
+        weightCell.append(weight);
+        row.append(label, colorCell, lineCell, weightCell);
+        body.append(row);
       });
+      table.append(head, body);
       target.append(table);
+      count.textContent = `${visibleCount.toLocaleString("id-ID")} dari ${categories.length.toLocaleString("id-ID")} kategori`;
     }
 
     function showFieldDatabase(entry) {
@@ -563,18 +719,23 @@
 
     function applyEntryStyle(entry, style) {
       entry.style = style;
+      updateLabelFontStyle(style);
       entry.layer.eachLayer((featureLayer) => {
         if (featureLayer.setStyle) {
           const featureStyle = getFeatureStyle(featureLayer.feature?.properties, style);
           featureLayer.setStyle({
-            radius: style.point_radius, color: featureStyle.color, weight: style.weight,
+            radius: style.point_radius, color: featureStyle.color, weight: featureStyle.weight,
+            dashArray: lineDashArray(featureStyle.line_style),
             fillColor: featureStyle.fillColor, fillOpacity: style.fill_opacity
           });
         }
         if (featureLayer.unbindTooltip) featureLayer.unbindTooltip();
         const value = featureLayer.feature?.properties?.[style.label_field];
         if (style.show_labels && style.label_field && value != null && featureLayer.bindTooltip) {
-          featureLayer.bindTooltip(String(value), { permanent: true, direction: "center", className: "maps-feature-label" });
+          featureLayer.bindTooltip(String(value), {
+            permanent: true, direction: "center", className: "maps-feature-label",
+            ...labelTooltipOptions(style)
+          });
         }
       });
       if (entry.googleLayer) {
@@ -583,7 +744,7 @@
           feature.forEachProperty((value, key) => { props[key] = value; });
           const featureStyle = getFeatureStyle(props, style);
           return {
-            strokeColor: featureStyle.color, strokeWeight: style.weight,
+            strokeColor: featureStyle.color, strokeWeight: featureStyle.weight,
             fillColor: featureStyle.fillColor, fillOpacity: style.fill_opacity, clickable: true
           };
         });
@@ -609,6 +770,12 @@
       page.querySelector("#mapsFillOpacity").value = String(entry.style.fill_opacity);
       page.querySelector("#mapsLineWeight").value = String(entry.style.weight);
       page.querySelector("#mapsPointRadius").value = String(entry.style.point_radius);
+      page.querySelector("#mapsLineStyle").value = entry.style.line_style || "solid";
+      page.querySelector("#mapsLabelFont").value = entry.style.label_font || "Arial, sans-serif";
+      page.querySelector("#mapsLabelSize").value = String(entry.style.label_size || 12);
+      page.querySelector("#mapsLabelColor").value = entry.style.label_color || "#1f2937";
+      page.querySelector("#mapsLabelBold").checked = Boolean(entry.style.label_bold);
+      page.querySelector("#mapsLabelStyle").hidden = !entry.style.show_labels;
       const fieldSelect = page.querySelector("#mapsLabelField");
       fieldSelect.replaceChildren(new Option("Tidak ada label", ""));
       entry.fields.forEach((field) => fieldSelect.add(new Option(field.name, field.name)));
@@ -619,6 +786,7 @@
       categoryField.value = entry.style.category_field;
       page.querySelector("#mapsRenderer").value = entry.style.renderer;
       page.querySelector("#mapsCategorySettings").hidden = entry.style.renderer !== "categorized";
+      page.querySelector("#mapsCategorySearch").value = "";
       renderCategoryLegend(entry.style.categories);
       showFieldDatabase(entry);
       coords.textContent = `${row.nama_layer} · ${entry.count.toLocaleString("id-ID")} objek`;
@@ -705,6 +873,10 @@
               coords.textContent = `${row.nama_layer} · ${loadedLayers.get(row.id).count.toLocaleString("id-ID")} objek`;
             } else if (loadedLayers.has(row.id)) {
               const entry = loadedLayers.get(row.id);
+              if (selectedFeatureLayerId === row.id && featurePropertiesPanel) {
+                featurePropertiesPanel.hidden = true;
+                selectedFeatureLayerId = null;
+              }
               entry.layer.remove();
               clearGoogleLayer(entry);
               loadedLayers.delete(row.id);
@@ -759,18 +931,7 @@
         const row = [...byId.values()].find((candidate) => candidate.nama_layer === selectedName);
         if (!row || !loadedLayers.has(row.id)) return;
         const entry = loadedLayers.get(row.id);
-        const style = {
-          color: page.querySelector("#mapsLineColor").value,
-          fill_color: page.querySelector("#mapsFillColor").value,
-          fill_opacity: Number(page.querySelector("#mapsFillOpacity").value),
-          weight: Number(page.querySelector("#mapsLineWeight").value),
-          point_radius: Number(page.querySelector("#mapsPointRadius").value),
-          label_field: page.querySelector("#mapsLabelField").value,
-          show_labels: page.querySelector("#mapsShowLabels").checked,
-          renderer: page.querySelector("#mapsRenderer").value,
-          category_field: page.querySelector("#mapsCategoryField").value,
-          categories: entry.style.categories || []
-        };
+        const style = readStyleControls(entry);
         try {
           const body = new URLSearchParams({ id: String(row.id), style: JSON.stringify(style), _csrf: window.CSRF_TOKEN || "" });
           await jsonRequest("/maps/style", { method: "POST", body });
@@ -783,15 +944,39 @@
       });
     }
 
+    function readStyleControls(entry) {
+      return {
+        ...entry.style,
+        color: page.querySelector("#mapsLineColor").value,
+        fill_color: page.querySelector("#mapsFillColor").value,
+        fill_opacity: Number(page.querySelector("#mapsFillOpacity").value),
+        weight: Number(page.querySelector("#mapsLineWeight").value),
+        line_style: page.querySelector("#mapsLineStyle").value,
+        point_radius: Number(page.querySelector("#mapsPointRadius").value),
+        label_field: page.querySelector("#mapsLabelField").value,
+        show_labels: page.querySelector("#mapsShowLabels").checked,
+        label_font: page.querySelector("#mapsLabelFont").value,
+        label_size: Number(page.querySelector("#mapsLabelSize").value),
+        label_color: page.querySelector("#mapsLabelColor").value,
+        label_bold: page.querySelector("#mapsLabelBold").checked,
+        renderer: page.querySelector("#mapsRenderer").value,
+        category_field: page.querySelector("#mapsCategoryField").value,
+        categories: entry.style.categories || []
+      };
+    }
+
+    const updateSelectedStyle = () => {
+      if (!currentSettingsEntry) return;
+      currentSettingsEntry.style = readStyleControls(currentSettingsEntry);
+      page.querySelector("#mapsLabelStyle").hidden = !currentSettingsEntry.style.show_labels;
+      applyEntryStyle(currentSettingsEntry, currentSettingsEntry.style);
+    };
+
     const rendererSelect = page.querySelector("#mapsRenderer");
     const categorySettings = page.querySelector("#mapsCategorySettings");
     rendererSelect?.addEventListener("change", () => {
       categorySettings.hidden = rendererSelect.value !== "categorized";
-      if (currentSettingsEntry) {
-        currentSettingsEntry.style.renderer = rendererSelect.value;
-        currentSettingsEntry.style.category_field = page.querySelector("#mapsCategoryField").value;
-        applyEntryStyle(currentSettingsEntry, currentSettingsEntry.style);
-      }
+      updateSelectedStyle();
     });
     page.querySelector("#mapsCategoryField")?.addEventListener("change", (event) => {
       if (!currentSettingsEntry) return;
@@ -800,6 +985,19 @@
       renderCategoryLegend([]);
       applyEntryStyle(currentSettingsEntry, currentSettingsEntry.style);
     });
+    page.querySelector("#toggleMapsCategories")?.addEventListener("click", () => {
+      categoriesExpanded = !categoriesExpanded;
+      renderCategoryLegend(currentSettingsEntry?.style.categories || []);
+    });
+    page.querySelector("#mapsCategorySearch")?.addEventListener("input", () => {
+      renderCategoryLegend(currentSettingsEntry?.style.categories || []);
+    });
+    ["mapsShowLabels", "mapsLabelField", "mapsLabelFont", "mapsLabelSize", "mapsLabelColor", "mapsLabelBold",
+      "mapsLineColor", "mapsFillColor", "mapsFillOpacity", "mapsLineStyle", "mapsLineWeight", "mapsPointRadius"]
+      .forEach((id) => {
+        const control = page.querySelector(`#${id}`);
+        control?.addEventListener(control.type === "range" || control.type === "color" || control.type === "number" ? "input" : "change", updateSelectedStyle);
+      });
     page.querySelector("#classifyMapsCategories")?.addEventListener("click", () => {
       if (!currentSettingsEntry) return;
       const field = page.querySelector("#mapsCategoryField").value;
@@ -811,16 +1009,22 @@
         .map((feature) => feature.properties?.[field])
         .filter((value) => value !== null && value !== undefined)
         .map((value) => String(value)));
-      if (values.size > 100) {
-        showMessage(errorBox, "Field memiliki lebih dari 100 nilai unik. Pilih field dengan kategori lebih sedikit.");
+      if (values.size > 1000) {
+        showMessage(errorBox, "Field memiliki lebih dari 1.000 nilai unik. Pilih field dengan kategori lebih sedikit.");
         return;
       }
       currentSettingsEntry.style.renderer = "categorized";
       currentSettingsEntry.style.category_field = field;
       currentSettingsEntry.style.categories = [...values].sort((a, b) => a.localeCompare(b, "id"))
-        .map((value, index) => ({ value, color: categoryColor(index) }));
+        .map((value, index) => ({
+          value,
+          color: categoryColor(index),
+          line_style: "solid",
+          weight: currentSettingsEntry.style.weight
+        }));
       rendererSelect.value = "categorized";
       categorySettings.hidden = false;
+      categoriesExpanded = true;
       renderCategoryLegend(currentSettingsEntry.style.categories);
       applyEntryStyle(currentSettingsEntry, currentSettingsEntry.style);
       showMessage(statusBox, `${values.size} kategori unik berhasil dibuat.`);
