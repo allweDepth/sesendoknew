@@ -20,6 +20,7 @@ $group = static function (string $title, string $icon, array $items): void {
       </h2>
     </div>
     <a class="item" href="/dashboard" data-spa="server" data-title="Dashboard"><i class="home icon"></i> Dashboard</a>
+    <a class="item" href="/maps" data-spa="server" data-title="Maps"><i class="map outline icon"></i> Maps</a>
     <?php $group('Referensi', 'database', [
       ['Urusan', '/referensi?tbl=rekening_kegiatan&req=urusan', 'Referensi/Urusan'],
       ['Bidang', '/referensi?tbl=rekening_kegiatan&req=bidang', 'Referensi/Bidang'],

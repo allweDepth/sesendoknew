@@ -7,6 +7,7 @@
   <title>seSendok</title>
 
   <link rel="stylesheet" href="/assets/css/fomantic.min.css">
+  <link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="/assets/css/modern-tables.css?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/css/modern-tables.css') ?>">
   <link rel="stylesheet" href="/assets/css/dark.css">
   <style>
@@ -511,11 +512,13 @@
   <!-- ================= APP CORE ================= -->
   <script src="/assets/js/app.js"></script> <!-- SETELAH semua dependency -->
 
-
+  <script src="/assets/vendor/leaflet/leaflet.js"></script>
+  <script src="/assets/vendor/leaflet/proj4.js"></script>
 
   <!-- UI COMPONENTS -->
   <script src="/assets/js/ui/ui-components.js"></script>
   <script src="/assets/js/ui/ui-extensions.js"></script>
+  <script src="/assets/js/maps.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/maps.js') ?>"></script>
   <!-- ENGINE: wajib tersedia sebelum modul Kontrak/Tata Naskah diinisialisasi. -->
   <script src="/assets/js/engine/document/document_builder.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/engine/document/document_builder.js') ?>"></script>
 

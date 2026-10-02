@@ -36,6 +36,9 @@ class SpaRouter {
 			if (window.app?.initPage) {
 				window.app.initPage();
 			}
+			if (typeof window.initMapsPage === "function") {
+				window.initMapsPage();
+			}
 		}
 	}
 
@@ -178,6 +181,10 @@ class SpaRouter {
 
 				if (window.app?.initPage) {
 					window.app.initPage();
+				}
+
+				if (typeof window.initMapsPage === "function") {
+					window.initMapsPage();
 				}
 
 				if (typeof initFomantic === "function") {

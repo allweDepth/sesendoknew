@@ -63,6 +63,11 @@ return [
     |--------------------------------------------------------------------------
     */
   '/dashboard' => ['DashboardController', 'index'],
+  '/maps'       => ['MapsController', 'index'],
+  '/maps/layers' => ['MapsController', 'layers'],
+  '/maps/upload' => ['MapsController', 'upload'],
+  '/maps/file' => ['MapsController', 'file'],
+  '/maps/delete' => ['MapsController', 'delete'],
   '/spa'       => ['HomeController', 'spa'],
 
   /*
