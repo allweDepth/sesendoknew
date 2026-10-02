@@ -9,14 +9,35 @@ class MapsController extends Controller
 {
     private const MANAGER_ROLES = ['admin_opd', 'kepala_opd', 'pa_kpa'];
     private const MAX_FILE_BYTES = 32 * 1024 * 1024;
+    private const MAX_LAYER_BYTES = 96 * 1024 * 1024;
+    private const SHAPEFILE_COMPONENTS = [
+        'shp', 'shx', 'dbf', 'prj', 'cpg', 'qix', 'sbn', 'sbx', 'ain', 'aih',
+        'atx', 'ixs', 'mxs', 'shp.xml', 'shx.xml', 'dbf.xml',
+    ];
 
     public function index(): void
+    {
+        $this->renderPage('map');
+    }
+
+    public function layersPage(): void
+    {
+        $this->renderPage('layers');
+    }
+
+    public function uploadPage(): void
+    {
+        $this->renderPage('upload');
+    }
+
+    private function renderPage(string $mode): void
     {
         $config = require __DIR__ . '/../../config/maps.php';
         $user = $this->requireUser();
         $this->view('maps/index', [
             'canManageLayers' => $this->canManageLayers($user),
             'googleMapsApiKey' => $config['google_maps_api_key'],
+            'mode' => $mode,
         ]);
     }
 
@@ -27,7 +48,7 @@ class MapsController extends Controller
             $user = $this->requireUser();
             [$where, $params] = $this->scopeFilter($user);
             $rows = DB::getInstance()->query(
-                "SELECT id,nama_layer,original_name,ukuran,kd_wilayah,kd_opd,username_insert,tgl_insert,components_json
+                "SELECT id,nama_layer,original_name,ukuran,kd_wilayah,kd_opd,username_insert,tgl_insert,components_json,style_json
                  FROM maps_layers WHERE is_deleted=0{$where} ORDER BY tgl_insert DESC,id DESC",
                 $params
             )->fetchAll();
@@ -36,12 +57,53 @@ class MapsController extends Controller
                 $row['ukuran'] = (int)$row['ukuran'];
                 $row['components'] = json_decode((string)$row['components_json'], true) ?: ['shp'];
                 unset($row['components_json']);
+                $row['style'] = json_decode((string)($row['style_json'] ?? ''), true) ?: [];
+                unset($row['style_json']);
             }
+
             unset($row);
             echo JsonResponse::success('Daftar layer peta', [], [
                 'rows' => $rows,
                 'can_manage' => $this->canManageLayers($user),
             ]);
+        } catch (Throwable $e) {
+            echo JsonResponse::error($e->getMessage(), 400);
+        }
+    }
+
+    public function saveStyle(): void
+    {
+        $this->beginJson();
+        try {
+            $user = $this->requireUser();
+            if (!$this->canManageLayers($user)) {
+                throw new RuntimeException('Role Anda tidak dapat mengubah simbologi layer.');
+            }
+            $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
+            $style = json_decode((string)($_POST['style'] ?? ''), true);
+            if (!$id || !is_array($style)) throw new InvalidArgumentException('Pengaturan simbologi tidak valid.');
+            $validated = [
+                'renderer' => ($style['renderer'] ?? 'simple') === 'categorized' ? 'categorized' : 'simple',
+                'color' => $this->validColor($style['color'] ?? null),
+                'fill_color' => $this->validColor($style['fill_color'] ?? null),
+                'fill_opacity' => $this->boundedNumber($style['fill_opacity'] ?? null, 0, 1),
+                'weight' => $this->boundedNumber($style['weight'] ?? null, 0.5, 10),
+                'point_radius' => $this->boundedNumber($style['point_radius'] ?? null, 2, 16),
+                'label_field' => $this->validFieldName($style['label_field'] ?? ''),
+                'show_labels' => !empty($style['show_labels']),
+                'category_field' => $this->validFieldName($style['category_field'] ?? ''),
+                'categories' => $this->validateCategories($style['categories'] ?? []),
+            ];
+            if ($validated['renderer'] === 'categorized'
+                && ($validated['category_field'] === '' || !$validated['categories'])) {
+                throw new InvalidArgumentException('Pilih field dan klasifikasikan kategori sebelum menyimpan simbologi categorized.');
+            }
+            [$where, $params] = $this->scopeFilter($user);
+            $db = DB::getInstance();
+            $row = $db->query("SELECT id FROM maps_layers WHERE id=? AND is_deleted=0{$where} LIMIT 1", [$id, ...$params])->fetch();
+            if (!$row) throw new RuntimeException('Layer tidak ditemukan dalam wilayah/OPD Anda.');
+            $db->update('maps_layers', ['style_json' => json_encode($validated, JSON_THROW_ON_ERROR)], 'WHERE id=?', [$id]);
+            echo JsonResponse::success('Simbologi layer berhasil disimpan.');
         } catch (Throwable $e) {
             echo JsonResponse::error($e->getMessage(), 400);
         }
@@ -57,40 +119,16 @@ class MapsController extends Controller
                 throw new RuntimeException('Hanya admin OPD, kepala OPD, atau PA/KPA yang dapat menambahkan layer.');
             }
             $files = $this->normalizeFiles($_FILES['files'] ?? []);
-            if (!$files || count($files) > 4) {
-                throw new InvalidArgumentException('Pilih satu file .shp dan file pendamping .shx, .dbf, atau .prj bila tersedia.');
+            if (count($files) !== 1 || strtolower(pathinfo($files[0]['name'], PATHINFO_EXTENSION)) !== 'zip') {
+                throw new InvalidArgumentException('Unggah satu paket .zip berisi file SHP dan seluruh berkas pendampingnya.');
             }
-
-            $byExtension = [];
-            $baseName = null;
-            $totalSize = 0;
-            foreach ($files as $file) {
-                if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
-                    throw new InvalidArgumentException('Upload gagal. Pilih file kembali dan pastikan batas ukuran server mencukupi.');
-                }
-                $name = basename((string)($file['name'] ?? ''));
-                $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-                if (!in_array($extension, ['shp', 'shx', 'dbf', 'prj'], true) || isset($byExtension[$extension])) {
-                    throw new InvalidArgumentException('Hanya satu file untuk setiap komponen .shp, .shx, .dbf, dan .prj yang diterima.');
-                }
-                $componentBase = strtolower(pathinfo($name, PATHINFO_FILENAME));
-                if ($componentBase === '' || ($baseName !== null && $componentBase !== $baseName)) {
-                    throw new InvalidArgumentException('Nama file .shp dan file pendamping harus sama, hanya berbeda ekstensi.');
-                }
-                $baseName = $componentBase;
-                $size = (int)($file['size'] ?? 0);
-                if ($size < 1 || $size > self::MAX_FILE_BYTES) {
-                    throw new InvalidArgumentException('Setiap file shapefile harus berukuran maksimal 32 MB.');
-                }
-                $totalSize += $size;
-                $byExtension[$extension] = $file;
+            $archiveUpload = $files[0];
+            if (($archiveUpload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK
+                || $archiveUpload['size'] < 1 || $archiveUpload['size'] > self::MAX_LAYER_BYTES) {
+                throw new InvalidArgumentException('Paket ZIP gagal diunggah atau ukurannya melebihi 96 MB.');
             }
-            if (!isset($byExtension['shp'])) {
-                throw new InvalidArgumentException('File .shp wajib dipilih.');
-            }
-            if ($totalSize > 96 * 1024 * 1024) {
-                throw new InvalidArgumentException('Ukuran seluruh komponen shapefile maksimal 96 MB.');
-            }
+            $components = $this->readShapefileArchive($archiveUpload['tmp_name']);
+            $totalSize = array_sum(array_map('strlen', $components));
 
             $scope = $this->requireOpdScope($user);
             $scopeDirectory = preg_replace('/[^A-Za-z0-9._-]/', '_', $scope['kd_wilayah'] . '-' . $scope['kd_opd']);
@@ -100,14 +138,14 @@ class MapsController extends Controller
                 throw new RuntimeException('Folder penyimpanan layer peta tidak dapat dibuat.');
             }
 
-            foreach ($byExtension as $extension => $file) {
-                if (!move_uploaded_file((string)$file['tmp_name'], $directory . '/layer.' . $extension)) {
+            foreach ($components as $extension => $contents) {
+                if (file_put_contents($directory . '/layer.' . $extension, $contents, LOCK_EX) !== strlen($contents)) {
                     throw new RuntimeException('File ' . $extension . ' gagal disimpan.');
                 }
             }
 
             $displayName = trim((string)($_POST['nama_layer'] ?? ''));
-            if ($displayName === '') $displayName = pathinfo((string)$byExtension['shp']['name'], PATHINFO_FILENAME);
+            if ($displayName === '') $displayName = pathinfo((string)$archiveUpload['name'], PATHINFO_FILENAME);
             $displayName = trim(preg_replace('/[\x00-\x1F\x7F]/u', '', $displayName) ?? '');
             $nameLength = function_exists('mb_strlen') ? mb_strlen($displayName) : strlen($displayName);
             if ($displayName === '' || $nameLength > 160) {
@@ -117,9 +155,9 @@ class MapsController extends Controller
             $db = DB::getInstance();
             $db->insert('maps_layers', [
                 'nama_layer' => $displayName,
-                'original_name' => basename((string)$byExtension['shp']['name']),
+                'original_name' => basename((string)$archiveUpload['name']),
                 'storage_dir' => $relativeDirectory,
-                'components_json' => json_encode(array_keys($byExtension), JSON_THROW_ON_ERROR),
+                'components_json' => json_encode(array_keys($components), JSON_THROW_ON_ERROR),
                 'ukuran' => $totalSize,
                 'kd_wilayah' => $scope['kd_wilayah'],
                 'kd_opd' => $scope['kd_opd'],
@@ -145,7 +183,7 @@ class MapsController extends Controller
         $user = $this->requireUser();
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
         $part = strtolower((string)($_GET['part'] ?? ''));
-        if (!$id || !in_array($part, ['shp', 'shx', 'dbf', 'prj'], true)) {
+        if (!$id || !in_array($part, self::SHAPEFILE_COMPONENTS, true)) {
             http_response_code(400);
             exit('Permintaan file peta tidak valid.');
         }
@@ -278,5 +316,106 @@ class MapsController extends Controller
             ];
         }
         return $files;
+    }
+
+    private function readShapefileArchive(string $path): array
+    {
+        $archive = new ZipArchive();
+        if ($archive->open($path) !== true) throw new InvalidArgumentException('Paket ZIP tidak dapat dibuka.');
+        try {
+            if ($archive->numFiles < 1 || $archive->numFiles > 64) {
+                throw new InvalidArgumentException('Paket ZIP harus berisi maksimal 64 berkas.');
+            }
+            $shapefiles = [];
+            $entries = [];
+            $expandedBytes = 0;
+            foreach (range(0, $archive->numFiles - 1) as $index) {
+                $stat = $archive->statIndex($index);
+                if (!$stat || str_ends_with((string)$stat['name'], '/')) continue;
+                $name = basename(str_replace('\\', '/', (string)$stat['name']));
+                $lowerName = strtolower($name);
+                $extension = null;
+                foreach (self::SHAPEFILE_COMPONENTS as $candidate) {
+                    if (str_ends_with($lowerName, '.' . $candidate)) {
+                        $extension = $candidate;
+                        break;
+                    }
+                }
+                if ($extension === null) continue;
+                $baseName = substr($lowerName, 0, -strlen('.' . $extension));
+                if ($baseName === '') throw new InvalidArgumentException('Nama komponen shapefile di dalam ZIP tidak valid.');
+                $entries[] = ['index' => $index, 'extension' => $extension, 'base' => $baseName, 'size' => (int)$stat['size']];
+                if ($extension === 'shp') $shapefiles[] = $baseName;
+                $expandedBytes += (int)$stat['size'];
+                if ((int)$stat['size'] > self::MAX_FILE_BYTES || $expandedBytes > self::MAX_LAYER_BYTES) {
+                    throw new InvalidArgumentException('Batas komponen adalah 32 MB per file dan 96 MB seluruh shapefile.');
+                }
+            }
+            if (count(array_unique($shapefiles)) !== 1) {
+                throw new InvalidArgumentException('Paket ZIP harus berisi tepat satu file .shp.');
+            }
+            $shapefileBase = $shapefiles[0];
+            $components = [];
+            foreach ($entries as $entry) {
+                if ($entry['base'] !== $shapefileBase) continue;
+                if (isset($components[$entry['extension']])) {
+                    throw new InvalidArgumentException('Paket ZIP berisi komponen shapefile duplikat.');
+                }
+                $contents = $archive->getFromIndex($entry['index']);
+                if (!is_string($contents) || strlen($contents) !== $entry['size']) {
+                    throw new RuntimeException('Berkas shapefile di dalam ZIP gagal dibaca.');
+                }
+                $components[$entry['extension']] = $contents;
+            }
+            if (!isset($components['shp'])) throw new InvalidArgumentException('File .shp wajib ada di dalam ZIP.');
+            return $components;
+        } finally {
+            $archive->close();
+        }
+    }
+
+    private function validateCategories($categories): array
+    {
+        if (!is_array($categories) || count($categories) > 100) {
+            throw new InvalidArgumentException('Kategori harus berupa daftar maksimal 100 nilai.');
+        }
+        $validated = [];
+        $seen = [];
+        foreach ($categories as $category) {
+            if (!is_array($category) || !array_key_exists('value', $category)) {
+                throw new InvalidArgumentException('Format kategori simbologi tidak valid.');
+            }
+            $value = (string)$category['value'];
+            if (strlen($value) > 255 || isset($seen[$value])) {
+                throw new InvalidArgumentException('Nilai kategori terlalu panjang atau duplikat.');
+            }
+            $seen[$value] = true;
+            $validated[] = ['value' => $value, 'color' => $this->validColor($category['color'] ?? null)];
+        }
+        return $validated;
+    }
+
+    private function validColor($value): string
+    {
+        $value = (string)$value;
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $value)) throw new InvalidArgumentException('Warna simbologi tidak valid.');
+        return strtolower($value);
+    }
+
+    private function boundedNumber($value, float $min, float $max): float
+    {
+        if (!is_numeric($value)) throw new InvalidArgumentException('Nilai simbologi tidak valid.');
+        $number = (float)$value;
+        if (!is_finite($number) || $number < $min || $number > $max) throw new InvalidArgumentException('Nilai simbologi berada di luar batas.');
+        return $number;
+    }
+
+    private function validFieldName($value): string
+    {
+        $value = (string)$value;
+        if ($value !== '' && !preg_match('/^[A-Za-z_][A-Za-z0-9_]{0,10}$/', $value)) {
+            throw new InvalidArgumentException('Nama field label tidak valid.');
+        }
+        return $value;
     }
 }

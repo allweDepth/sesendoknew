@@ -2,6 +2,8 @@
 
 Menu Maps tersedia bagi pengguna yang sudah login. Peta menggunakan Leaflet untuk basemap XYZ dan layer SHP; Google Maps ditampilkan melalui Google Maps JavaScript API resminya.
 
+Menu Maps dibagi menjadi tiga halaman: **Peta** menampilkan kanvas peta dan layer aktif tanpa form unggah; **Atur Layer SHP** mengatur visibilitas, simbologi, label, dan inspeksi field atribut; **Tambah/Unggah SHP** menangani unggahan sebagai alur terpisah.
+
 ## Menyiapkan database
 
 Jalankan `database/migrations/20261002_phase59_maps_layers.sql` pada database aplikasi sebelum membuka halaman Maps. File shapefile disimpan privat di `storage/uploads/maps/`, sedangkan metadata layer disimpan di tabel `maps_layers`.
@@ -17,12 +19,18 @@ Endpoint file memeriksa scope yang sama seperti daftar layer; file shapefile tid
 
 ## Mengunggah shapefile
 
-Pilih `.shp`; sertakan `.dbf`, `.shx`, dan `.prj` bila tersedia. Nama dasar semua komponen harus sama. Batas aplikasi adalah 32 MB per file dan 96 MB per set. Pastikan batas `upload_max_filesize`, `post_max_size`, serta batas body request pada web server mengizinkan unggahan tersebut.
+Unggah satu file `.zip` berisi tepat satu `.shp` dan file pendamping dengan nama dasar yang sama. Paket menyimpan komponen `.shp`, `.shx`, `.dbf`, `.prj`, `.cpg`, `.qix`, `.sbn`, `.sbx`, `.ain`, `.aih`, `.atx`, `.ixs`, `.mxs`, dan metadata `.shp.xml`/`.shx.xml`/`.dbf.xml` yang dikenal. Komponen disimpan satu per satu di folder privat layer; jalur/nama dari dalam ZIP tidak digunakan untuk menentukan lokasi penyimpanan. Batas aplikasi adalah 32 MB per komponen, 96 MB total hasil ekstraksi dan 96 MB untuk file ZIP. PHP memerlukan ekstensi `zip`. Pastikan batas `upload_max_filesize`, `post_max_size`, serta batas body request pada web server mengizinkan unggahan tersebut.
+
+Di **Atur Layer SHP**, pilih **Kategori berdasarkan field**, tentukan field DBF, lalu klasifikasikan nilai unik. Palet warna bisa disesuaikan per kategori; renderer, field, dan warna disimpan bersama gaya layer dan digunakan pada peta serta legenda. Maksimal 100 kategori per layer.
 
 Geometri titik, multipoint, garis, dan poligon didukung. Koordinat dari `.prj` dikonversi ke WGS 84/EPSG:4326 untuk ditampilkan. Bila `.prj` tidak tersedia, data harus sudah menggunakan koordinat WGS 84.
+
+Pada database yang sudah memasang migrasi Maps sebelumnya, jalankan `database/migrations/20261002_phase60_maps_shapefile_packages.sql` untuk menambah kapasitas metadata komponen shapefile.
 
 ## Basemap
 
 OpenStreetMap, Esri Terrain/Topographic, dan Esri Satellite dapat dipilih tanpa API key. Basemap OSM dan Esri mengikuti atribusi yang ditampilkan pada peta.
 
 Google Roadmap, Satellite, Hybrid, dan Terrain memerlukan Google Maps Platform API key serta aktivasi Maps JavaScript API dan billing yang sesuai. Set variabel lingkungan `GOOGLE_MAPS_API_KEY` pada proses PHP; Google menyediakan peta ketika pilihan tersebut digunakan. Batasi key berdasarkan referrer aplikasi dan API yang diizinkan. Jangan simpan key pada source control.
+
+Jangan memakai URL tile XYZ Google secara langsung: akses tile peta Google harus mengikuti ketentuan Google Maps Platform. Endpoint tile tak terdokumentasi bukan pengganti API resmi dan dapat berhenti bekerja atau melanggar persyaratan penggunaan.

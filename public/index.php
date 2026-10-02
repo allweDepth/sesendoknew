@@ -32,7 +32,7 @@ header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header("Permissions-Policy: camera=(), microphone=(), geolocation=(self)");
-header("Content-Security-Policy: default-src 'self'; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://server.arcgisonline.com https://*.googleapis.com https://*.gstatic.com https://*.googleusercontent.com; media-src 'self' blob:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://maps.googleapis.com https://maps.gstatic.com; connect-src 'self' https://maps.googleapis.com https://maps.gstatic.com https://*.googleapis.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
+header("Content-Security-Policy: default-src 'self'; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://server.arcgisonline.com https://*.google.com https://*.googleapis.com https://*.gstatic.com https://*.googleusercontent.com; media-src 'self' blob:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://maps.googleapis.com https://maps.gstatic.com; connect-src 'self' https://maps.googleapis.com https://maps.gstatic.com https://*.googleapis.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
 header('Cache-Control: no-store, private');
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 if (APP_BASE_PATH !== '' && ($requestPath === APP_BASE_PATH || str_starts_with($requestPath, APP_BASE_PATH . '/'))) {
@@ -41,7 +41,7 @@ if (APP_BASE_PATH !== '' && ($requestPath === APP_BASE_PATH || str_starts_with($
 $maxRequestBytes = $requestPath === '/maps/upload' ? 100 * 1024 * 1024 : 4 * 1024 * 1024;
 if ((int)($_SERVER['CONTENT_LENGTH'] ?? 0) > $maxRequestBytes) {
   http_response_code(413);
-  exit($requestPath === '/maps/upload' ? 'Ukuran total file shapefile maksimal 96 MB.' : 'Request terlalu besar');
+  exit($requestPath === '/maps/upload' ? 'Ukuran paket ZIP shapefile maksimal 96 MB.' : 'Request terlalu besar');
 }
 if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https') {
   header('Strict-Transport-Security: max-age=31536000; includeSubDomains');

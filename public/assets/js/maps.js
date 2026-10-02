@@ -2,9 +2,11 @@
   "use strict";
 
   const MAX_FILE_BYTES = 32 * 1024 * 1024;
+  const MAX_ARCHIVE_BYTES = 96 * 1024 * 1024;
   const MAX_FEATURES = 50000;
   const MAX_POINTS = 500000;
   const COLORS = ["#138a72", "#2563eb", "#e87924", "#9333ea", "#0891b2", "#dc2626"];
+  let destroyActiveMapPage = null;
   const bases = {
     osm: () => L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
@@ -140,7 +142,12 @@
       let name = "";
       for (let i = 0; i < 11 && view.getUint8(offset + i) !== 0; i++) name += String.fromCharCode(view.getUint8(offset + i));
       const width = view.getUint8(offset + 16);
-      if (name && width) fields.push({ name, type: String.fromCharCode(view.getUint8(offset + 11)), width });
+      if (name && width) fields.push({
+        name,
+        type: String.fromCharCode(view.getUint8(offset + 11)),
+        width,
+        decimals: view.getUint8(offset + 17)
+      });
     }
 
     const records = [];
@@ -160,7 +167,7 @@
       }
       records.push(record);
     }
-    return records;
+    return { fields, records };
   }
 
   function signedArea(ring) {
@@ -219,6 +226,15 @@
       `<tr><th>${esc(key)}</th><td>${esc(value)}</td></tr>`).join("")}</table></div>`;
   }
 
+  function collectCoordinates(value, points = []) {
+    if (Array.isArray(value) && value.length >= 2 && Number.isFinite(value[0]) && Number.isFinite(value[1])) {
+      points.push(value);
+    } else if (Array.isArray(value)) {
+      value.forEach((child) => collectCoordinates(child, points));
+    }
+    return points;
+  }
+
   async function jsonRequest(url, options = {}) {
     const { headers: requestHeaders, ...requestOptions } = options;
     const response = await fetch(url, {
@@ -234,6 +250,7 @@
   function initMapsPage() {
     const page = document.querySelector(".maps-page");
     if (!page || page.dataset.initialized === "true") return;
+    if (destroyActiveMapPage) destroyActiveMapPage();
     page.dataset.initialized = "true";
     if (!window.L) throw new Error("Leaflet tidak berhasil dimuat.");
 
@@ -244,6 +261,8 @@
     const statusBox = page.querySelector("#shapefileStatus");
     const coords = page.querySelector("#mapCoordinates");
     const googleViewport = page.querySelector("#googleMapsViewport");
+    const mode = page.dataset.mode || "map";
+    const settingsPanel = page.querySelector("#mapsLayerSettings");
     const byId = new Map();
     const loadedLayers = new Map();
     const map = L.map(page.querySelector("#mapsViewport"), { preferCanvas: true, zoomControl: false }).setView([-1.25, 119.35], 8);
@@ -253,6 +272,7 @@
     let googleInfoWindow = null;
     let usingGoogle = false;
     let mapFitBounds = null;
+    let currentSettingsEntry = null;
     const showMessage = (target, message) => {
       errorBox.classList.add("hidden");
       statusBox.classList.add("hidden");
@@ -288,15 +308,20 @@
 
     function addGoogleLayer(id, entry) {
       if (!googleMap || entry.googleLayer) return;
-      const color = COLORS[(id - 1) % COLORS.length];
+      const style = entry.style;
       const dataLayer = new google.maps.Data({ map: googleMap });
       dataLayer.addGeoJson(entry.geoJson);
-      dataLayer.setStyle({
-        strokeColor: color,
-        strokeWeight: 2,
-        fillColor: color,
-        fillOpacity: 0.3,
-        clickable: true
+      dataLayer.setStyle((feature) => {
+        const props = {};
+        feature.forEachProperty((value, key) => { props[key] = value; });
+        const featureStyle = getFeatureStyle(props, style);
+        return {
+          strokeColor: featureStyle.color,
+          strokeWeight: style.weight,
+          fillColor: featureStyle.fillColor,
+          fillOpacity: style.fill_opacity,
+          clickable: true
+        };
       });
       dataLayer.addListener("click", (event) => {
         const properties = {};
@@ -306,6 +331,34 @@
         googleInfoWindow.open({ map: googleMap });
       });
       entry.googleLayer = dataLayer;
+      renderGoogleLabels(entry);
+    }
+
+    function renderGoogleLabels(entry) {
+      entry.googleLabelMarkers = [];
+      if (entry.style.show_labels && entry.style.label_field) {
+        entry.geoJson.features.forEach((feature) => {
+          const value = feature.properties?.[entry.style.label_field];
+          if (value == null || value === "") return;
+          const points = collectCoordinates(feature.geometry.coordinates);
+          if (!points.length) return;
+          const center = points.reduce((sum, point) => [sum[0] + point[0] / points.length, sum[1] + point[1] / points.length], [0, 0]);
+          entry.googleLabelMarkers.push(new google.maps.Marker({
+            map: googleMap,
+            position: { lat: center[1], lng: center[0] },
+            title: String(value),
+            label: { text: String(value), color: entry.style.color, fontSize: "12px", fontWeight: "700" },
+            icon: { path: google.maps.SymbolPath.CIRCLE, scale: 0, fillOpacity: 0, strokeOpacity: 0 }
+          }));
+        });
+      }
+    }
+
+    function clearGoogleLayer(entry) {
+      entry.googleLayer?.setMap(null);
+      entry.googleLayer = null;
+      (entry.googleLabelMarkers || []).forEach((marker) => marker.setMap(null));
+      entry.googleLabelMarkers = [];
     }
 
     async function selectBase(name) {
@@ -341,10 +394,7 @@
           const center = googleMap.getCenter();
           if (center) map.setView([center.lat(), center.lng()], googleMap.getZoom(), { animate: false });
           loadedLayers.forEach((entry) => {
-            if (entry.googleLayer) {
-              entry.googleLayer.setMap(null);
-              entry.googleLayer = null;
-            }
+            clearGoogleLayer(entry);
           });
         }
         usingGoogle = false;
@@ -396,20 +446,182 @@
       const fileData = Object.fromEntries(buffers);
       const projectionText = fileData.prj ? new TextDecoder().decode(fileData.prj) : "";
       const features = parseShapefile(fileData.shp, projectionText);
-      const records = fileData.dbf ? parseDbf(fileData.dbf, features.length) : [];
-      const geoJson = toGeoJson(features, records);
+      const dbf = fileData.dbf ? parseDbf(fileData.dbf, features.length) : { fields: [], records: [] };
+      const geoJson = toGeoJson(features, dbf.records);
       if (!geoJson.features.length) throw new Error(`Layer "${row.nama_layer}" tidak memiliki geometri yang dapat ditampilkan.`);
-      const color = COLORS[(id - 1) % COLORS.length];
+      const defaultColor = COLORS[(id - 1) % COLORS.length];
+      const style = {
+        renderer: row.style?.renderer === "categorized" ? "categorized" : "simple",
+        category_field: row.style?.category_field || "",
+        categories: Array.isArray(row.style?.categories) ? row.style.categories : [],
+        color: row.style?.color || defaultColor,
+        fill_color: row.style?.fill_color || row.style?.color || defaultColor,
+        fill_opacity: Number(row.style?.fill_opacity ?? .3),
+        weight: Number(row.style?.weight ?? 2),
+        point_radius: Number(row.style?.point_radius ?? 5),
+        label_field: row.style?.label_field || "",
+        show_labels: Boolean(row.style?.show_labels)
+      };
       const layer = L.geoJSON(geoJson, {
-        style: () => ({ color, weight: 2, fillColor: color, fillOpacity: 0.26 }),
-        pointToLayer: (_feature, latlng) => L.circleMarker(latlng, {
-          radius: 5, color, weight: 1.5, fillColor: color, fillOpacity: .85
-        }),
-        onEachFeature: (feature, featureLayer) => featureLayer.bindPopup(featurePopup(feature), { maxWidth: 380 })
+        style: (feature) => {
+          const featureStyle = getFeatureStyle(feature.properties, style);
+          return { color: featureStyle.color, weight: style.weight, fillColor: featureStyle.fillColor, fillOpacity: style.fill_opacity };
+        },
+        pointToLayer: (feature, latlng) => {
+          const featureStyle = getFeatureStyle(feature.properties, style);
+          return L.circleMarker(latlng, {
+            radius: style.point_radius, color: featureStyle.color, weight: style.weight,
+            fillColor: featureStyle.fillColor, fillOpacity: style.fill_opacity
+          });
+        },
+        onEachFeature: (feature, featureLayer) => {
+          featureLayer.bindPopup(featurePopup(feature), { maxWidth: 380 });
+          if (style.show_labels && style.label_field && feature.properties[style.label_field] != null) {
+            featureLayer.bindTooltip(String(feature.properties[style.label_field]), { permanent: true, direction: "center", className: "maps-feature-label" });
+          }
+        }
       });
-      const entry = { layer, geoJson, count: geoJson.features.length, name: row.nama_layer };
+      const entry = { layer, geoJson, count: geoJson.features.length, name: row.nama_layer, style, fields: dbf.fields };
       if (usingGoogle) addGoogleLayer(id, entry);
       return entry;
+    }
+
+    function getFeatureStyle(properties, style) {
+      if (style.renderer === "categorized" && style.category_field) {
+        const value = properties?.[style.category_field];
+        const category = style.categories.find((item) => item.value === String(value ?? ""));
+        if (category) return { color: category.color, fillColor: category.color };
+      }
+      return { color: style.color, fillColor: style.fill_color };
+    }
+
+    function categoryColor(index) {
+      const hue = (index * 137.508) % 360;
+      const saturation = 0.68;
+      const lightness = index % 2 ? 0.43 : 0.52;
+      const chroma = (1 - Math.abs(2 * lightness - 1)) * saturation;
+      const x = chroma * (1 - Math.abs((hue / 60) % 2 - 1));
+      const sectors = [[chroma, x, 0], [x, chroma, 0], [0, chroma, x], [0, x, chroma], [x, 0, chroma], [chroma, 0, x]];
+      const match = sectors[Math.floor(hue / 60)];
+      const offset = lightness - chroma / 2;
+      return `#${match.map((value) => Math.round((value + offset) * 255).toString(16).padStart(2, "0")).join("")}`;
+    }
+
+    function renderCategoryLegend(categories) {
+      const target = page.querySelector("#mapsCategoriesLegend");
+      if (!target) return;
+      target.replaceChildren();
+      if (!categories.length) {
+        target.textContent = "Belum ada kategori. Klasifikasikan field untuk membuat legenda.";
+        return;
+      }
+      const table = document.createElement("table");
+      categories.forEach((category) => {
+        const row = document.createElement("tr");
+        const colorCell = document.createElement("td");
+        const color = document.createElement("input");
+        color.type = "color";
+        color.value = category.color;
+        color.setAttribute("aria-label", `Warna kategori ${category.value || "(kosong)"}`);
+        color.addEventListener("input", () => {
+          category.color = color.value;
+          if (currentSettingsEntry) applyEntryStyle(currentSettingsEntry, currentSettingsEntry.style);
+        });
+        colorCell.append(color);
+        const label = document.createElement("td");
+        label.textContent = category.value === "" ? "(kosong)" : category.value;
+        row.append(colorCell, label);
+        table.append(row);
+      });
+      target.append(table);
+    }
+
+    function showFieldDatabase(entry) {
+      const target = page.querySelector("#mapsDbfFields");
+      if (!target) return;
+      target.replaceChildren();
+      if (!entry.fields.length) {
+        target.textContent = "File .dbf tidak disertakan atau tidak memiliki field.";
+        return;
+      }
+      const table = document.createElement("table");
+      const head = document.createElement("thead");
+      head.innerHTML = "<tr><th>Field</th><th>Tipe</th><th>Panjang</th><th>Contoh</th></tr>";
+      const body = document.createElement("tbody");
+      entry.fields.forEach((field) => {
+        const row = document.createElement("tr");
+        [field.name, field.type, String(field.width), String(entry.geoJson.features.find((feature) => feature.properties[field.name] != null)?.properties[field.name] ?? "—")].forEach((value) => {
+          const cell = document.createElement("td");
+          cell.textContent = value;
+          row.append(cell);
+        });
+        body.append(row);
+      });
+      table.append(head, body);
+      target.append(table);
+    }
+
+    function applyEntryStyle(entry, style) {
+      entry.style = style;
+      entry.layer.eachLayer((featureLayer) => {
+        if (featureLayer.setStyle) {
+          const featureStyle = getFeatureStyle(featureLayer.feature?.properties, style);
+          featureLayer.setStyle({
+            radius: style.point_radius, color: featureStyle.color, weight: style.weight,
+            fillColor: featureStyle.fillColor, fillOpacity: style.fill_opacity
+          });
+        }
+        if (featureLayer.unbindTooltip) featureLayer.unbindTooltip();
+        const value = featureLayer.feature?.properties?.[style.label_field];
+        if (style.show_labels && style.label_field && value != null && featureLayer.bindTooltip) {
+          featureLayer.bindTooltip(String(value), { permanent: true, direction: "center", className: "maps-feature-label" });
+        }
+      });
+      if (entry.googleLayer) {
+        entry.googleLayer.setStyle((feature) => {
+          const props = {};
+          feature.forEachProperty((value, key) => { props[key] = value; });
+          const featureStyle = getFeatureStyle(props, style);
+          return {
+            strokeColor: featureStyle.color, strokeWeight: style.weight,
+            fillColor: featureStyle.fillColor, fillOpacity: style.fill_opacity, clickable: true
+          };
+        });
+        (entry.googleLabelMarkers || []).forEach((marker) => marker.setMap(null));
+        renderGoogleLabels(entry);
+      }
+    }
+
+    async function selectLayerForSettings(row) {
+      if (!loadedLayers.has(row.id)) loadedLayers.set(row.id, await loadLayer(row.id));
+      const entry = loadedLayers.get(row.id);
+      currentSettingsEntry = entry;
+      if (!map.hasLayer(entry.layer) && !usingGoogle) entry.layer.addTo(map);
+      const toggle = [...list.querySelectorAll('input[type="checkbox"]')].find((input) => input.getAttribute("aria-label") === `Tampilkan layer ${row.nama_layer}`);
+      if (toggle) toggle.checked = true;
+      setFitBounds();
+      fitActiveMap();
+      settingsPanel.hidden = false;
+      page.querySelector("#mapsSelectedLayerName").textContent = row.nama_layer;
+      page.querySelector("#mapsShowLabels").checked = entry.style.show_labels;
+      page.querySelector("#mapsLineColor").value = entry.style.color;
+      page.querySelector("#mapsFillColor").value = entry.style.fill_color;
+      page.querySelector("#mapsFillOpacity").value = String(entry.style.fill_opacity);
+      page.querySelector("#mapsLineWeight").value = String(entry.style.weight);
+      page.querySelector("#mapsPointRadius").value = String(entry.style.point_radius);
+      const fieldSelect = page.querySelector("#mapsLabelField");
+      fieldSelect.replaceChildren(new Option("Tidak ada label", ""));
+      entry.fields.forEach((field) => fieldSelect.add(new Option(field.name, field.name)));
+      fieldSelect.value = entry.style.label_field;
+      const categoryField = page.querySelector("#mapsCategoryField");
+      categoryField.replaceChildren(new Option("Pilih field", ""));
+      entry.fields.forEach((field) => categoryField.add(new Option(field.name, field.name)));
+      categoryField.value = entry.style.category_field;
+      page.querySelector("#mapsRenderer").value = entry.style.renderer;
+      page.querySelector("#mapsCategorySettings").hidden = entry.style.renderer !== "categorized";
+      renderCategoryLegend(entry.style.categories);
+      showFieldDatabase(entry);
+      coords.textContent = `${row.nama_layer} · ${entry.count.toLocaleString("id-ID")} objek`;
     }
 
     function renderRows(rows, canManage) {
@@ -439,7 +651,23 @@
         meta.textContent = `${row.kd_wilayah} / ${row.kd_opd} · ${row.username_insert} · ${(row.ukuran / 1048576).toFixed(1)} MB`;
         details.append(title, meta);
         container.append(toggle, details);
-        if (canManage) {
+        if (canManage && mode === "layers") {
+          const actions = document.createElement("div");
+          actions.className = "maps-layer-actions";
+          const configure = document.createElement("button");
+          configure.className = "ui mini basic icon button";
+          configure.type = "button";
+          configure.title = "Atur simbologi dan field";
+          configure.setAttribute("aria-label", `Atur layer ${row.nama_layer}`);
+          configure.innerHTML = '<i class="sliders horizontal icon"></i>';
+          configure.addEventListener("click", async () => {
+            try {
+              await selectLayerForSettings(row);
+            } catch (error) {
+              showMessage(errorBox, error.message);
+            }
+          });
+          actions.append(configure);
           const remove = document.createElement("button");
           remove.className = "ui mini basic icon button";
           remove.type = "button";
@@ -452,7 +680,8 @@
               const body = new URLSearchParams({ id: String(row.id), _csrf: window.CSRF_TOKEN || "" });
               await jsonRequest("/maps/delete", { method: "POST", body });
               loadedLayers.get(row.id)?.layer.remove();
-              loadedLayers.get(row.id)?.googleLayer?.setMap(null);
+              const removedEntry = loadedLayers.get(row.id);
+              if (removedEntry) clearGoogleLayer(removedEntry);
               loadedLayers.delete(row.id);
               setFitBounds();
               await refreshLayers();
@@ -461,7 +690,8 @@
               showMessage(errorBox, error.message);
             }
           });
-          container.append(remove);
+          actions.append(remove);
+          container.append(actions);
         }
         toggle.addEventListener("change", async () => {
           try {
@@ -476,11 +706,10 @@
             } else if (loadedLayers.has(row.id)) {
               const entry = loadedLayers.get(row.id);
               entry.layer.remove();
-              entry.googleLayer?.setMap(null);
-              entry.googleLayer = null;
+              clearGoogleLayer(entry);
               loadedLayers.delete(row.id);
               setFitBounds();
-              coords.textContent = mapFitBounds ? `${loadedLayers.size} layer aktif` : "Pilih peta dasar atau layer untuk mulai.";
+              coords.textContent = mapFitBounds ? `${loadedLayers.size} layer aktif` : "Pilih layer untuk menampilkan peta.";
             }
           } catch (error) {
             toggle.checked = false;
@@ -492,17 +721,21 @@
     }
 
     async function refreshLayers() {
-      const data = await jsonRequest("/maps/layers");
+      const data = await jsonRequest("/maps/api/layers");
       renderRows(data.rows || [], data.can_manage === true);
     }
 
     setBase("osm");
     L.control.scale({ metric: true, imperial: false }).addTo(map);
-    page.querySelector("#mapZoomIn").addEventListener("click", () => map.zoomIn());
-    page.querySelector("#mapZoomOut").addEventListener("click", () => map.zoomOut());
-    page.querySelector("#mapFit").addEventListener("click", () => {
-      fitActiveMap();
+    page.querySelector("#mapZoomIn")?.addEventListener("click", () => {
+      if (usingGoogle && googleMap) googleMap.setZoom(googleMap.getZoom() + 1);
+      else map.zoomIn();
     });
+    page.querySelector("#mapZoomOut")?.addEventListener("click", () => {
+      if (usingGoogle && googleMap) googleMap.setZoom(googleMap.getZoom() - 1);
+      else map.zoomOut();
+    });
+    page.querySelector("#mapFit")?.addEventListener("click", fitActiveMap);
     baseSelect.addEventListener("change", async () => {
       try {
         await selectBase(baseSelect.value);
@@ -513,29 +746,97 @@
       }
     });
     map.whenReady(() => setTimeout(() => map.invalidateSize(), 0));
-    window.addEventListener("resize", () => {
+    const onResize = () => {
       if (usingGoogle && google.maps?.event && googleMap) google.maps.event.trigger(googleMap, "resize");
       else map.invalidateSize();
+    };
+    window.addEventListener("resize", onResize);
+
+    const saveStyleButton = page.querySelector("#saveMapsStyle");
+    if (saveStyleButton) {
+      saveStyleButton.addEventListener("click", async () => {
+        const selectedName = page.querySelector("#mapsSelectedLayerName").textContent;
+        const row = [...byId.values()].find((candidate) => candidate.nama_layer === selectedName);
+        if (!row || !loadedLayers.has(row.id)) return;
+        const entry = loadedLayers.get(row.id);
+        const style = {
+          color: page.querySelector("#mapsLineColor").value,
+          fill_color: page.querySelector("#mapsFillColor").value,
+          fill_opacity: Number(page.querySelector("#mapsFillOpacity").value),
+          weight: Number(page.querySelector("#mapsLineWeight").value),
+          point_radius: Number(page.querySelector("#mapsPointRadius").value),
+          label_field: page.querySelector("#mapsLabelField").value,
+          show_labels: page.querySelector("#mapsShowLabels").checked,
+          renderer: page.querySelector("#mapsRenderer").value,
+          category_field: page.querySelector("#mapsCategoryField").value,
+          categories: entry.style.categories || []
+        };
+        try {
+          const body = new URLSearchParams({ id: String(row.id), style: JSON.stringify(style), _csrf: window.CSRF_TOKEN || "" });
+          await jsonRequest("/maps/style", { method: "POST", body });
+          applyEntryStyle(entry, style);
+          row.style = style;
+          showMessage(statusBox, "Simbologi dan pengaturan label layer berhasil disimpan.");
+        } catch (error) {
+          showMessage(errorBox, error.message);
+        }
+      });
+    }
+
+    const rendererSelect = page.querySelector("#mapsRenderer");
+    const categorySettings = page.querySelector("#mapsCategorySettings");
+    rendererSelect?.addEventListener("change", () => {
+      categorySettings.hidden = rendererSelect.value !== "categorized";
+      if (currentSettingsEntry) {
+        currentSettingsEntry.style.renderer = rendererSelect.value;
+        currentSettingsEntry.style.category_field = page.querySelector("#mapsCategoryField").value;
+        applyEntryStyle(currentSettingsEntry, currentSettingsEntry.style);
+      }
+    });
+    page.querySelector("#mapsCategoryField")?.addEventListener("change", (event) => {
+      if (!currentSettingsEntry) return;
+      currentSettingsEntry.style.category_field = event.currentTarget.value;
+      currentSettingsEntry.style.categories = [];
+      renderCategoryLegend([]);
+      applyEntryStyle(currentSettingsEntry, currentSettingsEntry.style);
+    });
+    page.querySelector("#classifyMapsCategories")?.addEventListener("click", () => {
+      if (!currentSettingsEntry) return;
+      const field = page.querySelector("#mapsCategoryField").value;
+      if (!field) {
+        showMessage(errorBox, "Pilih field kategori terlebih dahulu.");
+        return;
+      }
+      const values = new Set(currentSettingsEntry.geoJson.features
+        .map((feature) => feature.properties?.[field])
+        .filter((value) => value !== null && value !== undefined)
+        .map((value) => String(value)));
+      if (values.size > 100) {
+        showMessage(errorBox, "Field memiliki lebih dari 100 nilai unik. Pilih field dengan kategori lebih sedikit.");
+        return;
+      }
+      currentSettingsEntry.style.renderer = "categorized";
+      currentSettingsEntry.style.category_field = field;
+      currentSettingsEntry.style.categories = [...values].sort((a, b) => a.localeCompare(b, "id"))
+        .map((value, index) => ({ value, color: categoryColor(index) }));
+      rendererSelect.value = "categorized";
+      categorySettings.hidden = false;
+      renderCategoryLegend(currentSettingsEntry.style.categories);
+      applyEntryStyle(currentSettingsEntry, currentSettingsEntry.style);
+      showMessage(statusBox, `${values.size} kategori unik berhasil dibuat.`);
     });
 
-    const addButton = page.querySelector("#showAddLayer");
-    if (addButton && form) {
-      addButton.addEventListener("click", () => { form.hidden = !form.hidden; });
-      page.querySelector("#cancelAddLayer").addEventListener("click", () => {
-        form.reset();
-        form.hidden = true;
-        showMessage(errorBox, "");
-      });
+    if (form) {
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
         showMessage(errorBox, "");
         const files = Array.from(page.querySelector("#shapefileInput").files || []);
-        if (!files.some((file) => file.name.toLowerCase().endsWith(".shp"))) {
-          showMessage(errorBox, "Pilih file .shp. Anda juga dapat memilih file .dbf, .shx, dan .prj dengan nama yang sama.");
+        if (files.length !== 1 || !files[0].name.toLowerCase().endsWith(".zip")) {
+          showMessage(errorBox, "Pilih satu paket ZIP yang berisi file .shp dan seluruh berkas pendampingnya.");
           return;
         }
-        if (files.some((file) => file.size > MAX_FILE_BYTES)) {
-          showMessage(errorBox, "Setiap komponen shapefile maksimal 32 MB.");
+        if (files[0].size > MAX_ARCHIVE_BYTES) {
+          showMessage(errorBox, "Paket ZIP shapefile maksimal 96 MB.");
           return;
         }
         const body = new FormData(form);
@@ -545,7 +846,7 @@
         try {
           await jsonRequest("/maps/upload", { method: "POST", body });
           form.reset();
-          form.hidden = true;
+          if (mode !== "upload") form.hidden = true;
           await refreshLayers();
           showMessage(statusBox, "Shapefile berhasil diunggah dan tersimpan untuk wilayah/OPD Anda.");
         } catch (error) {
@@ -560,6 +861,11 @@
       list.textContent = error.message;
       showMessage(errorBox, error.message);
     });
+    destroyActiveMapPage = () => {
+      window.removeEventListener("resize", onResize);
+      map.remove();
+      if (googleMap && google.maps?.event) google.maps.event.clearInstanceListeners(googleMap);
+    };
   }
 
   window.initMapsPage = initMapsPage;
