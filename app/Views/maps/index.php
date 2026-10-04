@@ -25,6 +25,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
         <option value="google-hybrid">Google Hybrid</option>
         <option value="google-terrain">Google Terrain</option>
       </select>
+      <?php require __DIR__ . '/search.php'; ?>
       <span id="mapCoordinates">Peta siap · pilih layer pada panel Layer</span>
       <span class="maps-toolbar-spacer"></span>
       <button class="ui icon button" id="mapZoomIn" type="button" title="Perbesar" aria-label="Perbesar"><i class="plus icon"></i></button>
@@ -94,6 +95,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
         <div id="shapefileStatus" class="ui hidden positive message" role="status"></div>
       </aside>
       <div class="ui segment maps-preview-panel">
+        <?php require __DIR__ . '/search.php'; ?>
         <div class="maps-preview-toolbar"><strong>Pratinjau</strong><span id="mapCoordinates">Pilih layer untuk menampilkan peta.</span>
           <div class="ui buttons"><button class="ui icon button" id="mapZoomIn" type="button" title="Perbesar" aria-label="Perbesar"><i class="plus icon"></i></button><button class="ui icon button" id="mapZoomOut" type="button" title="Perkecil" aria-label="Perkecil"><i class="minus icon"></i></button><button class="ui icon button" id="mapFit" type="button" title="Sesuaikan layer" aria-label="Sesuaikan layer"><i class="expand icon"></i></button></div>
         </div>
@@ -119,6 +121,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
         <div id="shapefileStatus" class="ui hidden positive message" role="status"></div>
       </section>
       <section class="ui segment form maps-preview-panel">
+        <?php require __DIR__ . '/search.php'; ?>
         <div class="maps-preview-toolbar"><strong>Layer yang sudah ada</strong><span id="mapCoordinates">Pilih layer untuk pratinjau.</span></div>
         <div id="mapsViewport" class="maps-viewport" role="application" aria-label="Pratinjau peta"></div>
         <label class="maps-upload-basemap" for="mapsBasemap">Peta dasar</label>
@@ -182,13 +185,13 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
   #mainContext .content-scroll:has(.maps-mode-map) { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
   #mainContext .content-scroll:has(.maps-mode-map) #main-content { display: flex; flex: 1 1 auto; width: 100%; min-height: 0; }
   .maps-mode-map { display: flex; flex: 1 1 auto; flex-direction: column; gap: 8px; height: auto; min-height: 0; }
-  .maps-full-toolbar { margin: 0 !important; display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 6px 10px; background: var(--surface, #fff); border: 1px solid #d9e2ec; border-radius: 8px; }
+  .maps-page .maps-full-toolbar { position: relative; z-index: 900; overflow: visible; margin: 0 !important; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-height: 48px; padding: 6px 10px; background: var(--surface, #fff); border: 1px solid #d9e2ec; border-radius: 8px; }
   .maps-full-toolbar label { white-space: nowrap; font-weight: 700; }
   .maps-toolbar-spacer { flex: 1; }
   .maps-full-toolbar .button { margin: 0 !important; }
   .maps-google-note { color: #697586; font-size: .85em; }
   .maps-full-shell { position: relative; flex: 1; min-height: 0; overflow: hidden; border: 1px solid #d9e2ec; border-radius: 9px; }
-  .maps-viewport { width: 100%; height: 100%; min-height: 330px; overflow: hidden; background: #eef3f6; }
+  .maps-viewport { position: relative; z-index: 0; isolation: isolate; width: 100%; height: 100%; min-height: 330px; overflow: hidden; background: #eef3f6; }
   .maps-mode-map .maps-full-shell > .maps-viewport { position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; }
   .maps-viewport .leaflet-container { width: 100%; height: 100%; font: inherit; }
   #googleMapsViewport[hidden] { display: none; }
@@ -213,7 +216,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
   .maps-mode-layers, .maps-mode-upload { overflow: auto; }
   .maps-layout { display: grid; grid-template-columns: minmax(320px, 390px) minmax(0, 1fr); gap: 14px; min-height: 640px; }
   .maps-panel, .maps-preview-panel { margin: 0 !important; border-radius: 10px !important; }
-  .maps-panel { min-width: 0; overflow: auto; }
+  .maps-panel { min-width: 0; overflow: visible; }
   .maps-basemap-field { display: grid; gap: 6px; margin-bottom: 14px; }
   .maps-basemap-field label, .maps-panel > h2 { font-weight: 700; }
   .maps-layer-heading, .maps-preview-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
@@ -264,7 +267,20 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
   .maps-mode-map .maps-navigation.ui.menu { margin-bottom: 0; }
   .maps-full-toolbar > .ui.dropdown { min-width: 210px; max-width: 290px; }
   #mapCoordinates { color: #64748b; font-size: .9em; overflow-wrap: anywhere; }
+  .maps-full-toolbar #mapCoordinates { flex: 1 1 100%; order: 2; }
   .maps-preview-panel { min-width: 0; }
+  /* Keep Leaflet panes inside their canvas; menus may overlap adjacent panels. */
+  .maps-layout > .maps-panel { position: relative; z-index: 2; }
+  .maps-layout > .maps-preview-panel { position: relative; z-index: 1; }
+  .maps-page .ui.dropdown .menu { z-index: 1000; }
+  .maps-page .ui.dropdown.active { z-index: 1001; }
+  .maps-location-search { position: relative; z-index: 3; flex: 1 1 250px; min-width: 0; max-width: 380px; }
+  .maps-preview-panel > .maps-location-search { margin-bottom: 12px; max-width: none; }
+  .maps-page .maps-location-search .ui.search, .maps-page .maps-location-search .ui.input { width: 100%; }
+  .maps-page .maps-location-search .prompt { min-width: 0; border-radius: .28571429rem 0 0 .28571429rem; }
+  .maps-page .maps-location-search .results { width: 100%; max-height: min(320px, 45vh); overflow-y: auto; z-index: 1000; }
+  .maps-page .maps-location-search .results .description { overflow-wrap: anywhere; }
+  .maps-search-caption { margin-top: 3px; font-size: .75rem; color: #64748b; }
   .maps-preview-toolbar { flex-wrap: wrap; }
   .maps-layer-row:has(input:checked) { border-color: #2185d0; background: rgba(33,133,208,.05); }
   .maps-panel.ui.form .field > label { margin-bottom: .5em; }
@@ -276,7 +292,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
     .maps-navigation.ui.menu .item { padding: .75em; font-size: .85em; }
     .maps-full-toolbar > .ui.dropdown { min-width: 0; max-width: none; flex: 1 1 220px; }
     .maps-full-toolbar #mapCoordinates { flex: 1 1 100%; order: 2; }
-    .maps-page .maps-page .maps-floating-layers { width: min(240px, 65vw); max-height: 38%; }
+    .maps-page .maps-floating-layers { width: min(240px, 65vw); max-height: 38%; }
     .maps-full-shell { min-height: 380px; }
     .maps-layout { min-height: 0; }
     .maps-page .maps-feature-properties { max-height: 42%; }

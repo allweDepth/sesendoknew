@@ -43,6 +43,14 @@ Klik feature untuk memberi highlight kuning dan membuka seluruh atribut DBF. Kli
 
 Klik peta menampilkan satu penanda lokasi beserta koordinat WGS84/EPSG:4326 (latitude/longitude bertanda +/−) dan UTM dalam meter. Zona UTM serta hemisfer N/S dipilih otomatis dan kode EPSG ditampilkan. UTM tersedia pada lintang 80°S–84°N. Zona khusus Norwegia/Svalbard mengikuti pembagian UTM. Titik klik berikutnya mengganti penanda sebelumnya.
 
+## Pencarian lokasi
+
+Semua halaman Maps menyediakan komponen Search Fomantic UI. Masukkan minimal tiga karakter nama lokasi/alamat dan tekan Enter atau tombol cari. Klik hasil, atau pilih dengan tombol panah lalu Enter, untuk memindahkan/zoom peta dan menampilkan penanda dengan koordinat WGS84 serta UTM. Data pencarian berasal dari OpenStreetMap melalui Photon, terpisah dari gambar XYZ, dan dapat dipakai bersama semua peta dasar termasuk Google. Hasil bergantung pada kelengkapan data OSM; ini bukan Google Places.
+
+Permintaan hanya dikirim saat pengguna mencari, maksimum satu permintaan per detik per halaman; hingga 30 kata pencarian disimpan dalam cache memori halaman. Respons terlambat dibatalkan saat teks diganti atau halaman ditutup. Hasil kosong, gangguan jaringan, dan timeout ditampilkan di bawah kolom. Nama/alamat yang dicari dikirim ke penyedia; atribut maupun geometri SHP tidak dikirim.
+
+Default `MAPS_SEARCH_ENDPOINT` adalah `https://photon.komoot.io/api/`. [Server publik Photon](https://github.com/komoot/photon#demo-server) mengizinkan penggunaan wajar, dapat membatasi permintaan, dan tidak menjamin ketersediaan. Untuk penggunaan ramai, atur variabel lingkungan ini ke server Photon sendiri atau proxy yang mengembalikan GeoJSON Photon. Origin HTTPS endpoint tersebut otomatis dimasukkan ke `connect-src` CSP; endpoint relatif menggunakan origin aplikasi. Attribution OpenStreetMap ditampilkan di kolom pencarian.
+
 ## Gambar dan edit SHP
 
 Admin OPD, kepala OPD, dan PA/KPA dengan wilayah/OPD yang valid dapat membuka **Gambar SHP**, tombol pensil pada layer, atau **Edit SHP terpilih** pada panel properti. Hak akses penyimpanan diperiksa kembali di server dan selalu mengikuti OPD pengguna.

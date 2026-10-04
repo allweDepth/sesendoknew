@@ -290,7 +290,7 @@
       if (featurePropertiesPanel) featurePropertiesPanel.hidden = true;
       map.closePopup();
     }
-    function showCoordinates(latlng) {
+    function showCoordinates(latlng, title = 'Koordinat titik klik') {
       const lng = ((latlng.lng + 180) % 360 + 360) % 360 - 180;
       const lat = latlng.lat;
       const signed = (value) => `${value >= 0 ? '+' : ''}${value.toFixed(6)}`;
@@ -306,8 +306,8 @@
       }
       coords.textContent = `${wgs} · ${utm}`;
       if (coordinateMarker) coordinateMarker.remove();
-      coordinateMarker = L.marker([lat, lng], { title: 'Koordinat titik klik', bubblingMouseEvents: false }).addTo(map);
-      coordinateMarker.bindPopup(`<strong>Koordinat titik klik</strong><p>${esc(wgs)}</p><p>${esc(utm)}</p>`, { maxWidth: 350 }).openPopup();
+      coordinateMarker = L.marker([lat, lng], { title, bubblingMouseEvents: false }).addTo(map);
+      coordinateMarker.bindPopup(`<strong>${esc(title)}</strong><p>${esc(wgs)}</p><p>${esc(utm)}</p>`, { maxWidth: 350 }).openPopup();
     }
     function selectFeature(feature, featureLayer, id, name, latlng) {
       if (shapeEditor?.active) { if (latlng) shapeEditor.mapClick(latlng); return; }
@@ -355,10 +355,110 @@
       window.jQuery(page).find("select").filter(function () { return !this.closest("#mapsShapeEditor"); }).each(function () {
         const select = window.jQuery(this);
         const wrapper = select.parent(".ui.dropdown");
-        (wrapper.length ? wrapper : select).dropdown({ fullTextSearch: true });
+        (wrapper.length ? wrapper : select).dropdown({
+          fullTextSearch: true,
+          direction: "auto",
+          context: page.closest(".content-scroll") || window
+        });
       });
     }
     if (window.jQuery?.fn.checkbox) window.jQuery(page).find(".ui.checkbox").checkbox();
+
+    const searchContainer = page.querySelector('.maps-location-search');
+    const searchWidget = searchContainer && window.jQuery?.(searchContainer.querySelector('.ui.search'));
+    const searchInput = searchContainer?.querySelector('.prompt');
+    const searchButton = searchContainer?.querySelector('.maps-search-submit');
+    const searchStatus = searchContainer?.querySelector('#mapsSearchStatus');
+    const searchCache = new Map();
+    let searchAbort = null;
+    let searchVersion = 0;
+    let searchLastRequest = 0;
+    let searchBusy = false;
+    if (searchWidget && window.jQuery.fn.search) {
+      searchWidget.search({
+        automatic: false, searchOnFocus: false, preserveHTML: false, maxResults: 7,
+        selector: { searchButton: '.maps-unused-search-button' },
+        onSelect(result) {
+          const [lng, lat] = result.coordinates;
+          clearFeatureSelection();
+          const extent = result.extent;
+          if (extent && extent[0] < extent[2] && extent[1] < extent[3]) {
+            map.fitBounds([[extent[1], extent[0]], [extent[3], extent[2]]], { maxZoom: 16, padding: [30, 30] });
+          } else map.setView([lat, lng], 16);
+          showCoordinates({ lat, lng }, result.title);
+          searchStatus.textContent = 'Lokasi ditampilkan pada peta';
+          return true;
+        }
+      });
+      async function searchLocation() {
+        const query = searchInput.value.trim();
+        if (query.length < 3) { searchStatus.textContent = 'Masukkan minimal 3 karakter'; return; }
+        if (searchBusy) return;
+        const key = query.toLocaleLowerCase();
+        if (!searchCache.has(key) && Date.now() - searchLastRequest < 1000) {
+          searchStatus.textContent = 'Tunggu sebentar sebelum mencari lagi'; return;
+        }
+        const version = ++searchVersion;
+        searchBusy = true; searchButton.disabled = true;
+        searchWidget.search('hide results').addClass('loading');
+        searchStatus.textContent = 'Mencari lokasi…';
+        const controller = new AbortController();
+        searchAbort = controller;
+        const timeout = setTimeout(() => controller.abort(), 12000);
+        try {
+          let results = searchCache.get(key);
+          if (!results) {
+            const url = new URL(searchContainer.dataset.endpoint, window.location.href);
+            url.searchParams.set('q', query); url.searchParams.set('limit', '7');
+            searchLastRequest = Date.now();
+            const response = await fetch(url, { signal: controller.signal, credentials: 'omit' });
+            if (!response.ok) throw new Error('Layanan pencarian sedang tidak tersedia. Coba lagi.');
+            const data = await response.json();
+            if (!Array.isArray(data.features)) throw new Error('Hasil layanan pencarian tidak valid.');
+            results = data.features.filter((feature) => {
+              const c = feature.geometry?.coordinates;
+              return feature.geometry?.type === 'Point' && Array.isArray(c) && c.length >= 2 &&
+                Number.isFinite(c[0]) && Number.isFinite(c[1]) && Math.abs(c[0]) <= 180 && Math.abs(c[1]) <= 90;
+            }).slice(0, 7).map((feature, index) => {
+              const p = feature.properties || {};
+              const address = [...new Set([p.street, p.housenumber, p.district, p.city, p.county, p.state, p.country].filter(v => typeof v === 'string' && v))].join(', ');
+              const extent = p.extent;
+              return { id: String(index), title: String(p.name || p.street || address || 'Lokasi'), description: address,
+                coordinates: feature.geometry.coordinates,
+                extent: Array.isArray(extent) && extent.length === 4 && extent.every(Number.isFinite) &&
+                  Math.abs(extent[0]) <= 180 && Math.abs(extent[2]) <= 180 && Math.abs(extent[1]) <= 90 && Math.abs(extent[3]) <= 90 ? extent : null };
+            });
+            if (searchCache.size >= 30) searchCache.delete(searchCache.keys().next().value);
+            searchCache.set(key, results);
+          }
+          if (version !== searchVersion || !page.isConnected) return;
+          searchWidget.search('save results', results);
+          searchWidget.search('inject id', results);
+          if (results.length) {
+            searchWidget.search('add results', searchWidget.search('generate results', { results }));
+            searchStatus.textContent = `${results.length} hasil · pilih lokasi`;
+          } else searchStatus.textContent = 'Lokasi tidak ditemukan. Coba nama atau alamat lain.';
+        } catch (error) {
+          if (version === searchVersion && page.isConnected) searchStatus.textContent = error.name === 'AbortError' ? 'Pencarian terlalu lama. Coba lagi.' : error.message;
+        } finally {
+          clearTimeout(timeout);
+          if (version === searchVersion) { searchBusy = false; searchButton.disabled = false; searchWidget.removeClass('loading'); }
+        }
+      }
+      searchButton.addEventListener('click', searchLocation);
+      searchInput.addEventListener('keydown', (event) => {
+        // Let Fomantic handle Enter only when a result was selected with arrow keys.
+        if (event.key === 'Enter' && !searchContainer.querySelector('.results .result.active')) {
+          event.preventDefault(); event.stopImmediatePropagation(); searchLocation();
+        }
+      }, true);
+      searchInput.addEventListener('input', () => {
+        ++searchVersion; searchAbort?.abort(); searchBusy = false; searchButton.disabled = false;
+        searchWidget.removeClass('loading').search('hide results');
+        searchContainer.querySelector('.results').replaceChildren();
+        searchStatus.textContent = 'Enter atau tombol cari';
+      });
+    }
     const showMessage = (target, message) => {
       errorBox.classList.add("hidden");
       statusBox.classList.add("hidden");
@@ -1048,6 +1148,8 @@
       window.removeEventListener("resize", onResize);
       document.removeEventListener("keydown", onEscape);
       shapeEditor?.destroy();
+      ++searchVersion; searchAbort?.abort();
+      if (searchWidget && window.jQuery?.fn.search) searchWidget.search('destroy');
       if (window.jQuery?.fn.dropdown) window.jQuery(page).find(".ui.dropdown").dropdown("destroy");
       if (window.jQuery?.fn.checkbox) window.jQuery(page).find(".ui.checkbox").checkbox("destroy");
       map.remove();
