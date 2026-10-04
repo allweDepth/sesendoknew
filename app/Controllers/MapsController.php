@@ -32,11 +32,9 @@ class MapsController extends Controller
 
     private function renderPage(string $mode): void
     {
-        $config = require __DIR__ . '/../../config/maps.php';
         $user = $this->requireUser();
         $this->view('maps/index', [
             'canManageLayers' => $this->canManageLayers($user),
-            'googleMapsApiKey' => $config['google_maps_api_key'],
             'mode' => $mode,
         ]);
     }

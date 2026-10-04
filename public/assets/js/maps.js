@@ -40,6 +40,14 @@
     })
   };
 
+  // Google XYZ layers share the Leaflet renderer with SHP overlays.
+  Object.entries({ roadmap: "m", satellite: "s", hybrid: "y", terrain: "p" }).forEach(([name, layer]) => {
+    bases[`google-${name}`] = () => L.tileLayer(`https://mt{s}.google.com/vt/lyrs=${layer}&x={x}&y={y}&z={z}`, {
+      subdomains: "0123", maxZoom: 20,
+      attribution: '&copy; <a href="https://maps.google.com" target="_blank" rel="noopener">Google</a>'
+    });
+  });
+
   function readInt(view, offset, littleEndian = true) {
     if (offset < 0 || offset + 4 > view.byteLength) throw new Error("Struktur shapefile tidak lengkap.");
     return view.getInt32(offset, littleEndian);
@@ -244,15 +252,6 @@
       `<tr><th>${esc(key)}</th><td>${esc(value)}</td></tr>`).join("")}</table></div>`;
   }
 
-  function collectCoordinates(value, points = []) {
-    if (Array.isArray(value) && value.length >= 2 && Number.isFinite(value[0]) && Number.isFinite(value[1])) {
-      points.push(value);
-    } else if (Array.isArray(value)) {
-      value.forEach((child) => collectCoordinates(child, points));
-    }
-    return points;
-  }
-
   async function jsonRequest(url, options = {}) {
     const { headers: requestHeaders, ...requestOptions } = options;
     const response = await fetch(url, {
@@ -278,7 +277,6 @@
     const errorBox = page.querySelector("#shapefileError");
     const statusBox = page.querySelector("#shapefileStatus");
     const coords = page.querySelector("#mapCoordinates");
-    const googleViewport = page.querySelector("#googleMapsViewport");
     const featurePropertiesPanel = page.querySelector("#mapsFeatureProperties");
     const mode = page.dataset.mode || "map";
     const settingsPanel = page.querySelector("#mapsLayerSettings");
@@ -286,14 +284,39 @@
     const loadedLayers = new Map();
     const map = L.map(page.querySelector("#mapsViewport"), { preferCanvas: true, zoomControl: false }).setView([-1.25, 119.35], 8);
     let activeBase = null;
-    let googleLoader = null;
-    let googleMap = null;
-    let googleInfoWindow = null;
-    let usingGoogle = false;
     let mapFitBounds = null;
     let currentSettingsEntry = null;
     let selectedFeatureLayerId = null;
     let categoriesExpanded = false;
+    let syncingControls = false;
+    function syncDropdowns() {
+      if (!window.jQuery?.fn.dropdown) return;
+      syncingControls = true;
+      page.querySelectorAll("select").forEach((select) => {
+        const value = select.value;
+        const menu = window.jQuery(select).closest(".ui.dropdown");
+        if (!menu.length) return;
+        menu.dropdown("change values", [...select.options].map((option) => ({
+          name: option.textContent, value: option.value, disabled: option.disabled
+        })));
+        menu.dropdown("set selected", value);
+      });
+      page.querySelectorAll(".ui.checkbox").forEach((checkbox) => {
+        const input = checkbox.querySelector('input[type="checkbox"]');
+        if (input && window.jQuery?.fn.checkbox) {
+          window.jQuery(checkbox).checkbox(input.checked ? "set checked" : "set unchecked");
+        }
+      });
+      syncingControls = false;
+    }
+    if (window.jQuery?.fn.dropdown) {
+      window.jQuery(page).find("select").each(function () {
+        const select = window.jQuery(this);
+        const wrapper = select.parent(".ui.dropdown");
+        (wrapper.length ? wrapper : select).dropdown({ fullTextSearch: true });
+      });
+    }
+    if (window.jQuery?.fn.checkbox) window.jQuery(page).find(".ui.checkbox").checkbox();
     const showMessage = (target, message) => {
       errorBox.classList.add("hidden");
       statusBox.classList.add("hidden");
@@ -315,6 +338,7 @@
         fields.textContent = "Feature ini tidak memiliki atribut.";
       } else {
         const table = document.createElement("table");
+        table.className = "ui compact celled unstackable table";
         const body = document.createElement("tbody");
         entries.forEach(([key, rawValue]) => {
           const row = document.createElement("tr");
@@ -338,136 +362,8 @@
 
     function setBase(name) {
       if (activeBase) map.removeLayer(activeBase);
-      activeBase = bases[name]();
+      activeBase = (bases[name] || bases.osm)();
       activeBase.addTo(map);
-    }
-
-    function loadGoogleApi() {
-      if (window.google?.maps) return Promise.resolve();
-      if (googleLoader) return googleLoader;
-      const key = String(window.MAPS_GOOGLE_API_KEY || "");
-      if (!key) return Promise.reject(new Error("Google Maps Platform API key belum dikonfigurasi."));
-      googleLoader = new Promise((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&v=weekly`;
-        script.async = true;
-        script.onload = () => window.google?.maps
-          ? resolve()
-          : reject(new Error("Google Maps API gagal dimuat."));
-        script.onerror = () => reject(new Error("Google Maps API gagal dimuat. Periksa API key dan pembatasan domain."));
-        document.head.append(script);
-      });
-      return googleLoader;
-    }
-
-    function addGoogleLayer(id, entry) {
-      if (!googleMap || entry.googleLayer) return;
-      const style = entry.style;
-      const dataLayer = new google.maps.Data({ map: googleMap });
-      dataLayer.addGeoJson(entry.geoJson);
-      dataLayer.setStyle((feature) => {
-        const props = {};
-        feature.forEachProperty((value, key) => { props[key] = value; });
-        const featureStyle = getFeatureStyle(props, style);
-        return {
-          strokeColor: featureStyle.color,
-          strokeWeight: featureStyle.weight,
-          fillColor: featureStyle.fillColor,
-          fillOpacity: style.fill_opacity,
-          clickable: true
-        };
-      });
-      dataLayer.addListener("click", (event) => {
-        const properties = {};
-        event.feature.forEachProperty((value, key) => { properties[key] = value; });
-        if (featurePropertiesPanel) {
-          showFeatureProperties({ properties }, id, entry.name);
-        } else {
-          googleInfoWindow.setContent(featurePopup({ properties }));
-          googleInfoWindow.setPosition(event.latLng);
-          googleInfoWindow.open({ map: googleMap });
-        }
-      });
-      entry.googleLayer = dataLayer;
-      renderGoogleLabels(entry);
-    }
-
-    function renderGoogleLabels(entry) {
-      entry.googleLabelMarkers = [];
-      if (entry.style.show_labels && entry.style.label_field) {
-        entry.geoJson.features.forEach((feature) => {
-          const value = feature.properties?.[entry.style.label_field];
-          if (value == null || value === "") return;
-          const points = collectCoordinates(feature.geometry.coordinates);
-          if (!points.length) return;
-          const center = points.reduce((sum, point) => [sum[0] + point[0] / points.length, sum[1] + point[1] / points.length], [0, 0]);
-          entry.googleLabelMarkers.push(new google.maps.Marker({
-            map: googleMap,
-            position: { lat: center[1], lng: center[0] },
-            title: String(value),
-            label: {
-              text: String(value),
-              color: entry.style.label_color || "#1f2937",
-              fontSize: `${entry.style.label_size || 12}px`,
-              fontWeight: entry.style.label_bold ? "700" : "400",
-              fontFamily: entry.style.label_font || "Arial, sans-serif"
-            },
-            icon: { path: google.maps.SymbolPath.CIRCLE, scale: 0, fillOpacity: 0, strokeOpacity: 0 }
-          }));
-        });
-      }
-    }
-
-    function clearGoogleLayer(entry) {
-      entry.googleLayer?.setMap(null);
-      entry.googleLayer = null;
-      (entry.googleLabelMarkers || []).forEach((marker) => marker.setMap(null));
-      entry.googleLabelMarkers = [];
-    }
-
-    async function selectBase(name) {
-      if (name.startsWith("google-")) {
-        await loadGoogleApi();
-        const type = name.replace("google-", "");
-        if (!googleMap) {
-          const center = map.getCenter();
-          googleMap = new google.maps.Map(googleViewport, {
-            center: { lat: center.lat, lng: center.lng },
-            zoom: map.getZoom(),
-            mapTypeId: type,
-            mapTypeControl: false,
-            streetViewControl: false,
-            fullscreenControl: true
-          });
-          googleInfoWindow = new google.maps.InfoWindow();
-        } else {
-          googleMap.setMapTypeId(type);
-        }
-        page.querySelector("#mapsViewport").hidden = true;
-        googleViewport.hidden = false;
-        usingGoogle = true;
-        loadedLayers.forEach((entry, id) => addGoogleLayer(id, entry));
-        if (mapFitBounds) {
-          googleMap.fitBounds([
-            { lat: mapFitBounds.getSouth(), lng: mapFitBounds.getWest() },
-            { lat: mapFitBounds.getNorth(), lng: mapFitBounds.getEast() }
-          ]);
-        }
-      } else {
-        if (usingGoogle && googleMap) {
-          const center = googleMap.getCenter();
-          if (center) map.setView([center.lat(), center.lng()], googleMap.getZoom(), { animate: false });
-          loadedLayers.forEach((entry) => {
-            clearGoogleLayer(entry);
-          });
-        }
-        usingGoogle = false;
-        googleViewport.hidden = true;
-        page.querySelector("#mapsViewport").hidden = false;
-        setBase(name);
-        setTimeout(() => map.invalidateSize(), 0);
-      }
-      showMessage(errorBox, "");
     }
 
     function setFitBounds() {
@@ -480,15 +376,7 @@
     }
 
     function fitActiveMap() {
-      if (!mapFitBounds) return;
-      if (usingGoogle && googleMap) {
-        googleMap.fitBounds([
-          { lat: mapFitBounds.getSouth(), lng: mapFitBounds.getWest() },
-          { lat: mapFitBounds.getNorth(), lng: mapFitBounds.getEast() }
-        ]);
-      } else {
-        map.fitBounds(mapFitBounds, { padding: [24, 24], maxZoom: 16 });
-      }
+      if (mapFitBounds) map.fitBounds(mapFitBounds, { padding: [24, 24], maxZoom: 16 });
     }
 
     async function loadLayer(id) {
@@ -564,7 +452,6 @@
         }
       });
       const entry = { layer, geoJson, count: geoJson.features.length, name: row.nama_layer, style, fields: dbf.fields };
-      if (usingGoogle) addGoogleLayer(id, entry);
       return entry;
     }
 
@@ -635,6 +522,7 @@
         return;
       }
       const table = document.createElement("table");
+      table.className = "ui compact celled unstackable table";
       const head = document.createElement("thead");
       head.innerHTML = "<tr><th>Nilai</th><th>Warna</th><th>Jenis garis</th><th>Tebal</th></tr>";
       const body = document.createElement("tbody");
@@ -701,6 +589,7 @@
         return;
       }
       const table = document.createElement("table");
+      table.className = "ui compact celled unstackable table";
       const head = document.createElement("thead");
       head.innerHTML = "<tr><th>Field</th><th>Tipe</th><th>Panjang</th><th>Contoh</th></tr>";
       const body = document.createElement("tbody");
@@ -738,30 +627,18 @@
           });
         }
       });
-      if (entry.googleLayer) {
-        entry.googleLayer.setStyle((feature) => {
-          const props = {};
-          feature.forEachProperty((value, key) => { props[key] = value; });
-          const featureStyle = getFeatureStyle(props, style);
-          return {
-            strokeColor: featureStyle.color, strokeWeight: featureStyle.weight,
-            fillColor: featureStyle.fillColor, fillOpacity: style.fill_opacity, clickable: true
-          };
-        });
-        (entry.googleLabelMarkers || []).forEach((marker) => marker.setMap(null));
-        renderGoogleLabels(entry);
-      }
     }
 
     async function selectLayerForSettings(row) {
       if (!loadedLayers.has(row.id)) loadedLayers.set(row.id, await loadLayer(row.id));
       const entry = loadedLayers.get(row.id);
       currentSettingsEntry = entry;
-      if (!map.hasLayer(entry.layer) && !usingGoogle) entry.layer.addTo(map);
+      if (!map.hasLayer(entry.layer)) entry.layer.addTo(map);
       const toggle = [...list.querySelectorAll('input[type="checkbox"]')].find((input) => input.getAttribute("aria-label") === `Tampilkan layer ${row.nama_layer}`);
       if (toggle) toggle.checked = true;
       setFitBounds();
       fitActiveMap();
+      syncingControls = true;
       settingsPanel.hidden = false;
       page.querySelector("#mapsSelectedLayerName").textContent = row.nama_layer;
       page.querySelector("#mapsShowLabels").checked = entry.style.show_labels;
@@ -789,6 +666,8 @@
       page.querySelector("#mapsCategorySearch").value = "";
       renderCategoryLegend(entry.style.categories);
       showFieldDatabase(entry);
+      syncDropdowns();
+      syncingControls = false;
       coords.textContent = `${row.nama_layer} · ${entry.count.toLocaleString("id-ID")} objek`;
     }
 
@@ -818,7 +697,12 @@
         const meta = document.createElement("small");
         meta.textContent = `${row.kd_wilayah} / ${row.kd_opd} · ${row.username_insert} · ${(row.ukuran / 1048576).toFixed(1)} MB`;
         details.append(title, meta);
-        container.append(toggle, details);
+        const checkbox = document.createElement("div");
+        checkbox.className = "ui fitted checkbox";
+        const checkboxLabel = document.createElement("label");
+        checkboxLabel.setAttribute("aria-hidden", "true");
+        checkbox.append(toggle, checkboxLabel);
+        container.append(checkbox, details);
         if (canManage && mode === "layers") {
           const actions = document.createElement("div");
           actions.className = "maps-layer-actions";
@@ -848,8 +732,6 @@
               const body = new URLSearchParams({ id: String(row.id), _csrf: window.CSRF_TOKEN || "" });
               await jsonRequest("/maps/delete", { method: "POST", body });
               loadedLayers.get(row.id)?.layer.remove();
-              const removedEntry = loadedLayers.get(row.id);
-              if (removedEntry) clearGoogleLayer(removedEntry);
               loadedLayers.delete(row.id);
               setFitBounds();
               await refreshLayers();
@@ -866,8 +748,7 @@
             if (toggle.checked) {
               if (!loadedLayers.has(row.id)) loadedLayers.set(row.id, await loadLayer(row.id));
               const entry = loadedLayers.get(row.id);
-              if (usingGoogle) addGoogleLayer(row.id, entry);
-              else entry.layer.addTo(map);
+              entry.layer.addTo(map);
               setFitBounds();
               fitActiveMap();
               coords.textContent = `${row.nama_layer} · ${loadedLayers.get(row.id).count.toLocaleString("id-ID")} objek`;
@@ -878,7 +759,6 @@
                 selectedFeatureLayerId = null;
               }
               entry.layer.remove();
-              clearGoogleLayer(entry);
               loadedLayers.delete(row.id);
               setFitBounds();
               coords.textContent = mapFitBounds ? `${loadedLayers.size} layer aktif` : "Pilih layer untuk menampilkan peta.";
@@ -889,6 +769,7 @@
           }
         });
         list.append(container);
+        if (window.jQuery?.fn.checkbox) window.jQuery(checkbox).checkbox();
       });
     }
 
@@ -900,27 +781,26 @@
     setBase("osm");
     L.control.scale({ metric: true, imperial: false }).addTo(map);
     page.querySelector("#mapZoomIn")?.addEventListener("click", () => {
-      if (usingGoogle && googleMap) googleMap.setZoom(googleMap.getZoom() + 1);
-      else map.zoomIn();
+      map.zoomIn();
     });
     page.querySelector("#mapZoomOut")?.addEventListener("click", () => {
-      if (usingGoogle && googleMap) googleMap.setZoom(googleMap.getZoom() - 1);
-      else map.zoomOut();
+      map.zoomOut();
     });
     page.querySelector("#mapFit")?.addEventListener("click", fitActiveMap);
-    baseSelect.addEventListener("change", async () => {
+    baseSelect.addEventListener("change", () => {
+      if (syncingControls) return;
       try {
-        await selectBase(baseSelect.value);
+        setBase(baseSelect.value);
       } catch (error) {
         showMessage(errorBox, error.message);
         baseSelect.value = "osm";
+        syncDropdowns();
         setBase("osm");
       }
     });
     map.whenReady(() => setTimeout(() => map.invalidateSize(), 0));
     const onResize = () => {
-      if (usingGoogle && google.maps?.event && googleMap) google.maps.event.trigger(googleMap, "resize");
-      else map.invalidateSize();
+      map.invalidateSize();
     };
     window.addEventListener("resize", onResize);
 
@@ -966,7 +846,7 @@
     }
 
     const updateSelectedStyle = () => {
-      if (!currentSettingsEntry) return;
+      if (syncingControls || !currentSettingsEntry) return;
       currentSettingsEntry.style = readStyleControls(currentSettingsEntry);
       page.querySelector("#mapsLabelStyle").hidden = !currentSettingsEntry.style.show_labels;
       applyEntryStyle(currentSettingsEntry, currentSettingsEntry.style);
@@ -975,11 +855,12 @@
     const rendererSelect = page.querySelector("#mapsRenderer");
     const categorySettings = page.querySelector("#mapsCategorySettings");
     rendererSelect?.addEventListener("change", () => {
+      if (syncingControls) return;
       categorySettings.hidden = rendererSelect.value !== "categorized";
       updateSelectedStyle();
     });
     page.querySelector("#mapsCategoryField")?.addEventListener("change", (event) => {
-      if (!currentSettingsEntry) return;
+      if (syncingControls || !currentSettingsEntry) return;
       currentSettingsEntry.style.category_field = event.currentTarget.value;
       currentSettingsEntry.style.categories = [];
       renderCategoryLegend([]);
@@ -999,7 +880,7 @@
         control?.addEventListener(control.type === "range" || control.type === "color" || control.type === "number" ? "input" : "change", updateSelectedStyle);
       });
     page.querySelector("#classifyMapsCategories")?.addEventListener("click", () => {
-      if (!currentSettingsEntry) return;
+      if (syncingControls || !currentSettingsEntry) return;
       const field = page.querySelector("#mapsCategoryField").value;
       if (!field) {
         showMessage(errorBox, "Pilih field kategori terlebih dahulu.");
@@ -1023,6 +904,7 @@
           weight: currentSettingsEntry.style.weight
         }));
       rendererSelect.value = "categorized";
+      syncDropdowns();
       categorySettings.hidden = false;
       categoriesExpanded = true;
       renderCategoryLegend(currentSettingsEntry.style.categories);
@@ -1047,6 +929,7 @@
         body.append("_csrf", window.CSRF_TOKEN || "");
         const button = form.querySelector('button[type="submit"]');
         button.disabled = true;
+        button.classList.add("loading");
         try {
           await jsonRequest("/maps/upload", { method: "POST", body });
           form.reset();
@@ -1057,6 +940,7 @@
           showMessage(errorBox, error.message);
         } finally {
           button.disabled = false;
+          button.classList.remove("loading");
         }
       });
     }
@@ -1067,8 +951,9 @@
     });
     destroyActiveMapPage = () => {
       window.removeEventListener("resize", onResize);
+      if (window.jQuery?.fn.dropdown) window.jQuery(page).find(".ui.dropdown").dropdown("destroy");
+      if (window.jQuery?.fn.checkbox) window.jQuery(page).find(".ui.checkbox").checkbox("destroy");
       map.remove();
-      if (googleMap && google.maps?.event) google.maps.event.clearInstanceListeners(googleMap);
     };
   }
 

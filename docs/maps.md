@@ -1,8 +1,8 @@
 # Maps
 
-Menu Maps tersedia bagi pengguna yang sudah login. Peta menggunakan Leaflet untuk basemap XYZ dan layer SHP; Google Maps ditampilkan melalui Google Maps JavaScript API resminya.
+Menu Maps tersedia bagi pengguna yang sudah login. Peta menggunakan Leaflet untuk basemap XYZ dan layer SHP; Google Roadmap, Satellite, Hybrid, dan Terrain juga ditampilkan sebagai tile XYZ pada kanvas Leaflet yang sama tanpa API key.
 
-Menu Maps dibagi menjadi tiga halaman: **Peta** menampilkan kanvas peta dan layer aktif tanpa form unggah; **Atur Layer SHP** mengatur visibilitas, simbologi, label, dan inspeksi field atribut; **Tambah/Unggah SHP** menangani unggahan sebagai alur terpisah.
+Tampilan menu, form, dropdown pencarian, checkbox, tombol, dan tabel menggunakan Fomantic UI. Menu Maps dibagi menjadi tiga halaman: **Peta** menampilkan kanvas peta dan layer aktif tanpa form unggah; **Atur Layer SHP** mengatur visibilitas, simbologi, label, dan inspeksi field atribut; **Tambah/Unggah SHP** menangani unggahan sebagai alur terpisah.
 
 Pada halaman **Peta**, klik feature pada layer untuk membuka panel properti berisi seluruh field atribut dari record DBF. Panel dapat ditutup, dan akan mengikuti layer yang sedang dipilih. Editor kategori menampilkan tabel yang dapat dibuka/ciutkan dan dicari, dengan pengaturan warna, jenis garis, dan ketebalan tiap kategori. Saat label diaktifkan, font, ukuran, warna, dan ketebalannya dapat diatur.
 
@@ -33,6 +33,6 @@ Pada database yang sudah memasang migrasi Maps sebelumnya, jalankan `database/mi
 
 OpenStreetMap, OpenTopoMap, CARTO Positron (terang), CARTO Dark Matter (gelap), Esri World Street Map, Esri Terrain/Topographic, dan Esri World Imagery (Satellite) dapat dipilih tanpa API key. Tile mengikuti atribusi provider yang ditampilkan pada peta dan ketentuan layanan/provider masing-masing.
 
-Google Roadmap, Satellite, Hybrid, dan Terrain memerlukan Google Maps Platform API key serta aktivasi Maps JavaScript API dan billing yang sesuai. Set variabel lingkungan `GOOGLE_MAPS_API_KEY` pada proses PHP; Google menyediakan peta ketika pilihan tersebut digunakan. Batasi key berdasarkan referrer aplikasi dan API yang diizinkan. Jangan simpan key pada source control.
+Google Roadmap (`lyrs=m`), Satellite (`lyrs=s`), Hybrid (`lyrs=y`), dan Terrain (`lyrs=p`) menggunakan `https://mt{s}.google.com/vt/lyrs=…&x={x}&y={y}&z={z}` dengan subdomain 0–3, tanpa API key. Atribusi Google ditampilkan di peta. Semua basemap memakai Leaflet sehingga layer SHP, kategori, label, koordinat, dan kontrol zoom tetap tersedia saat berpindah basemap.
 
-Jangan memakai URL tile XYZ Google secara langsung: akses tile peta Google harus mengikuti ketentuan Google Maps Platform. Endpoint tile tak terdokumentasi bukan pengganti API resmi dan dapat berhenti bekerja atau melanggar persyaratan penggunaan.
+Endpoint Google XYZ ini bukan API resmi yang terdokumentasi; ketersediaannya bergantung pada provider dan penggunaan tetap mengikuti ketentuan Google. Tidak ada proxy atau cache tile di server aplikasi.

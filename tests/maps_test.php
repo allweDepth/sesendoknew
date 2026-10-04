@@ -52,7 +52,7 @@ $assert(str_contains($script, 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
 $assert(str_contains($script, 'basemaps.cartocdn.com/light_all') && str_contains($script, 'basemaps.cartocdn.com/dark_all') && str_contains($view, 'CARTO Positron') && str_contains($view, 'CARTO Dark Matter'), 'CARTO light/dark XYZ basemaps tersedia pada semua halaman peta');
 $assert(str_contains($script, 'World_Street_Map') && str_contains($frontController, 'https://*.basemaps.cartocdn.com'), 'Esri street XYZ dan izin gambar CSP untuk tile CARTO tersedia');
 $assert(str_contains($script, 'World_Topo_Map') && str_contains($script, 'World_Imagery'), 'basemap Esri terrain dan satellite tersedia');
-$assert(str_contains($view, 'Google Roadmap') && str_contains($view, 'Google Hybrid') && str_contains($script, 'new google.maps.Map') && str_contains($script, 'new google.maps.Data'), 'basemap Google memakai Google Maps Platform dengan renderer resminya');
+$assert(str_contains($view, 'Google Roadmap') && str_contains($view, 'Google Hybrid') && str_contains($script, 'https://mt{s}.google.com/vt/lyrs=') && !str_contains($script, 'maps/api/js?key=') && !str_contains($view, 'perlu API key'), 'basemap Google memakai XYZ Leaflet tanpa API key');
 $assert(str_contains($controller, "['admin_opd', 'kepala_opd', 'pa_kpa']"), 'upload dibatasi pada role pengelola OPD');
 $assert(str_contains($controller, 'storage/uploads/maps/') && str_contains($controller, 'scopeFilter'), 'layer tersimpan privat dan akses dibatasi scope wilayah/OPD');
 $instance = (new ReflectionClass(MapsController::class))->newInstanceWithoutConstructor();
