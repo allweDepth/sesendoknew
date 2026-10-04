@@ -4,6 +4,7 @@ require_once __DIR__ . '/../Core/Controller.php';
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../Services/JsonResponse.php';
+require_once __DIR__ . '/../Services/MapsShapefileWriter.php';
 
 class MapsController extends Controller
 {
@@ -46,11 +47,13 @@ class MapsController extends Controller
             $user = $this->requireUser();
             [$where, $params] = $this->scopeFilter($user);
             $rows = DB::getInstance()->query(
-                "SELECT id,nama_layer,original_name,ukuran,kd_wilayah,kd_opd,username_insert,tgl_insert,components_json,style_json
+                "SELECT id,nama_layer,original_name,ukuran,kd_wilayah,kd_opd,username_insert,tgl_insert,components_json,style_json,storage_dir
                  FROM maps_layers WHERE is_deleted=0{$where} ORDER BY tgl_insert DESC,id DESC",
                 $params
             )->fetchAll();
             foreach ($rows as &$row) {
+                $row['revision'] = hash('sha256', (string)$row['storage_dir']);
+                unset($row['storage_dir']);
                 $row['id'] = (int)$row['id'];
                 $row['ukuran'] = (int)$row['ukuran'];
                 $row['components'] = json_decode((string)$row['components_json'], true) ?: ['shp'];
@@ -178,6 +181,139 @@ class MapsController extends Controller
                 rmdir($directory);
             }
             echo JsonResponse::error($e->getMessage(), 400);
+        }
+    }
+
+    public function saveGeometry(): void
+    {
+        $this->beginJson();
+        $directories = [];
+        $db = null;
+        $transaction = false;
+        try {
+            if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') throw new RuntimeException('Gunakan POST untuk menyimpan SHP.');
+            $user = $this->requireUser();
+            if (!$this->canManageLayers($user)) throw new RuntimeException('Role Anda tidak dapat menggambar atau mengedit SHP.');
+            $scope = $this->requireOpdScope($user);
+            $id = filter_var($_POST['id'] ?? 0, FILTER_VALIDATE_INT);
+            if ($id === false || $id < 0) throw new InvalidArgumentException('ID layer tidak valid.');
+            $collection = json_decode((string)($_POST['geojson'] ?? ''), true, 64, JSON_THROW_ON_ERROR);
+            $fields = json_decode((string)($_POST['fields'] ?? ''), true, 64, JSON_THROW_ON_ERROR);
+            if (!is_array($collection) || !is_array($fields)) throw new InvalidArgumentException('Geometri atau field SHP tidak valid.');
+            $components = MapsShapefileWriter::build($collection, $fields);
+            $divideField = trim((string)($_POST['divide_field'] ?? ''));
+            $name = trim((string)($_POST['nama_layer'] ?? ''));
+            $nameLength = function_exists('mb_strlen') ? mb_strlen($name, 'UTF-8') : strlen($name);
+            if ($name === '' || $nameLength > 160 || !preg_match('//u', $name) || preg_match('/[\x00-\x1F\x7F]/', $name)) throw new InvalidArgumentException('Nama layer harus berisi 1–160 karakter.');
+            $db = DB::getInstance();
+            $db->begin();
+            $transaction = true;
+            if ($id) {
+                [$where, $params] = $this->scopeFilter($user);
+                $existing = $db->query("SELECT id,storage_dir FROM maps_layers WHERE id=? AND is_deleted=0{$where} FOR UPDATE", [$id, ...$params])->fetch();
+                if (!$existing) throw new RuntimeException('Layer tidak ditemukan dalam wilayah/OPD Anda.');
+                if (!hash_equals(hash('sha256', (string)$existing['storage_dir']), (string)($_POST['revision'] ?? ''))) {
+                    throw new RuntimeException('Layer telah diubah pengguna lain. Tutup editor dan muat ulang layer sebelum mengedit.');
+                }
+            }
+            $packages = [['name' => $name, 'components' => $components]];
+            if ($divideField !== '') {
+                if (!in_array($divideField, array_column($fields, 'name'), true)) throw new InvalidArgumentException('Field pemisah tidak ditemukan.');
+                $groups = [];
+                foreach ($collection['features'] as $feature) {
+                    $value = $feature['properties'][$divideField] ?? null;
+                    $key = json_encode($value, JSON_THROW_ON_ERROR);
+                    if (!isset($groups[$key])) $groups[$key] = ['value' => $value, 'features' => []];
+                    $groups[$key]['features'][] = $feature;
+                }
+                if (count($groups) < 2 || count($groups) > 50) throw new InvalidArgumentException('Divide layer membutuhkan 2–50 nilai field yang berbeda.');
+                $packages = [];
+                foreach ($groups as $group) {
+                    $suffix = $group['value'] === null ? 'kosong' : (is_bool($group['value']) ? ($group['value'] ? 'ya' : 'tidak') : (string)$group['value']);
+                    $label = preg_replace('/[\x00-\x1F\x7F]/u', '', $name . ' - ' . $suffix) ?? $name;
+                    $label = function_exists('mb_strcut') ? mb_strcut($label, 0, 160, 'UTF-8') : substr($label, 0, 160);
+                    $packages[] = ['name' => $label, 'components' => MapsShapefileWriter::build(['type' => 'FeatureCollection', 'features' => $group['features']], $fields)];
+                }
+            }
+            $savedIds = [];
+            foreach ($packages as $package) {
+                $components = $package['components'];
+                $scopeDirectory = preg_replace('/[^A-Za-z0-9._-]/', '_', $scope['kd_wilayah'] . '-' . $scope['kd_opd']);
+                $relativeDirectory = 'storage/uploads/maps/' . $scopeDirectory . '/' . bin2hex(random_bytes(16));
+                $directory = dirname(__DIR__, 2) . '/' . $relativeDirectory;
+                if (!mkdir($directory, 0770, true) && !is_dir($directory)) throw new RuntimeException('Folder SHP tidak dapat dibuat.');
+                $directories[] = $directory;
+                foreach ($components as $extension => $contents) {
+                    if (file_put_contents($directory . '/layer.' . $extension, $contents, LOCK_EX) !== strlen($contents)) throw new RuntimeException('Komponen SHP gagal disimpan.');
+                }
+                $data = [
+                    'nama_layer' => $package['name'], 'original_name' => $package['name'] . '.zip', 'storage_dir' => $relativeDirectory,
+                    'components_json' => json_encode(array_keys($components), JSON_THROW_ON_ERROR),
+                    'ukuran' => array_sum(array_map('strlen', $components)),
+                ];
+                if ($id && $divideField === '') {
+                    $db->update('maps_layers', $data, 'WHERE id=?', [$id]);
+                    $savedIds[] = $id;
+                } else {
+                    $db->insert('maps_layers', $data + [
+                        'kd_wilayah' => $scope['kd_wilayah'], 'kd_opd' => $scope['kd_opd'],
+                        'username_insert' => (string)($user['username'] ?? 'user'), 'user_id' => (int)$user['id'],
+                        'tgl_insert' => date('Y-m-d H:i:s'), 'is_deleted' => 0,
+                    ]);
+                    $savedIds[] = (int)$db->lastInsertId();
+                }
+            }
+            $db->commit();
+            $transaction = false;
+            // Previous component folders remain available as a recoverable snapshot.
+            echo JsonResponse::success('Geometri dan field SHP berhasil disimpan.', [], ['id' => $savedIds[0], 'ids' => $savedIds]);
+        } catch (Throwable $e) {
+            if ($transaction && $db) $db->rollback();
+            foreach ($directories as $directory) {
+                foreach (glob($directory . '/*') ?: [] as $file) if (is_file($file)) unlink($file);
+                rmdir($directory);
+            }
+            echo JsonResponse::error($e->getMessage(), 400);
+        }
+    }
+
+    public function download(): void
+    {
+        $temporary = null;
+        try {
+            $user = $this->requireUser();
+            $id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
+            if (!$id || $id < 1) throw new InvalidArgumentException('ID layer tidak valid.');
+            [$where, $params] = $this->scopeFilter($user);
+            $row = DB::getInstance()->query("SELECT storage_dir,components_json FROM maps_layers WHERE id=? AND is_deleted=0{$where}", [$id, ...$params])->fetch();
+            if (!$row) throw new RuntimeException('Layer tidak ditemukan dalam wilayah/OPD Anda.');
+            $root = realpath(dirname(__DIR__, 2) . '/storage/uploads/maps');
+            $directory = realpath(dirname(__DIR__, 2) . '/' . $row['storage_dir']);
+            if (!$root || !$directory || !str_starts_with($directory, $root . DIRECTORY_SEPARATOR)) throw new RuntimeException('Folder SHP tidak tersedia.');
+            if (!class_exists(ZipArchive::class)) throw new RuntimeException('Ekstensi ZIP tidak tersedia.');
+            $temporary = tempnam(sys_get_temp_dir(), 'maps-download-');
+            if (!$temporary) throw new RuntimeException('Paket unduhan gagal dibuat.');
+            $zip = new ZipArchive();
+            if ($zip->open($temporary, ZipArchive::OVERWRITE) !== true) throw new RuntimeException('Paket ZIP gagal dibuat.');
+            foreach (json_decode($row['components_json'], true) ?: [] as $part) {
+                if (!in_array($part, self::SHAPEFILE_COMPONENTS, true)) continue;
+                $file = realpath($directory . '/layer.' . $part);
+                if (!$file || !str_starts_with($file, $directory . DIRECTORY_SEPARATOR) || !is_file($file)) throw new RuntimeException('Komponen SHP tidak tersedia.');
+                $zip->addFile($file, 'layer.' . $part);
+            }
+            if (!$zip->close()) throw new RuntimeException('Paket ZIP gagal diselesaikan.');
+            while (ob_get_level() > 0) ob_end_clean();
+            header('Content-Type: application/zip');
+            header('Content-Disposition: attachment; filename="layer-' . $id . '.zip"');
+            header('Content-Length: ' . filesize($temporary));
+            header('Cache-Control: private, no-store');
+            header('X-Content-Type-Options: nosniff');
+            readfile($temporary);
+        } catch (Throwable $e) {
+            $this->beginJson();
+            echo JsonResponse::error($e->getMessage(), 400);
+        } finally {
+            if ($temporary && is_file($temporary)) unlink($temporary);
         }
     }
 

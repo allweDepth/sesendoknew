@@ -153,7 +153,7 @@
     return features;
   }
 
-  function parseDbf(buffer, expectedRecords) {
+  function parseDbf(buffer, expectedRecords, encoding = "windows-1252") {
     if (buffer.byteLength < 33) throw new Error("File .dbf pendamping tidak valid.");
     const view = new DataView(buffer);
     const recordCount = view.getUint32(4, true);
@@ -162,7 +162,7 @@
     if (recordCount < expectedRecords || headerLength < 33 || recordLength < 1 || headerLength > buffer.byteLength) {
       throw new Error("File .dbf tidak cocok atau strukturnya tidak valid.");
     }
-    const decoder = new TextDecoder("windows-1252");
+    const decoder = new TextDecoder(encoding);
     const fields = [];
     for (let offset = 32; offset + 32 <= headerLength && view.getUint8(offset) !== 0x0d; offset += 32) {
       let name = "";
@@ -245,13 +245,6 @@
     })[char]);
   }
 
-  function featurePopup(feature) {
-    const entries = Object.entries(feature.properties || {}).slice(0, 50);
-    if (!entries.length) return "<div>Objek tanpa atribut.</div>";
-    return `<div class="maps-feature-popup"><table>${entries.map(([key, value]) =>
-      `<tr><th>${esc(key)}</th><td>${esc(value)}</td></tr>`).join("")}</table></div>`;
-  }
-
   async function jsonRequest(url, options = {}) {
     const { headers: requestHeaders, ...requestOptions } = options;
     const response = await fetch(url, {
@@ -287,12 +280,61 @@
     let mapFitBounds = null;
     let currentSettingsEntry = null;
     let selectedFeatureLayerId = null;
+    let selectedFeature = null;
+    let selectedHighlight = null;
+    let coordinateMarker = null;
+    let shapeEditor = null;
+    function clearFeatureSelection() {
+      if (selectedHighlight) selectedHighlight.remove();
+      selectedHighlight = null; selectedFeature = null; selectedFeatureLayerId = null;
+      if (featurePropertiesPanel) featurePropertiesPanel.hidden = true;
+      map.closePopup();
+    }
+    function showCoordinates(latlng) {
+      const lng = ((latlng.lng + 180) % 360 + 360) % 360 - 180;
+      const lat = latlng.lat;
+      const signed = (value) => `${value >= 0 ? '+' : ''}${value.toFixed(6)}`;
+      const wgs = `WGS84 (EPSG:4326): Lat ${signed(lat)}, Lon ${signed(lng)}`;
+      let utm = 'UTM tidak tersedia di luar lintang 80°S–84°N.';
+      if (lat >= -80 && lat <= 84 && typeof window.proj4 === "function") {
+        let zone = Math.min(60, Math.max(1, Math.floor((lng + 180) / 6) + 1));
+        if (lat >= 56 && lat < 64 && lng >= 3 && lng < 12) zone = 32;
+        if (lat >= 72 && lat < 84 && lng >= 0 && lng < 42) zone = lng < 9 ? 31 : lng < 21 ? 33 : lng < 33 ? 35 : 37;
+        const south = lat < 0;
+        const [east, north] = window.proj4('EPSG:4326', `+proj=utm +zone=${zone} ${south ? '+south' : ''} +datum=WGS84 +units=m +no_defs`, [lng, lat]);
+        utm = `UTM ${zone}${south ? 'S' : 'N'} (EPSG:${(south ? 32700 : 32600) + zone}): E ${east.toFixed(2)} m, N ${north.toFixed(2)} m`;
+      }
+      coords.textContent = `${wgs} · ${utm}`;
+      if (coordinateMarker) coordinateMarker.remove();
+      coordinateMarker = L.marker([lat, lng], { title: 'Koordinat titik klik', bubblingMouseEvents: false }).addTo(map);
+      coordinateMarker.bindPopup(`<strong>Koordinat titik klik</strong><p>${esc(wgs)}</p><p>${esc(utm)}</p>`, { maxWidth: 350 }).openPopup();
+    }
+    function selectFeature(feature, featureLayer, id, name, latlng) {
+      if (shapeEditor?.active) { if (latlng) shapeEditor.mapClick(latlng); return; }
+      clearFeatureSelection();
+      selectedFeature = feature; selectedFeatureLayerId = id;
+      selectedHighlight = L.geoJSON(feature, {
+        interactive: false,
+        style: { color: '#f59e0b', weight: 5, fillColor: '#fbbf24', fillOpacity: .35 },
+        pointToLayer: (_, point) => L.circleMarker(point, { radius: 10, color: '#f59e0b', weight: 4, fillOpacity: .3, interactive: false })
+      }).addTo(map);
+      if (latlng) showCoordinates(latlng);
+      showFeatureProperties(feature, id, name);
+    }
+    map.on('click', (event) => {
+      if (shapeEditor?.mapClick(event.latlng)) return;
+      clearFeatureSelection();
+      showCoordinates(event.latlng);
+    });
+    const onEscape = (event) => { if (event.key === 'Escape' && !shapeEditor?.active) { clearFeatureSelection(); coordinateMarker?.remove(); coordinateMarker = null; } };
+    document.addEventListener('keydown', onEscape);
     let categoriesExpanded = false;
     let syncingControls = false;
     function syncDropdowns() {
       if (!window.jQuery?.fn.dropdown) return;
       syncingControls = true;
       page.querySelectorAll("select").forEach((select) => {
+        if (select.closest("#mapsShapeEditor")) return;
         const value = select.value;
         const menu = window.jQuery(select).closest(".ui.dropdown");
         if (!menu.length) return;
@@ -310,7 +352,7 @@
       syncingControls = false;
     }
     if (window.jQuery?.fn.dropdown) {
-      window.jQuery(page).find("select").each(function () {
+      window.jQuery(page).find("select").filter(function () { return !this.closest("#mapsShapeEditor"); }).each(function () {
         const select = window.jQuery(this);
         const wrapper = select.parent(".ui.dropdown");
         (wrapper.length ? wrapper : select).dropdown({ fullTextSearch: true });
@@ -356,8 +398,7 @@
       featurePropertiesPanel.hidden = false;
     };
     page.querySelector("#closeMapsFeatureProperties")?.addEventListener("click", () => {
-      featurePropertiesPanel.hidden = true;
-      selectedFeatureLayerId = null;
+      clearFeatureSelection();
     });
 
     function setBase(name) {
@@ -394,11 +435,17 @@
         if (buffer.byteLength > MAX_FILE_BYTES) throw new Error(`File .${part} melebihi batas 32 MB.`);
         return buffer;
       };
-      const buffers = await Promise.all(["shp", "dbf", "prj"].filter((part) => parts.includes(part)).map(async (part) => [part, await fetchPart(part)]));
+      const buffers = await Promise.all(["shp", "dbf", "prj", "cpg"].filter((part) => parts.includes(part)).map(async (part) => [part, await fetchPart(part)]));
       const fileData = Object.fromEntries(buffers);
       const projectionText = fileData.prj ? new TextDecoder().decode(fileData.prj) : "";
       const features = parseShapefile(fileData.shp, projectionText);
-      const dbf = fileData.dbf ? parseDbf(fileData.dbf, features.length) : { fields: [], records: [] };
+      let encoding = "windows-1252";
+      if (fileData.cpg) {
+        const cpg = new TextDecoder().decode(fileData.cpg).trim();
+        const requested = /^(65001|UTF-?8)$/i.test(cpg) ? "utf-8" : /^125[0-8]$/.test(cpg) ? `windows-${cpg}` : cpg;
+        try { new TextDecoder(requested); encoding = requested; } catch (_) { /* Retain DBF fallback for unknown code pages. */ }
+      }
+      const dbf = fileData.dbf ? parseDbf(fileData.dbf, features.length, encoding) : { fields: [], records: [] };
       const geoJson = toGeoJson(features, dbf.records);
       if (!geoJson.features.length) throw new Error(`Layer "${row.nama_layer}" tidak memiliki geometri yang dapat ditampilkan.`);
       const defaultColor = COLORS[(id - 1) % COLORS.length];
@@ -438,11 +485,8 @@
           });
         },
         onEachFeature: (feature, featureLayer) => {
-          if (featurePropertiesPanel) {
-            featureLayer.on("click", () => showFeatureProperties(feature, id, row.nama_layer));
-          } else {
-            featureLayer.bindPopup(featurePopup(feature), { maxWidth: 380 });
-          }
+          featureLayer.options.bubblingMouseEvents = false;
+          featureLayer.on("click", (event) => selectFeature(feature, featureLayer, id, row.nama_layer, event.latlng));
           if (style.show_labels && style.label_field && feature.properties[style.label_field] != null) {
             featureLayer.bindTooltip(String(feature.properties[style.label_field]), {
               permanent: true, direction: "center", className: "maps-feature-label",
@@ -451,7 +495,7 @@
           }
         }
       });
-      const entry = { layer, geoJson, count: geoJson.features.length, name: row.nama_layer, style, fields: dbf.fields };
+      const entry = { id, editable: [1, 3, 5, 8].includes(new DataView(fileData.shp).getInt32(32, true)) && features.every((feature) => feature.type !== 0), layer, geoJson, count: geoJson.features.length, name: row.nama_layer, style, fields: dbf.fields };
       return entry;
     }
 
@@ -688,6 +732,7 @@
         container.className = "maps-layer-row";
         const toggle = document.createElement("input");
         toggle.type = "checkbox";
+        toggle.dataset.layerId = String(row.id);
         toggle.checked = loadedLayers.has(row.id);
         toggle.setAttribute("aria-label", `Tampilkan layer ${row.nama_layer}`);
         const details = document.createElement("div");
@@ -703,9 +748,26 @@
         checkboxLabel.setAttribute("aria-hidden", "true");
         checkbox.append(toggle, checkboxLabel);
         container.append(checkbox, details);
-        if (canManage && mode === "layers") {
+        {
           const actions = document.createElement("div");
           actions.className = "maps-layer-actions";
+          const download = document.createElement("a");
+          download.className = "ui mini basic icon button";
+          download.href = `/maps/download?id=${row.id}`;
+          download.title = "Unduh paket SHP";
+          download.setAttribute("aria-label", `Unduh SHP ${row.nama_layer}`);
+          download.innerHTML = '<i class="download icon"></i>';
+          actions.append(download);
+          if (canManage) {
+            const edit = document.createElement("button");
+            edit.className = "ui mini primary icon button"; edit.type = "button";
+            edit.title = "Edit geometri dan field SHP";
+            edit.setAttribute("aria-label", `Edit SHP ${row.nama_layer}`);
+            edit.innerHTML = '<i class="pencil alternate icon"></i>';
+            edit.addEventListener("click", () => shapeEditor?.open(row.id));
+            actions.append(edit);
+          }
+          if (canManage && mode === "layers") {
           const configure = document.createElement("button");
           configure.className = "ui mini basic icon button";
           configure.type = "button";
@@ -713,6 +775,7 @@
           configure.setAttribute("aria-label", `Atur layer ${row.nama_layer}`);
           configure.innerHTML = '<i class="sliders horizontal icon"></i>';
           configure.addEventListener("click", async () => {
+            if (shapeEditor?.active) { showMessage(errorBox, "Tutup editor SHP sebelum mengatur simbologi."); return; }
             try {
               await selectLayerForSettings(row);
             } catch (error) {
@@ -727,10 +790,13 @@
           remove.setAttribute("aria-label", `Hapus layer ${row.nama_layer}`);
           remove.innerHTML = '<i class="trash alternate outline icon"></i>';
           remove.addEventListener("click", async () => {
+            if (shapeEditor?.active) { showMessage(errorBox, "Simpan atau batalkan edit sebelum menghapus layer."); return; }
             if (!window.confirm(`Hapus layer "${row.nama_layer}" dari daftar OPD?`)) return;
             try {
               const body = new URLSearchParams({ id: String(row.id), _csrf: window.CSRF_TOKEN || "" });
               await jsonRequest("/maps/delete", { method: "POST", body });
+              if (selectedFeatureLayerId === row.id) clearFeatureSelection();
+              if (currentSettingsEntry?.id === row.id) { currentSettingsEntry = null; if (settingsPanel) settingsPanel.hidden = true; }
               loadedLayers.get(row.id)?.layer.remove();
               loadedLayers.delete(row.id);
               setFitBounds();
@@ -741,9 +807,16 @@
             }
           });
           actions.append(remove);
+          }
           container.append(actions);
         }
         toggle.addEventListener("change", async () => {
+          if (shapeEditor?.active) {
+            toggle.checked = loadedLayers.has(row.id);
+            if (window.jQuery?.fn.checkbox) window.jQuery(toggle.parentElement).checkbox(toggle.checked ? "set checked" : "set unchecked");
+            showMessage(errorBox, "Simpan atau batalkan edit sebelum mengubah layer aktif.");
+            return;
+          }
           try {
             if (toggle.checked) {
               if (!loadedLayers.has(row.id)) loadedLayers.set(row.id, await loadLayer(row.id));
@@ -755,8 +828,7 @@
             } else if (loadedLayers.has(row.id)) {
               const entry = loadedLayers.get(row.id);
               if (selectedFeatureLayerId === row.id && featurePropertiesPanel) {
-                featurePropertiesPanel.hidden = true;
-                selectedFeatureLayerId = null;
+                clearFeatureSelection();
               }
               entry.layer.remove();
               loadedLayers.delete(row.id);
@@ -778,6 +850,30 @@
       renderRows(data.rows || [], data.can_manage === true);
     }
 
+    shapeEditor = window.createMapsShapeEditor?.({
+      page, map, getRow: (id) => byId.get(id), clearSelection: () => {
+        clearFeatureSelection(); coordinateMarker?.remove(); coordinateMarker = null;
+      },
+      loadLayer: async (id) => {
+        if (!loadedLayers.has(id)) loadedLayers.set(id, await loadLayer(id));
+        const toggle = list.querySelector(`input[data-layer-id="${id}"]`);
+        if (toggle) { toggle.checked = true; window.jQuery?.(toggle.parentElement).checkbox?.("set checked"); }
+        return loadedLayers.get(id);
+      },
+      onSaved: async (id, ids = []) => {
+        clearFeatureSelection();
+        loadedLayers.get(id)?.layer.remove(); loadedLayers.delete(id);
+        if (currentSettingsEntry?.id === id) { currentSettingsEntry = null; if (settingsPanel) settingsPanel.hidden = true; }
+        await refreshLayers();
+        const entry = await loadLayer(id); loadedLayers.set(id, entry); entry.layer.addTo(map);
+        setFitBounds(); fitActiveMap();
+        renderRows([...byId.values()], page.dataset.canManage === "1");
+        showMessage(statusBox, ids.length > 1 ? `${ids.length} layer hasil divide berhasil disimpan. Layer asal tetap tersedia.` : "Geometri dan field SHP berhasil disimpan.");
+      }
+    });
+    page.querySelector("#mapsEditSelectedFeature")?.addEventListener("click", () => {
+      if (selectedFeatureLayerId != null) shapeEditor?.open(selectedFeatureLayerId, selectedFeature);
+    });
     setBase("osm");
     L.control.scale({ metric: true, imperial: false }).addTo(map);
     page.querySelector("#mapZoomIn")?.addEventListener("click", () => {
@@ -807,8 +903,7 @@
     const saveStyleButton = page.querySelector("#saveMapsStyle");
     if (saveStyleButton) {
       saveStyleButton.addEventListener("click", async () => {
-        const selectedName = page.querySelector("#mapsSelectedLayerName").textContent;
-        const row = [...byId.values()].find((candidate) => candidate.nama_layer === selectedName);
+        const row = byId.get(currentSettingsEntry?.id);
         if (!row || !loadedLayers.has(row.id)) return;
         const entry = loadedLayers.get(row.id);
         const style = readStyleControls(entry);
@@ -951,6 +1046,8 @@
     });
     destroyActiveMapPage = () => {
       window.removeEventListener("resize", onResize);
+      document.removeEventListener("keydown", onEscape);
+      shapeEditor?.destroy();
       if (window.jQuery?.fn.dropdown) window.jQuery(page).find(".ui.dropdown").dropdown("destroy");
       if (window.jQuery?.fn.checkbox) window.jQuery(page).find(".ui.checkbox").checkbox("destroy");
       map.remove();

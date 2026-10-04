@@ -38,7 +38,7 @@ $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 if (APP_BASE_PATH !== '' && ($requestPath === APP_BASE_PATH || str_starts_with($requestPath, APP_BASE_PATH . '/'))) {
   $requestPath = substr($requestPath, strlen(APP_BASE_PATH)) ?: '/';
 }
-$maxRequestBytes = $requestPath === '/maps/upload' ? 100 * 1024 * 1024 : 4 * 1024 * 1024;
+$maxRequestBytes = $requestPath === '/maps/upload' ? 100 * 1024 * 1024 : ($requestPath === '/maps/geometry' ? 40 * 1024 * 1024 : 4 * 1024 * 1024);
 if ((int)($_SERVER['CONTENT_LENGTH'] ?? 0) > $maxRequestBytes) {
   http_response_code(413);
   exit($requestPath === '/maps/upload' ? 'Ukuran paket ZIP shapefile maksimal 96 MB.' : 'Request terlalu besar');

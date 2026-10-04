@@ -1,0 +1,41 @@
+'use strict';
+const assert = require('node:assert/strict');
+const geometry = require('../public/assets/js/maps-geometry.js');
+const polygon = (x1,y1,x2,y2,properties={ID:1}) => ({type:'Feature',properties,geometry:{type:'Polygon',coordinates:[[[x1,y1],[x2,y1],[x2,y2],[x1,y2],[x1,y1]]]}});
+function area(feature) {
+  const polygons = feature.geometry.type === 'Polygon' ? [feature.geometry.coordinates] : feature.geometry.coordinates;
+  return polygons.reduce((total,p) => total + p.reduce((sum,r,index) => {
+    const a = Math.abs(r.slice(1).reduce((v,point,i) => v+r[i][0]*point[1]-point[0]*r[i][1],0)/2);
+    return sum+(index===0?a:-a);
+  },0),0);
+}
+const a=polygon(0,0,4,4), b=polygon(2,0,6,4);
+assert.equal(area(geometry.booleanFeatures(a,b,'union')),24);
+assert.equal(area(geometry.booleanFeatures(a,b,'intersection')),8);
+assert.equal(area(geometry.booleanFeatures(a,b,'difference')),8);
+assert.equal(area(geometry.booleanFeatures(a,b,'xor')),16);
+assert.throws(() => geometry.booleanFeatures(a,polygon(10,10,11,11),'intersection'),/kosong/);
+assert.deepEqual(a.properties,{ID:1});
+const hole = polygon(0,0,10,10,{NAMA:'hole'});
+hole.geometry.coordinates.push([[4,4],[4,6],[6,6],[6,4],[4,4]]);
+const split=geometry.splitPolygon(hole,[5,-1],[5,11]);
+assert.equal(split.length,2);
+assert.ok(Math.abs(split.reduce((sum,p)=>sum+area(p),0)-96)<1e-8);
+assert.equal(split[0].properties.NAMA,'hole');
+assert.throws(()=>geometry.splitPolygon(a,[10,10],[10,11]),/bagian dalam/);
+assert.throws(()=>geometry.splitPolygon(a,[0,0],[0,0]),/berbeda/);
+const line={type:'Feature',properties:{ID:2},geometry:{type:'LineString',coordinates:[[1,1],[2,2],[3,3]]}};
+assert.deepEqual(geometry.continueLine(line,[],false,[[4,4]]).geometry.coordinates,[[1,1],[2,2],[3,3],[4,4]]);
+assert.deepEqual(geometry.continueLine(line,[],true,[[0,0],[-1,-1]]).geometry.coordinates,[[-1,-1],[0,0],[1,1],[2,2],[3,3]]);
+assert.equal(line.geometry.coordinates.length,3);
+const splitLine=geometry.splitLine(line,[],1);
+assert.deepEqual(splitLine.map(f=>f.geometry.coordinates),[[[1,1],[2,2]],[[2,2],[3,3]]]);
+assert.throws(()=>geometry.splitLine(line,[],0),/node/);
+const multipart={...line,geometry:{type:'MultiLineString',coordinates:[line.geometry.coordinates,[[5,5],[6,6]]]}};
+assert.equal(geometry.explodeFeature(multipart).length,2);
+assert.equal(geometry.splitLine(multipart,[0],1).length,3);
+const divided=geometry.divideLayer([a,b,{...line,properties:{ID:null}}],'ID');
+assert.equal(divided.length,2);
+assert.equal(divided[0].features.length,2);
+assert.throws(()=>geometry.divideLayer([a,b],'ID'),/dua nilai/);
+console.log('MAPS GEOMETRY TESTS COMPLETE: boolean areas, polygon holes/divide, line continuation, multipart, layer division');

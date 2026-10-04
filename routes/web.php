@@ -67,6 +67,8 @@ return [
   '/maps/layers' => ['MapsController', 'layersPage'],
   '/maps/add' => ['MapsController', 'uploadPage'],
   '/maps/api/layers' => ['MapsController', 'layers'],
+  '/maps/geometry' => ['MapsController', 'saveGeometry'],
+  '/maps/download' => ['MapsController', 'download'],
   '/maps/style' => ['MapsController', 'saveStyle'],
   '/maps/upload' => ['MapsController', 'upload'],
   '/maps/file' => ['MapsController', 'file'],

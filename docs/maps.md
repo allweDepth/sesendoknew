@@ -36,3 +36,30 @@ OpenStreetMap, OpenTopoMap, CARTO Positron (terang), CARTO Dark Matter (gelap), 
 Google Roadmap (`lyrs=m`), Satellite (`lyrs=s`), Hybrid (`lyrs=y`), dan Terrain (`lyrs=p`) menggunakan `https://mt{s}.google.com/vt/lyrs=…&x={x}&y={y}&z={z}` dengan subdomain 0–3, tanpa API key. Atribusi Google ditampilkan di peta. Semua basemap memakai Leaflet sehingga layer SHP, kategori, label, koordinat, dan kontrol zoom tetap tersedia saat berpindah basemap.
 
 Endpoint Google XYZ ini bukan API resmi yang terdokumentasi; ketersediaannya bergantung pada provider dan penggunaan tetap mengikuti ketentuan Google. Tidak ada proxy atau cache tile di server aplikasi.
+
+## Seleksi dan koordinat
+
+Klik feature untuk memberi highlight kuning dan membuka seluruh atribut DBF. Klik area kosong, tutup panel properti, tekan Escape, atau nonaktifkan layer untuk menghapus seleksi dan menutup properti. Highlight tidak mengubah simbologi yang disimpan.
+
+Klik peta menampilkan satu penanda lokasi beserta koordinat WGS84/EPSG:4326 (latitude/longitude bertanda +/−) dan UTM dalam meter. Zona UTM serta hemisfer N/S dipilih otomatis dan kode EPSG ditampilkan. UTM tersedia pada lintang 80°S–84°N. Zona khusus Norwegia/Svalbard mengikuti pembagian UTM. Titik klik berikutnya mengganti penanda sebelumnya.
+
+## Gambar dan edit SHP
+
+Admin OPD, kepala OPD, dan PA/KPA dengan wilayah/OPD yang valid dapat membuka **Gambar SHP**, tombol pensil pada layer, atau **Edit SHP terpilih** pada panel properti. Hak akses penyimpanan diperiksa kembali di server dan selalu mengikuti OPD pengguna.
+
+- **Aktif edit / Off edit**: Aktif edit mengizinkan perubahan geometri, field, dan atribut. Off edit mengunci perubahan serta tetap mempertahankan draft. Tidak ada penyimpanan otomatis ketika mengganti mode.
+- **Simpan edit / Simpan SHP ke OPD** menyimpan draft. **Tidak simpan / Batal edit** membuang draft dan menampilkan layer asal kembali. Menutup dengan tombol X meminta konfirmasi pengabaian perubahan.
+- **Titik, garis, poligon tertutup**: pilih jenis geometri, klik **Gambar feature**, kemudian klik peta. Titik selesai dengan satu klik. Garis membutuhkan minimal dua titik, poligon tiga titik; **Selesai** menutup ring poligon secara otomatis. **Undo titik** menghapus titik gambar terakhir; **Batalkan gambar** mengabaikan gambar yang sedang dibuat.
+- Pilih feature pada editor untuk mengedit atribut. Geser node putih untuk mengubah posisi; klik node kecil di tengah sisi untuk menambah node; klik kanan node putih untuk menghapusnya. Jumlah node minimum garis/poligon tetap dijaga.
+- **Lanjut awal/akhir garis** menambahkan titik ke garis yang dipilih. Untuk MultiLineString, klik node pada bagian garis yang akan dilanjutkan terlebih dahulu.
+- **Divide garis di node** membagi garis pada node tengah terpilih. **Divide poligon** memakai dua klik sebagai garis lurus pemotong, diperpanjang melewati poligon. Atribut asal disalin ke bagian hasil. **Pisahkan multipart** memisahkan bagian MultiLineString, MultiPolygon, atau MultiPoint menjadi feature tersendiri.
+- **Boolean poligon** menyediakan union, intersection, difference A−B, dan XOR antara feature A terpilih dan feature B dalam layer yang sama. Hasil mengganti A dan B serta menggunakan atribut A. Hasil kosong ditolak tanpa menghapus input. **Undo edit** menyimpan hingga sepuluh langkah geometri/field terakhir.
+- **Divide layer berdasarkan field** menyimpan 2–50 layer baru menurut nilai field, dalam satu transaksi; layer asal tetap tersedia. Bila penyimpanan salah satu hasil gagal, seluruh hasil dibatalkan.
+
+Field dasar mendukung teks (`C`), angka (`N`), boolean (`L`), dan tanggal (`D`). Nama field harus unik tanpa membedakan huruf besar/kecil, maksimal 10 karakter ASCII (huruf, angka, underscore). Maksimal 64 field; teks maksimal 254 byte UTF-8, angka maksimal 20 karakter dengan 0–8 desimal. Tanggal memakai YYYY-MM-DD. **Terapkan field** menerapkan perubahan schema dan mempertahankan nilai saat field diubah namanya; field yang dihapus tidak disertakan saat menyimpan.
+
+Hasil editor adalah paket nyata `.shp`, `.shx`, `.dbf`, `.prj`, dan `.cpg`, dengan koordinat WGS84 dua dimensi dan DBF UTF-8. Unduh melalui tombol download pada layer. SHP titik, multipoint, garis/multigaris, dan poligon/multipoligon 2D dapat diedit; SHP Z/M dan null-shape perlu diekspor menjadi 2D sebelum diedit. Satu layer harus berisi satu jenis geometri SHP.
+
+Penyimpanan edit menulis folder komponen baru dan mengganti metadata secara transaksional. Folder versi sebelumnya dipertahankan sebagai snapshot privat. Revision token menolak penyimpanan dari versi layer yang sudah berubah sehingga pengguna perlu memuat ulang. Tidak diperlukan migrasi database tambahan. Batas body request `/maps/geometry` adalah 40 MB; batas PHP `post_max_size` perlu mengizinkan request tersebut untuk layer berukuran besar.
+
+Pustaka polygon-clipping 0.15.7 dibundel lokal beserta lisensi MIT di `public/assets/vendor/polygon-clipping/`; operasi geometri tidak mengirim data layer ke layanan pihak ketiga.

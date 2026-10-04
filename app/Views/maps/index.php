@@ -7,6 +7,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
     <?php foreach (['map' => ['/maps', 'map outline', 'Peta'], 'layers' => ['/maps/layers', 'layer group', 'Atur Layer SHP'], 'upload' => ['/maps/add', 'cloud upload', 'Tambah/Unggah SHP']] as $key => [$url, $icon, $label]): ?>
       <a class="<?= $mode === $key ? 'active ' : '' ?>item" href="<?= $url ?>" data-spa="server" data-title="Maps/<?= $label ?>" <?= $mode === $key ? 'aria-current="page"' : '' ?>><i class="<?= $icon ?> icon"></i><?= $label ?></a>
     <?php endforeach; ?>
+    <?php if ($canManageLayers): ?><button class="item" type="button" id="mapsNewShape"><i class="pencil alternate icon"></i>Gambar SHP</button><?php endif; ?>
   </nav>
   <?php if ($mode === 'map'): ?>
     <div class="ui segment maps-full-toolbar">
@@ -33,10 +34,6 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
     </div>
     <div class="maps-full-shell">
       <div id="mapsViewport" class="maps-viewport" role="application" aria-label="Peta interaktif"></div>
-      <section id="mapsFeatureProperties" class="ui segment maps-feature-properties" aria-live="polite" hidden>
-        <div class="maps-feature-properties-heading"><strong id="mapsFeatureTitle">Properti feature</strong><button type="button" id="closeMapsFeatureProperties" class="ui mini basic icon button" aria-label="Tutup properti feature"><i class="close icon"></i></button></div>
-        <div id="mapsFeatureFields" class="maps-feature-properties-fields"></div>
-      </section>
       <aside class="ui raised segment maps-floating-layers">
         <h3 class="ui small header"><i class="layers icon"></i>Layer OPD</h3>
         <div id="mapLayersList" class="maps-layers-list"><div class="ui active inline loader"></div> Memuat layer…</div>
@@ -135,9 +132,53 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
       </section>
     </div>
   <?php endif; ?>
+      <section id="mapsFeatureProperties" class="ui segment maps-feature-properties" aria-live="polite" hidden>
+        <div class="maps-feature-properties-heading"><strong id="mapsFeatureTitle">Properti feature</strong><button type="button" id="closeMapsFeatureProperties" class="ui mini basic icon button" aria-label="Tutup properti feature"><i class="close icon"></i></button></div>
+        <?php if ($canManageLayers): ?><button class="ui mini primary button" id="mapsEditSelectedFeature" type="button"><i class="edit icon"></i>Edit SHP terpilih</button><?php endif; ?>
+        <div id="mapsFeatureFields" class="maps-feature-properties-fields"></div>
+      </section>
+  <?php if ($canManageLayers): ?>
+  <aside id="mapsShapeEditor" class="ui raised segment form maps-shape-editor" aria-label="Editor SHP" hidden>
+    <div class="maps-feature-properties-heading"><h3 class="ui small header" id="mapsEditorTitle">Gambar SHP</h3><button class="ui mini basic icon button" id="mapsEditorClose" type="button" aria-label="Tutup editor SHP"><i class="close icon"></i></button></div>
+    <div class="inline fields maps-edit-mode" role="radiogroup" aria-label="Mode edit SHP">
+      <label>Mode SHP</label>
+      <div class="field"><div class="ui radio checkbox"><input id="mapsEditOn" type="radio" name="maps_edit_mode" value="on" checked><label for="mapsEditOn">Aktif edit</label></div></div>
+      <div class="field"><div class="ui radio checkbox"><input id="mapsEditOff" type="radio" name="maps_edit_mode" value="off"><label for="mapsEditOff">Off edit</label></div></div>
+    </div>
+    <div id="mapsEditorModeStatus" class="ui mini info message" role="status">Aktif edit: perubahan belum disimpan.</div>
+    <div class="field"><label for="mapsEditorName">Nama layer</label><input id="mapsEditorName" maxlength="160" placeholder="Nama SHP baru"></div>
+    <div class="field"><label for="mapsEditorGeometry">Jenis geometri</label><select id="mapsEditorGeometry"><option value="Point">Titik</option><option value="LineString">Garis</option><option value="Polygon">Poligon</option></select></div>
+    <div class="ui small buttons"><button class="ui primary button" type="button" id="mapsEditorDraw">Gambar feature</button><button class="ui button" type="button" id="mapsEditorFinish" disabled>Selesai</button><button class="ui button" type="button" id="mapsEditorUndo" disabled>Undo titik</button></div>
+    <button class="ui mini basic button" id="mapsEditorCancelDraw" type="button" hidden>Batalkan gambar</button>
+    <p id="mapsEditorHint" class="maps-editor-hint" role="status">Klik Gambar feature, lalu klik lokasi pada peta.</p>
+    <div class="maps-editor-feature-toolbar"><span id="mapsEditorCount"></span><button class="ui mini basic negative button" id="mapsEditorDeleteFeature" type="button" disabled>Hapus feature terpilih</button></div>
+    <h4 class="ui dividing header">Edit geometri</h4>
+    <div class="maps-editor-operations">
+      <button class="ui mini button" id="mapsEditorContinueStart" type="button">Lanjut awal garis</button><button class="ui mini button" id="mapsEditorContinueEnd" type="button">Lanjut akhir garis</button>
+      <button class="ui mini button" id="mapsEditorSplitLine" type="button">Divide garis di node</button><button class="ui mini button" id="mapsEditorSplitPolygon" type="button">Divide poligon</button>
+      <button class="ui mini button" id="mapsEditorExplode" type="button">Pisahkan multipart</button><button class="ui mini basic button" id="mapsEditorUndoEdit" type="button" disabled>Undo edit</button>
+    </div>
+    <div class="two fields"><div class="field"><label for="mapsEditorBoolean">Boolean poligon</label><select id="mapsEditorBoolean"><option value="union">Gabung (union)</option><option value="intersection">Irisan</option><option value="difference">Selisih A − B</option><option value="xor">XOR</option></select></div><div class="field"><label for="mapsEditorOperand">Feature B</label><select id="mapsEditorOperand"><option value="">Pilih poligon lain</option></select></div></div>
+    <button class="ui mini primary button" id="mapsEditorApplyBoolean" type="button">Terapkan boolean (A = feature terpilih)</button>
+    <p class="maps-editor-hint">Hasil boolean memakai atribut A; A dan B diganti hasil operasi. Divide menyalin atribut asal. Klik Undo edit untuk membatalkan.</p>
+    <div class="field"><label for="mapsEditorDivideField">Divide layer berdasarkan field</label><select id="mapsEditorDivideField"><option value="">Pilih field</option></select></div>
+    <button class="ui mini basic primary button" id="mapsEditorDivideLayer" type="button">Simpan sebagai layer terpisah</button>
+    <p id="mapsEditorDivideStatus" class="maps-editor-hint" role="status"></p>
+    <h4 class="ui dividing header">Field SHP</h4>
+    <p class="maps-editor-hint">Nama unik maksimal 10 karakter. Panjang teks dihitung dalam byte UTF-8.</p>
+    <div class="maps-editor-fields-scroll"><table class="ui compact celled unstackable table"><thead><tr><th>Nama</th><th>Tipe</th><th>Panjang</th><th>Desimal</th><th></th></tr></thead><tbody id="mapsEditorFields"></tbody></table></div>
+    <div class="ui mini buttons"><button class="ui button" id="mapsEditorAddField" type="button">Tambah field</button><button class="ui primary button" id="mapsEditorApplyFields" type="button">Terapkan field</button></div>
+    <h4 class="ui dividing header">Atribut feature terpilih</h4>
+    <div id="mapsEditorAttributes">Pilih feature pada peta untuk mengedit atribut.</div>
+    <div class="ui divider"></div>
+    <button class="ui primary fluid button" id="mapsEditorSave" type="button"><i class="save icon"></i>Simpan SHP ke OPD</button>
+    <button class="ui basic fluid button" id="mapsEditorDiscard" type="button" style="margin-top:8px">Tidak simpan / Batal edit</button>
+    <div id="mapsEditorError" class="ui hidden negative message" role="alert"></div>
+  </aside>
+  <?php endif; ?>
 </section>
 <style>
-  .maps-page { width: 100%; max-width: none !important; height: 100%; min-height: 0; padding: 0 !important; }
+  .maps-page { position: relative; width: 100%; max-width: none !important; height: 100%; min-height: 0; padding: 0 !important; }
   #mainContext .content-scroll:has(.maps-mode-map) { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
   #mainContext .content-scroll:has(.maps-mode-map) #main-content { display: flex; flex: 1 1 auto; width: 100%; min-height: 0; }
   .maps-mode-map { display: flex; flex: 1 1 auto; flex-direction: column; gap: 8px; height: auto; min-height: 0; }
@@ -240,4 +281,20 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
     .maps-layout { min-height: 0; }
     .maps-page .maps-feature-properties { max-height: 42%; }
   }
+  .maps-page .maps-shape-editor { position: absolute; z-index: 850; left: 12px; top: 65px; width: min(430px, calc(100% - 24px)); max-height: calc(100% - 80px); overflow: auto; margin: 0; }
+  .maps-page .ui.form .ui.message:not(.hidden) { display: block; }
+  .maps-editor-operations { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .maps-editor-operations .button { margin: 0; }
+  .maps-editor-hint { color: #64748b; font-size: .85em; margin: 10px 0; }
+  .maps-editor-feature-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+  .maps-editor-fields-scroll { overflow: auto; margin-bottom: 10px; }
+  .maps-editor-fields-scroll input { min-width: 65px; padding: 6px !important; }
+  .maps-editor-fields-scroll input[data-key=name] { min-width: 105px; }
+  .maps-editor-fields-scroll select { min-width: 95px; }
+  .maps-vertex { background: #fff; border: 2px solid #f59e0b; border-radius: 50%; }
+  .maps-midpoint { background: #f59e0b; border: 1px solid #fff; border-radius: 50%; }
+  .maps-drawing .leaflet-container, .leaflet-container.maps-drawing { cursor: crosshair; }
+  .maps-navigation.ui.menu button.item { background: transparent; border: 0; cursor: pointer; font: inherit; }
+  body.dark-mode .maps-editor-hint { color: #cbd5e1; }
+  @media (max-width: 600px) { .maps-page .maps-shape-editor { top: auto; bottom: 12px; max-height: 48%; } }
 </style>
