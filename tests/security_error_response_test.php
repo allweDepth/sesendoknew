@@ -46,6 +46,12 @@ try {
     $assert(RequestGuard::requiresPost(Router::route($path)), "$path wajib POST");
   }
   $assert(!RequestGuard::requiresPost(Router::route('/maps/api/layers')), 'daftar layer tetap tersedia melalui GET');
+  foreach (['/maps', '/maps/layers', '/maps/add'] as $path) {
+    $assert(!RequestGuard::requiresPost(Router::route($path)), "$path membuka halaman melalui GET");
+  }
+  $assert(!RequestGuard::requiresPost(['MapsController', 'uploadPage']), 'nama halaman unggah tidak dianggap aksi penyimpanan');
+  $assert(!RequestGuard::requiresPost(['OtherController', 'uploadPage']), 'halaman baru tidak diblokir berdasarkan awalan nama');
+  $assert(!RequestGuard::requiresPost(Router::route('/kontrak/procurement/draft')), 'pratinjau dokumen kontrak tetap menerima GET');
   try { FileService::getPath('file.pdf', '../../config'); $assert(false, 'traversal ditolak'); }
   catch (InvalidArgumentException $e) { $assert(true, 'traversal modul file ditolak'); }
   try { FileService::delete('../../config/database.php', 'test'); $assert(false, 'traversal ditolak'); }

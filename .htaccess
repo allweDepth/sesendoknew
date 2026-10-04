@@ -20,6 +20,7 @@ RewriteRule ^(?:public/)?uploads/.*\.(?:php[0-9]?|phtml|phar|cgi|pl|sh|html?|svg
 
 # Assets publik
 RewriteRule ^assets/(.*)$ public/assets/$1 [L]
+RewriteRule ^uploads/(.*)$ public/uploads/$1 [L]
 
 # File/folder nyata yang aman tetap dapat dilayani
 RewriteCond %{REQUEST_FILENAME} !-f

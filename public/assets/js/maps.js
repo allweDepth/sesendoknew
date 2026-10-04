@@ -272,6 +272,9 @@
     const coords = page.querySelector("#mapCoordinates");
     const featurePropertiesPanel = page.querySelector("#mapsFeatureProperties");
     const mode = page.dataset.mode || "map";
+    const inspector = page.querySelector(".maps-inspector");
+    const rightSidebar = page.querySelector(".maps-floating-layers") || page.querySelector(".maps-preview-panel");
+    if (inspector && rightSidebar) rightSidebar.append(inspector);
     const settingsPanel = page.querySelector("#mapsLayerSettings");
     const byId = new Map();
     const loadedLayers = new Map();

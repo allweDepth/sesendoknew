@@ -13,6 +13,9 @@ class MapsMemoryDB {
     public function rollback(){ $this->rows=$this->backup; }
     public function commit(){}
     public function query($sql,$params){
+        if (str_contains($sql, 'FROM user_sesendok_biila')) {
+            return new MapsMemoryStatement($_SESSION['user'] ?? []);
+        }
         foreach($this->rows as $row) if($row['id']==$params[0] && !$row['is_deleted'] && $row['kd_wilayah']===$params[1] && $row['kd_opd']===$params[2])return new MapsMemoryStatement($row);
         return new MapsMemoryStatement([]);
     }

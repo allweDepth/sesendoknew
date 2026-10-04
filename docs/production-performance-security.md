@@ -52,3 +52,13 @@ Server produksi dan perimeter belum diperiksa: domain/hosting tidak tersedia dal
 Validasi yang telah dijalankan: simulasi error SQL pada endpoint Maps tanpa menghapus tabel asli, rate limit dalam transaksi rollback, HTTP login/dashboard/logout dengan akun viewer sementara yang dihapus setelah pengujian, penolakan CSRF dan akses schema oleh viewer, blokir file sensitif melalui Apache, tes Maps, tes keamanan phase 27, dan baca/tulis ulang XLSX dengan library baru. Pengujian ini tidak mencakup pentest menyeluruh atau audit semua fitur dan OS.
 
 Panduan acuan: [autentikasi OWASP](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html) dan [unggahan OWASP](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html).
+
+### Perbaikan regresi 4 Oktober 2026
+
+Pembatasan metode menggunakan pasangan controller/action yang eksplisit. Pemeriksaan berdasarkan awalan nama sebelumnya salah menolak GET `uploadPage` dan `procurementDraft`. Halaman unggah dan pratinjau kembali bekerja; aksi penyimpanan tetap membutuhkan POST dan CSRF.
+
+`bin/setup-upload-storage.sh` mengatur direktori unggahan privat dan publik dengan ACL khusus proses PHP serta pemilik proyek pada macOS, termasuk pewarisan izin untuk folder baru. Direktori tidak memakai izin 777. Untuk Linux, tentukan `WEB_GROUP` sesuai proses PHP. URL `/uploads/` diarahkan ke `public/uploads/`, sehingga tanda tangan dan gambar identitas dapat dibaca; folder privat dan ekstensi aktif tetap diblokir. Unggah tanda tangan memeriksa keberadaan direktori sebelum menyimpan.
+
+Properti feature dan editor SHP ditempatkan di sidebar kanan: pada halaman Peta, keduanya berada dalam panel Layer OPD dengan satu area gulir; pada halaman pengaturan/unggah, keduanya berada pada panel pratinjau kanan. Tampilan editor dengan layer asli telah diperiksa pada Safari tanpa menyimpan perubahan geometri.
+
+`python3 tests/security_http_regression_test.py` lulus 62 pemeriksaan terhadap Apache/MariaDB lokal: login/logout, 26 halaman, API baca, tabel anggaran, penolakan GET mutasi/CSRF, buat/edit SHP dan snapshot, unggah ZIP/DBF, foto profil, tanda tangan dan baca ulang gambar, serta blokir file internal. Akun dan unggahan uji dibersihkan otomatis. Tes Maps, geometri, penulis shapefile, respons error aman, XLSX phase 34, dan PDF pengadaan phase 56 juga lulus. Dua tes berbasis pencocokan teks (phase 26 E2E dan phase 35 navigasi) masih gagal; kegagalan yang sama dikonfirmasi pada kode sebelum hardening (`728823c`). Hasil ini tidak berarti seluruh fitur atau keamanan server produksi telah teruji.

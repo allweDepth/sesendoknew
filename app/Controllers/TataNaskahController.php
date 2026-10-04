@@ -360,7 +360,12 @@ class TataNaskahController extends Controller
 
     $filename = "ttd_" . $_SESSION['user']['id'] . ".png";
 
-    $path = __DIR__ . "/../../public/uploads/signature/" . $filename;
+    $directory = __DIR__ . '/../../public/uploads/signature';
+    if (!is_dir($directory) && !mkdir($directory, 0750, true) && !is_dir($directory)) {
+      echo JsonResponse::error('Penyimpanan tanda tangan belum tersedia.', 500);
+      return;
+    }
+    $path = $directory . '/' . $filename;
 
     if (!move_uploaded_file($file['tmp_name'], $path)) {
       echo JsonResponse::error('Tanda tangan belum dapat disimpan.', 500);

@@ -135,6 +135,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
       </section>
     </div>
   <?php endif; ?>
+  <div class="maps-inspector">
       <section id="mapsFeatureProperties" class="ui segment maps-feature-properties" aria-live="polite" hidden>
         <div class="maps-feature-properties-heading"><strong id="mapsFeatureTitle">Properti feature</strong><button type="button" id="closeMapsFeatureProperties" class="ui mini basic icon button" aria-label="Tutup properti feature"><i class="close icon"></i></button></div>
         <?php if ($canManageLayers): ?><button class="ui mini primary button" id="mapsEditSelectedFeature" type="button"><i class="edit icon"></i>Edit SHP terpilih</button><?php endif; ?>
@@ -179,6 +180,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
     <div id="mapsEditorError" class="ui hidden negative message" role="alert"></div>
   </aside>
   <?php endif; ?>
+  </div>
 </section>
 <style>
   .maps-page { position: relative; width: 100%; max-width: none !important; height: 100%; min-height: 0; padding: 0 !important; }
@@ -196,7 +198,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
   .maps-viewport .leaflet-container { width: 100%; height: 100%; font: inherit; }
   #googleMapsViewport[hidden] { display: none; }
   .maps-page .maps-floating-layers { margin: 0 !important; position: absolute; z-index: 500; top: 12px; right: 12px; width: min(300px, 38vw); max-height: calc(100% - 24px); padding: 13px; overflow: auto; background: rgba(255,255,255,.96); border: 1px solid #d9e2ec; border-radius: 9px; box-shadow: 0 3px 18px rgba(0,0,0,.18); }
-  .maps-page .maps-feature-properties { margin: 0 !important; position: absolute; z-index: 510; left: 12px; bottom: 12px; width: min(390px, calc(100% - 340px)); max-height: min(48%, 420px); padding: 12px; overflow: auto; background: rgba(255,255,255,.97); border: 1px solid #b9c8d8; border-radius: 9px; box-shadow: 0 3px 18px rgba(0,0,0,.2); }
+  .maps-page .maps-feature-properties { margin: 0 !important; padding: 12px; background: rgba(255,255,255,.97); border: 1px solid #b9c8d8; border-radius: 9px; box-shadow: 0 3px 18px rgba(0,0,0,.2); }
   .maps-feature-properties-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
   .maps-feature-properties-fields { overflow-wrap: anywhere; }
   .maps-feature-properties-fields table { width: 100%; border-collapse: collapse; }
@@ -261,7 +263,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
   body.dark-mode .maps-layer-label small, body.dark-mode .maps-page-heading p, body.dark-mode .maps-google-note, body.dark-mode .maps-upload-form .field small { color: #cbd5e1; }
   @media (max-width: 900px) { .maps-layout, .maps-upload-layout { grid-template-columns: 1fr; } .maps-mode-layers .maps-viewport, .maps-upload-layout .maps-viewport { min-height: 380px; height: 55vh; } }
   body.dark-mode .maps-feature-properties { background: rgba(20,30,40,.97); color: #e2e8f0; border-color: #475569; }
-  @media (max-width: 600px) { .maps-full-toolbar { flex-wrap: wrap; } .maps-full-toolbar select { max-width: 100%; flex: 1; } .maps-page .maps-floating-layers { width: min(260px, 60vw); } .maps-page .maps-feature-properties { left: 8px; bottom: 8px; width: calc(100% - 16px); max-height: 45%; padding: 8px; font-size: .85rem; } .maps-layer-shortcut { display: none !important; } }
+  @media (max-width: 600px) { .maps-full-toolbar { flex-wrap: wrap; } .maps-full-toolbar select { max-width: 100%; flex: 1; } .maps-page .maps-floating-layers { width: min(260px, 60vw); } .maps-page .maps-feature-properties { padding: 8px; font-size: .85rem; } .maps-layer-shortcut { display: none !important; } }
   .maps-page [hidden] { display: none !important; }
   .maps-navigation.ui.menu { flex: 0 0 auto; margin: 0 0 12px; flex-wrap: wrap; }
   .maps-mode-map .maps-navigation.ui.menu { margin-bottom: 0; }
@@ -295,9 +297,14 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
     .maps-page .maps-floating-layers { width: min(240px, 65vw); max-height: 38%; }
     .maps-full-shell { min-height: 380px; }
     .maps-layout { min-height: 0; }
-    .maps-page .maps-feature-properties { max-height: 42%; }
   }
-  .maps-page .maps-shape-editor { position: absolute; z-index: 850; left: 12px; top: 65px; width: min(430px, calc(100% - 24px)); max-height: calc(100% - 80px); overflow: auto; margin: 0; }
+  .maps-page .maps-shape-editor { margin: 0; }
+  /* Properties and editing share the right sidebar, with one scroll area. */
+  .maps-page .maps-inspector:has(> [hidden]):not(:has(> :not([hidden]))) { display: none; }
+  .maps-page .maps-inspector > .maps-feature-properties,
+  .maps-page .maps-inspector > .maps-shape-editor { position: static; width: 100%; max-height: none; margin: 12px 0 0 !important; overflow: visible; box-shadow: none; }
+  .maps-page .maps-floating-layers:has(.maps-shape-editor:not([hidden])) { width: min(430px, calc(100% - 24px)); }
+  .maps-preview-panel > .maps-inspector { position: absolute; z-index: 500; top: 105px; right: 12px; width: min(430px, calc(100% - 24px)); max-height: calc(100% - 120px); overflow: auto; }
   .maps-page .ui.form .ui.message:not(.hidden) { display: block; }
   .maps-editor-operations { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
   .maps-editor-operations .button { margin: 0; }
@@ -312,5 +319,5 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
   .maps-drawing .leaflet-container, .leaflet-container.maps-drawing { cursor: crosshair; }
   .maps-navigation.ui.menu button.item { background: transparent; border: 0; cursor: pointer; font: inherit; }
   body.dark-mode .maps-editor-hint { color: #cbd5e1; }
-  @media (max-width: 600px) { .maps-page .maps-shape-editor { top: auto; bottom: 12px; max-height: 48%; } }
+  @media (max-width: 600px) { .maps-preview-panel > .maps-inspector { width: min(320px, calc(100% - 24px)); max-height: 65%; } }
 </style>
