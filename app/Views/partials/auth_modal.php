@@ -14,6 +14,7 @@ unset($_SESSION['login_error']);
   <!-- CONTENT -->
   <div class="content">
     <form class="ui form<?= $loginError ? ' error' : '' ?>" id="formLogin" method="POST" action="/login/proses">
+      <input type="hidden" name="_csrf" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
       <?php if ($loginError): ?>
         <div class="ui error message" role="alert">
@@ -67,6 +68,7 @@ unset($_SESSION['login_error']);
   <div class="scrolling content">
 
     <form class="ui form" id="formRegister" method="POST" action="/register/proses">
+      <input type="hidden" name="_csrf" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
       <!-- USERNAME -->
       <div class="field">
@@ -127,7 +129,7 @@ unset($_SESSION['login_error']);
         <label>Password</label>
         <div class="ui right labeled left icon input">
           <i class="lock icon"></i>
-          <input type="password" name="password" placeholder="Password">
+          <input type="password" name="password" placeholder="Password minimal 12 karakter" minlength="12" maxlength="72" autocomplete="new-password" required>
           <a onclick="changePassView()" class="ui basic label">
             <i class="eye icon"></i>
           </a>

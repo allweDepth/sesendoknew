@@ -1,4 +1,29 @@
 <?php
+ini_set('display_errors', '0');
+ini_set('display_startup_errors', '0');
+ini_set('log_errors', '1');
+header_remove('X-Powered-By');
+
+set_exception_handler(static function (Throwable $error): void {
+  if (!$error instanceof DatabaseError) error_log((string)$error);
+  // Discard any partial page before returning a safe failure response.
+  while (ob_get_level() > 0) ob_end_clean();
+  $status = $error instanceof DatabaseError ? $error->httpStatus : 500;
+  $message = $error instanceof DatabaseError
+    ? $error->getMessage()
+    : 'Terjadi gangguan pada aplikasi. Silakan coba lagi atau hubungi administrator.';
+  http_response_code($status);
+  if (strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'xmlhttprequest'
+      || str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['success' => false, 'message' => $message], JSON_UNESCAPED_UNICODE);
+  } else {
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<!doctype html><html lang="id"><meta charset="utf-8"><title>Gangguan layanan</title><p>'
+      . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</p></html>';
+  }
+});
+
 $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '/index.php');
 $basePath = preg_replace('#/public/index\.php$#', '', $scriptName);
 if ($basePath === $scriptName) {
@@ -25,6 +50,7 @@ ini_set('session.cookie_httponly', '1');
 ini_set('session.cookie_samesite', 'Strict');
 if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https') ini_set('session.cookie_secure', '1');
 session_start();
+if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 // Baseline browser hardening. TLS is terminated by the web server/proxy; HSTS
 // is emitted only when the current request is known to be HTTPS.
@@ -57,6 +83,7 @@ require_once __DIR__ . '/../app/Core/DB.php';
 require_once __DIR__ . '/../app/Core/Auth.php';
 require_once __DIR__ . '/../app/Core/Controller.php';
 require_once __DIR__ . '/../app/Core/Router.php';
+require_once __DIR__ . '/../app/Core/RequestGuard.php';
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
@@ -76,6 +103,12 @@ if ($uri === '' || $uri === false) {
 // 🔒 ROUTE RESOLVE
 // ==============================
 $route = Router::route($uri);
+if (RequestGuard::requiresPost($route) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+  http_response_code(405);
+  header('Allow: POST');
+  header('Content-Type: application/json; charset=utf-8');
+  exit(json_encode(['success' => false, 'message' => 'Metode permintaan tidak diizinkan.']));
+}
 
 // ==============================
 // 🔒 PROTEKSI LOGIN GLOBAL
@@ -123,8 +156,9 @@ if (!in_array($uri, $publicRoutes)) {
 
 // One CSRF gate for every authenticated state-changing endpoint. Controllers
 // may retain their local checks as defence in depth.
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !in_array($uri, ['/login/proses', '/register/proses'], true)) {
-  $sent = (string)($_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_POST['_csrf'] ?? '');
+if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'HEAD', 'OPTIONS'], true)) {
+  $sent = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_POST['_csrf'] ?? '';
+  if (!is_string($sent)) $sent = '';
   if (empty($_SESSION['csrf_token']) || !hash_equals((string)$_SESSION['csrf_token'], $sent)) {
     http_response_code(403);
     header('Content-Type: application/json; charset=utf-8');

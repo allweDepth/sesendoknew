@@ -11,6 +11,10 @@ class ResetTabelController extends Controller
       header('Location: ' . app_url('/'));
       exit;
     }
+    if (!in_array($_SESSION['user']['type_user'] ?? '', ['super_admin', 'admin_wilayah'], true)) {
+      http_response_code(403);
+      exit('Akses ditolak.');
+    }
   }
 
   /*

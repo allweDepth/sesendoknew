@@ -83,10 +83,8 @@ class DynamicSanitizer
     ];
 
     if (!class_exists(\DOMDocument::class)) {
-      $tags = '<'.implode('><', $allowedTags).'>';
-      $clean = strip_tags($html, $tags);
-      $clean = preg_replace('/\s+on[a-z]+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/iu', '', $clean);
-      return preg_replace('/(href|src)\s*=\s*(["\'])\s*(?:javascript|vbscript):.*?\2/iu', '$1="#"', $clean);
+      // Fail closed when the structural HTML parser is unavailable.
+      return htmlspecialchars($html, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
     $document = new \DOMDocument('1.0', 'UTF-8');

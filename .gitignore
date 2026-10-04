@@ -1,0 +1,6 @@
+
+# Credentials and private runtime data
+/config/database.local.php
+/.env
+/.env.*
+/storage/logs/

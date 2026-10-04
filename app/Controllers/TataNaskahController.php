@@ -343,6 +343,14 @@ class TataNaskahController extends Controller
     }
 
     $file = $_FILES['signature'];
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK
+        || !is_uploaded_file($file['tmp_name'] ?? '')
+        || filesize($file['tmp_name']) > 2 * 1024 * 1024
+        || (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']) !== 'image/png'
+        || !getimagesize($file['tmp_name'])) {
+      echo JsonResponse::error('Tanda tangan harus gambar PNG valid maksimal 2 MB.', 422);
+      return;
+    }
     $ext  = pathinfo($file['name'], PATHINFO_EXTENSION);
 
     if (!in_array(strtolower($ext), ['png'])) {
@@ -354,7 +362,10 @@ class TataNaskahController extends Controller
 
     $path = __DIR__ . "/../../public/uploads/signature/" . $filename;
 
-    move_uploaded_file($file['tmp_name'], $path);
+    if (!move_uploaded_file($file['tmp_name'], $path)) {
+      echo JsonResponse::error('Tanda tangan belum dapat disimpan.', 500);
+      return;
+    }
 
     DB::getInstance()->update(
       "user_sesendok_biila",

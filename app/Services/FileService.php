@@ -1,51 +1,50 @@
 <?php
-// FILE: sesendoknew/app/Services/FileService.php
 
 class FileService
 {
-  // ================= UPLOAD =================
+  private const EXTENSIONS = [
+    'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp',
+    'application/pdf' => 'pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
+  ];
+
+  private static function directory(string $module): string
+  {
+    if (!preg_match('/^[a-zA-Z0-9_-]+$/D', $module)) throw new InvalidArgumentException('Modul file tidak valid.');
+    return __DIR__ . '/../../public/uploads/' . $module . '/';
+  }
+
   public static function upload($file, $module)
   {
-    // cek file valid
-    if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
-      return null; // tidak ada file
+    $target = self::directory($module);
+    if (!$file || ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) return null;
+    if (($file['error'] ?? null) !== UPLOAD_ERR_OK || !is_uploaded_file($file['tmp_name'] ?? '')) {
+      throw new InvalidArgumentException('Unggahan tidak valid.');
     }
-
-    // sanitize nama file
-    $originalName = basename($file['name']); // nama asli
-    $originalName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalName); // bersihkan karakter
-
-    // generate nama unik
-    $fileName = uniqid() . '_' . $originalName; // nama final
-
-    // path berdasarkan module
-    $basePath = __DIR__ . '/../../public/uploads/'; // root upload
-    $targetPath = $basePath . $module . '/'; // folder module
-
-    // buat folder jika belum ada
-    if (!is_dir($targetPath)) {
-      mkdir($targetPath, 0777, true); // recursive
-    }
-
-    // simpan file
-    move_uploaded_file($file['tmp_name'], $targetPath . $fileName); // upload
-
-    return $fileName; // return nama file
+    if (filesize($file['tmp_name']) > 15 * 1024 * 1024) throw new InvalidArgumentException('File maksimal 15 MB.');
+    $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
+    $ext = self::EXTENSIONS[$mime] ?? null;
+    if (!$ext) throw new InvalidArgumentException('Format file tidak diizinkan.');
+    if (str_starts_with($mime, 'image/') && !getimagesize($file['tmp_name'])) throw new InvalidArgumentException('Gambar tidak valid.');
+    if (!is_dir($target) && !mkdir($target, 0750, true)) throw new RuntimeException('Penyimpanan belum tersedia.');
+    $name = bin2hex(random_bytes(16)) . '.' . $ext;
+    if (!move_uploaded_file($file['tmp_name'], $target . $name)) throw new RuntimeException('File belum dapat disimpan.');
+    return $name;
   }
 
-  // ================= DELETE =================
   public static function delete($fileName, $module)
   {
-    $path = __DIR__ . '/../../public/uploads/' . $module . '/' . $fileName; // path file
-
-    if (file_exists($path)) { // cek file ada
-      unlink($path); // hapus file
-    }
+    $root = realpath(self::directory($module));
+    if (!is_string($fileName) || $fileName !== basename($fileName)) throw new InvalidArgumentException('File tidak valid.');
+    $path = $root ? realpath($root . '/' . $fileName) : false;
+    if ($path && str_starts_with($path, $root . DIRECTORY_SEPARATOR) && is_file($path)) unlink($path);
   }
 
-  // ================= PATH GETTER =================
   public static function getPath($fileName, $module)
   {
-    return '/uploads/' . $module . '/' . $fileName; // untuk akses frontend
+    self::directory($module);
+    if (!is_string($fileName) || $fileName !== basename($fileName)) throw new InvalidArgumentException('File tidak valid.');
+    return '/uploads/' . rawurlencode($module) . '/' . rawurlencode($fileName);
   }
 }

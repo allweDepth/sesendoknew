@@ -1,14 +1,20 @@
 Options -Indexes
+ServerSignature Off
+<IfModule mod_headers.c>
+    Header always unset X-Powered-By
+</IfModule>
 
 DirectoryIndex public/index.php
 
 RewriteEngine On
 
 # Tolak akses langsung ke folder internal/sensitif
-RewriteRule ^(?:\.git|\.vscode|app|bin|config|database|docs|node_modules|routes|scripts|storage|tests|tmp|vendor)(?:/|$) - [F,L,NC]
+RewriteRule ^(?:\.git|\.vscode|app|bin|config|database|docs|node_modules|routes|scripts|storage|tests|tmp|vendor|output|outputs|resources)(?:/|$) - [F,L,NC]
+RewriteRule ^(?!public/index\.php$).*\.(?:php|phtml|phar)(?:/|$) - [F,L,NC]
+RewriteRule ^(?:public/)?uploads/.*\.(?:php[0-9]?|phtml|phar|cgi|pl|sh|html?|svg|shtml)(?:\.|/|$) - [F,L,NC]
 
 # Tolak file sensitif
-<FilesMatch "(^\.|\.env|\.sql$|\.log$|\.ini$|composer\.(json|lock)$|package(-lock)?\.json$)">
+<FilesMatch "(^\.|\.env|\.(sql|log|ini|bak|backup|sh|md)$|^debug\.txt$|composer\.(json|lock)$|package(-lock)?\.json$)">
     Require all denied
 </FilesMatch>
 

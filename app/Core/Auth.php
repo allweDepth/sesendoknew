@@ -15,24 +15,23 @@ class Auth
             [$usernameInput, $usernameInput]
         );
 
-        if (!$user) return false;
-        if ((int)($user['disable'] ?? 0) === 1) {
-            $_SESSION['login_error'] = 'Akun dinonaktifkan. Hubungi pengelola OPD.';
-            return false;
-        }
-        if (!password_verify($passwordInput, $user['password'])) return false;
+        // A dummy hash also verifies unknown accounts, limiting timing disclosure.
+        $hash = $user['password'] ?? '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi';
+        $valid = password_verify($passwordInput, $hash);
+        if (!$user || !$valid || (int)($user['disable'] ?? 0) === 1
+            || (int)($user['disable_login'] ?? 0) === 1) return false;
 
         if (!in_array($user['type_user'], self::allowedRoles())) {
-            $_SESSION['login_error'] =
-                "Role Anda ({$user['type_user']}) belum dikenali sistem.";
             return false;
         }
 
         // 🔐 ANTI SESSION FIXATION
         session_regenerate_id(true);
 
+        unset($user['password']);
         $_SESSION['user'] = $user;
         $_SESSION['last_activity'] = time();
+        $_SESSION['login_at'] = time();
 
         return true;
     }
@@ -73,6 +72,7 @@ class Auth
     public static function scopedUser(): array
     {
         $user = $_SESSION['user'] ?? [];
+        unset($user['password']);
         if (in_array($user['type_user'] ?? '', ['super_admin','admin_wilayah','tapd'], true)) {
             $user['registered_kd_opd'] = $user['kd_opd'] ?? null;
             $user['scope_selected'] = !empty($_SESSION['scope_kd_opd']);
@@ -92,6 +92,13 @@ class Auth
             return false;
         }
 
+        unset($_SESSION['user']['password']);
+        $_SESSION['login_at'] ??= time();
+        if (time() - (int)$_SESSION['login_at'] > 8 * 3600) {
+            self::logout();
+            return false;
+        }
+
         $timeout = 1800; // 30 menit
 
         if (
@@ -100,6 +107,24 @@ class Auth
         ) {
             self::logout();
             return false;
+        }
+
+        // Recheck access once per HTTP request so revoked accounts and changed
+        // roles do not retain authority through an old session.
+        static $checked = [];
+        $id = (int)($_SESSION['user']['id'] ?? 0);
+        if (!isset($checked[$id])) {
+            $active = DB::getInstance()->query(
+                'SELECT id,type_user,disable,disable_login,kd_wilayah,kd_opd FROM user_sesendok_biila WHERE id=?',
+                [$id]
+            )->fetch();
+            if (!$active || !empty($active['disable']) || !empty($active['disable_login'])
+                || !in_array($active['type_user'], self::allowedRoles(), true)) {
+                self::logout();
+                return false;
+            }
+            $_SESSION['user'] = array_replace($_SESSION['user'], $active);
+            $checked[$id] = true;
         }
 
         // update activity

@@ -226,7 +226,7 @@ PERUBAHAN:
       if ($sqlState === '42S02' || $driverCode === 1146) {
         return "Gagal {$operation}{$target}: tabel database yang dibutuhkan belum tersedia.";
       }
-      return "Gagal {$operation}{$target}: database menolak operasi (SQLSTATE {$sqlState}).";
+      return "Gagal {$operation}{$target}: data belum dapat diproses. Hubungi administrator.";
     }
 
     $message = trim($e->getMessage());

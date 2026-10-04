@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/DatabaseError.php';
+
 class DB
 {
   // ======================================================
@@ -131,6 +133,7 @@ BUILD DSN BERDASARKAN SOCKET / HOST
           // agar prepared statement native mysql
           // ==================================================
           PDO::ATTR_EMULATE_PREPARES => false,
+          (class_exists(\Pdo\Mysql::class) ? \Pdo\Mysql::ATTR_LOCAL_INFILE : PDO::MYSQL_ATTR_LOCAL_INFILE) => false,
 
         ]
       );
@@ -139,7 +142,7 @@ BUILD DSN BERDASARKAN SOCKET / HOST
       // ==================================================
       // JIKA KONEKSI GAGAL
       // ==================================================
-      die("Database Error: " . $e->getMessage());
+      throw DatabaseError::from($e, true);
     }
   }
 
@@ -225,13 +228,7 @@ Perbaikan:
       return $stmt;
     } catch (PDOException $e) {
 
-      /* =========================================
-        THROW ERROR DENGAN SQL CONTEXT
-        ========================================= */
-
-      throw new Exception(
-        "SQL Error: " . $e->getMessage()
-      );
+      throw DatabaseError::from($e);
     }
   }
 
@@ -423,7 +420,7 @@ Jika transaction sudah aktif → tidak membuat baru
     if (!$this->pdo->inTransaction()) {
 
       // mulai transaction
-      $this->pdo->beginTransaction();
+      $this->databaseOperation(fn() => $this->pdo->beginTransaction());
     }
   }
 
@@ -436,7 +433,7 @@ Hanya commit jika transaction aktif
   {
     if ($this->pdo->inTransaction()) {
 
-      $this->pdo->commit();
+      $this->databaseOperation(fn() => $this->pdo->commit());
     }
   }
 
@@ -449,7 +446,7 @@ Mencegah rollback error jika tidak ada transaction
   {
     if ($this->pdo->inTransaction()) {
 
-      $this->pdo->rollBack();
+      $this->databaseOperation(fn() => $this->pdo->rollBack());
     }
   }
 
@@ -477,7 +474,7 @@ CEK STATUS TRANSACTION
       // ==================================================
       // EKSEKUSI SATU PER SATU
       // ==================================================
-      $this->pdo->exec($query);
+      $this->databaseOperation(fn() => $this->pdo->exec($query));
     }
 
     return true;
@@ -613,7 +610,16 @@ CEK STATUS TRANSACTION
 
     if (!preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
 
-      throw new Exception("Invalid table name: {$table}");
+      throw new Exception('Permintaan data tidak valid.');
+    }
+  }
+
+  private function databaseOperation(callable $operation)
+  {
+    try {
+      return $operation();
+    } catch (PDOException $error) {
+      throw DatabaseError::from($error);
     }
   }
 }

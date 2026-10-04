@@ -216,7 +216,7 @@ $(document).ready(function () {
 			cancelText: "Batal",
 			onApprove: () => {
 				return new Promise((resolve) => {
-					window.location.href = window.appUrl ? window.appUrl("/logout") : "/logout";
+					e.currentTarget.closest("form").submit();
 					resolve();
 				});
 			},

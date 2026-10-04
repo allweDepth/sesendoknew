@@ -1,5 +1,8 @@
 RewriteEngine On
 Options -Indexes
+ServerSignature Off
+RewriteRule ^(?!index\.php$).*\.(?:php|phtml|phar)(?:/|$) - [F,L,NC]
+RewriteRule ^uploads/.*\.(?:php[0-9]?|phtml|phar|cgi|pl|sh|html?|svg|shtml)(?:\.|/|$) - [F,L,NC]
 <FilesMatch "(^\.|\.env|\.sql|\.log|\.ini|composer\.(json|lock)$)">
   Require all denied
 </FilesMatch>

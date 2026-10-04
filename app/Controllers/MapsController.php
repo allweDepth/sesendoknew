@@ -68,7 +68,7 @@ class MapsController extends Controller
                 'can_manage' => $this->canManageLayers($user),
             ]);
         } catch (Throwable $e) {
-            echo JsonResponse::error($e->getMessage(), 400);
+            echo JsonResponse::error($e->getMessage(), $e instanceof DatabaseError ? $e->httpStatus : 400);
         }
     }
 
@@ -111,7 +111,7 @@ class MapsController extends Controller
             $db->update('maps_layers', ['style_json' => json_encode($validated, JSON_THROW_ON_ERROR)], 'WHERE id=?', [$id]);
             echo JsonResponse::success('Simbologi layer berhasil disimpan.');
         } catch (Throwable $e) {
-            echo JsonResponse::error($e->getMessage(), 400);
+            echo JsonResponse::error($e->getMessage(), $e instanceof DatabaseError ? $e->httpStatus : 400);
         }
     }
 
@@ -180,7 +180,7 @@ class MapsController extends Controller
                 }
                 rmdir($directory);
             }
-            echo JsonResponse::error($e->getMessage(), 400);
+            echo JsonResponse::error($e->getMessage(), $e instanceof DatabaseError ? $e->httpStatus : 400);
         }
     }
 
@@ -273,7 +273,7 @@ class MapsController extends Controller
                 foreach (glob($directory . '/*') ?: [] as $file) if (is_file($file)) unlink($file);
                 rmdir($directory);
             }
-            echo JsonResponse::error($e->getMessage(), 400);
+            echo JsonResponse::error($e->getMessage(), $e instanceof DatabaseError ? $e->httpStatus : 400);
         }
     }
 
@@ -311,7 +311,7 @@ class MapsController extends Controller
             readfile($temporary);
         } catch (Throwable $e) {
             $this->beginJson();
-            echo JsonResponse::error($e->getMessage(), 400);
+            echo JsonResponse::error($e->getMessage(), $e instanceof DatabaseError ? $e->httpStatus : 400);
         } finally {
             if ($temporary && is_file($temporary)) unlink($temporary);
         }
@@ -375,7 +375,7 @@ class MapsController extends Controller
             $db->update('maps_layers', ['is_deleted' => 1], 'WHERE id=?', [$id]);
             echo JsonResponse::success('Layer berhasil dihapus dari peta.');
         } catch (Throwable $e) {
-            echo JsonResponse::error($e->getMessage(), 400);
+            echo JsonResponse::error($e->getMessage(), $e instanceof DatabaseError ? $e->httpStatus : 400);
         }
     }
 

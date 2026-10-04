@@ -49,7 +49,7 @@ class ApiController
     // CEK LOGIN
     // ==============================
     if (!in_array($tbl, $publicModules)) {
-      if (!isset($_SESSION['user'])) {
+      if (!Auth::check()) {
 
         http_response_code(401);
 
@@ -61,6 +61,20 @@ class ApiController
 
         return;
       }
+    }
+
+    // Public dropdowns are the only anonymous API operations.
+    if (in_array($tbl, $publicModules, true) && $action !== 'get') {
+      http_response_code(403);
+      echo json_encode(['success' => false, 'message' => 'Operasi tidak diizinkan.']);
+      return;
+    }
+    if (in_array($action, ['add', 'add_json', 'edit', 'edit_json', 'delete', 'import'], true)
+        && ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+      http_response_code(405);
+      header('Allow: POST');
+      echo json_encode(['success' => false, 'message' => 'Metode permintaan tidak diizinkan.']);
+      return;
     }
 
     // ==============================

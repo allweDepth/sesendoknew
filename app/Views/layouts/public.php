@@ -206,8 +206,8 @@
                 prompt: 'Password wajib diisi'
               },
               {
-                type: 'minLength[6]',
-                prompt: 'Minimal 6 karakter'
+                type: 'minLength[12]',
+                prompt: 'Minimal 12 karakter'
               }
             ]
           },

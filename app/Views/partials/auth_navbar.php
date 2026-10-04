@@ -35,7 +35,7 @@
                         <a class="item" id="userMenuMessages" href="/wallchat" data-spa="server" data-title="Wallchat"><i class="circular comments outline icon"></i>Pesan</a>
                         <a class="item" id="darkToggle" role="button" tabindex="0"><i class="circular moon icon"></i><span>Mode Gelap</span></a>
                         <a class="item" id="userMenuProfile" href="/profil" data-spa="server" data-title="Profil &amp; Pengaturan"><i class="circular qrcode icon"></i>Profil &amp; Pengaturan</a>
-                        <a class="item" href="/logout" id="btnLogout"><i class="circular sign out alternate icon"></i>Keluar</a>
+                        <form method="POST" action="<?= app_url('/logout') ?>" style="margin:0"><input type="hidden" name="_csrf" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>"><button type="submit" class="item" id="btnLogout" style="border:0;background:transparent;width:100%;text-align:left"><i class="circular sign out alternate icon"></i>Keluar</button></form>
                       
                     </div>
                 </div>
