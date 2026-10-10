@@ -80,7 +80,7 @@ class TataNaskahController extends Controller
       $pdfService = new PdfService(); // init service
 
       // generate PDF (string binary)
-      $pdfContent = $pdfService->generate($tbl, (int)$id); // cast id ke int
+      $pdfContent = $pdfService->generate($tbl, (int)$id, isset($_GET['bentuk_lampiran']) ? (string)$_GET['bentuk_lampiran'] : null);
 
       // set header browser → PDF
       header('Content-Type: application/pdf'); // tipe file PDF

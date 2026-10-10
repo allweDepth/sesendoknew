@@ -14,15 +14,18 @@ class PdfService
     $this->db = DB::getInstance(); // koneksi DB
   }
 
-  public function generate(string $tbl, int $id): string
+  public function generate(string $tbl, int $id, ?string $attachmentFormat = null): string
   {
+    if ($attachmentFormat !== null && !in_array($attachmentFormat, ['tabel', 'list'], true)) {
+      throw new InvalidArgumentException('Bentuk lampiran tidak valid');
+    }
     // =====================================================
     // ROUTING PER TABEL
     // =====================================================
     switch ($tbl) {
 
       case 'trx_naskah_dinas':
-        return $this->generateTataNaskah($id); // khusus
+        return $this->generateTataNaskah($id, $attachmentFormat); // khusus
 
       default:
         return $this->generateGeneric($tbl, $id); // default
@@ -64,7 +67,7 @@ class PdfService
   // =====================================================
   // KHUSUS TATA NASKAH (TEMPLATE JSON)
   // =====================================================
-  private function generateTataNaskah(int $id): string
+  private function generateTataNaskah(int $id, ?string $attachmentFormat = null): string
   {
     // =====================================================
     // ambil data utama
@@ -99,6 +102,13 @@ class PdfService
 
     $strukturData = json_decode($struktur['struktur_json'], true); // isi
     $schemaData   = json_decode($jenis['schema_json'], true); // template
+    if (!is_array($strukturData)) throw new RuntimeException('Struktur naskah tidak valid');
+    if ($attachmentFormat !== null) $strukturData['bentuk_lampiran'] = $attachmentFormat === 'tabel' ? 1 : 0;
+    if (isset($schemaData['sections'])) $schemaData = $schemaData['sections'];
+    if (empty($strukturData['tempat_ditetapkan'])) {
+      $wilayah=$this->db->query('SELECT uraian FROM wilayah_neo WHERE kode=? AND is_deleted=0 LIMIT 1',[$naskah['kd_wilayah']])->fetch();
+      $strukturData['tempat_ditetapkan']=$wilayah['uraian']??'';
+    }
     if(!empty($strukturData['penandatangan']) && ctype_digit((string)$strukturData['penandatangan'])){
       $pegawai=$this->db->query('SELECT nama,gelar_depan,gelar,nip,jabatan,golongan,ruang FROM db_asn_pemda_neo WHERE id=?',[(int)$strukturData['penandatangan']])->fetch();
       if($pegawai){
