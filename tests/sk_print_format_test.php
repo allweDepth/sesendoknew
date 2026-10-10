@@ -15,7 +15,7 @@ $header=['jenis_naskah'=>'Naskah Dinas Penetapan','nomor'=>'SK/USER/17','tanggal
 $data=['nama_penandatangan'=>'Pejabat Pengguna','jabatan_penandatangan'=>'Kepala Unit Pengguna','tempat_ditetapkan'=>'Kota Pengguna',
   'nama_ditugaskan'=>[['nama'=>'Nama & Pengguna','nip'=>'001234567890','pangkat'=>'Golongan pengguna','jabatan'=>'Jabatan pengguna','jabatan_sk'=>'Tugas pengguna']]];
 $method=new ReflectionMethod(PdfTemplateService::class,'renderAssignmentAttachment');
-foreach(['tabel'=>true,'list'=>false] as $format=>$table){
+foreach([1=>true,0=>false] as $format=>$table){
   $pdf=new SkHtmlProbe();$pdf->setPrintHeader(false);$pdf->setPrintFooter(false);$pdf->AddPage();
   $method->invoke($renderer,$pdf,$header,array_merge($data,['bentuk_lampiran'=>$format]));
   verify(str_contains($pdf->html,'<thead>')===$table,"Format $format diterapkan");
@@ -28,6 +28,3 @@ $rows=$normalize->invoke($renderer,[['URAIAN'=>'Dasar dari pengguna','type'=>'al
 verify($rows[0]['text']==='Dasar dari pengguna'&&$rows[0]['type']==='alpha'&&$rows[0]['align']==='right'&&$rows[0]['style']===['bold'],'Metadata paragraf dan isi lama dipertahankan');
 $scalar=$normalize->invoke($renderer,'Diktum pengguna','paragraph');
 verify($scalar[0]['type']==='paragraph'&&$scalar[0]['text']==='Diktum pengguna','Diktum teks tidak mendapat nomor tambahan');
-$service=(new ReflectionClass(PdfService::class))->newInstanceWithoutConstructor();
-try{$service->generate('trx_naskah_dinas',1,'invalid');throw new RuntimeException('Format invalid diterima');}
-catch(InvalidArgumentException $e){echo "PASS: Format cetak tidak valid ditolak sebelum akses database\n";}

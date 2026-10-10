@@ -668,16 +668,6 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		// OPEN PDF
 		// =====================================================
 		const path = `/tata_naskah/generate_pdf?tbl=${encodeURIComponent(tbl)}&id=${encodeURIComponent(id)}`;
-		if (tbl === 'trx_naskah_dinas') {
-			const modal = $('<div class="ui small modal"><div class="header">Cetak Naskah / Surat Keputusan</div><div class="content"><p>Pilih bentuk lampiran nama yang ditugaskan.</p><div class="ui two buttons"><button type="button" class="ui primary button" data-format="tabel">Pakai tabel</button><button type="button" class="ui button" data-format="list">Pakai daftar (list)</button></div></div><div class="actions"><button type="button" class="ui cancel button">Batal</button></div></div>');
-			modal.find('[data-format]').on('click', function () {
-				const url = path + '&bentuk_lampiran=' + $(this).attr('data-format');
-				window.open(window.appUrl ? window.appUrl(url) : url, '_blank');
-				modal.modal('hide');
-			});
-			modal.appendTo(document.body).modal({ onHidden: function () { modal.modal('destroy'); modal.remove(); } }).modal('show');
-			return;
-		}
 		window.open(window.appUrl ? window.appUrl(path) : path, "_blank");
 	}
 	openAkta(id) {

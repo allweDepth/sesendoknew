@@ -520,6 +520,12 @@ class TataNaskahModule {
 
 			const input = container.find(`[name="${key}"]`);
 			if (!input.length) return;
+			if (input.attr("type") === "checkbox") {
+				const checked = ["1", "true", "yes", "on", "tabel", "table"].includes(String(val).trim().toLowerCase());
+				input.prop("checked", checked);
+				input.closest(".ui.checkbox").checkbox(checked ? "set checked" : "set unchecked");
+				return;
+			}
 
 			input.val(val);
 		});
