@@ -16,11 +16,9 @@ unset($_SESSION['login_error']);
     <form class="ui form<?= $loginError ? ' error' : '' ?>" id="formLogin" method="POST" action="/login/proses">
       <input type="hidden" name="_csrf" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
-      <?php if ($loginError): ?>
-        <div class="ui error message" role="alert">
-          <?= htmlspecialchars($loginError, ENT_QUOTES, 'UTF-8') ?>
-        </div>
-      <?php endif; ?>
+      <div class="ui error message" role="alert">
+        <?= htmlspecialchars($loginError ?? '', ENT_QUOTES, 'UTF-8') ?>
+      </div>
 
       <div class="field">
         <label>Username</label>

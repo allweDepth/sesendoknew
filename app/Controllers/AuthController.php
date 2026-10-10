@@ -6,6 +6,17 @@ require_once __DIR__ . '/../Core/AuthRateLimiter.php';
 
 class AuthController extends Controller
 {
+    public function loginSession(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+            http_response_code(405);
+            header('Allow: GET');
+            return;
+        }
+        header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: no-store, private');
+        echo json_encode(['success' => true, 'csrf_token' => $_SESSION['csrf_token']]);
+    }
 
     public function login()
     {

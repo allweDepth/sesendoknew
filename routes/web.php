@@ -53,6 +53,7 @@ return [
     |--------------------------------------------------------------------------
     */
   '/login/proses'      => ['AuthController', 'login'],
+  '/login/session'     => ['AuthController', 'loginSession'],
   '/logout'            => ['AuthController', 'logout'],
   '/session/status'    => ['AuthController', 'status'],
   '/register/proses'   => ['AuthController', 'register'],

@@ -24,6 +24,7 @@
   </main><footer class="public-footer"><div class="ui container public-footer-grid"><div><h3>seSendok Kabupaten Pasangkayu</h3><p>Satu ekosistem data perencanaan, penganggaran, pelaksanaan, dan akuntabilitas kinerja daerah.</p><small>Informasi pada portal dikelola oleh perangkat daerah terkait.</small></div><div><h3>Navigasi</h3><a href="<?= app_url('/berita') ?>">Berita</a><a href="<?= app_url('/datateknis') ?>">Data Teknis</a><a href="<?= app_url('/pelayanan') ?>">Pelayanan</a></div><div><h3>Akses cepat</h3><a href="#" id="footerLogin">Login aplikasi</a><a href="<?= app_url('/organisasi') ?>">Struktur Organisasi</a></div></div></footer>
 
   <?php require __DIR__ . '/../partials/auth_modal.php'; ?>
+  <script src="<?= app_url('/assets/js/auth-session.js') ?>"></script>
 
   <script>
     $(document).ready(function() {

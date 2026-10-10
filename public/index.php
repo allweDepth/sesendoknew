@@ -119,6 +119,7 @@ $publicRoutes = [
   '/',                 // halaman login
   '/login',            // kalau ada
   '/login/proses',
+  '/login/session',
   '/logout',
   '/register',
   '/register/proses',
@@ -160,6 +161,14 @@ if (!in_array($_SERVER['REQUEST_METHOD'], ['GET', 'HEAD', 'OPTIONS'], true)) {
   $sent = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_POST['_csrf'] ?? '';
   if (!is_string($sent)) $sent = '';
   if (empty($_SESSION['csrf_token']) || !hash_equals((string)$_SESSION['csrf_token'], $sent)) {
+    $expectsJson = strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'xmlhttprequest'
+      || str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
+    if ($uri === '/login/proses' && !$expectsJson) {
+      // Reject the stale submission; never authenticate or replay its password.
+      $_SESSION['login_error'] = 'Sesi form login sudah berubah. Silakan masukkan kembali akun Anda.';
+      header('Location: ' . app_url('/'), true, 303);
+      exit;
+    }
     http_response_code(403);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['success' => false, 'message' => 'Sesi keamanan tidak valid. Muat ulang halaman lalu coba lagi.']);
