@@ -1,0 +1,7 @@
+{
+  "git.enabled": true,
+  "git.autofetch": true,
+  "git.autofetchPeriod": 180,
+  "git.autorefresh": true,
+  "git.fetchOnPull": true
+}
