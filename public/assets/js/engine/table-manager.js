@@ -386,6 +386,10 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 					break;
 				case "trx_naskah_dinas":
 					btnExtra += `
+        <button type="button" class="ui teal button btn-copy-row"
+            data-id="${id}" aria-label="Salin dokumen" data-tooltip="Salin dokumen" data-position="top center">
+            <i class="copy icon"></i>
+        </button>
         <button type="button" class="ui teal button"
     data-action="export_pdf"
     data-tbl="${this.state.tbl}">

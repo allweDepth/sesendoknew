@@ -10,6 +10,7 @@ class TataNaskahModule {
 	constructor() {
 		this.state = window.app.state; // ambil global state
 		this.currentId = null; // // menyimpan id saat edit
+		this.isCopy = false;
 		this.state.setTable("trx_naskah_dinas"); // set tabel agar TableManager tahu tabel yang dipakai
 
 		this.mainContainer = '[name="tabel_trx_naskah_dinas"]';
@@ -125,6 +126,7 @@ class TataNaskahModule {
 		$(document).off("click", ".kelompok-card");
 		$(document).off("click", ".btn-open-naskah");
 		$(document).off("click", ".btn-edit-row");
+		$(document).off("click.tataNaskahCopy", ".btn-copy-row");
 		$(document).off("input.naskahSearch", "#jenisNaskahSearch, #searchTataNaskah");
 		$(document).on("input.naskahSearch", "#jenisNaskahSearch", e=>{const q=String(e.target.value||"").toLowerCase();$("#jenis-list .item").each(function(){$(this).toggle($(this).text().toLowerCase().includes(q));});});
 		$(document).on("input.naskahSearch", "#searchTataNaskah", e=>{const q=String(e.target.value||"").toLowerCase();$('[name="tabel_trx_naskah_dinas"] tr[data-id]').each(function(){$(this).toggle($(this).text().toLowerCase().includes(q));});});
@@ -142,6 +144,19 @@ class TataNaskahModule {
 			if (!id) return;
 
 			this.loadSchema(null, id);
+		});
+
+		$(document).on("click.tataNaskahCopy", ".btn-copy-row", (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			const row = $(e.currentTarget).closest("tr");
+			const id = $(e.currentTarget).data("id") || row.data("id");
+			if (!id) {
+				Toast.error("Dokumen yang akan disalin tidak ditemukan.");
+				return;
+			}
+
+			this.loadSchema(null, id, { copy: true });
 		});
 
 		// =====================================
@@ -251,6 +266,7 @@ class TataNaskahModule {
 			if (payload[key] !== undefined && payload[key] !== null && payload[key] !== "") data[key] = payload[key];
 		});
 
+		const savingCopy = this.isCopy;
 		this.isSubmitting = true;
 		const submitButton = $("#mainModal .btnSubmit");
 		submitButton.addClass("loading disabled");
@@ -260,8 +276,12 @@ class TataNaskahModule {
 			method: "POST",
 			data,
 			success: () => {
-				Toast.success(editing ? "Naskah berhasil diperbarui." : "Naskah berhasil disimpan.");
+				Toast.success(editing ? "Naskah berhasil diperbarui." : savingCopy ? "Salinan naskah berhasil disimpan." : "Naskah berhasil disimpan.");
 				$(document).trigger(`form:success.${this.state.tbl}.table`);
+				if (savingCopy) {
+					this.isCopy = false;
+					$("#mainModal").modal("hide");
+				}
 			},
 			complete: () => {
 				this.isSubmitting = false;
@@ -350,11 +370,13 @@ class TataNaskahModule {
 	/**
 	 * LOAD SCHEMA FORM
 	 */
-	loadSchema(jenisId, id = null) {
-		if (id) {
+	loadSchema(jenisId, id = null, options = {}) {
+		const copy = options.copy === true;
+		this.isCopy = copy;
+		if (id && !copy) {
 			this.currentId = id; // // SET LANGSUNG JIKA EDIT
 		} else {
-			this.currentId = null; // // hanya reset saat add
+			this.currentId = null;
 		}
 		// =====================================
 		// EDIT MODE
@@ -439,6 +461,7 @@ class TataNaskahModule {
 	}
 	renderForm(schema, data = {}, res = {}, jenisId = null, extra = {}) {
 		this.currentId = data?.id || null;
+		$("#content_modal").text(this.isCopy ? "Salin Dokumen Tata Naskah" : "Form Data");
 
 		this.formContainer.show("");
 
@@ -475,6 +498,16 @@ class TataNaskahModule {
 				...data,
 				...json,
 			};
+		}
+
+		if (this.isCopy) {
+			data = {
+				...data,
+				id: null,
+				nomor: "",
+				tanggal_surat: "",
+			};
+			this.currentId = null;
 		}
 
 		window.documentBuilder.schema = schema;
@@ -532,7 +565,7 @@ class TataNaskahModule {
 
 		container.find("select").trigger("change");
 		container.find("input, textarea").trigger("input");
-		this.enhanceForm(this.currentId!==null);
+		this.enhanceForm(this.currentId!==null, this.isCopy);
 
 		if (jenisId) {
 			$("#form_modal").find('input[name="jenis_id"]').remove();
@@ -611,7 +644,7 @@ class TataNaskahModule {
 		// =====================================
 		if (!Object.keys(fields).length) {
 			console.warn("VALIDATION SKIP: tidak ada field cocok di DOM");
-			this.enhanceForm(this.currentId!==null);
+			this.enhanceForm(this.currentId!==null, this.isCopy);
 			return;
 		}
 
@@ -650,9 +683,9 @@ class TataNaskahModule {
 		});
 
 	}
-	enhanceForm(isEdit=false) {
+	enhanceForm(isEdit=false,isCopy=false) {
 		const form=$("#form_modal");if(!form.length)return;
-		form.find(".naskah-form-guide").remove();form.prepend(`<div class="ui info message naskah-form-guide"><div class="header">${isEdit?'Edit':'Buat'} Naskah Dinas</div><p>Field bertanda wajib harus dilengkapi. Kemajuan pengisian: <b data-naskah-progress>0%</b></p><div class="ui tiny indicating progress"><div class="bar"></div></div></div>`);
+		form.find(".naskah-form-guide").remove();form.prepend(`<div class="ui info message naskah-form-guide"><div class="header">${isCopy?'Salin':isEdit?'Edit':'Buat'} Naskah Dinas</div><p>${isCopy?'Isi nomor baru dan pilih tanggal surat melalui kalender. Isi dokumen lainnya sudah disalin.':'Field bertanda wajib harus dilengkapi.'} Kemajuan pengisian: <b data-naskah-progress>0%</b></p><div class="ui tiny indicating progress"><div class="bar"></div></div></div>`);
 		const update=()=>{const required=form.find('.required.field:visible').filter(function(){return $(this).find('input,textarea,select').length;});let filled=0;required.each(function(){const field=$(this).find('input[type!=hidden],textarea,select').first();if(String(field.val()||'').trim()!=='')filled++;});const percent=required.length?Math.round(filled/required.length*100):100;form.find('[data-naskah-progress]').text(`${percent}%`);form.find('.naskah-form-guide .progress').progress({percent});};
 		form.off('input.naskahProgress change.naskahProgress').on('input.naskahProgress change.naskahProgress','input,textarea,select',update);update();
 	}
@@ -686,6 +719,7 @@ class TataNaskahModule {
 		$(document).off("form:success");
 		$("#form_modal").off("submit.tataNaskah");
 		$("#mainModal .btnSubmit").off("click.tataNaskah");
+		$(document).off("click.tataNaskahCopy", ".btn-copy-row");
 
 		$(this.mainContainer).empty();
 	}
