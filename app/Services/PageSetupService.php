@@ -10,7 +10,7 @@ final class PageSetupService
         $user=$user??($_SESSION['user']??[]);
         $defaults=['paper'=>'A4','orientation'=>'AUTO','font'=>'helvetica','font_size'=>10.0,'paper_width'=>null,'paper_height'=>null,'margin_top'=>10.0,'margin_right'=>10.0,'margin_bottom'=>12.0,'margin_left'=>10.0,'margin_header'=>5.0,'margin_footer'=>8.0,
             'header_enabled'=>false,'footer_enabled'=>false,'header_height'=>12.0,'footer_height'=>10.0,
-            'signature_height'=>35.0,'signature_position'=>'kanan','signature_text'=>'',
+            'signature_height'=>35.0,'signature_position'=>'kanan','signature_alignment'=>'C','signature_text'=>'',
             'header'=>self::sectionDefaults('header'),'footer'=>self::sectionDefaults('footer')];
         try{
             $opd=(string)($user['kd_opd']??'0');$row=null;
@@ -34,7 +34,7 @@ final class PageSetupService
                 'header_enabled'=>(bool)($row['header_pdf_aktif']??false),'footer_enabled'=>(bool)($row['footer_pdf_aktif']??false),
                 'header_height'=>$number($row['tinggi_header_mm']??null,12,4,80),'footer_height'=>$number($row['tinggi_footer_mm']??null,10,4,80),
                 'header'=>self::decodeSection($row['header_pdf_json']??null,'header'),'footer'=>self::decodeSection($row['footer_pdf_json']??null,'footer'),
-                'signature_height'=>$number($row['tinggi_tanda_tangan_mm']??null,35,10,120),'signature_position'=>$row['posisi_tanda_tangan']??'kanan','signature_text'=>$row['teks_tanda_tangan']??''];
+                'signature_height'=>$number($row['tinggi_tanda_tangan_mm']??null,35,10,120),'signature_position'=>$row['posisi_tanda_tangan']??'kanan','signature_alignment'=>$row['alignment_tanda_tangan']??'C','signature_text'=>$row['teks_tanda_tangan']??''];
         }catch(Throwable){return$defaults;}
     }
 

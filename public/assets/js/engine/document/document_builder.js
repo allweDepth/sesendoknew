@@ -5,6 +5,7 @@ class DocumentBuilder {
 
 		this.schema = null; // schema dari backend
 		this.data = {}; // data tambahan dari backend
+		this.rowOptions = new Map();
 	}
 
 	// ======================================================
@@ -16,6 +17,7 @@ class DocumentBuilder {
 
 		this.container.off(".documentBuilder");
 		this.container.empty();
+		this.rowOptions.clear();
 
 		// =====================================
 		// FIX: VALIDASI ARRAY (KRITIS)
@@ -86,9 +88,7 @@ class DocumentBuilder {
 				}
 
 				// 🔥 TYPE
-				if (rowData.type) {
-					row.attr("data-type", rowData.type);
-				}
+				if (rowData.type) row.attr("data-type", rowData.type);
 
 				// 🔥 ALIGN
 				if (rowData.align) {
@@ -132,14 +132,14 @@ class DocumentBuilder {
 		// =========================
 		// TYPE
 		// =========================
-		let type = rowData.type || "paragraph";
+		let type = rowData.type || row.attr("data-type") || "paragraph";
 
 		row.find(`[data-type="${type}"]`).addClass("active");
 
 		// =========================
 		// ALIGN
 		// =========================
-		let align = rowData.align || "justify";
+		let align = rowData.align || row.attr("data-align") || "justify";
 
 		row.find(`[data-align="${align}"]`).addClass("active");
 
@@ -255,6 +255,10 @@ class DocumentBuilder {
 	renderEditableTable(field) {
 		let key = field.name;
 		let columns = field.columns || ["URAIAN"];
+		const rowOptions = field.row_options && typeof field.row_options === "object" && !Array.isArray(field.row_options)
+			? field.row_options
+			: {};
+		this.rowOptions.set(key, rowOptions);
 
 		let showAction = this.hasActionColumn(key);
 		// 🔥 ambil label jika ada, fallback ke name
@@ -308,11 +312,18 @@ class DocumentBuilder {
 			let section = $(this).data("section");
 			let table = self.container.find(`table[name="${section}"]`);
 			let cols = table.data("columns")?.length || 2;
+			let scrollContent = self.container.closest(".scrolling.content");
+			let scrollTop = scrollContent.scrollTop();
 
 			table.find("tbody").append(self.buildRow(section, cols));
 
 			let newRow = table.find("tbody tr:last");
 			newRow.find(".ui.checkbox").checkbox();
+
+			if (scrollContent.length) {
+				scrollContent.scrollTop(scrollTop);
+				window.requestAnimationFrame(() => scrollContent.scrollTop(scrollTop));
+			}
 		});
 
 		// ==============================
@@ -461,15 +472,12 @@ class DocumentBuilder {
 	insertToTable(target, data) {
 		let table = this.container.find(`table[name="${target}"]`);
 
-		// =====================================
-		// FIX: fallback cari semua table editable
-		// =====================================
 		if (!table.length) {
-			table = this.container.find(`table[data-type="editable_table"]`);
+			const message = `Tabel tujuan "${target}" tidak ditemukan.`;
+			console.error(message, { target, data });
+			window.Toast?.error?.(message);
+			return;
 		}
-
-		// HARD STOP kalau tetap tidak ada
-		if (!table.length) return;
 
 		let tbody = table.find("tbody");
 
@@ -479,20 +487,22 @@ class DocumentBuilder {
 		// =====================================
 		// FIX: pastikan id selalu ada
 		// =====================================
-		let id = data.nip ?? data.id ?? data._id; // FIX: HARUS FIX ID DARI DB
-		if (!id) return; // HARD STOP kalau tidak ada id
+		let id = data.nip ?? data.id ?? data._id;
+		if (id === undefined || id === null || id === "") {
+			const message = `Data untuk tabel "${target}" tidak memiliki ID.`;
+			console.error(message, { target, data });
+			window.Toast?.error?.(message);
+			return;
+		}
 
-		if (tbody.find(`tr[data-id="${id}"]`).length > 0) return;
+		if (tbody.find("tr").toArray().some((row) => $(row).attr("data-id") === String(id))) return;
 
 		let columns = table.data("columns") || []; // 🔥 ambil dari schema, bukan header
 
-		let row = `<tr data-id="${id || Date.now()}">`; // // FIX
+		let row = $("<tr>").attr("data-id", String(id));
 
 		columns.forEach((col) => {
 			let key = col.toLowerCase().replace(/\s+/g, "_"); // 🔥 normalisasi key dari schema
-			// =====================================
-			// FIX: fallback mapping
-			// =====================================
 			let value;
 
 			// FIX KHUSUS ASN
@@ -522,19 +532,20 @@ class DocumentBuilder {
 				value = data[key] ?? data[col] ?? data.nama ?? data.text ?? "";
 			}
 
-			row += `
-			<td contenteditable="true" data-key="${key}">
-				${value}
-			</td>`;
+			row.append(
+				$("<td>")
+					.attr({ contenteditable: "true", "data-key": key })
+					.text(value ?? ""),
+			);
 		});
 
-		row += `
-		<td class="collapsing">
-			<button type="button" class="ui mini red icon button btn-del-row">
-				<i class="trash icon"></i>
-			</button>
-		</td>
-		</tr>`;
+		row.append(`
+			<td class="collapsing">
+				<button type="button" class="ui mini red icon button btn-del-row">
+					<i class="trash icon"></i>
+				</button>
+			</td>
+		`);
 
 		tbody.append(row);
 	}
@@ -549,8 +560,48 @@ class DocumentBuilder {
 	buildRow(section, columns) {
 		let table = this.container.find(`table[name="${section}"]`);
 		let cols = table.data("columns") || [];
+		const options = this.rowOptions.get(section) || {};
+		const optionValues = (key, allowed) => Array.isArray(options[key])
+			? options[key].filter((value) => Object.prototype.hasOwnProperty.call(allowed, value))
+			: Object.keys(allowed);
+		const typeOptions = {
+			paragraph: '<i class="align left icon"></i>',
+			list: '<i class="list ul icon"></i>',
+			numbered: '<i class="list ol icon"></i>',
+			alpha: '<span aria-hidden="true">a.</span>',
+		};
+		const alignOptions = {
+			left: '<i class="align left icon"></i>',
+			center: '<i class="align center icon"></i>',
+			right: '<i class="align right icon"></i>',
+			justify: '<i class="align justify icon"></i>',
+		};
+		const styleOptions = {
+			bold: '<i class="bold icon"></i>',
+			italic: '<i class="italic icon"></i>',
+			underline: '<i class="underline icon"></i>',
+		};
+		const formatOptions = {
+			label: '<i class="tag icon"></i>',
+		};
+		const buttons = (values, allowed, attribute, title = {}) =>
+			values.map((value) => `
+				<button type="button" class="ui icon button" data-${attribute}="${value}" title="${title[value] || value}">
+					${allowed[value]}
+				</button>
+			`).join("");
+		const types = optionValues("types", typeOptions);
+		const alignments = optionValues("alignments", alignOptions);
+		const styles = optionValues("styles", styleOptions);
+		const formats = optionValues("formats", formatOptions);
+		const defaultType = types.includes(options.default_type)
+			? options.default_type
+			: (types.includes("paragraph") ? "paragraph" : (types[0] || "paragraph"));
+		const defaultAlign = alignments.includes(options.default_align)
+			? options.default_align
+			: (alignments.includes("justify") ? "justify" : (alignments[0] || "justify"));
 
-		let row = `<tr data-type="paragraph" data-align="justify">`; // properti default ekspor PDF
+		let row = `<tr data-type="${defaultType}" data-align="${defaultAlign}">`;
 		let cells = [];
 
 		cols.forEach((col, i) => {
@@ -561,60 +612,10 @@ class DocumentBuilder {
 			<td data-key="${key}" class="doc-cell">
 				<div class="doc-editor" contenteditable="true"></div>
 				<div class="doc-toolbar">
-
-					<div class="btn-group">
-						<button type="button" class="ui icon button" data-type="paragraph">
-							<i class="align left icon"></i>
-						</button>
-						<button type="button" class="ui icon button" data-type="list">
-							<i class="list ul icon"></i>
-						</button>
-						<button type="button" class="ui icon button" data-type="numbered">
-							<i class="list ol icon"></i>
-						</button>
-						<button type="button" class="ui button" data-type="alpha" title="Penomoran abjad">
-							<span aria-hidden="true">a.</span>
-						</button>
-					</div>
-
-					<div class="divider"></div>
-
-					<div class="btn-group">
-	<button type="button" class="ui icon button" data-align="left">
-		<i class="align left icon"></i>
-	</button>
-	<button type="button" class="ui icon button" data-align="center">
-		<i class="align center icon"></i>
-	</button>
-	<button type="button" class="ui icon button" data-align="right">
-		<i class="align right icon"></i>
-	</button>
-	<button type="button" class="ui icon button" data-align="justify">
-		<i class="align justify icon"></i>
-	</button>
-</div>
-
-					<div class="divider"></div>
-
-					<div class="btn-group">
-	<button type="button" class="ui icon button" data-style="bold">
-		<i class="bold icon"></i>
-	</button>
-	<button type="button" class="ui icon button" data-style="italic">
-		<i class="italic icon"></i>
-	</button>
-	<button type="button" class="ui icon button" data-style="underline">
-		<i class="underline icon"></i>
-	</button>
-</div>
-
-					<div class="divider"></div>
-
-					<div class="btn-group">
-	<button type="button" class="ui icon button" data-format="label">
-		<i class="tag icon"></i>
-	</button>
-</div>
+					${types.length ? `<div class="btn-group">${buttons(types, typeOptions, "type", { alpha: "Penomoran abjad" })}</div>` : ""}
+					${alignments.length ? `<div class="divider"></div><div class="btn-group">${buttons(alignments, alignOptions, "align")}</div>` : ""}
+					${styles.length ? `<div class="divider"></div><div class="btn-group">${buttons(styles, styleOptions, "style")}</div>` : ""}
+					${formats.length ? `<div class="divider"></div><div class="btn-group">${buttons(formats, formatOptions, "format")}</div>` : ""}
 
 				</div>
 			</td>

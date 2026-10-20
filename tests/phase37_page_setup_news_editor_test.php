@@ -3,6 +3,7 @@
 $assert=static function(bool $ok,string $message):void{if(!$ok){fwrite(STDERR,"FAIL: $message\n");exit(1);}echo "PASS: $message\n";};
 $sidebar=file_get_contents(__DIR__.'/../app/Views/partials/sidebar.php');
 $settings=file_get_contents(__DIR__.'/../app/Views/pengaturan/form.php');
+$settingsController=file_get_contents(__DIR__.'/../app/Controllers/PengaturanController.php');
 $service=file_get_contents(__DIR__.'/../app/Services/PageSetupService.php');
 $editor=file_get_contents(__DIR__.'/../public/assets/js/ui/rich-document-editor.js');
 $news=file_get_contents(__DIR__.'/../public/assets/js/modules/halaman_berita.js');
@@ -12,6 +13,7 @@ $assert(!str_contains($sidebar,'href="/pengaturan#page-setup"'),'menu Page Setup
 $assert(str_contains($settings,'Page Setup PDF')&&!str_contains($settings,'Simpan Page Setup</button>'),'Page Setup berada di Pengaturan dan khusus PDF');
 foreach(['A3PLUS','A4','A5','A6','F4','LEGAL','LETTER','INDIAN_LEGAL','JIS_B4','JIS_B5','C4','C6','DL','CUSTOM'] as $paper)$assert(str_contains($settings,'value="'.$paper.'"'),"ukuran kertas $paper tersedia");
 foreach(['margin_atas_mm','margin_kanan_mm','margin_bawah_mm','margin_kiri_mm','margin_header_mm','margin_footer_mm','lebar_kertas_mm','tinggi_kertas_mm'] as $field)$assert(str_contains($settings,'name="'.$field.'"'),"pengaturan $field tersedia");
+$assert(str_contains($settingsController, 'foreach([\'lebar_kertas_mm\',\'tinggi_kertas_mm\'] as $field)') && str_contains($settingsController, '$data[$field]=null'),'dimensi kertas custom yang kosong disimpan sebagai NULL');
 $assert(str_contains($service,'Page Setup global sengaja hanya memengaruhi PDF'),'pengaturan Excel tidak dipengaruhi Page Setup global');
 $assert(str_contains($layout,'rich-document-editor.js'),'editor global dimuat aplikasi');
 foreach(['data-insert="table"','data-insert="chart"','data-insert="image"','data-insert="shape"','data-table-size="rows"','data-table-size="cols"','data-rde-wrap','data-style="columnCount"'] as $feature)$assert(str_contains($editor,$feature),"editor global memiliki $feature");
