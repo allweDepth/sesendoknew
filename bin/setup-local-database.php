@@ -10,9 +10,9 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/',$database)) throw new RuntimeException('Nama
 $pdo=new PDO('mysql:unix_socket='.$socket.';dbname='.$database,getenv('SESENDOK_SETUP_ADMIN')?:'root',getenv('SESENDOK_SETUP_ADMIN_PASSWORD')?:'',[
   PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
 ]);
-// Authentication requires this table on devices with an older database copy.
-$migration=dirname(__DIR__).'/database/migrations/20261004_phase61_auth_rate_limits.sql';
-$pdo->exec(file_get_contents($migration));
+// The complete schema is restored from the single current database backup.
+$ready=$pdo->query("SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='auth_rate_limits'")->fetchColumn();
+if (!(int)$ready) throw new RuntimeException('Impor config/sesendoknew_db.sql terlebih dahulu sebelum menyiapkan akun aplikasi.');
 $username='sesendok_local_'.bin2hex(random_bytes(4));
 $password=bin2hex(random_bytes(24));
 $account=$pdo->quote($username)."@'localhost'";
