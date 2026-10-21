@@ -37,6 +37,7 @@ class AjaxEngine {
 		processData = true, // Apakah data diproses otomatis oleh jQuery
 		contentType = "application/x-www-form-urlencoded; charset=UTF-8", // Tipe konten default
 		timeout = 30000,
+        silent = false, // Background status refreshes do not create toast or form feedback.
 	}) {
 		const recentSubmittedForm = Date.now() - Number(window.__lastSubmittedFormAt || 0) < 1000
 			? window.__lastSubmittedForm : null;
@@ -123,7 +124,7 @@ class AjaxEngine {
 				 * Ini menjaga konsistensi UI di seluruh sistem
 				 * tanpa perlu menulis Toast di setiap module.
 				 */
-				if (res && typeof res.success !== "undefined") {
+				if (!silent && res && typeof res.success !== "undefined") {
 					Toast.show({
 						success: res.success,
 						message: AjaxEngine.formatMessage(res),
@@ -133,11 +134,11 @@ class AjaxEngine {
 				// Beberapa handler legacy mengembalikan HTTP 200 untuk kegagalan.
 				// Jangan pernah menjalankan callback sukses CRUD dalam kondisi ini.
 				if (res && res.success === false) {
-					if (window.FormFeedback && activeForm) FormFeedback.error(activeForm, res);
+					if (!silent && window.FormFeedback && activeForm) FormFeedback.error(activeForm, res);
 					if (error) error(res, null);
 					return;
 				}
-				if (res && res.success === true && window.FormFeedback && activeForm) {
+				if (!silent && res && res.success === true && window.FormFeedback && activeForm) {
 					FormFeedback.success(activeForm, res.message || 'Data berhasil diproses');
 				}
 
@@ -166,8 +167,8 @@ class AjaxEngine {
 						window.location.replace(window.appUrl ? window.appUrl('/') : '/');
 						return;
 					}
-					if (window.FormFeedback && activeForm) FormFeedback.error(activeForm, response);
-					Toast.show({
+					if (!silent && window.FormFeedback && activeForm) FormFeedback.error(activeForm, response);
+					if (!silent) Toast.show({
 						success: false,
 						message: AjaxEngine.formatMessage(response),
 					});
@@ -179,11 +180,11 @@ class AjaxEngine {
 					const message = textStatus === "timeout"
 						? "Permintaan melewati batas 30 detik. Periksa koneksi atau query yang terlalu berat."
 						: `Server gagal merespons (${xhr.status || "jaringan"}): ${errorThrown || textStatus || "respons bukan JSON"}`;
-					Toast.show({
+					if (!silent) Toast.show({
 						success: false,
 						message,
 					});
-					if (window.FormFeedback && activeForm) FormFeedback.error(activeForm, { message });
+					if (!silent && window.FormFeedback && activeForm) FormFeedback.error(activeForm, { message });
 					if (error) error({ success: false, message, errors: {} }, xhr);
 				}
 			},

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/BudgetScheduleService.php";
 require_once __DIR__.'/../Core/DB.php';
 require_once __DIR__.'/../Core/Auth.php';
 require_once __DIR__.'/../../vendor/autoload.php';
@@ -104,7 +105,7 @@ class AnggaranDocumentService
     }
     public function saveMonthlyPlan(string $logical,int $anggaranId,array $months):array
     {
-        $this->assertCanWrite();
+        $this->assertCanWrite(); BudgetScheduleService::assertOpen($this->db, $this->user, $logical);
         $plan=$this->monthlyPlan($logical,$anggaranId);$values=[];for($m=1;$m<=12;$m++){$v=(float)($months[$m]??$months[(string)$m]??0);if($v<0)throw new InvalidArgumentException('Nilai rencana bulanan tidak boleh negatif');$values[$m]=$v;}if(array_sum($values)>(float)$plan['item']['jumlah']+0.01)throw new InvalidArgumentException('Total rencana bulanan melebihi pagu rincian');$u=$this->user['username']??'system';$this->db->begin();try{foreach($values as $m=>$v)$this->db->query('INSERT INTO rencana_realisasi_anggaran_neo(dokumen,anggaran_id,kd_wilayah,kd_opd,tahun,kd_sub_keg,kd_akun,jenis,bulan,nilai,username_insert,is_deleted) VALUES(?,?,?,?,?,?,?,?,?,?,?,0) ON DUPLICATE KEY UPDATE nilai=VALUES(nilai),tgl_update=NOW(),username_update=VALUES(username_insert),is_deleted=0',[$logical,$anggaranId,$this->user['kd_wilayah'],$this->user['kd_opd'],$this->user['tahun'],$plan['item']['kd_sub_keg'],$plan['item']['kd_akun'],'belanja',$m,$v,$u]);$this->db->commit();}catch(Throwable $e){$this->db->rollback();throw $e;}return $this->monthlyPlan($logical,$anggaranId);
     }
 
@@ -118,7 +119,7 @@ class AnggaranDocumentService
 
     public function saveAccountMonthly(string $logical,string $subCode,string $account,array $months,string $kind='belanja'):array
     {
-        $this->assertCanWrite();
+        $this->assertCanWrite(); BudgetScheduleService::assertOpen($this->db, $this->user, $logical);
         if($kind!=='belanja')throw new InvalidArgumentException('Rencana pendapatan akan mengikuti rekening pendapatan pada DPA Pendapatan; rincian ini adalah rekening belanja');
         $rows=$this->accountMonthlyRows($logical,$subCode);$target=null;foreach($rows as $row)if($row['kd_akun']===$account){$target=$row;break;}if(!$target)throw new RuntimeException('Kode rekening level akhir tidak ditemukan pada sub kegiatan');
         $values=[];for($month=1;$month<=12;$month++){$value=(float)($months[$month]??$months[(string)$month]??0);if($value<0)throw new InvalidArgumentException('Nilai bulanan tidak boleh negatif');$values[$month]=$value;}if(array_sum($values)>$target['pagu']+0.01)throw new InvalidArgumentException('Total pembagian bulanan melebihi pagu rekening Rp '.number_format($target['pagu'],0,',','.'));
@@ -126,6 +127,7 @@ class AnggaranDocumentService
     }
     public function setApproval(string $logical,string $subCode,bool $approved,string $scenario='KUNCI'):array
     {
+        BudgetScheduleService::assertOpen($this->db, $this->user, $logical);
         $role=$this->user['type_user']??'viewer';
         if(!in_array($role,['super_admin','admin_wilayah','tapd','kepala_opd','pa_kpa'],true))throw new RuntimeException('Role tidak memiliki kewenangan persetujuan dokumen');
         if(in_array($logical,['rkpd','rkpd_p'],true)&&!in_array($role,['super_admin','admin_wilayah','tapd'],true))throw new RuntimeException('Validasi pagu RKPD merupakan kewenangan TAPD');

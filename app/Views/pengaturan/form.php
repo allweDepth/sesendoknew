@@ -1,10 +1,12 @@
 <?php
-$user = $_SESSION['user'] ?? [];
+$user = Auth::scopedUser();
 $type = strtolower(str_replace(' ', '_', $user['type_user'] ?? ''));
 $canEdit = in_array($type, ['super_admin', 'admin_wilayah']);
 $canManagePagu = $type === 'admin_wilayah';
 $isRegional = in_array($type,['super_admin','admin_wilayah'],true);
 $canPageEdit = !in_array($type,['viewer','tapd'],true);
+$canSchedule = $canEdit || $type === 'tapd';
+$scheduleDisabled = $canSchedule ? '' : 'disabled';
 $disabled = $canEdit ? '' : 'disabled';
 $tahunLabel = $user['tahun'] ?? '-';
 ?>
@@ -35,7 +37,7 @@ $tahunLabel = $user['tahun'] ?? '-';
 
     <!-- TAB MENU -->
     <div class="ui top attached tabular menu" id="pengaturan-tabs">
-        <a class="active item" data-tab="pengaturan"><?= $isRegional?'Pengaturan Wilayah':'Jadwal Anggaran' ?></a>
+        <a class="active item" data-tab="pengaturan"><?= $isRegional?'Pengaturan Wilayah':'Jadwal Perencanaan & Anggaran' ?></a>
         <?php if($isRegional): ?><a class="item" data-tab="periode">Periode RPJMD</a><?php endif; ?>
         <a class="item" data-tab="page-setup">Page Setup PDF</a>
         <a class="item" data-tab="kop-surat">Kop Surat Resmi</a>
@@ -43,9 +45,10 @@ $tahunLabel = $user['tahun'] ?? '-';
     </div>
 
     <!-- TAB 1 -->
-    <div class="ui bottom attached tab segment active <?= !$isRegional?'opd-schedule-only':'' ?>" data-tab="pengaturan">
-        <?php if(!$isRegional): ?><style>.opd-schedule-only #form-pengaturan>*{display:none!important}.opd-schedule-only #form-pengaturan>#schedule-status-cards{display:flex!important}.opd-schedule-only:before{content:'Jadwal input ditetapkan oleh Admin Wilayah. OPD hanya melihat status dan rentang waktu dokumen.';display:block;padding:12px;margin-bottom:12px;background:#eaf6ff;border-radius:6px}</style><?php endif; ?>
+    <div class="ui bottom attached tab segment active <?= !$isRegional ? ($canSchedule ? 'tapd-schedule-only' : 'opd-schedule-only') : '' ?>" data-tab="pengaturan">
+        <?php if(!$isRegional): ?><style>.opd-schedule-only #form-pengaturan>*{display:none!important}.opd-schedule-only #form-pengaturan>.schedule-section{display:block!important}.opd-schedule-only .schedule-section>*:not(#schedule-status-cards){display:none!important}.opd-schedule-only:before{content:'Jadwal input ditetapkan oleh TAPD wilayah. OPD hanya melihat status dan rentang waktu dokumen.';display:block;padding:12px;margin-bottom:12px;background:#eaf6ff;border-radius:6px}</style><?php endif; ?>
 
+        <?php if ($type === 'tapd'): ?><style>.tapd-schedule-only #form-pengaturan>*:not(.schedule-section):not(.schedule-save){display:none!important}</style><?php endif; ?>
         <form class="ui form" id="form-pengaturan">
 
             <!-- ================= IDENTITAS ================= -->
@@ -98,12 +101,26 @@ $tahunLabel = $user['tahun'] ?? '-';
             </div>
 
             <!-- ================= PERIODE DOKUMEN ================= -->
-            <h4 class="ui dividing header">Periode Dokumen</h4>
+            <section class="schedule-section"><h4 class="ui dividing header">Jadwal Input Perencanaan dan Penganggaran</h4>
             <div class="ui blue icon message">
                 <i class="calendar check outline icon"></i>
-                <div class="content"><div class="header">Jadwal ini mengendalikan CRUD OPD secara otomatis</div>
-                <p>Di luar rentang waktu atau saat modul dikunci, pengguna OPD tidak dapat menambah, mengubah, maupun menghapus data. Pesan penolakan akan menyebutkan jadwal yang benar.</p></div>
+                <div class="content"><div class="header">Jadwal ini mengendalikan input seluruh OPD di wilayah dan tahun aktif</div>
+                <p>Di luar rentang waktu atau saat modul dikunci, pengguna OPD tidak dapat menambah, mengubah, maupun menghapus data. Waktu menggunakan Asia/Makassar (WITA). Status Enabled berarti input dibuka; Disabled berarti input ditutup.</p></div>
             </div>
+            <div class="ui info message" id="schedule-default-info"></div>
+            <?php if ($canSchedule): ?>
+            <div class="ui segment">
+                <h4 class="ui header">Tanggal Acuan Default</h4>
+                <p>Isi tanggal dokumen/surat yang sudah ditetapkan untuk menghitung jadwal terkait. Tombol default mengisi rentang kosong dan menghitung ulang rentang yang masih memakai default; rentang khusus TAPD tetap dipertahankan.</p>
+                <div class="three fields">
+                <?php $anchorIndex=0; foreach (BudgetScheduleDefaults::ANCHORS as $key=>$label): ?>
+                    <?php if ($anchorIndex && $anchorIndex%3===0): ?></div><div class="three fields"><?php endif; $anchorIndex++; ?>
+                    <div class="field"><label><?= htmlspecialchars($label) ?></label><div class="ui calendar schedule-anchor"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" name="anchor_<?= $key ?>" autocomplete="off" placeholder="YYYY-MM-DD"></div></div></div>
+                <?php endforeach; ?>
+                </div>
+                <button type="button" class="ui teal button" id="applyScheduleDefaults"><i class="calendar plus icon"></i>Terapkan Default Jadwal</button>
+            </div>
+            <?php endif; ?>
             <div id="schedule-status-cards" class="ui four stackable cards"></div>
 
             <div class="table-wrapper">
@@ -117,6 +134,7 @@ $tahunLabel = $user['tahun'] ?? '-';
                     "dpa" => "DPA",
                     "rkpd" => "RKPD",
                     "rka" => "RKA",
+                    "rka_p" => "RKA Perubahan",
                     "renja_p" => "Renja Perubahan",
                     "dppa" => "DPPA",
                     "kua_ppas" => "KUA PPAS",
@@ -130,10 +148,10 @@ $tahunLabel = $user['tahun'] ?? '-';
 
                 foreach ($ranges as $name => $label): ?>
                     <tr data-period-row="<?= $name ?>">
-                        <td><i class="clock outline icon"></i><strong><?= $label ?></strong></td>
-                        <td><div class="ui calendar start_<?= $name ?>"><div class="ui fluid input left icon"><i class="calendar icon"></i><input type="text" name="awal_<?= $name ?>" readonly <?= $disabled ?>></div></div></td>
-                        <td><div class="ui calendar end_<?= $name ?>"><div class="ui fluid input left icon"><i class="calendar icon"></i><input type="text" name="akhir_<?= $name ?>" readonly <?= $disabled ?>></div></div></td>
-                        <td><button type="button" class="ui mini blue icon button edit-document-period <?= $disabled ?>" data-period="<?= $name ?>" title="Edit periode <?= $label ?>"><i class="edit icon"></i></button></td>
+                        <td><i class="clock outline icon"></i><strong><?= $label ?></strong><div class="ui small text schedule-default-note" data-period="<?= $name ?>" style="max-width:380px;margin-top:5px"></div></td>
+                        <td><div class="ui calendar start_<?= $name ?>"><div class="ui fluid input left icon"><i class="calendar icon"></i><input type="text" name="awal_<?= $name ?>" readonly <?= $scheduleDisabled ?>></div></div></td>
+                        <td><div class="ui calendar end_<?= $name ?>"><div class="ui fluid input left icon"><i class="calendar icon"></i><input type="text" name="akhir_<?= $name ?>" readonly <?= $scheduleDisabled ?>></div></div></td>
+                        <td><button type="button" class="ui mini blue icon button edit-document-period <?= $scheduleDisabled ?>" data-period="<?= $name ?>" title="Edit periode <?= $label ?>"><i class="edit icon"></i></button></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -150,6 +168,10 @@ $tahunLabel = $user['tahun'] ?? '-';
                     "Global" => ["kunci", "setujui"],
                     "Renstra" => ["kunci_renstra", "setujui_renstra"],
                     "Renja" => ["kunci_renja", "setujui_renja"],
+                    "RKPD" => ["kunci_rkpd", "setujui_rkpd"],
+                    "RKA" => ["kunci_rka", "setujui_rka"],
+                    "RKPD P" => ["kunci_rkpd_perubahan", "setujui_rkpd_perubahan"],
+                    "RKA P" => ["kunci_rka_p", "setujui_rka_p"],
                     "DPA" => ["kunci_dpa", "setujui_dpa"],
                     "Renja P" => ["kunci_renja_p", "setujui_renja_p"],
                     "DPPA" => ["kunci_dppa", "setujui_dppa"],
@@ -157,26 +179,28 @@ $tahunLabel = $user['tahun'] ?? '-';
                     "Realisasi" => ["kunci_realisasi", "setujui_realisasi"],
                 ];
 
-                foreach ($controls as $title => $fields): ?>
+                foreach ($controls as $title => $fields):
+                    if ($type === 'tapd' && in_array($title, ['Paket','Realisasi'], true)) continue; ?>
                     <div class="card">
                         <div class="content">
                             <div class="header"><?= $title ?></div>
                         </div>
                         <div class="content">
                             <div class="ui toggle checkbox">
-                                <input type="checkbox" name="<?= $fields[0] ?>" <?= $disabled ?>>
+                                <input type="checkbox" name="<?= $fields[0] ?>" <?= $scheduleDisabled ?>>
                                 <label>Kunci</label>
-                            </div><br>
+                            </div><?php if ($type !== 'tapd' && !in_array($title, ['RKPD','RKA','RKPD P','RKA P'], true)): ?><br>
                             <div class="ui toggle checkbox">
                                 <input type="checkbox" name="<?= $fields[1] ?>" <?= $disabled ?>>
                                 <label>Setujui</label>
-                            </div>
+                            </div><?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
 
             </div>
 
+            </section>
             <!-- ================= KETERANGAN ================= -->
             <h4 class="ui dividing header">Keterangan</h4>
 
@@ -186,8 +210,8 @@ $tahunLabel = $user['tahun'] ?? '-';
 
             <div class="ui divider"></div>
 
-            <?php if ($canEdit): ?>
-                <div class="right aligned field">
+            <?php if ($canSchedule): ?>
+                <div class="right aligned field schedule-save">
                     <button class="ui primary button">
                         <i class="save icon"></i> Simpan Perubahan
                     </button>

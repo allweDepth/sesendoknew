@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__.'/../Core/Auth.php';
 require_once __DIR__.'/../Core/DB.php';
+require_once __DIR__.'/../Services/BudgetScheduleService.php';
+require_once __DIR__.'/../Services/JsonResponse.php';
 class DashboardController extends Controller {
  public function index(){
   if(!Auth::check()){header('Location: '.app_url('/'));exit;}$u=Auth::scopedUser();$db=DB::getInstance();$year=(int)($u['tahun']??date('Y'));$module=preg_replace('/[^a-z_]/','',(string)($_GET['mod']??'utama'))?:'utama';
@@ -22,6 +24,30 @@ class DashboardController extends Controller {
   if($module==='berita')$add($cards,'Konten Aktif',$count($db,'halaman_berita','kd_wilayah=? AND aktif=1 AND is_deleted=0',[$u['kd_wilayah']]),'newspaper','orange');
   if($module==='pesan')$add($cards,'Pesan Publik',$count($db,'wallchat','is_deleted=0 AND type=?',['public']),'comments','teal');
   if($module==='profil'){$add($cards,'Tahun Aktif',$year,'calendar','blue');$add($cards,'Role',strtoupper(str_replace('_',' ',$u['type_user']??'viewer')),'user shield','violet');}if(!$cards)$add($cards,'Data Tahun Aktif',0,'database');
-  $max=max(array_map(fn($c)=>is_numeric($c['value'])?(float)$c['value']:0,$cards))?:1;$this->view('dashboard/index',['module'=>$module,'title'=>$labels[$module],'cards'=>$cards,'max'=>$max,'year'=>$year,'user'=>$u]);
+  $dashboardStatus=$this->statusData($module,$u);
+  $max=max(array_map(fn($c)=>is_numeric($c['value'])?(float)$c['value']:0,$cards))?:1;$this->view('dashboard/index',['module'=>$module,'title'=>$labels[$module],'cards'=>$cards,'max'=>$max,'year'=>$year,'user'=>$u,'dashboardStatus'=>$dashboardStatus]);
  }
+ private function statusData(string $module,array $user):array
+ {
+  $stages=match($module){
+   'perencanaan'=>['renstra','rkpd','renja','rkpd_p','renja_p'],
+   'penganggaran'=>['kua_ppas','rka','dpa','kua_ppas_perubahan','rka_p','dppa','rapbd','apbd_perubahan','rak'],
+   'utama'=>['renstra','rkpd','renja','rka','dpa','rkpd_p','renja_p','rka_p','dppa'],
+   default=>[]
+  };
+  $schedules=[];
+  if($stages){$all=BudgetScheduleService::statuses(DB::getInstance(),$user);foreach($stages as $stage)$schedules[$stage]=$all[$stage];}
+  $unread=null;
+  if(in_array($module,['perencanaan','penganggaran'],true)){
+   $unread=(int)(DB::getInstance()->query("SELECT COUNT(*) total FROM wallchat WHERE receiver_id=? AND type='private' AND is_deleted=0 AND deleted_by_receiver=0 AND read_at IS NULL",[(int)($user['id']??0)])->fetch()['total']??0);
+  }
+  return ['schedules'=>$schedules,'unread'=>$unread];
+ }
+ public function status():void
+ {
+  header('Content-Type: application/json;charset=UTF-8');
+  try{if(!Auth::check())throw new RuntimeException('Unauthorized');$user=Auth::scopedUser();if(session_status()===PHP_SESSION_ACTIVE)session_write_close();echo JsonResponse::success('Status dashboard',[],$this->statusData((string)($_GET['mod']??'utama'),$user));}
+  catch(Throwable $e){echo JsonResponse::error($e->getMessage(),400);}
+ }
+
 }

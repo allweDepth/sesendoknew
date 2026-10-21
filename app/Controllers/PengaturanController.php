@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__.'/../Core/DB.php';
 require_once __DIR__.'/../Services/JsonResponse.php';
+require_once __DIR__.'/../Services/BudgetScheduleService.php';
 
 class PengaturanController extends Controller
 {
@@ -29,9 +30,46 @@ class PengaturanController extends Controller
         if(!Auth::check()){echo json_encode(['success'=>false,'message'=>'Unauthorized']);return;}
         require_once __DIR__.'/../Core/DB.php';require_once __DIR__.'/../Services/JsonResponse.php';
         $user=Auth::scopedUser();$row=DB::getInstance()->query('SELECT * FROM pengaturan_neo WHERE kd_wilayah=? AND tahun=? AND is_deleted=0 ORDER BY id DESC LIMIT 1',[$user['kd_wilayah'],$user['tahun']])->fetch();
-        if($row&&($user['kd_opd']??'0')!=='0'){$page=DB::getInstance()->query('SELECT * FROM page_setup_opd_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 LIMIT 1',[$user['kd_wilayah'],$user['kd_opd'],$user['tahun']])->fetch();if($page)$row=array_merge($row,$page);}
-        echo $row?JsonResponse::success('Jadwal aktif ditemukan',[],$row):JsonResponse::error('Jadwal tahun aktif belum dibuat',404);
+        if($row&&($user['kd_opd']??'0')!=='0'){$page=DB::getInstance()->query('SELECT * FROM page_setup_opd_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 LIMIT 1',[$user['kd_wilayah'],$user['kd_opd'],$user['tahun']])->fetch();if($page){unset($page['id'],$page['kd_wilayah'],$page['kd_opd'],$page['tahun']);$row=array_merge($row,$page);}}
+        $row=$row?:['tahun'=>$user['tahun']];
+        $row['_schedule_defaults']=BudgetScheduleDefaults::generate((int)$user['tahun'],$user['kd_wilayah'],json_decode($row['jadwal_acuan_json']??'{}',true)?:[]);
+        echo JsonResponse::success('Jadwal tahun aktif', [], $row);
     }
+    public function schedules(): void
+    {
+        header('Content-Type: application/json;charset=UTF-8');
+        try {
+            if (!Auth::check()) throw new RuntimeException('Unauthorized');
+            $user=Auth::scopedUser();
+            if (session_status()===PHP_SESSION_ACTIVE) session_write_close();
+            echo JsonResponse::success('Status jadwal input', [], BudgetScheduleService::statuses(DB::getInstance(), $user));
+        } catch (Throwable $e) { echo JsonResponse::error($e->getMessage(), 400); }
+    }
+
+    public function saveSchedules(): void
+    {
+        header('Content-Type: application/json;charset=UTF-8');
+        try {
+            if (!Auth::check()) throw new RuntimeException('Unauthorized');
+            if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') throw new RuntimeException('Method tidak diizinkan');
+            if (empty($_SESSION['csrf_token']) || ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '') !== $_SESSION['csrf_token']) throw new RuntimeException('CSRF validation gagal');
+            BudgetScheduleService::save(DB::getInstance(), Auth::scopedUser(), $_POST);
+            echo JsonResponse::success('Jadwal input seluruh OPD wilayah berhasil disimpan');
+        } catch (Throwable $e) { echo JsonResponse::error($e->getMessage(), 400); }
+    }
+
+    public function defaultSchedules(): void
+    {
+        header('Content-Type: application/json;charset=UTF-8');
+        try {
+            if (!Auth::check()) throw new RuntimeException('Unauthorized');
+            if (($_SERVER['REQUEST_METHOD']??'')!=='POST') throw new RuntimeException('Method tidak diizinkan');
+            if (empty($_SESSION['csrf_token']) || ($_SERVER['HTTP_X_CSRF_TOKEN']??'')!==$_SESSION['csrf_token']) throw new RuntimeException('CSRF validation gagal');
+            BudgetScheduleService::applyDefaults(DB::getInstance(),Auth::scopedUser(),is_array($_POST['anchors']??null)?$_POST['anchors']:[]);
+            echo JsonResponse::success('Default jadwal diterapkan; rentang khusus TAPD dan status kunci tetap dipakai.');
+        } catch (Throwable $e) {echo JsonResponse::error($e->getMessage(),400);}
+    }
+
     public function savePageSetup():void
     {
         header('Content-Type: application/json;charset=UTF-8');

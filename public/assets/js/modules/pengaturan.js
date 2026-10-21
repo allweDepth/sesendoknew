@@ -32,7 +32,7 @@ class PengaturanModule {
 	canEdit() {
 		const role = (this.user.type_user || "").toLowerCase().replace(/\s+/g, "_");
 
-		return ["super_admin", "admin_wilayah"].includes(role);
+		return ["super_admin", "admin_wilayah", "tapd"].includes(role);
 	}
 
 	// ==================================================
@@ -77,6 +77,12 @@ class PengaturanModule {
 	}
 
 	bindPeriodTable() {
+        $(document).off('click.scheduleDefaults','#applyScheduleDefaults').on('click.scheduleDefaults','#applyScheduleDefaults',()=>{
+            if (!this.canEdit()) return;
+            const anchors={};$('#form-pengaturan [name^="anchor_"]').each(function(){if(this.value)anchors[this.name.replace('anchor_','')]=this.value;});
+            this.ajax.request({url:'/pengaturan/schedules/defaults',method:'POST',data:{anchors},success:r=>{if(r?.success)this.loadData(()=>this.populate());}});
+        });
+
 		$(document).off('click.documentPeriod', '.edit-document-period').on('click.documentPeriod', '.edit-document-period', e => {
 			if (!this.canEdit()) return;
 			const button = $(e.currentTarget), row = button.closest('tr'), inputs = row.find('input');
@@ -295,11 +301,13 @@ class PengaturanModule {
 			if (callback) callback();
 		});
 
+        $('.schedule-anchor').calendar({type:'date',formatter:{date:d=>d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:''}});
 		const ranges = [
 			"renja",
 			"dpa",
 			"rkpd",
 			"rka",
+			"rka_p",
 			"renja_p",
 			"dppa",
 			"kua_ppas",
@@ -314,10 +322,12 @@ class PengaturanModule {
 		ranges.forEach((name) => {
 			$(`.start_${name}`).calendar({
 				type: "datetime",
+                formatter: {datetime: date => { if (!date) return ''; const pad = n => String(n).padStart(2,'0'); return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:00`; }},
 				endCalendar: $(`.end_${name}`),
 			});
 			$(`.end_${name}`).calendar({
 				type: "datetime",
+                formatter: {datetime: date => { if (!date) return ''; const pad = n => String(n).padStart(2,'0'); return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:00`; }},
 				startCalendar: $(`.start_${name}`),
 			});
 		});
@@ -354,9 +364,23 @@ class PengaturanModule {
 				field.val(this.data[key]);
 			}
 		});
+        this.populateScheduleDefaults();
 		this.populatePageSections();
 		this.renderScheduleStatus();
 	}
+
+    populateScheduleDefaults() {
+        const info=this.data?._schedule_defaults;
+        if (!info) return;
+        const esc=value=>$('<div>').text(value??'').html();
+        $('#schedule-default-info').html(`${esc(info.notice)}<br>${esc(info.annual_notice)}<br>${(info.sources||[]).map(x=>`<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.label)}</a>`).join(' · ')}`);
+        let anchors={}; try { anchors=JSON.parse(this.data.jadwal_acuan_json||'{}'); } catch (_) {}
+        Object.entries(anchors).forEach(([key,value])=>$('#form-pengaturan').find(`[name="anchor_${key}"]`).val(value));
+        $('.schedule-default-note').each(function() {
+            const period=$(this).data('period'),key=period==='rkpd_perubahan'?'rkpd_p':period;
+            $(this).text(info.notes?.[key]||'');
+        });
+    }
 
 	sectionDefaults(kind) {
 		return {font:"helvetica",size:8,color:"#222222",bold:false,italic:false,underline:false,divider:false,columns:[
@@ -390,18 +414,11 @@ class PengaturanModule {
 	}
 
 	renderScheduleStatus() {
-		const stages = [["rkpd","RKPD"],["renja","Renja"],["rka","RKA"],["dpa","DPA"],["rkpd_perubahan","RKPD Perubahan"],["renja_p","Renja Perubahan"],["dppa","DPPA"]];
-		const now = Date.now();
-		const html = stages.map(([key,label]) => {
-			const start = this.data[`awal_${key}`], end = this.data[`akhir_${key}`];
-			const lockedKey = ["rka"].includes(key) ? "kunci_renja" : key === "rkpd_perubahan" ? "kunci_renja_p" : `kunci_${key}`;
-			const locked = Number(this.data[lockedKey] || this.data.kunci || 0) === 1;
-			const active = start && end && now >= new Date(start).getTime() && now <= new Date(end).getTime() && !locked;
-			const color = active ? "green" : locked ? "red" : "orange";
-			const status = active ? "Dibuka" : locked ? "Dikunci" : (!start || !end ? "Belum diatur" : "Di luar jadwal");
-			return `<div class="${color} card"><div class="content"><div class="right floated ui ${color} label">${status}</div><div class="header">${label}</div><div class="meta">${start || "-"}</div><div class="description">s.d. ${end || "-"}</div></div></div>`;
-		}).join("");
-		$("#schedule-status-cards").html(html);
+        this.ajax.request({url:'/pengaturan/schedules',method:'GET',silent:true,success:res=>{
+            if (!res?.success) return;
+            const esc = value => $('<div>').text(value ?? '').html();
+            $('#schedule-status-cards').html(Object.values(res.data).map(status => `<div class="${status.enabled ? 'green' : 'orange'} card"><div class="content"><div class="ui ${status.enabled ? 'green' : 'orange'} label">${status.enabled ? 'Enabled' : 'Disabled'} · ${esc(status.status)}</div><div class="header">${esc(status.label)}</div><div class="description">${esc(status.message)}</div></div></div>`).join(''));
+        }});
 	}
 
 	bindSubmit() {
@@ -421,6 +438,14 @@ class PengaturanModule {
 				formData[this.name] = this.checked ? 1 : 0;
 			});
 
+            const anchors={};$('#form-pengaturan [name^="anchor_"]').each(function(){if(this.value)anchors[this.name.replace('anchor_','')]=this.value;});
+            formData.jadwal_acuan_json=JSON.stringify(anchors);
+            if (this.user.type_user === 'tapd' || !this.data.id) {
+                this.ajax.request({url:'/pengaturan/schedules/save',method:'POST',data:formData,success:res=>{
+                    if(res?.success) this.loadData(()=>this.populate());
+                }});
+                return;
+            }
 			this.ajax.request({
 				data: {
 					action: "edit",
@@ -435,6 +460,7 @@ class PengaturanModule {
 							success: true,
 							message: "Pengaturan berhasil disimpan",
 						});
+                        this.loadData(()=>this.populate());
 					}
 				},
 			});

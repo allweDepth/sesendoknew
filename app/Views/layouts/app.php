@@ -450,7 +450,7 @@
   <!-- JS -->
   <script>
     window.ASSET_VERSION =
-      "<?= (string)max((int)@filemtime(__DIR__ . '/../../../public/assets/js/app.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/anggaran-document.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/profil.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/kontrak.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/validation-engine.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/toast.js')) ?>";
+      "<?= (string)max((int)@filemtime(__DIR__ . '/../../../public/assets/js/app.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/pengaturan.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/anggaran-document.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/profil.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/kontrak.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/validation-engine.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/toast.js')) ?>";
     window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
   </script>
   <script>
@@ -489,7 +489,7 @@
   <script src="/assets/js/core/state.js"></script>
   <script src="/assets/js/core/toast.js"></script>
   <script src="/assets/js/services/e2e-message.js"></script>
-  <script src="/assets/js/core/ajax.js"></script> <!-- HARUS SEBELUM app.js -->
+  <script src="/assets/js/core/ajax.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/ajax.js') ?>"></script> <!-- HARUS SEBELUM app.js -->
   <script src="/assets/js/config/ui-config.js"></script>
   <script src="/assets/js/core/spa-router.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/spa-router.js') ?>"></script>
   <script src="/assets/js/core/page-loader.js"></script>
@@ -528,6 +528,7 @@
 
   <!-- ================= ENTRY POINT ================= -->
   <script src="/assets/js/app-init.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/app-init.js') ?>"></script>
+  <script src="/assets/js/ui/dashboard-status.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/ui/dashboard-status.js') ?>"></script>
 
   <script>
     window.CSRF_TOKEN = "<?= $_SESSION['csrf_token'] ?? '' ?>";

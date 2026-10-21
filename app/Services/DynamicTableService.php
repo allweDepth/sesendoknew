@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/JsonResponse.php';
+require_once __DIR__ . '/BudgetScheduleService.php';
 require_once __DIR__ . '/ProcurementDocumentService.php';
 
 /**
@@ -247,7 +248,6 @@ PERUBAHAN:
 
       case 'add':
         $this->authorize('add', $table);
-        $this->enforceBudgetSchedule($table);
         return $this->insert($table, $request);
       case 'add_json':
         $this->authorize('add', $table);
@@ -262,8 +262,7 @@ PERUBAHAN:
 
         if (!empty($request['id_row']) && ($request['mode'] ?? '') === 'update') {
           $this->authorize('edit', $table);
-          $this->enforceBudgetSchedule($table);
-          return $this->update($table, $request);
+            return $this->update($table, $request);
         }
 
         return JsonResponse::error("ID tidak ditemukan");
@@ -276,7 +275,6 @@ PERUBAHAN:
         return $this->updateJson($table, $request); // 🔥
       case 'delete':
         $this->authorize('delete', $table);
-        $this->enforceBudgetSchedule($table);
         $id = $request['id_row'] ?? null;
 
         if (!$id) {
@@ -336,22 +334,7 @@ PERUBAHAN:
 
   private function enforceBudgetSchedule(string $table): void
   {
-    $role = strtolower(str_replace(' ', '_', (string)($this->user['type_user'] ?? '')));
-    if ($role !== 'admin_opd') return;
-    $map = ['rkpd_neo' => 'rkpd', 'renja_neo' => 'renja', 'rka_neo' => 'rka', 'dpa_neo' => 'dpa', 'rkpd_p_neo' => 'rkpd_perubahan', 'renja_p_neo' => 'renja_p', 'rka_p_neo' => 'renja_p', 'dppa_neo' => 'dppa'];
-    $stage = $map[$table] ?? null;
-    if (!$stage) return;
-    $columns = $this->getTableColumns('pengaturan_neo');
-    $start = 'awal_' . $stage;
-    $end = 'akhir_' . $stage;
-    if (!in_array($start, $columns, true) || !in_array($end, $columns, true)) throw new RuntimeException('Jadwal ' . $stage . ' belum dikonfigurasi oleh administrator wilayah');
-    $lockMap = ['renja' => 'kunci_renja', 'rka' => 'kunci_renja', 'dpa' => 'kunci_dpa', 'rkpd_perubahan' => 'kunci_renja_p', 'renja_p' => 'kunci_renja_p', 'dppa' => 'kunci_dppa'];
-    $lock = $lockMap[$stage] ?? 'kunci';
-    $row = $this->db->query("SELECT `$start` mulai,`$end` selesai,COALESCE(`$lock`,0) dikunci FROM pengaturan_neo WHERE kd_wilayah=? AND tahun=? AND is_deleted=0 ORDER BY id DESC LIMIT 1", [$this->user['kd_wilayah'] ?? '', (int)($this->user['tahun'] ?? date('Y'))])->fetch();
-    if (!$row || empty($row['mulai']) || empty($row['selesai'])) throw new RuntimeException('Jadwal ' . strtoupper($stage) . ' belum ditetapkan. Hubungi admin wilayah.');
-    if ((int)$row['dikunci'] === 1) throw new RuntimeException('Input ' . strtoupper($stage) . ' sedang dikunci oleh admin wilayah.');
-    $now = time();
-    if ($now < strtotime($row['mulai']) || $now > strtotime($row['selesai'])) throw new RuntimeException('Periode input ' . strtoupper($stage) . ' hanya dibuka ' . date('d-m-Y H:i', strtotime($row['mulai'])) . ' s.d. ' . date('d-m-Y H:i', strtotime($row['selesai'])) . '.');
+    BudgetScheduleService::assertOpen($this->db, $this->user, $table);
   }
   /* =========================================================
 GET SINGLE ROW
@@ -621,6 +604,10 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
   {
     $role = $this->user['type_user'] ?? 'viewer';
 
+    if ($table === 'pengaturan_neo' && in_array($action, ['add','edit','delete'], true)) {
+      if (!in_array($role, ['super_admin','admin_wilayah'], true) || $action === 'delete') throw new RuntimeException('Jadwal hanya dapat dikelola melalui pengaturan jadwal TAPD; konfigurasi wilayah oleh administrator.');
+    }
+    if (in_array($action, ['add','edit','delete'], true)) $this->enforceBudgetSchedule($table);
     $matrix = require __DIR__ . '/../Config/role_matrix.php';
     if ($role === 'editor') $role = 'staf_opd';
     if ($role === 'user') $role = 'viewer';
@@ -1198,6 +1185,10 @@ kd_sub_keg → nama_sub_keg
 🔟 FINAL TRANSACTION (SAFE INSERT VERSION)
 ===================================================== */
 
+    if ($table === 'pengaturan_neo') {
+      $filtered=BudgetScheduleDefaults::fillMissing($filtered,(int)($filtered['tahun']??$this->user['tahun']),$this->user['kd_wilayah']);
+      BudgetScheduleService::validate($filtered);
+    }
     return $this->runTransaction(function () use ($table, $filtered, $request) {
 
       // Tata Naskah memakai counter atomik per klasifikasi dan tahun.
@@ -1434,6 +1425,11 @@ IGNORE SYSTEM FIELD
     }
     if (!$this->checkAccess($table, $id)) {
       return JsonResponse::error('Data tidak berada dalam lingkup wilayah, OPD, tahun, atau penugasan pengguna.');
+    }
+    if ($table === 'pengaturan_neo') {
+      unset($filtered['kd_wilayah']);
+      if (isset($filtered['tahun']) && (int)$filtered['tahun'] !== (int)$this->user['tahun']) throw new RuntimeException('Tahun pengaturan harus sesuai tahun aktif.');
+      BudgetScheduleService::validate(array_replace($oldData, $filtered));
     }
     // ======================================================
     // 🔥 CEK PERUBAHAN NOMOR + TANGGAL
@@ -3437,7 +3433,8 @@ LIMIT 1",
 
     // ambil nama tabel database
     $table = $profile['table'];
-
+    $this->activeProfileKey = $tbl;
+    $this->authorize('add', $table);
 
     // ======================================================
     // 2️⃣ AMBIL KOLOM TABEL DATABASE
@@ -4426,6 +4423,7 @@ LIMIT 1",
   }
   private function validateTimeWindow(string $table): void
   {
+    if (BudgetScheduleService::stage($table)) return; // Already checked by authorize() for every mutation.
     $role = $this->user['type_user'] ?? 'viewer';
 
     // Super admin bebas

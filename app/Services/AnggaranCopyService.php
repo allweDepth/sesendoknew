@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/PaguLimitService.php';
+require_once __DIR__ . '/BudgetScheduleService.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +76,8 @@ class AnggaranCopyService
 
         $sourceTable = self::table($from);
         $targetTable = self::table($to);
+        if ($tahun !== (int)($this->user['tahun'] ?? 0)) throw new RuntimeException('Tahun tujuan harus sesuai tahun aktif.');
+        BudgetScheduleService::assertOpen($this->db, $this->user, $targetTable);
         $wilayah = (string)($this->user['kd_wilayah'] ?? '');
         $opd     = (string)($this->user['kd_opd'] ?? '');
         if ($wilayah === '') throw new RuntimeException('Scope wilayah pengguna tidak lengkap');

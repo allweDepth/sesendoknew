@@ -31,6 +31,74 @@ $(document).ready(function () {
 		return null;
 	};
 
+    // All OPD mutation controls use the same schedule status as the server.
+    const scheduleStages = ['renstra','rkpd','renja','rka','dpa','rkpd_p','renja_p','rka_p','dppa','kua_ppas','rapbd','rak','kua_ppas_perubahan','apbd_perubahan'];
+    const stageFor = table => {
+        const key = String(table || '').replace(/_neo$/, '');
+        return scheduleStages.includes(key) ? key : (key.endsWith('_renstra') || ['renstra_skpd','tujuan_sasaran_renstra'].includes(key) ? 'renstra' : null);
+    };
+    let scheduleData = null, scheduleLoadedAt = 0, scheduleRequest = null, schedulePollTimer = null, scheduleBoundaryTimer = null;
+    window.budgetInputStatus = table => {
+        const stage = stageFor(table);
+        if (!stage || ['super_admin','admin_wilayah','tapd'].includes(window.app?.user?.type_user)) return null;
+        const status = scheduleData?.[stage];
+        if (!status || Date.now() - scheduleLoadedAt > 120000) return {enabled:false,message:'Sedang memuat jadwal input TAPD...'};
+        const now = Date.now(), enabled = !status.locked && status.start && status.end && now >= Date.parse(status.start) && now <= Date.parse(status.end);
+        return {...status, enabled:!!enabled, message:enabled ? `Input ${status.label}: Enabled (dibuka sesuai jadwal TAPD).` : status.message.replace('Dibuka.', 'Disabled (di luar jadwal).')};
+    };
+    const mutationSelector = '[data-ui="open-form"][data-action="add"], [data-ui="open-form"][data-action="add_json"], [data-ui="open-form"][data-action="edit"], [data-ui="open-form"][data-action="edit_json"], [data-ui="open-form"][data-action="import"], [data-ui="delete"], [data-budget-action="delete"], [data-phase3-action="advance"], [data-budget-action="approval"], [data-budget-action="monthly"], .editMonthlyAccount, #saveMonthlyPlan, .account-month-form button[type="submit"], .btnSubmit';
+    const currentScheduleTable = () => {
+        const path=location.pathname.replace(window.APP_BASE_PATH||'','');
+        if (path==='/dashboard' || path.startsWith('/pengaturan')) return null;
+        return new URLSearchParams(location.search).get('tbl') || $('#anggaranDocument').data('table') || window.app?.state?.tbl;
+    };
+    const syncScheduleControls = () => {
+        const current = currentScheduleTable(), status = window.budgetInputStatus(current);
+        if (status) {
+            let banner = $('#budgetScheduleNotice');
+            if (!banner.length) banner = $('<div id="budgetScheduleNotice" class="ui message">').prependTo('#main-content');
+            const text = `${status.enabled ? 'Enabled' : 'Disabled'} — ${status.message}`;
+            if (banner.text() !== text) banner.text(text);
+            banner.toggleClass('positive', status.enabled).toggleClass('warning', !status.enabled);
+        } else $('#budgetScheduleNotice').remove();
+        $(mutationSelector).each(function() {
+            const state = window.budgetInputStatus($(this).data('to') || $(this).data('tbl') || current);
+            if (state && !state.enabled) {
+                if (!this.hasAttribute('data-schedule-disabled')) {
+                    this.setAttribute('data-schedule-disabled', this.disabled || $(this).hasClass('disabled') ? 'preserve' : 'restore');
+                    $(this).addClass('disabled').prop('disabled', true).attr('aria-disabled','true');
+                }
+            } else if (this.getAttribute('data-schedule-disabled') === 'restore') {
+                $(this).removeClass('disabled').prop('disabled', false).removeAttr('aria-disabled data-schedule-disabled');
+            }
+        });
+    };
+    const needsSchedule = () => !document.hidden && stageFor(currentScheduleTable()) && !['super_admin','admin_wilayah','tapd'].includes(window.app?.user?.type_user);
+    const scheduleNextBoundary = () => {
+        clearTimeout(scheduleBoundaryTimer);
+        if (!needsSchedule() || !scheduleData) return;
+        const now=Date.now(), changes=Object.values(scheduleData).flatMap(status=>[Date.parse(status.start),Date.parse(status.end)+1]).filter(time=>Number.isFinite(time)&&time>now);
+        if (changes.length) scheduleBoundaryTimer=setTimeout(()=>{syncScheduleControls();scheduleNextBoundary();},Math.min(2147483647,Math.max(1,Math.min(...changes)-now)));
+    };
+    const ensureSchedules = () => {
+        clearTimeout(schedulePollTimer);
+        if (!needsSchedule()) {clearTimeout(scheduleBoundaryTimer);return;}
+        schedulePollTimer=setTimeout(ensureSchedules,60000);
+        if (scheduleRequest || Date.now()-scheduleLoadedAt<55000) return;
+        scheduleRequest=window.Ajax.request({url:'/pengaturan/schedules',method:'GET',silent:true,timeout:10000,success:res=>{
+            if (res?.success) {scheduleData=res.data;scheduleLoadedAt=Date.now();syncScheduleControls();scheduleNextBoundary();}
+        },complete:()=>{scheduleRequest=null;}});
+    };
+    ensureSchedules();
+    document.addEventListener('visibilitychange',()=>{ensureSchedules();if(!document.hidden)syncScheduleControls();});
+    window.addEventListener('focus',ensureSchedules);
+    document.addEventListener('click', event => {
+        const control = event.target.closest(mutationSelector);
+        if (!control) return;
+        const status = window.budgetInputStatus($(control).data('to') || $(control).data('tbl') || currentScheduleTable());
+        if (status && !status.enabled) { event.preventDefault(); event.stopImmediatePropagation(); window.Toast?.show({success:false,message:status.message}); }
+    }, true);
+
 	const $context = $("#mainContext");
 
 	// ===============================
@@ -143,7 +211,7 @@ $(document).ready(function () {
 	let toolbarSyncTimer;
 	new MutationObserver(() => {
 		clearTimeout(toolbarSyncTimer);
-		toolbarSyncTimer = setTimeout(syncGlobalToolbar, 80);
+		toolbarSyncTimer = setTimeout(() => { syncGlobalToolbar(); ensureSchedules(); syncScheduleControls(); scheduleNextBoundary(); }, 80);
 	}).observe(document.getElementById('main-content'), { childList: true, subtree: true });
 	syncGlobalToolbar();
 
@@ -198,7 +266,7 @@ $(document).ready(function () {
 			try { localStorage.setItem("sesendok-theme", dark ? "dark" : "light"); } catch (_) {}
 			$("#userMenu").dropdown("hide");
 		});
-	$(".ui.sticky").sticky({
+	$(".ui.sticky:not(.dashboard-messenger-notice)").sticky({
 		context: $context,
 	});
 

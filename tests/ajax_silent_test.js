@@ -1,0 +1,18 @@
+const fs = require('node:fs');
+const vm = require('node:vm');
+const assert = require('node:assert/strict');
+let request, notices = 0, successes = 0, errors = 0;
+const jquery = () => ({closest:()=>[],addClass:()=>{}});
+jquery.ajax = options => { request = options; return {}; };
+const context = { $:jquery, window:{}, document:{activeElement:{}}, AppConfig:{defaultMethod:'POST'}, Toast:{show:()=>notices++}, setTimeout:()=>{} };
+vm.createContext(context);
+vm.runInContext(fs.readFileSync(__dirname+'/../public/assets/js/core/ajax.js','utf8')+'\nglobalThis.engine=new AjaxEngine();',context);
+context.engine.request({silent:true,success:()=>successes++});request.success({success:true,message:'Status'});
+assert.equal(notices,0);assert.equal(successes,1);
+context.engine.request({success:()=>successes++});request.success({success:true,message:'Saved'});
+assert.equal(notices,1);assert.equal(successes,2);
+context.engine.request({silent:true,error:()=>errors++});request.error({responseJSON:{success:false,message:'Unavailable'}},'error','');
+assert.equal(notices,1);assert.equal(errors,1);
+context.engine.request({silent:true});request.success({expired:true,message:'Expired'});
+assert.equal(notices,2);
+console.log('PASS: Background status updates stay quiet; callbacks and session-expiry notices remain active.');

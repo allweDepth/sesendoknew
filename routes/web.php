@@ -152,9 +152,13 @@ return [
     | ⚙️ PENGATURAN
     |--------------------------------------------------------------------------
     */
+  '/dashboard/status' => ['DashboardController', 'status'],
   '/pengaturan'        => ['PengaturanController', 'index'],
   '/pengaturan/fragment' => ['PengaturanController', 'fragment'],
   '/pengaturan/current' => ['PengaturanController', 'current'],
+  '/pengaturan/schedules' => ['PengaturanController', 'schedules'],
+  '/pengaturan/schedules/save' => ['PengaturanController', 'saveSchedules'],
+  '/pengaturan/schedules/defaults' => ['PengaturanController', 'defaultSchedules'],
   '/pengaturan/page-setup/save' => ['PengaturanController', 'savePageSetup'],
   '/pengaturan/identity' => ['PengaturanController', 'identity'],
   '/pengaturan/identity/upload' => ['PengaturanController', 'uploadIdentityImage'],
