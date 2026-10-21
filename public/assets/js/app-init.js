@@ -53,14 +53,8 @@ $(document).ready(function () {
         return new URLSearchParams(location.search).get('tbl') || $('#anggaranDocument').data('table') || window.app?.state?.tbl;
     };
     const syncScheduleControls = () => {
-        const current = currentScheduleTable(), status = window.budgetInputStatus(current);
-        if (status) {
-            let banner = $('#budgetScheduleNotice');
-            if (!banner.length) banner = $('<div id="budgetScheduleNotice" class="ui message">').prependTo('#main-content');
-            const text = `${status.enabled ? 'Enabled' : 'Disabled'} — ${status.message}`;
-            if (banner.text() !== text) banner.text(text);
-            banner.toggleClass('positive', status.enabled).toggleClass('warning', !status.enabled);
-        } else $('#budgetScheduleNotice').remove();
+        const current = currentScheduleTable();
+        document.getElementById('budgetScheduleNotice')?.remove();
         $(mutationSelector).each(function() {
             const state = window.budgetInputStatus($(this).data('to') || $(this).data('tbl') || current);
             if (state && !state.enabled) {
