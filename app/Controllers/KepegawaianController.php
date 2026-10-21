@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../Core/DB.php';
+require_once __DIR__ . '/../Services/RegionalLeadershipService.php';
 
 class KepegawaianController extends Controller
 {
@@ -72,13 +73,22 @@ class KepegawaianController extends Controller
     try {
       $u = $this->structureUser();
       $db = DB::getInstance();
-      $scopeOpds = (($u['structure_scope'] ?? '') === 'regional') ? ['BUPATI', 'SETDA'] : [$u['kd_opd'], 'SETDA', 'BUPATI'];
+      $scopeOpds = array_values(array_unique([$u['kd_opd'], 'SETDA', 'BUPATI', 'GUBERNUR', 'WALIKOTA']));
       $marks = implode(',', array_fill(0, count($scopeOpds), '?'));
       $rowParams = array_merge([$u['kd_wilayah'], $u['tahun']], $scopeOpds);
       $rows = $db->query("SELECT s.*,CASE WHEN (s.parent_id IS NULL AND s.parent_kd_opd IS NULL) OR LOWER(TRIM(COALESCE(s.nama_jabatan,''))) LIKE '%penanggung jawab%' OR LOWER(TRIM(COALESCE(s.nama_jabatan,''))) LIKE '%penanggungjawab%' THEN 'Kepala OPD' ELSE s.nama_jabatan END AS nama_jabatan_display,CONCAT_WS(' ',a.gelar_depan,a.nama,a.gelar) nama_pegawai,a.nip,CONCAT(s.kd_opd,':',s.id) struktur_key,CONCAT(COALESCE(s.parent_kd_opd,s.kd_opd),':',COALESCE(s.parent_id,0)) parent_key FROM struktur_jabatan_opd_neo s LEFT JOIN db_asn_pemda_neo a ON a.id=s.pegawai_id AND a.is_deleted=0 WHERE s.kd_wilayah=? AND s.tahun=? AND s.kd_opd IN ($marks) AND s.status_jabatan='AKTIF' AND s.berlaku_mulai<=CURDATE() AND (s.berlaku_sampai IS NULL OR s.berlaku_sampai>=CURDATE()) AND s.is_deleted=0 ORDER BY s.kd_opd,s.urutan,s.id", $rowParams)->fetchAll();
       $employeeOpds = (($u['structure_scope'] ?? '') === 'regional') ? ['BUPATI', 'SETDA'] : [$u['kd_opd']];
       $marks = implode(',', array_fill(0, count($employeeOpds), '?'));
       $employees = $db->query("SELECT id,CONCAT_WS(' ',gelar_depan,nama,gelar) nama,nip,jabatan,kd_opd FROM db_asn_pemda_neo WHERE kd_wilayah=? AND kd_opd IN ($marks) AND is_deleted=0 AND disable=0 AND COALESCE(aktif,1)=1 ORDER BY nama", array_merge([$u['kd_wilayah']], $employeeOpds))->fetchAll();
+      $region = $db->query('SELECT uraian FROM wilayah_neo WHERE kode=? AND is_deleted=0 LIMIT 1', [$u['kd_wilayah']])->fetch();
+      $officials = $db->query('SELECT * FROM pimpinan_wilayah_neo WHERE kd_wilayah=? AND tahun=?', [$u['kd_wilayah'], $u['tahun']])->fetchAll();
+      $titles = RegionalLeadershipService::titles($u['kd_wilayah'], $region['uraian'] ?? $u['kd_wilayah']);
+      $rows = RegionalLeadershipService::merge($rows, $officials, $titles, $u['kd_opd'], ($u['type_user'] ?? '') === 'admin_wilayah');
+      foreach ($rows as &$row) {
+        if (empty($row['jenis_pimpinan'])) $row['can_manage'] = $this->canManageStructure($u);
+        foreach (['foto', 'file_sk'] as $field) $row[$field . '_url'] = !empty($row[$field]) ? app_url('/' . $row[$field]) : null;
+      }
+      unset($row);
       echo json_encode(['success' => true, 'data' => ['rows' => $rows, 'employees' => $employees]], JSON_UNESCAPED_UNICODE);
     } catch (Throwable $e) {
       http_response_code(400);
@@ -93,6 +103,11 @@ class KepegawaianController extends Controller
       $u = $this->structureUser();
       if (!$this->canManageStructure($u)) throw new RuntimeException('Struktur jabatan hanya dapat diatur Admin OPD, Kepala OPD, atau PA/KPA');
       if (empty($_SESSION['csrf_token']) || ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '') !== $_SESSION['csrf_token']) throw new RuntimeException('CSRF validation gagal');
+      if (!empty($_POST['jenis_pimpinan'])) {
+        RegionalLeadershipService::save(DB::getInstance(), $u, $_POST);
+        echo json_encode(['success' => true, 'message' => 'Data pimpinan wilayah berhasil disimpan']);
+        return;
+      }
       $id = (int)($_POST['id'] ?? 0);
       $targetOpd = trim((string)($_POST['target_kd_opd'] ?? $u['kd_opd']));
       $regional = (($u['structure_scope'] ?? '') === 'regional');
@@ -100,6 +115,7 @@ class KepegawaianController extends Controller
       $employeeId = (int)($_POST['pegawai_id'] ?? 0);
       $name = trim((string)($_POST['nama_jabatan'] ?? ''));
       if (!$employeeId || $name === '') throw new InvalidArgumentException('Jabatan dan pejabat ASN wajib dipilih');
+      if (RegionalLeadershipService::legacyRole(['kd_opd' => $targetOpd, 'nama_jabatan' => $name])) throw new RuntimeException('Gunakan form pimpinan wilayah yang dikelola role daerah');
       $db = DB::getInstance();
       if (!$db->query('SELECT id FROM db_asn_pemda_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND is_deleted=0 AND disable=0 LIMIT 1', [$employeeId, $u['kd_wilayah'], $targetOpd])->fetch()) throw new RuntimeException('ASN tidak aktif atau bukan bagian dari scope ini');
       $parentToken = trim((string)($_POST['parent_id'] ?? ''));
@@ -114,6 +130,8 @@ class KepegawaianController extends Controller
       if ($skNumber === '' || $skDate === '') throw new InvalidArgumentException('Nomor dan tanggal SK pengangkatan wajib diisi');
       $effective = $tmt ?: $skDate;
       $existing = $id ? $db->query('SELECT * FROM struktur_jabatan_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0', [$id, $u['kd_wilayah'], $targetOpd, $u['tahun']])->fetch() : null;
+      if ($id && !$existing) throw new RuntimeException('Jabatan tidak ditemukan dalam scope ini');
+      if ($existing && RegionalLeadershipService::legacyRole($existing)) throw new RuntimeException('Gunakan form pimpinan wilayah yang dikelola role daerah');
       $data = ['pegawai_id' => $employeeId, 'parent_id' => $parent, 'parent_kd_opd' => $parent ? $parentOpd : null, 'nama_jabatan' => $name, 'kelompok_jabatan' => trim((string)($_POST['kelompok_jabatan'] ?? '')), 'eselon' => trim((string)($_POST['eselon'] ?? '')), 'nomor_sk_pengangkatan' => $skNumber, 'tanggal_sk_pengangkatan' => $skDate, 'tmt_jabatan' => $effective, 'berlaku_mulai' => $effective, 'berlaku_sampai' => null, 'status_jabatan' => 'AKTIF', 'urutan' => max(1, (int)($_POST['urutan'] ?? 1)), 'keterangan' => trim((string)($_POST['keterangan'] ?? ''))];
       $newPeriod = !$existing || (int)$existing['pegawai_id'] !== $employeeId || ($existing['nomor_sk_pengangkatan'] ?? '') !== $skNumber || ($existing['berlaku_mulai'] ?? '') !== $effective;
       $db->begin();
@@ -153,6 +171,9 @@ class KepegawaianController extends Controller
       $targetOpd = trim((string)($_POST['target_kd_opd'] ?? $u['kd_opd']));
       if ($targetOpd !== $u['kd_opd'] && !(($u['structure_scope'] ?? '') === 'regional' && in_array($targetOpd, ['BUPATI', 'SETDA'], true))) throw new RuntimeException('Scope struktur tidak boleh diubah');
       $db = DB::getInstance();
+      $existing = $db->query('SELECT * FROM struktur_jabatan_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0', [$id, $u['kd_wilayah'], $targetOpd, $u['tahun']])->fetch();
+      if (!$existing) throw new RuntimeException('Jabatan tidak ditemukan dalam scope ini');
+      if (RegionalLeadershipService::legacyRole($existing)) throw new RuntimeException('Posisi pimpinan wilayah selalu tersedia; ubah melalui form pimpinan wilayah');
       $db->begin();
       try {
         $db->query('UPDATE struktur_jabatan_opd_neo SET parent_id=NULL,parent_kd_opd=NULL,tgl_update=NOW(),username_update=? WHERE parent_id=? AND parent_kd_opd=? AND kd_wilayah=? AND tahun=? AND is_deleted=0', [$u['username'] ?? 'system', $id, $targetOpd, $u['kd_wilayah'], $u['tahun']]);
