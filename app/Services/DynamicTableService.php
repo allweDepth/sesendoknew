@@ -881,7 +881,12 @@ AUDIT TRAIL (TIDAK DIUBAH)
     if (!in_array($way, ['PENYEDIA', 'SWAKELOLA'], true)) throw new InvalidArgumentException('Cara pengadaan tidak valid');
     if ($way === 'SWAKELOLA') {
       if (!in_array((string)($data['tipe_swakelola'] ?? ''), ['I', 'II', 'III', 'IV'], true)) throw new InvalidArgumentException('Tipe Swakelola I, II, III, atau IV wajib dipilih');
-      $data['rekanan_id'] = null;
+      // Keep the selected company/institution/organization linked to swakelola.
+      if (empty($data['rekanan_id'])) throw new InvalidArgumentException('Perusahaan/instansi/organisasi pelaksana swakelola wajib dipilih');
+      else {
+        $partner=$this->db->query("SELECT id FROM rekanan_neo WHERE id=? AND is_deleted=0 AND COALESCE(disable,0)=0 AND (kd_wilayah=? OR kd_wilayah IS NULL OR kd_wilayah='')",[(int)$data['rekanan_id'],$this->user['kd_wilayah']??''])->fetch();
+        if (!$partner) throw new InvalidArgumentException('Perusahaan/instansi/organisasi pelaksana tidak tersedia dalam wilayah pengguna');
+      }
     } elseif (empty($data['rekanan_id'])) {
       throw new InvalidArgumentException('Penyedia wajib dipilih untuk pengadaan melalui penyedia');
     } else {

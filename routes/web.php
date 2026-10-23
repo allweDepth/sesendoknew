@@ -43,6 +43,7 @@ return [
   '/kontrak/procurement/templates' => ['KontrakController', 'procurementTemplates'],
   '/kontrak/procurement/documents' => ['KontrakController', 'procurementDocuments'],
   '/kontrak/procurement/draft' => ['KontrakController', 'procurementDraft'],
+  '/kontrak/procurement/generate-swakelola' => ['KontrakController', 'procurementGenerateSwakelola'],
   '/kontrak/procurement/save' => ['KontrakController', 'procurementSave'],
   '/kontrak/procurement/delete' => ['KontrakController', 'procurementDelete'],
   '/kontrak/procurement/pdf' => ['KontrakController', 'procurementPdf'],

@@ -656,6 +656,7 @@ class KontrakRealisasiService
     }
     $d = $this->db->query($sql, $params)->fetch();
     if (!$d) throw new RuntimeException('Kontrak tidak ditemukan');
+    if(($d['cara_pengadaan']??'')==='SWAKELOLA')return (new ProcurementDocumentService($this->user))->swakelolaContractPdf($id);
     return (new ProcurementFixedPdfService($this->user))->directContract($d,PageSetupService::current($this->user));
     $d['nomor_spk'] = $d['nomor_kontrak'];
     $d['tanggal_spk'] = $d['tanggal_kontrak'];

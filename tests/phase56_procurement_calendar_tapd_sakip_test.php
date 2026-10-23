@@ -13,7 +13,8 @@ foreach([
 $masterCount=(int)$db->query('SELECT COUNT(*) jumlah FROM master_dokumen_pengadaan_neo WHERE aktif=1 AND is_deleted=0')->fetch()['jumlah'];
 $ok($masterCount>=28,'master meliputi dokumen penyedia dan Swakelola I-IV');
 $sectionCount=(int)$db->query('SELECT COUNT(*) jumlah FROM master_dokumen_pengadaan_bagian_neo WHERE is_deleted=0')->fetch()['jumlah'];
-$ok($sectionCount>=$masterCount*3,'setiap master memiliki bagian narasi yang dapat disalin dan diedit');
+$withoutSections=(int)$db->query("SELECT COUNT(*) n FROM master_dokumen_pengadaan_neo m WHERE m.aktif=1 AND m.is_deleted=0 AND m.kode NOT IN ('LAMPIRAN_NEGOSIASI','DAFTAR_HADIR_KLARIFIKASI') AND NOT EXISTS (SELECT 1 FROM master_dokumen_pengadaan_bagian_neo b WHERE b.master_id=m.id AND b.is_deleted=0 AND LENGTH(b.isi_template)>0)")->fetch()['n'];
+$ok($withoutSections===0,'setiap master aktif memiliki isi yang dapat disalin dan diedit');
 
 $cases=[
  ['PENYEDIA','BARANG','',10000000,'BUKTI_PEMBELIAN'],['PENYEDIA','BARANG','',50000000,'KUITANSI'],

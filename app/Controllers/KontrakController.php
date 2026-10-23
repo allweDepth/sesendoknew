@@ -230,6 +230,11 @@ class KontrakController extends Controller
   {
     $this->json(fn() => (new ProcurementDocumentService($_SESSION['user'] ?? []))->draft((int)($_GET['contract_id'] ?? 0), (int)($_GET['master_id'] ?? 0)));
   }
+  public function procurementGenerateSwakelola()
+  {
+    $p=$this->payload();
+    $this->json(fn()=>(new ProcurementDocumentService($_SESSION['user']??[]))->generateSwakelola((int)($p['contract_id']??0)),'Dokumen swakelola disusun otomatis sesuai paket');
+  }
   public function procurementSave()
   {
     $p = $this->payload();
@@ -242,7 +247,7 @@ class KontrakController extends Controller
   public function procurementPdf()
   {
     $id=(int)($_GET['id']??0);
-    try{$body=(new ProcurementDocumentService($_SESSION['user']??[]))->pdf($id);header('Content-Type: application/pdf');header('Content-Disposition: attachment; filename="dokumen-pengadaan-'.$id.'.pdf"');echo$body;}catch(Throwable $e){http_response_code(400);echo$e->getMessage();}exit;
+    try{$service=new ProcurementDocumentService($_SESSION['user']??[]);$document=$service->detail($id);$body=$service->pdf($id);$filename=preg_replace('/[^\pL\pN ._-]+/u',' ',(string)$document['judul']).'.pdf';header('Content-Type: application/pdf');header("Content-Disposition: attachment; filename=\"dokumen-pengadaan-$id.pdf\"; filename*=UTF-8''".rawurlencode($filename));echo$body;}catch(Throwable $e){http_response_code(400);echo$e->getMessage();}exit;
   }
   private function json(callable $callback, string $message = 'Data berhasil dimuat'): void
   {
