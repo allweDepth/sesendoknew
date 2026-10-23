@@ -54,7 +54,10 @@ class AnggaranController extends Controller
     {
         header('Content-Type: application/json;charset=UTF-8');
         if(!Auth::check()){echo JsonResponse::error('Unauthorized',401);return;}
-        try{$service=new AnggaranDocumentService(Auth::scopedUser());$data=$action==='groups'?$service->groups($_GET['tbl']??''):$service->details($_GET['tbl']??'',$_GET['kd_sub_keg']??'');echo JsonResponse::success('Data dokumen berhasil dimuat',[],$data);}catch(Throwable $e){echo JsonResponse::error($e->getMessage(),400);}
+        // Read-only document requests must not block navigation/status requests on the session lock.
+        $user = Auth::scopedUser();
+        if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
+        try{$service=new AnggaranDocumentService($user);$data=$action==='groups'?$service->groups($_GET['tbl']??''):$service->details($_GET['tbl']??'',$_GET['kd_sub_keg']??'');echo JsonResponse::success('Data dokumen berhasil dimuat',[],$data);}catch(Throwable $e){echo JsonResponse::error($e->getMessage(),400);}
     }
 
     public function exportPdf(): void

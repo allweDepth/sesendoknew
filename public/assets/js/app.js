@@ -179,6 +179,10 @@ class App {
 			return; // tidak perlu load script lagi
 		}
 
+		this.loadingModules = this.loadingModules || new Set();
+		if (this.loadingModules.has(moduleName)) return;
+		this.loadingModules.add(moduleName);
+
 		// Editor paragraf dipakai Tata Naskah dan dokumen kontrak SSKK/SSUK.
 		if (["tata_naskah", "kontrak"].includes(moduleName)) {
 			// jika module tata naskah
@@ -214,12 +218,16 @@ class App {
 		script.onload = () => {
 			// ketika script selesai load
 
+			this.loadingModules.delete(moduleName);
 			this.loadedModules.push(moduleName); // tandai module sudah dimuat
-			this.initModuleInstance(moduleName); // jalankan instance module
+			const currentPath = window.appRoutePath ? window.appRoutePath(window.location.pathname) : window.location.pathname;
+			if (window.appModuleMap["/" + currentPath.split("/")[1]] === moduleName)
+				this.initModuleInstance(moduleName);
 		};
 
 		script.onerror = () => {
 			// jika script gagal load
+			this.loadingModules.delete(moduleName);
 			console.error("Gagal load module:", moduleName); // tampilkan error
 		};
 

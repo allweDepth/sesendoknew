@@ -103,6 +103,7 @@ $(document).ready(function () {
 	$sidebarUtama.sidebar({
 		context: $context,
 		transition: "push",
+		dimPage: false,
 	});
 
 	$("#toggleSidebar").on("click", function () {

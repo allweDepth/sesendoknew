@@ -18,17 +18,21 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		this.changes = { rkpd: "rkpd_p", renja: "renja_p", rka: "rka_p" };
 	}
 	init() {
+		window.activeBudgetDocument?.request?.abort();
+		window.activeBudgetDocument = this;
 		this.state.setTable(this.table);
 		this.state.req = null;
 		this.injectStyles();
 		this.renderBudgetShell();
+		this.root = document.querySelector(".anggaran-hierarchy");
+		this.route = window.location.pathname;
 		this.loadGroups();
 		this.bindPhase3Actions();
 		this.bindAuxActions();
 		this.bindBudgetForm();
 			$(document)
-			.off(`form:success.${this.table}.budget`)
-			.on(`form:success.${this.table}.budget`, () => this.loadGroups());
+			.off("form:success.budgetDocument")
+			.on(`form:success.${this.table}.table.budgetDocument`, () => { if (this.isActive()) this.loadGroups(); });
 	}
 	renderBudgetShell() {
 		const label = this.formatTitle(this.table.replace("_p", " Perubahan")),
@@ -45,14 +49,29 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		);
 		if(official) $('.budget-secondary-export [data-budget-action="tapd"]').before('<button class="ui basic button" data-budget-action="same-price-excel"><i class="clone outline icon"></i>Rekap Harga Sama (Excel)</button>');
 	}
-	loadGroups() {
-		window.Ajax.request({
-			url: `/anggaran/groups?tbl=${encodeURIComponent(this.table)}`,
-			method: "GET",
-			success: (r) => {
-				if (r?.success) this.renderGroups(r.data || []);
+	isActive() {
+		return window.activeBudgetDocument === this && this.root?.isConnected && window.location.pathname === this.route;
+	}
+	loadDocument(url, render) {
+		this.request?.abort();
+		const version = this.requestVersion = (this.requestVersion || 0) + 1;
+		const active = () => this.isActive() && this.requestVersion === version;
+		const failed = () => {
+			if (active()) $("#budgetGroupList").html('<div class="ui warning message"><p>Data belum berhasil dimuat. Silakan coba kembali.</p><button class="ui small basic button" data-budget-action="back">Muat ulang daftar</button></div>');
+		};
+		this.request = window.Ajax.request({
+			url, method: "GET", silent: true,
+			success: (response) => {
+				if (!active()) return;
+				if (!response?.success || !Array.isArray(response.data)) { failed(); return; }
+				try { render(response.data); }
+				catch (error) { console.error("Gagal menampilkan dokumen anggaran", error); failed(); }
 			},
+			error: failed,
 		});
+	}
+	loadGroups() {
+		this.loadDocument(`/anggaran/groups?tbl=${encodeURIComponent(this.table)}`, rows => this.renderGroups(rows));
 	}
 	renderGroups(rows) {
 		const total = rows.reduce((n, r) => n + Number(r.total || 0), 0),
@@ -90,18 +109,12 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		);
 	}
 	loadDetails(code) {
-		window.Ajax.request({
-			url: `/anggaran/details?tbl=${encodeURIComponent(this.table)}&kd_sub_keg=${encodeURIComponent(code)}`,
-			method: "GET",
-			success: (r) => {
-				if (r?.success) {
-					this.renderDetails(code, r.data || []);
-					if (["dpa", "dppa"].includes(this.table))
-						$("#budgetGroupList>.ui.segment:first").append(
-							`<a class="ui right floated teal button" data-spa="server" href="${window.appUrl ? window.appUrl("/anggaran/rencana-rekening") : "/anggaran/rencana-rekening"}?tbl=${this.table}&kd_sub_keg=${encodeURIComponent(code)}"><i class="calendar alternate icon"></i>Rencana per Rekening</a>`,
-						);
-				}
-			},
+		this.loadDocument(`/anggaran/details?tbl=${encodeURIComponent(this.table)}&kd_sub_keg=${encodeURIComponent(code)}`, rows => {
+			this.renderDetails(code, rows);
+			if (["dpa", "dppa"].includes(this.table))
+				$("#budgetGroupList>.ui.segment:first").append(
+					`<a class="ui right floated teal button" data-spa="server" href="${window.appUrl ? window.appUrl("/anggaran/rencana-rekening") : "/anggaran/rencana-rekening"}?tbl=${this.table}&kd_sub_keg=${encodeURIComponent(code)}"><i class="calendar alternate icon"></i>Rencana per Rekening</a>`,
+				);
 		});
 	}
 	renderDetails(code, rows) {

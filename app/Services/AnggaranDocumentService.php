@@ -16,13 +16,55 @@ class AnggaranDocumentService
     private function scope(string $alias='a'):array{$w=$this->user['kd_wilayah']??'';$o=$this->user['kd_opd']??'';$y=(int)($this->user['tahun']??0);if(!$w||!$y)throw new RuntimeException('Scope pengguna tidak lengkap');$sql="$alias.kd_wilayah=? AND $alias.tahun=? AND $alias.is_deleted=0";$p=[$w,$y];if($o&&$o!=='0'){$sql.=" AND $alias.kd_opd=?";$p[]=$o;}return[$sql,$p];}
     public function groups(string $logical):array
     {
-        $table=$this->table($logical);[$scope,$params]=$this->scope();$amount=str_starts_with($logical,'rkpd')?'a.pagu':'a.jumlah';$description=str_starts_with($logical,'rkpd')?'MAX(a.indikator)':'MAX(a.uraian)';
-        $prefix="CONVERT(a.kd_sub_keg USING utf8mb4) COLLATE utf8mb4_general_ci";
-                return $this->db->query("SELECT a.kd_sub_keg,COALESCE(h.uraian,r.uraian,$description) nama_sub_kegiatan,COUNT(*) jumlah_uraian,COALESCE(SUM($amount),0) total,MAX(a.setujui) setujui,MAX(a.kunci) kunci,
-                      (SELECT CONCAT(x.kode,' ',x.uraian) FROM rekening_kegiatan_historis x WHERE x.tahun=a.tahun AND CONVERT(x.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(a.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci AND x.level='program' AND $prefix LIKE CONCAT(CONVERT(x.kode USING utf8mb4) COLLATE utf8mb4_general_ci,'.%') ORDER BY CHAR_LENGTH(x.kode) DESC LIMIT 1) program,
-                      (SELECT CONCAT(x.kode,' ',x.uraian) FROM rekening_kegiatan_historis x WHERE x.tahun=a.tahun AND CONVERT(x.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(a.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci AND x.level='kegiatan' AND $prefix LIKE CONCAT(CONVERT(x.kode USING utf8mb4) COLLATE utf8mb4_general_ci,'.%') ORDER BY CHAR_LENGTH(x.kode) DESC LIMIT 1) kegiatan,
-                      (SELECT CONCAT(x.kode,' ',x.uraian) FROM rekening_kegiatan x WHERE x.level='bidang' AND $prefix LIKE CONCAT(CONVERT(x.kode USING utf8mb4) COLLATE utf8mb4_general_ci,'.%') ORDER BY CHAR_LENGTH(x.kode) DESC LIMIT 1) bidang
-                      FROM `$table` a LEFT JOIN rekening_kegiatan r ON CONVERT(r.kode USING utf8mb4) COLLATE utf8mb4_general_ci=$prefix AND r.level='sub_kegiatan' LEFT JOIN rekening_kegiatan_historis h ON h.tahun=a.tahun AND CONVERT(h.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(a.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci AND CONVERT(h.kode USING utf8mb4) COLLATE utf8mb4_general_ci=$prefix AND h.level='sub_kegiatan' WHERE $scope GROUP BY a.kd_sub_keg,h.uraian,r.uraian ORDER BY a.kd_sub_keg",$params)->fetchAll();
+        $table = $this->table($logical);
+        [$scope, $params] = $this->scope();
+        $amount = str_starts_with($logical, 'rkpd') ? 'a.pagu' : 'a.jumlah';
+        $description = str_starts_with($logical, 'rkpd') ? 'a.indikator' : 'a.uraian';
+        // Aggregate the scoped document before looking up nomenclature. Joining
+        // thousands of detail rows to converted reference codes prevented index use.
+        $rows = $this->db->query("SELECT a.kd_sub_keg, MAX($description) nama_sub_kegiatan,
+            COUNT(*) jumlah_uraian, COALESCE(SUM($amount),0) total,
+            MAX(a.setujui) setujui, MAX(a.kunci) kunci
+            FROM `$table` a WHERE $scope GROUP BY a.kd_sub_keg ORDER BY a.kd_sub_keg", $params)->fetchAll();
+        if (!$rows) return [];
+
+        $codes = [];
+        foreach ($rows as $row) {
+            $parts = explode('.', (string)$row['kd_sub_keg']);
+            while ($parts) {
+                $codes[implode('.', $parts)] = true;
+                array_pop($parts);
+            }
+        }
+        $codes = array_keys($codes);
+        $holders = implode(',', array_fill(0, count($codes), '?'));
+        $reference = $this->db->query("SELECT kode,level,uraian FROM rekening_kegiatan
+            WHERE kode IN ($holders) AND level IN ('sub_kegiatan','bidang')", $codes)->fetchAll();
+        $historical = $this->db->query("SELECT kode,level,uraian FROM rekening_kegiatan_historis
+            WHERE tahun=? AND kd_wilayah=? AND kode IN ($holders)
+            AND level IN ('sub_kegiatan','program','kegiatan')",
+            array_merge([(int)$this->user['tahun'], $this->user['kd_wilayah']], $codes))->fetchAll();
+        $currentMap = $historyMap = [];
+        foreach ($reference as $item) $currentMap[$item['level']][$item['kode']] = $item['uraian'];
+        foreach ($historical as $item) $historyMap[$item['level']][$item['kode']] = $item['uraian'];
+        foreach ($rows as &$row) {
+            $code = (string)$row['kd_sub_keg'];
+            $row['nama_sub_kegiatan'] = $historyMap['sub_kegiatan'][$code]
+                ?? $currentMap['sub_kegiatan'][$code] ?? $row['nama_sub_kegiatan'];
+            $row['program'] = $row['kegiatan'] = $row['bidang'] = null;
+            $parts = explode('.', $code);
+            array_pop($parts);
+            while ($parts) {
+                $prefix = implode('.', $parts);
+                foreach (['program','kegiatan','bidang'] as $level) {
+                    $name = $level === 'bidang' ? ($currentMap[$level][$prefix] ?? null) : ($historyMap[$level][$prefix] ?? null);
+                    if ($row[$level] === null && $name !== null) $row[$level] = $prefix.' '.$name;
+                }
+                array_pop($parts);
+            }
+        }
+        unset($row);
+        return $rows;
     }
     public function details(string $logical,string $code):array
     {

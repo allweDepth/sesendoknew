@@ -129,12 +129,22 @@ class SpaRouter {
 	// ================================
 	// CLIENT MODE
 	// ================================
+	beginNavigation() {
+		this.navigation?.abort();
+		window.activeBudgetDocument?.request?.abort();
+		this.navigation = new AbortController();
+		return this.navigation;
+	}
+
 	loadClientModule(url) {
+		const navigation = this.beginNavigation();
 		fetch(url, {
+			signal: navigation.signal,
 			headers: { "X-Requested-With": "XMLHttpRequest" },
 		})
 			.then((res) => res.text())
 			.then((html) => {
+				if (navigation !== this.navigation || navigation.signal.aborted) return;
 				// destroy table lama
 				if (window.TableManager && TableManager.instances) {
 					Object.values(TableManager.instances).forEach((tbl) => {
@@ -157,18 +167,21 @@ class SpaRouter {
 				if (typeof initFomantic === "function") {
 					initFomantic();
 				}
-			});
+			}).catch(error => { if (error.name !== "AbortError") console.error("Gagal memuat halaman", error); });
 	}
 
 	// ================================
 	// SERVER MODE
 	// ================================
 	loadServerPartial(url) {
+		const navigation = this.beginNavigation();
 		fetch(url, {
+			signal: navigation.signal,
 			headers: { "X-Requested-With": "XMLHttpRequest" },
 		})
 			.then((res) => res.text())
 			.then((html) => {
+				if (navigation !== this.navigation || navigation.signal.aborted) return;
 				window.tableManager = null;
 				$("#main-content").html(html);
 
@@ -191,7 +204,7 @@ class SpaRouter {
 				if (typeof initFomantic === "function") {
 					initFomantic();
 				}
-			});
+			}).catch(error => { if (error.name !== "AbortError") console.error("Gagal memuat halaman", error); });
 	}
 
 	// ================================
