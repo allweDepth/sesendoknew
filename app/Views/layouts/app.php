@@ -490,7 +490,7 @@
   <script src="/assets/js/core/toast.js"></script>
   <script src="/assets/js/services/e2e-message.js"></script>
   <script src="/assets/js/core/ajax.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/ajax.js') ?>"></script> <!-- HARUS SEBELUM app.js -->
-  <script src="/assets/js/config/ui-config.js"></script>
+  <script src="/assets/js/config/ui-config.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/config/ui-config.js') ?>"></script>
   <script src="/assets/js/core/spa-router.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/spa-router.js') ?>"></script>
   <script src="/assets/js/core/page-loader.js"></script>
   <script src="/assets/js/core/validation-engine.js"></script>

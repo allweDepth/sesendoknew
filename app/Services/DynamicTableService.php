@@ -650,7 +650,15 @@ ROLE AUTHORIZATION (TIDAK DIUBAH)
         throw new Exception('Hanya Kepala OPD/PA/KPA yang dapat mengelola daftar subkegiatan.');
       }
     }
-    if (in_array($table, ['user_subkegiatan_neo', 'pejabat_tahunan_neo'], true) && in_array($action, ['add', 'edit', 'delete'], true)) {
+    if ($table === 'pejabat_tahunan_neo' && in_array($action, ['add', 'edit', 'delete'], true)) {
+      if (!in_array($role, ['admin_wilayah', 'admin_opd', 'kepala_opd', 'pa_kpa'], true)) {
+        throw new Exception('Pejabat Tahunan hanya dapat dikelola Admin Wilayah, Admin OPD, Kepala OPD, atau PA/KPA sesuai lingkupnya.');
+      }
+      if (empty($this->user['kd_wilayah']) || empty($this->user['kd_opd']) || $this->user['kd_opd'] === '0' || empty($this->user['tahun'])) {
+        throw new Exception('Pilih satu OPD dan tahun aktif untuk mengelola Pejabat Tahunan.');
+      }
+    }
+    if ($table === 'user_subkegiatan_neo' && in_array($action, ['add', 'edit', 'delete'], true)) {
       if (!in_array($role, ['admin_wilayah', 'kepala_opd'], true)) {
         throw new Exception('Penetapan pejabat dan sub kegiatan hanya menjadi kewenangan Kepala OPD atau administrator regional.');
       }
@@ -681,6 +689,24 @@ AUDIT TRAIL (TIDAK DIUBAH)
       $data['username_update'] = $user;
     }
 
+    return $data;
+  }
+
+  private function normalizeAnnualOfficial(array $data): array
+  {
+    $employee = $this->db->query(
+      "SELECT nama,nip,gelar_depan,gelar FROM db_asn_pemda_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND is_deleted=0 AND disable=0 AND COALESCE(aktif,1)=1 LIMIT 1",
+      [(int)($data['pegawai_id'] ?? 0), $this->user['kd_wilayah'], $this->user['kd_opd']]
+    )->fetch();
+    if (!$employee) throw new InvalidArgumentException('Pegawai harus aktif dan terdaftar pada OPD serta wilayah yang sedang dikelola.');
+    $start = substr((string)($data['berlaku_mulai'] ?? ''), 0, 10);
+    $end = substr((string)($data['berlaku_sampai'] ?? ''), 0, 10);
+    if (!$start || !$end || $end < $start) throw new InvalidArgumentException('Masa berlaku Pejabat Tahunan tidak valid.');
+    if (in_array($data['jenis_pejabat'] ?? '', ['PPK','PPTK'], true) && empty($data['kd_sub_keg'])) {
+      throw new InvalidArgumentException('Sub kegiatan wajib diisi untuk PPK/PPTK.');
+    }
+    $data['nama_pegawai'] = trim(implode(' ', array_filter([$employee['gelar_depan'], $employee['nama'], $employee['gelar']])));
+    $data['nip'] = $employee['nip'];
     return $data;
   }
 
@@ -1173,6 +1199,7 @@ kd_sub_keg → nama_sub_keg
     $filtered = $this->injectAudit($filtered, 'insert');
     $filtered = $this->normalizeSakipMetrics($table, $filtered);
     $filtered = $this->normalizeContractProcurement($table, $filtered);
+    if ($table === 'pejabat_tahunan_neo') $filtered = $this->normalizeAnnualOfficial($filtered);
     $this->enforceSubActivityAssignment($table, $filtered, 'add');
     $this->enforceDocumentRowLock($table, $filtered);
 
@@ -1507,6 +1534,7 @@ IGNORE SYSTEM FIELD
     $this->applyChangeDocumentRules($table, $oldData, $filtered);
     $filtered = $this->normalizeSakipMetrics($table, $filtered);
     $filtered = $this->normalizeContractProcurement($table, $filtered);
+    if ($table === 'pejabat_tahunan_neo') $filtered = $this->normalizeAnnualOfficial($filtered);
     $this->enforceSubActivityAssignment($table, $filtered, 'edit');
     $this->enforceDocumentRowLock($table, $filtered);
     if ($table === 'rpjmd_kabupaten_neo' && ($filtered['berlaku_mulai'] ?? '') > ($filtered['berlaku_sampai'] ?? '')) {

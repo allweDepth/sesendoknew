@@ -23,7 +23,11 @@ $(document).ready(function () {
 			return result(false);
 		}
 		if (path.startsWith("/kepegawaian")) {
-			if (["pejabat_tahunan", "penugasan_subkegiatan"].includes(tbl)) return { add:["admin_wilayah","kepala_opd"].includes(role), edit:["admin_wilayah","kepala_opd"].includes(role), delete:["admin_wilayah","kepala_opd"].includes(role), import:false };
+			if (tbl === "pejabat_tahunan") {
+				const allowed = ["admin_wilayah","admin_opd","kepala_opd","pa_kpa"].includes(role) && Boolean(window.app?.user?.kd_wilayah && window.app?.user?.kd_opd && window.app.user.kd_opd !== "0" && window.app?.user?.tahun);
+				return {add:allowed,edit:allowed,delete:allowed,import:false};
+			}
+			if (["penugasan_subkegiatan"].includes(tbl)) return { add:["admin_wilayah","kepala_opd"].includes(role), edit:["admin_wilayah","kepala_opd"].includes(role), delete:["admin_wilayah","kepala_opd"].includes(role), import:false };
 			const allowed=["admin_wilayah","admin_opd","kepala_opd","pa_kpa"].includes(role);
 			return { add:allowed, edit:allowed, delete:allowed, import:allowed };
 		}

@@ -1136,9 +1136,11 @@ UIConfig.sk_pegawai = { layout: { columns: 1 }, validation: { pegawai_id:{requir
 UIConfig.pejabat_tahunan = {layout:{columns:1},validation:{jenis_pejabat:{required:true},pegawai_id:{required:true},nomor_sk:{required:true},berlaku_mulai:{required:true},berlaku_sampai:{required:true}},form:{elements:[
 	{tag:"fieldDropdown",prop:{label:"Jenis Pejabat",name:"jenis_pejabat",options:[{value:"PA_KPA",text:"Pengguna Anggaran / KPA"},{value:"PPK",text:"Pejabat Pembuat Komitmen (per Sub Kegiatan)"},{value:"PPTK",text:"PPTK (per Sub Kegiatan)"},{value:"PPK_SKPD",text:"Pejabat Penatausahaan Keuangan"},{value:"BENDAHARA",text:"Bendahara"},{value:"PEJABAT_PENGADAAN",text:"Pejabat Pengadaan"},{value:"PEJABAT_LAINNYA",text:"Pejabat Lainnya"}]}},
 	{tag:"fieldDropdown",prop:{label:"Nama Pegawai",name:"pegawai_id",...pegawaiDropdown}},
+	{tag:"field",prop:{label:"Nama Pejabat (otomatis dari pegawai)",tableLabel:"Nama Pejabat",tablePriority:10,name:"nama_pegawai",readonly:true}},
+	{tag:"field",prop:{label:"NIP (otomatis dari pegawai)",tableLabel:"NIP",tablePriority:9,name:"nip",readonly:true}},
 	{tag:"field",prop:{label:"Nomor SK",name:"nomor_sk"}},{tag:"fieldCalendar",prop:{label:"Tanggal SK",name:"tanggal_sk",calendarType:"date"}},
 	{tag:"fieldCalendar",prop:{label:"Berlaku Mulai",name:"berlaku_mulai",calendarType:"date"}},{tag:"fieldCalendar",prop:{label:"Berlaku Sampai",name:"berlaku_sampai",calendarType:"date"}},
-	{tag:"fieldDropdown",prop:{label:"Sub Kegiatan (wajib untuk PPK/PPTK)",name:"kd_sub_keg",source:"rekening_kegiatan.sub_kegiatan",search:true}},
+	{tag:"fieldDropdown",prop:{label:"Sub Kegiatan (wajib untuk PPK/PPTK)",name:"kd_sub_keg",source:"rekening_kegiatan",filter:{level:"sub_kegiatan"},search:true}},
 	{tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan"}}
 ]}};
 
