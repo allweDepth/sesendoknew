@@ -2368,7 +2368,9 @@ $profiles['kontrak'] = [
   'where' => ['is_deleted' => 0],
   'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1],
   'not_duplicate' => ['kd_wilayah', 'kd_opd', 'tahun', 'nomor_kontrak'],
-  'lookup' => ['nama_ppk' => ['table' => 'pejabat_tahunan_neo', 'value_field' => 'nama_pegawai', 'match' => ['id' => 'ppk_id']]],
+  'lookup' => [
+    'nama_ppk' => ['table' => 'pejabat_tahunan_neo', 'value_field' => 'nama_pegawai', 'match' => ['id' => 'ppk_id', 'kd_wilayah' => 'kd_wilayah', 'kd_opd' => 'kd_opd', 'tahun' => 'tahun']],
+  ],
   'validation' => ['cara_pengadaan' => ['required'], 'jenis_pengadaan' => ['required'], 'nomor_kontrak' => ['required']],
   'req_filters' => ['kontrak_dpa' => ['where' => ['tahap' => 'dpa']], 'kontrak_dppa' => ['where' => ['tahap' => 'dppa']]],
   'dropdown' => ['value' => 'id', 'label' => 'nomor_kontrak'],

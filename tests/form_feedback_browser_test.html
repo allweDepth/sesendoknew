@@ -1,0 +1,48 @@
+<!doctype html><html lang="id"><meta charset="utf-8"><title>Form feedback regression</title>
+<link rel="stylesheet" href="/sesendoknew/assets/css/fomantic.min.css">
+<body style="padding:30px"><h2 class="ui header">Validasi field sidebar dan modal</h2><div id="results" class="ui message">Menjalankan pengujian…</div><div class="ui two column stackable grid">
+<div class="column"><section class="ui segment" data-test-container="sidebar"><h3>Form sidebar</h3><form id="sidebarForm" class="ui form" novalidate>
+<div class="required field"><label>Nomor kontrak</label><input name="nomor_kontrak" aria-describedby="number-help" required><small id="number-help">Isi nomor pada dokumen.</small></div>
+<div class="required field"><label>Tipe Swakelola</label><div class="ui selection dropdown"><input type="hidden" name="tipe_swakelola"><i class="dropdown icon"></i><div class="default text">Pilih tipe</div><div class="menu"><div class="item" data-value="III">Tipe III</div></div></div></div>
+</form></section></div>
+<div class="column"><section class="ui segment" data-test-container="modal"><h3>Form modal</h3><form id="modalForm" class="ui form" novalidate>
+<div class="required field"><label>Tanggal mulai</label><div class="ui calendar"><div class="ui left icon input"><i class="calendar icon"></i><input name="tanggal_mulai" required></div></div></div>
+<div class="field"><label>Keterangan</label><textarea name="keterangan"></textarea></div>
+</form></section></div></div>
+<script src="/sesendoknew/assets/js/jquery.min.js"></script><script src="/sesendoknew/assets/js/fomantic.min.js"></script>
+<script src="/sesendoknew/assets/js/core/validation-engine.js?qa=20261024.1"></script>
+<script>
+$(function(){
+ const messages=[];function check(ok,text){if(!ok)throw new Error(text);messages.push(text);}
+ try {
+  const sidebar=$('#sidebarForm'),modal=$('#modalForm');
+  sidebar.form({inline:true,fields:{nomor_kontrak:'empty',tipe_swakelola:'empty'}});
+  check(!!FormValidation.collect(sidebar).tipe_swakelola,'Dropdown hidden yang wajib ikut divalidasi');
+  FormFeedback.error(sidebar,{errors:{nomor_kontrak:['Nomor kontrak wajib diisi'],tipe_swakelola:['Pilih tipe Swakelola']}});
+  check(sidebar.find('.field.error').length===2 && sidebar.find('.ui.basic.red.pointing.prompt.label').length===2,'Field dan prompt Fomantic ditandai merah');
+  check(sidebar.find('[name=nomor_kontrak]').attr('aria-invalid')==='true','Atribut aksesibilitas menunjukkan field invalid');
+  check(modal.find('.field.error').length===0,'Error sidebar tidak bocor ke modal');
+  FormFeedback.error(sidebar,{errors:{nomor_kontrak:['Nomor kontrak wajib diisi'],tipe_swakelola:['Pilih tipe Swakelola']}});
+  check(sidebar.find('.prompt.label').length===2,'Pengulangan respons tidak menggandakan prompt');
+  sidebar.find('[name=nomor_kontrak]').val('600/04').trigger('input');
+  check(sidebar.find('.field.error').length===1 && !sidebar.find('[name=nomor_kontrak]').attr('aria-invalid'),'Field yang diperbaiki kembali normal tanpa menghapus error lainnya');
+  check(sidebar.find('[name=nomor_kontrak]').attr('aria-describedby')==='number-help','Petunjuk aksesibilitas asli dipertahankan');
+  sidebar.find('[name=tipe_swakelola]').val('III').trigger('change');
+  check(!sidebar.hasClass('error') && sidebar.find('.prompt.label').length===0,'Dropdown yang diperbaiki membersihkan state dan ringkasan error');
+  FormFeedback.error(modal,{errors:{tanggal_mulai:['Tanggal mulai wajib diisi']}});
+  check(modal.find('.ui.calendar').closest('.field').hasClass('error'),'Field kalender ditandai merah di modal');
+  modal.find('[name=tanggal_mulai]').val('2026-10-24').trigger('change');
+  check(modal.find('.field.error').length===0,'Koreksi tanggal membersihkan error modal');
+  FormFeedback.error(modal,{message:'Layanan data belum tersedia'});
+  check(modal.hasClass('error') && modal.find('.field.error').length===0,'Error layanan tidak menandai field yang valid');
+  FormFeedback.success(modal,'Tersimpan');
+  check(!modal.hasClass('error') && modal.hasClass('success'),'Berhasil menyimpan membersihkan status error');
+  FormFeedback.error(sidebar,{errors:{nomor_kontrak:['<scr'+'ipt>injection</scr'+'ipt>']}});
+  check(sidebar.find('.prompt.label script').length===0,'Pesan validasi di-escape sebagai teks');
+  // Leave representative errors visible for visual inspection.
+  FormFeedback.error(sidebar,{errors:{nomor_kontrak:['Nomor kontrak sudah digunakan'],tipe_swakelola:['Pilih tipe Swakelola yang sesuai']}});
+  FormFeedback.error(modal,{errors:{tanggal_mulai:['Tanggal mulai harus sebelum tanggal selesai']}});
+  $('#results').addClass('positive').text('PASS: '+messages.length+' pemeriksaan — '+messages.join('; '));
+ } catch(error){$('#results').addClass('negative').text('FAIL: '+error.message);throw error;}
+});
+</script></body></html>

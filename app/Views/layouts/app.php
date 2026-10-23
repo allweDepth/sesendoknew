@@ -493,7 +493,7 @@
   <script src="/assets/js/config/ui-config.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/config/ui-config.js') ?>"></script>
   <script src="/assets/js/core/spa-router.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/spa-router.js') ?>"></script>
   <script src="/assets/js/core/page-loader.js"></script>
-  <script src="/assets/js/core/validation-engine.js"></script>
+  <script src="/assets/js/core/validation-engine.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/validation-engine.js') ?>"></script>
   <script src="/assets/js/core/dialog.js"></script>
   <!-- UI REGISTRY -->
   <script src="/assets/js/ui/ui-registry.js"></script>
@@ -502,7 +502,7 @@
   <!-- ================= ENGINE ================= -->
 
   <script src="/assets/js/engine/table-manager.js"></script>
-  <script src="/assets/js/engine/form-engine.js"></script>
+  <script src="/assets/js/engine/form-engine.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/engine/form-engine.js') ?>"></script>
   <script src="/assets/js/engine/form-container-manager.js"></script>
   <script src="/assets/js/engine/flyout-controller.js"></script>
   <script src="/assets/js/engine/dropdown_engine.js"></script>

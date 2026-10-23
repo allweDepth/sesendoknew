@@ -138,7 +138,9 @@ final class SwakelolaDocumentService
             if ($b['type']==='table') {
                 $html.='<table border="1" cellpadding="4" width="100%">';
                 foreach ($b['rows'] as $row) {
-                    $html.='<tr>';$column=0;
+                    // TCPDF retries a row on the next page when it does not fit.
+                    // Its nobr fallback still permits rows taller than a full page.
+                    $html.='<tr nobr="true">';$column=0;
                     foreach ($row as $cell) {
                         $span=(int)($cell['colspan']??1);$width='';
                         if(!empty($b['column_widths']))$width=' width="'.array_sum(array_slice($b['column_widths'],$column,$span)).'%"';

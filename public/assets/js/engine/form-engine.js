@@ -614,17 +614,7 @@ class FormEngine {
 			success: (res) => {
 				if (!res || res.success !== true) return;
 				this.isSubmitting = false; // // reset flag submit
-				form.removeClass("error").addClass("success");
-				form.find(".ui.error.message").hide().empty();
-				let successBox = form.find(".ui.success.message");
-				if (!successBox.length) successBox = $('<div class="ui success message" role="status"></div>').prependTo(form);
-				successBox
-					.html(
-						`<i class="check circle icon"></i>${$("<div>")
-							.text(res.message || "Data berhasil disimpan")
-							.html()}`,
-					)
-					.show();
+				FormFeedback.success(form, res.message || "Data berhasil disimpan");
 
 				// ==================================================
 				// AKTIFKAN KEMBALI CALENDAR YANG TADI DISABLE
@@ -657,27 +647,7 @@ class FormEngine {
 	}
 
 	renderBackendErrors(form, response = {}) {
-		const errors = response?.errors || {};
-		const messages = [];
-		form.find(".field").removeClass("error");
-		form.removeClass("success").addClass("error");
-		form.find(".ui.success.message").hide().empty();
-		if (errors && typeof errors === "object") {
-			Object.entries(errors).forEach(([name, value]) => {
-				const items = Array.isArray(value) ? value : [value];
-				items.forEach((item) => item && messages.push(`${name}: ${item}`));
-				form.find(`[name="${name}"]`).closest(".field").addClass("error");
-			});
-		}
-		if (!messages.length && response?.message) messages.push(response.message);
-		const box = form.find(".ui.error.message");
-		if (box.length && messages.length) {
-			box
-				.html(
-					`<div class="header">Data tidak dapat disimpan</div><ul class="list">${messages.map((message) => `<li>${$("<div>").text(message).html()}</li>`).join("")}</ul>`,
-				)
-				.show();
-		}
+		FormFeedback.error(form, response);
 		const firstError = form.find(".field.error").first();
 		if (firstError.length) firstError[0].scrollIntoView({ behavior: "smooth", block: "center" });
 	}

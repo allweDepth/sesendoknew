@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/JsonResponse.php';
+require_once __DIR__ . '/FieldValidationException.php';
 require_once __DIR__ . '/BudgetScheduleService.php';
 require_once __DIR__ . '/ProcurementDocumentService.php';
 
@@ -180,7 +181,8 @@ PERUBAHAN:
     } catch (\Throwable $e) {
       return JsonResponse::error(
         $this->explainThrowable($e, (string)($request['action'] ?? ''), (string)($request['tbl'] ?? '')),
-        $e instanceof InvalidArgumentException ? 422 : 400
+        $e instanceof InvalidArgumentException ? 422 : 400,
+        $e instanceof FieldValidationException ? $e->errors : []
       );
     }
   }
@@ -904,17 +906,17 @@ AUDIT TRAIL (TIDAK DIUBAH)
     $kind = strtoupper((string)($data['jenis_pengadaan'] ?? 'BARANG'));
     $method = trim((string)($data['metode_pemilihan'] ?? ''));
     $value = (float)($data['nilai_kontrak'] ?? $data['nilai_hps'] ?? 0);
-    if (!in_array($way, ['PENYEDIA', 'SWAKELOLA'], true)) throw new InvalidArgumentException('Cara pengadaan tidak valid');
+    if (!in_array($way, ['PENYEDIA', 'SWAKELOLA'], true)) throw new FieldValidationException('cara_pengadaan', 'Cara pengadaan tidak valid');
     if ($way === 'SWAKELOLA') {
-      if (!in_array((string)($data['tipe_swakelola'] ?? ''), ['I', 'II', 'III', 'IV'], true)) throw new InvalidArgumentException('Tipe Swakelola I, II, III, atau IV wajib dipilih');
+      if (!in_array((string)($data['tipe_swakelola'] ?? ''), ['I', 'II', 'III', 'IV'], true)) throw new FieldValidationException('tipe_swakelola', 'Tipe Swakelola I, II, III, atau IV wajib dipilih');
       // Keep the selected company/institution/organization linked to swakelola.
-      if (empty($data['rekanan_id'])) throw new InvalidArgumentException('Perusahaan/instansi/organisasi pelaksana swakelola wajib dipilih');
+      if (empty($data['rekanan_id'])) throw new FieldValidationException('rekanan_id', 'Perusahaan/instansi/organisasi pelaksana swakelola wajib dipilih');
       else {
         $partner=$this->db->query("SELECT id FROM rekanan_neo WHERE id=? AND is_deleted=0 AND COALESCE(disable,0)=0 AND (kd_wilayah=? OR kd_wilayah IS NULL OR kd_wilayah='')",[(int)$data['rekanan_id'],$this->user['kd_wilayah']??''])->fetch();
-        if (!$partner) throw new InvalidArgumentException('Perusahaan/instansi/organisasi pelaksana tidak tersedia dalam wilayah pengguna');
+        if (!$partner) throw new FieldValidationException('rekanan_id', 'Perusahaan/instansi/organisasi pelaksana tidak tersedia dalam wilayah pengguna');
       }
     } elseif (empty($data['rekanan_id'])) {
-      throw new InvalidArgumentException('Penyedia wajib dipilih untuk pengadaan melalui penyedia');
+      throw new FieldValidationException('rekanan_id', 'Penyedia wajib dipilih untuk pengadaan melalui penyedia');
     } else {
       $data['tipe_swakelola'] = null;
     }
@@ -5229,22 +5231,21 @@ AND is_deleted = 0
       $match = $cfg['match'];
 
       $where = [];
-
+      $params = [];
       foreach ($match as $master => $local) {
-
-        if (!isset($data[$local])) continue;
-
-        $where[$master] = $data[$local];
+        // A partial composite key must never resolve an unrelated reference.
+        if (!isset($data[$local]) || $data[$local] === '') continue 2;
+        $where[] = "`$master` = ?";
+        $params[] = $data[$local];
       }
-
       if (!$where) continue;
-
-      $row = $this->db
-        ->table($table)
-        ->select($valueField)
-        ->where($where)
-        ->get()
-        ->getRowArray();
+      $columns = $this->getTableColumns($table);
+      if (in_array('is_deleted', $columns, true)) $where[] = '`is_deleted` = 0';
+      // DB::select() takes a table name; it is not a query-builder select.
+      $row = $this->db->query(
+        "SELECT `$valueField` FROM `$table` WHERE " . implode(' AND ', $where) . ' LIMIT 1',
+        $params
+      )->fetch();
 
       if ($row) {
 

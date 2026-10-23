@@ -95,47 +95,103 @@ class FormFeedback {
 		return form;
 	}
 
-	static error(form, response = {}) {
-		form = this.ensure(form).removeClass("success").addClass("error");
-		if (!form.length) return;
-		form.find(".ui.success.message").hide().empty();
+	static reset(form) {
+		form = $(form);
+		form.removeClass("error success").removeData("fieldFeedbackErrors").removeData("formFeedbackGeneral");
 		form.find(".field").removeClass("error");
-		const messages = [],
-			errors = response.errors || {};
-		if (Array.isArray(errors)) errors.forEach((value) => value && messages.push(String(value)));
-		else
-			Object.entries(errors).forEach(([name, values]) => {
-				(Array.isArray(values) ? values : [values]).forEach((value) => value && messages.push(String(value)));
-				form
-					.find(`[name="${CSS.escape(name)}"]`)
-					.closest(".field")
-					.addClass("error");
+		form.find("[aria-invalid]").removeAttr("aria-invalid");
+		form.find(".prompt.label").remove();
+		form.find("[data-feedback-describedby]").each(function () {
+			const input = $(this), prompt = input.attr("data-feedback-describedby");
+			const ids = (input.attr("aria-describedby") || "").split(/\s+/).filter(id => id && id !== prompt);
+			if (ids.length) input.attr("aria-describedby", ids.join(" ")); else input.removeAttr("aria-describedby");
+			input.removeAttr("data-feedback-describedby");
+		});
+		form.find(".form-feedback-zone .message").hide().empty();
+		return form;
+	}
+
+	static renderField(form, name, messages) {
+		const inputs = form.find("[name]").filter(function () { return this.name === name; });
+		const fields = inputs.closest(".field").addClass("error");
+		inputs.attr("aria-invalid", "true");
+		fields.each(function () {
+			const field = $(this);
+			field.children(".prompt.label").remove();
+			const prompt = $('<div class="ui basic red pointing prompt label" role="alert"></div>');
+			const id = `field-error-${++FormFeedback.promptId}`;
+			prompt.attr("id", id).text(messages.join(" ")).appendTo(field);
+			inputs.each(function () {
+				const input = $(this), ids = new Set((input.attr("aria-describedby") || "").split(/\s+/).filter(Boolean));
+				ids.add(id);
+				input.attr("aria-describedby", [...ids].join(" ")).attr("data-feedback-describedby", id);
 			});
-		if (!messages.length)
-			messages.push(response.message || "Data tidak dapat diproses. Periksa kembali isian formulir.");
-		const escape = (value) => $("<div>").text(value).html();
-		form
-			.find(".ui.error.message")
-			.html(
-				`<div class="header">Validasi gagal</div><ul class="list">${messages.map((message) => `<li>${escape(message)}</li>`).join("")}</ul>`,
-			)
-			.show();
+		});
+	}
+
+	static summary(form) {
+		const errors = form.data("fieldFeedbackErrors") || {};
+		const messages = [...Object.values(errors).flat(), ...(form.data("formFeedbackGeneral") || [])];
+		const box = form.children(".form-feedback-zone").find(".ui.error.message").empty();
+		if (!messages.length) {
+			if (!form.find(".field.error").length) form.removeClass("error");
+			box.hide(); return;
+		}
+		form.addClass("error");
+		$('<div class="header">Periksa kembali isian formulir</div>').appendTo(box);
+		const list = $('<ul class="list"></ul>').appendTo(box);
+		messages.forEach(message => $('<li>').text(message).appendTo(list));
+		box.show();
+	}
+
+	static error(form, response = {}) {
+		form = this.reset(this.ensure(form)).addClass("error");
+		if (!form.length) return;
+		const errors = {}, general = [], source = response.errors || {};
+		if (Array.isArray(source)) general.push(...source.filter(Boolean).map(String));
+		else Object.entries(source).forEach(([name, values]) => {
+			const messages = (Array.isArray(values) ? values : [values]).filter(Boolean).map(String);
+			if (!messages.length) return;
+			errors[name] = messages;
+			this.renderField(form, name, messages);
+		});
+		if (!Object.keys(errors).length && !general.length)
+			general.push(response.message || "Data tidak dapat diproses. Silakan coba kembali.");
+		form.data("fieldFeedbackErrors", errors).data("formFeedbackGeneral", general);
+		this.summary(form);
+	}
+
+	static clearField(input) {
+		input = $(input);
+		const form = input.closest("form.ui.form"), name = input.attr("name");
+		const errors = form.data("fieldFeedbackErrors");
+		if (!errors || !Object.hasOwn(errors, name)) return;
+		const current = FormValidation.collect(form)[name];
+		if (current?.length) return;
+		const field = input.closest(".field");
+		field.removeClass("error").children(".prompt.label").remove();
+		form.find("[name]").filter(function () { return this.name === name; }).each(function () {
+			const item = $(this), prompt = item.attr("data-feedback-describedby");
+			const ids = (item.attr("aria-describedby") || "").split(/\s+/).filter(id => id && id !== prompt);
+			item.removeAttr("aria-invalid data-feedback-describedby");
+			if (ids.length) item.attr("aria-describedby", ids.join(" ")); else item.removeAttr("aria-describedby");
+		});
+		delete errors[name];
+		this.summary(form);
 	}
 
 	static success(form, message = "Data berhasil disimpan") {
-		form = this.ensure(form).removeClass("error").addClass("success");
+		form = this.reset(this.ensure(form)).addClass("success");
 		if (!form.length) return;
-		form.find(".field").removeClass("error");
-		form.find(".ui.error.message").hide().empty();
-		form
-			.find(".ui.success.message")
-			.html(
-				`<div class="header"><i class="check circle icon"></i> Berhasil</div><p>${$("<div>").text(message).html()}</p>`,
-			)
-			.show();
+		const box = form.children(".form-feedback-zone").find(".ui.success.message").empty();
+		$('<div class="header"><i class="check circle icon"></i> Berhasil</div>').appendTo(box);
+		$('<p>').text(message).appendTo(box);
+		box.show();
 	}
+
 }
 
+FormFeedback.promptId = 0;
 window.FormFeedback = FormFeedback;
 
 /**
@@ -179,7 +235,7 @@ class FormValidation {
 		form.find("input[name], select[name], textarea[name]").each(function () {
 			const input = $(this),
 				name = input.attr("name");
-			if (!name || seen.has(name) || input.prop("disabled") || input.attr("type") === "hidden") return;
+			if (!name || seen.has(name) || input.prop("disabled") || (input.attr("type") === "hidden" && !input.closest(".ui.dropdown").length)) return;
 			seen.add(name);
 			const field = input.closest(".field");
 			const label = FormValidation.fieldLabel(input);
@@ -235,9 +291,7 @@ class FormValidation {
 			if (options.focus !== false && first.length) first[0].scrollIntoView({ behavior: "smooth", block: "center" });
 			return false;
 		}
-		form.removeClass("error");
-		form.find(".field").removeClass("error");
-		form.find(".ui.error.message").hide().empty();
+		FormFeedback.reset(form);
 		return true;
 	}
 }
@@ -263,4 +317,9 @@ $(function () {
 	$("form.ui.form").each(function () {
 		FormFeedback.ensure(this);
 	});
+});
+
+// Delegation also covers forms created later inside sidebars and modals.
+$(document).on("input.formFeedback change.formFeedback", "form.ui.form [name]", function () {
+	FormFeedback.clearField(this);
 });
