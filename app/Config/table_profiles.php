@@ -2419,6 +2419,7 @@ $officialDropdown = static function (string $type): array {
 };
 $profiles['pejabat_ppk'] = $officialDropdown('PPK');
 $profiles['pejabat_pptk'] = $officialDropdown('PPTK');
+$profiles['pejabat_pengadaan'] = $officialDropdown('PEJABAT_PENGADAAN');
 
 $profiles['absensi'] = [
   'table' => 'absensi_pegawai_neo',

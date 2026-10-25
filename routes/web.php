@@ -47,6 +47,9 @@ return [
   '/kontrak/procurement/save' => ['KontrakController', 'procurementSave'],
   '/kontrak/procurement/delete' => ['KontrakController', 'procurementDelete'],
   '/kontrak/procurement/pdf' => ['KontrakController', 'procurementPdf'],
+  '/kontrak/procurement/bundle-pdf' => ['KontrakController', 'procurementBundlePdf'],
+  '/kontrak/print-settings' => ['KontrakController', 'printSettings'],
+  '/kontrak/print-settings/save' => ['KontrakController', 'savePrintSettings'],
   '/halaman_berita' => ['HalamanBeritaController', 'index'], //Controller hanya return HTML shell BUKAN data tabel
   /*
     |--------------------------------------------------------------------------

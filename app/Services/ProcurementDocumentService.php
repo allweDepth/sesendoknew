@@ -7,6 +7,8 @@ require_once __DIR__.'/ProcurementFixedPdfService.php';
 require_once __DIR__.'/ProcurementReferenceTermsService.php';
 require_once __DIR__.'/SwakelolaDocumentService.php';
 require_once __DIR__.'/SwakelolaAutoFillService.php';
+require_once __DIR__.'/ContractOfficialService.php';
+require_once __DIR__.'/ContractPrintSettingsService.php';
 
 /** Master + snapshot dokumen pengadaan yang dapat diedit tanpa mengubah master. */
 final class ProcurementDocumentService
@@ -15,7 +17,10 @@ final class ProcurementDocumentService
     private array $user;
     private const EDIT_ROLES=['super_admin','admin_wilayah','admin_opd','kepala_opd','pa_kpa','ppk','pejabat_pengadaan','pokja_ulp'];
 
-    public function __construct(array $user=[]){$this->db=DB::getInstance();$this->user=Auth::scopedUser()?:$user;}
+    public function __construct(array $user=[]){$this->db=DB::getInstance();$this->user=Auth::scopedUser()?:$user;
+        if(!empty($this->user['kd_opd'])){$kop=OfficialLetterheadPdfService::settings($this->user);foreach(['nama_opd'=>'nama_opd','nama_pemerintah'=>'nama_pemda','alamat'=>'alamat_opd'] as $from=>$to)if(!empty($kop[$from]))$this->user[$to]=$kop[$from];}
+        foreach(['nama_opd','nama_org'] as $key)if(!empty($this->user[$key]))$this->user[$key]=ProcurementDocumentFormatService::bodyOpdName($this->user[$key]);
+    }
 
     private function scope():array
     {
@@ -30,9 +35,20 @@ final class ProcurementDocumentService
     private function contract(int $id):array
     {
         [$w,$o,$y]=$this->scope();$sql="SELECT k.*,COALESCE(r.nama_perusahaan,k.nama_penyedia) nama_penyedia_resmi,r.alamat alamat_penyedia,r.npwp,r.direktur,r.jabatan jabatan_pelaksana,r.no_ktp nik_pelaksana,r.email email_pelaksana,r.no_akta_pendirian,r.tgl_akta_pendirian,COALESCE(ppk.nama_pegawai,k.nama_ppk) nama_ppk_resmi,ppk.nip nip_ppk_resmi FROM kontrak_neo k LEFT JOIN rekanan_neo r ON r.id=k.rekanan_id AND r.is_deleted=0 LEFT JOIN pejabat_tahunan_neo ppk ON ppk.id=k.ppk_id AND ppk.is_deleted=0 WHERE k.id=? AND k.kd_wilayah=? AND k.tahun=? AND k.is_deleted=0";$p=[$id,$w,$y];
-        if($o!==''&&$o!=='0'){$sql.=' AND k.kd_opd=?';$p[]=$o;}$row=$this->db->query($sql.' LIMIT 1',$p)->fetch();if(!$row)throw new RuntimeException('Kontrak tidak ditemukan dalam lingkup pengguna');return$row;
+        if($o!==''&&$o!=='0'){$sql.=' AND k.kd_opd=?';$p[]=$o;}$row=$this->db->query($sql.' LIMIT 1',$p)->fetch();if(!$row)throw new RuntimeException('Kontrak tidak ditemukan dalam lingkup pengguna');
+        $row=ContractOfficialService::resolve($row);$row['sumber_dana']='APBD';$row['print_settings']=ContractPrintSettingsService::get($id);
+        $row['rab']=$this->db->query('SELECT * FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY CAST(nomor AS UNSIGNED),id',[$id])->fetchAll();
+        $row['dokumen_referensi']=[];foreach($this->db->query('SELECT kode_dokumen,nomor_dokumen,tanggal_dokumen FROM dokumen_pengadaan_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY id',[$id])->fetchAll() as $ref)$row['dokumen_referensi'][$ref['kode_dokumen']]=$ref;
+        $vendor=$row['rekanan_id']?$this->db->query('SELECT no_rekening,bank_rekening,atas_nama_rekening,nama_notaris_pendirian FROM rekanan_neo WHERE id=? AND is_deleted=0',[$row['rekanan_id']])->fetch():[];
+        return $row+($vendor?:[]);
     }
 
+    public function printSettings(int $id,?array $input=null):array
+    {
+        $this->contract($id);
+        if($input!==null){$this->canEdit();return ContractPrintSettingsService::save($id,$input,(string)($this->user['username']??''));}
+        return ContractPrintSettingsService::get($id);
+    }
     private function assertApplicable(array $master, array $contract): void
     {
         foreach (['cara_pengadaan','jenis_pengadaan'] as $key) {
@@ -46,7 +62,7 @@ final class ProcurementDocumentService
     private function letterhead():array
     {
         [$w,$o,$y]=$this->scope();
-        $kop=$this->db->query('SELECT * FROM kop_surat_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND aktif=1 AND is_deleted=0 ORDER BY id DESC LIMIT 1',[$w,$o,$y])->fetch()?:[];
+        $kop=OfficialLetterheadPdfService::settings($this->user);
         $out=['nama_pemerintah'=>$kop['nama_pemerintah']??$this->user['nama_pemda']??'PEMERINTAH DAERAH',
             'nama_opd'=>$kop['nama_opd']??$this->user['nama_opd']??$this->user['nama_org']??'PERANGKAT DAERAH',
             'alamat'=>$kop['alamat']??$this->user['alamat_opd']??'',
@@ -54,7 +70,7 @@ final class ProcurementDocumentService
             'gunakan_gambar_kop'=>!empty($kop['gunakan_gambar_kop'])];
         $root=realpath(__DIR__.'/../..').DIRECTORY_SEPARATOR;
         foreach(['gambar_kop','logo_kiri','logo_kanan'] as $field){
-            $path=!empty($kop[$field])?realpath($root.ltrim($kop[$field],'/')):false;
+            $path=OfficialLetterheadPdfService::imagePath($kop[$field]??'');
             if($path && str_starts_with($path,$root) && is_file($path) && is_readable($path) && filesize($path)<=3*1024*1024){
                 $mime=(new finfo(FILEINFO_MIME_TYPE))->file($path);
                 if(in_array($mime,['image/png','image/jpeg','image/webp'],true))$out[$field]='data:'.$mime.';base64,'.base64_encode(file_get_contents($path));
@@ -78,7 +94,7 @@ final class ProcurementDocumentService
 
     public function templates(int $contractId):array
     {
-        $c=$this->contract($contractId);$way=strtoupper((string)($c['cara_pengadaan']??'PENYEDIA'));$kind=strtoupper((string)($c['jenis_pengadaan']??'BARANG'));$method=(string)($c['metode_pemilihan']??'');$sw=$c['tipe_swakelola']??null;$value=(float)($c['nilai_kontrak']??0);
+        $c=$this->contract($contractId);$way=strtoupper((string)($c['cara_pengadaan']??'PENYEDIA'));$kind=strtoupper((string)($c['jenis_pengadaan']??'BARANG'));$method=(string)($c['metode_pemilihan']??'');$sw=$c['tipe_swakelola']??null;$value=(float)($c['nilai_kontrak']??$c['total_anggaran']??0);
         $recommended=self::recommendForm($way,$kind,$method,$value,$sw);
         $rows=$this->db->query("SELECT id,kode,nama,kelompok,cara_pengadaan,jenis_pengadaan,metode_pemilihan,tipe_swakelola,bentuk_kontrak,nilai_min,nilai_max,dasar_hukum,sumber_format,versi,orientasi FROM master_dokumen_pengadaan_neo WHERE aktif=1 AND is_deleted=0 AND berlaku_mulai<=CURDATE() AND (berlaku_sampai IS NULL OR berlaku_sampai>=CURDATE()) AND (cara_pengadaan='SEMUA' OR cara_pengadaan=?) AND (jenis_pengadaan='SEMUA' OR jenis_pengadaan=?) AND (tipe_swakelola IS NULL OR tipe_swakelola=?) ORDER BY FIELD(kelompok,'PERSIAPAN','PEMILIHAN','KONTRAK','PELAKSANAAN','SWAKELOLA'),nama",[$way,$kind,$sw])->fetchAll();
         foreach($rows as &$r){$r['direkomendasikan']=($r['bentuk_kontrak']===$recommended)||($way==='SWAKELOLA'&&$r['kode']==='SWAKELOLA_'.$sw);$r['sesuai_nilai']=($value>=(float)$r['nilai_min']&&($r['nilai_max']===null||$value<=(float)$r['nilai_max']));}unset($r);
@@ -202,6 +218,36 @@ final class ProcurementDocumentService
         $pdf->AddPage();OfficialLetterheadPdfService::draw($pdf,$this->user);$pdf->SetFont($setup['font']??'helvetica','B',13);$pdf->MultiCell(0,7,strtoupper((string)$d['judul']),0,'C');$pdf->SetFont($setup['font']??'helvetica','',9);$pdf->MultiCell(0,5,'Nomor: '.($d['nomor_dokumen']?:'-').' | Tanggal: '.$d['tanggal_dokumen'],0,'C');$pdf->Ln(4);
         foreach($d['sections'] as $section){$pdf->SetFont($setup['font']??'helvetica','B',10);$pdf->MultiCell(0,6,$section['judul'],0,'L');$pdf->SetFont($setup['font']??'helvetica','',9);$body=$this->renderVariables((string)$section['isi'],$vars);$pdf->writeHTML($this->sanitizeHtml($body),true,false,true,false,'');$pdf->Ln(2);}if($d['attachments']){foreach($d['attachments'] as $a){$pdf->AddPage();$pdf->SetFont($setup['font']??'helvetica','B',11);$pdf->MultiCell(0,7,'LAMPIRAN - '.$a['judul'],0,'C');$pdf->SetFont($setup['font']??'helvetica','',9);$pdf->writeHTML($this->sanitizeHtml($this->renderVariables((string)($a['isi']??''),$vars)),true,false,true,false,'');}}
         $pdf->SetFont($setup['font']??'helvetica','I',7);$pdf->MultiCell(0,4,'Dasar format: '.$d['dasar_hukum_snapshot'].' | Master versi '.$d['versi_master'],0,'L');return$pdf->Output('','S');
+    }
+
+    /** Preserve edited snapshots; only create missing applicable documents. */
+    public function bundlePdf(int $contractId):string
+    {
+        $this->canEdit();$info=$this->templates($contractId);$c=$info['contract'];
+        if(($c['cara_pengadaan']??'')!=='PENYEDIA')throw new InvalidArgumentException('Gunakan penyusunan dokumen swakelola untuk paket ini');
+        $order=['UNDANGAN_PL','JADWAL_DOKUMEN','BA_SURVEY_HARGA','PAKTA_INTEGRITAS','BA_KLARIFIKASI_NEGOSIASI','LAMPIRAN_NEGOSIASI','DAFTAR_HADIR_KLARIFIKASI','PENETAPAN_PENYEDIA','PENGUMUMAN_PENYEDIA','BA_EVALUASI','BAHP','SPPBJ','SPMK','RAPAT_PRA_KONTRAK'];
+        $form=$info['recommended_form'];$kind=$c['jenis_pengadaan'];$main=$form==='SPK'?'SPK_'.$kind:($form==='SURAT_PERJANJIAN'?'SURAT_PERJANJIAN':$form);
+        $order[]=$main;$order[]='SSUK';$order[]='SSKK';
+        $reference=ProcurementDocumentFormatService::supports('SAMPUL',$c);
+        if($reference)$order=array_merge([$main],array_reverse(array_slice($order,0,14)));
+        $existing=[];foreach($this->list($contractId) as $d)if(!isset($existing[$d['kode_dokumen']]))$existing[$d['kode_dokumen']]=$d['id'];
+        $masters=[];foreach($info['templates'] as $m)if($m['sesuai_nilai']&&(!$m['metode_pemilihan']||$m['metode_pemilihan']===($c['metode_pemilihan']??'')))$masters[$m['kode']]=$m;
+        foreach($order as $code){
+            if(isset($existing[$code])||!isset($masters[$code]))continue;
+            $m=$masters[$code];$draft=$this->draft($contractId,(int)$m['id']);$number=$reference?ProcurementDocumentFormatService::documentNumber($c,$code):($code===$main?$c['nomor_kontrak']:($code==='SPMK'?$c['nomor_spmk']:'600/'.($c['nomor_rup']?:$contractId).'/'.str_replace('_','-',$code).'/PPK/DPUPR'));
+            $saved=$this->save(['contract_id'=>$contractId,'master_id'=>$m['id'],'judul'=>$m['nama'],'nomor_dokumen'=>$number,'tanggal_dokumen'=>$c['tanggal_kontrak']?:date('Y-m-d'),'status'=>'DRAFT','sections'=>$draft['sections'],'data_isian'=>['dibuat_sebagai'=>'bundel','rup_sementara'=>str_contains($c['keterangan']??'','RUP acak sementara')]]);
+            $existing[$code]=$saved['id'];
+        }
+        $c=$this->contract($contractId);$setup=PageSetupService::current($this->user);if($reference)$setup=ProcurementDocumentFormatService::setup($setup,$c['print_settings']??[]);$pdf=PageSetupService::createPdf($setup,'P');$pdf->SetTitle('Dokumen Pengadaan - '.$c['uraian_kontrak']);
+        $renderer=new ProcurementFixedPdfService($this->user);
+        if($form==='SPK'){$renderer->cover($pdf,$c,$setup);$pdf->Bookmark('Sampul SPK',0,0,$pdf->getPage());}
+        foreach($order as $code){
+            if(!isset($existing[$code]))continue;
+            $d=$this->detail((int)$existing[$code]);$d['include_cover']=false;$start=$pdf->getNumPages()+1;
+            $renderer->renderInto($pdf,$d,$c,$setup);$pdf->Bookmark($d['nama_master']??$d['judul'],0,0,$start);
+        }
+        if(!$pdf->getNumPages())throw new RuntimeException('Tidak ada dokumen yang sesuai untuk digabung');
+        return $pdf->Output('','S');
     }
 
     private function variables(array $d,array $c):array

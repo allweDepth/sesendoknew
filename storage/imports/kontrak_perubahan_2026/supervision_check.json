@@ -1,0 +1,90 @@
+[
+  {
+    "excel_row": 7,
+    "package": "Pengawasan Pemb./rehabilitasi Median Jalan Nasional Kota Pasangkayu",
+    "budget": "75000000.00",
+    "hps": "74979645.00",
+    "offer": "74976562.50",
+    "gap_percent": "0.004111115756816399970952116404"
+  },
+  {
+    "excel_row": 10,
+    "package": "Pengawasan Kantor Bupati Pasangkayu",
+    "budget": "100000000.00",
+    "hps": "99972860.00",
+    "offer": "99968750.00",
+    "gap_percent": "0.004111115756816399970952116404"
+  },
+  {
+    "excel_row": 24,
+    "package": "Pengawasan Pemb. Jalan Beton/Rigid Desa Sarasa cs.",
+    "budget": "100000000.00",
+    "hps": "99972860.00",
+    "offer": "99968750.00",
+    "gap_percent": "0.004111115756816399970952116404"
+  },
+  {
+    "excel_row": 32,
+    "package": "Pengawasan pemb jalan kabupaten pasangkayu 1 cs.",
+    "budget": "40000000.00",
+    "hps": "39989144.00",
+    "offer": "39987500.00",
+    "gap_percent": "0.004111115756816399970952116404"
+  },
+  {
+    "excel_row": 36,
+    "package": "Pengawasan Pemeliharaan/Normalisasi Sungai Drainase Kota Pasangkayu cs.",
+    "budget": "8500000.00",
+    "hps": "8497693.11",
+    "offer": "8497343.76",
+    "gap_percent": "0.004111115751978480192490735877"
+  },
+  {
+    "excel_row": 39,
+    "package": "Pengawasan Pemeliharaan Jalan Kota Pasangkayu cs.",
+    "budget": "10000000.00",
+    "hps": "9997286.00",
+    "offer": "9996875.00",
+    "gap_percent": "0.004111115756816399970952116404"
+  },
+  {
+    "excel_row": 63,
+    "package": "Pengawasan Normalisasi Sungai/Saluran Bulumario cs.",
+    "budget": "42000000.00",
+    "hps": "41988601.20",
+    "offer": "41986875.00",
+    "gap_percent": "0.004111115756816399970952116404"
+  },
+  {
+    "excel_row": 77,
+    "package": "Perencanaan dan Pengawasan Rehab Aula kantor kelurahan Baras",
+    "budget": "20000000.00",
+    "hps": "19994572.00",
+    "offer": "19993750.00",
+    "gap_percent": "0.004111115756816399970952116404"
+  },
+  {
+    "excel_row": 91,
+    "package": "Pengawasan Pemeliharaan Ruas Jalan kabupaten II Dalam Kota Pasangkayu cs.",
+    "budget": "10000000.00",
+    "hps": "9997286.00",
+    "offer": "9996875.00",
+    "gap_percent": "0.004111115756816399970952116404"
+  },
+  {
+    "excel_row": 94,
+    "package": "Pengawasan Pematangan Lahan Sekolah Rakyat",
+    "budget": "20000000.00",
+    "hps": "19994572.00",
+    "offer": "19993750.00",
+    "gap_percent": "0.004111115756816399970952116404"
+  },
+  {
+    "excel_row": 101,
+    "package": "Pengawasan Pemb. Jalan Dusun Mandar cs.",
+    "budget": "9000000.00",
+    "hps": "8997557.40",
+    "offer": "8997187.50",
+    "gap_percent": "0.004111115756816399970952116404"
+  }
+]

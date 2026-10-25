@@ -707,7 +707,7 @@ AUDIT TRAIL (TIDAK DIUBAH)
     if (in_array($data['jenis_pejabat'] ?? '', ['PPK','PPTK'], true) && empty($data['kd_sub_keg'])) {
       throw new InvalidArgumentException('Sub kegiatan wajib diisi untuk PPK/PPTK.');
     }
-    $data['nama_pegawai'] = trim(implode(' ', array_filter([$employee['gelar_depan'], $employee['nama'], $employee['gelar']])));
+    $data['nama_pegawai'] = ContractOfficialService::employeeName($employee);
     $data['nip'] = $employee['nip'];
     return $data;
   }

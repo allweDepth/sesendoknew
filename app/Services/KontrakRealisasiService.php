@@ -263,18 +263,21 @@ class KontrakRealisasiService
       $row['satuan'] = trim((string)($row['satuan'] ?? ''));
       $row['vol_negoisasi'] = (float)($row['volume'] ?? $row['vol_negoisasi'] ?? 0);
       $row['harga_sat_negoisasi'] = (float)($row['harga_satuan'] ?? $row['harga_sat_negoisasi'] ?? 0);
-      $row['jumlah_negoisasi'] = $row['vol_negoisasi'] * $row['harga_sat_negoisasi'];
+      $row['pajak'] = (float)($row['pajak'] ?? $existingLookup[$row['id']]['pajak'] ?? 0);
+      if($row['pajak']<0||$row['pajak']>100)throw new InvalidArgumentException('Pajak RAB ke-'.($i+1).' tidak valid');
+      $row['jumlah_negoisasi'] = round($row['vol_negoisasi'] * $row['harga_sat_negoisasi'] * (1+$row['pajak']/100),2);
       if (!$row['uraian'] || !$row['satuan'] || $row['vol_negoisasi'] <= 0 || $row['harga_sat_negoisasi'] <= 0) throw new InvalidArgumentException('Uraian RAB ke-' . ($i + 1) . ' belum lengkap');
       $total += $row['jumlah_negoisasi'];
     }
     unset($row);
-    if ($total > (float)$header['nilai_kontrak'] + 0.01) throw new InvalidArgumentException('Total RAB Rp ' . number_format($total, 0, ',', '.') . ' melebihi nilai kontrak Rp ' . number_format((float)$header['nilai_kontrak'], 0, ',', '.'));
+    $limit=$header['nilai_kontrak']!==null?(float)$header['nilai_kontrak']:((($header['status_kontrak']??'')==='draft'&&!$header['setujui'])?(float)$header['total_anggaran']:0);
+    if ($total > $limit + 0.01) throw new InvalidArgumentException('Total RAB Rp ' . number_format($total, 0, ',', '.') . ' melebihi batas kontrak/pagu Rp ' . number_format($limit, 0, ',', '.'));
     $kept = [];
     $this->db->begin();
     try {
       foreach ($items as $i => $row) {
         $old = (int)$row['id'] > 0 ? ($existingLookup[(int)$row['id']] ?? []) : [];
-        $values = ['kontrak_id' => $contractId, 'kontrak_item_id' => array_key_exists('kontrak_item_id', $row) ? (!empty($row['kontrak_item_id']) ? (int)$row['kontrak_item_id'] : null) : ($old['kontrak_item_id'] ?? null), 'tahun' => $header['tahun'], 'kd_wilayah' => $header['kd_wilayah'], 'kd_opd' => $header['kd_opd'], 'id_renja_p' => (int)($row['id_renja_p'] ?? $old['id_renja_p'] ?? 0), 'id_dpa' => (int)($row['id_dpa'] ?? $old['id_dpa'] ?? 0), 'id_dppa' => (int)($row['id_dppa'] ?? $old['id_dppa'] ?? 0), 'nomor' => (string)($row['nomor'] ?? ($i + 1)), 'uraian' => $row['uraian'], 'satuan' => $row['satuan'], 'type' => (string)($row['type'] ?? $old['type'] ?? 'PEKERJAAN'), 'vol_negoisasi' => $row['vol_negoisasi'], 'harga_sat_negoisasi' => $row['harga_sat_negoisasi'], 'jumlah_negoisasi' => $row['jumlah_negoisasi'], 'bobot' => $total > 0 ? ($row['jumlah_negoisasi'] / $total * 100) : 0, 'keterangan' => (string)($row['keterangan'] ?? $old['keterangan'] ?? ''), 'is_deleted' => 0];
+        $values = ['kontrak_id' => $contractId, 'kontrak_item_id' => array_key_exists('kontrak_item_id', $row) ? (!empty($row['kontrak_item_id']) ? (int)$row['kontrak_item_id'] : null) : ($old['kontrak_item_id'] ?? null), 'tahun' => $header['tahun'], 'kd_wilayah' => $header['kd_wilayah'], 'kd_opd' => $header['kd_opd'], 'id_renja_p' => (int)($row['id_renja_p'] ?? $old['id_renja_p'] ?? 0), 'id_dpa' => (int)($row['id_dpa'] ?? $old['id_dpa'] ?? 0), 'id_dppa' => (int)($row['id_dppa'] ?? $old['id_dppa'] ?? 0), 'nomor' => (string)($row['nomor'] ?? ($i + 1)), 'uraian' => $row['uraian'], 'satuan' => $row['satuan'], 'type' => (string)($row['type'] ?? $old['type'] ?? 'PEKERJAAN'), 'vol_negoisasi' => $row['vol_negoisasi'], 'harga_sat_negoisasi' => $row['harga_sat_negoisasi'], 'pajak' => $row['pajak'], 'jumlah_negoisasi' => $row['jumlah_negoisasi'], 'bobot' => $total > 0 ? ($row['jumlah_negoisasi'] / $total * 100) : 0, 'keterangan' => (string)($row['keterangan'] ?? $old['keterangan'] ?? ''), 'is_deleted' => 0];
         if ((int)$row['id'] > 0) {
           $values['username_update'] = $this->user['username'] ?? 'system';
           $values['tgl_update'] = date('Y-m-d H:i:s');
@@ -642,7 +645,7 @@ class KontrakRealisasiService
     }
     $row = $this->db->query($sql . ' LIMIT 1', $params)->fetch();
     if (!$row) throw new RuntimeException('Kontrak tidak ditemukan atau bukan dalam lingkup pengguna');
-    return $row;
+    return ContractOfficialService::resolve($row);
   }
 
   public function contractPdf(int $id): string
@@ -656,6 +659,8 @@ class KontrakRealisasiService
     }
     $d = $this->db->query($sql, $params)->fetch();
     if (!$d) throw new RuntimeException('Kontrak tidak ditemukan');
+    $d=ContractOfficialService::resolve($d);
+    if(ProcurementDocumentFormatService::supports('SPK_KONSULTANSI_KONSTRUKSI',$d))$d=(new ProcurementDocumentService($this->user))->templates($id)['contract'];
     if(($d['cara_pengadaan']??'')==='SWAKELOLA')return (new ProcurementDocumentService($this->user))->swakelolaContractPdf($id);
     return (new ProcurementFixedPdfService($this->user))->directContract($d,PageSetupService::current($this->user));
     $d['nomor_spk'] = $d['nomor_kontrak'];

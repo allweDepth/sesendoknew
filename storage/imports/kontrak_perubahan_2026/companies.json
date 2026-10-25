@@ -1,0 +1,199 @@
+[
+  {
+    "key": "muara",
+    "aliases": [
+      "CV MUARA KARYA DESAIN"
+    ],
+    "source": "perusahaan konsultan/cv muara karya desain/2. ISIAN Kualifikasi KMD JALAN NEW 2026.docx",
+    "fields": {
+      "nama_perusahaan": "CV. MUARA KARYA DESAIN",
+      "alamat": "Jalan Abdul Syakur Lrg. Masjid Al-Amanah, Karema, Mamuju, Sulawesi Barat",
+      "npwp": "0997482468814000",
+      "direktur": "MASRI J, S.T",
+      "jabatan": "Direktur",
+      "no_akta_pendirian": "02",
+      "tgl_akta_pendirian": "2024-01-03",
+      "nama_notaris_pendirian": "AZIZAH TASMAN, S.H., M.Kn.",
+      "no_akta_perubahan": "03",
+      "tgl_akta_perubahan": "2026-07-03",
+      "nama_notaris_perubahan": "AZIZAH TASMAN, S.H., M.Kn."
+    }
+  },
+  {
+    "key": "buana",
+    "aliases": [
+      "CV BUANA TELAGA CONSULTANT"
+    ],
+    "source": "perusahaan konsultan/PROFIL COMPANY CV. BTC. (JALAN).pdf",
+    "fields": {
+      "nama_perusahaan": "CV. BUANA TELAGA CONSULTANT",
+      "alamat": "Jl. Atiek Suteja, Karema, Mamuju, Sulawesi Barat",
+      "email": "cv.buanatelaga.btc@gmail.com",
+      "npwp": "0839908308814000",
+      "direktur": "AZWAR, ST",
+      "jabatan": "Direktur",
+      "no_akta_perubahan": "62",
+      "tgl_akta_perubahan": "2019-09-25",
+      "nama_notaris_perubahan": "MAHMUD, S.H., S.S., M.Kn."
+    }
+  },
+  {
+    "key": "armyl",
+    "aliases": [
+      "CV ARMIL ENGINERING"
+    ],
+    "source": "perusahaan konsultan/BUNDEL PERUSAHAAN CV ARMIL .pdf",
+    "fields": {
+      "nama_perusahaan": "CV. ARMYL ENGINEERING KONSULTAN",
+      "alamat": "Jl. Abdul Syakur Lrg. Masjid Al-Amanah, Karema, Mamuju, Sulawesi Barat",
+      "npwp": "0747284404814000",
+      "direktur": "SUBHAN, ST",
+      "jabatan": "Direktur",
+      "no_akta_pendirian": "58",
+      "tgl_akta_pendirian": "2015-11-27",
+      "nama_notaris_pendirian": "IRAWATI, S.H., M.Kn.",
+      "no_akta_perubahan": "52",
+      "tgl_akta_perubahan": "2022-04-19",
+      "nama_notaris_perubahan": "MAHMUD, S.H., S.S., M.Kn."
+    }
+  },
+  {
+    "key": "bumantara",
+    "aliases": [
+      "CV BUMANTARA KARYA TEKNIK"
+    ],
+    "source": "perusahaan fisik/COMPRO+CV.BKT+2026.pdf",
+    "fields": {
+      "nama_perusahaan": "CV. BUMANTARA KARYA TEKNIK",
+      "alamat": "Perumahan Bumi Findaria Mas 3 Blok L.38, Moncongloe, Kabupaten Maros, Sulawesi Selatan",
+      "npwp": "1000000011560400",
+      "direktur": "FADHEL ARJUL FAUDZAN",
+      "jabatan": "Direktur",
+      "email": "bumantarakaryateknik@gmail.com",
+      "no_akta_pendirian": "17",
+      "tgl_akta_pendirian": "2026-10-16",
+      "nama_notaris_pendirian": "SYAHBUR BASO LUKKASA, S.H."
+    }
+  },
+  {
+    "key": "mulia",
+    "aliases": [
+      "CV MULIA NARATAMA DAYA"
+    ],
+    "source": "perusahaan fisik/COMPRO CV MULIA NARATAMA DAYA.pdf",
+    "fields": {
+      "nama_perusahaan": "CV. MULIA NARATAMA DAYA",
+      "alamat": "Jl. Tamalate II No.172 RT.001 RW.003, Mappala, Rappocini, Makassar, Sulawesi Selatan",
+      "npwp": "1000000011449988",
+      "direktur": "MUH ALIM MUNADHIL M",
+      "jabatan": "Direktur",
+      "email": "mulianaratamadaya@gmail.com",
+      "no_akta_pendirian": "07",
+      "tgl_akta_pendirian": "2026-10-07",
+      "nama_notaris_pendirian": "SYAHBUR BASO LUKKASA, S.H."
+    }
+  },
+  {
+    "key": "pajeko",
+    "aliases": [
+      "CV PAJEKO"
+    ],
+    "source": "Median Jalan/company profie pajeko cv.pdf",
+    "fields": {
+      "nama_perusahaan": "CV. PAJEKO",
+      "alamat": "Jl. Kijang Raya No.56, Birobuli Selatan, Palu Selatan, Kota Palu, Sulawesi Tengah",
+      "npwp": "0435243977831000",
+      "direktur": "ANDI WILLIAM CH NARA",
+      "email": "pajekocv@yahoo.com",
+      "no_akta_pendirian": "07",
+      "tgl_akta_pendirian": "2021-09-07",
+      "nama_notaris_pendirian": "ERNY SINGAL, S.H., M.H., M.Kn.",
+      "jabatan": "Direktur",
+      "no_akta_perubahan": "06",
+      "tgl_akta_perubahan": "2024-02-05",
+      "nama_notaris_perubahan": "ERNY SINGAL, S.H., M.H., M.Kn."
+    }
+  },
+  {
+    "key": "kalipu",
+    "aliases": [
+      "PT KALIPU WAE TUO"
+    ],
+    "source": "perusahaan konsultan/PROFILE PT. KALIPU WAE TUO - Copy.pdf",
+    "fields": {
+      "nama_perusahaan": "PT. KALIPU WAE TUO",
+      "alamat": "Jl. Abdul Syakur Lr.I, Karema, Mamuju, Sulawesi Barat",
+      "npwp": "0813596806814000",
+      "direktur": "ABDUL RAHMAN, ST",
+      "jabatan": "Direktur Utama",
+      "email": "pt.kalipuwaetuo@gmail.com"
+    }
+  },
+  {
+    "key": "rama",
+    "aliases": [
+      "CV RAMA KARYA KONSTRUKSI"
+    ],
+    "source": "perusahaan fisik/CV RKK/NPWP CV. RKK.pdf",
+    "fields": {
+      "nama_perusahaan": "CV. RAMA KARYA KONSTRUKSI",
+      "alamat": "Jl. Ahmad Yani, Pasangkayu, Sulawesi Barat",
+      "npwp": "1000000010460127",
+      "direktur": "ABD KADIR LATIEF",
+      "jabatan": "Direktur"
+    }
+  },
+  {
+    "key": "patambero",
+    "aliases": [],
+    "source": "Perusahaan Stok design Air bersih/COMPANY PROFILE CV. PCE.pdf",
+    "fields": {
+      "nama_perusahaan": "CV. PATAMBERO CONSULTANT ENGINEERING",
+      "alamat": "BTN Amazone Blok B/15, Baru, Banggae, Majene, Sulawesi Barat",
+      "npwp": "1000000009290624",
+      "direktur": "MUHAMMAD REZAPAHLEVI",
+      "jabatan": "Direktur",
+      "email": "patamberoconsultant@gmail.com",
+      "no_akta_pendirian": "15",
+      "tgl_akta_pendirian": "2026-04-14",
+      "nama_notaris_pendirian": "AZIZAH TASMAN, S.H., M.Kn."
+    }
+  },
+  {
+    "key": "asa",
+    "existing_id": 6,
+    "aliases": [
+      "CV ASA KARYA"
+    ]
+  },
+  {
+    "key": "aqila",
+    "existing_id": 436,
+    "aliases": [
+      "CV AQILA"
+    ]
+  },
+  {
+    "key": "iporannuan",
+    "existing_id": 444,
+    "aliases": [
+      "CV IPORAANUANG",
+      "CV IPPORANNUAN"
+    ]
+  },
+  {
+    "key": "karya",
+    "existing_id": 406,
+    "aliases": [
+      "CV KARYA UTAMA NUSANTARA"
+    ]
+  },
+  {
+    "key": "bss",
+    "existing_id": 480,
+    "aliases": [
+      "PT BUMI SEDAYA SEJAHTERA",
+      "PT BUMI SEDAYA SEJAHTERA (sementrara bikin sbu)"
+    ]
+  }
+]

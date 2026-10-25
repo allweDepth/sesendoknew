@@ -1580,6 +1580,7 @@ UIConfig.kontrak = {
 			{ tag:"input", prop:{label:"Waktu Pelaksanaan (hari)",name:"waktu_pelaksanaan",type:"number"} },
 			{ tag:"fieldDropdown", prop:{label:"PPK aktif",name:"ppk_id",source:"pejabat_ppk",search:true} },
 			{ tag:"fieldDropdown", prop:{label:"PPTK aktif (jika ada)",name:"pptk_id",source:"pejabat_pptk",search:true} },
+			{ tag:"fieldDropdown", prop:{label:"Pejabat Pengadaan",name:"pejabat_pengadaan_id",source:"pejabat_pengadaan",search:true} },
 			{ tag:"fieldDropdown", prop:{label:"Perusahaan / Instansi / Organisasi Pelaksana",name:"rekanan_id",source:"rekanan",search:true} },
 			{ tag:"input", prop:{label:"Status Kontrak",name:"status_kontrak"} },
 			{ tag:"fieldCheckbox", prop:{label:"Setujui",name:"setujui"} },

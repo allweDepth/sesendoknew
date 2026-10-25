@@ -249,6 +249,23 @@ class KontrakController extends Controller
     $id=(int)($_GET['id']??0);
     try{$service=new ProcurementDocumentService($_SESSION['user']??[]);$document=$service->detail($id);$body=$service->pdf($id);$filename=preg_replace('/[^\pL\pN ._-]+/u',' ',(string)$document['judul']).'.pdf';header('Content-Type: application/pdf');header("Content-Disposition: attachment; filename=\"dokumen-pengadaan-$id.pdf\"; filename*=UTF-8''".rawurlencode($filename));echo$body;}catch(Throwable $e){http_response_code(400);echo$e->getMessage();}exit;
   }
+  public function procurementBundlePdf()
+  {
+    try{
+      if(!Auth::check())throw new RuntimeException('Silakan masuk kembali');
+      $id=(int)($_POST['contract_id']??0);$body=(new ProcurementDocumentService($_SESSION['user']??[]))->bundlePdf($id);
+      header('Content-Type: application/pdf');header('Content-Disposition: attachment; filename="bundel-dokumen-pengadaan-'.$id.'.pdf"');echo $body;
+    }catch(Throwable $e){http_response_code(400);header('Content-Type: text/plain;charset=UTF-8');echo $e->getMessage();}exit;
+  }
+  public function printSettings()
+  {
+    $this->json(fn()=>(new ProcurementDocumentService($_SESSION['user']??[]))->printSettings((int)($_GET['contract_id']??0)));
+  }
+  public function savePrintSettings()
+  {
+    $payload=json_decode((string)file_get_contents('php://input'),true);if(!is_array($payload))$payload=$_POST;
+    $this->json(fn()=>(new ProcurementDocumentService($_SESSION['user']??[]))->printSettings((int)($payload['contract_id']??0),$payload),'Pengaturan cetak disimpan');
+  }
   private function json(callable $callback, string $message = 'Data berhasil dimuat'): void
   {
     header('Content-Type: application/json;charset=UTF-8');
