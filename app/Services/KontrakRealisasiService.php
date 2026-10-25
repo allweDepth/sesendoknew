@@ -240,10 +240,10 @@ class KontrakRealisasiService
   public function delivery(int $contractId): array
   {
     $header = $this->contractHeader($contractId);
-    $rab = $this->db->query('SELECT * FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY nomor,id', [$contractId])->fetchAll();
+    $rab = $this->db->query('SELECT * FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY COALESCE(NULLIF(urutan,0),id),id', [$contractId])->fetchAll();
     $schedule = $this->db->query('SELECT j.* FROM kontrak_jadwal_neo j LEFT JOIN rab_paket_neo r ON r.id=j.rab_id AND r.kontrak_id=j.kontrak_id WHERE j.kontrak_id=? AND j.is_deleted=0 AND (j.rab_id IS NULL OR r.id IS NOT NULL) ORDER BY COALESCE(r.nomor,\'\'),j.rab_id,j.minggu_ke,j.id', [$contractId])->fetchAll();
     $documents = $this->db->query('SELECT id,jenis_dokumen,nomor_dokumen,tanggal_dokumen,judul,nama_file_asli,path_file,mime_type,ukuran,versi,keterangan,tgl_insert FROM kontrak_dokumen_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY jenis_dokumen,versi DESC', [$contractId])->fetchAll();
-    return ['contract' => $header, 'rab' => $rab, 'schedule' => $schedule, 'curve' => $this->contractCurve($rab, $schedule), 'documents' => $documents];
+    return ['contract' => $header, 'rab' => $rab, 'schedule' => $schedule, 'curve' => $this->contractCurve($rab, $schedule), 'documents' => $documents, 'can_manage_documents' => !in_array($this->user['type_user'] ?? 'viewer', ['tapd', 'viewer'], true)];
   }
 
   public function saveRab(int $contractId, array $items): array
@@ -260,6 +260,11 @@ class KontrakRealisasiService
       $row['id'] = (int)($row['id'] ?? 0);
       if ($row['id'] && !isset($existingLookup[$row['id']])) throw new InvalidArgumentException('Item RAB ke-' . ($i + 1) . ' tidak termasuk kontrak ini');
       $row['uraian'] = trim((string)($row['uraian'] ?? ''));
+      $row['type']=(string)($row['type']??$existingLookup[$row['id']]['type']??'PEKERJAAN');
+      if($row['type']==='KETERANGAN'){
+        if($row['uraian']==='')throw new InvalidArgumentException('Uraian keterangan RAB wajib diisi');
+        $row['satuan']='';$row['vol_negoisasi']=null;$row['harga_sat_negoisasi']=null;$row['pajak']=null;$row['jumlah_negoisasi']=null;continue;
+      }
       $row['satuan'] = trim((string)($row['satuan'] ?? ''));
       $row['vol_negoisasi'] = (float)($row['volume'] ?? $row['vol_negoisasi'] ?? 0);
       $row['harga_sat_negoisasi'] = (float)($row['harga_satuan'] ?? $row['harga_sat_negoisasi'] ?? 0);
@@ -278,6 +283,8 @@ class KontrakRealisasiService
       foreach ($items as $i => $row) {
         $old = (int)$row['id'] > 0 ? ($existingLookup[(int)$row['id']] ?? []) : [];
         $values = ['kontrak_id' => $contractId, 'kontrak_item_id' => array_key_exists('kontrak_item_id', $row) ? (!empty($row['kontrak_item_id']) ? (int)$row['kontrak_item_id'] : null) : ($old['kontrak_item_id'] ?? null), 'tahun' => $header['tahun'], 'kd_wilayah' => $header['kd_wilayah'], 'kd_opd' => $header['kd_opd'], 'id_renja_p' => (int)($row['id_renja_p'] ?? $old['id_renja_p'] ?? 0), 'id_dpa' => (int)($row['id_dpa'] ?? $old['id_dpa'] ?? 0), 'id_dppa' => (int)($row['id_dppa'] ?? $old['id_dppa'] ?? 0), 'nomor' => (string)($row['nomor'] ?? ($i + 1)), 'uraian' => $row['uraian'], 'satuan' => $row['satuan'], 'type' => (string)($row['type'] ?? $old['type'] ?? 'PEKERJAAN'), 'vol_negoisasi' => $row['vol_negoisasi'], 'harga_sat_negoisasi' => $row['harga_sat_negoisasi'], 'pajak' => $row['pajak'], 'jumlah_negoisasi' => $row['jumlah_negoisasi'], 'bobot' => $total > 0 ? ($row['jumlah_negoisasi'] / $total * 100) : 0, 'keterangan' => (string)($row['keterangan'] ?? $old['keterangan'] ?? ''), 'is_deleted' => 0];
+        $values['urutan']=$i+1;
+        if($row['type']==='KETERANGAN'){foreach(['hps','penawaran','negoisasi'] as $stage)foreach(['vol_','harga_sat_','jumlah_'] as $prefix)$values[$prefix.$stage]=null;$values['bobot']=0;}
         if ((int)$row['id'] > 0) {
           $values['username_update'] = $this->user['username'] ?? 'system';
           $values['tgl_update'] = date('Y-m-d H:i:s');
@@ -308,7 +315,7 @@ class KontrakRealisasiService
     $this->assertCanWrite();
     $header = $this->contractHeader($contractId);
     if (!$weeks) throw new InvalidArgumentException('Time schedule minimal memiliki satu periode pada item RAB');
-    $rabRows = $this->db->query('SELECT id,bobot,nomor,uraian FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0', [$contractId])->fetchAll();
+    $rabRows = $this->db->query("SELECT id,bobot,nomor,uraian FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0 AND COALESCE(type,'')<>'KETERANGAN'", [$contractId])->fetchAll();
     if (!$rabRows) throw new InvalidArgumentException('Simpan RAB terlebih dahulu sebelum membuat Time Schedule');
     $rabById = [];
     foreach ($rabRows as $row) $rabById[(int)$row['id']] = $row;
@@ -399,6 +406,7 @@ class KontrakRealisasiService
     $r = 2;
     $rabLabel = [];
     foreach ($data['rab'] as $i => $x) {
+      if(($x['type']??'')==='KETERANGAN'){$s->fromArray([$x['nomor'],$x['uraian']],null,'A'.$r);$s->getStyle('A'.$r.':G'.$r)->getFont()->setBold(true);$r++;continue;}
       $rabLabel[(int)$x['id']] = ($x['nomor'] ?: $i + 1) . ' - ' . $x['uraian'];
       $s->fromArray([$x['nomor'] ?: $i + 1, $x['uraian'], $x['satuan'], (float)$x['vol_negoisasi'], (float)$x['harga_sat_negoisasi'], (float)$x['jumlah_negoisasi'], (float)$x['bobot']], null, 'A' . $r++);
     }
@@ -421,17 +429,22 @@ class KontrakRealisasiService
     $this->assertCanWrite();
     if (!is_file($filePath)) throw new InvalidArgumentException('File RAB tidak ditemukan');
     $sheet = IOFactory::load($filePath)->getActiveSheet();
-    $rows = $sheet->toArray(null, true, true, true);
+    $rows = $sheet->toArray(null, true, false, true);
     $items = [];
+    $extended=strtoupper(trim((string)$sheet->getCell('G1')->getValue()))==='SATUAN';
     foreach ($rows as $index => $row) {
-      if ($index === 1) continue;
-      if (strtoupper(trim((string)($row['A'] ?? ''))) === 'MINGGU') break;
+      if ($index <= ($extended?2:1)) continue;
+      if (in_array(strtoupper(trim((string)($row['A'] ?? ''))),['MINGGU','ITEM RAB','KURVA S KONTRAK'],true)) break;
       $description = trim((string)($row['B'] ?? ''));
-      $unit = trim((string)($row['C'] ?? ''));
-      $volume = $row['D'] ?? null;
-      $price = $row['E'] ?? null;
-      if ($description === '' || preg_match('/^\d{4}-\d{2}-\d{2}$/', $description) || $unit === '' || !is_numeric($volume) || !is_numeric($price) || (float)$volume <= 0 || (float)$price <= 0) continue;
-      $items[] = ['nomor' => $row['A'] ?? count($items) + 1, 'uraian' => $description, 'satuan' => $unit, 'volume' => (float)$volume, 'harga_satuan' => (float)$price, 'keterangan' => trim((string)($row['H'] ?? ''))];
+      $unit = trim((string)($row[$extended?'G':'C'] ?? ''));
+      $volume = $row[$extended?'F':'D'] ?? null;
+      $price = $row[$extended?'J':'E'] ?? null;
+      if ($description === '' || preg_match('/^\d{4}-\d{2}-\d{2}$/', $description)) continue;
+      if($unit===''&&($volume===null||$volume===''||$volume===0)&&($price===null||$price===''||$price===0)){
+        $items[]=['nomor'=>(string)($row['A']??''),'uraian'=>$description,'type'=>'KETERANGAN'];continue;
+      }
+      if($unit===''||!is_numeric($volume)||!is_numeric($price)||(float)$volume<=0||(float)$price<=0)throw new InvalidArgumentException('Data item Excel baris '.$index.' belum lengkap');
+      $items[] = ['nomor' => $row['A'] ?? count($items) + 1, 'uraian' => $description, 'satuan' => $unit, 'volume' => (float)$volume, 'harga_satuan' => (float)$price, 'pajak'=>$extended?(float)($row['K']??0):0, 'keterangan' => $extended?'':trim((string)($row['H'] ?? ''))];
     }
     if (!$items) throw new InvalidArgumentException('Tidak ada baris RAB yang dapat diimpor. Gunakan template resmi.');
     $result = $this->saveRab($contractId, $items);
@@ -454,6 +467,7 @@ class KontrakRealisasiService
     $html = '<br><table border="1" cellpadding="4"><tr style="font-weight:bold;background-color:#dcecff"><th width="6%">No</th><th width="38%">Uraian</th><th width="10%">Satuan</th><th width="10%">Volume</th><th width="14%">Harga Satuan</th><th width="14%">Jumlah</th><th width="8%">Bobot</th></tr>';
     $total = 0;
     foreach ($data['rab'] as $x) {
+      if(($x['type']??'')==='KETERANGAN'){$html.='<tr style="font-weight:bold;background-color:#eef2f5"><td>'.htmlspecialchars((string)$x['nomor']).'</td><td>'.htmlspecialchars((string)$x['uraian']).'</td><td></td><td></td><td></td><td></td><td></td></tr>';continue;}
       $total += (float)$x['jumlah_negoisasi'];
       $html .= '<tr><td>' . htmlspecialchars((string)$x['nomor']) . '</td><td>' . htmlspecialchars((string)$x['uraian']) . '</td><td>' . htmlspecialchars((string)$x['satuan']) . '</td><td align="right">' . number_format((float)$x['vol_negoisasi'], 2, ',', '.') . '</td><td align="right">' . number_format((float)$x['harga_sat_negoisasi'], 0, ',', '.') . '</td><td align="right">' . number_format((float)$x['jumlah_negoisasi'], 0, ',', '.') . '</td><td align="right">' . number_format((float)$x['bobot'], 2, ',', '.') . '%</td></tr>';
     }

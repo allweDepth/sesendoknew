@@ -1,0 +1,154 @@
+[
+  {
+    "id": 852,
+    "cleared_cells": 7689,
+    "unrelated_error_cells_cleared": 6969,
+    "legacy_annotations_cleared": 28,
+    "financial_dependency_cells_preserved": 1523,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 820,
+    "cleared_cells": 7689,
+    "unrelated_error_cells_cleared": 6969,
+    "legacy_annotations_cleared": 28,
+    "financial_dependency_cells_preserved": 1523,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 822,
+    "cleared_cells": 7689,
+    "unrelated_error_cells_cleared": 6969,
+    "legacy_annotations_cleared": 28,
+    "financial_dependency_cells_preserved": 1517,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 825,
+    "cleared_cells": 7689,
+    "unrelated_error_cells_cleared": 6969,
+    "legacy_annotations_cleared": 28,
+    "financial_dependency_cells_preserved": 1235,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 821,
+    "cleared_cells": 7689,
+    "unrelated_error_cells_cleared": 6969,
+    "legacy_annotations_cleared": 28,
+    "financial_dependency_cells_preserved": 1511,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 823,
+    "cleared_cells": 7689,
+    "unrelated_error_cells_cleared": 6969,
+    "legacy_annotations_cleared": 28,
+    "financial_dependency_cells_preserved": 1480,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 790,
+    "cleared_cells": 8083,
+    "unrelated_error_cells_cleared": 7176,
+    "legacy_annotations_cleared": 11,
+    "financial_dependency_cells_preserved": 5798,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 788,
+    "cleared_cells": 8083,
+    "unrelated_error_cells_cleared": 7176,
+    "legacy_annotations_cleared": 11,
+    "financial_dependency_cells_preserved": 5796,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 789,
+    "cleared_cells": 8083,
+    "unrelated_error_cells_cleared": 7176,
+    "legacy_annotations_cleared": 11,
+    "financial_dependency_cells_preserved": 5799,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 791,
+    "cleared_cells": 8083,
+    "unrelated_error_cells_cleared": 7176,
+    "legacy_annotations_cleared": 11,
+    "financial_dependency_cells_preserved": 5798,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 793,
+    "cleared_cells": 8083,
+    "unrelated_error_cells_cleared": 7176,
+    "legacy_annotations_cleared": 11,
+    "financial_dependency_cells_preserved": 5799,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 798,
+    "cleared_cells": 7682,
+    "unrelated_error_cells_cleared": 6963,
+    "legacy_annotations_cleared": 27,
+    "financial_dependency_cells_preserved": 1547,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 799,
+    "cleared_cells": 7682,
+    "unrelated_error_cells_cleared": 6963,
+    "legacy_annotations_cleared": 27,
+    "financial_dependency_cells_preserved": 1547,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 855,
+    "cleared_cells": 7682,
+    "unrelated_error_cells_cleared": 6963,
+    "legacy_annotations_cleared": 27,
+    "financial_dependency_cells_preserved": 1544,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 800,
+    "cleared_cells": 7682,
+    "unrelated_error_cells_cleared": 6963,
+    "legacy_annotations_cleared": 27,
+    "financial_dependency_cells_preserved": 1481,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 797,
+    "cleared_cells": 7682,
+    "unrelated_error_cells_cleared": 6963,
+    "legacy_annotations_cleared": 27,
+    "financial_dependency_cells_preserved": 1547,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 824,
+    "cleared_cells": 7525,
+    "unrelated_error_cells_cleared": 6963,
+    "legacy_annotations_cleared": 28,
+    "financial_dependency_cells_preserved": 1381,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 853,
+    "cleared_cells": 7525,
+    "unrelated_error_cells_cleared": 6963,
+    "legacy_annotations_cleared": 28,
+    "financial_dependency_cells_preserved": 1353,
+    "styles_and_vba_preserved": true
+  },
+  {
+    "id": 849,
+    "cleared_cells": 9137,
+    "unrelated_error_cells_cleared": 8435,
+    "legacy_annotations_cleared": 2,
+    "financial_dependency_cells_preserved": 29367,
+    "styles_and_vba_preserved": true
+  }
+]

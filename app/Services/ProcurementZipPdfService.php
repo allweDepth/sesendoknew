@@ -136,9 +136,10 @@ final class ProcurementZipPdfService
         $widths=[3,20,5,5,5,4,9,9,9,4,9,9,9];
         $html='<table cellpadding="2"><thead><tr style="font-weight:bold;text-align:center"><td width="3%">No.</td><td width="20%">Uraian Pekerjaan</td><td colspan="3" width="15%">Kuantitas</td><td width="4%">Satuan</td><td colspan="3" width="27%">Harga Satuan</td><td width="4%">Pajak</td><td colspan="3" width="27%">JUMLAH</td></tr><tr style="font-weight:bold;text-align:center">';
         foreach(['','','HPS','Penawaran','Negosiasi','','HPS','Penawaran','Negosiasi','','HPS','Penawaran','Negosiasi'] as $i=>$label)$html.='<td width="'.$widths[$i].'%">'.$label.'</td>';
-        $html.='</tr></thead><tbody><tr><td colspan="13" style="border-top:0.5px solid black">Biaya perencanaan teknis</td></tr>';
+        $html.='</tr></thead><tbody>';if(str_contains($c['jenis_pengadaan']??'','KONSULTANSI'))$html.='<tr><td colspan="13" style="border-top:0.5px solid black">Biaya perencanaan teknis</td></tr>';
         $totals=['hps'=>[0,0,0],'penawaran'=>[0,0,0],'negoisasi'=>[0,0,0]];
         foreach($c['rab']??[] as $r){
+            if(($r['type']??'')==='KETERANGAN'){$html.='<tr nobr="true" bgcolor="#eeeeee"><td width="3%">'.$this->e($r['nomor']).'</td><td colspan="12" width="97%"><b>'.$this->e($r['uraian']).'</b></td></tr>';continue;}
             $values=[$r['nomor'],$r['uraian']];
             foreach(array_keys($totals) as $k)$values[]=number_format((float)$r['vol_'.$k],2,',','.');$values[]=$r['satuan'];
             foreach(array_keys($totals) as $k)$values[]=number_format((float)$r['harga_sat_'.$k],2,',','.');$values[]=number_format((float)$r['pajak'],2,',','.');

@@ -22,6 +22,7 @@ class KontrakModule extends BaseCrudModule {
 	init() {
 		this.styles();
 		this.rowAction();
+		this.bindUpload();
 		const detailId = Number(new URLSearchParams(window.location.search).get("detail"));
 		if (Number.isSafeInteger(detailId) && detailId > 0) {
 			this.renderLayout();
@@ -32,49 +33,27 @@ class KontrakModule extends BaseCrudModule {
 		}
 		super.init();
 		this.bindActions();
-		this.bindUpload();
+	}
+
+	documentUploadForm() {
+		return `<form class="ui form segment" id="contractDocumentForm"><h4 class="ui header"><i class="paperclip icon"></i>Tambah File Paket</h4><div class="two fields"><div class="field"><label>Jenis Dokumen</label><select name="jenis_dokumen" class="ui dropdown">${["KONTRAK","SPK","SPMK","SSKK","SSUK","RAB","JADWAL","KURVA_S","GAMBAR","BAST","PHO","FHO","ADENDUM","JAMINAN","LAPORAN","LAINNYA"].map(x=>`<option value="${x}">${x.replaceAll("_"," ")}</option>`).join("")}</select></div><div class="required field"><label>Judul Dokumen</label><input name="judul" required maxlength="255"></div></div><div class="two fields"><div class="field"><label>Nomor Dokumen</label><input name="nomor_dokumen" maxlength="255"></div><div class="field"><label>Tanggal Dokumen</label><div class="ui calendar contract-calendar"><div class="ui input left icon"><i class="calendar icon"></i><input name="tanggal_dokumen" placeholder="YYYY-MM-DD" autocomplete="off"></div></div></div></div><div class="required field"><label>File (maks. 25 MB)</label><input type="file" name="file" required accept=".pdf,.jpg,.jpeg,.png,.xlsx,.docx,.zip"></div><div class="field"><label>Keterangan</label><textarea name="keterangan" rows="2"></textarea></div><div class="ui error message"></div><button type="submit" class="ui teal button"><i class="upload icon"></i>Upload Dokumen</button></form>`;
+	}
+
+	uploadedDocumentCards(docs, canManage) {
+		return docs.map(x=>`<div class="ui clearing segment" data-uploaded-document="${Number(x.id)}"><div class="ui right floated mini buttons"><a class="ui basic blue button" href="${this.esc(window.appUrl ? window.appUrl(`/kontrak/document/download?id=${Number(x.id)}`) : `/kontrak/document/download?id=${Number(x.id)}`)}"><i class="download icon"></i>Unduh</a>${canManage?`<button type="button" class="ui basic red button" data-contract-document-delete="${Number(x.id)}"><i class="trash icon"></i>Hapus</button>`:""}</div><b>${this.esc(x.jenis_dokumen)} · ${this.esc(x.judul)}</b><div>${this.esc(x.nama_file_asli)} · versi ${Number(x.versi || 1)}</div>${x.keterangan?`<div class="description">${this.esc(x.keterangan)}</div>`:""}</div>`).join("") || '<div class="ui message">Belum ada dokumen diunggah.</div>';
 	}
 
 	bindUpload() {
-		$(document)
-			.off("click.contractDocumentTab", '[data-tab="documents"]')
-			.on("click.contractDocumentTab", '[data-tab="documents"]', () => {
-				const target = $("#contractDeliveryContent .tab[data-tab=documents]");
-				if (!target.length || $("#contractDocumentForm").length) return;
-				target
-					.prepend(
-						`<form class="ui form segment" id="contractDocumentForm">
-				<div class="four fields">
-					<div class="field"><label>Jenis</label><select name="jenis_dokumen" class="ui dropdown">${["KONTRAK", "SPK", "SPMK", "SSKK", "SSUK", "RAB", "JADWAL", "KURVA_S", "GAMBAR", "BAST", "PHO", "FHO", "ADENDUM", "JAMINAN", "LAPORAN", "LAINNYA"].map((x) => `<option value="${x}">${x.replaceAll("_", " ")}</option>`).join("")}</select></div>
-					<div class="required field"><label>Judul</label><input name="judul" required></div>
-					<div class="field"><label>Tanggal</label><div class="ui calendar contract-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" name="tanggal_dokumen" placeholder="YYYY-MM-DD" autocomplete="off"></div></div></div>
-					<div class="required field"><label>File (maks. 25 MB)</label><input type="file" name="file" required accept=".pdf,.jpg,.jpeg,.png,.xlsx,.docx,.zip"></div>
-				</div>
-				<button type="submit" class="ui teal button"><i class="upload icon"></i>Upload Dokumen</button>
-			</form>`,
-					)
-					.find(".ui.dropdown")
-					.dropdown();
-
-				const docs = this.deliveryData?.documents || [];
-				target
-					.children(".ui.segment")
-					.not("#contractDocumentForm")
-					.each((i, element) => {
-						const doc = docs[i];
-						if (!doc || $(element).find("[data-contract-document-delete]").length) return;
-						$(element).append(
-							`<div class="ui right floated mini buttons"><a class="ui basic blue button" href="${window.appUrl ? window.appUrl(`/kontrak/document/download?id=${doc.id}`) : `/kontrak/document/download?id=${doc.id}`}"><i class="download icon"></i>Unduh</a><button class="ui basic red button" data-contract-document-delete="${doc.id}"><i class="trash icon"></i>Hapus</button></div><div class="ui clearing divider"></div>`,
-						);
-					});
-			});
-
 		$(document)
 			.off("submit.contractDocument", "#contractDocumentForm")
 			.on("submit.contractDocument", "#contractDocumentForm", (e) => {
 				e.preventDefault();
 				if (window.FormValidation && !FormValidation.validate(e.currentTarget)) return;
 				const form = new FormData(e.currentTarget);
+				if (form.get("file")?.size > 25 * 1024 * 1024) {
+					$(e.currentTarget).addClass("error").find(".ui.error.message").text("Ukuran file maksimal 25 MB.");
+					return;
+				}
 				form.set("contract_id", this.contractId);
 				const button = $(e.currentTarget).find("button[type=submit]").addClass("loading disabled");
 				window.Ajax.request({
@@ -83,7 +62,7 @@ class KontrakModule extends BaseCrudModule {
 					data: form,
 					processData: false,
 					contentType: false,
-					success: () => this.openDelivery(this.contractId, "documents"),
+					success: r => { if (r?.success) this.openDelivery(this.contractId, "documents"); },
 					complete: () => button.removeClass("loading disabled"),
 				});
 			});
@@ -542,7 +521,7 @@ class KontrakModule extends BaseCrudModule {
 			curve = d.curve || [];
 		const rabRows = (rab.length ? rab : [{}])
 			.map(
-				(x, i) =>
+				(x, i) => x.type==="KETERANGAN"?this.rabNoteRow(x):
 					`<tr><td><input type="hidden" value="${x.id || ""}" data-rab="id"><input value="${this.esc(x.nomor || i + 1)}" data-rab="nomor" required></td><td><input value="${this.esc(x.uraian || "")}" data-rab="uraian" required></td><td><input value="${this.esc(x.satuan || "")}" data-rab="satuan" required></td><td><input type="number" min="0.000000000001" step="any" value="${Number(x.vol_negoisasi || 0)}" data-rab="volume" required></td><td><input type="number" min="0.01" step="any" value="${Number(x.harga_sat_negoisasi || 0)}" data-rab="harga_satuan" required></td><td><input type="number" min="0" max="100" step="any" value="${Number(x.pajak || 0)}" data-rab="pajak" aria-label="Pajak persen"></td><td data-rab-total>${this.money(x.jumlah_negoisasi)}</td><td data-rab-weight>${Number(x.bobot || 0).toFixed(2)}%</td></tr>`,
 			)
 			.join("");
@@ -552,7 +531,7 @@ class KontrakModule extends BaseCrudModule {
 			if (!scheduleByRab.has(key)) scheduleByRab.set(key, []);
 			scheduleByRab.get(key).push(x);
 		});
-		const scheduleGroups = rab
+		const scheduleGroups = rab.filter(x=>x.type!=="KETERANGAN")
 			.map((item) => {
 				const rows = scheduleByRab.get(Number(item.id)) || [];
 				const inputRows = rows.length
@@ -578,21 +557,16 @@ class KontrakModule extends BaseCrudModule {
 					`<div class="s-point"><span style="height:${Math.max(2, Number(x.rencana_kumulatif || 0) * 1.4)}px"></span><i style="height:${Math.max(2, Number(x.realisasi_kumulatif || 0) * 1.4)}px"></i><small>M${x.minggu_ke}</small></div>`,
 			)
 			.join("");
-		const docCards =
-			(d.documents || [])
-				.map(
-					(x) =>
-						`<div class="ui segment"><b>${this.esc(x.jenis_dokumen)} · ${this.esc(x.judul)}</b><br><small>${this.esc(x.nama_file_asli)} · versi ${x.versi}</small></div>`,
-				)
-				.join("") || '<div class="ui message">Belum ada dokumen diunggah.</div>';
+		const docCards = this.uploadedDocumentCards(d.documents || [], d.can_manage_documents !== false);
 		$("#contractDeliveryContent")
 			.html(`<div class="contract-delivery-heading"><div><h3 class="ui header"><i class="tasks teal icon"></i><div class="content">RAB, Time Schedule & Kurva S<div class="sub header">${this.esc(d.contract?.nomor_kontrak || "")} · ${this.esc(d.contract?.uraian_kontrak || "")}</div></div></h3></div><button type="button" class="ui basic button" id="contractPrintSettings"><i class="print icon"></i>Pengaturan Cetak</button></div><div class="ui top attached tabular menu"><a class="${activeTab === "rab" ? "active " : ""}item" data-tab="rab">RAB</a><a class="${activeTab === "schedule" ? "active " : ""}item" data-tab="schedule">Time Schedule & Kurva S</a><a class="${activeTab === "documents" ? "active " : ""}item" data-tab="documents">Dokumen Terkait</a></div>
-			<div class="ui bottom attached ${activeTab === "rab" ? "active " : ""}tab segment" data-tab="rab"><form class="ui form" id="contractRabForm"><div class="ui positive message">${d.contract?.nilai_kontrak==null?"Nilai kontrak belum ditetapkan. Total RAB estimasi "+this.money(rab.reduce((sum,x)=>sum+Number(x.jumlah_negoisasi||0),0)):"Nilai kontrak "+this.money(d.contract.nilai_kontrak)}. Jumlah RAB sudah termasuk pajak; bobot dihitung dari setiap item terhadap total RAB.</div><div class="table-wrapper"><table class="ui compact celled table delivery-table"><thead><tr><th>No</th><th>Uraian</th><th>Satuan</th><th>Volume</th><th>Harga Satuan Sebelum Pajak</th><th>Pajak %</th><th>Jumlah Termasuk Pajak</th><th>Bobot</th></tr></thead><tbody id="rabRows">${rabRows}</tbody></table></div><div class="ui buttons"><button type="button" class="ui button" data-delivery-action="add-rab"><i class="plus icon"></i>Tambah Baris</button><button type="button" class="ui primary button" data-delivery-action="save-rab"><i class="save icon"></i>Simpan RAB</button></div></form></div>
+			<div class="ui bottom attached ${activeTab === "rab" ? "active " : ""}tab segment" data-tab="rab"><form class="ui form" id="contractRabForm"><div class="ui positive message">${d.contract?.nilai_kontrak==null?"Nilai kontrak belum ditetapkan. Total RAB estimasi "+this.money(rab.reduce((sum,x)=>sum+Number(x.jumlah_negoisasi||0),0)):"Nilai kontrak "+this.money(d.contract.nilai_kontrak)}. Jumlah RAB sudah termasuk pajak; bobot dihitung dari setiap item terhadap total RAB.</div><div class="table-wrapper"><table class="ui compact celled table delivery-table"><thead><tr><th>No</th><th>Uraian</th><th>Satuan</th><th>Volume</th><th>Harga Satuan Sebelum Pajak</th><th>Pajak %</th><th>Jumlah Termasuk Pajak</th><th>Bobot</th></tr></thead><tbody id="rabRows">${rabRows}</tbody></table></div><div class="ui buttons"><button type="button" class="ui button" data-delivery-action="add-rab"><i class="plus icon"></i>Tambah Baris</button><button type="button" class="ui button" data-delivery-action="add-rab-note"><i class="heading icon"></i>Tambah Keterangan</button><button type="button" class="ui primary button" data-delivery-action="save-rab"><i class="save icon"></i>Simpan RAB</button></div></form></div>
 			<div class="ui bottom attached ${activeTab === "schedule" ? "active " : ""}tab segment" data-tab="schedule"><form class="ui form" id="contractScheduleForm"><div class="ui info message"><div class="header">Jadwal disusun per item RAB</div><p>Rencana dan realisasi setiap item dicatat per minggu/periode. Kurva S kontrak dihitung dari bobot item RAB × progres kumulatif item.</p></div><div class="s-chart">${bars || '<div class="ui message">Belum ada Kurva S tersimpan.</div>'}</div>${scheduleGroups || '<div class="ui warning message">Simpan RAB terlebih dahulu agar Time Schedule dapat dibuat per item RAB.</div>'}<button type="button" class="ui teal button" data-delivery-action="save-schedule" ${rab.length ? "" : "disabled"}><i class="save icon"></i>Simpan Time Schedule</button></form></div>
-			<div class="ui bottom attached ${activeTab === "documents" ? "active " : ""}tab segment" data-tab="documents"><div class="ui info message">Dokumen kontrak disusun per kontrak dan jenis dokumen: Kontrak, SPK, SPMK, SSKK, SSUK, RAB, Jadwal, Kurva S, gambar, BAST, PHO/FHO, adendum, jaminan, dan laporan.</div>${docCards}</div>`);
+			<div class="ui bottom attached ${activeTab === "documents" ? "active " : ""}tab segment" data-tab="documents"><div class="ui info message">Dokumen kontrak disusun per kontrak dan jenis dokumen: Kontrak, SPK, SPMK, SSKK, SSUK, RAB, Jadwal, Kurva S, gambar, BAST, PHO/FHO, adendum, jaminan, dan laporan.</div>${d.can_manage_documents !== false ? this.documentUploadForm() : ""}${docCards}</div>`);
 		$("#contractDeliveryContent .tabular.menu").append(`<a class="${activeTab === "procurement" ? "active " : ""}item" data-tab="procurement">Buat Dokumen Pengadaan</a>`);
 		$("#contractDeliveryContent").append(`<div class="ui bottom attached ${activeTab === "procurement" ? "active " : ""}tab segment" data-tab="procurement"><div id="procurementDocumentContent"><div class="ui active centered inline loader"></div></div></div>`);
 		$("#contractDeliveryContent .menu .item").tab();
+		$("#contractDocumentForm .ui.dropdown").dropdown();
 		this.initContractCalendars($("#contractDeliveryContent"));
 		if (activeTab === "documents") $("#contractDeliveryContent .menu .item[data-tab=documents]").trigger("click");
 		this.loadProcurementDocuments();
@@ -606,6 +580,10 @@ class KontrakModule extends BaseCrudModule {
 		const button=$("#generateAllSwakelola");if(button.hasClass("loading"))return;button.addClass("loading disabled");
 		window.Ajax.request({url:"/kontrak/procurement/generate-swakelola",method:"POST",data:{contract_id:this.contractId},success:r=>{if(r?.success)this.loadProcurementDocuments();},complete:()=>button.removeClass("loading disabled")});
 	}
+	rabNoteRow(x) {
+		return `<tr class="active rab-note-row"><td><input type="hidden" data-rab="id" value="${x.id||""}"><input type="hidden" data-rab="type" value="KETERANGAN"><input data-rab="nomor" value="${this.esc(x.nomor??"")}" placeholder="Opsional"></td><td colspan="7"><div class="ui action input"><input data-rab="uraian" required value="${this.esc(x.uraian||"")}" placeholder="Judul divisi / keterangan" style="font-weight:bold"><button type="button" class="ui icon button" data-delivery-action="rab-note-up" title="Pindah ke atas"><i class="arrow up icon"></i></button><button type="button" class="ui icon button" data-delivery-action="rab-note-down" title="Pindah ke bawah"><i class="arrow down icon"></i></button><button type="button" class="ui icon button" data-delivery-action="rab-note-delete" title="Hapus keterangan"><i class="trash icon"></i></button></div></td></tr>`;
+	}
+
 	recalculateRabTotals() {
 		const rows=$("#rabRows tr").toArray(),values=rows.map(tr=>{const row=$(tr),volume=Number(row.find('[data-rab="volume"]').val())||0,price=Number(row.find('[data-rab="harga_satuan"]').val())||0,tax=Number(row.find('[data-rab="pajak"]').val())||0;return Math.round((volume*price*(1+tax/100)+Number.EPSILON)*100)/100;}),total=values.reduce((sum,x)=>sum+x,0);
 		rows.forEach((tr,i)=>{$(tr).find('[data-rab-total]').text(this.money(values[i]));$(tr).find('[data-rab-weight]').text((total?100*values[i]/total:0).toFixed(2)+"%");});
@@ -729,6 +707,8 @@ class KontrakModule extends BaseCrudModule {
 			$("#rabImportFile").trigger("click");
 			return;
 		}
+		if(a==="add-rab-note"){$("#rabRows").append(this.rabNoteRow({}));return;}
+		if(["rab-note-up","rab-note-down","rab-note-delete"].includes(a)){const row=button.closest("tr");if(a==="rab-note-up")row.prev().before(row);else if(a==="rab-note-down")row.next().after(row);else row.remove();return;}
 		if (a === "add-rab") {
 			$("#rabRows").append(
 				'<tr><td><input type="hidden" data-rab="id"><input data-rab="nomor" required></td><td><input data-rab="uraian" required></td><td><input data-rab="satuan" required></td><td><input type="number" min="0.000000000001" step="any" data-rab="volume" required></td><td><input type="number" min="0.01" step="any" data-rab="harga_satuan" required></td><td><input type="number" min="0" max="100" step="any" value="0" data-rab="pajak" aria-label="Pajak persen"></td><td data-rab-total>-</td><td data-rab-weight>-</td></tr>',

@@ -246,7 +246,12 @@ $tahunLabel = $user['tahun'] ?? '-';
             </div>
             <div class="ui segment" id="custom-paper-fields"><h4 class="ui dividing header">Ukuran Custom</h4><div class="two fields"><div class="field"><label>Lebar</label><div class="ui right labeled input"><input type="number" min="50" max="2000" step="0.1" name="lebar_kertas_mm"><div class="ui label">mm</div></div></div><div class="field"><label>Tinggi</label><div class="ui right labeled input"><input type="number" min="50" max="2000" step="0.1" name="tinggi_kertas_mm"><div class="ui label">mm</div></div></div></div></div>
             <h4 class="ui dividing header">Margin Dokumen</h4>
-            <div class="six fields"><div class="field"><label>Atas</label><input type="number" min="0" step="0.5" name="margin_atas_mm"></div><div class="field"><label>Kanan</label><input type="number" min="0" step="0.5" name="margin_kanan_mm"></div><div class="field"><label>Bawah</label><input type="number" min="0" step="0.5" name="margin_bawah_mm"></div><div class="field"><label>Kiri</label><input type="number" min="0" step="0.5" name="margin_kiri_mm"></div><div class="field"><label>Jarak header dari tepi</label><input type="number" min="0" step="0.5" name="margin_header_mm"></div><div class="field"><label>Jarak footer dari tepi</label><input type="number" min="0" step="0.5" name="margin_footer_mm"></div></div>
+            <div class="inline field"><label>Satuan margin</label><select class="ui compact dropdown" id="marginUnit"><option value="mm" selected>Milimeter (mm)</option><option value="cm">Sentimeter (cm)</option></select><span class="ui grey text">10 mm = 1 cm</span></div>
+            <div class="six fields">
+                <?php foreach(['atas'=>'Atas','kanan'=>'Kanan','bawah'=>'Bawah','kiri'=>'Kiri','header'=>'Jarak header dari tepi','footer'=>'Jarak footer dari tepi'] as $edge=>$label): ?>
+                <div class="field"><label><?= $label ?></label><div class="ui right labeled input"><input type="number" min="0" step="0.5" name="margin_<?= $edge ?>_mm" data-margin-value><div class="ui label" data-margin-unit>mm</div></div></div>
+                <?php endforeach; ?>
+            </div>
             <div class="ui two stackable cards page-setup-sections">
                 <?php foreach(['header'=>'Header','footer'=>'Footer'] as $section=>$sectionLabel):?>
                 <div class="fluid card page-section-editor" data-page-section="<?= $section ?>">

@@ -60,6 +60,7 @@ class PengaturanModule {
 			this.bindPeriodTable();
 			this.initUI();
 			this.bindPageSectionEditors();
+			this.bindMarginUnits();
 			this.initIdentityImages();
 			this.bindOfficialLetterhead();
 			const toggleCustomPaper = () => {
@@ -364,9 +365,22 @@ class PengaturanModule {
 				field.val(this.data[key]);
 			}
 		});
+		const pageForm=$("#form-page-setup"),unit=pageForm.find('#marginUnit').val()||'mm';
+		pageForm.attr('data-margin-display-unit','mm');this.setMarginUnit(pageForm,unit);
         this.populateScheduleDefaults();
 		this.populatePageSections();
 		this.renderScheduleStatus();
+	}
+
+	bindMarginUnits() {
+		const form=$("#form-page-setup");form.attr('data-margin-display-unit','mm');
+		form.off('change.marginUnits','#marginUnit').on('change.marginUnits','#marginUnit',e=>this.setMarginUnit(form,e.currentTarget.value));
+	}
+	setMarginUnit(form,unit) {
+		unit=unit==='cm'?'cm':'mm';const previous=form.attr('data-margin-display-unit')||'mm';
+		const factor=(previous==='cm'?10:1)/(unit==='cm'?10:1);
+		form.find('[data-margin-value]').each((_,input)=>{if(input.value!==''&&Number.isFinite(Number(input.value)))input.value=String(Math.round(Number(input.value)*factor*1e6)/1e6);input.step=unit==='cm'?'0.05':'0.5';});
+		form.find('[data-margin-unit]').text(unit);form.attr('data-margin-display-unit',unit);
 	}
 
     populateScheduleDefaults() {
@@ -470,6 +484,8 @@ class PengaturanModule {
 			if (!this.data) return;
 			$(e.currentTarget).find('[data-page-section]').each((_,panel)=>this.syncPageSection($(panel)));
 			const values = Object.fromEntries($(e.currentTarget).serializeArray().map(x => [x.name, x.value]));
+			const unit=$(e.currentTarget).attr('data-margin-display-unit')||'mm';
+			$(e.currentTarget).find('[data-margin-value]').each((_,input)=>{if(input.value!==''&&Number.isFinite(Number(input.value)))values[input.name]=Math.round(Number(input.value)*(unit==='cm'?10:1)*1e6)/1e6;});
 			["header_pdf_aktif","footer_pdf_aktif"].forEach(name=>values[name]=$(e.currentTarget).find(`[name="${name}"]`).prop('checked')?1:0);
 			this.ajax.request({url:"/pengaturan/page-setup/save",method:"POST",data:values,success:(res)=>{
 				if(res.success){this.data={...this.data,...values};Toast.show({success:true,message:"Page Setup PDF OPD berhasil disimpan"});}

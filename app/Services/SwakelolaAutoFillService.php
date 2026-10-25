@@ -25,7 +25,7 @@ final class SwakelolaAutoFillService
             'tanggal_akta'=>$this->date($c['tgl_akta_pendirian']??''),
             'nama_kegiatan'=>$c['nama_sub_keg']??$c['uraian_kontrak']??''];
         $id=(int)$c['id'];
-        $this->rab=$db->query('SELECT * FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY nomor,id',[$id])->fetchAll();
+        $this->rab=$db->query('SELECT * FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY COALESCE(NULLIF(urutan,0),id),id',[$id])->fetchAll();
         $this->schedule=$db->query('SELECT * FROM kontrak_jadwal_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY minggu_ke,id',[$id])->fetchAll();
         $kop=$db->query('SELECT * FROM kop_surat_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND aktif=1 AND is_deleted=0 ORDER BY id DESC LIMIT 1',[$c['kd_wilayah'],$c['kd_opd'],$c['tahun']])->fetch()?:[];
         $this->values['alamat_opd']=$kop['alamat']??$this->values['alamat_opd'];
@@ -200,6 +200,7 @@ final class SwakelolaAutoFillService
                     $rows=array_slice($block['rows'],0,$header);
                     $rows[]=array_map(fn($label)=>['colspan'=>1,'blocks'=>[['type'=>'paragraph','text'=>$label,'bold'=>true]]],['No','Uraian Pekerjaan','Satuan','Volume','Harga Satuan (Rp)','Jumlah Harga (Rp)']);
                     foreach($this->rab as $i=>$item){
+                        if(($item['type']??'')==='KETERANGAN'){$rows[]=[['colspan'=>1,'blocks'=>[['type'=>'paragraph','text'=>$item['nomor']]]],['colspan'=>5,'blocks'=>[['type'=>'paragraph','text'=>$item['uraian'],'bold'=>true]]]];continue;}
                         $volume=rtrim(rtrim(number_format((float)($item['vol_negoisasi']??$item['vol_hps']??0),4,',','.'),'0'),',');
                         $values=[(string)($i+1),$item['uraian'],$item['satuan'],$volume,number_format((float)($item['harga_sat_negoisasi']??$item['harga_sat_hps']??0),2,',','.'),number_format((float)($item['jumlah_negoisasi']??$item['jumlah_hps']??0),2,',','.')];
                         $rows[]=array_map(fn($v)=>['colspan'=>1,'blocks'=>[['type'=>'paragraph','text'=>$v]]],$values);

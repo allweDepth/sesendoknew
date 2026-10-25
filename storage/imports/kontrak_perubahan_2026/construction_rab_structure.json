@@ -1,0 +1,2543 @@
+{
+  "contracts": [
+    {
+      "id": 852,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/63944484 - Normalisasi Saluran Sungai Bulubunggu/RAB - CV. BUMANTARA KARYA TEKNIK - Normalisasi Saluran Sungai Bulubunggu.xlsx",
+      "sha256": "85188d5f0845484fd2213c4a11556dd4b67deb134f5a322bcee046e2761797fe",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 6016200,
+          "jumlah_penawaran": 6015090,
+          "jumlah_negoisasi": 6015090
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.19",
+          "uraian": "Keselamatan dan Kesehatan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 587745,
+          "jumlah_penawaran": 587745,
+          "jumlah_negoisasi": 587745
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "3.1.(1)",
+          "uraian": "Galian Biasa/Perapihan",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 393395543.23,
+          "jumlah_penawaran": 393260643.69,
+          "jumlah_negoisasi": 393260643.69
+        }
+      ]
+    },
+    {
+      "id": 820,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/68871440 - Normalisasi Sungai Saluran Bulumario/RAB - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Bulumario.xlsx",
+      "sha256": "8ca087a8d7ae9cadb543a3b55d58d61fe28f571b46557bd8858c7eb22a606b1c",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 6016200,
+          "jumlah_penawaran": 6015090,
+          "jumlah_negoisasi": 6015090
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.19",
+          "uraian": "Keselamatan dan Kesehatan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 587745,
+          "jumlah_penawaran": 587745,
+          "jumlah_negoisasi": 587745
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "3.1.(1)",
+          "uraian": "Galian Biasa/Perapihan",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 393395543.23,
+          "jumlah_penawaran": 393260643.69,
+          "jumlah_negoisasi": 393260643.69
+        }
+      ]
+    },
+    {
+      "id": 822,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/68246415 - Normalisasi Sungai Saluran Desa Dapurang/RAB - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Dapurang.xlsx",
+      "sha256": "6189c553f36997c33b814742b4a3218f4d71b02af29fa47b136bf0f82cf4fab3",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 6016200,
+          "jumlah_penawaran": 6015090,
+          "jumlah_negoisasi": 6015090
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.19",
+          "uraian": "Keselamatan dan Kesehatan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 560772,
+          "jumlah_penawaran": 560772,
+          "jumlah_negoisasi": 560772
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "3.1.(1)",
+          "uraian": "Galian Biasa/Perapihan",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 393422992.94,
+          "jumlah_penawaran": 393288083.98,
+          "jumlah_negoisasi": 393288083.98
+        }
+      ]
+    },
+    {
+      "id": 825,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/61828489 - Normalisasi Sungai Saluran Desa Polewali/RAB - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Polewali.xlsx",
+      "sha256": "2b91ad2ddd5f2857c647eb145a092ea81be2c2aa567dbfed52ee69bd5c61ec0a",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 5871900,
+          "jumlah_penawaran": 5870790,
+          "jumlah_negoisasi": 5870790
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.19",
+          "uraian": "Keselamatan dan Kesehatan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 507825,
+          "jumlah_penawaran": 507825,
+          "jumlah_negoisasi": 507825
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "3.1.(1)",
+          "uraian": "Galian Biasa/Perapihan",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 73620126.78,
+          "jumlah_penawaran": 73594881.65,
+          "jumlah_negoisasi": 73594881.65
+        }
+      ]
+    },
+    {
+      "id": 821,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/66789677 - Normalisasi Sungai Saluran Desa Saptanajaya/RAB - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Saptanajaya.xlsx",
+      "sha256": "d575fdb496fca716360068cd8f9bdce0fc02c9547e488667b498b40b5f1503e8",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 6016200,
+          "jumlah_penawaran": 6015090,
+          "jumlah_negoisasi": 6015090
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.19",
+          "uraian": "Keselamatan dan Kesehatan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 566100,
+          "jumlah_penawaran": 566100,
+          "jumlah_negoisasi": 566100
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "3.1.(1)",
+          "uraian": "Galian Biasa/Perapihan",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 393417503,
+          "jumlah_penawaran": 393282595.92,
+          "jumlah_negoisasi": 393282595.92
+        }
+      ]
+    },
+    {
+      "id": 823,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/60879306 - Normalisasi Sungai Saluran Desa Tirtabuana/RAB - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Tirtabuana.xlsx",
+      "sha256": "79efd0f0991ab17879cca7fbebd1fcec489ef44fc42d0c168ca0ba4d1062b746",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 5727600,
+          "jumlah_penawaran": 5726490,
+          "jumlah_negoisasi": 5726490
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.19",
+          "uraian": "Keselamatan dan Kesehatan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 545565,
+          "jumlah_penawaran": 545565,
+          "jumlah_negoisasi": 545565
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "3.1.(1)",
+          "uraian": "Galian Biasa/Perapihan",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 351726880.87,
+          "jumlah_penawaran": 351606269.96,
+          "jumlah_negoisasi": 351606269.96
+        }
+      ]
+    },
+    {
+      "id": 790,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/66769304 - Pemb. Jalan Rabat Gudang obat Ako Pasangkayu/RAB - PT. BUMI SEDAYA SEJAHTERA - Pemb. Jalan Rabat Gudang obat Ako Pasangkayu.xlsx",
+      "sha256": "9cc83e21d103345d132f0a3c0ad181cadc75efbd000a1be22c1ceb3273bfba29",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 10323000,
+          "jumlah_penawaran": 10321890,
+          "jumlah_negoisasi": 10321890
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.22.(1a1)",
+          "uraian": "Pembuatan dokumen RKK, RMPK, RKPPL, dan RMLLP",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 832500,
+          "jumlah_penawaran": 832500,
+          "jumlah_negoisasi": 832500
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "1.22.(1b2)",
+          "uraian": "Pembuatan prosedur dan instruksi kerja",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "1.22.(1c)",
+          "uraian": "Penyusunan pelaporan penerapan SMKK",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 8,
+          "urutan": 6,
+          "nomor": "1.22.(3b1)",
+          "uraian": "Topi pelindung (Safety Helmet)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 416250,
+          "jumlah_penawaran": 416250,
+          "jumlah_negoisasi": 416250
+        },
+        {
+          "source_row": 9,
+          "urutan": 7,
+          "nomor": "1.22.(3b7)",
+          "uraian": "Sarung tangan (Safety Gloves)",
+          "type": "ITEM",
+          "satuan": "Pasang",
+          "jumlah_hps": 83250,
+          "jumlah_penawaran": 83250,
+          "jumlah_negoisasi": 83250
+        },
+        {
+          "source_row": 10,
+          "urutan": 8,
+          "nomor": "1.22.(3b10)",
+          "uraian": "Sepatu keselamatan (Rubber Safety Shoes)",
+          "type": "ITEM",
+          "satuan": "Pasang",
+          "jumlah_hps": 1110000,
+          "jumlah_penawaran": 1110000,
+          "jumlah_negoisasi": 1110000
+        },
+        {
+          "source_row": 11,
+          "urutan": 9,
+          "nomor": "1.22.(3b15)",
+          "uraian": "Rompi keselamatan (Safety Vest)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 318847.5,
+          "jumlah_penawaran": 318847.5,
+          "jumlah_negoisasi": 318847.5
+        },
+        {
+          "source_row": 12,
+          "urutan": 10,
+          "nomor": "1.22.(5a)",
+          "uraian": "Ahli K3 konstruksi/ahli keselamatan konstruksi",
+          "type": "ITEM",
+          "satuan": "Orang",
+          "jumlah_hps": 3330000,
+          "jumlah_penawaran": 3330000,
+          "jumlah_negoisasi": 3330000
+        },
+        {
+          "source_row": 13,
+          "urutan": 11,
+          "nomor": "1.22.(5i)",
+          "uraian": "Petugas pengatur lalu lintas (flagman)",
+          "type": "ITEM",
+          "satuan": "Orang",
+          "jumlah_hps": 3885000,
+          "jumlah_penawaran": 3885000,
+          "jumlah_negoisasi": 3885000
+        },
+        {
+          "source_row": 14,
+          "urutan": 12,
+          "nomor": "1.22.(6a1)",
+          "uraian": "Peralatan P3K kotak A lengkap",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 666000,
+          "jumlah_penawaran": 666000,
+          "jumlah_negoisasi": 666000
+        },
+        {
+          "source_row": 15,
+          "urutan": 13,
+          "nomor": "1.22.(7a)",
+          "uraian": "Rambu petunjuk",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 55500,
+          "jumlah_penawaran": 55500,
+          "jumlah_negoisasi": 55500
+        },
+        {
+          "source_row": 16,
+          "urutan": 14,
+          "nomor": "1.22.(7b)",
+          "uraian": "Rambu larangan",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 55500,
+          "jumlah_penawaran": 55500,
+          "jumlah_negoisasi": 55500
+        },
+        {
+          "source_row": 17,
+          "urutan": 15,
+          "nomor": "1.22.(7c)",
+          "uraian": "Rambu peringatan",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 55500,
+          "jumlah_penawaran": 55500,
+          "jumlah_negoisasi": 55500
+        },
+        {
+          "source_row": 18,
+          "urutan": 16,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 19,
+          "urutan": 17,
+          "nomor": "3.3.(2a2)",
+          "uraian": "Penyiapan badan jalan untuk rekontruksi Perkerasan Lama",
+          "type": "ITEM",
+          "satuan": "m2",
+          "jumlah_hps": 980793.72,
+          "jumlah_penawaran": 980491.14,
+          "jumlah_negoisasi": 980491.14
+        },
+        {
+          "source_row": 20,
+          "urutan": 18,
+          "nomor": "",
+          "uraian": "DIVISI 5. PERKERASAN BERBUTIR DAN PERKERASAN BETON",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 21,
+          "urutan": 19,
+          "nomor": "7.1 (10)",
+          "uraian": "Beton mutu rendah  fc’= 15 MPa",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 126782034.88,
+          "jumlah_penawaran": 126764886.24,
+          "jumlah_negoisasi": 126764886.24
+        }
+      ]
+    },
+    {
+      "id": 788,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/63055939 - Pemb. Jalan Rabat Kabupaten Pasangkayu/RAB - CV. BUMANTARA KARYA TEKNIK - Pemb. Jalan Rabat Kabupaten Pasangkayu.xlsx",
+      "sha256": "3f697c3ddfd78849c3d2348decb07a98a2789a36c4f7b62b4b38b55e4f58646d",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 20623800,
+          "jumlah_penawaran": 20622690,
+          "jumlah_negoisasi": 20622690
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.22.(1a1)",
+          "uraian": "Pembuatan dokumen RKK, RMPK, RKPPL, dan RMLLP",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 832500,
+          "jumlah_penawaran": 832500,
+          "jumlah_negoisasi": 832500
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "1.22.(1b2)",
+          "uraian": "Pembuatan prosedur dan instruksi kerja",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "1.22.(1c)",
+          "uraian": "Penyusunan pelaporan penerapan SMKK",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 1110000,
+          "jumlah_penawaran": 1110000,
+          "jumlah_negoisasi": 1110000
+        },
+        {
+          "source_row": 8,
+          "urutan": 6,
+          "nomor": "1.22.(2a)",
+          "uraian": "kegiatan Induksi Keselamatan Konstruksi (Safety Induction)",
+          "type": "ITEM",
+          "satuan": "kegiatan",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 9,
+          "urutan": 7,
+          "nomor": "1.22.(2b)",
+          "uraian": "kegiatan Pengarahan Keselamatan Konstruksi (Safety Briefing)",
+          "type": "ITEM",
+          "satuan": "kegiatan",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 10,
+          "urutan": 8,
+          "nomor": "1.22.(2c)",
+          "uraian": "kegiatan Pertemuan keselamatan (Safety Talk)",
+          "type": "ITEM",
+          "satuan": "kegiatan",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 11,
+          "urutan": 9,
+          "nomor": "1.22.(2e)",
+          "uraian": "kegiatan Rapat Keselamatan Konstruksi (Construction Safety Meeting)",
+          "type": "ITEM",
+          "satuan": "kegiatan",
+          "jumlah_hps": 777000,
+          "jumlah_penawaran": 777000,
+          "jumlah_negoisasi": 777000
+        },
+        {
+          "source_row": 12,
+          "urutan": 10,
+          "nomor": "1.22.(2l)",
+          "uraian": "Papan Informasi Keselamatan Konstruksi",
+          "type": "ITEM",
+          "satuan": "Lembar",
+          "jumlah_hps": 222000,
+          "jumlah_penawaran": 222000,
+          "jumlah_negoisasi": 222000
+        },
+        {
+          "source_row": 13,
+          "urutan": 11,
+          "nomor": "1.22.(3b1)",
+          "uraian": "Topi pelindung (Safety Helmet)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 832500,
+          "jumlah_penawaran": 832500,
+          "jumlah_negoisasi": 832500
+        },
+        {
+          "source_row": 14,
+          "urutan": 12,
+          "nomor": "1.22.(3b7)",
+          "uraian": "Sarung tangan (Safety Gloves)",
+          "type": "ITEM",
+          "satuan": "Pasang",
+          "jumlah_hps": 166500,
+          "jumlah_penawaran": 166500,
+          "jumlah_negoisasi": 166500
+        },
+        {
+          "source_row": 15,
+          "urutan": 13,
+          "nomor": "1.22.(3b10)",
+          "uraian": "Sepatu keselamatan (Rubber Safety Shoes)",
+          "type": "ITEM",
+          "satuan": "Pasang",
+          "jumlah_hps": 2220000,
+          "jumlah_penawaran": 2220000,
+          "jumlah_negoisasi": 2220000
+        },
+        {
+          "source_row": 16,
+          "urutan": 14,
+          "nomor": "1.22.(3b15)",
+          "uraian": "Rompi keselamatan (Safety Vest)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 637695,
+          "jumlah_penawaran": 637695,
+          "jumlah_negoisasi": 637695
+        },
+        {
+          "source_row": 17,
+          "urutan": 15,
+          "nomor": "1.22.(4a)",
+          "uraian": "Asuransi (Construction All Risk/CAR)",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 3330000,
+          "jumlah_penawaran": 3330000,
+          "jumlah_negoisasi": 3330000
+        },
+        {
+          "source_row": 18,
+          "urutan": 16,
+          "nomor": "1.22.(5i)",
+          "uraian": "Petugas pengatur lalu lintas (flagman)",
+          "type": "ITEM",
+          "satuan": "Orang",
+          "jumlah_hps": 3885000,
+          "jumlah_penawaran": 3885000,
+          "jumlah_negoisasi": 3885000
+        },
+        {
+          "source_row": 19,
+          "urutan": 17,
+          "nomor": "1.22.(6a1)",
+          "uraian": "Peralatan P3K kotak A lengkap",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 20,
+          "urutan": 18,
+          "nomor": "1.22.(7a)",
+          "uraian": "Rambu petunjuk",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 111000,
+          "jumlah_penawaran": 111000,
+          "jumlah_negoisasi": 111000
+        },
+        {
+          "source_row": 21,
+          "urutan": 19,
+          "nomor": "1.22.(7b)",
+          "uraian": "Rambu larangan",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 111000,
+          "jumlah_penawaran": 111000,
+          "jumlah_negoisasi": 111000
+        },
+        {
+          "source_row": 22,
+          "urutan": 20,
+          "nomor": "1.22.(7c)",
+          "uraian": "Rambu peringatan",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 111000,
+          "jumlah_penawaran": 111000,
+          "jumlah_negoisasi": 111000
+        },
+        {
+          "source_row": 23,
+          "urutan": 21,
+          "nomor": "1.22.(7i)",
+          "uraian": "Tongkat pengatur lalu intas (Warning Lights Stick)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 444000,
+          "jumlah_penawaran": 444000,
+          "jumlah_negoisasi": 444000
+        },
+        {
+          "source_row": 24,
+          "urutan": 22,
+          "nomor": "1.22.(9b1a)",
+          "uraian": "Alat pemadam Api Ringan (APAR) Kelas A",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 688200,
+          "jumlah_penawaran": 688200,
+          "jumlah_negoisasi": 688200
+        },
+        {
+          "source_row": 25,
+          "urutan": 23,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 26,
+          "urutan": 24,
+          "nomor": "3.3.(2a2)",
+          "uraian": "Penyiapan badan jalan untuk rekontruksi Perkerasan Lama",
+          "type": "ITEM",
+          "satuan": "m2",
+          "jumlah_hps": 2235632.75,
+          "jumlah_penawaran": 2234943.05,
+          "jumlah_negoisasi": 2234943.05
+        },
+        {
+          "source_row": 27,
+          "urutan": 25,
+          "nomor": "",
+          "uraian": "DIVISI 5. PERKERASAN BERBUTIR DAN PERKERASAN BETON",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 28,
+          "urutan": 26,
+          "nomor": "7.1 (10)",
+          "uraian": "Beton mutu rendah  fc’= 15 MPa",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 358889111.21,
+          "jumlah_penawaran": 358846239.61,
+          "jumlah_negoisasi": 358846239.61
+        }
+      ]
+    },
+    {
+      "id": 789,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/68942736 - Pemb. Jalan Rabat Andi Bandaco Pasangkayu/RAB - PT. BUMI SEDAYA SEJAHTERA - Pemb. Jalan Rabat Andi Bandaco Pasangkayu.xlsx",
+      "sha256": "5dc5ada220847f506de726b9e1c0a17a4d558a6b71a509acdb4ad1f805db2c65",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 20623800,
+          "jumlah_penawaran": 20622690,
+          "jumlah_negoisasi": 20622690
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.22.(1a1)",
+          "uraian": "Pembuatan dokumen RKK, RMPK, RKPPL, dan RMLLP",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 832500,
+          "jumlah_penawaran": 832500,
+          "jumlah_negoisasi": 832500
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "1.22.(1b2)",
+          "uraian": "Pembuatan prosedur dan instruksi kerja",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "1.22.(1c)",
+          "uraian": "Penyusunan pelaporan penerapan SMKK",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 1665000,
+          "jumlah_penawaran": 1665000,
+          "jumlah_negoisasi": 1665000
+        },
+        {
+          "source_row": 8,
+          "urutan": 6,
+          "nomor": "1.22.(2a)",
+          "uraian": "kegiatan Induksi Keselamatan Konstruksi (Safety Induction)",
+          "type": "ITEM",
+          "satuan": "kegiatan",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 9,
+          "urutan": 7,
+          "nomor": "1.22.(2b)",
+          "uraian": "kegiatan Pengarahan Keselamatan Konstruksi (Safety Briefing)",
+          "type": "ITEM",
+          "satuan": "kegiatan",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 10,
+          "urutan": 8,
+          "nomor": "1.22.(2c)",
+          "uraian": "kegiatan Pertemuan keselamatan (Safety Talk)",
+          "type": "ITEM",
+          "satuan": "kegiatan",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 11,
+          "urutan": 9,
+          "nomor": "1.22.(2e)",
+          "uraian": "kegiatan Rapat Keselamatan Konstruksi (Construction Safety Meeting)",
+          "type": "ITEM",
+          "satuan": "kegiatan",
+          "jumlah_hps": 1165500,
+          "jumlah_penawaran": 1165500,
+          "jumlah_negoisasi": 1165500
+        },
+        {
+          "source_row": 12,
+          "urutan": 10,
+          "nomor": "1.22.(2l)",
+          "uraian": "Papan Informasi Keselamatan Konstruksi",
+          "type": "ITEM",
+          "satuan": "Lembar",
+          "jumlah_hps": 222000,
+          "jumlah_penawaran": 222000,
+          "jumlah_negoisasi": 222000
+        },
+        {
+          "source_row": 13,
+          "urutan": 11,
+          "nomor": "1.22.(3b1)",
+          "uraian": "Topi pelindung (Safety Helmet)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 1665000,
+          "jumlah_penawaran": 1665000,
+          "jumlah_negoisasi": 1665000
+        },
+        {
+          "source_row": 14,
+          "urutan": 12,
+          "nomor": "1.22.(3b7)",
+          "uraian": "Sarung tangan (Safety Gloves)",
+          "type": "ITEM",
+          "satuan": "Pasang",
+          "jumlah_hps": 333000,
+          "jumlah_penawaran": 333000,
+          "jumlah_negoisasi": 333000
+        },
+        {
+          "source_row": 15,
+          "urutan": 13,
+          "nomor": "1.22.(3b10)",
+          "uraian": "Sepatu keselamatan (Rubber Safety Shoes)",
+          "type": "ITEM",
+          "satuan": "Pasang",
+          "jumlah_hps": 4440000,
+          "jumlah_penawaran": 4440000,
+          "jumlah_negoisasi": 4440000
+        },
+        {
+          "source_row": 16,
+          "urutan": 14,
+          "nomor": "1.22.(3b15)",
+          "uraian": "Rompi keselamatan (Safety Vest)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 1275390,
+          "jumlah_penawaran": 1275390,
+          "jumlah_negoisasi": 1275390
+        },
+        {
+          "source_row": 17,
+          "urutan": 15,
+          "nomor": "1.22.(4a)",
+          "uraian": "Asuransi (Construction All Risk/CAR)",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 3330000,
+          "jumlah_penawaran": 3330000,
+          "jumlah_negoisasi": 3330000
+        },
+        {
+          "source_row": 18,
+          "urutan": 16,
+          "nomor": "1.22.(5a)",
+          "uraian": "Ahli K3 konstruksi/ahli keselamatan konstruksi",
+          "type": "ITEM",
+          "satuan": "Orang",
+          "jumlah_hps": 5550000,
+          "jumlah_penawaran": 5550000,
+          "jumlah_negoisasi": 5550000
+        },
+        {
+          "source_row": 19,
+          "urutan": 17,
+          "nomor": "1.22.(5i)",
+          "uraian": "Petugas pengatur lalu lintas (flagman)",
+          "type": "ITEM",
+          "satuan": "Orang",
+          "jumlah_hps": 3330000,
+          "jumlah_penawaran": 3330000,
+          "jumlah_negoisasi": 3330000
+        },
+        {
+          "source_row": 20,
+          "urutan": 18,
+          "nomor": "1.22.(6a1)",
+          "uraian": "Peralatan P3K kotak A lengkap",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 21,
+          "urutan": 19,
+          "nomor": "1.22.(7a)",
+          "uraian": "Rambu petunjuk",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 166500,
+          "jumlah_penawaran": 166500,
+          "jumlah_negoisasi": 166500
+        },
+        {
+          "source_row": 22,
+          "urutan": 20,
+          "nomor": "1.22.(7b)",
+          "uraian": "Rambu larangan",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 166500,
+          "jumlah_penawaran": 166500,
+          "jumlah_negoisasi": 166500
+        },
+        {
+          "source_row": 23,
+          "urutan": 21,
+          "nomor": "1.22.(7c)",
+          "uraian": "Rambu peringatan",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 222000,
+          "jumlah_penawaran": 222000,
+          "jumlah_negoisasi": 222000
+        },
+        {
+          "source_row": 24,
+          "urutan": 22,
+          "nomor": "1.22.(9b1a)",
+          "uraian": "Alat pemadam Api Ringan (APAR) Kelas A",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 643800,
+          "jumlah_penawaran": 643800,
+          "jumlah_negoisasi": 643800
+        },
+        {
+          "source_row": 25,
+          "urutan": 23,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 26,
+          "urutan": 24,
+          "nomor": "3.3.(2a2)",
+          "uraian": "Penyiapan badan jalan untuk rekontruksi Perkerasan Lama",
+          "type": "ITEM",
+          "satuan": "m2",
+          "jumlah_hps": 2163515.56,
+          "jumlah_penawaran": 2162848.11,
+          "jumlah_negoisasi": 2162848.11
+        },
+        {
+          "source_row": 27,
+          "urutan": 25,
+          "nomor": "3.2.(2a)",
+          "uraian": "Timbunan Pilihan Kasar dari Sumber Galian",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 50364306.95,
+          "jumlah_penawaran": 50363306.28,
+          "jumlah_negoisasi": 50363306.28
+        },
+        {
+          "source_row": 28,
+          "urutan": 26,
+          "nomor": "",
+          "uraian": "DIVISI 5. PERKERASAN BERBUTIR DAN PERKERASAN BETON",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 29,
+          "urutan": 27,
+          "nomor": "7.1 (10)",
+          "uraian": "Beton mutu rendah  fc’= 15 MPa",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 299074259.34,
+          "jumlah_penawaran": 299038533.01,
+          "jumlah_negoisasi": 299038533.01
+        }
+      ]
+    },
+    {
+      "id": 791,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/62722597 - Pemb. Jalan Rabat Mesjid/RAB - CV. KARYA UTAMA NUSANTARA - Pemb. Jalan Rabat Mesjid.xlsx",
+      "sha256": "6e46ef3dc0d0d9e1f415048c6824a30a3c98808967078abdd85d43b8811f7f0d",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 10323000,
+          "jumlah_penawaran": 10321890,
+          "jumlah_negoisasi": 10321890
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.22.(1a1)",
+          "uraian": "Pembuatan dokumen RKK, RMPK, RKPPL, dan RMLLP",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 832500,
+          "jumlah_penawaran": 832500,
+          "jumlah_negoisasi": 832500
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "1.22.(1b2)",
+          "uraian": "Pembuatan prosedur dan instruksi kerja",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "1.22.(1c)",
+          "uraian": "Penyusunan pelaporan penerapan SMKK",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 8,
+          "urutan": 6,
+          "nomor": "1.22.(3b1)",
+          "uraian": "Topi pelindung (Safety Helmet)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 416250,
+          "jumlah_penawaran": 416250,
+          "jumlah_negoisasi": 416250
+        },
+        {
+          "source_row": 9,
+          "urutan": 7,
+          "nomor": "1.22.(3b7)",
+          "uraian": "Sarung tangan (Safety Gloves)",
+          "type": "ITEM",
+          "satuan": "Pasang",
+          "jumlah_hps": 83250,
+          "jumlah_penawaran": 83250,
+          "jumlah_negoisasi": 83250
+        },
+        {
+          "source_row": 10,
+          "urutan": 8,
+          "nomor": "1.22.(3b10)",
+          "uraian": "Sepatu keselamatan (Rubber Safety Shoes)",
+          "type": "ITEM",
+          "satuan": "Pasang",
+          "jumlah_hps": 1110000,
+          "jumlah_penawaran": 1110000,
+          "jumlah_negoisasi": 1110000
+        },
+        {
+          "source_row": 11,
+          "urutan": 9,
+          "nomor": "1.22.(3b15)",
+          "uraian": "Rompi keselamatan (Safety Vest)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 318847.5,
+          "jumlah_penawaran": 318847.5,
+          "jumlah_negoisasi": 318847.5
+        },
+        {
+          "source_row": 12,
+          "urutan": 10,
+          "nomor": "1.22.(5a)",
+          "uraian": "Ahli K3 konstruksi/ahli keselamatan konstruksi",
+          "type": "ITEM",
+          "satuan": "Orang",
+          "jumlah_hps": 3330000,
+          "jumlah_penawaran": 3330000,
+          "jumlah_negoisasi": 3330000
+        },
+        {
+          "source_row": 13,
+          "urutan": 11,
+          "nomor": "1.22.(5i)",
+          "uraian": "Petugas pengatur lalu lintas (flagman)",
+          "type": "ITEM",
+          "satuan": "Orang",
+          "jumlah_hps": 3885000,
+          "jumlah_penawaran": 3885000,
+          "jumlah_negoisasi": 3885000
+        },
+        {
+          "source_row": 14,
+          "urutan": 12,
+          "nomor": "1.22.(6a1)",
+          "uraian": "Peralatan P3K kotak A lengkap",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 15,
+          "urutan": 13,
+          "nomor": "1.22.(7a)",
+          "uraian": "Rambu petunjuk",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 55500,
+          "jumlah_penawaran": 55500,
+          "jumlah_negoisasi": 55500
+        },
+        {
+          "source_row": 16,
+          "urutan": 14,
+          "nomor": "1.22.(7b)",
+          "uraian": "Rambu larangan",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 55500,
+          "jumlah_penawaran": 55500,
+          "jumlah_negoisasi": 55500
+        },
+        {
+          "source_row": 17,
+          "urutan": 15,
+          "nomor": "1.22.(7c)",
+          "uraian": "Rambu peringatan",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 55500,
+          "jumlah_penawaran": 55500,
+          "jumlah_negoisasi": 55500
+        },
+        {
+          "source_row": 18,
+          "urutan": 16,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 19,
+          "urutan": 17,
+          "nomor": "3.3.(2a2)",
+          "uraian": "Penyiapan badan jalan untuk rekontruksi Perkerasan Lama",
+          "type": "ITEM",
+          "satuan": "m2",
+          "jumlah_hps": 391742.29,
+          "jumlah_penawaran": 391621.44,
+          "jumlah_negoisasi": 391621.44
+        },
+        {
+          "source_row": 20,
+          "urutan": 18,
+          "nomor": "",
+          "uraian": "DIVISI 5. PERKERASAN BERBUTIR DAN PERKERASAN BETON",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 21,
+          "urutan": 19,
+          "nomor": "7.1 (10)",
+          "uraian": "Beton mutu rendah  fc’= 15 MPa",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 77477910.21,
+          "jumlah_penawaran": 77467430.48,
+          "jumlah_negoisasi": 77467430.48
+        }
+      ]
+    },
+    {
+      "id": 793,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/67944317 - Pemb. Jalan Rabat Cakalang/RAB - CV. KARYA UTAMA NUSANTARA - Pemb. Jalan Rabat Cakalang.xlsx",
+      "sha256": "d932c29450ee3313bc797d531f83a2b41277e2693613c2ad794c79ff81601abf",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 20623800,
+          "jumlah_penawaran": 20622690,
+          "jumlah_negoisasi": 20622690
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.22.(1a1)",
+          "uraian": "Pembuatan dokumen RKK, RMPK, RKPPL, dan RMLLP",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 832500,
+          "jumlah_penawaran": 832500,
+          "jumlah_negoisasi": 832500
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "1.22.(1b2)",
+          "uraian": "Pembuatan prosedur dan instruksi kerja",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "1.22.(1c)",
+          "uraian": "Penyusunan pelaporan penerapan SMKK",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 1665000,
+          "jumlah_penawaran": 1665000,
+          "jumlah_negoisasi": 1665000
+        },
+        {
+          "source_row": 8,
+          "urutan": 6,
+          "nomor": "1.22.(2a)",
+          "uraian": "kegiatan Induksi Keselamatan Konstruksi (Safety Induction)",
+          "type": "ITEM",
+          "satuan": "kegiatan",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 9,
+          "urutan": 7,
+          "nomor": "1.22.(2b)",
+          "uraian": "kegiatan Pengarahan Keselamatan Konstruksi (Safety Briefing)",
+          "type": "ITEM",
+          "satuan": "kegiatan",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 10,
+          "urutan": 8,
+          "nomor": "1.22.(2c)",
+          "uraian": "kegiatan Pertemuan keselamatan (Safety Talk)",
+          "type": "ITEM",
+          "satuan": "kegiatan",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 11,
+          "urutan": 9,
+          "nomor": "1.22.(2e)",
+          "uraian": "kegiatan Rapat Keselamatan Konstruksi (Construction Safety Meeting)",
+          "type": "ITEM",
+          "satuan": "kegiatan",
+          "jumlah_hps": 1165500,
+          "jumlah_penawaran": 1165500,
+          "jumlah_negoisasi": 1165500
+        },
+        {
+          "source_row": 12,
+          "urutan": 10,
+          "nomor": "1.22.(2l)",
+          "uraian": "Papan Informasi Keselamatan Konstruksi",
+          "type": "ITEM",
+          "satuan": "Lembar",
+          "jumlah_hps": 111000,
+          "jumlah_penawaran": 111000,
+          "jumlah_negoisasi": 111000
+        },
+        {
+          "source_row": 13,
+          "urutan": 11,
+          "nomor": "1.22.(3b1)",
+          "uraian": "Topi pelindung (Safety Helmet)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 832500,
+          "jumlah_penawaran": 832500,
+          "jumlah_negoisasi": 832500
+        },
+        {
+          "source_row": 14,
+          "urutan": 12,
+          "nomor": "1.22.(3b7)",
+          "uraian": "Sarung tangan (Safety Gloves)",
+          "type": "ITEM",
+          "satuan": "Pasang",
+          "jumlah_hps": 166500,
+          "jumlah_penawaran": 166500,
+          "jumlah_negoisasi": 166500
+        },
+        {
+          "source_row": 15,
+          "urutan": 13,
+          "nomor": "1.22.(3b10)",
+          "uraian": "Sepatu keselamatan (Rubber Safety Shoes)",
+          "type": "ITEM",
+          "satuan": "Pasang",
+          "jumlah_hps": 2220000,
+          "jumlah_penawaran": 2220000,
+          "jumlah_negoisasi": 2220000
+        },
+        {
+          "source_row": 16,
+          "urutan": 14,
+          "nomor": "1.22.(3b15)",
+          "uraian": "Rompi keselamatan (Safety Vest)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 637695,
+          "jumlah_penawaran": 637695,
+          "jumlah_negoisasi": 637695
+        },
+        {
+          "source_row": 17,
+          "urutan": 15,
+          "nomor": "1.22.(4a)",
+          "uraian": "Asuransi (Construction All Risk/CAR)",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 3330000,
+          "jumlah_penawaran": 3330000,
+          "jumlah_negoisasi": 3330000
+        },
+        {
+          "source_row": 18,
+          "urutan": 16,
+          "nomor": "1.22.(5i)",
+          "uraian": "Petugas pengatur lalu lintas (flagman)",
+          "type": "ITEM",
+          "satuan": "Orang",
+          "jumlah_hps": 7770000,
+          "jumlah_penawaran": 7770000,
+          "jumlah_negoisasi": 7770000
+        },
+        {
+          "source_row": 19,
+          "urutan": 17,
+          "nomor": "1.22.(6a1)",
+          "uraian": "Peralatan P3K kotak A lengkap",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 20,
+          "urutan": 18,
+          "nomor": "1.22.(7a)",
+          "uraian": "Rambu petunjuk",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 55500,
+          "jumlah_penawaran": 55500,
+          "jumlah_negoisasi": 55500
+        },
+        {
+          "source_row": 21,
+          "urutan": 19,
+          "nomor": "1.22.(7b)",
+          "uraian": "Rambu larangan",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 55500,
+          "jumlah_penawaran": 55500,
+          "jumlah_negoisasi": 55500
+        },
+        {
+          "source_row": 22,
+          "urutan": 20,
+          "nomor": "1.22.(7c)",
+          "uraian": "Rambu peringatan",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 55500,
+          "jumlah_penawaran": 55500,
+          "jumlah_negoisasi": 55500
+        },
+        {
+          "source_row": 23,
+          "urutan": 21,
+          "nomor": "1.22.(7i)",
+          "uraian": "Tongkat pengatur lalu intas (Warning Lights Stick)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 444000,
+          "jumlah_penawaran": 444000,
+          "jumlah_negoisasi": 444000
+        },
+        {
+          "source_row": 24,
+          "urutan": 22,
+          "nomor": "1.22.(9b1a)",
+          "uraian": "Alat pemadam Api Ringan (APAR) Kelas A",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 688200,
+          "jumlah_penawaran": 688200,
+          "jumlah_negoisasi": 688200
+        },
+        {
+          "source_row": 25,
+          "urutan": 23,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 26,
+          "urutan": 24,
+          "nomor": "3.3.(2a2)",
+          "uraian": "Penyiapan badan jalan untuk rekontruksi Perkerasan Lama",
+          "type": "ITEM",
+          "satuan": "m2",
+          "jumlah_hps": 2524101.49,
+          "jumlah_penawaran": 2523322.79,
+          "jumlah_negoisasi": 2523322.79
+        },
+        {
+          "source_row": 27,
+          "urutan": 25,
+          "nomor": "3.2.(2a)",
+          "uraian": "Timbunan Pilihan Kasar dari Sumber Galian",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 14303463.17,
+          "jumlah_penawaran": 14303178.98,
+          "jumlah_negoisasi": 14303178.98
+        },
+        {
+          "source_row": 28,
+          "urutan": 26,
+          "nomor": "",
+          "uraian": "DIVISI 5. PERKERASAN BERBUTIR DAN PERKERASAN BETON",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 29,
+          "urutan": 27,
+          "nomor": "7.1 (10)",
+          "uraian": "Beton mutu rendah  fc’= 15 MPa",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 339748358.61,
+          "jumlah_penawaran": 339707773.5,
+          "jumlah_negoisasi": 339707773.5
+        }
+      ]
+    },
+    {
+      "id": 798,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/60976170 - Pemb. Jalan Dsn Benteng Desa Ompi/RAB - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Dsn Benteng Desa Ompi.xlsx",
+      "sha256": "aa37907e6c1224d8fe05bcd83756979fb29009dbc8678f18240c8d44646074b4",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 3851700,
+          "jumlah_penawaran": 3850590,
+          "jumlah_negoisasi": 3850590
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.19",
+          "uraian": "Keselamatan dan Kesehatan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 562770,
+          "jumlah_penawaran": 562770,
+          "jumlah_negoisasi": 562770
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "",
+          "uraian": "DIVISI 2. DRAINASE",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "2.1.(1)",
+          "uraian": "Galian untuk Selokan Drainase dan Saluran Air",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 7048636.75,
+          "jumlah_penawaran": 7043206.18,
+          "jumlah_negoisasi": 7043206.18
+        },
+        {
+          "source_row": 8,
+          "urutan": 6,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 9,
+          "urutan": 7,
+          "nomor": "3.1.(1)",
+          "uraian": "Galian Biasa/Perapihan",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 183536046.6,
+          "jumlah_penawaran": 183473110.12,
+          "jumlah_negoisasi": 183473110.12
+        }
+      ]
+    },
+    {
+      "id": 799,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/67735973 - Pemb. Jalan Dsn. Kampung Baru Desa Bukit Harapan/RAB - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Dsn. Kampung Baru Desa Bukit Harapan.xlsx",
+      "sha256": "2f69e6ccb819f397f914e5db58e3765aedd8c4b7c18e83d76409790d440f5260",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 3851700,
+          "jumlah_penawaran": 3850590,
+          "jumlah_negoisasi": 3850590
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.19",
+          "uraian": "Keselamatan dan Kesehatan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 562770,
+          "jumlah_penawaran": 562770,
+          "jumlah_negoisasi": 562770
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "",
+          "uraian": "DIVISI 2. DRAINASE",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "2.1.(1)",
+          "uraian": "Galian untuk Selokan Drainase dan Saluran Air",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 7048636.75,
+          "jumlah_penawaran": 7043206.18,
+          "jumlah_negoisasi": 7043206.18
+        },
+        {
+          "source_row": 8,
+          "urutan": 6,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 9,
+          "urutan": 7,
+          "nomor": "3.1.(1)",
+          "uraian": "Galian Biasa/Perapihan",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 183536046.6,
+          "jumlah_penawaran": 183473110.12,
+          "jumlah_negoisasi": 183473110.12
+        }
+      ]
+    },
+    {
+      "id": 855,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/69656274 - Pemb. Jalan Dusun Mandar/RAB - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Dusun Mandar.xlsx",
+      "sha256": "c37e45ffda070daf2f94176f93f1d4658aba4de05970f0b353351d8a0515e46f",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 3851700,
+          "jumlah_penawaran": 3850590,
+          "jumlah_negoisasi": 3850590
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.19",
+          "uraian": "Keselamatan dan Kesehatan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 594405,
+          "jumlah_penawaran": 594405,
+          "jumlah_negoisasi": 594405
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "",
+          "uraian": "DIVISI 2. DRAINASE",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "2.1.(1)",
+          "uraian": "Galian untuk Selokan Drainase dan Saluran Air",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 5951663.48,
+          "jumlah_penawaran": 5947078.07,
+          "jumlah_negoisasi": 5947078.07
+        },
+        {
+          "source_row": 8,
+          "urutan": 6,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 9,
+          "urutan": 7,
+          "nomor": "3.1.(1)",
+          "uraian": "Galian Biasa/Perapihan",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 169601886.7,
+          "jumlah_penawaran": 169543728.4,
+          "jumlah_negoisasi": 169543728.4
+        }
+      ]
+    },
+    {
+      "id": 800,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/62311319 - Pemb. Jalan Kabupaten/RAB - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Kabupaten.xlsx",
+      "sha256": "4a06233660dde46e6d9d3fc543475583f00cdbd68fc22cf048d380cb91204682",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 3851700,
+          "jumlah_penawaran": 3850590,
+          "jumlah_negoisasi": 3850590
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.19",
+          "uraian": "Keselamatan dan Kesehatan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 499500,
+          "jumlah_penawaran": 499500,
+          "jumlah_negoisasi": 499500
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "",
+          "uraian": "DIVISI 2. DRAINASE",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "2.1.(1)",
+          "uraian": "Galian untuk Selokan Drainase dan Saluran Air",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 4667971.36,
+          "jumlah_penawaran": 4664374.96,
+          "jumlah_negoisasi": 4664374.96
+        },
+        {
+          "source_row": 8,
+          "urutan": 6,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 9,
+          "urutan": 7,
+          "nomor": "3.1.(1)",
+          "uraian": "Galian Biasa/Perapihan",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 140980072.31,
+          "jumlah_penawaran": 140931728.73,
+          "jumlah_negoisasi": 140931728.73
+        }
+      ]
+    },
+    {
+      "id": 797,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/63456964 - Pemb. Jalan Wulai/RAB - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Wulai.xlsx",
+      "sha256": "f74427b9fa80e37cc526d9a57ea8146195f5dc0c4e4c5446d513361990483738",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 3996000,
+          "jumlah_penawaran": 3994890,
+          "jumlah_negoisasi": 3994890
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.19",
+          "uraian": "Keselamatan dan Kesehatan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 549450,
+          "jumlah_penawaran": 549450,
+          "jumlah_negoisasi": 549450
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "",
+          "uraian": "DIVISI 2. DRAINASE",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "2.1.(1)",
+          "uraian": "Galian untuk Selokan Drainase dan Saluran Air",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 14003914.07,
+          "jumlah_penawaran": 13993124.87,
+          "jumlah_negoisasi": 13993124.87
+        },
+        {
+          "source_row": 8,
+          "urutan": 6,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 9,
+          "urutan": 7,
+          "nomor": "3.1.(1)",
+          "uraian": "Galian Biasa/Perapihan",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 361451352.98,
+          "jumlah_penawaran": 361327407.44,
+          "jumlah_negoisasi": 361327407.44
+        }
+      ]
+    },
+    {
+      "id": 824,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/64430085 - Pemb. Jalan Desa Letawa/RAB - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Desa Letawa.xlsx",
+      "sha256": "19b68ded223a618da8dd3b4c7eed5273f913a3f186e2d84b668adaafb1e8ae2f",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 11211000,
+          "jumlah_penawaran": 11209890,
+          "jumlah_negoisasi": 11209890
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.19",
+          "uraian": "Keselamatan dan Kesehatan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 621711,
+          "jumlah_penawaran": 621711,
+          "jumlah_negoisasi": 621711
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "3.2.(2a)",
+          "uraian": "Timbunan Pilihan dari sumber galian (sirtu)",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 301768171.79,
+          "jumlah_penawaran": 301766025.54,
+          "jumlah_negoisasi": 301766025.54
+        },
+        {
+          "source_row": 8,
+          "urutan": 6,
+          "nomor": "3.3.(1)",
+          "uraian": "Penyiapan Badan Jalan",
+          "type": "ITEM",
+          "satuan": "M2",
+          "jumlah_hps": 6398996.56,
+          "jumlah_penawaran": 6394364.93,
+          "jumlah_negoisasi": 6394364.93
+        }
+      ]
+    },
+    {
+      "id": 853,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/60986217 - Peningkatan Jalan Bulubunggu/RAB - CV. BUMANTARA KARYA TEKNIK - Peningkatan Jalan Bulubunggu.xlsx",
+      "sha256": "ccec1d127383e38b140737f8aa853b23d52098a468c0ae7d448bddab5d7a3f82",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 11643900,
+          "jumlah_penawaran": 11642790,
+          "jumlah_negoisasi": 11642790
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "1.19",
+          "uraian": "Keselamatan dan Kesehatan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 700965,
+          "jumlah_penawaran": 700965,
+          "jumlah_negoisasi": 700965
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "3.2.(2a)",
+          "uraian": "Timbunan Pilihan dari sumber galian (sirtu)",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 183758272.21,
+          "jumlah_penawaran": 183756965.27,
+          "jumlah_negoisasi": 183756965.27
+        },
+        {
+          "source_row": 8,
+          "urutan": 6,
+          "nomor": "3.3.(1)",
+          "uraian": "Penyiapan Badan Jalan",
+          "type": "ITEM",
+          "satuan": "M2",
+          "jumlah_hps": 3896595.67,
+          "jumlah_penawaran": 3893775.3,
+          "jumlah_negoisasi": 3893775.3
+        }
+      ]
+    },
+    {
+      "id": 849,
+      "path": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/61530360 - Pematangan Lahan Sekolah Rakyat/RAB - PT. BUMI SEDAYA SEJAHTERA - Pematangan Lahan Sekolah Rakyat.xlsx",
+      "sha256": "dd2b7fc510cd2723c46ce0bfe757d9c05455387a26067c3a87b4fe7f4918be29",
+      "sheet": "64475219",
+      "rows": [
+        {
+          "source_row": 3,
+          "urutan": 1,
+          "nomor": "",
+          "uraian": "DIVISI 1. UMUM",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 4,
+          "urutan": 2,
+          "nomor": "1.2",
+          "uraian": "Mobilisasi",
+          "type": "ITEM",
+          "satuan": "LS",
+          "jumlah_hps": 23409900,
+          "jumlah_penawaran": 23408790,
+          "jumlah_negoisasi": 23408790
+        },
+        {
+          "source_row": 5,
+          "urutan": 3,
+          "nomor": "Skh-1.1.22.(1a)",
+          "uraian": "Pembuatan dokumen RKK, RMPK, RKPPL, dan RMLLP",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 4995000,
+          "jumlah_penawaran": 4995000,
+          "jumlah_negoisasi": 4995000
+        },
+        {
+          "source_row": 6,
+          "urutan": 4,
+          "nomor": "Skh-1.1.22.(1b)",
+          "uraian": "Pembuatan prosedur dan instruksi kerja",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 4995000,
+          "jumlah_penawaran": 4995000,
+          "jumlah_negoisasi": 4995000
+        },
+        {
+          "source_row": 7,
+          "urutan": 5,
+          "nomor": "Skh-1.1.22.(1c)",
+          "uraian": "Penyusunan pelaporan penerapan SMKK",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 4995000,
+          "jumlah_penawaran": 4995000,
+          "jumlah_negoisasi": 4995000
+        },
+        {
+          "source_row": 8,
+          "urutan": 6,
+          "nomor": "Skh-1.1.22.(3a5)",
+          "uraian": "Pembatas area (Restricted Area)",
+          "type": "ITEM",
+          "satuan": "Rol",
+          "jumlah_hps": 1665000,
+          "jumlah_penawaran": 1665000,
+          "jumlah_negoisasi": 1665000
+        },
+        {
+          "source_row": 9,
+          "urutan": 7,
+          "nomor": "Skh-1.1.22.(3b1)",
+          "uraian": "Topi pelindung (Safety Helmet)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 416250,
+          "jumlah_penawaran": 416250,
+          "jumlah_negoisasi": 416250
+        },
+        {
+          "source_row": 10,
+          "urutan": 8,
+          "nomor": "Skh-1.1.22.(3b4)",
+          "uraian": "Sarung tangan (Safety Gloves)",
+          "type": "ITEM",
+          "satuan": "Pasang",
+          "jumlah_hps": 83250,
+          "jumlah_penawaran": 83250,
+          "jumlah_negoisasi": 83250
+        },
+        {
+          "source_row": 11,
+          "urutan": 9,
+          "nomor": "Skh-1.1.22.(3b5)",
+          "uraian": "Sepatu keselamatan (Safety Shoes, rubber safety shoes and toe cap)",
+          "type": "ITEM",
+          "satuan": "Pasang",
+          "jumlah_hps": 2220000,
+          "jumlah_penawaran": 2220000,
+          "jumlah_negoisasi": 2220000
+        },
+        {
+          "source_row": 12,
+          "urutan": 10,
+          "nomor": "Skh-1.1.22.(3b6)",
+          "uraian": "Rompi keselamatan (Safety Vest)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 353368.5,
+          "jumlah_penawaran": 353368.5,
+          "jumlah_negoisasi": 353368.5
+        },
+        {
+          "source_row": 13,
+          "urutan": 11,
+          "nomor": "10",
+          "uraian": "Jaminan Kecelakan Kerja",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 1665000,
+          "jumlah_penawaran": 1665000,
+          "jumlah_negoisasi": 1665000
+        },
+        {
+          "source_row": 14,
+          "urutan": 12,
+          "nomor": "11",
+          "uraian": "Jaminan Kematian",
+          "type": "ITEM",
+          "satuan": "Ls",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 15,
+          "urutan": 13,
+          "nomor": "Skh-1.1.22.(5b)",
+          "uraian": "Petugas Keselamatan Konstruksi, Petugas K3 Konstruksi",
+          "type": "ITEM",
+          "satuan": "OB",
+          "jumlah_hps": 1665000,
+          "jumlah_penawaran": 1665000,
+          "jumlah_negoisasi": 1665000
+        },
+        {
+          "source_row": 16,
+          "urutan": 14,
+          "nomor": "Skh-1.1.22.(5e)",
+          "uraian": "Petugas pengatur lalu lintas",
+          "type": "ITEM",
+          "satuan": "OB",
+          "jumlah_hps": 1110000,
+          "jumlah_penawaran": 1110000,
+          "jumlah_negoisasi": 1110000
+        },
+        {
+          "source_row": 17,
+          "urutan": 15,
+          "nomor": "Skh-1.1.22.(6a)",
+          "uraian": "Peralatan P3K",
+          "type": "ITEM",
+          "satuan": "Set",
+          "jumlah_hps": 555000,
+          "jumlah_penawaran": 555000,
+          "jumlah_negoisasi": 555000
+        },
+        {
+          "source_row": 18,
+          "urutan": 16,
+          "nomor": "Skh-1.1.22.(7a)",
+          "uraian": "Rambu petunjuk",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 55500,
+          "jumlah_penawaran": 55500,
+          "jumlah_negoisasi": 55500
+        },
+        {
+          "source_row": 19,
+          "urutan": 17,
+          "nomor": "Skh-1.1.22.(7b)",
+          "uraian": "Rambu larangan",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 55500,
+          "jumlah_penawaran": 55500,
+          "jumlah_negoisasi": 55500
+        },
+        {
+          "source_row": 20,
+          "urutan": 18,
+          "nomor": "Skh-1.1.22.(7c)",
+          "uraian": "Rambu peringatan",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 55500,
+          "jumlah_penawaran": 55500,
+          "jumlah_negoisasi": 55500
+        },
+        {
+          "source_row": 21,
+          "urutan": 19,
+          "nomor": "Skh-1.1.22.(9a1)",
+          "uraian": "Alat Pemadam Api Ringan (APAR)",
+          "type": "ITEM",
+          "satuan": "Buah",
+          "jumlah_hps": 666000,
+          "jumlah_penawaran": 666000,
+          "jumlah_negoisasi": 666000
+        },
+        {
+          "source_row": 22,
+          "urutan": 20,
+          "nomor": "",
+          "uraian": "DIVISI 3. PEKERJAAN TANAH DAN GEOSINTETIK",
+          "type": "KETERANGAN",
+          "satuan": "",
+          "jumlah_hps": null,
+          "jumlah_penawaran": null,
+          "jumlah_negoisasi": null
+        },
+        {
+          "source_row": 23,
+          "urutan": 21,
+          "nomor": "3.1.(1)",
+          "uraian": "Galian Biasa",
+          "type": "ITEM",
+          "satuan": "M3",
+          "jumlah_hps": 247141014.95,
+          "jumlah_penawaran": 247099609.12,
+          "jumlah_negoisasi": 247099609.12
+        },
+        {
+          "source_row": 24,
+          "urutan": 22,
+          "nomor": "3.4.(1)",
+          "uraian": "Pembersihan dan Pengupasan Lahan",
+          "type": "ITEM",
+          "satuan": "M2",
+          "jumlah_hps": 103343721.97,
+          "jumlah_penawaran": 103314516.62,
+          "jumlah_negoisasi": 103314516.62
+        }
+      ]
+    }
+  ]
+}
