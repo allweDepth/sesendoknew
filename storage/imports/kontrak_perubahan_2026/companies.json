@@ -145,8 +145,10 @@
   },
   {
     "key": "patambero",
-    "aliases": [],
-    "source": "Perusahaan Stok design Air bersih/COMPANY PROFILE CV. PCE.pdf",
+    "aliases": [
+      "CV PATAMBERO CONSULTANT ENGINEERING"
+    ],
+    "source": "/Users/nabiila_inayah/Library/Mobile Documents/com~apple~CloudDocs/2026/Pengadaan 2026/Perubahan 2026/Perusahaan Stok design Air bersih/Perusahaan 1/COMPANY PROFILE CV. PCE.pdf",
     "fields": {
       "nama_perusahaan": "CV. PATAMBERO CONSULTANT ENGINEERING",
       "alamat": "BTN Amazone Blok B/15, Baru, Banggae, Majene, Sulawesi Barat",
@@ -157,7 +159,8 @@
       "no_akta_pendirian": "15",
       "tgl_akta_pendirian": "2026-04-14",
       "nama_notaris_pendirian": "AZIZAH TASMAN, S.H., M.Kn."
-    }
+    },
+    "existing_id": 588
   },
   {
     "key": "asa",
@@ -195,5 +198,13 @@
       "PT BUMI SEDAYA SEJAHTERA",
       "PT BUMI SEDAYA SEJAHTERA (sementrara bikin sbu)"
     ]
+  },
+  {
+    "key": "visual_art_design",
+    "existing_id": 461,
+    "aliases": [
+      "CV VISUAL ART DESIGN"
+    ],
+    "source": "/Users/nabiila_inayah/Library/Mobile Documents/com~apple~CloudDocs/2026/Pengadaan 2026/Perubahan 2026/Perusahaan Stok design Air bersih/Perusahaan 2/PROFIL PERUSAHAAN VISUAL ART DESIGN 2026.pdf"
   }
 ]

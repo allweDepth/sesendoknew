@@ -23,7 +23,7 @@ final class PageSetupService
             $paper=strtoupper((string)($row['ukuran_kertas']??'A4'));
             if(!array_key_exists($paper,self::paperSizes()))$paper='A4';
             $orientation=in_array(strtoupper((string)($row['orientasi_kertas']??'')),['AUTO','P','L'],true)?strtoupper($row['orientasi_kertas']):'AUTO';
-            $font=in_array(strtolower((string)($row['font_pdf']??'')),['helvetica','times','courier'],true)?strtolower($row['font_pdf']):'helvetica';
+            $font=in_array(strtolower((string)($row['font_pdf']??'')),['helvetica','times','courier','arial_tata_naskah'],true)?strtolower($row['font_pdf']):'helvetica';
             $size=max(6,min(18,(float)($row['ukuran_font_pdf']??10)));
             $number=static fn($value,float $fallback,float $min=0,float $max=100):float=>is_numeric($value)?max($min,min($max,(float)$value)):$fallback;
             return ['paper'=>$paper,'orientation'=>$orientation,'font'=>$font,'font_size'=>$size,
@@ -64,7 +64,10 @@ final class PageSetupService
     public static function createPdf(array $settings,string $fallbackOrientation='P'):TCPDF
     {
         require_once __DIR__.'/PageSetupPdf.php';
-        return new PageSetupPdf(self::orientation($settings,$fallbackOrientation),'mm',self::tcpdfFormat($settings),true,'UTF-8',false);
+        $pdf=new PageSetupPdf(self::orientation($settings,$fallbackOrientation),'mm',self::tcpdfFormat($settings),true,'UTF-8',false);
+        $root=__DIR__.'/../../resources/fonts/tata_naskah/';
+        foreach([''=>'arial','B'=>'arialbd','I'=>'ariali','BI'=>'arialbi'] as $style=>$file)$pdf->AddFont('arial_tata_naskah',$style,$root.$file.'.php');
+        return $pdf;
     }
 
     public static function applyExcel(object $sheet,array $settings,string $fallback='P'):void
@@ -101,7 +104,7 @@ final class PageSetupService
     {
         $defaults=self::sectionDefaults($kind);$data=is_array($json)?$json:json_decode((string)$json,true);
         if(!is_array($data))return$defaults;
-        $fonts=['helvetica','times','courier'];$data['font']=in_array(strtolower((string)($data['font']??'')),$fonts,true)?strtolower((string)$data['font']):$defaults['font'];
+        $fonts=['helvetica','times','courier','arial_tata_naskah'];$data['font']=in_array(strtolower((string)($data['font']??'')),$fonts,true)?strtolower((string)$data['font']):$defaults['font'];
         $data['size']=max(5,min(24,(float)($data['size']??$defaults['size'])));$data['color']=preg_match('/^#[0-9a-f]{6}$/i',(string)($data['color']??''))?(string)$data['color']:$defaults['color'];
         foreach(['bold','italic','underline','divider'] as $flag)$data[$flag]=!empty($data[$flag]);
         $columns=[];foreach(array_slice(is_array($data['columns']??null)?$data['columns']:[],0,3) as $i=>$column){$base=$defaults['columns'][$i];$columns[]=['text'=>mb_substr(strip_tags((string)($column['text']??'')),0,500),'width'=>max(5,min(90,(float)($column['width']??$base['width']))),'align'=>in_array(strtoupper((string)($column['align']??'')),['L','C','R'],true)?strtoupper((string)$column['align']):$base['align']];}

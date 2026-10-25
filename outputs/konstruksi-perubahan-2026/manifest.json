@@ -1,0 +1,1953 @@
+[
+  {
+    "id": 852,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/63944484 - Normalisasi Saluran Sungai Bulubunggu",
+    "hpsFile": "HPS - Normalisasi Saluran Sungai Bulubunggu.xlsm",
+    "offerFile": "Penawaran - CV. BUMANTARA KARYA TEKNIK - Normalisasi Saluran Sungai Bulubunggu.xlsm",
+    "rabFile": "RAB - CV. BUMANTARA KARYA TEKNIK - Normalisasi Saluran Sungai Bulubunggu.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      7
+    ],
+    "totalRow": 12,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PAKET NORMALISASI/NORMALISASI SALURAN SUNGAI BULUBUNGGU.xlsm",
+    "budget": 400000000,
+    "hps": 399999400,
+    "offer": 399863400,
+    "rab_hps": 399999488.23,
+    "rab_offer": 399863478.69,
+    "hps_detail_vs_recap": 88.23000001907349,
+    "offer_detail_vs_recap": 78.68999999761581,
+    "discount": 136000,
+    "company": "CV. BUMANTARA KARYA TEKNIK",
+    "package": "Normalisasi Saluran Sungai Bulubunggu",
+    "rup": "63944484",
+    "source_sheet": "2-BOQ PEMBUKAAN",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "E18",
+        "price_cell": "F18",
+        "amount_cell": "H18"
+      },
+      {
+        "description": "Keselamatan dan Kesehatan Kerja",
+        "unit": "Ls",
+        "qty_cell": "E51",
+        "price_cell": "F51",
+        "amount_cell": "H51"
+      },
+      {
+        "description": "Galian Biasa/Perapihan",
+        "unit": "M3",
+        "qty_cell": "E112",
+        "price_cell": "F112",
+        "amount_cell": "H112"
+      }
+    ],
+    "source_sha256": "bd7bdfb1c99f3a45720636ac8288422bfeaa24ebdd49da973a88d7036edde139",
+    "hps_sha256": "bd7bdfb1c99f3a45720636ac8288422bfeaa24ebdd49da973a88d7036edde139",
+    "offer_sha256": "6dd65cf9c38645823b78679c3905c61cbc4e7ee1755e3ac24e8eb27e7026c5e3",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "afd70b26c1423ddc303f48059ace2ae55bd43190694cf6f279dd534b7c83dd82"
+  },
+  {
+    "id": 820,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/68871440 - Normalisasi Sungai Saluran Bulumario",
+    "hpsFile": "HPS - Normalisasi Sungai Saluran Bulumario.xlsm",
+    "offerFile": "Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Bulumario.xlsm",
+    "rabFile": "RAB - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Bulumario.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      7
+    ],
+    "totalRow": 12,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PAKET NORMALISASI/NORMALISASI SUNGAISALURAN BULUMARIO.xlsm",
+    "budget": 400000000,
+    "hps": 399999400,
+    "offer": 399863400,
+    "rab_hps": 399999488.23,
+    "rab_offer": 399863478.69,
+    "hps_detail_vs_recap": 88.23000001907349,
+    "offer_detail_vs_recap": 78.68999999761581,
+    "discount": 136000,
+    "company": "CV. MULIA NARATAMA DAYA",
+    "package": "Normalisasi Sungai/Saluran Bulumario",
+    "rup": "68871440",
+    "source_sheet": "2-BOQ PEMBUKAAN",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "E18",
+        "price_cell": "F18",
+        "amount_cell": "H18"
+      },
+      {
+        "description": "Keselamatan dan Kesehatan Kerja",
+        "unit": "Ls",
+        "qty_cell": "E51",
+        "price_cell": "F51",
+        "amount_cell": "H51"
+      },
+      {
+        "description": "Galian Biasa/Perapihan",
+        "unit": "M3",
+        "qty_cell": "E112",
+        "price_cell": "F112",
+        "amount_cell": "H112"
+      }
+    ],
+    "source_sha256": "e89032c3b3fa261237a2197d0289b02dc8cf1b3d64cd62258bf4bef006d15639",
+    "hps_sha256": "e89032c3b3fa261237a2197d0289b02dc8cf1b3d64cd62258bf4bef006d15639",
+    "offer_sha256": "f32358f144006734f6af469137df439d457628337888d65353d0f3511e8aeae2",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "ca2acd3879e8e948a85722c53fa26c7591f79995df2fa90e5fe2cb394ab7921a"
+  },
+  {
+    "id": 822,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/68246415 - Normalisasi Sungai Saluran Desa Dapurang",
+    "hpsFile": "HPS - Normalisasi Sungai Saluran Desa Dapurang.xlsm",
+    "offerFile": "Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Dapurang.xlsm",
+    "rabFile": "RAB - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Dapurang.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      7
+    ],
+    "totalRow": 12,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PAKET NORMALISASI/NORMALISASI SUNGAISALURAN DESA DAPURANG.xlsm",
+    "budget": 400000000,
+    "hps": 399999900,
+    "offer": 399863900,
+    "rab_hps": 399999964.94,
+    "rab_offer": 399863945.98,
+    "hps_detail_vs_recap": 64.93999999761581,
+    "offer_detail_vs_recap": 45.980000019073486,
+    "discount": 136000,
+    "company": "CV. MULIA NARATAMA DAYA",
+    "package": "Normalisasi Sungai/Saluran Desa Dapurang",
+    "rup": "68246415",
+    "source_sheet": "2-BOQ PEMBUKAAN",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "E18",
+        "price_cell": "F18",
+        "amount_cell": "H18"
+      },
+      {
+        "description": "Keselamatan dan Kesehatan Kerja",
+        "unit": "Ls",
+        "qty_cell": "E51",
+        "price_cell": "F51",
+        "amount_cell": "H51"
+      },
+      {
+        "description": "Galian Biasa/Perapihan",
+        "unit": "M3",
+        "qty_cell": "E112",
+        "price_cell": "F112",
+        "amount_cell": "H112"
+      }
+    ],
+    "source_sha256": "8f4c6f47a06059eb5af612c1c9cac1091c35dacb1c1b5aa25e3541cf33b6290c",
+    "hps_sha256": "8f4c6f47a06059eb5af612c1c9cac1091c35dacb1c1b5aa25e3541cf33b6290c",
+    "offer_sha256": "4b69366863628a4d4d7f78194bbb2e256b1872f4c9a9308c94400726a5b9fa61",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "8d277258c79facfb8d0b6a3af3a11006525797b59795025bdd04b36d37ee9d74"
+  },
+  {
+    "id": 825,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/61828489 - Normalisasi Sungai Saluran Desa Polewali",
+    "hpsFile": "HPS - Normalisasi Sungai Saluran Desa Polewali.xlsm",
+    "offerFile": "Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Polewali.xlsm",
+    "rabFile": "RAB - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Polewali.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      7
+    ],
+    "totalRow": 12,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PAKET NORMALISASI/NORMALISASI SUNGAISALURAN DESA POLEWALI.xlsm",
+    "budget": 80000000,
+    "hps": 79999800,
+    "offer": 79973400,
+    "rab_hps": 79999851.78,
+    "rab_offer": 79973496.65,
+    "hps_detail_vs_recap": 51.78000000119209,
+    "offer_detail_vs_recap": 96.65000000596046,
+    "discount": 26400,
+    "company": "CV. MULIA NARATAMA DAYA",
+    "package": "Normalisasi Sungai/Saluran Desa Polewali",
+    "rup": "61828489",
+    "source_sheet": "2-BOQ PEMBUKAAN",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "E18",
+        "price_cell": "F18",
+        "amount_cell": "H18"
+      },
+      {
+        "description": "Keselamatan dan Kesehatan Kerja",
+        "unit": "Ls",
+        "qty_cell": "E51",
+        "price_cell": "F51",
+        "amount_cell": "H51"
+      },
+      {
+        "description": "Galian Biasa/Perapihan",
+        "unit": "M3",
+        "qty_cell": "E112",
+        "price_cell": "F112",
+        "amount_cell": "H112"
+      }
+    ],
+    "source_sha256": "1d05ba492cfc0d16dd17cd4a59516465d22b75c22c1bcd7569a7edb49dc7688f",
+    "hps_sha256": "1d05ba492cfc0d16dd17cd4a59516465d22b75c22c1bcd7569a7edb49dc7688f",
+    "offer_sha256": "b7ebae8263b08147dd1f3fca3d2196cb36af4d86b266eb6bb7cac6a15f33c95c",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "0d28f4b7c5b33b5b42363b6d6ad3d6a027dcd4349d50c19f9e108a6d74121622"
+  },
+  {
+    "id": 821,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/66789677 - Normalisasi Sungai Saluran Desa Saptanajaya",
+    "hpsFile": "HPS - Normalisasi Sungai Saluran Desa Saptanajaya.xlsm",
+    "offerFile": "Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Saptanajaya.xlsm",
+    "rabFile": "RAB - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Saptanajaya.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      7
+    ],
+    "totalRow": 12,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PAKET NORMALISASI/NORMALISASI SUNGAISALURAN DESA SAPTANA JAYA.xlsm",
+    "budget": 400000000,
+    "hps": 399999800,
+    "offer": 399863700,
+    "rab_hps": 399999803,
+    "rab_offer": 399863785.92,
+    "hps_detail_vs_recap": 3,
+    "offer_detail_vs_recap": 85.9200000166893,
+    "discount": 136100,
+    "company": "CV. MULIA NARATAMA DAYA",
+    "package": "Normalisasi Sungai/Saluran Desa Saptanajaya",
+    "rup": "66789677",
+    "source_sheet": "2-BOQ PEMBUKAAN",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "E18",
+        "price_cell": "F18",
+        "amount_cell": "H18"
+      },
+      {
+        "description": "Keselamatan dan Kesehatan Kerja",
+        "unit": "Ls",
+        "qty_cell": "E51",
+        "price_cell": "F51",
+        "amount_cell": "H51"
+      },
+      {
+        "description": "Galian Biasa/Perapihan",
+        "unit": "M3",
+        "qty_cell": "E112",
+        "price_cell": "F112",
+        "amount_cell": "H112"
+      }
+    ],
+    "source_sha256": "1d721de96944ba071100952b5f2d0ad0a68c68721927cd6682322e4e2281982d",
+    "hps_sha256": "1d721de96944ba071100952b5f2d0ad0a68c68721927cd6682322e4e2281982d",
+    "offer_sha256": "dc37b237872cec5634fda00ffdbb97fa46e774c0629921ebfb4093c8814bd809",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "60613fee1e63768f24dbd264a4049774f6a555ad51d95e69624b2a8379f86d86"
+  },
+  {
+    "id": 823,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/60879306 - Normalisasi Sungai Saluran Desa Tirtabuana",
+    "hpsFile": "HPS - Normalisasi Sungai Saluran Desa Tirtabuana.xlsm",
+    "offerFile": "Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Tirtabuana.xlsm",
+    "rabFile": "RAB - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Tirtabuana.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      7
+    ],
+    "totalRow": 12,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PAKET NORMALISASI/NORMALISASI SUNGAISALURAN DESA TIRTABUANA.xlsm",
+    "budget": 358000000,
+    "hps": 358000000,
+    "offer": 357878300,
+    "rab_hps": 358000045.87,
+    "rab_offer": 357878324.96,
+    "hps_detail_vs_recap": 45.87000000476837,
+    "offer_detail_vs_recap": 24.959999978542328,
+    "discount": 121700,
+    "company": "CV. MULIA NARATAMA DAYA",
+    "package": "Normalisasi Sungai/Saluran Desa Tirtabuana",
+    "rup": "60879306",
+    "source_sheet": "2-BOQ PEMBUKAAN",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "E18",
+        "price_cell": "F18",
+        "amount_cell": "H18"
+      },
+      {
+        "description": "Keselamatan dan Kesehatan Kerja",
+        "unit": "Ls",
+        "qty_cell": "E51",
+        "price_cell": "F51",
+        "amount_cell": "H51"
+      },
+      {
+        "description": "Galian Biasa/Perapihan",
+        "unit": "M3",
+        "qty_cell": "E112",
+        "price_cell": "F112",
+        "amount_cell": "H112"
+      }
+    ],
+    "source_sha256": "13c0cbb8607144a5b11103d1eb6ec2be42df4e0842a01000dde99ec9b8fe33ab",
+    "hps_sha256": "13c0cbb8607144a5b11103d1eb6ec2be42df4e0842a01000dde99ec9b8fe33ab",
+    "offer_sha256": "bd179aaadfd20230717e4867a276772b9849469de3ac49d298d51f2371cd9039",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "f29189206c23a1f92842f8bf961e1b1d4359f7437945eba2a54fa42fdea07c42"
+  },
+  {
+    "id": 790,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/66769304 - Pemb. Jalan Rabat Gudang obat Ako Pasangkayu",
+    "hpsFile": "HPS - Pemb. Jalan Rabat Gudang obat Ako Pasangkayu.xlsm",
+    "offerFile": "Penawaran - PT. BUMI SEDAYA SEJAHTERA - Pemb. Jalan Rabat Gudang obat Ako Pasangkayu.xlsm",
+    "rabFile": "RAB - PT. BUMI SEDAYA SEJAHTERA - Pemb. Jalan Rabat Gudang obat Ako Pasangkayu.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      19,
+      21
+    ],
+    "totalRow": 26,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PAKET RABAT BETON/PEMB JALAN GUDANG OBAT/EE RABAT BETON GUDANG OBAT.xlsm",
+    "budget": 150000000,
+    "hps": 150000000,
+    "offer": 149980000,
+    "rab_hps": 150004176.1,
+    "rab_offer": 149985614.88,
+    "hps_detail_vs_recap": 4176.0999999940395,
+    "offer_detail_vs_recap": 5614.879999995232,
+    "discount": 20000,
+    "company": "PT. BUMI SEDAYA SEJAHTERA",
+    "package": "Pemb. Jalan Rabat Gudang obat Ako Pasangkayu",
+    "rup": "66769304",
+    "source_sheet": "BOQ",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "H17",
+        "price_cell": "E17",
+        "amount_cell": "I17"
+      },
+      {
+        "description": "Pembuatan dokumen RKK, RMPK, RKPPL, dan RMLLP",
+        "unit": "Set",
+        "qty_cell": "H28",
+        "price_cell": "E28",
+        "amount_cell": "I28"
+      },
+      {
+        "description": "Pembuatan prosedur dan instruksi kerja ",
+        "unit": "Set",
+        "qty_cell": "H29",
+        "price_cell": "E29",
+        "amount_cell": "I29"
+      },
+      {
+        "description": "Penyusunan pelaporan penerapan SMKK ",
+        "unit": "Set",
+        "qty_cell": "H30",
+        "price_cell": "E30",
+        "amount_cell": "I30"
+      },
+      {
+        "description": "Topi pelindung (Safety Helmet) ",
+        "unit": "Buah",
+        "qty_cell": "H54",
+        "price_cell": "E54",
+        "amount_cell": "I54"
+      },
+      {
+        "description": "Sarung tangan (Safety Gloves) ",
+        "unit": "Pasang",
+        "qty_cell": "H57",
+        "price_cell": "E57",
+        "amount_cell": "I57"
+      },
+      {
+        "description": "Sepatu keselamatan (Rubber Safety Shoes)",
+        "unit": "Pasang",
+        "qty_cell": "H58",
+        "price_cell": "E58",
+        "amount_cell": "I58"
+      },
+      {
+        "description": "Rompi keselamatan (Safety Vest)",
+        "unit": "Buah",
+        "qty_cell": "H59",
+        "price_cell": "E59",
+        "amount_cell": "I59"
+      },
+      {
+        "description": "Ahli K3 konstruksi/ahli keselamatan konstruksi",
+        "unit": "Orang",
+        "qty_cell": "H67",
+        "price_cell": "E67",
+        "amount_cell": "I67"
+      },
+      {
+        "description": "Petugas pengatur lalu lintas (flagman)",
+        "unit": "Orang",
+        "qty_cell": "H71",
+        "price_cell": "E71",
+        "amount_cell": "I71"
+      },
+      {
+        "description": "Peralatan P3K kotak A lengkap",
+        "unit": "Set",
+        "qty_cell": "H75",
+        "price_cell": "E75",
+        "amount_cell": "I75"
+      },
+      {
+        "description": "Rambu petunjuk ",
+        "unit": "Buah",
+        "qty_cell": "H79",
+        "price_cell": "E79",
+        "amount_cell": "I79"
+      },
+      {
+        "description": "Rambu larangan ",
+        "unit": "Buah",
+        "qty_cell": "H80",
+        "price_cell": "E80",
+        "amount_cell": "I80"
+      },
+      {
+        "description": "Rambu peringatan ",
+        "unit": "Buah",
+        "qty_cell": "H81",
+        "price_cell": "E81",
+        "amount_cell": "I81"
+      },
+      {
+        "description": "Penyiapan badan jalan untuk rekontruksi Perkerasan Lama ",
+        "unit": "m2",
+        "qty_cell": "H133",
+        "price_cell": "E133",
+        "amount_cell": "I133"
+      },
+      {
+        "description": "Beton mutu rendah  fc’= 15 MPa ",
+        "unit": "M3",
+        "qty_cell": "H147",
+        "price_cell": "E147",
+        "amount_cell": "I147"
+      }
+    ],
+    "source_sha256": "1151dca5a69603cd8c11d8a527a8605da6eb007e9da2ead25a8c5a2961d5d35a",
+    "hps_sha256": "178d0292403760b67256d876d9e6367f358802079cc02a336f6bc56cb3b96a2d",
+    "offer_sha256": "8a22c539e1113feabd367110217cd4819746e8d7353a21af417d74ada3efc9b2",
+    "source_image_crc_repaired": [
+      "xl/media/image15.jpeg"
+    ],
+    "rab_sha256": "8f49c4221aee45982b6922dee82a098daf3d8c5a9b22872e94fe472bffedb959"
+  },
+  {
+    "id": 788,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/63055939 - Pemb. Jalan Rabat Kabupaten Pasangkayu",
+    "hpsFile": "HPS - Pemb. Jalan Rabat Kabupaten Pasangkayu.xlsm",
+    "offerFile": "Penawaran - CV. BUMANTARA KARYA TEKNIK - Pemb. Jalan Rabat Kabupaten Pasangkayu.xlsm",
+    "rabFile": "RAB - CV. BUMANTARA KARYA TEKNIK - Pemb. Jalan Rabat Kabupaten Pasangkayu.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      26,
+      28
+    ],
+    "totalRow": 33,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PAKET RABAT BETON/PEMB JALAN RABAT KABUPATEN PASANGKAYU/PEMB JALAN RABAT LINGKAR PASANGKAYU.xlsm",
+    "budget": 400000000,
+    "hps": 400000000,
+    "offer": 399950000,
+    "rab_hps": 400001938.96,
+    "rab_offer": 399957267.66,
+    "hps_detail_vs_recap": 1938.9599999785423,
+    "offer_detail_vs_recap": 7267.660000026226,
+    "discount": 50000,
+    "company": "CV. BUMANTARA KARYA TEKNIK",
+    "package": "Pemb. Jalan Rabat Kabupaten Pasangkayu",
+    "rup": "63055939",
+    "source_sheet": "BOQ",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "H17",
+        "price_cell": "E17",
+        "amount_cell": "I17"
+      },
+      {
+        "description": "Pembuatan dokumen RKK, RMPK, RKPPL, dan RMLLP",
+        "unit": "Set",
+        "qty_cell": "H28",
+        "price_cell": "E28",
+        "amount_cell": "I28"
+      },
+      {
+        "description": "Pembuatan prosedur dan instruksi kerja ",
+        "unit": "Set",
+        "qty_cell": "H29",
+        "price_cell": "E29",
+        "amount_cell": "I29"
+      },
+      {
+        "description": "Penyusunan pelaporan penerapan SMKK ",
+        "unit": "Set",
+        "qty_cell": "H30",
+        "price_cell": "E30",
+        "amount_cell": "I30"
+      },
+      {
+        "description": "kegiatan Induksi Keselamatan Konstruksi (Safety Induction)",
+        "unit": "kegiatan",
+        "qty_cell": "H33",
+        "price_cell": "E33",
+        "amount_cell": "I33"
+      },
+      {
+        "description": "kegiatan Pengarahan Keselamatan Konstruksi (Safety Briefing)",
+        "unit": "kegiatan",
+        "qty_cell": "H34",
+        "price_cell": "E34",
+        "amount_cell": "I34"
+      },
+      {
+        "description": "kegiatan Pertemuan keselamatan (Safety Talk)",
+        "unit": "kegiatan",
+        "qty_cell": "H35",
+        "price_cell": "E35",
+        "amount_cell": "I35"
+      },
+      {
+        "description": "kegiatan Rapat Keselamatan Konstruksi (Construction Safety Meeting)",
+        "unit": "kegiatan",
+        "qty_cell": "H45",
+        "price_cell": "E45",
+        "amount_cell": "I45"
+      },
+      {
+        "description": "Papan Informasi Keselamatan Konstruksi",
+        "unit": "Lembar",
+        "qty_cell": "H46",
+        "price_cell": "E46",
+        "amount_cell": "I46"
+      },
+      {
+        "description": "Topi pelindung (Safety Helmet) ",
+        "unit": "Buah",
+        "qty_cell": "H54",
+        "price_cell": "E54",
+        "amount_cell": "I54"
+      },
+      {
+        "description": "Sarung tangan (Safety Gloves) ",
+        "unit": "Pasang",
+        "qty_cell": "H57",
+        "price_cell": "E57",
+        "amount_cell": "I57"
+      },
+      {
+        "description": "Sepatu keselamatan (Rubber Safety Shoes)",
+        "unit": "Pasang",
+        "qty_cell": "H58",
+        "price_cell": "E58",
+        "amount_cell": "I58"
+      },
+      {
+        "description": "Rompi keselamatan (Safety Vest)",
+        "unit": "Buah",
+        "qty_cell": "H59",
+        "price_cell": "E59",
+        "amount_cell": "I59"
+      },
+      {
+        "description": "Asuransi (Construction All Risk/CAR)",
+        "unit": "Ls",
+        "qty_cell": "H62",
+        "price_cell": "E62",
+        "amount_cell": "I62"
+      },
+      {
+        "description": "Petugas pengatur lalu lintas (flagman)",
+        "unit": "Orang",
+        "qty_cell": "H71",
+        "price_cell": "E71",
+        "amount_cell": "I71"
+      },
+      {
+        "description": "Peralatan P3K kotak A lengkap",
+        "unit": "Set",
+        "qty_cell": "H75",
+        "price_cell": "E75",
+        "amount_cell": "I75"
+      },
+      {
+        "description": "Rambu petunjuk ",
+        "unit": "Buah",
+        "qty_cell": "H79",
+        "price_cell": "E79",
+        "amount_cell": "I79"
+      },
+      {
+        "description": "Rambu larangan ",
+        "unit": "Buah",
+        "qty_cell": "H80",
+        "price_cell": "E80",
+        "amount_cell": "I80"
+      },
+      {
+        "description": "Rambu peringatan ",
+        "unit": "Buah",
+        "qty_cell": "H81",
+        "price_cell": "E81",
+        "amount_cell": "I81"
+      },
+      {
+        "description": "Tongkat pengatur lalu intas (Warning Lights Stick)",
+        "unit": "Buah",
+        "qty_cell": "H82",
+        "price_cell": "E82",
+        "amount_cell": "I82"
+      },
+      {
+        "description": "Alat pemadam Api Ringan (APAR) Kelas A",
+        "unit": "Buah",
+        "qty_cell": "H86",
+        "price_cell": "E86",
+        "amount_cell": "I86"
+      },
+      {
+        "description": "Penyiapan badan jalan untuk rekontruksi Perkerasan Lama ",
+        "unit": "m2",
+        "qty_cell": "H133",
+        "price_cell": "E133",
+        "amount_cell": "I133"
+      },
+      {
+        "description": "Beton mutu rendah  fc’= 15 MPa ",
+        "unit": "M3",
+        "qty_cell": "H147",
+        "price_cell": "E147",
+        "amount_cell": "I147"
+      }
+    ],
+    "source_sha256": "bea3e6a931ddffa47680b545973f891aec5042813b0585ec8c24a61e6c72ccfa",
+    "hps_sha256": "7773eded75ea93d799981066520ae616143472d34c660e63aec927f96c5b8b1d",
+    "offer_sha256": "edc5bc6d71129dbf46d5b6b4b60bb41a1399b6bad0ff008e1b62ee491a26a701",
+    "source_image_crc_repaired": [
+      "xl/media/image14.jpeg"
+    ],
+    "rab_sha256": "2fb1b1562d816d0f06659486d846e0787876ed81a761d0a43a62060babd4fed6"
+  },
+  {
+    "id": 789,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/68942736 - Pemb. Jalan Rabat Andi Bandaco Pasangkayu",
+    "hpsFile": "HPS - Pemb. Jalan Rabat Andi Bandaco Pasangkayu.xlsm",
+    "offerFile": "Penawaran - PT. BUMI SEDAYA SEJAHTERA - Pemb. Jalan Rabat Andi Bandaco Pasangkayu.xlsm",
+    "rabFile": "RAB - PT. BUMI SEDAYA SEJAHTERA - Pemb. Jalan Rabat Andi Bandaco Pasangkayu.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      26,
+      27,
+      29
+    ],
+    "totalRow": 34,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PAKET RABAT BETON/PEMB JALAN RABAT LORONG ANDI BANDACONG PASANGKAYU/EE PEMB JALAN LORONG ANDI BANDACONG PASANGKAYU.xlsm",
+    "budget": 400000000,
+    "hps": 400000000,
+    "offer": 399960000,
+    "rab_hps": 400008071.85,
+    "rab_offer": 399969567.4,
+    "hps_detail_vs_recap": 8071.850000023842,
+    "offer_detail_vs_recap": 9567.399999976158,
+    "discount": 40000,
+    "company": "PT. BUMI SEDAYA SEJAHTERA",
+    "package": "Pemb. Jalan Rabat Andi Bandaco Pasangkayu",
+    "rup": "68942736",
+    "source_sheet": "BOQ",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "H17",
+        "price_cell": "E17",
+        "amount_cell": "I17"
+      },
+      {
+        "description": "Pembuatan dokumen RKK, RMPK, RKPPL, dan RMLLP",
+        "unit": "Set",
+        "qty_cell": "H28",
+        "price_cell": "E28",
+        "amount_cell": "I28"
+      },
+      {
+        "description": "Pembuatan prosedur dan instruksi kerja ",
+        "unit": "Set",
+        "qty_cell": "H29",
+        "price_cell": "E29",
+        "amount_cell": "I29"
+      },
+      {
+        "description": "Penyusunan pelaporan penerapan SMKK ",
+        "unit": "Set",
+        "qty_cell": "H30",
+        "price_cell": "E30",
+        "amount_cell": "I30"
+      },
+      {
+        "description": "kegiatan Induksi Keselamatan Konstruksi (Safety Induction)",
+        "unit": "kegiatan",
+        "qty_cell": "H33",
+        "price_cell": "E33",
+        "amount_cell": "I33"
+      },
+      {
+        "description": "kegiatan Pengarahan Keselamatan Konstruksi (Safety Briefing)",
+        "unit": "kegiatan",
+        "qty_cell": "H34",
+        "price_cell": "E34",
+        "amount_cell": "I34"
+      },
+      {
+        "description": "kegiatan Pertemuan keselamatan (Safety Talk)",
+        "unit": "kegiatan",
+        "qty_cell": "H35",
+        "price_cell": "E35",
+        "amount_cell": "I35"
+      },
+      {
+        "description": "kegiatan Rapat Keselamatan Konstruksi (Construction Safety Meeting)",
+        "unit": "kegiatan",
+        "qty_cell": "H45",
+        "price_cell": "E45",
+        "amount_cell": "I45"
+      },
+      {
+        "description": "Papan Informasi Keselamatan Konstruksi",
+        "unit": "Lembar",
+        "qty_cell": "H46",
+        "price_cell": "E46",
+        "amount_cell": "I46"
+      },
+      {
+        "description": "Topi pelindung (Safety Helmet) ",
+        "unit": "Buah",
+        "qty_cell": "H54",
+        "price_cell": "E54",
+        "amount_cell": "I54"
+      },
+      {
+        "description": "Sarung tangan (Safety Gloves) ",
+        "unit": "Pasang",
+        "qty_cell": "H57",
+        "price_cell": "E57",
+        "amount_cell": "I57"
+      },
+      {
+        "description": "Sepatu keselamatan (Rubber Safety Shoes)",
+        "unit": "Pasang",
+        "qty_cell": "H58",
+        "price_cell": "E58",
+        "amount_cell": "I58"
+      },
+      {
+        "description": "Rompi keselamatan (Safety Vest)",
+        "unit": "Buah",
+        "qty_cell": "H59",
+        "price_cell": "E59",
+        "amount_cell": "I59"
+      },
+      {
+        "description": "Asuransi (Construction All Risk/CAR)",
+        "unit": "Ls",
+        "qty_cell": "H62",
+        "price_cell": "E62",
+        "amount_cell": "I62"
+      },
+      {
+        "description": "Ahli K3 konstruksi/ahli keselamatan konstruksi",
+        "unit": "Orang",
+        "qty_cell": "H67",
+        "price_cell": "E67",
+        "amount_cell": "I67"
+      },
+      {
+        "description": "Petugas pengatur lalu lintas (flagman)",
+        "unit": "Orang",
+        "qty_cell": "H71",
+        "price_cell": "E71",
+        "amount_cell": "I71"
+      },
+      {
+        "description": "Peralatan P3K kotak A lengkap",
+        "unit": "Set",
+        "qty_cell": "H75",
+        "price_cell": "E75",
+        "amount_cell": "I75"
+      },
+      {
+        "description": "Rambu petunjuk ",
+        "unit": "Buah",
+        "qty_cell": "H79",
+        "price_cell": "E79",
+        "amount_cell": "I79"
+      },
+      {
+        "description": "Rambu larangan ",
+        "unit": "Buah",
+        "qty_cell": "H80",
+        "price_cell": "E80",
+        "amount_cell": "I80"
+      },
+      {
+        "description": "Rambu peringatan ",
+        "unit": "Buah",
+        "qty_cell": "H81",
+        "price_cell": "E81",
+        "amount_cell": "I81"
+      },
+      {
+        "description": "Alat pemadam Api Ringan (APAR) Kelas A",
+        "unit": "Buah",
+        "qty_cell": "H86",
+        "price_cell": "E86",
+        "amount_cell": "I86"
+      },
+      {
+        "description": "Penyiapan badan jalan untuk rekontruksi Perkerasan Lama ",
+        "unit": "m2",
+        "qty_cell": "H133",
+        "price_cell": "E133",
+        "amount_cell": "I133"
+      },
+      {
+        "description": "Timbunan Pilihan Kasar dari Sumber Galian",
+        "unit": "M3",
+        "qty_cell": "H134",
+        "price_cell": "E134",
+        "amount_cell": "I134"
+      },
+      {
+        "description": "Beton mutu rendah  fc’= 15 MPa ",
+        "unit": "M3",
+        "qty_cell": "H147",
+        "price_cell": "E147",
+        "amount_cell": "I147"
+      }
+    ],
+    "source_sha256": "e9161f9e6f422102c5d2f1f64ef829c66e70e82635ced7cb681ecebe2470c2cd",
+    "hps_sha256": "610d5c2679750dce9aedd582074ed422974b9e6edf7596005c4f183c1d9024d0",
+    "offer_sha256": "b6f08fef704b6f2c01a71495e61b78e2817be4c9982107e495b2f40808d4f99b",
+    "source_image_crc_repaired": [
+      "xl/media/image15.jpeg"
+    ],
+    "rab_sha256": "09ab9448ae9a6bdd924cdc9f1ba5857ef50c2f5fe768faf32d20f3006179799e"
+  },
+  {
+    "id": 791,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/62722597 - Pemb. Jalan Rabat Mesjid",
+    "hpsFile": "HPS - Pemb. Jalan Rabat Mesjid.xlsm",
+    "offerFile": "Penawaran - CV. KARYA UTAMA NUSANTARA - Pemb. Jalan Rabat Mesjid.xlsm",
+    "rabFile": "RAB - CV. KARYA UTAMA NUSANTARA - Pemb. Jalan Rabat Mesjid.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      19,
+      21
+    ],
+    "totalRow": 26,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PAKET RABAT BETON/PEMB JALAN RABAT MASJID/EE RABAT BETON SAMBUNG RABAT DEPAN MASJID.xlsm",
+    "budget": 100000000,
+    "hps": 100000000,
+    "offer": 99980000,
+    "rab_hps": 100000000,
+    "rab_offer": 99988289.42,
+    "hps_detail_vs_recap": 0,
+    "offer_detail_vs_recap": 8289.420000001788,
+    "discount": 20000,
+    "company": "CV. KARYA UTAMA NUSANTARA",
+    "package": "Pemb. Jalan Rabat Mesjid",
+    "rup": "62722597",
+    "source_sheet": "BOQ",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "H17",
+        "price_cell": "E17",
+        "amount_cell": "I17"
+      },
+      {
+        "description": "Pembuatan dokumen RKK, RMPK, RKPPL, dan RMLLP",
+        "unit": "Set",
+        "qty_cell": "H28",
+        "price_cell": "E28",
+        "amount_cell": "I28"
+      },
+      {
+        "description": "Pembuatan prosedur dan instruksi kerja ",
+        "unit": "Set",
+        "qty_cell": "H29",
+        "price_cell": "E29",
+        "amount_cell": "I29"
+      },
+      {
+        "description": "Penyusunan pelaporan penerapan SMKK ",
+        "unit": "Set",
+        "qty_cell": "H30",
+        "price_cell": "E30",
+        "amount_cell": "I30"
+      },
+      {
+        "description": "Topi pelindung (Safety Helmet) ",
+        "unit": "Buah",
+        "qty_cell": "H54",
+        "price_cell": "E54",
+        "amount_cell": "I54"
+      },
+      {
+        "description": "Sarung tangan (Safety Gloves) ",
+        "unit": "Pasang",
+        "qty_cell": "H57",
+        "price_cell": "E57",
+        "amount_cell": "I57"
+      },
+      {
+        "description": "Sepatu keselamatan (Rubber Safety Shoes)",
+        "unit": "Pasang",
+        "qty_cell": "H58",
+        "price_cell": "E58",
+        "amount_cell": "I58"
+      },
+      {
+        "description": "Rompi keselamatan (Safety Vest)",
+        "unit": "Buah",
+        "qty_cell": "H59",
+        "price_cell": "E59",
+        "amount_cell": "I59"
+      },
+      {
+        "description": "Ahli K3 konstruksi/ahli keselamatan konstruksi",
+        "unit": "Orang",
+        "qty_cell": "H67",
+        "price_cell": "E67",
+        "amount_cell": "I67"
+      },
+      {
+        "description": "Petugas pengatur lalu lintas (flagman)",
+        "unit": "Orang",
+        "qty_cell": "H71",
+        "price_cell": "E71",
+        "amount_cell": "I71"
+      },
+      {
+        "description": "Peralatan P3K kotak A lengkap",
+        "unit": "Set",
+        "qty_cell": "H75",
+        "price_cell": "E75",
+        "amount_cell": "I75"
+      },
+      {
+        "description": "Rambu petunjuk ",
+        "unit": "Buah",
+        "qty_cell": "H79",
+        "price_cell": "E79",
+        "amount_cell": "I79"
+      },
+      {
+        "description": "Rambu larangan ",
+        "unit": "Buah",
+        "qty_cell": "H80",
+        "price_cell": "E80",
+        "amount_cell": "I80"
+      },
+      {
+        "description": "Rambu peringatan ",
+        "unit": "Buah",
+        "qty_cell": "H81",
+        "price_cell": "E81",
+        "amount_cell": "I81"
+      },
+      {
+        "description": "Penyiapan badan jalan untuk rekontruksi Perkerasan Lama ",
+        "unit": "m2",
+        "qty_cell": "H133",
+        "price_cell": "E133",
+        "amount_cell": "I133"
+      },
+      {
+        "description": "Beton mutu rendah  fc’= 15 MPa ",
+        "unit": "M3",
+        "qty_cell": "H147",
+        "price_cell": "E147",
+        "amount_cell": "I147"
+      }
+    ],
+    "source_sha256": "e0a18db2754950a3bf873663ce3f3b5b7deaacbb2a8e989f4623545e0501279f",
+    "hps_sha256": "a21e11996c6232c8a5a62520d1a1e23ccf091c0b82d373e7150ef13f9942b6f7",
+    "offer_sha256": "17b89fd941f8aa457fc9588bb8c5dbfd4de1b49db05cd3666396e62a7dad1238",
+    "source_image_crc_repaired": [
+      "xl/media/image16.jpeg"
+    ],
+    "rab_sha256": "b908284abdfed4f0db6989f5d8f391810607b79902db6861d9e147dd91a22934"
+  },
+  {
+    "id": 793,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/67944317 - Pemb. Jalan Rabat Cakalang",
+    "hpsFile": "HPS - Pemb. Jalan Rabat Cakalang.xlsm",
+    "offerFile": "Penawaran - CV. KARYA UTAMA NUSANTARA - Pemb. Jalan Rabat Cakalang.xlsm",
+    "rabFile": "RAB - CV. KARYA UTAMA NUSANTARA - Pemb. Jalan Rabat Cakalang.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      26,
+      27,
+      29
+    ],
+    "totalRow": 34,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PAKET RABAT BETON/PEMB JLN RABAT CAKALANG/EE PEMB JALAN  RABAT JLN CAKALANG.xlsm",
+    "budget": 400000000,
+    "hps": 400000000,
+    "offer": 399960000,
+    "rab_hps": 400004118.27,
+    "rab_offer": 399961360.27,
+    "hps_detail_vs_recap": 4118.2699999809265,
+    "offer_detail_vs_recap": 1360.2699999809265,
+    "discount": 40000,
+    "company": "CV. KARYA UTAMA NUSANTARA",
+    "package": "Pemb. Jalan Rabat Cakalang",
+    "rup": "67944317",
+    "source_sheet": "BOQ",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "H17",
+        "price_cell": "E17",
+        "amount_cell": "I17"
+      },
+      {
+        "description": "Pembuatan dokumen RKK, RMPK, RKPPL, dan RMLLP",
+        "unit": "Set",
+        "qty_cell": "H28",
+        "price_cell": "E28",
+        "amount_cell": "I28"
+      },
+      {
+        "description": "Pembuatan prosedur dan instruksi kerja ",
+        "unit": "Set",
+        "qty_cell": "H29",
+        "price_cell": "E29",
+        "amount_cell": "I29"
+      },
+      {
+        "description": "Penyusunan pelaporan penerapan SMKK ",
+        "unit": "Set",
+        "qty_cell": "H30",
+        "price_cell": "E30",
+        "amount_cell": "I30"
+      },
+      {
+        "description": "kegiatan Induksi Keselamatan Konstruksi (Safety Induction)",
+        "unit": "kegiatan",
+        "qty_cell": "H33",
+        "price_cell": "E33",
+        "amount_cell": "I33"
+      },
+      {
+        "description": "kegiatan Pengarahan Keselamatan Konstruksi (Safety Briefing)",
+        "unit": "kegiatan",
+        "qty_cell": "H34",
+        "price_cell": "E34",
+        "amount_cell": "I34"
+      },
+      {
+        "description": "kegiatan Pertemuan keselamatan (Safety Talk)",
+        "unit": "kegiatan",
+        "qty_cell": "H35",
+        "price_cell": "E35",
+        "amount_cell": "I35"
+      },
+      {
+        "description": "kegiatan Rapat Keselamatan Konstruksi (Construction Safety Meeting)",
+        "unit": "kegiatan",
+        "qty_cell": "H45",
+        "price_cell": "E45",
+        "amount_cell": "I45"
+      },
+      {
+        "description": "Papan Informasi Keselamatan Konstruksi",
+        "unit": "Lembar",
+        "qty_cell": "H46",
+        "price_cell": "E46",
+        "amount_cell": "I46"
+      },
+      {
+        "description": "Topi pelindung (Safety Helmet) ",
+        "unit": "Buah",
+        "qty_cell": "H54",
+        "price_cell": "E54",
+        "amount_cell": "I54"
+      },
+      {
+        "description": "Sarung tangan (Safety Gloves) ",
+        "unit": "Pasang",
+        "qty_cell": "H57",
+        "price_cell": "E57",
+        "amount_cell": "I57"
+      },
+      {
+        "description": "Sepatu keselamatan (Rubber Safety Shoes)",
+        "unit": "Pasang",
+        "qty_cell": "H58",
+        "price_cell": "E58",
+        "amount_cell": "I58"
+      },
+      {
+        "description": "Rompi keselamatan (Safety Vest)",
+        "unit": "Buah",
+        "qty_cell": "H59",
+        "price_cell": "E59",
+        "amount_cell": "I59"
+      },
+      {
+        "description": "Asuransi (Construction All Risk/CAR)",
+        "unit": "Ls",
+        "qty_cell": "H62",
+        "price_cell": "E62",
+        "amount_cell": "I62"
+      },
+      {
+        "description": "Petugas pengatur lalu lintas (flagman)",
+        "unit": "Orang",
+        "qty_cell": "H71",
+        "price_cell": "E71",
+        "amount_cell": "I71"
+      },
+      {
+        "description": "Peralatan P3K kotak A lengkap",
+        "unit": "Set",
+        "qty_cell": "H75",
+        "price_cell": "E75",
+        "amount_cell": "I75"
+      },
+      {
+        "description": "Rambu petunjuk ",
+        "unit": "Buah",
+        "qty_cell": "H79",
+        "price_cell": "E79",
+        "amount_cell": "I79"
+      },
+      {
+        "description": "Rambu larangan ",
+        "unit": "Buah",
+        "qty_cell": "H80",
+        "price_cell": "E80",
+        "amount_cell": "I80"
+      },
+      {
+        "description": "Rambu peringatan ",
+        "unit": "Buah",
+        "qty_cell": "H81",
+        "price_cell": "E81",
+        "amount_cell": "I81"
+      },
+      {
+        "description": "Tongkat pengatur lalu intas (Warning Lights Stick)",
+        "unit": "Buah",
+        "qty_cell": "H82",
+        "price_cell": "E82",
+        "amount_cell": "I82"
+      },
+      {
+        "description": "Alat pemadam Api Ringan (APAR) Kelas A",
+        "unit": "Buah",
+        "qty_cell": "H86",
+        "price_cell": "E86",
+        "amount_cell": "I86"
+      },
+      {
+        "description": "Penyiapan badan jalan untuk rekontruksi Perkerasan Lama ",
+        "unit": "m2",
+        "qty_cell": "H133",
+        "price_cell": "E133",
+        "amount_cell": "I133"
+      },
+      {
+        "description": "Timbunan Pilihan Kasar dari Sumber Galian",
+        "unit": "M3",
+        "qty_cell": "H134",
+        "price_cell": "E134",
+        "amount_cell": "I134"
+      },
+      {
+        "description": "Beton mutu rendah  fc’= 15 MPa ",
+        "unit": "M3",
+        "qty_cell": "H147",
+        "price_cell": "E147",
+        "amount_cell": "I147"
+      }
+    ],
+    "source_sha256": "5bf36061778cb5fcc104d76ec3f1302a57bb91533c2658fcf94fc08798bca9f4",
+    "hps_sha256": "1051083f2ecd18d838b4090d74cf545793d44a51f8fef3c24e32516a875f8b94",
+    "offer_sha256": "cc973e894c94d30d0e41305cffbd96aedcb570e00098357001af5b82ac954149",
+    "source_image_crc_repaired": [
+      "xl/media/image15.jpeg"
+    ],
+    "rab_sha256": "8fe443054bcf1c9445ce344c15c9980207e15e33b2596f9c650a1cd307c0ad42"
+  },
+  {
+    "id": 798,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/60976170 - Pemb. Jalan Dsn Benteng Desa Ompi",
+    "hpsFile": "HPS - Pemb. Jalan Dsn Benteng Desa Ompi.xlsm",
+    "offerFile": "Penawaran - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Dsn Benteng Desa Ompi.xlsm",
+    "rabFile": "RAB - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Dsn Benteng Desa Ompi.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      7,
+      9
+    ],
+    "totalRow": 14,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PEMBUKAAN/PEMB JALAN DAN BENTENG DESA OMPI/PEMB JALAN BENTENG DESA OMPI.xlsm",
+    "budget": 195000000,
+    "hps": 194999000,
+    "offer": 194929000,
+    "rab_hps": 194999153.35,
+    "rab_offer": 194929676.3,
+    "hps_detail_vs_recap": 153.34999999403954,
+    "offer_detail_vs_recap": 676.3000000119209,
+    "discount": 70000,
+    "company": "CV. RAMA KARYA KONSTRUKSI",
+    "package": "Pemb. Jalan Dsn Benteng Desa Ompi",
+    "rup": "60976170",
+    "source_sheet": "2-BOQ PEMBUKAAN",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "E18",
+        "price_cell": "F18",
+        "amount_cell": "H18"
+      },
+      {
+        "description": "Keselamatan dan Kesehatan Kerja",
+        "unit": "Ls",
+        "qty_cell": "E51",
+        "price_cell": "F51",
+        "amount_cell": "H51"
+      },
+      {
+        "description": "Galian untuk Selokan Drainase dan Saluran Air",
+        "unit": "M3",
+        "qty_cell": "E65",
+        "price_cell": "F65",
+        "amount_cell": "H65"
+      },
+      {
+        "description": "Galian Biasa/Perapihan",
+        "unit": "M3",
+        "qty_cell": "E112",
+        "price_cell": "F112",
+        "amount_cell": "H112"
+      }
+    ],
+    "source_sha256": "0c4808e1ef100c06c57662b810bd868b8338110c8962cdddb4dbb99dfd241a86",
+    "hps_sha256": "0c4808e1ef100c06c57662b810bd868b8338110c8962cdddb4dbb99dfd241a86",
+    "offer_sha256": "8a8374b279291ab3c5d070889204e88c12f013fa94fb96c35f9525eaeadaaa78",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "5f8740ad6671c55c3cb90943da4fb4ea07872c707e3b5003c0888aa0b8ad130d"
+  },
+  {
+    "id": 799,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/67735973 - Pemb. Jalan Dsn. Kampung Baru Desa Bukit Harapan",
+    "hpsFile": "HPS - Pemb. Jalan Dsn. Kampung Baru Desa Bukit Harapan.xlsm",
+    "offerFile": "Penawaran - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Dsn. Kampung Baru Desa Bukit Harapan.xlsm",
+    "rabFile": "RAB - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Dsn. Kampung Baru Desa Bukit Harapan.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      7,
+      9
+    ],
+    "totalRow": 14,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PEMBUKAAN/PEMB JALAN DAN KAMPUNG BARU DESA BUKIT HARAPAN/PEMB JALAN BENTENG DESA OMPI.xlsm",
+    "budget": 195000000,
+    "hps": 194999000,
+    "offer": 194929000,
+    "rab_hps": 194999153.35,
+    "rab_offer": 194929676.3,
+    "hps_detail_vs_recap": 153.34999999403954,
+    "offer_detail_vs_recap": 676.3000000119209,
+    "discount": 70000,
+    "company": "CV. RAMA KARYA KONSTRUKSI",
+    "package": "Pemb. Jalan Dsn. Kampung Baru Desa Bukit Harapan",
+    "rup": "67735973",
+    "source_sheet": "2-BOQ PEMBUKAAN",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "E18",
+        "price_cell": "F18",
+        "amount_cell": "H18"
+      },
+      {
+        "description": "Keselamatan dan Kesehatan Kerja",
+        "unit": "Ls",
+        "qty_cell": "E51",
+        "price_cell": "F51",
+        "amount_cell": "H51"
+      },
+      {
+        "description": "Galian untuk Selokan Drainase dan Saluran Air",
+        "unit": "M3",
+        "qty_cell": "E65",
+        "price_cell": "F65",
+        "amount_cell": "H65"
+      },
+      {
+        "description": "Galian Biasa/Perapihan",
+        "unit": "M3",
+        "qty_cell": "E112",
+        "price_cell": "F112",
+        "amount_cell": "H112"
+      }
+    ],
+    "source_sha256": "ea704de3dfa754e04d1cadaf175085fce3fc27f7717fdac6802068db7f08b79b",
+    "hps_sha256": "ea704de3dfa754e04d1cadaf175085fce3fc27f7717fdac6802068db7f08b79b",
+    "offer_sha256": "fbec4d8ac1e45597aa018b44116595edc1dbf47c990454a9c0b976f9f0399d2c",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "17884bb5f8839d5e58bb0a5ae37f00e518a2aa46e70bce3ce619f891db578046"
+  },
+  {
+    "id": 855,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/69656274 - Pemb. Jalan Dusun Mandar",
+    "hpsFile": "HPS - Pemb. Jalan Dusun Mandar.xlsm",
+    "offerFile": "Penawaran - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Dusun Mandar.xlsm",
+    "rabFile": "RAB - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Dusun Mandar.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      7,
+      9
+    ],
+    "totalRow": 14,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PEMBUKAAN/PEMB JALAN DUSUN MANDAR/PEMB JALAN DUSUN MANDAR.xlsm",
+    "budget": 180000000,
+    "hps": 179999000,
+    "offer": 179935000,
+    "rab_hps": 179999655.18,
+    "rab_offer": 179935801.47,
+    "hps_detail_vs_recap": 655.1800000071526,
+    "offer_detail_vs_recap": 801.4699999988079,
+    "discount": 64000,
+    "company": "CV. IPORANNUAN UTAMA KONSTRUKSI",
+    "package": "Pemb. Jalan Dusun Mandar",
+    "rup": "69656274",
+    "source_sheet": "2-BOQ PEMBUKAAN",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "E18",
+        "price_cell": "F18",
+        "amount_cell": "H18"
+      },
+      {
+        "description": "Keselamatan dan Kesehatan Kerja",
+        "unit": "Ls",
+        "qty_cell": "E51",
+        "price_cell": "F51",
+        "amount_cell": "H51"
+      },
+      {
+        "description": "Galian untuk Selokan Drainase dan Saluran Air",
+        "unit": "M3",
+        "qty_cell": "E65",
+        "price_cell": "F65",
+        "amount_cell": "H65"
+      },
+      {
+        "description": "Galian Biasa/Perapihan",
+        "unit": "M3",
+        "qty_cell": "E112",
+        "price_cell": "F112",
+        "amount_cell": "H112"
+      }
+    ],
+    "source_sha256": "219388f0229ee7ad8e1a4e9558ce1d3310726287aead421d0acb0a879282580c",
+    "hps_sha256": "219388f0229ee7ad8e1a4e9558ce1d3310726287aead421d0acb0a879282580c",
+    "offer_sha256": "f396ef6ed7b264676f36b5e4f5c6d967899c0acfdf7ef5139989069a7d4447f4",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "5b3856f68cc015272b5a29d9163581aecfa105a8187b3aa88d6bce9d17acd417"
+  },
+  {
+    "id": 800,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/62311319 - Pemb. Jalan Kabupaten",
+    "hpsFile": "HPS - Pemb. Jalan Kabupaten.xlsm",
+    "offerFile": "Penawaran - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Kabupaten.xlsm",
+    "rabFile": "RAB - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Kabupaten.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      7,
+      9
+    ],
+    "totalRow": 14,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PEMBUKAAN/PEMB JALAN KABUPATEN/PEMB JALAN KABUPATEN.xlsm",
+    "budget": 150000000,
+    "hps": 149999000,
+    "offer": 149946000,
+    "rab_hps": 149999243.67,
+    "rab_offer": 149946193.69,
+    "hps_detail_vs_recap": 243.66999998688698,
+    "offer_detail_vs_recap": 193.6899999976158,
+    "discount": 53000,
+    "company": "CV. IPORANNUAN UTAMA KONSTRUKSI",
+    "package": "Pemb. Jalan Kabupaten",
+    "rup": "62311319",
+    "source_sheet": "2-BOQ PEMBUKAAN",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "E18",
+        "price_cell": "F18",
+        "amount_cell": "H18"
+      },
+      {
+        "description": "Keselamatan dan Kesehatan Kerja",
+        "unit": "Ls",
+        "qty_cell": "E51",
+        "price_cell": "F51",
+        "amount_cell": "H51"
+      },
+      {
+        "description": "Galian untuk Selokan Drainase dan Saluran Air",
+        "unit": "M3",
+        "qty_cell": "E65",
+        "price_cell": "F65",
+        "amount_cell": "H65"
+      },
+      {
+        "description": "Galian Biasa/Perapihan",
+        "unit": "M3",
+        "qty_cell": "E112",
+        "price_cell": "F112",
+        "amount_cell": "H112"
+      }
+    ],
+    "source_sha256": "46aaa6d66859d8aecff1a521bc282270f1848e78a1d2481dfb5c09f1d9d49cbd",
+    "hps_sha256": "46aaa6d66859d8aecff1a521bc282270f1848e78a1d2481dfb5c09f1d9d49cbd",
+    "offer_sha256": "143432f5bd395654630513c0aea95b85634b43751c1d74ee14592bc3cc9d0ea0",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "95f19563b69c5ba4aff935fc8d8744edb03911906834533b5ca8285902643ab4"
+  },
+  {
+    "id": 797,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/63456964 - Pemb. Jalan Wulai",
+    "hpsFile": "HPS - Pemb. Jalan Wulai.xlsm",
+    "offerFile": "Penawaran - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Wulai.xlsm",
+    "rabFile": "RAB - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Wulai.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      7,
+      9
+    ],
+    "totalRow": 14,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PEMBUKAAN/PEMB JALAN WULAI/PEMB JALAN WULAI.xlsm",
+    "budget": 380000000,
+    "hps": 380000000,
+    "offer": 379864000,
+    "rab_hps": 380000717.05,
+    "rab_offer": 379864872.31,
+    "hps_detail_vs_recap": 717.0500000119209,
+    "offer_detail_vs_recap": 872.3100000023842,
+    "discount": 136000,
+    "company": "CV. RAMA KARYA KONSTRUKSI",
+    "package": "Pemb. Jalan Wulai",
+    "rup": "63456964",
+    "source_sheet": "2-BOQ PEMBUKAAN",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "E18",
+        "price_cell": "F18",
+        "amount_cell": "H18"
+      },
+      {
+        "description": "Keselamatan dan Kesehatan Kerja",
+        "unit": "Ls",
+        "qty_cell": "E51",
+        "price_cell": "F51",
+        "amount_cell": "H51"
+      },
+      {
+        "description": "Galian untuk Selokan Drainase dan Saluran Air",
+        "unit": "M3",
+        "qty_cell": "E65",
+        "price_cell": "F65",
+        "amount_cell": "H65"
+      },
+      {
+        "description": "Galian Biasa/Perapihan",
+        "unit": "M3",
+        "qty_cell": "E112",
+        "price_cell": "F112",
+        "amount_cell": "H112"
+      }
+    ],
+    "source_sha256": "47a93c79d0d5eaead11942cd6e6b62a7559e8a522d7af056544208909366f35a",
+    "hps_sha256": "47a93c79d0d5eaead11942cd6e6b62a7559e8a522d7af056544208909366f35a",
+    "offer_sha256": "8957a65ff849ed332d82d98b86255e9b7591c7f812fdb976d590d97c18ac5848",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "84d9765047617dd6447c7920af09a171fc6d30a096fbf7a9425aa5f8743475f3"
+  },
+  {
+    "id": 824,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/64430085 - Pemb. Jalan Desa Letawa",
+    "hpsFile": "HPS - Pemb. Jalan Desa Letawa.xlsm",
+    "offerFile": "Penawaran - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Desa Letawa.xlsm",
+    "rabFile": "RAB - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Desa Letawa.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      7,
+      8
+    ],
+    "totalRow": 13,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PENINGKATAN/PEMBANGUNAN JALAN DESA LETAWA.xlsm",
+    "budget": 320000000,
+    "hps": 319999800,
+    "offer": 319991900,
+    "rab_hps": 319999879.35,
+    "rab_offer": 319991991.47,
+    "hps_detail_vs_recap": 79.35000002384186,
+    "offer_detail_vs_recap": 91.47000002861023,
+    "discount": 7900,
+    "company": "CV. IPORANNUAN UTAMA KONSTRUKSI",
+    "package": "Pemb. Jalan Desa Letawa",
+    "rup": "64430085",
+    "source_sheet": "2-BOQ PEMBUKAAN",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "E18",
+        "price_cell": "F18",
+        "amount_cell": "H18"
+      },
+      {
+        "description": "Keselamatan dan Kesehatan Kerja",
+        "unit": "Ls",
+        "qty_cell": "E51",
+        "price_cell": "F51",
+        "amount_cell": "H51"
+      },
+      {
+        "description": "Timbunan Pilihan dari sumber galian (sirtu)",
+        "unit": "M3",
+        "qty_cell": "E124",
+        "price_cell": "F124",
+        "amount_cell": "H124"
+      },
+      {
+        "description": "Penyiapan Badan Jalan",
+        "unit": "M2",
+        "qty_cell": "E129",
+        "price_cell": "F129",
+        "amount_cell": "H129"
+      }
+    ],
+    "source_sha256": "ba518f76d44fdf683e46298b7f93d315858e54df5678ceec336dd650de1b2504",
+    "hps_sha256": "ba518f76d44fdf683e46298b7f93d315858e54df5678ceec336dd650de1b2504",
+    "offer_sha256": "11a633b091d7a6fa68351d463dcdaf6065ceee1523f481712bf784ff419d3273",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "cfb6996c9e670e6a8094e9f22579fd5b3fc1b42163fa48399fc51e026d6abef0"
+  },
+  {
+    "id": 853,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/60986217 - Peningkatan Jalan Bulubunggu",
+    "hpsFile": "HPS - Peningkatan Jalan Bulubunggu.xlsm",
+    "offerFile": "Penawaran - CV. BUMANTARA KARYA TEKNIK - Peningkatan Jalan Bulubunggu.xlsm",
+    "rabFile": "RAB - CV. BUMANTARA KARYA TEKNIK - Peningkatan Jalan Bulubunggu.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      7,
+      8
+    ],
+    "totalRow": 13,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PENINGKATAN/PENINGKATAN JALAN BULUBUNGGU.xlsm",
+    "budget": 200000000,
+    "hps": 199999700,
+    "offer": 199994400,
+    "rab_hps": 199999732.88,
+    "rab_offer": 199994495.57,
+    "hps_detail_vs_recap": 32.87999999523163,
+    "offer_detail_vs_recap": 95.56999999284744,
+    "discount": 5300,
+    "company": "CV. BUMANTARA KARYA TEKNIK",
+    "package": "Peningkatan Jalan Bulubunggu",
+    "rup": "60986217",
+    "source_sheet": "2-BOQ PEMBUKAAN",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "Ls",
+        "qty_cell": "E18",
+        "price_cell": "F18",
+        "amount_cell": "H18"
+      },
+      {
+        "description": "Keselamatan dan Kesehatan Kerja",
+        "unit": "Ls",
+        "qty_cell": "E51",
+        "price_cell": "F51",
+        "amount_cell": "H51"
+      },
+      {
+        "description": "Timbunan Pilihan dari sumber galian (sirtu)",
+        "unit": "M3",
+        "qty_cell": "E124",
+        "price_cell": "F124",
+        "amount_cell": "H124"
+      },
+      {
+        "description": "Penyiapan Badan Jalan",
+        "unit": "M2",
+        "qty_cell": "E129",
+        "price_cell": "F129",
+        "amount_cell": "H129"
+      }
+    ],
+    "source_sha256": "300dcd78873900996e9c977555f43a3e07966d0db524fcfb99696e4144d9d3df",
+    "hps_sha256": "300dcd78873900996e9c977555f43a3e07966d0db524fcfb99696e4144d9d3df",
+    "offer_sha256": "c738268f049a8a32e4a64054509568f8f0cd92ac8a31b091b34f839a2d614a0d",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "1429bbeffec0b3385f749b38d15912b044723263b4c30a72bd402c23663c2061"
+  },
+  {
+    "id": 849,
+    "folder": "/Users/nabiila_inayah/Documents/htdocs/sesendoknew/outputs/konstruksi-perubahan-2026/61530360 - Pematangan Lahan Sekolah Rakyat",
+    "hpsFile": "HPS - Pematangan Lahan Sekolah Rakyat.xlsx",
+    "offerFile": "Penawaran - PT. BUMI SEDAYA SEJAHTERA - Pematangan Lahan Sekolah Rakyat.xlsx",
+    "rabFile": "RAB - PT. BUMI SEDAYA SEJAHTERA - Pematangan Lahan Sekolah Rakyat.xlsx",
+    "sheet": "64475219",
+    "itemRows": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      23,
+      24
+    ],
+    "totalRow": 29,
+    "source": "/Users/nabiila_inayah/Downloads/New/PERUBAHAN 2026/PEMATANGAN SEKOLAH RAKYAT/1. E.E. PERENCANAAN PEMATANGAN LAHAN.xlsx",
+    "budget": 400000000,
+    "hps": 400000000,
+    "offer": 399928300,
+    "rab_hps": 400000005.42,
+    "rab_offer": 399928284.24,
+    "hps_detail_vs_recap": 5.4200000166893005,
+    "offer_detail_vs_recap": -15.759999990463257,
+    "discount": 71700,
+    "company": "PT. BUMI SEDAYA SEJAHTERA",
+    "package": "Pematangan Lahan Sekolah Rakyat",
+    "rup": "61530360",
+    "source_sheet": "RAB",
+    "source_items": [
+      {
+        "description": "Mobilisasi",
+        "unit": "LS",
+        "qty_cell": "G17",
+        "price_cell": "H17",
+        "amount_cell": "J17"
+      },
+      {
+        "description": "Pembuatan dokumen RKK, RMPK, RKPPL, dan RMLLP",
+        "unit": "Set",
+        "qty_cell": "G60",
+        "price_cell": "H60",
+        "amount_cell": "J60"
+      },
+      {
+        "description": "Pembuatan prosedur dan instruksi kerja ",
+        "unit": "Set",
+        "qty_cell": "G61",
+        "price_cell": "H61",
+        "amount_cell": "J61"
+      },
+      {
+        "description": "Penyusunan pelaporan penerapan SMKK ",
+        "unit": "Set",
+        "qty_cell": "G62",
+        "price_cell": "H62",
+        "amount_cell": "J62"
+      },
+      {
+        "description": "Pembatas area (Restricted Area)",
+        "unit": "Rol",
+        "qty_cell": "G81",
+        "price_cell": "H81",
+        "amount_cell": "J81"
+      },
+      {
+        "description": "Topi pelindung (Safety Helmet) ",
+        "unit": "Buah",
+        "qty_cell": "G85",
+        "price_cell": "H85",
+        "amount_cell": "J85"
+      },
+      {
+        "description": "Sarung tangan (Safety Gloves) ",
+        "unit": "Pasang",
+        "qty_cell": "G88",
+        "price_cell": "H88",
+        "amount_cell": "J88"
+      },
+      {
+        "description": "Sepatu keselamatan (Safety Shoes, rubber safety shoes and toe cap)",
+        "unit": "Pasang",
+        "qty_cell": "G89",
+        "price_cell": "H89",
+        "amount_cell": "J89"
+      },
+      {
+        "description": "Rompi keselamatan (Safety Vest)",
+        "unit": "Buah",
+        "qty_cell": "G90",
+        "price_cell": "H90",
+        "amount_cell": "J90"
+      },
+      {
+        "description": "Jaminan Kecelakan Kerja",
+        "unit": "Ls",
+        "qty_cell": "G94",
+        "price_cell": "H94",
+        "amount_cell": "J94"
+      },
+      {
+        "description": "Jaminan Kematian",
+        "unit": "Ls",
+        "qty_cell": "G95",
+        "price_cell": "H95",
+        "amount_cell": "J95"
+      },
+      {
+        "description": "Petugas Keselamatan Konstruksi, Petugas K3 Konstruksi",
+        "unit": "OB",
+        "qty_cell": "G99",
+        "price_cell": "H99",
+        "amount_cell": "J99"
+      },
+      {
+        "description": "Petugas pengatur lalu lintas",
+        "unit": "OB",
+        "qty_cell": "G102",
+        "price_cell": "H102",
+        "amount_cell": "J102"
+      },
+      {
+        "description": "Peralatan P3K",
+        "unit": "Set",
+        "qty_cell": "G106",
+        "price_cell": "H106",
+        "amount_cell": "J106"
+      },
+      {
+        "description": "Rambu petunjuk ",
+        "unit": "Buah",
+        "qty_cell": "G110",
+        "price_cell": "H110",
+        "amount_cell": "J110"
+      },
+      {
+        "description": "Rambu larangan ",
+        "unit": "Buah",
+        "qty_cell": "G111",
+        "price_cell": "H111",
+        "amount_cell": "J111"
+      },
+      {
+        "description": "Rambu peringatan ",
+        "unit": "Buah",
+        "qty_cell": "G112",
+        "price_cell": "H112",
+        "amount_cell": "J112"
+      },
+      {
+        "description": "Alat Pemadam Api Ringan (APAR)",
+        "unit": "Buah",
+        "qty_cell": "G126",
+        "price_cell": "H126",
+        "amount_cell": "J126"
+      },
+      {
+        "description": "Galian Biasa",
+        "unit": "M3",
+        "qty_cell": "G188",
+        "price_cell": "H188",
+        "amount_cell": "J188"
+      },
+      {
+        "description": "Pembersihan dan Pengupasan Lahan ",
+        "unit": "M2",
+        "qty_cell": "G206",
+        "price_cell": "H206",
+        "amount_cell": "J206"
+      }
+    ],
+    "source_sha256": "2c9b5a6b4d48eacd48c53995aaf96a974ef4918dd7fe78d853f76fe32972501f",
+    "hps_sha256": "2c9b5a6b4d48eacd48c53995aaf96a974ef4918dd7fe78d853f76fe32972501f",
+    "offer_sha256": "bfdd8ff64f9f3c61dfe62a0d9da941f59d94c2e44052e2dc5118416be28666a1",
+    "source_image_crc_repaired": [],
+    "rab_sha256": "e953d805e031008d6e69b66e62ce2208952f05694b6156594b0e08d6e5fc74e9"
+  }
+]

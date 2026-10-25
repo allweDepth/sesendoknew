@@ -833,6 +833,7 @@ class FormEngine {
 		if (instance && !instance.isInitialized) {
 			instance.init();
 		}
+		$(document).trigger("form:rendered", [target]);
 	}
 
 	/**

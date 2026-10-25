@@ -923,6 +923,7 @@ AUDIT TRAIL (TIDAK DIUBAH)
     $data['cara_pengadaan'] = $way;
     $data['jenis_pengadaan'] = $kind;
     $data['bentuk_kontrak'] = ProcurementDocumentService::recommendForm($way, $kind, $method, $value, $data['tipe_swakelola'] ?? null);
+    if(array_key_exists('proses_pengadaan',$data))$data['proses_pengadaan']=ProcurementProcessService::normalize($data['proses_pengadaan'],$data);
     return $data;
   }
   private function performancePercentage(float $target, float $realization, string $polarity): float
@@ -1269,6 +1270,7 @@ kd_sub_keg → nama_sub_keg
 
       if ($table === 'kontrak_neo') {
         $this->saveContractItemsFromRequest($id, $request, $filtered);
+        ProcurementProcessService::syncDocuments($this->db,(int)$id,$filtered,(string)($this->user['username']??'system'));
       }
 
       // =====================================================
@@ -1622,6 +1624,7 @@ UPDATE DATA DENGAN DUPLICATE HANDLER
           $request,
           $profile
         );
+        if($table==='kontrak_neo')ProcurementProcessService::syncDocuments($this->db,(int)$id,array_merge($oldData,$diff),(string)($this->user['username']??'system'));
       } catch (PDOException $e) {
 
         // SQLSTATE duplicate
@@ -2102,6 +2105,17 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     )->fetchAll();
 
 
+
+    // Aggregate RAB only for contracts on the current, already-scoped page.
+    // Incomplete drafts may have RAB even though their contract value is unset.
+    if ($table === 'kontrak_neo' && $rows) {
+      $ids = array_map('intval', array_column($rows, 'id'));
+      $marks = implode(',', array_fill(0, count($ids), '?'));
+      $totals = $this->db->query("SELECT kontrak_id,COUNT(*) jumlah_rab,SUM(jumlah_hps) estimasi_hps_rab,SUM(jumlah_negoisasi) estimasi_nego_rab FROM rab_paket_neo WHERE is_deleted=0 AND kontrak_id IN ($marks) GROUP BY kontrak_id", $ids)->fetchAll();
+      $byId = array_column($totals, null, 'kontrak_id');
+      foreach ($rows as &$row) $row += $byId[$row['id']] ?? ['jumlah_rab'=>0,'estimasi_hps_rab'=>0,'estimasi_nego_rab'=>0];
+      unset($row);
+    }
 
     /* ======================================================
         1️⃣3️⃣ RESPONSE JSON

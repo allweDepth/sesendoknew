@@ -1,0 +1,280 @@
+{
+  "pdfs_verified": 28,
+  "rows_verified": {
+    "renja_p_neo": 1069,
+    "rka_p_neo": 1069,
+    "dppa_neo": 1069
+  },
+  "contracts_budget_links_verified": 83,
+  "name_corrections": [
+    {
+      "id": 776,
+      "old": "Pemb./rehabilitasi Median jalan Nasional/Kabupaten Kota Pasangkayu",
+      "new": "Pemb./rehabiltasi Median jalan Nasional/Kabupaten Kota Pasangkayu",
+      "rup": "69001211"
+    },
+    {
+      "id": 777,
+      "old": "Perencanaan Pemb./rehabilitasi Median Jalan Nasional Kota Pasangkayu",
+      "new": "Perencanaan Pemb./rehabiltasi Median jalan Nasional Kota Pasangkayu",
+      "rup": "69992498"
+    },
+    {
+      "id": 778,
+      "old": "Pengawasan Pemb./rehabilitasi Median Jalan Nasional Kota Pasangkayu",
+      "new": "Pengawasan Pemb./rehabiltasi Median jalan Nasional Kota Pasangkayu",
+      "rup": "60911873"
+    },
+    {
+      "id": 783,
+      "old": "Penyusunan Profil Dinas",
+      "new": "Penyusunan Profil DInas",
+      "rup": "60874935"
+    },
+    {
+      "id": 798,
+      "old": "Pemb. Jalan Dan Benteng Desa Ompi",
+      "new": "Pemb. Jalan Dsn Benteng Desa Ompi",
+      "rup": "60976170"
+    },
+    {
+      "id": 799,
+      "old": "Pemb. Jalan Dan. Kampung Baru Desa Bukit Harapan",
+      "new": "Pemb. Jalan Dsn. Kampung Baru Desa Bukit Harapan",
+      "rup": "67735973"
+    },
+    {
+      "id": 809,
+      "old": "Penyusunan Dokumen Perencanaan Teknis (SID) dan Dokumen Lingkungan Penahan Ombak Kabupaten Pasangkayu Ruas I",
+      "new": "Penyusunan Dokumen Perencanaan Teknis (SID) dan Dokumen Lingkungan Penahan Ombak/Perkuatan Tebing Kabupaten Pasangkayu Ruas I",
+      "rup": "67905278"
+    },
+    {
+      "id": 810,
+      "old": "Stock Design Air Minum Rusun I",
+      "new": "Stock Design Air Minum Ruas I",
+      "rup": "65548181"
+    },
+    {
+      "id": 811,
+      "old": "Stock Design Air Minum Rusun II",
+      "new": "Stock Design Air Minum Ruas II",
+      "rup": "63799408"
+    },
+    {
+      "id": 812,
+      "old": "Stock Design Air Minum Rusun III",
+      "new": "Stock Design Air Minum Ruas III",
+      "rup": "64467578"
+    },
+    {
+      "id": 813,
+      "old": "Stock Design Air Minum Rusun IV",
+      "new": "Stock Design Air Minum Ruas IV",
+      "rup": "64709183"
+    },
+    {
+      "id": 814,
+      "old": "Stock Design Air Minum Rusun V",
+      "new": "Stock Design Air Minum Ruas V",
+      "rup": "65159827"
+    },
+    {
+      "id": 815,
+      "old": "Stock Design Sanitasi Rusun I",
+      "new": "Stock Design Sanitasi Ruas I",
+      "rup": "65625456"
+    },
+    {
+      "id": 816,
+      "old": "Stock Design Sanitasi Rusun II",
+      "new": "Stock Design Sanitasi Ruas II",
+      "rup": "64262084"
+    },
+    {
+      "id": 817,
+      "old": "Stock Design Sanitasi Rusun III",
+      "new": "Stock Design Sanitasi Ruas III",
+      "rup": "63618454"
+    },
+    {
+      "id": 820,
+      "old": "Normalisasi Sungai/Saluran Bulunario",
+      "new": "Normalisasi Sungai/Saluran Bulumario",
+      "rup": "68871440"
+    },
+    {
+      "id": 821,
+      "old": "Normalisasi Sungai/Saluran Desa Santapajaya",
+      "new": "Normalisasi Sungai/Saluran Desa Saptanajaya",
+      "rup": "66789677"
+    },
+    {
+      "id": 824,
+      "old": "Pembangunan Jalan Desa Letawa",
+      "new": "Pemb. Jalan Desa Letawa",
+      "rup": "64430085"
+    },
+    {
+      "id": 830,
+      "old": "Stock Design Rekonstruksi Jalan Kabupaten IV",
+      "new": "Stock Desain Rekonstruksi Jalan Kabupaten IV",
+      "rup": "66689217"
+    },
+    {
+      "id": 831,
+      "old": "Stock Design Rehabilitasi/Rekonstruksi Hotmix Parabu",
+      "new": "Stock Desain Rehabilitasi/Rekonstruksi Hotmix Parabu",
+      "rup": "60744521"
+    },
+    {
+      "id": 832,
+      "old": "Stock Design jalan/Hotmix kelurahan Baras",
+      "new": "Stok Desain jalan/Hotmix kelurahan Baras",
+      "rup": "63932177"
+    },
+    {
+      "id": 833,
+      "old": "Stock Design Drainase Kelurahan Baras",
+      "new": "Stok Desain Drainase Kelurahan Baras",
+      "rup": "64984846"
+    },
+    {
+      "id": 834,
+      "old": "SID Tanggul Kecamatan Baras",
+      "new": "SID Tanggul/Perkuatan Tebing Kecamatan Baras",
+      "rup": "69053116"
+    },
+    {
+      "id": 847,
+      "old": "Pemeliharaan Ruas Jalan kabupaten II Dalam Kota Pasangkayu",
+      "new": "Pemeliharaan Ruas jalan kabupaten II Dalam Kota Pasangkayu",
+      "rup": "65603809"
+    },
+    {
+      "id": 854,
+      "old": "SID Tanggul Sarasa",
+      "new": "SID Tanggul/Perkuatan Tebing Sarasa",
+      "rup": "61246618"
+    },
+    {
+      "id": 848,
+      "old": "Pengawasan Pemeliharaan Ruas Jalan kabupaten II Dalam Kota Pasangkayu cs.",
+      "new": "Pengawasan Pemeliharaan Jalan Kota Pasangkayu cs.",
+      "rup": "67913757"
+    }
+  ],
+  "subactivity_label_corrections": [
+    {
+      "id": 783,
+      "old": "Profil Dinas",
+      "new": "Penyediaan Bahan Bacaan dan Peraturan Perundang-undangan"
+    },
+    {
+      "id": 784,
+      "old": "Pembangunan Jalan",
+      "new": "Rekonstruksi Jalan"
+    },
+    {
+      "id": 785,
+      "old": "Pembangunan Jalan",
+      "new": "Rekonstruksi Jalan"
+    },
+    {
+      "id": 786,
+      "old": "Pembangunan Jalan",
+      "new": "Rekonstruksi Jalan"
+    },
+    {
+      "id": 794,
+      "old": null,
+      "new": "Pembangunan Jalan"
+    },
+    {
+      "id": 801,
+      "old": null,
+      "new": "Pembangunan Jalan"
+    },
+    {
+      "id": 804,
+      "old": null,
+      "new": "Pembangunan Sistem Drainase Lingkungan"
+    },
+    {
+      "id": 805,
+      "old": null,
+      "new": "Pembangunan Sistem Drainase Lingkungan"
+    },
+    {
+      "id": 807,
+      "old": null,
+      "new": "Pemeliharaan Rutin Jalan"
+    },
+    {
+      "id": 809,
+      "old": "Rehabilitasi Seawall dan Bangunan Pengaman Pantai Lainnya",
+      "new": "Peningkatan Bangunan Perkuatan Tebing"
+    },
+    {
+      "id": 815,
+      "old": "Pembangunan Sistem Penyediaan Air Minum (SPAM) Jaringan Perpipaan",
+      "new": "Penyediaan Unit pengolahan setempat"
+    },
+    {
+      "id": 816,
+      "old": "Pembangunan Sistem Penyediaan Air Minum (SPAM) Jaringan Perpipaan",
+      "new": "Penyediaan Unit pengolahan setempat"
+    },
+    {
+      "id": 817,
+      "old": "Pembangunan Sistem Penyediaan Air Minum (SPAM) Jaringan Perpipaan",
+      "new": "Penyediaan Unit pengolahan setempat"
+    },
+    {
+      "id": 824,
+      "old": null,
+      "new": "Pembangunan Jalan"
+    },
+    {
+      "id": 825,
+      "old": null,
+      "new": "Normalisasi/Restorasi Sungai"
+    },
+    {
+      "id": 826,
+      "old": null,
+      "new": "Normalisasi/Restorasi Sungai"
+    },
+    {
+      "id": 830,
+      "old": "Pembangunan Jalan",
+      "new": "Rekonstruksi Jalan"
+    },
+    {
+      "id": 834,
+      "old": "Rehabilitasi Seawal dan Bangunan Pengaman Pantai Lainnya",
+      "new": "Peningkatan Bangunan Perkuatan Tebing"
+    },
+    {
+      "id": 854,
+      "old": "Rehabilitasi Seawall dan Bangunan Pengaman Pantai Lainnya",
+      "new": "Peningkatan Bangunan Perkuatan Tebing"
+    }
+  ],
+  "shared_budget_packages": [
+    {
+      "id": 807,
+      "package_excel": "Pengawasan Pemeliharaan Jalan Kota Pasangkayu cs.",
+      "uraian_dppa": "Pengawasan Pemeliharaan Jalan Kota Pasangkayu cs.",
+      "pagu_kontrak": "10000000.00",
+      "note": "Paket berbagi rincian DPPA; alokasi total telah diperiksa; nama kontrak tetap mengikuti DPPA."
+    },
+    {
+      "id": 848,
+      "package_excel": "Pengawasan Pemeliharaan Ruas Jalan kabupaten II Dalam Kota Pasangkayu cs.",
+      "uraian_dppa": "Pengawasan Pemeliharaan Jalan Kota Pasangkayu cs.",
+      "pagu_kontrak": "10000000.00",
+      "note": "Paket berbagi rincian DPPA; alokasi total telah diperiksa; nama kontrak tetap mengikuti DPPA."
+    }
+  ]
+}

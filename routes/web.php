@@ -41,6 +41,7 @@ return [
   '/kontrak/financial_excel' => ['KontrakController', 'financialExcel'],
   '/kontrak/financial_pdf' => ['KontrakController', 'financialPdf'],
   '/kontrak/procurement/templates' => ['KontrakController', 'procurementTemplates'],
+  '/kontrak/procurement/process' => ['KontrakController', 'procurementProcess'],
   '/kontrak/procurement/documents' => ['KontrakController', 'procurementDocuments'],
   '/kontrak/procurement/draft' => ['KontrakController', 'procurementDraft'],
   '/kontrak/procurement/generate-swakelola' => ['KontrakController', 'procurementGenerateSwakelola'],

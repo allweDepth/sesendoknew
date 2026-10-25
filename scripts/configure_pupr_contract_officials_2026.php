@@ -25,7 +25,7 @@ $db->begin();try{
  };
  $pp=$annual(27,'PEJABAT_PENGADAAN',null);$assignments=[];$counts=[];
  foreach($contracts as $c){
-  $code=$c['kd_sub_keg'];$employee=str_starts_with($code,'1.03.10.')?110:((str_starts_with($code,'1.03.09.')||$code==='1.03.01.2.09.0009')?5:((str_starts_with($code,'1.03.02.')||str_starts_with($code,'1.03.06.'))?6:null));
+  $code=$c['kd_sub_keg'];$employee=str_starts_with($code,'1.03.10.')?110:((str_starts_with($code,'1.03.09.')||str_starts_with($code,'1.03.03.')||str_starts_with($code,'1.03.05.')||str_starts_with($code,'1.03.07.')||$code==='1.03.01.2.09.0009')?5:((str_starts_with($code,'1.03.02.')||str_starts_with($code,'1.03.06.'))?6:null));
   $data=['pejabat_pengadaan_id'=>$pp,'username_update'=>$actor,'tgl_update'=>date('Y-m-d H:i:s')];
   $ppkEmployee=(str_starts_with($code,'1.03.02.')||str_starts_with($code,'1.03.06.'))?6:3;
   $data['ppk_id']=$annual($ppkEmployee,'PPK',$code);$data['nama_ppk']=$db->query('SELECT nama_pegawai FROM pejabat_tahunan_neo WHERE id=?',[$data['ppk_id']])->fetch()['nama_pegawai'];

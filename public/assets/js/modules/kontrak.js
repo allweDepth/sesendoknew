@@ -22,6 +22,14 @@ class KontrakModule extends BaseCrudModule {
 	init() {
 		this.styles();
 		this.rowAction();
+		const detailId = Number(new URLSearchParams(window.location.search).get("detail"));
+		if (Number.isSafeInteger(detailId) && detailId > 0) {
+			this.renderLayout();
+			this.bindExport();
+			this.bindActions();
+			this.openDelivery(detailId);
+			return;
+		}
 		super.init();
 		this.bindActions();
 		this.bindUpload();
@@ -116,6 +124,14 @@ class KontrakModule extends BaseCrudModule {
 	}
 
 	bindActions() {
+		$(document).off("form:rendered.contractProcess").on("form:rendered.contractProcess",(_e,target)=>this.loadProcessForm($(target)));
+		$(document).off("form:populated.contractProcess").on("form:populated.contractProcess",(_e,tbl,_data,target)=>{if(tbl==="kontrak")this.loadProcessForm($(target));});
+		$(document).off("change.contractProcess input.contractProcess",'#form_flyout [name=cara_pengadaan],#form_flyout [name=metode_pemilihan],#form_flyout [name=tipe_swakelola]')
+			.on("change.contractProcess input.contractProcess",'#form_flyout [name=cara_pengadaan],#form_flyout [name=metode_pemilihan],#form_flyout [name=tipe_swakelola]',()=>this.renderProcessForm($("#form_flyout")));
+		$(document).off("input.processValue change.processValue","#contractProcessFields [data-process-value]").on("input.processValue change.processValue","#contractProcessFields [data-process-value]",e=>{
+			const input=$(e.currentTarget),code=input.closest('[data-process-code]').attr('data-process-code');
+			this.processValues[code]??={};this.processValues[code][input.attr('data-process-value')]=input.val();this.serializeProcessForm($("#form_flyout"));
+		});
 		$(document).off("click.swakelolaGenerate","#generateAllSwakelola").on("click.swakelolaGenerate","#generateAllSwakelola",()=>this.generateAllSwakelola());
 		$(document).off("click.contractPrintSettings","#contractPrintSettings").on("click.contractPrintSettings","#contractPrintSettings",()=>this.openPrintSettings());
 		$(document).off("click.procurementBundle","#generateProcurementBundle").on("click.procurementBundle","#generateProcurementBundle",()=>this.generateProcurementBundle());
@@ -205,6 +221,51 @@ class KontrakModule extends BaseCrudModule {
 		$(document)
 			.off("change.rabImport", "#rabImportFile")
 			.on("change.rabImport", "#rabImportFile", (e) => this.importRab(e.currentTarget));
+	}
+
+	loadProcessForm(form) {
+		if(!form.find('[name=proses_pengadaan]').length)return;
+		form.find('[name=proses_pengadaan]').closest('.column').hide();
+		const token=this.processRequest=(this.processRequest||0)+1,id=Number(form.find('[name=id_row]').val()||0);
+		this.processValues={};this.processCatalog=null;
+		form.find('#contractProcessFields').remove();
+		form.find('[name=proses_pengadaan]').closest('.column').after('<div class="sixteen wide column" id="contractProcessFields"><div class="ui active centered inline loader"></div></div>');
+		window.Ajax.request({url:`/kontrak/procurement/process?contract_id=${id}`,method:"GET",success:r=>{
+			if(token!==this.processRequest||!form.find('[name=proses_pengadaan]').length)return;
+			this.processCatalog=r.data?.catalog||{};this.processValues=r.data?.values||{};this.renderProcessForm(form);
+		},error:()=>{if(token===this.processRequest)form.find('#contractProcessFields').html('<div class="ui negative message">Nomor/tanggal proses gagal dimuat. Buka kembali form sebelum menyimpan.</div>');}});
+	}
+
+	processFlow(form) {
+		if(form.find('[name=cara_pengadaan]').val()==="SWAKELOLA")return "SWAKELOLA";
+		const method=String(form.find('[name=metode_pemilihan]').val()||'').toLowerCase();
+		if(/katalog|e[ -]?purchas|e[ -]?catalog/.test(method))return "KATALOG";
+		if(/tender|lelang|seleksi/.test(method))return "TENDER";
+		return method.includes('pengadaan langsung')?"LANGSUNG":"LAINNYA";
+	}
+
+	processSteps(form) {
+		const flow=this.processFlow(form),type=form.find('[name=tipe_swakelola]').val();
+		const variant=/pemilihan|usulan/i.test(String(form.find('[name=metode_pemilihan]').val()||''));
+		return (this.processCatalog?.[flow]?.steps||[]).filter(s=>{
+			if(flow!=="SWAKELOLA")return true;if(s[3]!==type)return false;if(!['III','IV'].includes(type))return true;
+			const source=s[0].match(/^SW_[IV]+_(\d+)_/)?.[1];return source==='05'||(variant?['03','04']:['01','02']).includes(source);
+		});
+	}
+
+	serializeProcessForm(form) {
+		const values={};this.processSteps(form).filter(s=>s[2]!=="header").forEach(([code])=>{values[code]=this.processValues[code]||{nomor:'',tanggal:'',waktu:''};});
+		form.find('[name=proses_pengadaan]').val(JSON.stringify(values));
+	}
+
+	renderProcessForm(form) {
+		if(!this.processCatalog)return;
+		const flow=this.processFlow(form),steps=this.processSteps(form).filter(s=>s[2]!=="header"),escape=x=>this.esc(String(x??''));
+		form.find('#contractProcessFields').html(`<h4 class="ui dividing header"><i class="calendar alternate outline icon"></i>Nomor dan Tanggal Proses</h4><div class="ui small info message visible">${escape(this.processCatalog[flow]?.label)}. Nomor/tanggal Kontrak dan SPMK mengikuti isian di atas. Setiap tahap lainnya diisi terpisah.</div><div class="ui styled fluid accordion">${steps.map(([code,label])=>{
+			const v=this.processValues[code]||{};
+			return `<div class="title"><i class="dropdown icon"></i>${escape(label)}<div class="ui tiny grey text">${escape(v.tanggal||'Tanggal belum diisi')}</div></div><div class="content" data-process-code="${escape(code)}"><div class="field"><label>Nomor ${escape(label)}</label><input type="text" maxlength="255" data-process-value="nomor" value="${escape(v.nomor)}" placeholder="Kosong jika tidak bernomor"></div><div class="field"><label>Tanggal</label><div class="ui calendar contract-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" data-process-value="tanggal" value="${escape(v.tanggal)}" placeholder="YYYY-MM-DD" autocomplete="off"></div></div></div><div class="field"><label>Waktu / batas waktu (jika ada)</label><input type="text" maxlength="100" data-process-value="waktu" value="${escape(v.waktu)}" placeholder="Contoh: 10:00 WITA"></div></div>`;
+		}).join('')}</div>${steps.length?'':'<div class="ui message">Pilih metode atau tipe swakelola untuk menampilkan tahap yang sesuai.</div>'}`);
+		form.find('#contractProcessFields .ui.accordion').accordion({exclusive:false});this.initContractCalendars(form.find('#contractProcessFields'));this.serializeProcessForm(form);
 	}
 
 	openItems(id) {
@@ -552,7 +613,7 @@ class KontrakModule extends BaseCrudModule {
 	openPrintSettings() {
 		window.Ajax.request({url:`/kontrak/print-settings?contract_id=${this.contractId}`,method:"GET",success:r=>{
 			const s=r.data||{};$("#contractPrintSettingsModal").remove();
-			$("body").append(`<div class="ui small modal" id="contractPrintSettingsModal"><i class="close icon"></i><div class="header"><i class="print icon"></i>Pengaturan Cetak Kontrak</div><div class="content"><form class="ui form" id="contractPrintSettingsForm"><p>Arial 12 pt. Paragraf rata kiri-kanan dengan baris terakhir rata kiri. Pengaturan berlaku untuk dokumen dan bundel kontrak ini.</p><div class="three fields"><div class="field"><label>Sebelum paragraf (pt)</label><input type="number" name="paragraph_before" min="0" max="72" step="0.5" required value="${Number(s.paragraph_before??0)}"></div><div class="field"><label>Sesudah paragraf (pt)</label><input type="number" name="paragraph_after" min="0" max="72" step="0.5" required value="${Number(s.paragraph_after??6)}"></div><div class="field"><label>Spasi baris</label><input type="number" name="line_spacing" min="0.5" max="3" step="0.05" required value="${Number(s.line_spacing??1.5)}"><small>Default 1,5 baris</small></div></div><div class="ui error message"></div></form></div><div class="actions"><button class="ui button" id="resetContractPrintSettings">Default</button><button class="ui deny button">Batal</button><button class="ui primary button" id="saveContractPrintSettings"><i class="save icon"></i>Simpan</button></div></div>`);
+			$("body").append(`<div class="ui small modal" id="contractPrintSettingsModal"><i class="close icon"></i><div class="header"><i class="print icon"></i>Pengaturan Cetak Kontrak</div><div class="content"><form class="ui form" id="contractPrintSettingsForm"><p>Jenis/ukuran huruf dan halaman mengikuti Page Setup PDF. Paragraf rata kiri-kanan dengan baris terakhir rata kiri. Pengaturan berlaku untuk dokumen dan bundel kontrak ini.</p><div class="three fields"><div class="field"><label>Sebelum paragraf (pt)</label><input type="number" name="paragraph_before" min="0" max="72" step="0.5" required value="${Number(s.paragraph_before??0)}"></div><div class="field"><label>Sesudah paragraf (pt)</label><input type="number" name="paragraph_after" min="0" max="72" step="0.5" required value="${Number(s.paragraph_after??6)}"></div><div class="field"><label>Spasi baris</label><input type="number" name="line_spacing" min="0.5" max="3" step="0.05" required value="${Number(s.line_spacing??1.5)}"><small>Default 1,5 baris</small></div></div><div class="ui error message"></div></form></div><div class="actions"><button class="ui button" id="resetContractPrintSettings">Default</button><button class="ui deny button">Batal</button><button class="ui primary button" id="saveContractPrintSettings"><i class="save icon"></i>Simpan</button></div></div>`);
 			const modal=$("#contractPrintSettingsModal"),form=$("#contractPrintSettingsForm");
 			modal.find("#resetContractPrintSettings").on("click",()=>{form.find('[name=paragraph_before]').val(0);form.find('[name=paragraph_after]').val(6);form.find('[name=line_spacing]').val(1.5);form.removeClass('error').find('.field').removeClass('error');});
 			modal.find("#saveContractPrintSettings").on("click",()=>{

@@ -1562,7 +1562,7 @@ UIConfig.kontrak = {
 	form: {
 		elements: [
 			{ tag:"fieldDropdown", prop:{label:"Cara Pengadaan",name:"cara_pengadaan",options:[{value:"PENYEDIA",text:"Melalui Penyedia"},{value:"SWAKELOLA",text:"Swakelola"}]} },
-			{ tag:"fieldDropdown", prop:{label:"Jenis Pengadaan",name:"jenis_pengadaan",options:["BARANG","PEKERJAAN_KONSTRUKSI","JASA_LAINNYA","KONSULTANSI_KONSTRUKSI","KONSULTANSI_NON_KONSTRUKSI"].map(x=>({value:x,text:x.replaceAll("_"," ")}))} },
+			{ tag:"fieldDropdown", prop:{label:"Jenis Pengadaan",name:"jenis_pengadaan",options:["BARANG","PEKERJAAN_KONSTRUKSI","JASA_LAINNYA","KONSULTANSI","KONSULTANSI_KONSTRUKSI","KONSULTANSI_NON_KONSTRUKSI"].map(x=>({value:x,text:x.replaceAll("_"," ")}))} },
 			{ tag:"fieldDropdown", prop:{label:"Tipe Swakelola (wajib untuk swakelola)",name:"tipe_swakelola",classField:"contract-swakelola-field",options:["I","II","III","IV"].map(x=>({value:x,text:"Tipe "+x}))} },
 			{ tag:"input", prop:{label:"Metode Pemilihan / E-purchasing",name:"metode_pemilihan"} },
 			{ tag:"input", prop:{label:"Nomor RUP",name:"nomor_rup"} },
@@ -1578,6 +1578,7 @@ UIConfig.kontrak = {
 			{ tag:"fieldCalendar", prop:{label:"Tanggal Mulai",name:"tanggal_mulai",calendarType:"date"} },
 			{ tag:"fieldCalendar", prop:{label:"Tanggal Selesai",name:"tanggal_selesai",calendarType:"date"} },
 			{ tag:"input", prop:{label:"Waktu Pelaksanaan (hari)",name:"waktu_pelaksanaan",type:"number"} },
+			{ tag:"input", prop:{name:"proses_pengadaan",type:"hidden"} },
 			{ tag:"fieldDropdown", prop:{label:"PPK aktif",name:"ppk_id",source:"pejabat_ppk",search:true} },
 			{ tag:"fieldDropdown", prop:{label:"PPTK aktif (jika ada)",name:"pptk_id",source:"pejabat_pptk",search:true} },
 			{ tag:"fieldDropdown", prop:{label:"Pejabat Pengadaan",name:"pejabat_pengadaan_id",source:"pejabat_pengadaan",search:true} },

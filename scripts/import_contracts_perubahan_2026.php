@@ -6,6 +6,13 @@
 if (PHP_SAPI !== 'cli') { http_response_code(403); exit; }
 require_once __DIR__ . '/../app/Core/DB.php';
 $plan=json_decode(file_get_contents($argv[1]??''),true,512,JSON_THROW_ON_ERROR);
+// The finalized budget owns the package label. Keep the Excel spelling only
+// as provenance. Split allocations retain distinct IDs/RUP, with the DPPA name.
+foreach($plan['contracts'] as &$entry)if(!empty($entry['uraian_anggaran'])){
+ $entry['package_excel']=$entry['package_excel']??$entry['package'];
+ $entry['package']=$entry['uraian_anggaran'];
+}
+unset($entry);
 $vendors=json_decode(file_get_contents($argv[2]??''),true,512,JSON_THROW_ON_ERROR);
 $apply=in_array('--apply',$argv,true);$db=DB::getInstance();
 $w='76.01';$o='1.03.0.00.0.00.01.0000';$y=2026;$actor='IMPORT_PERUBAHAN_PUPR_2026';

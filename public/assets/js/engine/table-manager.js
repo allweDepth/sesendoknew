@@ -416,6 +416,19 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			columns.forEach((col) => {
 				let value = row[col.key] ?? "";
 				value = this.formatValue(value, col.format);
+				if (this.state.tbl === "kontrak") {
+					const count = Number(row.jumlah_rab || 0);
+					if (col.key === "uraian_kontrak" && count > 0) {
+						value += `<div><button type="button" class="ui mini basic teal button" data-contract-delivery="${Number(id)}"><i class="tasks icon"></i>${count} rincian RAB</button></div>`;
+					}
+					if (col.key === "nilai_hps" && !Number(row.nilai_hps) && count > 0) {
+						value = `${this.formatValue(row.estimasi_hps_rab, "currency")}<div class="ui tiny grey text">Estimasi RAB</div>`;
+					}
+					if (col.key === "nilai_kontrak" && row.nilai_kontrak == null) {
+						value = 'Belum ditetapkan';
+						if (count > 0) value += `<div class="ui tiny grey text">Estimasi RAB ${this.formatValue(row.estimasi_nego_rab, "currency")}</div>`;
+					}
+				}
 				html += `<td class="table-col-${col.width}" data-label="${this.escapeHtml(col.label)}">${value}</td>`;
 			});
 			// 🔥 FIX: hanya untuk tata_naskah + edit

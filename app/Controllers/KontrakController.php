@@ -221,6 +221,10 @@ class KontrakController extends Controller
   {
     $this->json(fn() => (new ProcurementDocumentService($_SESSION['user'] ?? []))->templates((int)($_GET['contract_id'] ?? 0)));
   }
+  public function procurementProcess()
+  {
+    $this->json(fn() => (new ProcurementDocumentService($_SESSION['user'] ?? []))->processSchedule((int)($_GET['contract_id'] ?? 0)));
+  }
   public function procurementDocuments()
   {
     $service = new ProcurementDocumentService($_SESSION['user'] ?? []);

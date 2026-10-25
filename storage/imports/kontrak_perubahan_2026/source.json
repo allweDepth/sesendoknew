@@ -12,7 +12,7 @@
     {
       "excel_row": 5,
       "number": 2,
-      "package": "Pemb./rehabilitasi Median jalan Nasional/Kabupaten Kota Pasangkayu",
+      "package": "Pemb./rehabiltasi Median jalan Nasional/Kabupaten Kota Pasangkayu",
       "budget": "2300000000.00",
       "subactivity": "Pembangunan Jalan",
       "consultant": null,
@@ -47,12 +47,14 @@
       "rab": [],
       "nilai_hps": "0.00",
       "nilai_kontrak": null,
-      "warnings": []
+      "warnings": [],
+      "package_excel": "Pemb./rehabilitasi Median jalan Nasional/Kabupaten Kota Pasangkayu",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 6,
       "number": 3,
-      "package": "Perencanaan Pemb./rehabilitasi Median Jalan Nasional Kota Pasangkayu",
+      "package": "Perencanaan Pemb./rehabiltasi Median jalan Nasional Kota Pasangkayu",
       "budget": "75000000.00",
       "subactivity": "Pembangunan Jalan",
       "consultant": "CV MUARA KARYA DESAIN",
@@ -195,12 +197,14 @@
       "nilai_kontrak": "74878000.00",
       "warnings": [],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Perencanaan Pemb./rehabilitasi Median Jalan Nasional Kota Pasangkayu",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 7,
       "number": 4,
-      "package": "Pengawasan Pemb./rehabilitasi Median Jalan Nasional Kota Pasangkayu",
+      "package": "Pengawasan Pemb./rehabiltasi Median jalan Nasional Kota Pasangkayu",
       "budget": "75000000.00",
       "subactivity": "Pembangunan Jalan",
       "consultant": "CV MUARA KARYA DESAIN",
@@ -434,7 +438,9 @@
       "warnings": [],
       "rab_template": "sample pengawasan HPS penawaran.xlsx / awas",
       "rab_base": "80000000",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Pengawasan Pemb./rehabilitasi Median Jalan Nasional Kota Pasangkayu",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 8,
@@ -1016,9 +1022,9 @@
     {
       "excel_row": 12,
       "number": 9,
-      "package": "Penyusunan Profil Dinas",
+      "package": "Penyusunan Profil DInas",
       "budget": "95000000.00",
-      "subactivity": "Profil Dinas",
+      "subactivity": "Penyediaan Bahan Bacaan dan Peraturan Perundang-undangan",
       "consultant": null,
       "contractor": null,
       "stage": null,
@@ -1053,14 +1059,16 @@
       "nilai_kontrak": null,
       "warnings": [
         "Identitas penyedia belum pasti"
-      ]
+      ],
+      "package_excel": "Penyusunan Profil Dinas",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 13,
       "number": 10,
       "package": "Stock Desain Rekonstruksi Jalan Kabupaten III",
       "budget": "95000000.00",
-      "subactivity": "Pembangunan Jalan",
+      "subactivity": "Rekonstruksi Jalan",
       "consultant": "CV MUARA KARYA DESAIN",
       "contractor": null,
       "stage": "TAHAP 1",
@@ -1208,7 +1216,7 @@
       "number": 11,
       "package": "Stock Desain Rekonstruksi Jalan Kabupaten I",
       "budget": "95000000.00",
-      "subactivity": "Pembangunan Jalan",
+      "subactivity": "Rekonstruksi Jalan",
       "consultant": "CV MUARA KARYA DESAIN",
       "contractor": null,
       "stage": "TAHAP 1",
@@ -1356,7 +1364,7 @@
       "number": 12,
       "package": "Stock Desain Rekonstruksi Jalan Kabupaten II",
       "budget": "95000000.00",
-      "subactivity": "Pembangunan Jalan",
+      "subactivity": "Rekonstruksi Jalan",
       "consultant": "CV MUARA KARYA DESAIN",
       "contractor": null,
       "stage": "TAHAP 1",
@@ -1784,7 +1792,7 @@
       "number": 21,
       "package": "Pengawasan Pemb. Jalan Beton/Rigid Desa Sarasa cs.",
       "budget": "100000000.00",
-      "subactivity": null,
+      "subactivity": "Pembangunan Jalan",
       "consultant": "CV MUARA KARYA DESAIN",
       "contractor": null,
       "stage": "TAHAP 2",
@@ -2141,7 +2149,7 @@
     {
       "excel_row": 28,
       "number": 25,
-      "package": "Pemb. Jalan Dan Benteng Desa Ompi",
+      "package": "Pemb. Jalan Dsn Benteng Desa Ompi",
       "budget": "195000000.00",
       "subactivity": "Pembangunan Jalan",
       "consultant": null,
@@ -2176,12 +2184,14 @@
       "rab": [],
       "nilai_hps": "0.00",
       "nilai_kontrak": null,
-      "warnings": []
+      "warnings": [],
+      "package_excel": "Pemb. Jalan Dan Benteng Desa Ompi",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 29,
       "number": 26,
-      "package": "Pemb. Jalan Dan. Kampung Baru Desa Bukit Harapan",
+      "package": "Pemb. Jalan Dsn. Kampung Baru Desa Bukit Harapan",
       "budget": "195000000.00",
       "subactivity": "Pembangunan Jalan",
       "consultant": null,
@@ -2216,7 +2226,9 @@
       "rab": [],
       "nilai_hps": "0.00",
       "nilai_kontrak": null,
-      "warnings": []
+      "warnings": [],
+      "package_excel": "Pemb. Jalan Dan. Kampung Baru Desa Bukit Harapan",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 30,
@@ -2263,7 +2275,7 @@
       "number": 29,
       "package": "Pengawasan pemb jalan kabupaten pasangkayu 1 cs.",
       "budget": "40000000.00",
-      "subactivity": null,
+      "subactivity": "Pembangunan Jalan",
       "consultant": "CV MUARA KARYA DESAIN",
       "contractor": null,
       "stage": "TAHAP 2",
@@ -2582,7 +2594,7 @@
       "number": 32,
       "package": "Perencanaan Pemeliharaan/Normalisasi Sungai Drainase Kota Pasangkayu cs.",
       "budget": "8500000.00",
-      "subactivity": null,
+      "subactivity": "Pembangunan Sistem Drainase Lingkungan",
       "consultant": "CV ARMIL ENGINERING",
       "contractor": null,
       "stage": "TAHAP 1",
@@ -2730,7 +2742,7 @@
       "number": 33,
       "package": "Pengawasan Pemeliharaan/Normalisasi Sungai Drainase Kota Pasangkayu cs.",
       "budget": "8500000.00",
-      "subactivity": null,
+      "subactivity": "Pembangunan Sistem Drainase Lingkungan",
       "consultant": "CV ARMIL ENGINERING",
       "contractor": null,
       "stage": "TAHAP 1",
@@ -3012,7 +3024,7 @@
       "number": 36,
       "package": "Pengawasan Pemeliharaan Jalan Kota Pasangkayu cs.",
       "budget": "10000000.00",
-      "subactivity": null,
+      "subactivity": "Pemeliharaan Rutin Jalan",
       "consultant": "CV MUARA KARYA DESAIN",
       "contractor": null,
       "stage": "TAHAP 1",
@@ -3399,9 +3411,9 @@
     {
       "excel_row": 41,
       "number": 38,
-      "package": "Penyusunan Dokumen Perencanaan Teknis (SID) dan Dokumen Lingkungan Penahan Ombak Kabupaten Pasangkayu Ruas I",
+      "package": "Penyusunan Dokumen Perencanaan Teknis (SID) dan Dokumen Lingkungan Penahan Ombak/Perkuatan Tebing Kabupaten Pasangkayu Ruas I",
       "budget": "100000000.00",
-      "subactivity": "Rehabilitasi Seawall dan Bangunan Pengaman Pantai Lainnya",
+      "subactivity": "Peningkatan Bangunan Perkuatan Tebing",
       "consultant": null,
       "contractor": null,
       "stage": null,
@@ -3544,12 +3556,14 @@
         "Identitas penyedia belum pasti"
       ],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Penyusunan Dokumen Perencanaan Teknis (SID) dan Dokumen Lingkungan Penahan Ombak Kabupaten Pasangkayu Ruas I",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 43,
       "number": 40,
-      "package": "Stock Design Air Minum Rusun I",
+      "package": "Stock Design Air Minum Ruas I",
       "budget": "100000000.00",
       "subactivity": "Pembangunan Sistem Penyediaan Air Minum (SPAM) Jaringan Perpipaan",
       "consultant": null,
@@ -3574,7 +3588,7 @@
         }
       ],
       "shared": false,
-      "vendor_alias": "",
+      "vendor_alias": "CV PATAMBERO CONSULTANT ENGINEERING",
       "jenis_pengadaan": "KONSULTANSI_KONSTRUKSI",
       "bentuk_kontrak": "SPK",
       "nomor_rup": "65548181",
@@ -3694,12 +3708,15 @@
         "Identitas penyedia belum pasti"
       ],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Stock Design Air Minum Rusun I",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket",
+      "provider_assignment_source": "water_provider_assignment.json"
     },
     {
       "excel_row": 44,
       "number": 41,
-      "package": "Stock Design Air Minum Rusun II",
+      "package": "Stock Design Air Minum Ruas II",
       "budget": "100000000.00",
       "subactivity": "Pembangunan Sistem Penyediaan Air Minum (SPAM) Jaringan Perpipaan",
       "consultant": null,
@@ -3724,7 +3741,7 @@
         }
       ],
       "shared": false,
-      "vendor_alias": "",
+      "vendor_alias": "CV PATAMBERO CONSULTANT ENGINEERING",
       "jenis_pengadaan": "KONSULTANSI_KONSTRUKSI",
       "bentuk_kontrak": "SPK",
       "nomor_rup": "63799408",
@@ -3844,12 +3861,15 @@
         "Identitas penyedia belum pasti"
       ],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Stock Design Air Minum Rusun II",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket",
+      "provider_assignment_source": "water_provider_assignment.json"
     },
     {
       "excel_row": 45,
       "number": 42,
-      "package": "Stock Design Air Minum Rusun III",
+      "package": "Stock Design Air Minum Ruas III",
       "budget": "100000000.00",
       "subactivity": "Pembangunan Sistem Penyediaan Air Minum (SPAM) Jaringan Perpipaan",
       "consultant": null,
@@ -3874,7 +3894,7 @@
         }
       ],
       "shared": false,
-      "vendor_alias": "",
+      "vendor_alias": "CV PATAMBERO CONSULTANT ENGINEERING",
       "jenis_pengadaan": "KONSULTANSI_KONSTRUKSI",
       "bentuk_kontrak": "SPK",
       "nomor_rup": "64467578",
@@ -3994,12 +4014,15 @@
         "Identitas penyedia belum pasti"
       ],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Stock Design Air Minum Rusun III",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket",
+      "provider_assignment_source": "water_provider_assignment.json"
     },
     {
       "excel_row": 46,
       "number": 43,
-      "package": "Stock Design Air Minum Rusun IV",
+      "package": "Stock Design Air Minum Ruas IV",
       "budget": "100000000.00",
       "subactivity": "Pembangunan Sistem Penyediaan Air Minum (SPAM) Jaringan Perpipaan",
       "consultant": null,
@@ -4024,7 +4047,7 @@
         }
       ],
       "shared": false,
-      "vendor_alias": "",
+      "vendor_alias": "CV PATAMBERO CONSULTANT ENGINEERING",
       "jenis_pengadaan": "KONSULTANSI_KONSTRUKSI",
       "bentuk_kontrak": "SPK",
       "nomor_rup": "64709183",
@@ -4144,12 +4167,15 @@
         "Identitas penyedia belum pasti"
       ],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Stock Design Air Minum Rusun IV",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket",
+      "provider_assignment_source": "water_provider_assignment.json"
     },
     {
       "excel_row": 47,
       "number": 44,
-      "package": "Stock Design Air Minum Rusun V",
+      "package": "Stock Design Air Minum Ruas V",
       "budget": "100000000.00",
       "subactivity": "Pembangunan Sistem Penyediaan Air Minum (SPAM) Jaringan Perpipaan",
       "consultant": null,
@@ -4174,7 +4200,7 @@
         }
       ],
       "shared": false,
-      "vendor_alias": "",
+      "vendor_alias": "CV VISUAL ART DESIGN",
       "jenis_pengadaan": "KONSULTANSI_KONSTRUKSI",
       "bentuk_kontrak": "SPK",
       "nomor_rup": "65159827",
@@ -4294,14 +4320,17 @@
         "Identitas penyedia belum pasti"
       ],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Stock Design Air Minum Rusun V",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket",
+      "provider_assignment_source": "water_provider_assignment.json"
     },
     {
       "excel_row": 48,
       "number": 45,
-      "package": "Stock Design Sanitasi Rusun I",
+      "package": "Stock Design Sanitasi Ruas I",
       "budget": "100000000.00",
-      "subactivity": "Pembangunan Sistem Penyediaan Air Minum (SPAM) Jaringan Perpipaan",
+      "subactivity": "Penyediaan Unit pengolahan setempat",
       "consultant": null,
       "contractor": null,
       "stage": "TAHAP 2",
@@ -4324,7 +4353,7 @@
         }
       ],
       "shared": false,
-      "vendor_alias": "",
+      "vendor_alias": "CV VISUAL ART DESIGN",
       "jenis_pengadaan": "KONSULTANSI_KONSTRUKSI",
       "bentuk_kontrak": "SPK",
       "nomor_rup": "65625456",
@@ -4444,14 +4473,17 @@
         "Identitas penyedia belum pasti"
       ],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Stock Design Sanitasi Rusun I",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket",
+      "provider_assignment_source": "water_provider_assignment.json"
     },
     {
       "excel_row": 49,
       "number": 46,
-      "package": "Stock Design Sanitasi Rusun II",
+      "package": "Stock Design Sanitasi Ruas II",
       "budget": "100000000.00",
-      "subactivity": "Pembangunan Sistem Penyediaan Air Minum (SPAM) Jaringan Perpipaan",
+      "subactivity": "Penyediaan Unit pengolahan setempat",
       "consultant": null,
       "contractor": null,
       "stage": "TAHAP 2",
@@ -4474,7 +4506,7 @@
         }
       ],
       "shared": false,
-      "vendor_alias": "",
+      "vendor_alias": "CV VISUAL ART DESIGN",
       "jenis_pengadaan": "KONSULTANSI_KONSTRUKSI",
       "bentuk_kontrak": "SPK",
       "nomor_rup": "64262084",
@@ -4594,14 +4626,17 @@
         "Identitas penyedia belum pasti"
       ],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Stock Design Sanitasi Rusun II",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket",
+      "provider_assignment_source": "water_provider_assignment.json"
     },
     {
       "excel_row": 50,
       "number": 47,
-      "package": "Stock Design Sanitasi Rusun III",
+      "package": "Stock Design Sanitasi Ruas III",
       "budget": "100000000.00",
-      "subactivity": "Pembangunan Sistem Penyediaan Air Minum (SPAM) Jaringan Perpipaan",
+      "subactivity": "Penyediaan Unit pengolahan setempat",
       "consultant": null,
       "contractor": null,
       "stage": "TAHAP 2",
@@ -4624,7 +4659,7 @@
         }
       ],
       "shared": false,
-      "vendor_alias": "",
+      "vendor_alias": "CV VISUAL ART DESIGN",
       "jenis_pengadaan": "KONSULTANSI_KONSTRUKSI",
       "bentuk_kontrak": "SPK",
       "nomor_rup": "63618454",
@@ -4744,7 +4779,10 @@
         "Identitas penyedia belum pasti"
       ],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Stock Design Sanitasi Rusun III",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket",
+      "provider_assignment_source": "water_provider_assignment.json"
     },
     {
       "excel_row": 51,
@@ -5045,7 +5083,7 @@
     {
       "excel_row": 55,
       "number": 51,
-      "package": "Normalisasi Sungai/Saluran Bulunario",
+      "package": "Normalisasi Sungai/Saluran Bulumario",
       "budget": "400000000.00",
       "subactivity": "Normalisasi/Restorasi Sungai",
       "consultant": null,
@@ -5080,12 +5118,14 @@
       "rab": [],
       "nilai_hps": "0.00",
       "nilai_kontrak": null,
-      "warnings": []
+      "warnings": [],
+      "package_excel": "Normalisasi Sungai/Saluran Bulunario",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 56,
       "number": 52,
-      "package": "Normalisasi Sungai/Saluran Desa Santapajaya",
+      "package": "Normalisasi Sungai/Saluran Desa Saptanajaya",
       "budget": "400000000.00",
       "subactivity": "Normalisasi/Restorasi Sungai",
       "consultant": null,
@@ -5120,7 +5160,9 @@
       "rab": [],
       "nilai_hps": "0.00",
       "nilai_kontrak": null,
-      "warnings": []
+      "warnings": [],
+      "package_excel": "Normalisasi Sungai/Saluran Desa Santapajaya",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 57,
@@ -5205,9 +5247,9 @@
     {
       "excel_row": 60,
       "number": 56,
-      "package": "Pembangunan Jalan Desa Letawa",
+      "package": "Pemb. Jalan Desa Letawa",
       "budget": "320000000.00",
-      "subactivity": null,
+      "subactivity": "Pembangunan Jalan",
       "consultant": null,
       "contractor": "CV IPPORANNUAN",
       "stage": "TAHAP 2",
@@ -5240,14 +5282,16 @@
       "rab": [],
       "nilai_hps": "0.00",
       "nilai_kontrak": null,
-      "warnings": []
+      "warnings": [],
+      "package_excel": "Pembangunan Jalan Desa Letawa",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 61,
       "number": 57,
       "package": "Normalisasi Sungai/Saluran Desa Polewali",
       "budget": "80000000.00",
-      "subactivity": null,
+      "subactivity": "Normalisasi/Restorasi Sungai",
       "consultant": null,
       "contractor": "CV MULIA NARATAMA DAYA",
       "stage": "TAHAP 2",
@@ -5287,7 +5331,7 @@
       "number": 59,
       "package": "Pengawasan Normalisasi Sungai/Saluran Bulumario cs.",
       "budget": "42000000.00",
-      "subactivity": null,
+      "subactivity": "Normalisasi/Restorasi Sungai",
       "consultant": "CV ARMIL ENGINERING",
       "contractor": null,
       "stage": "TAHAP 2",
@@ -5968,9 +6012,9 @@
     {
       "excel_row": 70,
       "number": 64,
-      "package": "Stock Design Rekonstruksi Jalan Kabupaten IV",
+      "package": "Stock Desain Rekonstruksi Jalan Kabupaten IV",
       "budget": "100000000.00",
-      "subactivity": "Pembangunan Jalan",
+      "subactivity": "Rekonstruksi Jalan",
       "consultant": "CV AQILA",
       "contractor": null,
       "stage": "TAHAP 2",
@@ -6111,12 +6155,14 @@
       "nilai_kontrak": "99838000.00",
       "warnings": [],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Stock Design Rekonstruksi Jalan Kabupaten IV",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 71,
       "number": 64,
-      "package": "Stock Design Rehabilitasi/Rekonstruksi Hotmix Parabu",
+      "package": "Stock Desain Rehabilitasi/Rekonstruksi Hotmix Parabu",
       "budget": "100000000.00",
       "subactivity": "Pembangunan Jalan",
       "consultant": "CV AQILA",
@@ -6259,12 +6305,14 @@
       "nilai_kontrak": "99838000.00",
       "warnings": [],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Stock Design Rehabilitasi/Rekonstruksi Hotmix Parabu",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 73,
       "number": 65,
-      "package": "Stock Design jalan/Hotmix kelurahan Baras",
+      "package": "Stok Desain jalan/Hotmix kelurahan Baras",
       "budget": "100000000.00",
       "subactivity": "Pembangunan Jalan",
       "consultant": "CV ASA KARYA",
@@ -6407,12 +6455,14 @@
       "nilai_kontrak": "99838000.00",
       "warnings": [],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Stock Design jalan/Hotmix kelurahan Baras",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 74,
       "number": 66,
-      "package": "Stock Design Drainase Kelurahan Baras",
+      "package": "Stok Desain Drainase Kelurahan Baras",
       "budget": "100000000.00",
       "subactivity": "Pembangunan Jalan",
       "consultant": "CV ASA KARYA",
@@ -6555,14 +6605,16 @@
       "nilai_kontrak": "99838000.00",
       "warnings": [],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Stock Design Drainase Kelurahan Baras",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 75,
       "number": 67,
-      "package": "SID Tanggul Kecamatan Baras",
+      "package": "SID Tanggul/Perkuatan Tebing Kecamatan Baras",
       "budget": "100000000.00",
-      "subactivity": "Rehabilitasi Seawal dan Bangunan Pengaman Pantai Lainnya",
+      "subactivity": "Peningkatan Bangunan Perkuatan Tebing",
       "consultant": "CV ASA KARYA",
       "contractor": null,
       "stage": "TAHAP 2",
@@ -6703,7 +6755,9 @@
       "nilai_kontrak": "99838000.00",
       "warnings": [],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "SID Tanggul Kecamatan Baras",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 76,
@@ -8470,7 +8524,7 @@
     {
       "excel_row": 89,
       "number": 80,
-      "package": "Pemeliharaan Ruas Jalan kabupaten II Dalam Kota Pasangkayu",
+      "package": "Pemeliharaan Ruas jalan kabupaten II Dalam Kota Pasangkayu",
       "budget": "390000000.00",
       "subactivity": "Pemeliharaan Rutin Jalan",
       "consultant": null,
@@ -8505,12 +8559,14 @@
       "rab": [],
       "nilai_hps": "0.00",
       "nilai_kontrak": null,
-      "warnings": []
+      "warnings": [],
+      "package_excel": "Pemeliharaan Ruas Jalan kabupaten II Dalam Kota Pasangkayu",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 91,
       "number": 82,
-      "package": "Pengawasan Pemeliharaan Ruas Jalan kabupaten II Dalam Kota Pasangkayu cs.",
+      "package": "Pengawasan Pemeliharaan Jalan Kota Pasangkayu cs.",
       "budget": "10000000.00",
       "subactivity": "Pemeliharaan Rutin Jalan",
       "consultant": "PT KALIPU WAE TUO",
@@ -8744,7 +8800,9 @@
       "warnings": [],
       "rab_template": "sample pengawasan HPS penawaran.xlsx / awas",
       "rab_base": "80000000",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "Pengawasan Pemeliharaan Ruas Jalan kabupaten II Dalam Kota Pasangkayu cs.",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 92,
@@ -9256,9 +9314,9 @@
     {
       "excel_row": 97,
       "number": 88,
-      "package": "SID Tanggul Sarasa",
+      "package": "SID Tanggul/Perkuatan Tebing Sarasa",
       "budget": "100000000.00",
-      "subactivity": "Rehabilitasi Seawall dan Bangunan Pengaman Pantai Lainnya",
+      "subactivity": "Peningkatan Bangunan Perkuatan Tebing",
       "consultant": null,
       "contractor": null,
       "stage": null,
@@ -9401,7 +9459,9 @@
         "Identitas penyedia belum pasti"
       ],
       "rab_template": "HPS dan penawaran konsultan 2026.xlsx / 64449217",
-      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar."
+      "rab_note": "Draft estimasi proporsional; negosiasi dibulatkan ke bawah Rp1.000 melalui penyesuaian komponen terbesar.",
+      "package_excel": "SID Tanggul Sarasa",
+      "name_source": "Rincian DPPA final, bukan ejaan Excel daftar paket"
     },
     {
       "excel_row": 98,

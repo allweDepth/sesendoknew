@@ -1,0 +1,101 @@
+{
+    "assignment_basis": "User: four packages per company; folder order Perusahaan 1 then Perusahaan 2; contract order Air Minum I–V then Sanitasi I–III.",
+    "companies": [
+        {
+            "id": 588,
+            "name": "CV. PATAMBERO CONSULTANT ENGINEERING",
+            "source": "/Users/nabiila_inayah/Library/Mobile Documents/com~apple~CloudDocs/2026/Pengadaan 2026/Perubahan 2026/Perusahaan Stok design Air bersih/Perusahaan 1/COMPANY PROFILE CV. PCE.pdf",
+            "sha256": "eac093305333c2be12116503e06e7b6921c7477ffecd0e3d6da884875949215d",
+            "account_status": "Not found; left empty"
+        },
+        {
+            "id": 461,
+            "name": "CV. VISUAL ART DESIGN",
+            "source": "/Users/nabiila_inayah/Library/Mobile Documents/com~apple~CloudDocs/2026/Pengadaan 2026/Perubahan 2026/Perusahaan Stok design Air bersih/Perusahaan 2/PROFIL PERUSAHAAN VISUAL ART DESIGN 2026.pdf",
+            "sha256": "e58d3d7c5d5b900effee3a58203ceba4fc6ae386292d08b4c73a054fd370c3aa",
+            "account_status": "Existing database account retained"
+        }
+    ],
+    "contracts": [
+        {
+            "id": 810,
+            "package": "Stock Design Air Minum Ruas I",
+            "nomor_kontrak": "600/65548181/SPK-Konsultansi/PPK/DPUPR",
+            "vendor_id": 588,
+            "vendor": "CV. PATAMBERO CONSULTANT ENGINEERING",
+            "rab_rows": 7,
+            "hps": "99999642.960000000000",
+            "negotiated_estimate": "99838000.000000000000"
+        },
+        {
+            "id": 811,
+            "package": "Stock Design Air Minum Ruas II",
+            "nomor_kontrak": "600/63799408/SPK-Konsultansi/PPK/DPUPR",
+            "vendor_id": 588,
+            "vendor": "CV. PATAMBERO CONSULTANT ENGINEERING",
+            "rab_rows": 7,
+            "hps": "99999642.960000000000",
+            "negotiated_estimate": "99838000.000000000000"
+        },
+        {
+            "id": 812,
+            "package": "Stock Design Air Minum Ruas III",
+            "nomor_kontrak": "600/64467578/SPK-Konsultansi/PPK/DPUPR",
+            "vendor_id": 588,
+            "vendor": "CV. PATAMBERO CONSULTANT ENGINEERING",
+            "rab_rows": 7,
+            "hps": "99999642.960000000000",
+            "negotiated_estimate": "99838000.000000000000"
+        },
+        {
+            "id": 813,
+            "package": "Stock Design Air Minum Ruas IV",
+            "nomor_kontrak": "600/64709183/SPK-Konsultansi/PPK/DPUPR",
+            "vendor_id": 588,
+            "vendor": "CV. PATAMBERO CONSULTANT ENGINEERING",
+            "rab_rows": 7,
+            "hps": "99999642.960000000000",
+            "negotiated_estimate": "99838000.000000000000"
+        },
+        {
+            "id": 814,
+            "package": "Stock Design Air Minum Ruas V",
+            "nomor_kontrak": "600/65159827/SPK-Konsultansi/PPK/DPUPR",
+            "vendor_id": 461,
+            "vendor": "CV. VISUAL ART DESIGN",
+            "rab_rows": 7,
+            "hps": "99999642.960000000000",
+            "negotiated_estimate": "99838000.000000000000"
+        },
+        {
+            "id": 815,
+            "package": "Stock Design Sanitasi Ruas I",
+            "nomor_kontrak": "600/65625456/SPK-Konsultansi/PPK/DPUPR",
+            "vendor_id": 461,
+            "vendor": "CV. VISUAL ART DESIGN",
+            "rab_rows": 7,
+            "hps": "99999642.960000000000",
+            "negotiated_estimate": "99838000.000000000000"
+        },
+        {
+            "id": 816,
+            "package": "Stock Design Sanitasi Ruas II",
+            "nomor_kontrak": "600/64262084/SPK-Konsultansi/PPK/DPUPR",
+            "vendor_id": 461,
+            "vendor": "CV. VISUAL ART DESIGN",
+            "rab_rows": 7,
+            "hps": "99999642.960000000000",
+            "negotiated_estimate": "99838000.000000000000"
+        },
+        {
+            "id": 817,
+            "package": "Stock Design Sanitasi Ruas III",
+            "nomor_kontrak": "600/63618454/SPK-Konsultansi/PPK/DPUPR",
+            "vendor_id": 461,
+            "vendor": "CV. VISUAL ART DESIGN",
+            "rab_rows": 7,
+            "hps": "99999642.960000000000",
+            "negotiated_estimate": "99838000.000000000000"
+        }
+    ]
+}
