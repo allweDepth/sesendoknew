@@ -1,0 +1,35 @@
+{
+    "applied": true,
+    "scope": [
+        "76.01",
+        "1.03.0.00.0.00.01.0000",
+        2026
+    ],
+    "source_documents": 28,
+    "recap_total": "71262055709.00",
+    "missing_details": [],
+    "tables": {
+        "renja_p_neo": {
+            "updated": 1069,
+            "inserted": 0,
+            "retired": 0,
+            "active_rows": 1201,
+            "total": 71262055709
+        },
+        "rka_p_neo": {
+            "updated": 1069,
+            "inserted": 0,
+            "retired": 0,
+            "active_rows": 1201,
+            "total": 71262055709
+        },
+        "dppa_neo": {
+            "updated": 1069,
+            "inserted": 0,
+            "retired": 0,
+            "active_rows": 1201,
+            "total": 71262055709
+        }
+    },
+    "stale_dppa_cash_rows_retired": 0
+}
