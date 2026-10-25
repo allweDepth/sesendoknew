@@ -12,7 +12,7 @@ class DynamicImportHelper
 
     if ($header === '') return ''; // //
 
-    return strtolower(preg_replace('/[^a-z0-9_]/', '', $header)); // //
+    return preg_replace('/[^a-z0-9_]/', '', strtolower($header)); // //
   }
 
   public function normalizeForCompare(?string $value): string // //

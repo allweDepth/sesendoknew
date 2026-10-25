@@ -2950,6 +2950,7 @@ Perbaikan:
 ========================================================= */
   private function runTransaction(callable $callback)
   {
+    $ownsTransaction = !$this->db->inTransaction();
     try {
 
       /* =========================================
@@ -2958,7 +2959,7 @@ Perbaikan:
 
       // gunakan PDO beginTransaction
       // lebih aman dibanding START TRANSACTION SQL
-      $this->db->begin();
+      if ($ownsTransaction) $this->db->begin();
 
       /* =========================================
         2️⃣ JALANKAN LOGIC CALLBACK
@@ -2972,7 +2973,7 @@ Perbaikan:
         ========================================= */
 
       // jika tidak ada exception
-      $this->db->commit();
+      if ($ownsTransaction) $this->db->commit();
 
       // kembalikan hasil callback
       return $result;
@@ -2983,7 +2984,7 @@ Perbaikan:
         ========================================= */
 
       // batalkan semua query dalam transaction
-      $this->db->rollback();
+      if ($ownsTransaction) $this->db->rollback();
 
       // lempar kembali error agar layer atas tahu
       throw $e;
@@ -3491,361 +3492,77 @@ LIMIT 1",
    */
   public function importStrict($tbl, $file, $jmlHeader = 1)
   {
-
-    // ======================================================
-    // 1️⃣ VALIDASI PROFILE TABEL
-    // ======================================================
-
-    if (!isset($this->profiles[$tbl])) {
-      throw new Exception("Profile tabel tidak ditemukan.");
+    if (!isset($this->profiles[$tbl])) throw new InvalidArgumentException('Profile tabel tidak ditemukan.');
+    if (!is_file($file)) throw new InvalidArgumentException('File Excel tidak ditemukan.');
+    $jmlHeader=(int)$jmlHeader;
+    if($jmlHeader<1||$jmlHeader>50)throw new InvalidArgumentException('Baris header harus antara 1–50.');
+    $profile=$this->profiles[$tbl];$table=$profile['table'];$this->activeProfileKey=$tbl;
+    $this->authorize('add',$table);
+    $columnMap=$this->buildColumnMap($table,$profile);
+    $schema=[];
+    foreach($this->db->query("SHOW COLUMNS FROM `$table`")->fetchAll() as $column)$schema[$column['Field']]=$column['Type'];
+    $reader=\PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file);
+    // Date style is needed to distinguish Excel dates from ordinary numbers.
+    $reader->setReadDataOnly(false);
+    $book=$reader->load($file);$sheet=$book->getActiveSheet();
+    $lastColumn=\PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($sheet->getHighestDataColumn());
+    $headers=[];$seen=[];
+    for($c=1;$c<=$lastColumn;$c++){
+      $label=trim((string)$sheet->getCell([$c,$jmlHeader])->getValue());
+      if($label==='')continue;
+      $key=$this->normalizeForCompare($label);
+      if(!isset($columnMap[$key]))throw new InvalidArgumentException("Header Excel '$label' tidak cocok dengan kolom tabel.");
+      $field=$columnMap[$key];
+      if(isset($seen[$field]))throw new InvalidArgumentException("Kolom Excel '$label' muncul lebih dari satu kali.");
+      $headers[$c]=$field;$seen[$field]=true;
     }
-
-    // ambil konfigurasi tabel dari profile
-    $profile = $this->profiles[$tbl];
-
-    // ambil nama tabel database
-    $table = $profile['table'];
-    $this->activeProfileKey = $tbl;
-    $this->authorize('add', $table);
-
-    // ======================================================
-    // 2️⃣ AMBIL KOLOM TABEL DATABASE
-    // ======================================================
-
-    $columns = $this->getTableColumns($table);
-
-
-    // ======================================================
-    // 3️⃣ AMBIL SCOPE USER
-    // ======================================================
-
-    // wilayah user
-    $kd_wilayah = $this->user['kd_wilayah'] ?? null;
-
-    // tahun user
-    $tahun = $this->user['tahun'] ?? date('Y');
-
-    if (!$kd_wilayah) {
-      throw new Exception("kd_wilayah tidak ditemukan.");
-    }
-
-
-    // ======================================================
-    // 4️⃣ RESOLVE PERATURAN
-    // ======================================================
-
-    $peraturan_id = null;
-
-    if (in_array('peraturan_id', $columns)) {
-      $peraturan_id = $this->resolver()->resolvePeraturanId($table, $tbl);
-    }
-
-
-    // ======================================================
-    // 5️⃣ LOAD FILE EXCEL
-    // ======================================================
-
-    // buat reader otomatis
-    $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file);
-
-    // baca hanya data (lebih cepat)
-    $reader->setReadDataOnly(true);
-
-    // load spreadsheet
-    $spreadsheet = $reader->load($file);
-
-    // ambil sheet aktif
-    $sheet = $spreadsheet->getActiveSheet();
-
-    // iterator baris Excel
-    $rowIterator = $sheet->getRowIterator();
-
-
-    // ======================================================
-    // 6️⃣ BUILD COLUMN MAP
-    // ======================================================
-
-    // mapping header Excel → kolom SQL
-    $columnMap = $this->buildColumnMap($table, $profile);
-
-
-    // ======================================================
-    // 7️⃣ VARIABLE STATISTIK IMPORT
-    // ======================================================
-
-    $headers = [];
-
-    $totalRows = 0;
-    $successRows = 0;
-    $failedRows = 0;
-
-    $errorRows = [];
-
-
-    // ======================================================
-    // 8️⃣ IMPORT DALAM TRANSACTION
-    // ======================================================
-
-    return $this->runTransaction(function () use (
-
-      $rowIterator,
-      $jmlHeader,
-      $columnMap,
-      $columns,
-      $table,
-      $tbl,
-      $kd_wilayah,
-      $tahun,
-      $peraturan_id,
-      &$headers,
-      &$totalRows,
-      &$successRows,
-      &$failedRows,
-      &$errorRows
-
-    ) {
-      $duplicateMemory = [];   // tambahkan baris ini
-      $rowNumber = 0;
-
-      // ==================================================
-      // LOOP SEMUA BARIS EXCEL
-      // ==================================================
-
-      foreach ($rowIterator as $row) {
-
-        $rowNumber++;
-
-        // iterator cell
-        $cellIterator = $row->getCellIterator();
-
-        // baca semua cell
-        $cellIterator->setIterateOnlyExistingCells(false);
-
-        $values = [];
-
-        foreach ($cellIterator as $cell) {
-          $values[] = trim((string)$cell->getValue());
+    if(!$headers)throw new InvalidArgumentException('Header Excel kosong. Pilih nomor baris header yang benar.');
+    $system=['id','id_row','kd_wilayah','kd_opd','tahun','is_deleted','disable','kunci','setujui','tgl_insert','tgl_update','username_insert','username_update'];
+    return $this->runTransaction(function()use($sheet,$headers,$schema,$system,$profile,$table,$tbl,$jmlHeader){
+      $total=0;$success=0;$errors=[];
+      for($r=$jmlHeader+1,$last=$sheet->getHighestDataRow();$r<=$last;$r++){
+        $data=[];$nonEmpty=false;$counted=false;
+        try{
+          foreach($headers as$c=>$field){
+            $cell=$sheet->getCell([$c,$r]);$raw=$cell->getValue();
+            if($raw!==null&&$raw!=='')$nonEmpty=true;
+            if(in_array($field,$system,true)||$raw===null||$raw==='')continue;
+            if($field==='npwp'&&$cell->getDataType()===\PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_NUMERIC)throw new InvalidArgumentException('NPWP wajib bertipe teks. Gunakan format Text lalu isi ulang NPWP lengkap.');
+            $value=$cell->isFormula()?$cell->getCalculatedValue():$raw;
+            if(is_string($value)&&preg_match('/^#(?:REF!|VALUE!|DIV\/0!|NAME\?|N\/A|NUM!)/',$value))throw new InvalidArgumentException("Nilai/formula kolom $field tidak valid.");
+            if(preg_match('/^(?:date|datetime|timestamp)/i',$schema[$field]??'')&&is_numeric($value)){
+              $value=\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject((float)$value)->format(str_starts_with(strtolower($schema[$field]),'date(')||strtolower($schema[$field])==='date'?'Y-m-d':'Y-m-d H:i:s');
+            }
+            $data[$field]=is_string($value)?trim($value):$value;
+          }
+          if(!$nonEmpty)continue;
+          $total++;$counted=true;
+          $this->db->query('SAVEPOINT excel_import_row');
+          try{
+            if(!empty($profile['import_relations']))$data=$this->resolveImportRelations($data,$profile['import_relations'],$r);
+            if($table==='rekening_kegiatan'&&empty($data['level'])&&!empty($data['kode'])){ $levels=[1=>'urusan',2=>'bidang',3=>'program',5=>'kegiatan',6=>'sub_kegiatan'];$data['level']=$levels[count(explode('.',(string)$data['kode']))]??''; }
+            $request=$data+['tbl'=>$tbl,'action'=>'add','_import_row'=>$r];
+            // Reuse the same scope, hierarchy, date, assignment, lock and field
+            // validation as the add form, including all dependent writes.
+            $response=json_decode($this->insert($table,$request),true);
+            if(empty($response['success'])){
+              $detail=$response['errors']??[];
+              throw new InvalidArgumentException(($response['message']??'Data tidak dapat disimpan').($detail?' — '.json_encode($detail,JSON_UNESCAPED_UNICODE):''));
+            }
+            $this->db->query('RELEASE SAVEPOINT excel_import_row');$success++;
+          }catch(\Throwable $e){$this->db->query('ROLLBACK TO SAVEPOINT excel_import_row');$this->db->query('RELEASE SAVEPOINT excel_import_row');throw $e;}
+        }catch(\Throwable $e){
+          if(!$nonEmpty)continue;
+          if(!$counted)$total++;
+          $errors[]=['row'=>$r,'message'=>$e->getMessage()];
         }
-        //===============================================
-        // HEADER PROCESSING
-        // ===============================================
-
-        if ($rowNumber <= $jmlHeader) {
-
-          // header terakhir
-          if ($rowNumber === $jmlHeader) {
-            foreach ($values as $h) {
-              if ($h === '') {
-                continue;
-              }
-              // normalisasi header
-              $normalized = $this->importHelper()->normalizeForCompare($h);
-              // cek apakah cocok dengan kolom tabel
-              if (!isset($columnMap[$normalized])) {
-                throw new Exception(
-                  "Header Excel '{$h}' tidak cocok dengan kolom tabel."
-                );
-              }
-              // simpan mapping header
-              $headers[] = $columnMap[$normalized];
-            }
-          }
-
-          continue;
-        }
-
-
-        // ==================================================
-        // BARIS DATA
-        // ==================================================
-
-        $totalRows++;
-
-        $data = [];
-
-        foreach ($values as $k => $v) {
-
-          if (!isset($headers[$k])) {
-            continue;
-          }
-
-          $data[$headers[$k]] = $v;
-        }
-
-        // Jangan mengirim string kosong untuk kolom opsional. Pada MySQL
-        // strict mode nilai tersebut tidak valid untuk DATE/DATETIME dan
-        // beberapa tipe numerik; dengan menghapusnya, default schema (NULL
-        // atau nilai default kolom) tetap berlaku.
-        $data = array_filter($data, static function ($value) {
-          return $value !== '';
-        });
-        try {
-          // ==================================================
-          // INJECT SCOPE
-          // ==================================================
-          if (in_array('kd_wilayah', $columns)) {
-            $data['kd_wilayah'] = $kd_wilayah;
-          }
-
-          if (in_array('tahun', $columns)) {
-            $data['tahun'] = $tahun;
-          }
-
-          // ======================================================
-          // tambahkan peraturan_id otomatis jika ada mapping
-          // ======================================================
-
-          if (in_array('peraturan_id', $columns)) {
-            $data['peraturan_id'] = $peraturan_id;
-          }
-
-
-          // ==================================================
-          // RESOLVE RELATIONS
-          // ==================================================
-
-          $profile = $this->profiles[$tbl] ?? [];
-
-          if ($table === 'master_biaya' && in_array($tbl, ['ssh', 'hspk', 'asb', 'sbu'], true)) {
-            $data['tipe'] = $tbl;
-            $data['kode_aset'] = $this->validateAssetCode($data['kode_aset'] ?? null, $rowNumber);
-          }
-
-          $relations = $profile['import_relations'] ?? [];
-
-          if (!empty($relations)) {
-
-            $data = $this->resolveImportRelations(
-              $data,
-              $relations,
-              $rowNumber
-            );
-          }
-
-          // ==================================================
-          // AUTO DETECT LEVEL UNTUK rekening_kegiatan
-          // ==================================================
-
-          if ($table === 'rekening_kegiatan' && !empty($data['kode'])) {
-
-            $segments = explode('.', $data['kode']);
-            $count = count($segments);
-
-            $levelMap = [
-              1 => 'urusan',
-              2 => 'bidang',
-              3 => 'program',
-              5 => 'kegiatan',
-              6 => 'sub_kegiatan'
-            ];
-            if (!isset($levelMap[$count])) {
-              continue;
-            }
-
-            $data['level'] = $levelMap[$count];
-
-            // set parent_kode otomatis
-            if ($count > 1) {
-              $data['parent_kode'] = substr(
-                $data['kode'],
-                0,
-                strrpos($data['kode'], '.')
-              );
-            }
-
-            $hierarchyError = $this->applyRekeningHierarchy($data, $data['level']);
-            if ($hierarchyError !== null) {
-              $decodedError = json_decode($hierarchyError, true);
-              throw new Exception($decodedError['message'] ?? 'Hierarki nomenklatur import tidak valid');
-            }
-          }
-          // ==================================================
-          // SANITASI DATA
-          // ==================================================
-
-          $data = $this->sanitizer()->applySanitization($table, $data);
-
-
-          // ==================================================
-          // AUDIT TRAIL
-          // ==================================================
-
-          $data = $this->injectAudit($data, 'insert');
-
-          // ======================================================
-          // CEK DUPLICATE DALAM FILE EXCEL
-          // ======================================================
-
-          $profile = $this->getProfileByTable($table);
-
-          if (!empty($profile['not_duplicate'])) {
-
-            $keyParts = [];
-
-            foreach ($profile['not_duplicate'] as $field) {
-
-              $keyParts[] = $data[$field] ?? '';
-            }
-
-            $duplicateKey = implode('|', $keyParts);
-
-            if (isset($duplicateMemory[$duplicateKey])) {
-
-              throw new Exception(
-                "Duplicate antar baris Excel terdeteksi."
-              );
-            }
-
-            $duplicateMemory[$duplicateKey] = true;
-          }
-
-          // ======================================================
-          // VALIDASI DUPLICATE DATABASE
-          // ======================================================
-
-          $this->validateDuplicate($table, $data);
-
-
-          // ==================================================
-          // INSERT DATABASE
-          // ==================================================
-
-          (new PaguLimitService($this->user))->validate($table, $data);
-          $this->db->insert($table, $data);
-
-          $successRows++;
-        } catch (\Throwable $e) {
-
-          $failedRows++;
-
-          $errorRows[] = [
-            'row' => $rowNumber,
-            'message' => $e->getMessage()
-          ];
-        }
+        unset($request);
       }
-
-
-      // ==================================================
-      // GROUP ERROR
-      // ==================================================
-
-      $groupedErrors = $this->importHelper()->groupImportErrors($errorRows); // //
-
-
-      // ==================================================
-      // RETURN RESULT
-      // ==================================================
-
-      return JsonResponse::success(
-        "Import selesai",
-        [
-          'total' => $totalRows,
-          'berhasil' => $successRows,
-          'gagal' => $failedRows
-        ],
-        $groupedErrors
-      );
+      if(!$total)throw new InvalidArgumentException('Tidak ada baris data yang dapat diimpor.');
+      http_response_code(200);
+      $grouped=$this->importHelper()->groupImportErrors($errors);
+      $message="Impor selesai: $success dari $total baris berhasil; ".count($errors).' baris gagal.';
+      return json_encode(['success'=>$success>0,'message'=>$message,'meta'=>['total'=>$total,'berhasil'=>$success,'gagal'=>count($errors)],'data'=>$grouped,'errors'=>$success===0?['file'=>array_map(fn($e)=>'Baris '.implode(', ',$e['rows']).': '.$e['message'],$grouped)]:[]],JSON_UNESCAPED_UNICODE);
     });
   }
 

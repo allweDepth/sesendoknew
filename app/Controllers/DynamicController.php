@@ -5,6 +5,7 @@ require_once __DIR__ . '/../Services/DynamicTableService.php';
 require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../Services/JsonResponse.php';
 require_once __DIR__ . '/../Services/PageSetupService.php';
+require_once __DIR__ . '/../Services/ExcelPresentationService.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -139,8 +140,9 @@ class DynamicController
         $cell = $col . $row;
         $fieldName = strtolower((string)$field);
 
-        if (preg_match('/(^kode$|^kd_|_kode$|^nip$|^npwp$|nomor)/', $fieldName)) {
+        if (preg_match('/(^kode$|^kd_|_kode$|(?:^|_)(?:nip|npwp)(?:_|$)|nomor|no_rekening|sipd_id)/', $fieldName)) {
           $sheet->setCellValueExplicit($cell, (string)$value, DataType::TYPE_STRING);
+          $sheet->getStyle($cell)->getNumberFormat()->setFormatCode('@');
         } elseif ($value !== null && $value !== '' && is_numeric($value)) {
           $sheet->setCellValue($cell, (float)$value);
           if (preg_match('/harga|nilai|pagu|anggaran|total|jumlah/', $fieldName)) {
@@ -152,7 +154,7 @@ class DynamicController
             str_contains((string)$value, ' ') ? 'dd/mm/yyyy hh:mm' : 'dd/mm/yyyy'
           );
         } else {
-          $sheet->setCellValue($cell, $value);
+          $sheet->setCellValueExplicit($cell, (string)$value, DataType::TYPE_STRING);
         }
         $colIndex++;
       }
@@ -167,7 +169,7 @@ class DynamicController
     header('Content-Disposition: attachment; filename="' . $fileName . '"');
     header('Cache-Control: max-age=0');
 
-    $sheet->setAutoFilter("A1:{$lastColumn}1");
+    $sheet->setAutoFilter("A1:{$lastColumn}".max(1,$row-1));
     $sheet->freezePane('A2');
     $sheet->getStyle("A1:{$lastColumn}1")->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');
     $sheet->getStyle("A1:{$lastColumn}1")->getFill()->setFillType('solid')->getStartColor()->setARGB('FF176B87');
@@ -179,6 +181,7 @@ class DynamicController
     }
 
     PageSetupService::applyExcel($sheet,PageSetupService::current($_SESSION['user']??[]),'L');
+    ExcelPresentationService::apply($spreadsheet, $_SESSION['user']??[], str_replace('_',' ',ucfirst($tableKey)));
     $writer = new Xlsx($spreadsheet);
     $writer->save('php://output');
     exit;
@@ -194,16 +197,20 @@ class DynamicController
     $columns=array_values(array_filter(array_column($db->query("SHOW COLUMNS FROM `$table`")->fetchAll(),'Field'),fn($c)=>!in_array($c,$skip,true)));
     $book=new Spreadsheet();$sheet=$book->getActiveSheet();$sheet->setTitle(substr('Template-'.$key,0,31));
     foreach($columns as $i=>$column){$cell=Coordinate::stringFromColumnIndex($i+1).'1';$sheet->setCellValue($cell,strtoupper($column));$sheet->getColumnDimension(Coordinate::stringFromColumnIndex($i+1))->setWidth(max(14,min(32,strlen($column)+5)));}
+    foreach($columns as$i=>$column){if(preg_match('/kode|^kd_|nip|npwp|nomor|rekening/',$column))$sheet->getStyle(Coordinate::stringFromColumnIndex($i+1).':'.Coordinate::stringFromColumnIndex($i+1))->getNumberFormat()->setFormatCode('@');}
     $last=Coordinate::stringFromColumnIndex(max(1,count($columns)));$sheet->getStyle("A1:{$last}1")->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');$sheet->getStyle("A1:{$last}1")->getFill()->setFillType('solid')->getStartColor()->setARGB('FF176B87');$sheet->getStyle("A1:{$last}50")->getBorders()->getAllBorders()->setBorderStyle('hair')->getColor()->setARGB('FFD5E1E8');$sheet->freezePane('A2');$sheet->setAutoFilter("A1:{$last}1");
     PageSetupService::applyExcel($sheet,PageSetupService::current($_SESSION['user']??[]),'L');
+    ExcelPresentationService::apply($book, $_SESSION['user']??[], 'Template impor '.str_replace('_',' ',$key));
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');header('Content-Disposition: attachment; filename="template-'.preg_replace('/[^a-z0-9_-]/i','',$key).'.xlsx"');(new Xlsx($book))->save('php://output');exit;
   }
 
   /* ==========================================================
        IMPORT (STRICT + PROTECTED)
     ========================================================== */
-  private function import()
+  public function import()
   {
+    $this->guard();
+    try {
     $profiles = require __DIR__ . '/../Config/table_profiles.php';
 
     $tableKey = $_POST['tbl'] ?? null;
@@ -229,6 +236,11 @@ class DynamicController
       $jmlHeader
     );
 
+    } catch (Throwable $e) {
+      http_response_code(400);
+      header('Content-Type: application/json; charset=UTF-8');
+      echo JsonResponse::error($e->getMessage());
+    }
     exit;
   }
 }

@@ -1211,11 +1211,7 @@ UIConfig.evaluasi_renja={layout:{columns:1},validation:{triwulan:{required:true}
 	{tag:"fieldTextarea",prop:{label:"Faktor Pendorong",name:"faktor_pendorong"}},{tag:"fieldTextarea",prop:{label:"Faktor Penghambat",name:"faktor_penghambat"}},{tag:"fieldTextarea",prop:{label:"Tindak Lanjut",name:"tindak_lanjut"}},{tag:"fieldDropdown",prop:{label:"Status",name:"status",options:[{value:"draft",text:"Draft"},{value:"dikirim",text:"Dikirim ke Bappeda"},{value:"diverifikasi",text:"Diverifikasi"},{value:"perbaikan",text:"Perlu Perbaikan"}]}}
 ]}};
 UIConfig.__importFactory = function (tbl, templateFile) {
-	const templateHtml = templateFile
-		? `<a href="/assets/template_import/${templateFile}" target="_blank">
-                Download Template ${tbl}
-           </a>`
-		: `<a href="/template_import?tabel=${encodeURIComponent(tbl)}" target="_blank">Download Template ${tbl}</a>`;
+	const templateHtml = `<a href="/template_import?tabel=${encodeURIComponent(tbl)}" target="_blank">Download Template ${tbl}</a>`;
 
 	return {
 		layout: { columns: 1 },
@@ -1254,12 +1250,12 @@ UIConfig.__importFactory = function (tbl, templateFile) {
 				{
 					tag: "fieldDropdown",
 					prop: {
-						label: "Jumlah Header",
+						label: "Nomor baris header",
 						name: "jml_header",
 						default: "1",
 						options: Array.from({ length: 8 }, (_, i) => ({
-							value: String(i),
-							text: String(i),
+							value: String(i + 1),
+							text: String(i + 1),
 						})),
 					},
 				},
@@ -1301,7 +1297,7 @@ UIConfig.sbu.import = UIConfig.__importFactory("sbu", null);
 UIConfig.ssh.import = UIConfig.__importFactory("ssh", null);
 UIConfig.hspk.import = UIConfig.__importFactory("hspk", null);
 UIConfig.asb.import = UIConfig.__importFactory("asb", null);
-UIConfig.aset.import = UIConfig.__importFactory("aset_neo", null); //DEFAULT GLOBAL TANPA TEMPLATE
+UIConfig.aset.import = UIConfig.__importFactory("aset", null); //DEFAULT GLOBAL TANPA TEMPLATE
 
 const phase3Flags = [
 	{ tag: "fieldCheckbox", prop: { label: "Kunci", name: "kunci" } },

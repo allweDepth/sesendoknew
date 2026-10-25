@@ -282,7 +282,7 @@ mendukung:
 
 		return `
         <div class="field">
-            <div class="ui ${variant} message">
+            <div class="ui ${variant} message" style="display:block">
                 ${icon ? `<i class="${icon} icon"></i>` : ""}
                 <div class="content">
                     ${title ? `<div class="header">${title}</div>` : ""}

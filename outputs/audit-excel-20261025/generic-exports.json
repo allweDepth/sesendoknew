@@ -1,0 +1,284 @@
+[
+  {
+    "type": "export",
+    "profile": "akun",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "sbu",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "ssh",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "asb",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "hspk",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "mapping",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "aset",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "organisasi",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "satuan",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "satuan_teks",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "sumber_dana",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "wilayah",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "peraturan",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "rekanan",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "renja",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "renja_p",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "renstra_skpd",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "tujuan_sasaran_renstra",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "asn",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "pppk",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "riwayat_jabatan",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "riwayat_pangkat",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "cuti",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "sk_pegawai",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "pejabat_tahunan",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "register_surat",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "misi_renstra_neo",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "tujuan_renstra_neo",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "sasaran_renstra_neo",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "indikator_sasaran_renstra_neo",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "program_renstra_neo",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "indikator_program_renstra_neo",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "kegiatan_renstra_neo",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "sub_kegiatan_renstra_neo",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "referensi_sub_kegiatan_renstra",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "renstra_neo",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "periode_rpjmd",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "rekening_kegiatan",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "kontrak",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "trx_naskah_dinas",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "ref_klasifikasi_keamanan",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "sk",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "pengaturan",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "group_sub_kegiatan",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "profil",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "wallchat",
+    "status": "PASS",
+    "sheets": 1
+  },
+  {
+    "type": "export",
+    "profile": "halaman_berita",
+    "status": "PASS",
+    "sheets": 1
+  }
+]

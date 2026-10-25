@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/ExcelPresentationService.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../Core/Auth.php';
@@ -404,58 +405,64 @@ class KontrakRealisasiService
 
   public function rabExcel(int $contractId): string
   {
-    $data = $this->delivery($contractId);
-    $book = new Spreadsheet();
-    $s = $book->getActiveSheet();
-    $s->setTitle('RAB dan Kurva S');
-    $s->fromArray(['NO', 'URAIAN', 'SATUAN', 'VOLUME', 'HARGA SATUAN', 'JUMLAH', 'BOBOT %'], null, 'A1');
-    $r = 2;
-    $rabLabel = [];
-    foreach ($data['rab'] as $i => $x) {
-      if(($x['type']??'')==='KETERANGAN'){$s->fromArray([$x['nomor'],$x['uraian']],null,'A'.$r);$s->getStyle('A'.$r.':G'.$r)->getFont()->setBold(true);$r++;continue;}
-      $rabLabel[(int)$x['id']] = ($x['nomor'] ?: $i + 1) . ' - ' . $x['uraian'];
-      $s->fromArray([$x['nomor'] ?: $i + 1, $x['uraian'], $x['satuan'], (float)$x['vol_negoisasi'], (float)$x['harga_sat_negoisasi'], (float)$x['jumlah_negoisasi'], (float)$x['bobot']], null, 'A' . $r++);
+    $data=$this->delivery($contractId);$book=new Spreadsheet();$s=$book->getActiveSheet();$s->setTitle('RAB');
+    $s->fromArray(['NO','URAIAN','SATUAN','VOLUME','HARGA SATUAN SEBELUM PAJAK','PAJAK %','JUMLAH TERMASUK PAJAK','BOBOT %'],null,'A1',true);
+    $r=2;$labels=[];
+    foreach($data['rab'] as$i=>$x){
+      $s->setCellValueExplicit('A'.$r,(string)(($x['type']??'')==='KETERANGAN'?($x['nomor']??''):($x['nomor']?:$i+1)),\PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+      $s->setCellValueExplicit('B'.$r,(string)$x['uraian'],\PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+      if(($x['type']??'')==='KETERANGAN'){$s->getStyle("A$r:H$r")->getFont()->setBold(true);$s->getStyle("A$r:H$r")->getFill()->setFillType('solid')->getStartColor()->setARGB('FFDCEAF2');$r++;continue;}
+      $labels[(int)$x['id']]=($x['nomor']?:$i+1).' - '.$x['uraian'];
+      $s->fromArray([$x['satuan'],(float)$x['vol_negoisasi'],(float)$x['harga_sat_negoisasi'],(float)$x['pajak'],(float)$x['jumlah_negoisasi'],(float)$x['bobot']],null,'C'.$r++,true);
     }
-    $r += 2;
-    $s->fromArray(['ITEM RAB', 'MINGGU', 'MULAI', 'SELESAI', 'RENCANA ITEM %', 'REALISASI ITEM %', 'RENCANA KUM. ITEM %', 'REALISASI KUM. ITEM %'], null, 'A' . $r++);
-    foreach ($data['schedule'] as $x) $s->fromArray([$rabLabel[(int)($x['rab_id'] ?? 0)] ?? 'Jadwal lama/tanpa item', $x['minggu_ke'], $x['tanggal_mulai'], $x['tanggal_selesai'], (float)$x['bobot_rencana'], (float)$x['bobot_realisasi'], (float)$x['rencana_kumulatif'], (float)$x['realisasi_kumulatif']], null, 'A' . $r++);
-    $r += 2;
-    $s->fromArray(['KURVA S KONTRAK', 'MINGGU', 'RENCANA KUMULATIF %', 'REALISASI KUMULATIF %'], null, 'A' . $r++);
-    foreach ($data['curve'] as $x) $s->fromArray(['', $x['minggu_ke'], (float)$x['rencana_kumulatif'], (float)$x['realisasi_kumulatif']], null, 'A' . $r++);
-    foreach (range('A', 'H') as $c) $s->getColumnDimension($c)->setAutoSize(true);
-    $s->getStyle('A1:H1')->getFont()->setBold(true);
-    PageSetupService::applyExcel($s,PageSetupService::current($this->user),'L');
-    $tmp = tempnam(sys_get_temp_dir(), 'rab_') . '.xlsx';
-    (new Xlsx($book))->save($tmp);
-    return $tmp;
+    $s->setCellValue('B'.$r,'TOTAL RAB')->setCellValue('G'.$r,$r>2?'=SUM(G2:G'.($r-1).')':0);
+    $s->getStyle("A$r:H$r")->getFont()->setBold(true);
+    $s->getStyle('F2:F'.$r)->getNumberFormat()->setFormatCode('0.00"%"');$s->getStyle('H2:H'.$r)->getNumberFormat()->setFormatCode('0.00"%"');
+    $schedule=$book->createSheet();$schedule->setTitle('Jadwal');$schedule->fromArray(['ITEM RAB','MINGGU','MULAI','SELESAI','RENCANA ITEM %','REALISASI ITEM %','RENCANA KUM. ITEM %','REALISASI KUM. ITEM %'],null,'A1',true);$r=2;
+    foreach($data['schedule']as$x){$schedule->fromArray([$labels[(int)($x['rab_id']??0)]??'Jadwal lama/tanpa item',$x['minggu_ke'],$x['tanggal_mulai'],$x['tanggal_selesai'],(float)$x['bobot_rencana'],(float)$x['bobot_realisasi'],(float)$x['rencana_kumulatif'],(float)$x['realisasi_kumulatif']],null,'A'.$r++,true);}
+    $curve=$book->createSheet();$curve->setTitle('Kurva S');$curve->fromArray(['MINGGU','RENCANA KUMULATIF %','REALISASI KUMULATIF %'],null,'A1',true);$r=2;
+    foreach($data['curve']as$x)$curve->fromArray([$x['minggu_ke'],(float)$x['rencana_kumulatif'],(float)$x['realisasi_kumulatif']],null,'A'.$r++,true);
+    $book->setActiveSheetIndex(0);
+    ExcelPresentationService::apply($book,$this->user,'RAB — '.($data['contract']['nomor_kontrak']??$contractId));
+    $tmp=tempnam(sys_get_temp_dir(),'rab_').'.xlsx';(new Xlsx($book))->save($tmp);return$tmp;
   }
 
-  public function importRab(int $contractId, string $filePath): array
+  public function importRab(int $contractId,string $filePath):array
   {
-    $this->assertCanWrite();
-    if (!is_file($filePath)) throw new InvalidArgumentException('File RAB tidak ditemukan');
-    $sheet = IOFactory::load($filePath)->getActiveSheet();
-    $rows = $sheet->toArray(null, true, false, true);
-    $items = [];
-    $extended=strtoupper(trim((string)$sheet->getCell('G1')->getValue()))==='SATUAN';
-    foreach ($rows as $index => $row) {
-      if ($index <= ($extended?2:1)) continue;
-      if (in_array(strtoupper(trim((string)($row['A'] ?? ''))),['MINGGU','ITEM RAB','KURVA S KONTRAK'],true)) break;
-      $description = trim((string)($row['B'] ?? ''));
-      $unit = trim((string)($row[$extended?'G':'C'] ?? ''));
-      $volume = $row[$extended?'F':'D'] ?? null;
-      $price = $row[$extended?'J':'E'] ?? null;
-      if ($description === '' || preg_match('/^\d{4}-\d{2}-\d{2}$/', $description)) continue;
-      if($unit===''&&($volume===null||$volume===''||$volume===0)&&($price===null||$price===''||$price===0)){
-        $items[]=['nomor'=>(string)($row['A']??''),'uraian'=>$description,'type'=>'KETERANGAN'];continue;
-      }
-      if($unit===''||!is_numeric($volume)||!is_numeric($price)||(float)$volume<=0||(float)$price<=0)throw new InvalidArgumentException('Data item Excel baris '.$index.' belum lengkap');
-      $items[] = ['nomor' => $row['A'] ?? count($items) + 1, 'uraian' => $description, 'satuan' => $unit, 'volume' => (float)$volume, 'harga_satuan' => (float)$price, 'pajak'=>$extended?(float)($row['K']??0):0, 'keterangan' => $extended?'':trim((string)($row['H'] ?? ''))];
+    $this->assertCanWrite();$this->contractHeader($contractId,true);
+    if(!is_file($filePath))throw new InvalidArgumentException('File RAB tidak ditemukan');
+    $book=IOFactory::load($filePath);$sheet=$book->getSheetByName('RAB')??$book->getActiveSheet();
+    $rows=$sheet->toArray(null,true,false,true);$items=[];$map=[];$header=0;
+    $normalize=fn($v)=>preg_replace('/[^a-z0-9]/','',strtolower(trim((string)$v)));
+    foreach(array_slice($rows,0,50,true)as$index=>$row){
+      $candidate=[];foreach($row as$col=>$v){$key=$normalize($v);if(in_array($key,['uraian','jenisbarangjasa','uraiankegiatan'],true))$candidate['uraian']=$col;elseif(in_array($key,['no','nomor','noitem'],true))$candidate['nomor']=$col;elseif(in_array($key,['satuan','satuanunit'],true))$candidate['satuan']=$col;elseif(in_array($key,['volume','volumenegoisasi','volumepenawaran'],true))$candidate['volume']=$col;elseif(in_array($key,['hargasatuan','hargasatuansebelumpajak'],true))$candidate['harga_satuan']=$col;elseif(in_array($key,['pajak','pajakpersen','ppn'],true))$candidate['pajak']=$col;}
+      if(count(array_intersect(['uraian','satuan','volume','harga_satuan'],array_keys($candidate)))===4){$map=$candidate;$header=$index;break;}
     }
-    if (!$items) throw new InvalidArgumentException('Tidak ada baris RAB yang dapat diimpor. Gunakan template resmi.');
-    $result = $this->saveRab($contractId, $items);
-    $result['imported'] = count($items);
-    return $result;
+    if(!$map&&strtoupper(trim((string)$sheet->getCell('G1')->getValue()))==='SATUAN'){$map=['nomor'=>'A','uraian'=>'B','satuan'=>'G','volume'=>'F','harga_satuan'=>'J','pajak'=>'K'];$header=2;}
+    if(!$map)throw new InvalidArgumentException('Header RAB tidak dikenali. Wajib ada Uraian, Satuan, Volume dan Harga Satuan.');
+    foreach($rows as$index=>$row){
+      if($index<=$header)continue;
+      $description=trim((string)($row[$map['uraian']]??''));$number=trim((string)($row[$map['nomor']??'A']??''));
+      if(preg_match('/^(TOTAL RAB|JUMLAH(?: TOTAL)?|ITEM RAB|KURVA S KONTRAK|MINGGU)$/i',$description)||in_array(strtoupper($number),['ITEM RAB','KURVA S KONTRAK','MINGGU'],true))break;
+      if($description==='')continue;
+      $unit=trim((string)($row[$map['satuan']]??''));$volume=$row[$map['volume']]??null;$price=$row[$map['harga_satuan']]??null;
+      if($unit===''&&($volume===null||$volume===''||$volume===0)&&($price===null||$price===''||$price===0)){$items[]=['nomor'=>$number,'uraian'=>$description,'type'=>'KETERANGAN'];continue;}
+      foreach(['volume'=>$volume,'harga_satuan'=>$price,'pajak'=>$row[$map['pajak']??'ZZ']??0]as$key=>$value){
+        if(is_string($value)&&!is_numeric($value)){$value=str_replace(['Rp','rp',' ',"\xc2\xa0"],'',$value);if(str_contains($value,','))$value=str_replace(',','.',str_replace('.','',$value));}
+        if(!is_numeric($value))throw new InvalidArgumentException("Excel baris $index: $key harus berupa angka.");
+        $values[$key]=(float)$value;
+      }
+      if($unit===''||$values['volume']<=0||$values['harga_satuan']<=0||$values['pajak']<0||$values['pajak']>100)throw new InvalidArgumentException("Data item Excel baris $index belum lengkap atau nilainya tidak valid.");
+      $items[]=['nomor'=>$number?:count($items)+1,'uraian'=>$description,'satuan'=>$unit]+$values;
+    }
+    if(!$items)throw new InvalidArgumentException('Tidak ada baris RAB yang dapat diimpor.');
+    $existing=$this->delivery($contractId)['rab'];$used=[];
+    foreach($items as &$item){
+      $matches=array_values(array_filter($existing,fn($x)=>!isset($used[$x['id']])&&(string)$x['nomor']===(string)$item['nomor']));
+      if(count($matches)!==1)$matches=array_values(array_filter($existing,fn($x)=>!isset($used[$x['id']])&&(string)$x['uraian']===(string)$item['uraian']));
+      if(count($matches)===1){$item['id']=(int)$matches[0]['id'];$used[$item['id']]=true;}
+    }unset($item);
+    $result=$this->saveRab($contractId,$items);$result['imported']=count($items);return$result;
   }
 
   public function rabPdf(int $contractId): string
@@ -771,10 +778,10 @@ class KontrakRealisasiService
     $sheet = $book->getActiveSheet();
     $sheet->setTitle('Kontrak dan Realisasi');
     $headers = ['NO', 'TAHAP', 'SUB KEGIATAN', 'NOMOR KONTRAK', 'PEKERJAAN', 'PENYEDIA', 'ANGGARAN', 'NILAI KONTRAK', 'REALISASI', 'PROGRESS FISIK', 'DEVIASI'];
-    $sheet->fromArray($headers, null, 'A1');
+    $sheet->fromArray($headers, null, 'A1',true);
     $row = 2;
     foreach ($rows as $i => $r) {
-      $sheet->fromArray([$i + 1, $r['tahap'], $r['kd_sub_keg'], $r['nomor_kontrak'], $r['uraian_kontrak'], $r['penyedia'], (float)$r['total_anggaran'], (float)$r['nilai_kontrak'], (float)$r['realisasi'], (float)$r['progress_fisik'], (float)$r['nilai_kontrak'] - (float)$r['realisasi']], null, 'A' . $row++);
+      $sheet->fromArray([$i + 1, $r['tahap'], $r['kd_sub_keg'], $r['nomor_kontrak'], $r['uraian_kontrak'], $r['penyedia'], (float)$r['total_anggaran'], (float)$r['nilai_kontrak'], (float)$r['realisasi'], (float)$r['progress_fisik'], (float)$r['nilai_kontrak'] - (float)$r['realisasi']], null, 'A' . $row++,true);
     }
     $sheet->getStyle('A1:K1')->getFont()->setBold(true);
     $sheet->getStyle('G2:K' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
@@ -790,6 +797,7 @@ class KontrakRealisasiService
       $sheet->addChart($chart);
     }
     PageSetupService::applyExcel($sheet,PageSetupService::current($this->user),'L');
+    ExcelPresentationService::apply($book,$this->user);
     $tmp = tempnam(sys_get_temp_dir(), 'phase4_') . '.xlsx';
     (new Xlsx($book))->setIncludeCharts(true)->save($tmp);
     return $tmp;
@@ -905,15 +913,15 @@ class KontrakRealisasiService
     $last = Coordinate::stringFromColumnIndex(count($headers));
     $s->mergeCells("A1:{$last}1")->setCellValue('A1', strtoupper($titles[$format]) . ' TAHUN ' . $year);
     $s->mergeCells("A2:{$last}2")->setCellValue('A2', 'Dicetak ' . date('d-m-Y H:i'));
-    $s->fromArray($headers, null, 'A4');
+    $s->fromArray($headers, null, 'A4',true);
     $row = 5;
-    foreach ($dataRows as $values) $s->fromArray($values, null, 'A' . $row++);
+    foreach ($dataRows as $values) $s->fromArray($values, null, 'A' . $row++,true);
     $totalRow = $row;
     $s->setCellValue('A' . $totalRow, 'TOTAL');
     $s->mergeCells('A' . $totalRow . ':C' . $totalRow);
-    if ($format === 'spj') $s->setCellValue('H' . $totalRow, '=SUM(H5:H' . ($row - 1) . ')');
+    if ($format === 'spj') $s->setCellValue('H' . $totalRow, $dataRows?'=SUM(H5:H' . ($row - 1) . ')':0);
     elseif ($format === 'lra') {
-      foreach (['D', 'E', 'F'] as $column) $s->setCellValue($column . $totalRow, '=SUM(' . $column . '5:' . $column . ($row - 1) . ')');
+      foreach (['D', 'E', 'F'] as $column) $s->setCellValue($column . $totalRow, $dataRows?'=SUM(' . $column . '5:' . $column . ($row - 1) . ')':0);
       $s->setCellValue('G' . $totalRow, "=IF(D{$totalRow}=0,0,E{$totalRow}/D{$totalRow}*100)");
     } else {
       $s->setCellValue('D' . $totalRow, '=SUM(D5:D' . ($row - 1) . ')');
@@ -921,7 +929,7 @@ class KontrakRealisasiService
     if(in_array($format,['spj','lra'],true)){
       $source=$format==='spj'?$this->financialRows():$this->lraRows();
       $summary=$this->accountLevelSummary($source,$format==='spj'?'jumlah':'realisasi');
-      if($summary){$summaryRow=$totalRow+3;$s->setCellValue('A'.$summaryRow,'REKAP NOMOR REKENING BELANJA PER LEVEL');$s->mergeCells('A'.$summaryRow.':'.$last.$summaryRow);$s->getStyle('A'.$summaryRow.':'.$last.$summaryRow)->getFont()->setBold(true);$summaryRow++;$s->fromArray(['KODE REKENING','URAIAN','JUMLAH'],null,'A'.$summaryRow);$s->getStyle('A'.$summaryRow.':C'.$summaryRow)->getFont()->setBold(true);$summaryRow++;foreach($summary as $level){$s->fromArray([$level['kode'],$level['uraian'],$level['jumlah']],null,'A'.$summaryRow++);}$s->getStyle('C'.($totalRow+5).':C'.max($totalRow+5,$summaryRow-1))->getNumberFormat()->setFormatCode('#,##0.00');}
+      if($summary){$summaryRow=$totalRow+3;$s->setCellValue('A'.$summaryRow,'REKAP NOMOR REKENING BELANJA PER LEVEL');$s->mergeCells('A'.$summaryRow.':'.$last.$summaryRow);$s->getStyle('A'.$summaryRow.':'.$last.$summaryRow)->getFont()->setBold(true);$summaryRow++;$s->fromArray(['KODE REKENING','URAIAN','JUMLAH'],null,'A'.$summaryRow,true);$s->getStyle('A'.$summaryRow.':C'.$summaryRow)->getFont()->setBold(true);$summaryRow++;foreach($summary as $level){$s->fromArray([$level['kode'],$level['uraian'],$level['jumlah']],null,'A'.$summaryRow++,true);}$s->getStyle('C'.($totalRow+5).':C'.max($totalRow+5,$summaryRow-1))->getNumberFormat()->setFormatCode('#,##0.00');}
     }
     $s->getStyle("A1:{$last}1")->getFont()->setBold(true)->setSize(14)->getColor()->setARGB('FFFFFFFF');
     $s->getStyle("A1:{$last}1")->getFill()->setFillType('solid')->getStartColor()->setARGB('FF174A68');
@@ -952,6 +960,7 @@ class KontrakRealisasiService
       $s->addChart($chart);
     }
     PageSetupService::applyExcel($s,PageSetupService::current($this->user),'L');
+    ExcelPresentationService::apply($book,$this->user);
     $tmp = tempnam(sys_get_temp_dir(), 'finance_') . '.xlsx';
     $writer = new Xlsx($book);
     $writer->setIncludeCharts(true);

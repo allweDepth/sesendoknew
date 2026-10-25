@@ -41,7 +41,10 @@ class AjaxEngine {
 	}) {
 		const recentSubmittedForm = Date.now() - Number(window.__lastSubmittedFormAt || 0) < 1000
 			? window.__lastSubmittedForm : null;
-		const activeForm = $(document.activeElement).closest('form.ui.form')[0] || recentSubmittedForm || null;
+        const payloadValue = key => data instanceof FormData ? data.get(key) : typeof data === 'string' ? new URLSearchParams(data).get(key) : data?.[key];
+        const action = payloadValue('action'), mode = payloadValue('mode');
+        const mutation = String(method).toUpperCase() !== 'GET' && !['list','dropdown','export','count','search','get'].includes(action) && !(action === 'edit' && mode === 'get');
+        const activeForm = mutation ? ($(document.activeElement).closest('form.ui.form')[0] || recentSubmittedForm || null) : null;
 		/**
 		 * Menggunakan jQuery $.ajax
 		 * Tidak diubah ke fetch agar tetap kompatibel
@@ -126,7 +129,7 @@ class AjaxEngine {
 				 */
 				if (!silent && res && typeof res.success !== "undefined") {
 					Toast.show({
-						success: res.success,
+						success: res.success && !(Number(res.meta?.gagal)>0),
 						message: AjaxEngine.formatMessage(res),
 					});
 				}

@@ -184,7 +184,8 @@ class StandarHargaService
 
         $stats = ['total'=>0,'inserted'=>0,'updated'=>0,'mapped'=>0,'unmapped_accounts'=>0,'skipped'=>0,'tahun'=>$year,'tipe'=>$type];
         $unitCache = [];
-        $this->db->begin();
+        $ownsTransaction = !$this->db->inTransaction();
+        if($ownsTransaction)$this->db->begin();
         try {
             for ($rowNumber = 2, $last = $sheet->getHighestDataRow(); $rowNumber <= $last; $rowNumber++) {
                 $values = $sheet->rangeToArray("A{$rowNumber}:I{$rowNumber}", null, true, true, false)[0];
@@ -237,10 +238,10 @@ class StandarHargaService
                     $stats['mapped']++;
                 }
             }
-            $this->db->commit();
+            if($ownsTransaction)$this->db->commit();
             return $stats;
         } catch (Throwable $exception) {
-            $this->db->rollback();
+            if($ownsTransaction)$this->db->rollback();
             throw $exception;
         }
     }

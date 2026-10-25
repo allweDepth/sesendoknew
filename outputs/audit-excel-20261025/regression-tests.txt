@@ -1,0 +1,28 @@
+PASS: Database QA terpisah
+PASS: Uraian lebih lebar daripada nomor
+PASS: Header dan footer cetak serta nomor halaman
+PASS: NPWP tetap teks utuh dengan nol awal dan lebih dari 15 digit
+PASS: Header kosong tidak menggeser kolom dan baris kosong dilewati
+PASS: Identifier nol awal dan scope wilayah dipertahankan
+PASS: Tanggal serial Excel diimpor sebagai tanggal ASN
+PASS: Header ganda ditolak dengan pesan jelas
+PASS: Impor parsial menunjukkan nomor baris gagal dan melanjutkan baris valid
+PASS: NPWP numerik ditolak dengan petunjuk perbaikan
+PASS: Impor SIPD ssh dan angka desimal Indonesia
+PASS: Impor ulang SIPD ssh memperbarui data yang sama
+PASS: Impor SIPD hspk dan angka desimal Indonesia
+PASS: Impor ulang SIPD hspk memperbarui data yang sama
+PASS: Impor SIPD asb dan angka desimal Indonesia
+PASS: Impor ulang SIPD asb memperbarui data yang sama
+PASS: Impor SIPD sbu dan angka desimal Indonesia
+PASS: Impor ulang SIPD sbu memperbarui data yang sama
+PASS: Role viewer tidak dapat melakukan impor
+PASS: Ekspor RAB membawa pajak, jadwal dan kurva dalam sheet terpisah
+PASS: Ekspor-impor RAB mempertahankan item dan ID jadwal
+PASS: Ekspor-impor RAB mempertahankan total termasuk pajak
+PASS: Jadwal tidak hilang saat impor ulang RAB
+PASS: Ekspor spj kosong tidak membuat formula melingkar
+PASS: Ekspor lra kosong tidak membuat formula melingkar
+PASS: Header/footer sheet RAB
+PASS: Header/footer sheet Jadwal
+PASS: Header/footer sheet Kurva S

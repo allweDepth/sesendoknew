@@ -568,6 +568,7 @@ class FormEngine {
 		// GUNAKAN FORM DATA UNTUK SEMUA MODE
 		// ======================================================
 		const formElement = document.querySelector(this.formSelector); // // ambil DOM form
+		form.find(".import-result").remove();
 		const formData = new FormData(formElement); // // selalu FormData
 
 		// ======================================================
@@ -622,7 +623,15 @@ class FormEngine {
 			success: (res) => {
 				if (!res || res.success !== true) return;
 				this.isSubmitting = false; // // reset flag submit
-				FormFeedback.success(form, res.message || "Data berhasil disimpan");
+				if(this.state.action === "import" && res.meta) {
+                    FormFeedback.reset(form);
+                    form.find(".import-result").remove();
+                    const result=$("<div>").addClass("ui import-result "+(Number(res.meta.gagal)>0?"warning":"positive")+" message");
+                    $("<div>").addClass("header").text(res.message).appendTo(result);
+                    const list=$("<ul>").addClass("list").appendTo(result);
+                    (Array.isArray(res.data)?res.data:[]).forEach(x=>$("<li>").text(`Baris ${(x.rows||[]).join(", ")}: ${x.message}`).appendTo(list));
+                    form.append(result); result.show();
+                } else FormFeedback.success(form, res.message || "Data berhasil disimpan");
 
 				// ==================================================
 				// AKTIFKAN KEMBALI CALENDAR YANG TADI DISABLE
