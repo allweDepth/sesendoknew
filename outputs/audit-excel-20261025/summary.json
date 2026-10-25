@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-26",
+  "export_types": 85,
+  "import_templates": 85,
+  "special_exports": 28,
+  "import_modules": 52,
+  "realization_import": "PASS melalui layanan kontrak; penolakan nilai berlebih diuji",
+  "sipd_types": [
+    "ssh",
+    "hspk",
+    "asb",
+    "sbu"
+  ],
+  "focused_assertions_passed": 32,
+  "browser_import": {
+    "meta": {
+      "total": 2,
+      "berhasil": 1,
+      "gagal": 1
+    },
+    "message": "Impor selesai: 1 dari 2 baris berhasil; 1 baris gagal.",
+    "warning_visible": true,
+    "warning_text": "Impor selesai: 1 dari 2 baris berhasil; 1 baris gagal.Baris 2: Validation gagal — {\"direktur\":\"direktur wajib diisi\"}",
+    "template_visible": true
+  },
+  "mapping_performance": {
+    "export": "mapping",
+    "status": "PASS",
+    "seconds": 3.7,
+    "bytes": 702730
+  },
+  "npwp": "MariaDB varchar; XLSX string with @ format; numeric NPWP import rejected with clear field message",
+  "scope": "Ekspor membaca data; pengujian impor memakai database QA terpisah. Data utama tidak diubah.",
+  "limits": [
+    "Uji impor menggunakan data acuan valid per modul, kasus negatif terfokus, dan satu regresi form browser. Tidak mencakup semua variasi file Excel buatan pihak ketiga.",
+    "Pemeriksaan workbook meliputi file XLSX/style/header/footer/lebar kolom dan pratinjau terpilih. Bukan pemeriksaan visual manual setiap sel dari semua ekspor."
+  ]
+}

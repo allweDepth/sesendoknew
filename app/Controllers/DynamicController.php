@@ -171,15 +171,6 @@ class DynamicController
 
     $sheet->setAutoFilter("A1:{$lastColumn}".max(1,$row-1));
     $sheet->freezePane('A2');
-    $sheet->getStyle("A1:{$lastColumn}1")->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');
-    $sheet->getStyle("A1:{$lastColumn}1")->getFill()->setFillType('solid')->getStartColor()->setARGB('FF176B87');
-    $sheet->getStyle("A1:{$lastColumn}".max(1,$row-1))->getBorders()->getAllBorders()->setBorderStyle('thin')->getColor()->setARGB('FFB7C9D3');
-    $sheet->getStyle("A1:{$lastColumn}".max(1,$row-1))->getAlignment()->setVertical('top')->setWrapText(true);
-    for($stripe=2;$stripe<$row;$stripe+=2)$sheet->getStyle("A{$stripe}:{$lastColumn}{$stripe}")->getFill()->setFillType('solid')->getStartColor()->setARGB('FFF0F7FA');
-    foreach (range(1, $totalColumns) as $columnIndex) {
-      $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($columnIndex))->setAutoSize(true);
-    }
-
     PageSetupService::applyExcel($sheet,PageSetupService::current($_SESSION['user']??[]),'L');
     ExcelPresentationService::apply($spreadsheet, $_SESSION['user']??[], str_replace('_',' ',ucfirst($tableKey)));
     $writer = new Xlsx($spreadsheet);
@@ -195,6 +186,7 @@ class DynamicController
     $table=$profiles[$key]['table']; $db=DB::getInstance();
     $skip=['id','kd_wilayah','kd_opd','tahun','tgl_insert','tgl_update','username_insert','username_update','is_deleted','disable','kunci','setujui'];
     $columns=array_values(array_filter(array_column($db->query("SHOW COLUMNS FROM `$table`")->fetchAll(),'Field'),fn($c)=>!in_array($c,$skip,true)));
+    if($key==='realisasi')$columns=['kontrak_id','tanggal','uraian_transaksi','dok','id_dok_anggaran','jumlah','progress_fisik','keterangan'];
     $book=new Spreadsheet();$sheet=$book->getActiveSheet();$sheet->setTitle(substr('Template-'.$key,0,31));
     foreach($columns as $i=>$column){$cell=Coordinate::stringFromColumnIndex($i+1).'1';$sheet->setCellValue($cell,strtoupper($column));$sheet->getColumnDimension(Coordinate::stringFromColumnIndex($i+1))->setWidth(max(14,min(32,strlen($column)+5)));}
     foreach($columns as$i=>$column){if(preg_match('/kode|^kd_|nip|npwp|nomor|rekening/',$column))$sheet->getStyle(Coordinate::stringFromColumnIndex($i+1).':'.Coordinate::stringFromColumnIndex($i+1))->getNumberFormat()->setFormatCode('@');}

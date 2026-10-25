@@ -198,7 +198,8 @@ class KontrakRealisasiService
     $existing = (float)($this->db->query('SELECT COALESCE(SUM(jumlah),0) total FROM daftar_realisasi_neo WHERE kontrak_id=? AND is_deleted=0', [$contractId])->fetch()['total'] ?? 0)-$oldTotal;
     if ($existing + $total > (float)$header['nilai_kontrak'] + 0.01) throw new InvalidArgumentException('Total realisasi melebihi nilai kontrak');
     $transactionUuid=$editing&&$old['transaksi_uuid']!==''?$old['transaksi_uuid']:$this->uuid();$stored=$this->storeRealizationFiles($header,$transactionUuid,$files);
-    $this->db->begin();
+    $ownsTransaction=!$this->db->inTransaction();
+    if($ownsTransaction)$this->db->begin();
     try {
       if($editing){if($old['transaksi_uuid']!=='')$this->db->update('daftar_realisasi_neo',['is_deleted'=>1,'tgl_update'=>date('Y-m-d H:i:s'),'username_update'=>$this->user['username']??'system'],'WHERE transaksi_uuid=? AND kontrak_id=?',[$old['transaksi_uuid'],$contractId]);else $this->db->update('daftar_realisasi_neo',['is_deleted'=>1,'tgl_update'=>date('Y-m-d H:i:s'),'username_update'=>$this->user['username']??'system'],'WHERE id=?',[$realizationId]);}
       foreach ($rows as $row) {
@@ -213,9 +214,9 @@ class KontrakRealisasiService
         ]);
       }
       foreach($stored as $file)$this->db->insert('realisasi_dokumen_neo',array_merge($file,['transaksi_uuid'=>$transactionUuid,'kontrak_id'=>$contractId,'kd_wilayah'=>$header['kd_wilayah'],'kd_opd'=>$header['kd_opd'],'tahun'=>$header['tahun'],'username_insert'=>$this->user['username']??'system','is_deleted'=>0]));
-      $this->db->commit();
+      if($ownsTransaction)$this->db->commit();
     } catch (Throwable $e) {
-      $this->db->rollback();
+      if($ownsTransaction)$this->db->rollback();
       foreach($stored as $file)if(is_file(dirname(__DIR__,2).'/'.$file['path_file']))@unlink(dirname(__DIR__,2).'/'.$file['path_file']);
       throw $e;
     }
@@ -415,6 +416,7 @@ class KontrakRealisasiService
       $labels[(int)$x['id']]=($x['nomor']?:$i+1).' - '.$x['uraian'];
       $s->fromArray([$x['satuan'],(float)$x['vol_negoisasi'],(float)$x['harga_sat_negoisasi'],(float)$x['pajak'],(float)$x['jumlah_negoisasi'],(float)$x['bobot']],null,'C'.$r++,true);
     }
+    for($itemRow=2;$itemRow<$r;$itemRow++){if($s->getCell('C'.$itemRow)->getValue()!==null&&$s->getCell('C'.$itemRow)->getValue()!==''){$s->setCellValue('G'.$itemRow,"=ROUND(D{$itemRow}*E{$itemRow}*(1+F{$itemRow}/100),2)");$lastItem=$r-1;$s->setCellValue('H'.$itemRow,"=IF(SUM(G2:G{$lastItem})=0,0,G{$itemRow}/SUM(G2:G{$lastItem})*100)");}}
     $s->setCellValue('B'.$r,'TOTAL RAB')->setCellValue('G'.$r,$r>2?'=SUM(G2:G'.($r-1).')':0);
     $s->getStyle("A$r:H$r")->getFont()->setBold(true);
     $s->getStyle('F2:F'.$r)->getNumberFormat()->setFormatCode('0.00"%"');$s->getStyle('H2:H'.$r)->getNumberFormat()->setFormatCode('0.00"%"');
@@ -460,7 +462,7 @@ class KontrakRealisasiService
     foreach($items as &$item){
       $matches=array_values(array_filter($existing,fn($x)=>!isset($used[$x['id']])&&(string)$x['nomor']===(string)$item['nomor']));
       if(count($matches)!==1)$matches=array_values(array_filter($existing,fn($x)=>!isset($used[$x['id']])&&(string)$x['uraian']===(string)$item['uraian']));
-      if(count($matches)===1){$item['id']=(int)$matches[0]['id'];$used[$item['id']]=true;}
+      if(count($matches)===1){$item['id']=(int)$matches[0]['id'];$used[$item['id']]=true;if(!isset($map['pajak'])&&($item['type']??'')!=='KETERANGAN')$item['pajak']=(float)($matches[0]['pajak']??0);}
     }unset($item);
     $result=$this->saveRab($contractId,$items);$result['imported']=count($items);return$result;
   }

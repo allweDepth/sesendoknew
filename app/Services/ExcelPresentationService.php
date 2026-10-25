@@ -48,9 +48,21 @@ final class ExcelPresentationService
                 $identifierColumns[$c]=(bool)preg_match('/npwp|(?:^| )(?:nip|kode|nomor)(?: |$)|^kd |rekening/',$label);
                 $width=self::width($label);
                 $sheet->getColumnDimension($col)->setAutoSize(false)->setWidth($width);
-                if(preg_match('/harga|nilai|pagu|anggaran|jumlah|total|realisasi|deviasi|sisa/',$label)) {
-                    for($r=$first+1;$r<=$lastRow;$r++)if((is_numeric($sheet->getCell([$c,$r])->getValue())||$sheet->getCell([$c,$r])->isFormula())&&$sheet->getStyle("$col$r")->getNumberFormat()->getFormatCode()==='General')$sheet->getStyle("$col$r")->getNumberFormat()->setFormatCode('#,##0.00');
+                $body=$col.($first+1).':'.$col.max($first+1,$lastRow);
+                if($identifierColumns[$c]){
+                    $sheet->getStyle($body)->getNumberFormat()->setFormatCode('@');
+                    $sheet->getStyle($body)->getAlignment()->setHorizontal('left');
+                } elseif(preg_match('/harga|nilai|pagu|anggaran|jumlah|total|realisasi|deviasi|sisa|volume|target|pajak|ppn|bobot|^no$|^id$/',$label)) {
+                    $sheet->getStyle($body)->getAlignment()->setWrapText(false)->setHorizontal('right');
+                    if(preg_match('/harga|nilai|pagu|anggaran|jumlah|total|realisasi|deviasi|sisa/',$label)&&$sheet->getStyle($col.($first+1))->getNumberFormat()->getFormatCode()==='General')$sheet->getStyle($body)->getNumberFormat()->setFormatCode('#,##0.00');
                 }
+            }
+            $sheet->getDefaultRowDimension()->setRowHeight(23);
+            if($lastRow>2000){
+                $stripe=new \PhpOffice\PhpSpreadsheet\Style\Conditional();
+                $stripe->setConditionType(\PhpOffice\PhpSpreadsheet\Style\Conditional::CONDITION_EXPRESSION)->addCondition('MOD(ROW(),2)=0');
+                $stripe->getStyle()->getFill()->setFillType('solid')->getStartColor()->setARGB('FFF1F6FA');
+                $sheet->getStyle('A'.($first+1).':'.$last.$lastRow)->setConditionalStyles([$stripe]);
             }
             for($r=1;$r<$first;$r++) {
                 if($sheet->getCell([1,$r])->getValue()!==null)$sheet->getRowDimension($r)->setRowHeight($r===1?34:28);
@@ -62,8 +74,7 @@ final class ExcelPresentationService
                     $cell=$sheet->getCell([$c,$r]);$value=$cell->getValue();
                     if($value===null||$value==='')continue;
                     $hasData=true;
-                    if(!empty($identifierColumns[$c])){ $cell->setValueExplicit((string)$value,\PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);$sheet->getStyle($cell->getCoordinate())->getNumberFormat()->setFormatCode('@');$sheet->getStyle($cell->getCoordinate())->getAlignment()->setHorizontal('left'); }
-                    elseif(is_numeric($value)||$cell->isFormula())$sheet->getStyle($cell->getCoordinate())->getAlignment()->setWrapText(false)->setHorizontal('right');
+                    if(!empty($identifierColumns[$c])&&$cell->getDataType()!==\PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING)$cell->setValueExplicit((string)$value,\PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
                     if(is_string($value)&&$value[0]!=='=') {
                         $width=$sheet->getColumnDimension(Coordinate::stringFromColumnIndex($c))->getWidth();
                         $lines=max($lines,(int)ceil(mb_strlen($value)/max(8,$width-3))+substr_count($value,"\n"));
@@ -71,9 +82,9 @@ final class ExcelPresentationService
                 }
                 if(!$hasData)continue;
                 $range="A$r:$last$r";
-                $sheet->getStyle($range)->getBorders()->getBottom()->setBorderStyle('hair')->getColor()->setARGB('FFD4E1E8');
-                if($r%2===0&&$sheet->getStyle("A$r")->getFill()->getFillType()==='none')$sheet->getStyle($range)->getFill()->setFillType('solid')->getStartColor()->setARGB('FFF1F6FA');
-                $sheet->getRowDimension($r)->setRowHeight(max(23,$lines*14+8));
+                if($lastRow<=2000)$sheet->getStyle($range)->getBorders()->getBottom()->setBorderStyle('hair')->getColor()->setARGB('FFD4E1E8');
+                if($lastRow<=2000&&$r%2===0&&$sheet->getStyle("A$r")->getFill()->getFillType()==='none')$sheet->getStyle($range)->getFill()->setFillType('solid')->getStartColor()->setARGB('FFF1F6FA');
+                if($lines>1)$sheet->getRowDimension($r)->setRowHeight($lines*14+8);
             }
             $heading=$title ?: $sheet->getTitle();
             $safe=fn($v)=>str_replace('&','&&',preg_replace('/[\r\n]+/',' ',(string)$v));

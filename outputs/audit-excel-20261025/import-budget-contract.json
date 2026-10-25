@@ -1,0 +1,146 @@
+[
+    {
+        "profile": "rkpd",
+        "role": "admin_opd",
+        "status": "PASS",
+        "result": {
+            "success": true,
+            "message": "Impor selesai: 1 dari 1 baris berhasil; 0 baris gagal.",
+            "meta": {
+                "total": 1,
+                "berhasil": 1,
+                "gagal": 0
+            },
+            "data": [],
+            "errors": []
+        }
+    },
+    {
+        "profile": "rkpd_p",
+        "role": "admin_opd",
+        "status": "PASS",
+        "result": {
+            "success": true,
+            "message": "Impor selesai: 1 dari 1 baris berhasil; 0 baris gagal.",
+            "meta": {
+                "total": 1,
+                "berhasil": 1,
+                "gagal": 0
+            },
+            "data": [],
+            "errors": []
+        }
+    },
+    {
+        "profile": "renja",
+        "role": "admin_opd",
+        "status": "PASS",
+        "result": {
+            "success": true,
+            "message": "Impor selesai: 1 dari 1 baris berhasil; 0 baris gagal.",
+            "meta": {
+                "total": 1,
+                "berhasil": 1,
+                "gagal": 0
+            },
+            "data": [],
+            "errors": []
+        }
+    },
+    {
+        "profile": "renja_p",
+        "role": "admin_opd",
+        "status": "PASS",
+        "result": {
+            "success": true,
+            "message": "Impor selesai: 1 dari 1 baris berhasil; 0 baris gagal.",
+            "meta": {
+                "total": 1,
+                "berhasil": 1,
+                "gagal": 0
+            },
+            "data": [],
+            "errors": []
+        }
+    },
+    {
+        "profile": "rka",
+        "role": "admin_opd",
+        "status": "PASS",
+        "result": {
+            "success": true,
+            "message": "Impor selesai: 1 dari 1 baris berhasil; 0 baris gagal.",
+            "meta": {
+                "total": 1,
+                "berhasil": 1,
+                "gagal": 0
+            },
+            "data": [],
+            "errors": []
+        }
+    },
+    {
+        "profile": "rka_p",
+        "role": "admin_opd",
+        "status": "PASS",
+        "result": {
+            "success": true,
+            "message": "Impor selesai: 1 dari 1 baris berhasil; 0 baris gagal.",
+            "meta": {
+                "total": 1,
+                "berhasil": 1,
+                "gagal": 0
+            },
+            "data": [],
+            "errors": []
+        }
+    },
+    {
+        "profile": "dpa",
+        "role": "admin_opd",
+        "status": "PASS",
+        "result": {
+            "success": true,
+            "message": "Impor selesai: 1 dari 1 baris berhasil; 0 baris gagal.",
+            "meta": {
+                "total": 1,
+                "berhasil": 1,
+                "gagal": 0
+            },
+            "data": [],
+            "errors": []
+        }
+    },
+    {
+        "profile": "dppa",
+        "role": "admin_opd",
+        "status": "PASS",
+        "result": {
+            "success": true,
+            "message": "Impor selesai: 1 dari 1 baris berhasil; 0 baris gagal.",
+            "meta": {
+                "total": 1,
+                "berhasil": 1,
+                "gagal": 0
+            },
+            "data": [],
+            "errors": []
+        }
+    },
+    {
+        "profile": "kontrak",
+        "role": "admin_opd",
+        "status": "PASS",
+        "result": {
+            "success": true,
+            "message": "Impor selesai: 1 dari 1 baris berhasil; 0 baris gagal.",
+            "meta": {
+                "total": 1,
+                "berhasil": 1,
+                "gagal": 0
+            },
+            "data": [],
+            "errors": []
+        }
+    }
+]

@@ -1,0 +1,1 @@
+PASS: Mapping export respects region/year/type and returns one row per mapping (15115 rows)

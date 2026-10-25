@@ -35,6 +35,10 @@ try{
   $b=new Spreadsheet();$s=$b->getActiveSheet();$s->fromArray(['NAMA_PERUSAHAAN','ALAMAT','DIREKTUR','NPWP'],null,'A1');$s->fromArray(['Baris invalid '.$token,'Alamat','','98'.$token],null,'A2');$s->fromArray(['Baris valid '.$token,'Alamat','Direktur','97'.$token],null,'A3');
   $partial=json_decode($service->importStrict('rekanan',saveTestExcel($b)),true);excelCheck($partial['meta']['total']===2&&$partial['meta']['berhasil']===1&&$partial['meta']['gagal']===1&&$partial['data'][0]['rows']===['2'],'Impor parsial menunjukkan nomor baris gagal dan melanjutkan baris valid');
   $b=new Spreadsheet();$s=$b->getActiveSheet();$s->fromArray(['NAMA_PERUSAHAAN','ALAMAT','DIREKTUR','NPWP'],null,'A1');$s->fromArray(['NPWP angka '.$token,'Alamat','Direktur',1234567890123456],null,'A2');$s->setCellValueExplicit('D2',1234567890123456,\PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_NUMERIC);$badNpwp=json_decode($service->importStrict('rekanan',saveTestExcel($b)),true);excelCheck(!$badNpwp['success']&&str_contains($badNpwp['data'][0]['message'],'NPWP wajib bertipe teks'),'NPWP numerik ditolak dengan petunjuk perbaikan');
+  $realizationService=new KontrakRealisasiService($_SESSION['user']);$contractItem=$realizationService->contractItems(850)[0];
+  $b=new Spreadsheet();$s=$b->getActiveSheet();$s->fromArray(['KONTRAK_ID','TANGGAL','URAIAN_TRANSAKSI','DOK','ID_DOK_ANGGARAN','JUMLAH','PROGRESS_FISIK'],null,'A1');$s->fromArray([850,'2026-10-26','Uji impor realisasi '.$token,$contractItem['tahap'],$contractItem['anggaran_id'],1,1],null,'A2',true);
+  $realizationImport=json_decode($service->importStrict('realisasi',saveTestExcel($b)),true);excelCheck(($realizationImport['meta']['berhasil']??0)===1,'Impor realisasi memakai layanan transaksi kontrak');
+  $s->setCellValue('F2',100000000000000);$excessImport=json_decode($service->importStrict('realisasi',saveTestExcel($b)),true);excelCheck(!$excessImport['success']&&str_contains($excessImport['data'][0]['message'],'melebihi nilai kontrak'),'Impor realisasi melebihi kontrak ditolak');
   $sipdUser=$_SESSION['user'];$sipdUser['type_user']='tapd';$sipd=new StandarHargaService($sipdUser);
   foreach(['ssh','hspk','asb','sbu']as$type){
     $b=new Spreadsheet();$s=$b->getActiveSheet();$s->fromArray(['Kode Kelompok Barang','Uraian Kelompok Barang','ID Standar Harga','Kode Barang','Uraian Barang','Spesifikasi','Satuan','Harga Satuan','Kode Rekening'],null,'A1');
@@ -50,6 +54,11 @@ try{
  excelCheck(count($before['rab'])===count($after['rab'])&&array_column($before['rab'],'id')===array_column($after['rab'],'id'),'Ekspor-impor RAB mempertahankan item dan ID jadwal');
  excelCheck(abs(array_sum(array_column($before['rab'],'jumlah_negoisasi'))-array_sum(array_column($after['rab'],'jumlah_negoisasi')))<.011,'Ekspor-impor RAB mempertahankan total termasuk pajak');
  excelCheck($before['schedule']===$after['schedule'],'Jadwal tidak hilang saat impor ulang RAB');
+ $legacy=new Spreadsheet();$legacySheet=$legacy->getActiveSheet();$legacySheet->fromArray(['NO','URAIAN','SATUAN','VOLUME','HARGA SATUAN','JUMLAH','BOBOT %'],null,'A1');$legacyRow=2;
+ foreach($before['rab']as$item)$legacySheet->fromArray([$item['nomor'],$item['uraian'],$item['satuan'],$item['vol_negoisasi'],$item['harga_sat_negoisasi'],$item['jumlah_negoisasi'],$item['bobot']],null,'A'.$legacyRow++,true);
+ $service->importRab($id,saveTestExcel($legacy));$legacyAfter=$service->delivery($id);excelCheck(array_column($before['rab'],'pajak')===array_column($legacyAfter['rab'],'pajak'),'Impor RAB lama tanpa kolom pajak mempertahankan pajak yang ada');
+ $sheet=$book->getSheet(0);$originalPrice=(float)$sheet->getCell('E2')->getValue();$sheet->setCellValue('E2',$originalPrice+100);\PhpOffice\PhpSpreadsheet\Calculation\Calculation::getInstance($book)->clearCalculationCache();
+ $expected=round((float)$sheet->getCell('D2')->getValue()*($originalPrice+100)*(1+(float)$sheet->getCell('F2')->getValue()/100),2);excelCheck(abs((float)$sheet->getCell('G2')->getCalculatedValue()-$expected)<.001,'Jumlah RAB Excel dihitung ulang ketika harga satuan diubah');
  $emptyUser=$_SESSION['user'];$emptyUser['tahun']=2099;$_SESSION['user']=$emptyUser;
  foreach(['spj','lra']as$format){$emptyFile=(new KontrakRealisasiService($emptyUser))->financialExcel($format);$files[]=$emptyFile;$emptySheet=IOFactory::load($emptyFile)->getActiveSheet();$col=$format==='spj'?'H':'D';excelCheck($emptySheet->getCell($col.'5')->getCalculatedValue()===0,'Ekspor '.$format.' kosong tidak membuat formula melingkar');}
  $_SESSION['user']['tahun']=2026;

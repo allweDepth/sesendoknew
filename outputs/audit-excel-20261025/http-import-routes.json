@@ -1,0 +1,17 @@
+[
+  {
+    "route": "/dynamic",
+    "status": "PASS",
+    "validation": "Header Excel kosong. Pilih nomor baris header yang benar."
+  },
+  {
+    "route": "/import",
+    "status": "PASS",
+    "validation": "Header Excel kosong. Pilih nomor baris header yang benar."
+  },
+  {
+    "route": "/renstra/import",
+    "status": "PASS",
+    "validation": "Header Excel kosong. Pilih nomor baris header yang benar."
+  }
+]

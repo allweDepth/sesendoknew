@@ -2245,41 +2245,15 @@ GET ALL RAW DATA (UNTUK EXPORT / REPORT)
     $select = $modeConfig['select'] ?? ['*'];
     $selectClause = implode(',', $select);
 
-    if ($table === 'master_biaya_akun') {
-      $whereParts = ['master_biaya_akun.is_deleted = 0'];
-      $params = [];
-      $req = $request['req'] ?? null;
-
-      if (in_array($req, ['ssh', 'sbu', 'asb', 'hspk'], true)) {
-        $whereParts[] = 'master_biaya.tipe = ?';
-        $params[] = $req;
-      }
-
-      if (($this->user['type_user'] ?? null) === 'admin_wilayah') {
-        $whereParts[] = 'master_biaya_akun.kd_wilayah = ?';
-        $params[] = $this->user['kd_wilayah'] ?? null;
-      }
-
-      $orderBy = $modeConfig['order_by'] ?? 'master_biaya_akun.id DESC';
-      $query = "
-        SELECT $selectClause
-        FROM master_biaya_akun
-        LEFT JOIN master_biaya ON master_biaya.id = master_biaya_akun.master_biaya_id
-        LEFT JOIN akun_neo ON akun_neo.kode = master_biaya_akun.kd_akun
-        WHERE " . implode(' AND ', $whereParts) . "
-        ORDER BY $orderBy
-      ";
-
-      return $this->db->query($query, $params)->fetchAll();
-    }
-
     list($userWhere, $userParams) = $this->applyUserScope($table);
 
     $joinSql = '';
     if (!empty($profile['join'])) {
       foreach ($profile['join'] as $join) {
         if (!empty($join['table']) && !empty($join['on'])) {
-          $joinSql .= " LEFT JOIN `{$join['table']}` ON {$join['on']} ";
+          if($table==='master_biaya_akun'&&$join['table']==='akun_neo'){
+            $joinSql .= ' LEFT JOIN akun_neo ON akun_neo.id=(SELECT account_ref.id FROM akun_neo account_ref WHERE account_ref.kode=master_biaya_akun.kd_akun AND account_ref.is_deleted=0 ORDER BY account_ref.id DESC LIMIT 1) ';
+          }else $joinSql .= " LEFT JOIN `{$join['table']}` ON {$join['on']} ";
         }
       }
       $userWhere = array_map(
@@ -2288,6 +2262,11 @@ GET ALL RAW DATA (UNTUK EXPORT / REPORT)
       );
     }
 
+    if($table==='master_biaya_akun'){
+      $userWhere[]='master_biaya_akun.is_deleted=0 AND master_biaya.is_deleted=0';
+      if(!empty($this->user['tahun'])){$userWhere[]='master_biaya.tahun=?';$userParams[]=$this->user['tahun'];}
+      if(in_array($request['req']??null,['ssh','sbu','asb','hspk'],true)){$userWhere[]='master_biaya.tipe=?';$userParams[]=$request['req'];}
+    }
     $profileWhere = array_merge($profile['where'] ?? [], $modeConfig['where'] ?? []);
     if ($profileWhere) {
       list($extraWhere, $extraParams) = $this->meta()->buildWhere(
@@ -3499,6 +3478,8 @@ LIMIT 1",
     $profile=$this->profiles[$tbl];$table=$profile['table'];$this->activeProfileKey=$tbl;
     $this->authorize('add',$table);
     $columnMap=$this->buildColumnMap($table,$profile);
+    if($tbl==='realisasi')foreach(['contract_id'=>'kontrak_id','nomor_kontrak'=>'nomor_kontrak','uraian_transaksi'=>'uraian_transaksi','uraian_progress'=>'uraian_transaksi','tahap'=>'dok','dok'=>'dok','anggaran_id'=>'id_dok_anggaran','id_dok_anggaran'=>'id_dok_anggaran']as$label=>$field)$columnMap[$this->normalizeForCompare($label)]=$field;
+
     $schema=[];
     foreach($this->db->query("SHOW COLUMNS FROM `$table`")->fetchAll() as $column)$schema[$column['Field']]=$column['Type'];
     $reader=\PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file);
@@ -3544,7 +3525,15 @@ LIMIT 1",
             $request=$data+['tbl'=>$tbl,'action'=>'add','_import_row'=>$r];
             // Reuse the same scope, hierarchy, date, assignment, lock and field
             // validation as the add form, including all dependent writes.
-            $response=json_decode($this->insert($table,$request),true);
+            if($tbl==='realisasi'){
+              require_once __DIR__.'/KontrakRealisasiService.php';
+              $delivery=new KontrakRealisasiService($this->user);$contract=(int)($data['kontrak_id']??0);
+              if(!$contract&&!empty($data['nomor_kontrak']))$contract=(int)($this->db->query('SELECT id FROM kontrak_neo WHERE nomor_kontrak=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 LIMIT 1',[$data['nomor_kontrak'],$this->user['kd_wilayah'],$this->user['kd_opd'],$this->user['tahun']])->fetch()['id']??0);
+              $stage=strtolower((string)($data['dok']??''));$budget=(int)($data['id_dok_anggaran']??0);
+              if(!$stage||!$budget){$matches=array_values(array_filter($delivery->contractItems($contract),fn($x)=>(empty($data['kd_sub_keg'])||$x['kd_sub_keg']===$data['kd_sub_keg'])&&(empty($data['kd_akun'])||$x['kd_akun']===$data['kd_akun'])));if(count($matches)!==1)throw new InvalidArgumentException('Isi tahap/dok dan id_dok_anggaran untuk menentukan uraian kontrak.');$stage=$matches[0]['tahap'];$budget=(int)$matches[0]['anggaran_id'];}
+              $delivery->saveRealization(['contract_id'=>$contract,'tanggal'=>$data['tanggal']??'','uraian_transaksi'=>$data['uraian_transaksi']??$data['keterangan']??'','keterangan'=>$data['keterangan']??''],[['tahap'=>$stage,'anggaran_id'=>$budget,'jumlah'=>$data['jumlah']??0,'progress_fisik'=>$data['progress_fisik']??0]]);
+              $response=['success'=>true];
+            }else $response=json_decode($this->insert($table,$request),true);
             if(empty($response['success'])){
               $detail=$response['errors']??[];
               throw new InvalidArgumentException(($response['message']??'Data tidak dapat disimpan').($detail?' — '.json_encode($detail,JSON_UNESCAPED_UNICODE):''));
