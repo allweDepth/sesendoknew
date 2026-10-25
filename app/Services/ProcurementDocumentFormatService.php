@@ -24,9 +24,13 @@ final class ProcurementDocumentFormatService
     }
     public static function paragraphHtml(string $html):string
     {
+        // A manual break before another number starts a new list item, not a
+        // continuation of the preceding item's hanging-indent cell.
+        $html=preg_replace_callback('/<p([^>]*)>(.*?)<\/p>/su',static fn($p)=>'<p'.$p[1].'>'.preg_replace('/<br\s*\/?>(\s*\d+(?:\.\d+)*[.)]\s+)/iu','</p><p'.$p[1].'>$1',$p[2]).'</p>',$html);
         $html=preg_replace_callback('/<p>(\d+(?:\.\d+)*[.)])\s+(.*?)<\/p>/su',static function($m){
             $nested=substr_count(rtrim($m[1],'.)'),'.')>0;
-            return '<table cellpadding="0"><tr>'.($nested?'<td width="4%"></td>':'').'<td width="8%" align="left">'.$m[1].'</td><td width="'.($nested?'88':'92').'%"><p align="justify">'.$m[2].'</p></td></tr></table>';
+            $marker=$nested?5:4;
+            return '<table width="100%" cellpadding="0"><tr>'.($nested?'<td width="4%"></td>':'').'<td width="'.$marker.'%" align="left">'.$m[1].'</td><td width="'.(100-$marker-($nested?4:0)).'%"><p align="justify">'.$m[2].'</p></td></tr></table>';
         },$html);
         return preg_replace('/<p(?![^>]*\balign=)([^>]*)>/u','<p align="justify"$1>',$html);
     }
