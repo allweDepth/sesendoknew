@@ -4,6 +4,7 @@ require_once __DIR__ . '/JsonResponse.php';
 require_once __DIR__ . '/FieldValidationException.php';
 require_once __DIR__ . '/BudgetScheduleService.php';
 require_once __DIR__ . '/ProcurementDocumentService.php';
+require_once __DIR__ . '/ProcurementContractTypeService.php';
 
 /**
  * ============================================================
@@ -922,6 +923,7 @@ AUDIT TRAIL (TIDAK DIUBAH)
     }
     $data['cara_pengadaan'] = $way;
     $data['jenis_pengadaan'] = $kind;
+    $data['jenis_kontrak'] = ProcurementContractTypeService::normalize($data);
     $data['bentuk_kontrak'] = ProcurementDocumentService::recommendForm($way, $kind, $method, $value, $data['tipe_swakelola'] ?? null);
     if(array_key_exists('proses_pengadaan',$data))$data['proses_pengadaan']=ProcurementProcessService::normalize($data['proses_pengadaan'],$data);
     return $data;
@@ -1057,7 +1059,7 @@ INSERT (FIXED STABLE VERSION v3.1)
     $tbl = $request['tbl'] ?? null;   // tbl berasal dari request frontend
 
     // jika tbl ada dan field tahap belum diisi
-    if ($tbl && isset($filtered['tahap']) === false) {
+    if ($tbl && in_array('tahap', $columns, true) && isset($filtered['tahap']) === false) {
 
       // 🔥 panggil resolver tahap otomatis
       $tahap = $this->resolveTahap($tbl);
@@ -2067,6 +2069,12 @@ DELETE (FULL IDENTIK LOGIC ASLI)
 
       $orderBy = "`$primaryKey` DESC";
     }
+    // A joined lookup can contain several `id` columns. Qualify a plain
+    // configured base-table sort just as we already do for browser sorting.
+    if (!empty($profile['join']) && preg_match('/^`?([a-zA-Z0-9_]+)`?\s+(ASC|DESC)$/i', trim($orderBy), $plainOrder)
+        && in_array($plainOrder[1], $columns, true)) {
+      $orderBy = "`$table`.`{$plainOrder[1]}` {$plainOrder[2]}";
+    }
 
     /* ======================================================
         1️⃣1️⃣ TOTAL DATA
@@ -2406,7 +2414,9 @@ HANYA PERIODE AKTIF DI-CACHE
         $params[] = $this->user['tahun'];
       }
 
-      if (in_array('periode_id', $columns)) {
+      // Renstra has its own selected multi-year period. A row from the OPD's
+      // historical period must remain openable from the history list.
+      if ($table !== 'renstra_neo' && in_array('periode_id', $columns)) {
 
         $periodeAktif = $this->getPeriodeAktif();
 

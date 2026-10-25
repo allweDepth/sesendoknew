@@ -482,14 +482,18 @@ class PengaturanModule {
 		$("#form-page-setup").on("submit", (e) => {
 			e.preventDefault();
 			if (!this.data) return;
+			const form=$(e.currentTarget),button=form.find('button[type="submit"]');
+			if(button.hasClass('loading'))return;
+			if(window.FormFeedback)FormFeedback.reset(form[0]);
+			button.addClass('loading disabled');
 			$(e.currentTarget).find('[data-page-section]').each((_,panel)=>this.syncPageSection($(panel)));
 			const values = Object.fromEntries($(e.currentTarget).serializeArray().map(x => [x.name, x.value]));
 			const unit=$(e.currentTarget).attr('data-margin-display-unit')||'mm';
 			$(e.currentTarget).find('[data-margin-value]').each((_,input)=>{if(input.value!==''&&Number.isFinite(Number(input.value)))values[input.name]=Math.round(Number(input.value)*(unit==='cm'?10:1)*1e6)/1e6;});
 			["header_pdf_aktif","footer_pdf_aktif"].forEach(name=>values[name]=$(e.currentTarget).find(`[name="${name}"]`).prop('checked')?1:0);
 			this.ajax.request({url:"/pengaturan/page-setup/save",method:"POST",data:values,success:(res)=>{
-				if(res.success){this.data={...this.data,...values};Toast.show({success:true,message:"Page Setup PDF OPD berhasil disimpan"});}
-			}});
+				if(res.success){this.data={...this.data,...values};if(window.FormFeedback)FormFeedback.success(form[0],"Page Setup PDF OPD berhasil disimpan");}
+			},error:res=>{if(window.FormFeedback)FormFeedback.error(form[0],res);},complete:()=>button.removeClass('loading disabled')});
 		});
 	}
 	initIdentityImages(){

@@ -38,7 +38,7 @@ manifest=json.loads(Path(sys.argv[1]).read_text())
 contracts=[];report=[]
 for entry in manifest:
  folder=Path(entry['folder']);path=folder/entry['rabFile'];source={'sheet':entry['source_sheet'],'items':entry['source_items']}
- hps=source_cells(folder/entry['hpsFile'],source['sheet']);offer=source_cells(folder/entry['offerFile'],source['sheet'])
+ hps=source_cells(folder/entry['hpsFile'],source['sheet']);offer=source_cells(folder/entry['offerFile'],entry.get('offer_source_sheet',source['sheet']))
  wb=load_workbook(path,read_only=True,data_only=True);ws=wb[entry['sheet']];rab=[]
  assert len(entry['itemRows'])==len(source['items']),'Only original work items may be imported'
  for i,(row,original) in enumerate(zip(entry['itemRows'],source['items'])):

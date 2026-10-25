@@ -53,7 +53,9 @@ final class ProcurementDocumentService
     public function processSchedule(int $id=0):array
     {
         $this->scope();$c=$id?$this->contract($id):[];
-        return ['catalog'=>ProcurementProcessService::catalog(),'values'=>$id?ProcurementProcessService::values($c):[]];
+        $types=[];foreach(['BARANG','JASA_LAINNYA','PEKERJAAN_KONSTRUKSI','KONSULTANSI','KONSULTANSI_KONSTRUKSI','KONSULTANSI_NON_KONSTRUKSI'] as $kind)$types[$kind]=ProcurementContractTypeService::options(['jenis_pengadaan'=>$kind]);
+        $types['SWAKELOLA']=ProcurementContractTypeService::options(['cara_pengadaan'=>'SWAKELOLA']);
+        return ['catalog'=>ProcurementProcessService::catalog(),'values'=>$id?ProcurementProcessService::values($c):[],'contract_types'=>$types];
     }
     private function assertApplicable(array $master, array $contract): void
     {
@@ -176,13 +178,18 @@ final class ProcurementDocumentService
     {
         $this->canEdit();$available=$this->templates($contractId);
         if(($available['contract']['cara_pengadaan']??'')!=='SWAKELOLA')throw new InvalidArgumentException('Paket bukan pengadaan swakelola');
-        $created=0;$existing=0;
+        $created=0;$existing=0;$pending=[];$missingDates=[];
         foreach($available['templates'] as $master){
             // Complete reference packages remain available individually; avoid duplicate bundles.
             if(!SwakelolaDocumentService::supports($master['kode'])||str_ends_with($master['kode'],'_LENGKAP'))continue;
             $old=$this->db->query('SELECT id FROM dokumen_pengadaan_neo WHERE kontrak_id=? AND master_id=? AND is_deleted=0 LIMIT 1',[$contractId,$master['id']])->fetch();
             if($old){$existing++;continue;}
             $draft=$this->draft($contractId,(int)$master['id']);
+            if(empty($draft['tanggal_dokumen']))$missingDates[]=$master['nama'];
+            $pending[]=[$master,$draft];
+        }
+        if($missingDates)throw new FieldValidationException('proses_pengadaan','Lengkapi tanggal proses Swakelola pada edit kontrak sebelum menyusun dokumen: '.implode('; ',$missingDates));
+        foreach($pending as [$master,$draft]){
             $this->save(['contract_id'=>$contractId,'master_id'=>$master['id'],'judul'=>$draft['judul'],
                 'nomor_dokumen'=>$draft['nomor_dokumen'],'tanggal_dokumen'=>$draft['tanggal_dokumen'],
                 'sections'=>$draft['sections'],'data_isian'=>$draft['data_isian'],'status'=>'DRAFT']);

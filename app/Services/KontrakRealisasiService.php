@@ -541,9 +541,9 @@ class KontrakRealisasiService
     if (!in_array($type, $types, true)) throw new InvalidArgumentException('Jenis dokumen kontrak tidak valid');
     if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) throw new InvalidArgumentException('File dokumen belum dipilih atau gagal diunggah');
     if (($file['size'] ?? 0) > 25 * 1024 * 1024) throw new InvalidArgumentException('Ukuran file maksimal 25 MB');
-    $allowed = ['application/pdf', 'image/jpeg', 'image/png', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/zip'];
+    $allowed = ['application/pdf', 'image/jpeg', 'image/png', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel.sheet.macroEnabled.12', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/zip'];
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
-    if (!in_array($mime, $allowed, true)) throw new InvalidArgumentException('Format file harus PDF, JPG, PNG, XLSX, DOCX, atau ZIP');
+    if (!in_array($mime, $allowed, true)) throw new InvalidArgumentException('Format file harus PDF, JPG, PNG, XLSX, XLSM, DOCX, atau ZIP');
     $safeScope = preg_replace('/[^A-Za-z0-9._-]/', '_', ($header['kd_wilayah'] ?? 'wilayah') . '-' . ($header['kd_opd'] ?? 'opd'));
     $relative = 'storage/uploads/' . $safeScope . '/' . $header['tahun'] . '/kontrak/' . $contractId . '/' . strtolower($type);
     $directory = dirname(__DIR__, 2) . '/' . $relative;

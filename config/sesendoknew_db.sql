@@ -9073,7 +9073,7 @@ SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
 LOCK TABLES `auth_rate_limits` WRITE;
 /*!40000 ALTER TABLE `auth_rate_limits` DISABLE KEYS */;
 INSERT INTO `auth_rate_limits` VALUES
-('549f23efad7d30949c74c9b0b95c53e76b6040881d28f56cb44eef410391416f',1,1792913136);
+('549f23efad7d30949c74c9b0b95c53e76b6040881d28f56cb44eef410391416f',1,1792925631);
 /*!40000 ALTER TABLE `auth_rate_limits` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;
@@ -62126,7 +62126,7 @@ CREATE TABLE `kontrak_dokumen_neo` (
   PRIMARY KEY (`id`),
   KEY `idx_dok_kontrak` (`kontrak_id`,`jenis_dokumen`),
   KEY `idx_dok_scope` (`kd_wilayah`,`kd_opd`,`tahun`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -62136,6 +62136,26 @@ CREATE TABLE `kontrak_dokumen_neo` (
 SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
 LOCK TABLES `kontrak_dokumen_neo` WRITE;
 /*!40000 ALTER TABLE `kontrak_dokumen_neo` DISABLE KEYS */;
+INSERT INTO `kontrak_dokumen_neo` VALUES
+(6,852,'RAB',NULL,'2026-10-26','Penawaran Excel — Normalisasi Saluran Sungai Bulubunggu','Penawaran - CV. BUMANTARA KARYA TEKNIK - Normalisasi Saluran Sungai Bulubunggu.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/852/rab/penawaran-a3c956d7ffec82bcba50.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',7833051,1,'Penawaran perusahaan: CV. BUMANTARA KARYA TEKNIK. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:02','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(7,820,'RAB',NULL,'2026-10-26','Penawaran Excel — Normalisasi Sungai/Saluran Bulumario','Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Bulumario.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/820/rab/penawaran-8b4a7bde1e93954aeda7.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',7833483,1,'Penawaran perusahaan: CV. MULIA NARATAMA DAYA. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:02','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(8,822,'RAB',NULL,'2026-10-26','Penawaran Excel — Normalisasi Sungai/Saluran Desa Dapurang','Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Dapurang.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/822/rab/penawaran-8657c6387449df63bac6.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',7833393,1,'Penawaran perusahaan: CV. MULIA NARATAMA DAYA. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:02','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(9,825,'RAB',NULL,'2026-10-26','Penawaran Excel — Normalisasi Sungai/Saluran Desa Polewali','Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Polewali.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/825/rab/penawaran-76eb60195ddbc148b958.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',7830614,1,'Penawaran perusahaan: CV. MULIA NARATAMA DAYA. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(10,821,'RAB',NULL,'2026-10-26','Penawaran Excel — Normalisasi Sungai/Saluran Desa Saptanajaya','Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Saptanajaya.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/821/rab/penawaran-e1ed037ee5174476626e.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',7833426,1,'Penawaran perusahaan: CV. MULIA NARATAMA DAYA. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(11,823,'RAB',NULL,'2026-10-26','Penawaran Excel — Normalisasi Sungai/Saluran Desa Tirtabuana','Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Tirtabuana.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/823/rab/penawaran-fbf74369f84f2d3ee6e1.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',7833079,1,'Penawaran perusahaan: CV. MULIA NARATAMA DAYA. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(12,790,'RAB',NULL,'2026-10-26','Penawaran Excel — Pemb. Jalan Rabat Gudang obat Ako Pasangkayu','Penawaran - PT. BUMI SEDAYA SEJAHTERA - Pemb. Jalan Rabat Gudang obat Ako Pasangkayu.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/790/rab/penawaran-e80964e03e3be4fd3517.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',10788930,1,'Penawaran perusahaan: PT. BUMI SEDAYA SEJAHTERA. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(13,788,'RAB',NULL,'2026-10-26','Penawaran Excel — Pemb. Jalan Rabat Kabupaten Pasangkayu','Penawaran - CV. BUMANTARA KARYA TEKNIK - Pemb. Jalan Rabat Kabupaten Pasangkayu.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/788/rab/penawaran-aa895e6bb98d639d3f2f.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',10753252,1,'Penawaran perusahaan: CV. BUMANTARA KARYA TEKNIK. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(14,789,'RAB',NULL,'2026-10-26','Penawaran Excel — Pemb. Jalan Rabat Andi Bandaco Pasangkayu','Penawaran - PT. BUMI SEDAYA SEJAHTERA - Pemb. Jalan Rabat Andi Bandaco Pasangkayu.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/789/rab/penawaran-688a436104a4eb677f98.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',10790219,1,'Penawaran perusahaan: PT. BUMI SEDAYA SEJAHTERA. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(15,791,'RAB',NULL,'2026-10-26','Penawaran Excel — Pemb. Jalan Rabat Mesjid','Penawaran - CV. KARYA UTAMA NUSANTARA - Pemb. Jalan Rabat Mesjid.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/791/rab/penawaran-34520d05a47055554d07.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',10874826,1,'Penawaran perusahaan: CV. KARYA UTAMA NUSANTARA. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(16,793,'RAB',NULL,'2026-10-26','Penawaran Excel — Pemb. Jalan Rabat Cakalang','Penawaran - CV. KARYA UTAMA NUSANTARA - Pemb. Jalan Rabat Cakalang.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/793/rab/penawaran-347d88fc7ece82906a28.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',10788154,1,'Penawaran perusahaan: CV. KARYA UTAMA NUSANTARA. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(17,798,'RAB',NULL,'2026-10-26','Penawaran Excel — Pemb. Jalan Dsn Benteng Desa Ompi','Penawaran - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Dsn Benteng Desa Ompi.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/798/rab/penawaran-e3d39a9aaae83af97e6c.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',7776058,1,'Penawaran perusahaan: CV. RAMA KARYA KONSTRUKSI. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(18,799,'RAB',NULL,'2026-10-26','Penawaran Excel — Pemb. Jalan Dsn. Kampung Baru Desa Bukit Harapan','Penawaran - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Dsn. Kampung Baru Desa Bukit Harapan.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/799/rab/penawaran-1a68cb4c7e9f608f047c.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',7777337,1,'Penawaran perusahaan: CV. RAMA KARYA KONSTRUKSI. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(19,855,'RAB',NULL,'2026-10-26','Penawaran Excel — Pemb. Jalan Dusun Mandar','Penawaran - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Dusun Mandar.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/855/rab/penawaran-ba6a0f781916cc8f3072.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',7775761,1,'Penawaran perusahaan: CV. IPORANNUAN UTAMA KONSTRUKSI. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(20,800,'RAB',NULL,'2026-10-26','Penawaran Excel — Pemb. Jalan Kabupaten','Penawaran - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Kabupaten.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/800/rab/penawaran-177c2fc13781cdeb53e3.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',7774741,1,'Penawaran perusahaan: CV. IPORANNUAN UTAMA KONSTRUKSI. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(21,797,'RAB',NULL,'2026-10-26','Penawaran Excel — Pemb. Jalan Wulai','Penawaran - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Wulai.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/797/rab/penawaran-fab2c64041877580c291.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',7775129,1,'Penawaran perusahaan: CV. RAMA KARYA KONSTRUKSI. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(22,824,'RAB',NULL,'2026-10-26','Penawaran Excel — Pemb. Jalan Desa Letawa','Penawaran - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Desa Letawa.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/824/rab/penawaran-9c1a42d6e8e16f3fac2d.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',7764893,1,'Penawaran perusahaan: CV. IPORANNUAN UTAMA KONSTRUKSI. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:03','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(23,853,'RAB',NULL,'2026-10-26','Penawaran Excel — Peningkatan Jalan Bulubunggu','Penawaran - CV. BUMANTARA KARYA TEKNIK - Peningkatan Jalan Bulubunggu.xlsm','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/853/rab/penawaran-a317eea40fd09e754823.xlsm','application/vnd.ms-excel.sheet.macroEnabled.12',7764669,1,'Penawaran perusahaan: CV. BUMANTARA KARYA TEKNIK. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:04','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0),
+(24,849,'RAB',NULL,'2026-10-26','Penawaran Excel — Pematangan Lahan Sekolah Rakyat','Penawaran - PT. BUMI SEDAYA SEJAHTERA - Pematangan Lahan Sekolah Rakyat.xlsx','storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/849/rab/penawaran-a65941a1f260573edf0f.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',12701846,1,'Penawaran perusahaan: PT. BUMI SEDAYA SEJAHTERA. Total rincian dan pembulatan diperiksa terhadap RAB aplikasi.','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-25 18:42:04','IMPORT_PENAWARAN_EXCEL_2026',NULL,NULL,0);
 /*!40000 ALTER TABLE `kontrak_dokumen_neo` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;
@@ -171603,6 +171623,7 @@ CREATE TABLE `page_setup_opd_neo` (
   `footer_pdf_json` longtext DEFAULT NULL,
   `tinggi_tanda_tangan_mm` decimal(5,1) NOT NULL DEFAULT 35.0,
   `posisi_tanda_tangan` enum('kiri','tengah','kanan','dua_kolom') NOT NULL DEFAULT 'kanan',
+  `alignment_tanda_tangan` enum('L','C','R','J') NOT NULL DEFAULT 'C',
   `teks_tanda_tangan` varchar(500) DEFAULT NULL,
   `tgl_insert` datetime DEFAULT current_timestamp(),
   `username_insert` varchar(100) DEFAULT NULL,
@@ -171612,7 +171633,7 @@ CREATE TABLE `page_setup_opd_neo` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_page_setup_opd` (`kd_wilayah`,`kd_opd`,`tahun`),
   KEY `idx_page_setup_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -171623,7 +171644,7 @@ SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
 LOCK TABLES `page_setup_opd_neo` WRITE;
 /*!40000 ALTER TABLE `page_setup_opd_neo` DISABLE KEYS */;
 INSERT INTO `page_setup_opd_neo` VALUES
-(1,'76.01','1.03.0.00.0.00.01.0000',2026,'F4','AUTO','helvetica',10.0,NULL,NULL,10.0,10.0,12.0,10.0,5.0,8.0,0,0,12.0,10.0,'{\"font\":\"helvetica\",\"size\":8,\"color\":\"#222222\",\"bold\":false,\"italic\":false,\"underline\":false,\"divider\":false,\"columns\":[{\"text\":\"\",\"width\":25,\"align\":\"L\"},{\"text\":\"\",\"width\":50,\"align\":\"C\"},{\"text\":\"\",\"width\":25,\"align\":\"R\"}]}','{\"font\":\"helvetica\",\"size\":8,\"color\":\"#222222\",\"bold\":false,\"italic\":false,\"underline\":false,\"divider\":false,\"columns\":[{\"text\":\"\",\"width\":25,\"align\":\"L\"},{\"text\":\"\",\"width\":50,\"align\":\"C\"},{\"text\":\"{page} / {pages}\",\"width\":25,\"align\":\"R\"}]}',35.0,'kanan','','2026-10-20 14:12:08','nabiila','2026-10-20 14:39:02','nabiila',0);
+(1,'76.01','1.03.0.00.0.00.01.0000',2026,'F4','AUTO','helvetica',10.0,NULL,NULL,10.0,10.0,12.0,10.0,5.0,8.0,0,0,12.0,10.0,'{\"font\":\"helvetica\",\"size\":8,\"color\":\"#222222\",\"bold\":false,\"italic\":false,\"underline\":false,\"divider\":false,\"columns\":[{\"text\":\"\",\"width\":25,\"align\":\"L\"},{\"text\":\"\",\"width\":50,\"align\":\"C\"},{\"text\":\"\",\"width\":25,\"align\":\"R\"}]}','{\"font\":\"helvetica\",\"size\":8,\"color\":\"#222222\",\"bold\":false,\"italic\":false,\"underline\":false,\"divider\":false,\"columns\":[{\"text\":\"\",\"width\":25,\"align\":\"L\"},{\"text\":\"\",\"width\":50,\"align\":\"C\"},{\"text\":\"{page} / {pages}\",\"width\":25,\"align\":\"R\"}]}',35.0,'kanan','C','','2026-10-20 14:12:08','nabiila','2026-10-20 14:39:02','nabiila',0);
 /*!40000 ALTER TABLE `page_setup_opd_neo` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;
@@ -209207,4 +209228,4 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-10-25 17:29:03
+-- Dump completed on 2026-10-25 18:45:27

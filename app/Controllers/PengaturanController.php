@@ -76,6 +76,18 @@ class PengaturanController extends Controller
         try{if(!Auth::check())throw new RuntimeException('Unauthorized');if(empty($_SESSION['csrf_token'])||($_SERVER['HTTP_X_CSRF_TOKEN']??'')!==$_SESSION['csrf_token'])throw new RuntimeException('CSRF validation gagal');$u=Auth::scopedUser();$role=$u['type_user']??'viewer';if(in_array($role,['viewer','tapd'],true))throw new RuntimeException('Role hanya dapat melihat Page Setup');$opd=(string)($u['kd_opd']??'0');if($opd===''||$opd==='0')throw new RuntimeException('Pilih satu OPD sebelum menyimpan Page Setup');
             $allowed=['ukuran_kertas','orientasi_kertas','font_pdf','ukuran_font_pdf','lebar_kertas_mm','tinggi_kertas_mm','margin_atas_mm','margin_kanan_mm','margin_bawah_mm','margin_kiri_mm','margin_header_mm','margin_footer_mm','header_pdf_aktif','footer_pdf_aktif','tinggi_header_mm','tinggi_footer_mm','header_pdf_json','footer_pdf_json','tinggi_tanda_tangan_mm','posisi_tanda_tangan','alignment_tanda_tangan','teks_tanda_tangan'];$data=[];foreach($allowed as $f)if(array_key_exists($f,$_POST))$data[$f]=$_POST[$f];
             foreach(['lebar_kertas_mm','tinggi_kertas_mm'] as $field)if(array_key_exists($field,$data)&&trim((string)$data[$field])==='')$data[$field]=null;
+            $errors=[];
+            foreach(['ukuran_font_pdf','lebar_kertas_mm','tinggi_kertas_mm','margin_atas_mm','margin_kanan_mm','margin_bawah_mm','margin_kiri_mm','margin_header_mm','margin_footer_mm','tinggi_header_mm','tinggi_footer_mm','tinggi_tanda_tangan_mm'] as $field){
+                if(!array_key_exists($field,$data)||$data[$field]===null)continue;
+                $value=str_replace(',','.',trim((string)$data[$field]));
+                if(!is_numeric($value)||!is_finite((float)$value)||(float)$value<0)$errors[$field]='Isi angka yang valid dan tidak negatif.';
+                else $data[$field]=$value;
+            }
+            foreach(['header_pdf_json','footer_pdf_json'] as $field)if(isset($data[$field])&&$data[$field]!==''){
+                $section=json_decode($data[$field],true);
+                if(!is_array($section))$errors[$field]='Konfigurasi header/footer tidak valid. Muat ulang halaman lalu coba kembali.';
+            }
+            if($errors){echo JsonResponse::error('Page Setup belum disimpan. Periksa isian yang ditandai.',422,$errors);return;}
             $data['header_pdf_aktif']=!empty($data['header_pdf_aktif'])?1:0;$data['footer_pdf_aktif']=!empty($data['footer_pdf_aktif'])?1:0;if(!in_array($data['orientasi_kertas']??'AUTO',['AUTO','P','L'],true))throw new InvalidArgumentException('Orientasi tidak valid');if(!in_array($data['posisi_tanda_tangan']??'kanan',['kiri','tengah','kanan','dua_kolom'],true))throw new InvalidArgumentException('Posisi tanda tangan tidak valid');if(!in_array($data['alignment_tanda_tangan']??'C',['L','C','R','J'],true))throw new InvalidArgumentException('Alignment tanda tangan tidak valid');
             $columns=array_keys($data);$sqlColumns=implode(',',array_map(fn($x)=>"`$x`",$columns));$marks=implode(',',array_fill(0,count($columns),'?'));$updates=implode(',',array_map(fn($x)=>"`$x`=VALUES(`$x`)",$columns));DB::getInstance()->query("INSERT INTO page_setup_opd_neo(kd_wilayah,kd_opd,tahun,$sqlColumns,username_insert,is_deleted) VALUES(?,?,?,$marks,?,0) ON DUPLICATE KEY UPDATE $updates,tgl_update=NOW(),username_update=VALUES(username_insert),is_deleted=0",[$u['kd_wilayah'],$opd,$u['tahun'],...array_values($data),$u['username']??'system']);echo JsonResponse::success('Page Setup OPD tersimpan');
         }catch(Throwable $e){echo JsonResponse::error($e->getMessage(),400);}
@@ -92,7 +104,7 @@ class PengaturanController extends Controller
         require_once __DIR__.'/../Core/DB.php';require_once __DIR__.'/../Services/JsonResponse.php';
         $user = $_SESSION['user'];
         $usageSql = implode(' UNION ALL ', array_map(
-            static fn($item) => "SELECT kd_wilayah,kd_opd,tahun,'{$item[0]}' dokumen,COALESCE(SUM({$item[2]}),0) terpakai FROM `{$item[1]}` WHERE is_deleted=0 GROUP BY kd_wilayah,kd_opd,tahun",
+            static fn($item) => "SELECT CONVERT(kd_wilayah USING utf8mb4) COLLATE utf8mb4_unicode_ci kd_wilayah,CONVERT(kd_opd USING utf8mb4) COLLATE utf8mb4_unicode_ci kd_opd,tahun,_utf8mb4'{$item[0]}' COLLATE utf8mb4_unicode_ci dokumen,COALESCE(SUM({$item[2]}),0) terpakai FROM `{$item[1]}` WHERE is_deleted=0 GROUP BY kd_wilayah,kd_opd,tahun",
             [['rkpd','rkpd_neo','pagu'],['rkpd_p','rkpd_p_neo','pagu'],['renja','renja_neo','jumlah'],['rka','rka_neo','jumlah'],['dpa','dpa_neo','jumlah'],['renja_p','renja_p_neo','jumlah'],['rka_p','rka_p_neo','jumlah'],['dppa','dppa_neo','jumlah']]
         ));
         $rows = DB::getInstance()->query(

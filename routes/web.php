@@ -172,6 +172,7 @@ return [
   '/scope/opds' => ['ScopeController', 'options'],
   '/scope/select' => ['ScopeController', 'select'],
   '/user_opd' => ['UserOpdController', 'index'],
+  '/user_pemda' => ['UserOpdController', 'index'],
   '/user_opd/list' => ['UserOpdController', 'list'],
   '/user_opd/employees' => ['UserOpdController', 'employees'],
   '/user_opd/save' => ['UserOpdController', 'save'],

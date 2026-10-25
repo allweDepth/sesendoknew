@@ -2,7 +2,9 @@
 
 $assert=static function(bool $ok,string $message):void{if(!$ok){fwrite(STDERR,"FAIL: $message\n");exit(1);}echo "PASS: $message\n";};
 $sidebar=file_get_contents(__DIR__.'/../app/Views/partials/sidebar.php');
-$settings=file_get_contents(__DIR__.'/../app/Views/pengaturan/form.php');
+require_once __DIR__.'/../app/Core/Auth.php';
+$_SESSION['user']=['type_user'=>'admin_opd','kd_wilayah'=>'76.01','kd_opd'=>'1.03.0.00.0.00.01.0000','tahun'=>2026];
+ob_start();require __DIR__.'/../app/Views/pengaturan/form.php';$settings=ob_get_clean();
 $settingsController=file_get_contents(__DIR__.'/../app/Controllers/PengaturanController.php');
 $service=file_get_contents(__DIR__.'/../app/Services/PageSetupService.php');
 $editor=file_get_contents(__DIR__.'/../public/assets/js/ui/rich-document-editor.js');

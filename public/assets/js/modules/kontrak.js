@@ -36,7 +36,7 @@ class KontrakModule extends BaseCrudModule {
 	}
 
 	documentUploadForm() {
-		return `<form class="ui form segment" id="contractDocumentForm"><h4 class="ui header"><i class="paperclip icon"></i>Tambah File Paket</h4><div class="two fields"><div class="field"><label>Jenis Dokumen</label><select name="jenis_dokumen" class="ui dropdown">${["KONTRAK","SPK","SPMK","SSKK","SSUK","RAB","JADWAL","KURVA_S","GAMBAR","BAST","PHO","FHO","ADENDUM","JAMINAN","LAPORAN","LAINNYA"].map(x=>`<option value="${x}">${x.replaceAll("_"," ")}</option>`).join("")}</select></div><div class="required field"><label>Judul Dokumen</label><input name="judul" required maxlength="255"></div></div><div class="two fields"><div class="field"><label>Nomor Dokumen</label><input name="nomor_dokumen" maxlength="255"></div><div class="field"><label>Tanggal Dokumen</label><div class="ui calendar contract-calendar"><div class="ui input left icon"><i class="calendar icon"></i><input name="tanggal_dokumen" placeholder="YYYY-MM-DD" autocomplete="off"></div></div></div></div><div class="required field"><label>File (maks. 25 MB)</label><input type="file" name="file" required accept=".pdf,.jpg,.jpeg,.png,.xlsx,.docx,.zip"></div><div class="field"><label>Keterangan</label><textarea name="keterangan" rows="2"></textarea></div><div class="ui error message"></div><button type="submit" class="ui teal button"><i class="upload icon"></i>Upload Dokumen</button></form>`;
+		return `<form class="ui form segment" id="contractDocumentForm"><h4 class="ui header"><i class="paperclip icon"></i>Tambah File Paket</h4><div class="two fields"><div class="field"><label>Jenis Dokumen</label><select name="jenis_dokumen" class="ui dropdown">${["KONTRAK","SPK","SPMK","SSKK","SSUK","RAB","JADWAL","KURVA_S","GAMBAR","BAST","PHO","FHO","ADENDUM","JAMINAN","LAPORAN","LAINNYA"].map(x=>`<option value="${x}">${x.replaceAll("_"," ")}</option>`).join("")}</select></div><div class="required field"><label>Judul Dokumen</label><input name="judul" required maxlength="255"></div></div><div class="two fields"><div class="field"><label>Nomor Dokumen</label><input name="nomor_dokumen" maxlength="255"></div><div class="field"><label>Tanggal Dokumen</label><div class="ui calendar contract-calendar"><div class="ui input left icon"><i class="calendar icon"></i><input name="tanggal_dokumen" placeholder="YYYY-MM-DD" autocomplete="off"></div></div></div></div><div class="required field"><label>File (maks. 25 MB)</label><input type="file" name="file" required accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xlsm,.docx,.zip"></div><div class="field"><label>Keterangan</label><textarea name="keterangan" rows="2"></textarea></div><div class="ui error message"></div><button type="submit" class="ui teal button"><i class="upload icon"></i>Upload Dokumen</button></form>`;
 	}
 
 	uploadedDocumentCards(docs, canManage) {
@@ -103,8 +103,9 @@ class KontrakModule extends BaseCrudModule {
 	}
 
 	bindActions() {
+		$(document).off("change.contractType",'#form_flyout [name=cara_pengadaan],#form_flyout [name=jenis_pengadaan]').on("change.contractType",'#form_flyout [name=cara_pengadaan],#form_flyout [name=jenis_pengadaan]',()=>this.renderContractTypes($("#form_flyout")));
 		$(document).off("form:rendered.contractProcess").on("form:rendered.contractProcess",(_e,target)=>this.loadProcessForm($(target)));
-		$(document).off("form:populated.contractProcess").on("form:populated.contractProcess",(_e,tbl,_data,target)=>{if(tbl==="kontrak")this.loadProcessForm($(target));});
+		$(document).off("form:populated.contractProcess").on("form:populated.contractProcess",(_e,tbl,data,target)=>{if(tbl==="kontrak"){$(target).attr('data-saved-contract-type',data?.jenis_kontrak||'');this.loadProcessForm($(target));}});
 		$(document).off("change.contractProcess input.contractProcess",'#form_flyout [name=cara_pengadaan],#form_flyout [name=metode_pemilihan],#form_flyout [name=tipe_swakelola]')
 			.on("change.contractProcess input.contractProcess",'#form_flyout [name=cara_pengadaan],#form_flyout [name=metode_pemilihan],#form_flyout [name=tipe_swakelola]',()=>this.renderProcessForm($("#form_flyout")));
 		$(document).off("input.processValue change.processValue","#contractProcessFields [data-process-value]").on("input.processValue change.processValue","#contractProcessFields [data-process-value]",e=>{
@@ -211,8 +212,17 @@ class KontrakModule extends BaseCrudModule {
 		form.find('[name=proses_pengadaan]').closest('.column').after('<div class="sixteen wide column" id="contractProcessFields"><div class="ui active centered inline loader"></div></div>');
 		window.Ajax.request({url:`/kontrak/procurement/process?contract_id=${id}`,method:"GET",success:r=>{
 			if(token!==this.processRequest||!form.find('[name=proses_pengadaan]').length)return;
+			this.contractTypes=r.data?.contract_types||{};this.renderContractTypes(form);
 			this.processCatalog=r.data?.catalog||{};this.processValues=r.data?.values||{};this.renderProcessForm(form);
 		},error:()=>{if(token===this.processRequest)form.find('#contractProcessFields').html('<div class="ui negative message">Nomor/tanggal proses gagal dimuat. Buka kembali form sebelum menyimpan.</div>');}});
+	}
+	renderContractTypes(form) {
+		const way=form.find('[name=cara_pengadaan]').val(),kind=form.find('[name=jenis_pengadaan]').val(),input=form.find('[name=jenis_kontrak]'),dropdown=input.closest('.ui.dropdown');
+		const options=this.contractTypes?.[way==='SWAKELOLA'?'SWAKELOLA':kind];if(!input.length||!options)return;
+		const previous=input.val()||form.attr('data-saved-contract-type'),fallback=way==='SWAKELOLA'?'PERJANJIAN_SWAKELOLA':kind==='PEKERJAAN_KONSTRUKSI'?'HARGA_SATUAN':'LUMSUM';
+		dropdown.dropdown('change values',Object.entries(options).map(([value,name])=>({value,name})));
+		dropdown.dropdown('set selected',Object.hasOwn(options,previous)?previous:fallback);
+		form.removeAttr('data-saved-contract-type');
 	}
 
 	processFlow(form) {

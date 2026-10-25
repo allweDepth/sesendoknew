@@ -859,9 +859,15 @@ class FormEngine {
 			return "";
 		}
 		switch (tag) {
+			case "hidden":
+			case "fieldHidden": {
+				const escape=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+				return `<input type="hidden" name="${escape(prop.name)}" value="${escape(prop.value??prop.default??"")}">`;
+			}
 			case "fieldAction":
 				return this.fieldWrapper(this.inputAction(prop), prop);
 
+			case "calendar":
 			case "fieldCalendar":
 				return this.fieldWrapper(this.calendar(prop), prop);
 
@@ -874,12 +880,15 @@ class FormEngine {
 			case "input":
 				return this.fieldWrapper(this.input(prop), prop);
 
+			case "textarea":
 			case "fieldTextarea":
 				return this.fieldWrapper(`<textarea name="${prop.name}" ${prop.atribut || ""}></textarea>`, prop);
 
+			case "dropdown":
 			case "fieldDropdown":
 				return this.fieldWrapper(this.dropdown(prop), prop);
 
+			case "toggle":
 			case "fieldCheckbox":
 				return `
                     <div class="field ${prop.classField || ""}">

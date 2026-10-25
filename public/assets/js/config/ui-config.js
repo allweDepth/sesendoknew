@@ -788,6 +788,8 @@ UIConfig.rekanan = {
 			{ tag: "field", prop: { label: "Nama Direktur", name: "direktur" } },
 			{ tag: "field", prop: { label: "Jabatan", name: "jabatan" } },
 			{ tag: "field", prop: { label: "No KTP", name: "no_ktp" } },
+			{ tag: "field", prop: { label: "Golongan", name: "golongan", required:true } },
+			{ tag: "field", prop: { label: "Ruang", name: "ruang", required:true, atribut:'maxlength="10"' } },
 
 			{
 				tag: "fieldTextarea",
@@ -1099,6 +1101,10 @@ UIConfig.pppk = {
 	form: { elements: [
 		{ tag: "field", prop: { label: "Nama Lengkap", name: "nama" } },
 		{ tag: "fieldAction", prop: { label: "Nomor Induk PPPK", name: "nip" } },
+		{ tag: "field", prop: { label: "Tempat Lahir", name: "t4_lahir", required:true } },
+		{ tag: "fieldCalendar", prop: { label: "Tanggal Lahir", name: "tgl_lahir", calendarType:"date", required:true } },
+		{ tag: "field", prop: { label: "Golongan", name: "golongan", required:true } },
+		{ tag: "field", prop: { label: "Ruang", name: "ruang", required:true, atribut:'maxlength="10"' } },
 		{ tag: "field", prop: { label: "Jabatan", name: "jabatan" } },
 		{ tag: "field", prop: { label: "Unit Kerja", name: "unit_kerja" } },
 		{ tag: "field", prop: { label: "Status Kepegawaian", name: "status_kepeg" } },
@@ -1190,7 +1196,7 @@ UIConfig.usulan_pembangunan={layout:{columns:1},validation:{jenis_usulan:{requir
 	{tag:"fieldDropdown",prop:{label:"Status",name:"status",options:[{value:"diusulkan",text:"Diusulkan"},{value:"diverifikasi",text:"Diverifikasi"},{value:"diterima",text:"Diterima"},{value:"ditolak",text:"Ditolak"},{value:"diakomodasi",text:"Diakomodasi"}]}},{tag:"fieldTextarea",prop:{label:"Catatan Verifikasi",name:"catatan_verifikasi"}}
 ]}};
 UIConfig.evaluasi_renja={layout:{columns:1},validation:{triwulan:{required:true},kd_sub_keg:{required:true},indikator:{required:true}},form:{elements:[
-	{tag:"fieldDropdown",prop:{label:"Triwulan",name:"triwulan",options:[{value:"1",text:"Triwulan I"},{value:"2",text:"Triwulan II"},{value:"3",text:"Triwulan III"},{value:"4",text:"Triwulan IV"}]}},{tag:"fieldDropdown",prop:{label:"Target Renja yang Dievaluasi",name:"renja_kinerja_id",source:"renja_kinerja_dropdown",search:true}},{tag:"fieldDropdown",prop:{label:"Sub Kegiatan",name:"kd_sub_keg",source:"rekening_kegiatan.sub_kegiatan",search:true}},{tag:"fieldTextarea",prop:{label:"Indikator Kinerja",name:"indikator"}},{tag:"field",prop:{label:"Satuan",name:"satuan"}},
+	{tag:"fieldDropdown",prop:{label:"Triwulan",name:"triwulan",options:[{value:"1",text:"Triwulan I"},{value:"2",text:"Triwulan II"},{value:"3",text:"Triwulan III"},{value:"4",text:"Triwulan IV"}]}},{tag:"fieldDropdown",prop:{label:"Target Renja yang Dievaluasi",name:"renja_kinerja_id",source:"renja_kinerja_dropdown",search:true}},{tag:"fieldDropdown",prop:{label:"Sub Kegiatan",name:"kd_sub_keg",source:"sub_kegiatan_penugasan",search:true}},{tag:"fieldTextarea",prop:{label:"Indikator Kinerja",name:"indikator"}},{tag:"field",prop:{label:"Satuan",name:"satuan"}},
 	{tag:"field",prop:{label:"Target Tahunan",name:"target_tahunan",type:"number"}},{tag:"field",prop:{label:"Target Triwulan",name:"target_triwulan",type:"number"}},{tag:"field",prop:{label:"Realisasi Triwulan",name:"realisasi_triwulan",type:"number"}},{tag:"field",prop:{label:"Realisasi Kumulatif",name:"realisasi_kumulatif",type:"number"}},{tag:"field",prop:{label:"Pagu Anggaran",name:"pagu_anggaran",type:"number"}},{tag:"field",prop:{label:"Realisasi Anggaran Triwulan",name:"realisasi_anggaran_triwulan",type:"number"}},{tag:"field",prop:{label:"Realisasi Anggaran Kumulatif",name:"realisasi_anggaran_kumulatif",type:"number"}},
 	{tag:"fieldTextarea",prop:{label:"Faktor Pendorong",name:"faktor_pendorong"}},{tag:"fieldTextarea",prop:{label:"Faktor Penghambat",name:"faktor_penghambat"}},{tag:"fieldTextarea",prop:{label:"Tindak Lanjut",name:"tindak_lanjut"}},{tag:"fieldDropdown",prop:{label:"Status",name:"status",options:[{value:"draft",text:"Draft"},{value:"dikirim",text:"Dikirim ke Bappeda"},{value:"diverifikasi",text:"Diverifikasi"},{value:"perbaikan",text:"Perlu Perbaikan"}]}}
 ]}};
@@ -1287,7 +1293,7 @@ const phase3Flags = [
 UIConfig.rkpd = {
 	validation: { kd_sub_keg: { required: true }, target: { required: true }, pagu: { required: true } },
 	form: { elements: [
-		{ tag: "fieldDropdown", prop: { label: "Sub Kegiatan", name: "kd_sub_keg", source: "sub_kegiatan" } },
+		{ tag: "fieldDropdown", prop: { label: "Sub Kegiatan", name: "kd_sub_keg", source: "sub_kegiatan_penugasan" } },
 		{ tag: "fieldTextarea", prop: { label: "Indikator", name: "indikator", atribut: `rows="2"` } },
 		{ tag: "input", prop: { label: "Target", name: "target", type: "number" } },
 		{ tag: "input", prop: { label: "Pagu", name: "pagu", type: "number" } },
@@ -1327,7 +1333,7 @@ const phase3BudgetForm = { layout:{columns:1}, validation:{kd_sub_keg:{required:
 	{ tag: "input", prop: { label: "Total Belanja", name: "jumlah", type: "number" } },
 	{ tag: "fieldDropdown", prop: { label: "Sumber Dana", name: "sumber_dana_id", source: "sumber_dana" } },
 	{ tag: "input", prop: { label: "Nama Sumber Dana (sesuai dokumen)", name: "sumber_dana_teks" } },
-	...phase3Flags,
+	...phase3Flags.filter(element => element.prop.name !== "keterangan"),
 ] } };
 ["renja", "rka", "dpa", "renja_p", "rka_p", "dppa"].forEach((key) => { UIConfig[key] = phase3BudgetForm; });
 /*
@@ -1568,6 +1574,7 @@ UIConfig.kontrak = {
 			{ tag:"input", prop:{label:"Nomor RUP",name:"nomor_rup"} },
 			{ tag:"input", prop:{label:"Nilai HPS",tableLabel:"Nilai HPS",tableWidth:"money",tablePriority:20,name:"nilai_hps",type:"number"} },
 			{ tag:"input", prop:{label:"Bentuk Kontrak (ditentukan otomatis)",name:"bentuk_kontrak",atribut:"readonly"} },
+			{ tag:"fieldDropdown", prop:{label:"Jenis Kontrak",name:"jenis_kontrak",options:[]} },
 			{ tag:"fieldTextarea", prop:{label:"Nama/Ruang Lingkup Pekerjaan",tableLabel:"Nama/Ruang Lingkup Pekerjaan",tableWidth:"wide",tablePriority:30,name:"uraian_kontrak",atribut:`rows="2"`} },
 			{ tag:"input", prop:{label:"Total Pagu Terpilih (otomatis dari rincian)",tableLabel:"Total Pagu",tableWidth:"money",tablePriority:18,name:"total_anggaran",type:"number",atribut:"readonly"} },
 			{ tag:"input", prop:{label:"Nilai Kontrak (otomatis dari rincian)",tableLabel:"Nilai Kontrak",tableWidth:"money",tablePriority:19,name:"nilai_kontrak",type:"number",atribut:"readonly"} },
@@ -1664,7 +1671,7 @@ UIConfig.halaman_berita = {
 	},
 };
 UIConfig.absensi={validation:{pegawai_id:{required:true},tanggal:{required:true},status:{required:true}},form:{elements:[
-	{tag:"fieldDropdown",prop:{label:"Pegawai",name:"pegawai_id",source:"pegawai",search:true}},
+	{tag:"fieldDropdown",prop:{label:"Pegawai",name:"pegawai_id",source:"asn",search:true}},
 	{tag:"fieldCalendar",prop:{label:"Tanggal",name:"tanggal",calendarType:"date"}},
 	{tag:"fieldCalendar",prop:{label:"Jam Masuk",name:"jam_masuk",calendarType:"time"}},{tag:"fieldCalendar",prop:{label:"Jam Pulang",name:"jam_pulang",calendarType:"time"}},
 	{tag:"fieldDropdown",prop:{label:"Status",name:"status",options:["HADIR","DINAS_LUAR","IZIN","SAKIT","CUTI","ALPA","WFH"].map(x=>({value:x,text:x.replace('_',' ')}))}},

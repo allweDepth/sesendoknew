@@ -57,7 +57,7 @@ $group = static function (string $title, string $icon, array $items): void {
     <?php if ($manager) $group('User & Role OPD', 'users cog', [['Kelola User & Role', '/user_opd', 'User & Role OPD/Kelola']]); ?>
     <a class="item" href="/pengaturan" data-spa="client" data-title="Pengaturan"><i class="toolbox icon"></i> Pengaturan</a>
     <?php if ($manager) $group('Berita', 'newspaper', [['Kelola Konten', '/halaman_berita', 'Berita/Kelola Konten']]); ?>
-    <?php if ($role === 'super_admin'): ?><a class="item" href="/reset_tabel" data-spa="client" data-title="Reset Tabel"><i class="erase icon"></i> Reset Tabel</a><a class="item" href="/user_pemda" data-spa="client" data-title="User Pemda"><i class="users icon"></i> User Pemda</a><?php endif; ?>
+    <?php if ($role === 'super_admin'): ?><a class="item" href="/reset_tabel" data-spa="client" data-title="Reset Tabel"><i class="erase icon"></i> Reset Tabel</a><a class="item" href="/user_pemda" data-spa="server" data-title="User Pemda"><i class="users icon"></i> User Pemda</a><?php endif; ?>
     <?php $group('Pesan', 'comments outline', [['Buka Messenger', '/wallchat', 'Pesan/Messenger']]);
     $group('Profil', 'user', [['Pengaturan Profil', '/profil', 'Profil/Pengaturan']]); ?>
   </div>

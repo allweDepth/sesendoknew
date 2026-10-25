@@ -20,6 +20,13 @@ $(document).ready(function () {
 			if (tbl === "organisasi") return result(role === "admin_wilayah");
 			if (tbl === "wilayah") return result(role === "super_admin");
 			if (["rekening_kegiatan", "satuan", "aset", "akun", "sumber_dana"].includes(tbl)) return result(role === "tapd");
+			if (tbl === "rpjmd_kabupaten") {
+				const allowed=["super_admin","admin_wilayah"].includes(role);
+				return {add:allowed,edit:allowed,delete:allowed,import:false};
+			}
+			// These screens use their own action/profile rules; the technical-reference
+			// read-only rule must not hide every add/edit control on them.
+			if (["rekanan","usulan_pembangunan","peraturan"].includes(tbl)) return null;
 			return result(false);
 		}
 		if (path.startsWith("/kepegawaian")) {

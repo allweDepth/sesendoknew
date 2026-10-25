@@ -1,0 +1,192 @@
+[
+    {
+        "kontrak_id": 852,
+        "document_id": "6",
+        "filename": "Penawaran - CV. BUMANTARA KARYA TEKNIK - Normalisasi Saluran Sungai Bulubunggu.xlsm",
+        "sha256": "a3c956d7ffec82bcba505d7294b89c2cab25fd9a6f916a61f74a5aa8789c3c5a",
+        "total_rab": 399863478.69,
+        "display_rupiah": 399863479,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/852/rab/penawaran-a3c956d7ffec82bcba50.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 820,
+        "document_id": "7",
+        "filename": "Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Bulumario.xlsm",
+        "sha256": "8b4a7bde1e93954aeda77b2f6ce0004ca2bddee55e936cd540c99b6d8562dfb9",
+        "total_rab": 399863478.69,
+        "display_rupiah": 399863479,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/820/rab/penawaran-8b4a7bde1e93954aeda7.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 822,
+        "document_id": "8",
+        "filename": "Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Dapurang.xlsm",
+        "sha256": "8657c6387449df63bac6103c65a6d229476e8c925f6f97be9162916393738211",
+        "total_rab": 399863945.98,
+        "display_rupiah": 399863946,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/822/rab/penawaran-8657c6387449df63bac6.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 825,
+        "document_id": "9",
+        "filename": "Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Polewali.xlsm",
+        "sha256": "76eb60195ddbc148b9586e42e6c461b2b2941f6543f15f4ad3a1d37e838d004f",
+        "total_rab": 79973496.65,
+        "display_rupiah": 79973497,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/825/rab/penawaran-76eb60195ddbc148b958.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 821,
+        "document_id": "10",
+        "filename": "Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Saptanajaya.xlsm",
+        "sha256": "e1ed037ee5174476626e9fd60bb30b7b1666196b4a80cb596e0756599f7bc7e6",
+        "total_rab": 399863785.92,
+        "display_rupiah": 399863786,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/821/rab/penawaran-e1ed037ee5174476626e.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 823,
+        "document_id": "11",
+        "filename": "Penawaran - CV. MULIA NARATAMA DAYA - Normalisasi Sungai Saluran Desa Tirtabuana.xlsm",
+        "sha256": "fbf74369f84f2d3ee6e1f065577c2b750ab2c19549a0d10f6d5ce328287b45ce",
+        "total_rab": 357878324.96,
+        "display_rupiah": 357878325,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/823/rab/penawaran-fbf74369f84f2d3ee6e1.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 790,
+        "document_id": "12",
+        "filename": "Penawaran - PT. BUMI SEDAYA SEJAHTERA - Pemb. Jalan Rabat Gudang obat Ako Pasangkayu.xlsm",
+        "sha256": "e80964e03e3be4fd35170b2b69bcbf6ac6b99bc99e7e8453e9d48de5119103a7",
+        "total_rab": 149985614.88,
+        "display_rupiah": 149985615,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/790/rab/penawaran-e80964e03e3be4fd3517.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 788,
+        "document_id": "13",
+        "filename": "Penawaran - CV. BUMANTARA KARYA TEKNIK - Pemb. Jalan Rabat Kabupaten Pasangkayu.xlsm",
+        "sha256": "aa895e6bb98d639d3f2fb105ef369b54fb0ee978673dbe56c0940b8d7202ff2c",
+        "total_rab": 399957267.66,
+        "display_rupiah": 399957268,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/788/rab/penawaran-aa895e6bb98d639d3f2f.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 789,
+        "document_id": "14",
+        "filename": "Penawaran - PT. BUMI SEDAYA SEJAHTERA - Pemb. Jalan Rabat Andi Bandaco Pasangkayu.xlsm",
+        "sha256": "688a436104a4eb677f981b8fce166b93397e48d5d218f26cf6cfeaf205c04830",
+        "total_rab": 399969567.4,
+        "display_rupiah": 399969567,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/789/rab/penawaran-688a436104a4eb677f98.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 791,
+        "document_id": "15",
+        "filename": "Penawaran - CV. KARYA UTAMA NUSANTARA - Pemb. Jalan Rabat Mesjid.xlsm",
+        "sha256": "34520d05a47055554d07082cba9700b6f003698d6bb4d818a82484a46799f50a",
+        "total_rab": 99988289.42,
+        "display_rupiah": 99988289,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/791/rab/penawaran-34520d05a47055554d07.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 793,
+        "document_id": "16",
+        "filename": "Penawaran - CV. KARYA UTAMA NUSANTARA - Pemb. Jalan Rabat Cakalang.xlsm",
+        "sha256": "347d88fc7ece82906a28e38ffff1efbc1ed56eb1a88f28a506165185f6bbdd3b",
+        "total_rab": 399961360.27,
+        "display_rupiah": 399961360,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/793/rab/penawaran-347d88fc7ece82906a28.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 798,
+        "document_id": "17",
+        "filename": "Penawaran - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Dsn Benteng Desa Ompi.xlsm",
+        "sha256": "e3d39a9aaae83af97e6cdc3094b3211ed4e78a2f740a25b7a53b4c607c0285e6",
+        "total_rab": 194929676.3,
+        "display_rupiah": 194929676,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/798/rab/penawaran-e3d39a9aaae83af97e6c.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 799,
+        "document_id": "18",
+        "filename": "Penawaran - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Dsn. Kampung Baru Desa Bukit Harapan.xlsm",
+        "sha256": "1a68cb4c7e9f608f047c6a5bd414c8ffb27457d756275a71183b70ded12ac463",
+        "total_rab": 194929676.3,
+        "display_rupiah": 194929676,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/799/rab/penawaran-1a68cb4c7e9f608f047c.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 855,
+        "document_id": "19",
+        "filename": "Penawaran - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Dusun Mandar.xlsm",
+        "sha256": "ba6a0f781916cc8f3072005f96dd1cc7a6c444984b282ca31202845201157165",
+        "total_rab": 179935801.47,
+        "display_rupiah": 179935801,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/855/rab/penawaran-ba6a0f781916cc8f3072.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 800,
+        "document_id": "20",
+        "filename": "Penawaran - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Kabupaten.xlsm",
+        "sha256": "177c2fc13781cdeb53e371ca69195fa699e2b3af9a79aaa661c4ccee0c6cb354",
+        "total_rab": 149946193.69,
+        "display_rupiah": 149946194,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/800/rab/penawaran-177c2fc13781cdeb53e3.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 797,
+        "document_id": "21",
+        "filename": "Penawaran - CV. RAMA KARYA KONSTRUKSI - Pemb. Jalan Wulai.xlsm",
+        "sha256": "fab2c64041877580c2916a1aa9551fb952d4ad0b79c8486c98c45ab3231eb9c9",
+        "total_rab": 379864872.31,
+        "display_rupiah": 379864872,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/797/rab/penawaran-fab2c64041877580c291.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 824,
+        "document_id": "22",
+        "filename": "Penawaran - CV. IPORANNUAN UTAMA KONSTRUKSI - Pemb. Jalan Desa Letawa.xlsm",
+        "sha256": "9c1a42d6e8e16f3fac2d31897461d744619ed41ea67dc0dbfc382446fe02554c",
+        "total_rab": 319991991.47,
+        "display_rupiah": 319991991,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/824/rab/penawaran-9c1a42d6e8e16f3fac2d.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 853,
+        "document_id": "23",
+        "filename": "Penawaran - CV. BUMANTARA KARYA TEKNIK - Peningkatan Jalan Bulubunggu.xlsm",
+        "sha256": "a317eea40fd09e754823526a70e55938dd98502e22f19a98f991868bff2ea9f4",
+        "total_rab": 199994495.57,
+        "display_rupiah": 199994496,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/853/rab/penawaran-a317eea40fd09e754823.xlsm",
+        "status": "PASS"
+    },
+    {
+        "kontrak_id": 849,
+        "document_id": "24",
+        "filename": "Penawaran - PT. BUMI SEDAYA SEJAHTERA - Pematangan Lahan Sekolah Rakyat.xlsx",
+        "sha256": "a65941a1f260573edf0f1e1f6f7979e2c8a62e5f7b74356c039fc229104554fa",
+        "total_rab": 399928284.24,
+        "display_rupiah": 399928284,
+        "path": "storage/uploads/76.01-1.03.0.00.0.00.01.0000/2026/kontrak/849/rab/penawaran-a65941a1f260573edf0f.xlsx",
+        "status": "PASS"
+    }
+]
