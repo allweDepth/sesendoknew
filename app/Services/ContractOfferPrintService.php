@@ -45,14 +45,14 @@ final class ContractOfferPrintService
         if($newFile&&$oldPath&&$oldPath!==$newFile){$old=realpath(dirname(__DIR__,2).'/'.$oldPath);$dir=realpath(dirname(__DIR__,2).'/'.dirname($newFile));if($old&&$dir&&str_starts_with($old,$dir.DIRECTORY_SEPARATOR))unlink($old);}
         unset($p['kop_path']);return$p;
     }
-    public function pdf(int $id,string $kind='bundle'):string
+    public function pdf(int $id,string $kind='bundle',array $pageOverrides=[]):string
     {
         if(!in_array($kind,['bundle','letter','rab'],true))throw new InvalidArgumentException('Jenis cetak penawaran tidak valid.');
         $d=$this->data($id);$c=$d['contract'];$rows=$d['rab'];$total=round(array_sum(array_map(fn($r)=>$r['type']==='KETERANGAN'?0:(float)$r['jumlah_penawaran'],$rows)),2);
         if($total<=0)throw new RuntimeException('RAB penawaran belum terisi. Lengkapi RAB penawaran sebelum mencetak.');
         $vendor=$this->db->query('SELECT nama_perusahaan,direktur,jabatan FROM rekanan_neo WHERE id=? AND is_deleted=0',[(int)($c['rekanan_id']??0)])->fetch();if(!$vendor)throw new RuntimeException('Pilih perusahaan dan lengkapi identitas penyedia sebelum mencetak surat penawaran.');
         $p=$this->settings($id,$c);if(empty($p['tanggal_surat']))throw new RuntimeException('Lengkapi tanggal surat penawaran terlebih dahulu.');
-        $setup=array_merge(PageSetupService::current($this->user),ContractPrintSettingsService::get($id));$pdf=PageSetupService::createPdf($setup,$kind==='rab'?'L':'P');PageSetupService::applyPdf($pdf,$setup);ProcurementDocumentFormatService::typography($pdf,$setup);$pdf->SetCreator('seSendok');$pdf->SetTitle('Penawaran - '.$c['uraian_kontrak']);
+        $setup=array_merge(PageSetupService::current($this->user),ContractPrintSettingsService::get($id),$pageOverrides);$pdf=PageSetupService::createPdf($setup,$kind==='rab'?'L':'P');PageSetupService::applyPdf($pdf,$setup);ProcurementDocumentFormatService::typography($pdf,$setup);$pdf->SetCreator('seSendok');$pdf->SetTitle('Penawaran - '.$c['uraian_kontrak']);
         if($kind!=='rab'){$this->page($pdf,$setup,$p,'P');$this->letter($pdf,$c,$vendor,$p,$total);}
         if($kind!=='letter'){$this->page($pdf,$setup,$p,'L');$this->rab($pdf,$c,$vendor,$rows,$total);}
         return$pdf->Output('','S');

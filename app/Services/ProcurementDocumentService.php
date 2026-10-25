@@ -238,7 +238,7 @@ final class ProcurementDocumentService
     }
 
     /** Preserve edited snapshots; only create missing applicable documents. */
-    public function bundlePdf(int $contractId):string
+    public function bundlePdf(int $contractId,array $pageOverrides=[]):string
     {
         $this->canEdit();$info=$this->templates($contractId);$c=$info['contract'];
         if(($c['cara_pengadaan']??'')!=='PENYEDIA')throw new InvalidArgumentException('Gunakan penyusunan dokumen swakelola untuk paket ini');
@@ -258,7 +258,7 @@ final class ProcurementDocumentService
             $saved=$this->save(['contract_id'=>$contractId,'master_id'=>$m['id'],'judul'=>$m['nama'],'nomor_dokumen'=>$process['nomor']??'','tanggal_dokumen'=>$process['tanggal'],'status'=>'DRAFT','sections'=>$draft['sections'],'data_isian'=>['dibuat_sebagai'=>'bundel','rup_sementara'=>str_contains($c['keterangan']??'','RUP acak sementara')]]);
             $existing[$code]=$saved['id'];
         }
-        $c=$this->contract($contractId);$setup=PageSetupService::current($this->user);if($reference)$setup=ProcurementDocumentFormatService::setup($setup,$c['print_settings']??[]);$pdf=PageSetupService::createPdf($setup,'P');$pdf->SetTitle('Dokumen Pengadaan - '.$c['uraian_kontrak']);
+        $c=$this->contract($contractId);$setup=PageSetupService::current($this->user);if($reference)$setup=ProcurementDocumentFormatService::setup($setup,$c['print_settings']??[]);$setup=array_replace($setup,$pageOverrides);$pdf=PageSetupService::createPdf($setup,'P');$pdf->SetTitle('Dokumen Pengadaan - '.$c['uraian_kontrak']);
         $renderer=new ProcurementFixedPdfService($this->user);
         if($form==='SPK'){$renderer->cover($pdf,$c,$setup);$pdf->Bookmark('Sampul SPK',0,0,$pdf->getPage());}
         foreach($order as $code){
