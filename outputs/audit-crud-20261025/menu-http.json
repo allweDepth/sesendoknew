@@ -1,0 +1,4852 @@
+[
+  {
+    "role": "super_admin",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=berita",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kepegawaian",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=user_role",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/halaman_berita",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian/struktur",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=absensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=asn",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=cuti",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=pejabat_tahunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=penugasan_subkegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=pppk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=riwayat_jabatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=riwayat_pangkat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=sk_pegawai",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/reset_tabel",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/user_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/user_pemda",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 200,
+      "add": true,
+      "message": "Data berhasil disimpan",
+      "edit": true,
+      "delete": true,
+      "delete_message": "Data berhasil dihapus"
+    }
+  },
+  {
+    "role": "admin_wilayah",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=berita",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kepegawaian",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=user_role",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/halaman_berita",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian/struktur",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=absensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=asn",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=cuti",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=pejabat_tahunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=penugasan_subkegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=pppk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=riwayat_jabatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=riwayat_pangkat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=sk_pegawai",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/user_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 200,
+      "add": true,
+      "message": "Data berhasil disimpan",
+      "edit": true,
+      "delete": true,
+      "delete_message": "Data berhasil dihapus"
+    }
+  },
+  {
+    "role": "tapd",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=berita",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kepegawaian",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=user_role",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/halaman_berita",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian/struktur",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=absensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=asn",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=cuti",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=pejabat_tahunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=penugasan_subkegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=pppk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=riwayat_jabatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=riwayat_pangkat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=sk_pegawai",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/user_opd",
+        "status": 403,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 400,
+      "add": false,
+      "message": "Gagal menambah pada modul rekanan: Role Tim Anggaran Pemerintah Daerah tidak diizinkan melakukan aksi add. Lingkup akses: satu wilayah dan tahun"
+    }
+  },
+  {
+    "role": "admin_opd",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=berita",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kepegawaian",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=user_role",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/halaman_berita",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian/struktur",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=absensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=asn",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=cuti",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=pejabat_tahunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=penugasan_subkegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=pppk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=riwayat_jabatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=riwayat_pangkat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=sk_pegawai",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/user_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 200,
+      "add": true,
+      "message": "Data berhasil disimpan",
+      "edit": true,
+      "delete": true,
+      "delete_message": "Data berhasil dihapus"
+    }
+  },
+  {
+    "role": "kepala_opd",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=berita",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kepegawaian",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=user_role",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/halaman_berita",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian/struktur",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=absensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=asn",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=cuti",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=pejabat_tahunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=penugasan_subkegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=pppk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=riwayat_jabatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=riwayat_pangkat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=sk_pegawai",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/user_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 200,
+      "add": true,
+      "message": "Data berhasil disimpan",
+      "edit": true,
+      "delete": true,
+      "delete_message": "Data berhasil dihapus"
+    }
+  },
+  {
+    "role": "pa_kpa",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=berita",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kepegawaian",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=user_role",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/halaman_berita",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian/struktur",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=absensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=asn",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=cuti",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=pejabat_tahunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=penugasan_subkegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=pppk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=riwayat_jabatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=riwayat_pangkat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kepegawaian?tbl=sk_pegawai",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/user_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 200,
+      "add": true,
+      "message": "Data berhasil disimpan",
+      "edit": true,
+      "delete": true,
+      "delete_message": "Data berhasil dihapus"
+    }
+  },
+  {
+    "role": "ppk",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 200,
+      "add": true,
+      "message": "Data berhasil disimpan",
+      "edit": true,
+      "delete": false,
+      "delete_message": "Gagal menghapus pada modul rekanan: Role Pejabat Pembuat Komitmen tidak diizinkan melakukan aksi delete. Lingkup akses: subkegiatan yang ditugaskan"
+    }
+  },
+  {
+    "role": "pptk",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 200,
+      "add": true,
+      "message": "Data berhasil disimpan",
+      "edit": true,
+      "delete": false,
+      "delete_message": "Gagal menghapus pada modul rekanan: Role PPTK tidak diizinkan melakukan aksi delete. Lingkup akses: subkegiatan yang ditugaskan"
+    }
+  },
+  {
+    "role": "ppk_skpd",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 200,
+      "add": true,
+      "message": "Data berhasil disimpan",
+      "edit": true,
+      "delete": false,
+      "delete_message": "Gagal menghapus pada modul rekanan: Role Pejabat Penatausahaan Keuangan tidak diizinkan melakukan aksi delete. Lingkup akses: satu OPD dan tahun"
+    }
+  },
+  {
+    "role": "bendahara",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 200,
+      "add": true,
+      "message": "Data berhasil disimpan",
+      "edit": true,
+      "delete": false,
+      "delete_message": "Gagal menghapus pada modul rekanan: Role Bendahara tidak diizinkan melakukan aksi delete. Lingkup akses: satu OPD dan tahun"
+    }
+  },
+  {
+    "role": "pejabat_pengadaan",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 200,
+      "add": true,
+      "message": "Data berhasil disimpan",
+      "edit": true,
+      "delete": false,
+      "delete_message": "Gagal menghapus pada modul rekanan: Role Pejabat Pengadaan tidak diizinkan melakukan aksi delete. Lingkup akses: paket yang ditugaskan"
+    }
+  },
+  {
+    "role": "pokja_ulp",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 200,
+      "add": true,
+      "message": "Data berhasil disimpan",
+      "edit": true,
+      "delete": false,
+      "delete_message": "Gagal menghapus pada modul rekanan: Role Pokja Pemilihan/ULP tidak diizinkan melakukan aksi delete. Lingkup akses: paket yang ditugaskan"
+    }
+  },
+  {
+    "role": "staf_opd",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 200,
+      "add": true,
+      "message": "Data berhasil disimpan",
+      "edit": true,
+      "delete": false,
+      "delete_message": "Gagal menghapus pada modul rekanan: Role Staf OPD tidak diizinkan melakukan aksi delete. Lingkup akses: subkegiatan yang ditugaskan"
+    }
+  },
+  {
+    "role": "viewer",
+    "login": true,
+    "menu_pages": [
+      {
+        "url": "/dashboard",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=penganggaran",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=perencanaan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=pesan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=referensi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=sakip",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=standar_harga",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=tata_naskah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dashboard?mod=usulan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dpa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/dppa",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=__laporan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=kontrak",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/kontrak?tbl=realisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/mapping",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/add",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/maps/layers",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/pengaturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/profil",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=akun",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=aset",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=evaluasi_renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=iku_opd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=organisasi",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pengukuran_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=peraturan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=perjanjian_kinerja_detail",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=pohon_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekanan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=bidang",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=program",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=sub_kegiatan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rekening_kegiatan&req=urusan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=renja_kinerja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=rpjmd_kabupaten",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=satuan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=sumber_dana",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=usulan_pembangunan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/referensi?tbl=wilayah",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renja_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/renstra",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rka_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/rkpd_perubahan",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=asb",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=hspk",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=sbu",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/standar_harga?tbl=ssh",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/buat",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/tata_naskah/daftar",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "url": "/wallchat",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "provider_crud": {
+      "add_status": 400,
+      "add": false,
+      "message": "Gagal menambah pada modul rekanan: Role Viewer tidak diizinkan melakukan aksi add. Lingkup akses: data yang ditugaskan"
+    }
+  }
+]

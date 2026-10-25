@@ -716,7 +716,7 @@ AUDIT TRAIL (TIDAK DIUBAH)
   private function enforceSubActivityAssignment(string $table, array $data, string $action): void
   {
     $role = $this->user['type_user'] ?? 'viewer';
-    if (!in_array($role, ['ppk', 'pptk', 'staf_opd'], true) || empty($data['kd_sub_keg'])) return;
+    if (!in_array($role, ['ppk', 'pptk', 'staf_opd', 'pejabat_pengadaan', 'pokja_ulp'], true) || empty($data['kd_sub_keg'])) return;
     $flag = $action === 'delete' ? 'dapat_hapus' : 'dapat_input';
     $assignment = $this->db->query("SELECT id FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND `$flag`=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0 LIMIT 1", [(int)($this->user['id'] ?? 0), $this->user['kd_wilayah'] ?? '', $this->user['kd_opd'] ?? '', $this->user['tahun'] ?? date('Y'), $data['kd_sub_keg']])->fetch();
     if (!$assignment) throw new Exception('Anda tidak memiliki izin ' . $action . ' untuk sub kegiatan ini.');
@@ -777,6 +777,16 @@ AUDIT TRAIL (TIDAK DIUBAH)
     elseif (abs($volume - $oldVolume) >= 0.000001) $data['status_perubahan'] = 'ubah';
     else $data['status_perubahan'] = $oldData['status_perubahan'] ?? 'awal';
   }
+  private function normalizeReferenceComponents(string $table,array $data):array
+  {
+    if(!in_array($table,['akun_neo','aset_neo','sumber_dana_neo'],true))return $data;
+    $code=trim((string)($data['kode']??''));
+    if(!preg_match('/^\d+(?:\.\d+){0,5}$/D',$code))throw new FieldValidationException('kode','Kode harus berupa angka bertingkat yang dipisahkan titik, maksimal enam tingkat.');
+    $data['kode']=$code;$parts=explode('.',$code);$fields=[$table==='sumber_dana_neo'?'sumber_dana':'akun','kelompok','jenis_akun','objek','rincian_objek','sub_rincian_objek'];
+    foreach($fields as $i=>$field)$data[$field]=(int)($parts[$i]??0);
+    return $data;
+  }
+
   private function normalizeSakipMetrics(string $table, array $data): array
   {
     $scope = [$this->user['kd_wilayah'] ?? '', $this->user['kd_opd'] ?? '', (int)($this->user['tahun'] ?? date('Y'))];
@@ -801,15 +811,15 @@ AUDIT TRAIL (TIDAK DIUBAH)
       };
       if (in_array($table, ['iku_opd_neo', 'pohon_kinerja_neo'], true)) {
         $s = $structure(!empty($data['penanggung_jawab_struktur_id']) ? (int)$data['penanggung_jawab_struktur_id'] : null);
-        if (!$s) throw new InvalidArgumentException('Struktur organisasi aktif untuk penanggung jawab belum tersedia pada tanggal dokumen');
+        if (!$s) throw new FieldValidationException('penanggung_jawab_struktur_id','Struktur organisasi aktif untuk penanggung jawab belum tersedia pada tanggal dokumen. Lengkapi Struktur Organisasi terlebih dahulu.');
         $data['penanggung_jawab_struktur_id'] = (int)$s['id'];
         $data['penanggung_jawab_pegawai_id'] = (int)$s['pegawai_id'];
       } else {
         $first = $structure(!empty($data['pihak_pertama_struktur_id']) ? (int)$data['pihak_pertama_struktur_id'] : null);
-        if (!$first) throw new InvalidArgumentException('Struktur aktif pihak pertama belum tersedia pada tanggal dokumen');
+        if (!$first) throw new FieldValidationException('pihak_pertama_struktur_id','Struktur aktif pihak pertama belum tersedia pada tanggal dokumen. Lengkapi Struktur Organisasi terlebih dahulu.');
         $parentOpd = $first['parent_kd_opd'] ?: $scope[1];
         $second = !empty($first['parent_id']) ? $this->db->query("SELECT id,pegawai_id,nama_jabatan,parent_id,parent_kd_opd FROM struktur_jabatan_opd_neo WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 AND status_jabatan='AKTIF' AND berlaku_mulai<=? AND (berlaku_sampai IS NULL OR berlaku_sampai>=?) LIMIT 1", [(int)$first['parent_id'], $scope[0], $parentOpd, $scope[2], $effectiveDate, $effectiveDate])->fetch() : null;
-        if (!$second) throw new InvalidArgumentException('Atasan aktif pihak kedua belum tersedia pada struktur organisasi');
+        if (!$second) throw new FieldValidationException('pihak_pertama_struktur_id','Atasan aktif pihak kedua belum tersedia pada struktur organisasi. Lengkapi atasan pada Struktur Organisasi terlebih dahulu.');
         $data['pihak_pertama_struktur_id'] = (int)$first['id']; $data['pihak_pertama_pegawai_id'] = (int)$first['pegawai_id']; $data['pihak_pertama_jabatan'] = $first['nama_jabatan'];
         $data['pihak_kedua_struktur_id'] = (int)$second['id']; $data['pihak_kedua_pegawai_id'] = (int)$second['pegawai_id']; $data['pihak_kedua_jabatan'] = $second['nama_jabatan'];
       }
@@ -1047,7 +1057,7 @@ INSERT (FIXED STABLE VERSION v3.1)
       }
     }
     if ($table === 'rekening_kegiatan') {
-      $hierarchyError = $this->applyRekeningHierarchy($filtered, $request['req'] ?? null);
+      $hierarchyError = $this->applyRekeningHierarchy($filtered, $request['req'] ?? $filtered['level'] ?? null);
       if ($hierarchyError !== null) return $hierarchyError;
     }
     //date time
@@ -1202,6 +1212,7 @@ kd_sub_keg → nama_sub_keg
         ===================================================== */
     $filtered = $this->sanitizer()->applySanitization($table, $filtered);
     $filtered = $this->injectAudit($filtered, 'insert');
+    $filtered = $this->normalizeReferenceComponents($table, $filtered);
     $filtered = $this->normalizeSakipMetrics($table, $filtered);
     $filtered = $this->normalizeContractProcurement($table, $filtered);
     if ($table === 'pejabat_tahunan_neo') $filtered = $this->normalizeAnnualOfficial($filtered);
@@ -1506,6 +1517,7 @@ IGNORE SYSTEM FIELD
     if ($table === 'master_biaya_akun') {
       $filtered = $this->inheritMasterBiayaScope($filtered);
     }
+    if (empty($filtered['peraturan_id']) && !empty($oldData['peraturan_id'])) $filtered['peraturan_id'] = $oldData['peraturan_id'];
     $filtered = $this->resolver()->resolvePeraturan($table, $filtered, $this->activeProfileKey);
     $filtered = $this->resolver()->resolvePeriode($table, $filtered);
 
@@ -1538,6 +1550,7 @@ IGNORE SYSTEM FIELD
       }
     }
     $this->applyChangeDocumentRules($table, $oldData, $filtered);
+    $filtered = $this->normalizeReferenceComponents($table, $filtered);
     $filtered = $this->normalizeSakipMetrics($table, $filtered);
     $filtered = $this->normalizeContractProcurement($table, $filtered);
     if ($table === 'pejabat_tahunan_neo') $filtered = $this->normalizeAnnualOfficial($filtered);
@@ -2426,7 +2439,7 @@ HANYA PERIODE AKTIF DI-CACHE
         }
       }
 
-      if (in_array($role, ['ppk', 'pptk', 'staf_opd', 'viewer', 'user'], true) && in_array('kd_sub_keg', $columns, true)) {
+      if (in_array($role, ['ppk', 'pptk', 'staf_opd', 'viewer', 'user', 'pejabat_pengadaan', 'pokja_ulp'], true) && in_array('kd_sub_keg', $columns, true)) {
         $assignments = $this->db->query('SELECT kd_sub_keg FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND dapat_lihat=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0', [(int)($this->user['id'] ?? 0), $this->user['kd_wilayah'] ?? '', $this->user['kd_opd'] ?? '', $this->user['tahun'] ?? date('Y')])->fetchAll(PDO::FETCH_COLUMN);
         if (!$assignments) {
           $whereParts[] = '1=0';
@@ -2572,7 +2585,7 @@ BUILD RULE DARI SCHEMA DATABASE
 
       $fieldRules = [];
 
-      if ($null === 'NO' && $field !== 'id') {
+      if ($null === 'NO' && $field !== 'id' && $col['Default'] === null && !str_contains($col['Extra'] ?? '', 'auto_increment')) {
         $fieldRules[] = 'required';
       }
 
@@ -4223,7 +4236,7 @@ LIMIT 1",
           }
         }
 
-        if (in_array($role, ['ppk', 'pptk', 'staf_opd', 'viewer', 'user'], true) && in_array('kd_sub_keg', $columns, true)) {
+        if (in_array($role, ['ppk', 'pptk', 'staf_opd', 'viewer', 'user', 'pejabat_pengadaan', 'pokja_ulp'], true) && in_array('kd_sub_keg', $columns, true)) {
           $assignments = $this->db->query('SELECT kd_sub_keg FROM user_subkegiatan_neo WHERE user_id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND dapat_lihat=1 AND berlaku_mulai<=CURDATE() AND berlaku_sampai>=CURDATE() AND is_deleted=0', [(int)($this->user['id'] ?? 0), $this->user['kd_wilayah'] ?? '', $this->user['kd_opd'] ?? '', $this->user['tahun'] ?? date('Y')])->fetchAll(PDO::FETCH_COLUMN);
           if (!$assignments) {
             $where[] = '1=0';

@@ -4,6 +4,7 @@ require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
 require_once __DIR__ . '/PageSetupService.php';
+require_once __DIR__.'/ContractAccessService.php';
 require_once __DIR__ . '/ProcurementDocumentService.php';
 require_once __DIR__ . '/OfficialLetterheadPdfService.php';
 require_once __DIR__ . '/ProcurementFixedPdfService.php';
@@ -41,7 +42,7 @@ class KontrakRealisasiService
 
   private function assertCanWrite(): void
   {
-    if (in_array($this->user['type_user']??'viewer',['tapd','viewer'],true)) throw new RuntimeException('Role ini hanya dapat membaca dan mengekspor data kontrak/realisasi.');
+    if (in_array($this->user['type_user']??'viewer',['tapd','viewer','user'],true)) throw new RuntimeException('Role ini hanya dapat membaca dan mengekspor data kontrak/realisasi.');
   }
 
   public function summary(): array
@@ -50,6 +51,7 @@ class KontrakRealisasiService
     $opdSql = $o && $o !== '0' ? ' AND k.kd_opd=?' : '';
     $params = [$w, $y];
     if ($opdSql) $params[] = $o;
+    [$accessSql,$accessParams]=ContractAccessService::condition($this->user);$opdSql.=$accessSql;array_push($params,...$accessParams);
     $totals = $this->db->query("SELECT COUNT(*) jumlah_kontrak,COALESCE(SUM(k.total_anggaran),0) total_anggaran,COALESCE(SUM(k.nilai_kontrak),0) nilai_kontrak,COALESCE(SUM(r.realisasi),0) realisasi FROM kontrak_neo k LEFT JOIN (SELECT kontrak_id,SUM(jumlah) realisasi FROM daftar_realisasi_neo WHERE is_deleted=0 GROUP BY kontrak_id) r ON r.kontrak_id=k.id WHERE k.kd_wilayah=? AND k.tahun=? AND k.is_deleted=0$opdSql", $params)->fetch();
     $monthly = array_fill(1, 12, 0.0);
     $rows = $this->db->query("SELECT MONTH(dr.tanggal) bulan,SUM(dr.jumlah) nilai FROM daftar_realisasi_neo dr JOIN kontrak_neo k ON k.id=dr.kontrak_id WHERE k.kd_wilayah=? AND k.tahun=? AND k.is_deleted=0 AND dr.is_deleted=0$opdSql GROUP BY MONTH(dr.tanggal)", $params)->fetchAll();
@@ -66,6 +68,7 @@ class KontrakRealisasiService
     if ($opd) $dpaParams[] = $o;
     $dppaParams = [$w, $y];
     if ($opd) $dppaParams[] = $o;
+    [$accessSql,$accessParams]=ContractAccessService::condition($this->user,'b');$opd.=$accessSql;array_push($dpaParams,...$accessParams);array_push($dppaParams,...$accessParams);
         $sql = "SELECT b.kd_sub_keg,MAX(CONVERT(COALESCE(h.uraian,r.uraian,'') USING utf8mb4) COLLATE utf8mb4_general_ci) nama_sub_kegiatan,MAX(CONVERT(COALESCE(b.uraian,'') USING utf8mb4) COLLATE utf8mb4_general_ci) contoh_uraian,COUNT(*) jumlah_uraian,SUM(b.jumlah) pagu,'dppa' sumber FROM dppa_neo b LEFT JOIN rekening_kegiatan r ON CONVERT(r.kode USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_sub_keg USING utf8mb4) COLLATE utf8mb4_general_ci AND r.level='sub_kegiatan' LEFT JOIN rekening_kegiatan_historis h ON h.tahun=b.tahun AND CONVERT(h.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci AND CONVERT(h.kode USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_sub_keg USING utf8mb4) COLLATE utf8mb4_general_ci AND h.level='sub_kegiatan' WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0 GROUP BY b.kd_sub_keg
           UNION ALL SELECT b.kd_sub_keg,MAX(CONVERT(COALESCE(h.uraian,r.uraian,'') USING utf8mb4) COLLATE utf8mb4_general_ci),MAX(CONVERT(COALESCE(b.uraian,'') USING utf8mb4) COLLATE utf8mb4_general_ci),COUNT(*),SUM(b.jumlah),'dpa' FROM dpa_neo b LEFT JOIN rekening_kegiatan r ON CONVERT(r.kode USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_sub_keg USING utf8mb4) COLLATE utf8mb4_general_ci AND r.level='sub_kegiatan' LEFT JOIN rekening_kegiatan_historis h ON h.tahun=b.tahun AND CONVERT(h.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci AND CONVERT(h.kode USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_sub_keg USING utf8mb4) COLLATE utf8mb4_general_ci AND h.level='sub_kegiatan' WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0 AND NOT EXISTS (SELECT 1 FROM dppa_neo p WHERE p.kd_wilayah=b.kd_wilayah AND p.kd_opd=b.kd_opd AND p.tahun=b.tahun AND p.kd_sub_keg=b.kd_sub_keg AND p.setujui=1 AND p.kunci=1 AND p.is_deleted=0) GROUP BY b.kd_sub_keg";
     $rows = $this->db->query("SELECT kd_sub_keg,MAX(nama_sub_kegiatan) nama_sub_kegiatan,MAX(contoh_uraian) contoh_uraian,SUM(jumlah_uraian) jumlah_uraian,SUM(pagu) pagu,MAX(sumber) sumber FROM ($sql) x GROUP BY kd_sub_keg ORDER BY CASE WHEN MAX(sumber)='dppa' THEN 0 ELSE 1 END,kd_sub_keg", array_merge($dppaParams, $dpaParams))->fetchAll();
@@ -88,6 +91,7 @@ class KontrakRealisasiService
       $scope .= ' AND b.kd_opd=?';
       $params[] = $o;
     }
+    [$accessSql,$accessParams]=ContractAccessService::condition($this->user,'b');$scope.=$accessSql;array_push($params,...$accessParams);
     $needle = '%' . trim($search) . '%';
     $limit = max(10, min($limit, 100));
     $sql = function (string $table, string $stage) use ($scope, $contractId): string {
@@ -125,6 +129,7 @@ class KontrakRealisasiService
       $opd = ' AND k.kd_opd=?';
       $params[] = $o;
     }
+    [$accessSql,$accessParams]=ContractAccessService::condition($this->user);$opd.=$accessSql;array_push($params,...$accessParams);
     return $this->db->query("SELECT k.id,k.nomor_kontrak,k.uraian_kontrak,k.nilai_kontrak,COALESCE(SUM(dr.jumlah),0) realisasi FROM kontrak_neo k LEFT JOIN daftar_realisasi_neo dr ON dr.kontrak_id=k.id AND dr.is_deleted=0 WHERE k.kd_wilayah=? AND k.tahun=?$opd AND k.is_deleted=0 GROUP BY k.id ORDER BY k.nomor_kontrak", $params)->fetchAll();
   }
 
@@ -152,6 +157,7 @@ class KontrakRealisasiService
   {
     [$w,$o,$y]=$this->scope();$params=[$id,$w,$y];$sql='SELECT * FROM daftar_realisasi_neo WHERE id=? AND kd_wilayah=? AND tahun=? AND is_deleted=0';
     if($o&&$o!=='0'){$sql.=' AND kd_opd=?';$params[]=$o;}$anchor=$this->db->query($sql.' LIMIT 1',$params)->fetch();if(!$anchor)throw new RuntimeException('Transaksi realisasi tidak ditemukan');
+    $this->contractHeader((int)$anchor['kontrak_id']);
     $uuid=(string)($anchor['transaksi_uuid']??'');$rows=$uuid!==''?$this->db->query('SELECT * FROM daftar_realisasi_neo WHERE transaksi_uuid=? AND kontrak_id=? AND is_deleted=0 ORDER BY id',[$uuid,$anchor['kontrak_id']])->fetchAll():[$anchor];
     $files=$uuid!==''?$this->db->query('SELECT id,nama_file_asli,mime_type,ukuran,tgl_insert FROM realisasi_dokumen_neo WHERE transaksi_uuid=? AND kontrak_id=? AND is_deleted=0 ORDER BY id DESC',[$uuid,$anchor['kontrak_id']])->fetchAll():[];
     return ['id'=>$id,'transaksi_uuid'=>$uuid,'contract_id'=>(int)$anchor['kontrak_id'],'tanggal'=>$anchor['tanggal'],'uraian_transaksi'=>$anchor['uraian_progress']?:$anchor['ket_uraian_paket'],'keterangan'=>$anchor['keterangan'],'jumlah'=>array_sum(array_map(fn($r)=>(float)$r['jumlah'],$rows)),'items'=>array_map(fn($r)=>['tahap'=>$r['dok'],'anggaran_id'=>(int)$r['id_dok_anggaran'],'jumlah'=>(float)$r['jumlah'],'progress_fisik'=>(float)$r['progress_fisik']],$rows),'files'=>$files];
@@ -167,7 +173,7 @@ class KontrakRealisasiService
     $note = trim((string)($payload['keterangan'] ?? ''));
     if (!$contractId || !$date || !$description) throw new InvalidArgumentException('Kontrak, tanggal, dan uraian transaksi wajib diisi');
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) throw new InvalidArgumentException('Tanggal transaksi tidak valid');
-    $header = $this->contractHeader($contractId);
+    $header = $this->contractHeader($contractId,true);
     $contractItems = $this->contractItems($contractId);
     $lookup = [];
     foreach ($contractItems as $item) $lookup[$item['tahap'] . ':' . $item['anggaran_id']] = $item;
@@ -217,11 +223,11 @@ class KontrakRealisasiService
 
   public function realizationDocument(int $id):array
   {
-    [$w,$o,$y]=$this->scope();$params=[$id,$w,$y];$sql='SELECT * FROM realisasi_dokumen_neo WHERE id=? AND kd_wilayah=? AND tahun=? AND is_deleted=0';if($o&&$o!=='0'){$sql.=' AND kd_opd=?';$params[]=$o;}$row=$this->db->query($sql.' LIMIT 1',$params)->fetch();if(!$row)throw new RuntimeException('File transaksi tidak ditemukan');return$row;
+    [$w,$o,$y]=$this->scope();$params=[$id,$w,$y];$sql='SELECT * FROM realisasi_dokumen_neo WHERE id=? AND kd_wilayah=? AND tahun=? AND is_deleted=0';if($o&&$o!=='0'){$sql.=' AND kd_opd=?';$params[]=$o;}$row=$this->db->query($sql.' LIMIT 1',$params)->fetch();if(!$row)throw new RuntimeException('File transaksi tidak ditemukan');$this->contractHeader((int)$row['kontrak_id']);return$row;
   }
   public function deleteRealizationDocument(int $id):array
   {
-    $this->assertCanWrite();$row=$this->realizationDocument($id);$this->db->update('realisasi_dokumen_neo',['is_deleted'=>1,'tgl_update'=>date('Y-m-d H:i:s'),'username_update'=>$this->user['username']??'system'],'WHERE id=?',[$id]);$path=dirname(__DIR__,2).'/'.$row['path_file'];if(is_file($path))@unlink($path);return['id'=>$id];
+    $this->assertCanWrite();$row=$this->realizationDocument($id);$this->contractHeader((int)$row['kontrak_id'],true);$this->db->update('realisasi_dokumen_neo',['is_deleted'=>1,'tgl_update'=>date('Y-m-d H:i:s'),'username_update'=>$this->user['username']??'system'],'WHERE id=?',[$id]);$path=dirname(__DIR__,2).'/'.$row['path_file'];if(is_file($path))@unlink($path);return['id'=>$id];
   }
   private function storeRealizationFiles(array $header,string $uuid,array $files):array
   {
@@ -243,13 +249,13 @@ class KontrakRealisasiService
     $rab = $this->db->query('SELECT * FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY COALESCE(NULLIF(urutan,0),id),id', [$contractId])->fetchAll();
     $schedule = $this->db->query('SELECT j.* FROM kontrak_jadwal_neo j LEFT JOIN rab_paket_neo r ON r.id=j.rab_id AND r.kontrak_id=j.kontrak_id WHERE j.kontrak_id=? AND j.is_deleted=0 AND (j.rab_id IS NULL OR r.id IS NOT NULL) ORDER BY COALESCE(r.nomor,\'\'),j.rab_id,j.minggu_ke,j.id', [$contractId])->fetchAll();
     $documents = $this->db->query('SELECT id,jenis_dokumen,nomor_dokumen,tanggal_dokumen,judul,nama_file_asli,path_file,mime_type,ukuran,versi,keterangan,tgl_insert FROM kontrak_dokumen_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY jenis_dokumen,versi DESC', [$contractId])->fetchAll();
-    return ['contract' => $header, 'rab' => $rab, 'schedule' => $schedule, 'curve' => $this->contractCurve($rab, $schedule), 'documents' => $documents, 'can_manage_documents' => !in_array($this->user['type_user'] ?? 'viewer', ['tapd', 'viewer'], true)];
+    return ['contract' => $header, 'rab' => $rab, 'schedule' => $schedule, 'curve' => $this->contractCurve($rab, $schedule), 'documents' => $documents, 'can_manage_documents' => !in_array($this->user['type_user'] ?? 'viewer', ['tapd', 'viewer', 'user'], true) && ContractAccessService::canInput($this->user,$header)];
   }
 
   public function saveRab(int $contractId, array $items): array
   {
     $this->assertCanWrite();
-    $header = $this->contractHeader($contractId);
+    $header = $this->contractHeader($contractId,true);
     if (!$items) throw new InvalidArgumentException('RAB minimal memiliki satu uraian');
     $existing = $this->db->query('SELECT * FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0', [$contractId])->fetchAll();
     $existingIds = array_map('intval', array_column($existing, 'id'));
@@ -313,7 +319,7 @@ class KontrakRealisasiService
   public function saveSchedule(int $contractId, array $weeks): array
   {
     $this->assertCanWrite();
-    $header = $this->contractHeader($contractId);
+    $header = $this->contractHeader($contractId,true);
     if (!$weeks) throw new InvalidArgumentException('Time schedule minimal memiliki satu periode pada item RAB');
     $rabRows = $this->db->query("SELECT id,bobot,nomor,uraian FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0 AND COALESCE(type,'')<>'KETERANGAN'", [$contractId])->fetchAll();
     if (!$rabRows) throw new InvalidArgumentException('Simpan RAB terlebih dahulu sebelum membuat Time Schedule');
@@ -535,7 +541,7 @@ class KontrakRealisasiService
   public function uploadDocument(int $contractId, array $meta, array $file): array
   {
     $this->assertCanWrite();
-    $header = $this->contractHeader($contractId);
+    $header = $this->contractHeader($contractId,true);
     $types = ['KONTRAK', 'SPK', 'SPMK', 'SSKK', 'SSUK', 'RAB', 'JADWAL', 'KURVA_S', 'GAMBAR', 'BAST', 'PHO', 'FHO', 'ADENDUM', 'JAMINAN', 'LAPORAN', 'LAINNYA'];
     $type = strtoupper((string)($meta['jenis_dokumen'] ?? ''));
     if (!in_array($type, $types, true)) throw new InvalidArgumentException('Jenis dokumen kontrak tidak valid');
@@ -567,6 +573,7 @@ class KontrakRealisasiService
     }
     $row = $this->db->query($sql . ' LIMIT 1', $p)->fetch();
     if (!$row) throw new RuntimeException('Dokumen tidak ditemukan');
+    $this->contractHeader((int)$row['kontrak_id']);
     return $row;
   }
 
@@ -574,6 +581,7 @@ class KontrakRealisasiService
   {
     $this->assertCanWrite();
     $document = $this->document($id);
+    $this->contractHeader((int)$document['kontrak_id'],true);
     $root = realpath(dirname(__DIR__, 2) . '/storage/uploads');
     $path = realpath(dirname(__DIR__, 2) . '/' . ltrim((string)$document['path_file'], '/'));
     if (!$root || !$path || ($path !== $root && !str_starts_with($path, $root . DIRECTORY_SEPARATOR)))
@@ -597,7 +605,7 @@ class KontrakRealisasiService
   public function saveContractItems(int $contractId, array $items): array
   {
     $this->assertCanWrite();
-    $header = $this->contractHeader($contractId);
+    $header = $this->contractHeader($contractId,true);
     if (!$items) throw new InvalidArgumentException('Pilih minimal satu uraian DPA/DPPA untuk kontrak');
     $seen = [];
     $validated = [];
@@ -620,6 +628,7 @@ class KontrakRealisasiService
       }
       $budget = $this->db->query("SELECT id,kd_sub_keg,kd_akun,uraian,jumlah FROM $table WHERE id=? AND kd_wilayah=? AND tahun=?$opdSql AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1", $params)->fetch();
       if (!$budget) throw new InvalidArgumentException('Uraian kontrak ke-' . ($index + 1) . ' tidak ditemukan atau DPA/DPPA belum disetujui dan dikunci');
+      ContractAccessService::assert($this->user,array_replace($header,['kd_sub_keg'=>$budget['kd_sub_keg']]),'dapat_input');
       if ($stage === 'dpa') {
         $dppaFinal = $this->db->query('SELECT id FROM dppa_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1', [$header['kd_wilayah'], $header['kd_opd'], $header['tahun'], $budget['kd_sub_keg']])->fetch();
         if ($dppaFinal) throw new InvalidArgumentException('Gunakan uraian DPPA final untuk sub kegiatan ' . $budget['kd_sub_keg']);
@@ -648,7 +657,7 @@ class KontrakRealisasiService
     return ['items' => $validated, 'total_anggaran' => $totalPagu, 'nilai_kontrak' => $totalContract];
   }
 
-  private function contractHeader(int $id): array
+  private function contractHeader(int $id, bool $write=false): array
   {
     [$w, $o, $y] = $this->scope();
     $sql = 'SELECT * FROM kontrak_neo WHERE id=? AND kd_wilayah=? AND tahun=? AND is_deleted=0';
@@ -659,11 +668,13 @@ class KontrakRealisasiService
     }
     $row = $this->db->query($sql . ' LIMIT 1', $params)->fetch();
     if (!$row) throw new RuntimeException('Kontrak tidak ditemukan atau bukan dalam lingkup pengguna');
+    ContractAccessService::assert($this->user,$row,$write?'dapat_input':'dapat_lihat');
     return ContractOfficialService::resolve($row);
   }
 
   public function contractPdf(int $id): string
   {
+    $this->contractHeader($id);
     [$w, $o, $y] = $this->scope();
     $sql = "SELECT k.*,r.nama_perusahaan,r.alamat,r.npwp,r.direktur FROM kontrak_neo k LEFT JOIN rekanan_neo r ON r.id=k.rekanan_id WHERE k.id=? AND k.kd_wilayah=? AND k.tahun=? AND k.is_deleted=0";
     $params = [$id, $w, $y];
@@ -710,6 +721,7 @@ class KontrakRealisasiService
       $sql .= ' AND k.kd_opd=?';
       $params[] = $o;
     }
+    [$accessSql,$accessParams]=ContractAccessService::condition($this->user);$sql.=$accessSql;array_push($params,...$accessParams);
     return $this->db->query($sql . ' GROUP BY k.id ORDER BY k.nomor_kontrak', $params)->fetchAll();
   }
 
@@ -792,6 +804,7 @@ class KontrakRealisasiService
       $sql .= ' AND k.kd_opd=?';
       $p[] = $o;
     }
+    [$accessSql,$accessParams]=ContractAccessService::condition($this->user);$sql.=$accessSql;array_push($p,...$accessParams);
     return $this->db->query($sql . ' ORDER BY dr.tanggal,dr.id', $p)->fetchAll();
   }
 
@@ -804,6 +817,7 @@ class KontrakRealisasiService
       $scope .= ' AND k.kd_opd=?';
       $params[] = $o;
     }
+    [$accessSql,$accessParams]=ContractAccessService::condition($this->user);$scope.=$accessSql;array_push($params,...$accessParams);
     $budget = $this->db->query("SELECT ci.kd_sub_keg,ci.kd_akun,SUM(ci.pagu) pagu FROM kontrak_item_neo ci JOIN kontrak_neo k ON k.id=ci.kontrak_id WHERE ci.is_deleted=0 AND $scope GROUP BY ci.kd_sub_keg,ci.kd_akun", $params)->fetchAll();
     $actual = $this->db->query("SELECT dr.kd_sub_keg,dr.kd_akun,SUM(dr.jumlah) realisasi FROM daftar_realisasi_neo dr JOIN kontrak_neo k ON k.id=dr.kontrak_id WHERE dr.is_deleted=0 AND $scope GROUP BY dr.kd_sub_keg,dr.kd_akun", $params)->fetchAll();
     $grouped = [];

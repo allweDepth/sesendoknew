@@ -186,7 +186,7 @@ JIKA TIDAK ADA → PERTAHANKAN STATE MENU
 		if (action === "import") {
 			configKey = tbl; // import selalu mengikuti tabel
 		} else {
-			configKey = $btn.data("config") || req || state.req || tbl;
+			configKey = tbl === "mapping" ? "mapping" : ($btn.data("config") || req || state.req || tbl);
 		}
 
 		if (!configKey) {

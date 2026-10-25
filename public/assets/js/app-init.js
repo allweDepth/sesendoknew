@@ -3,11 +3,15 @@ $(document).ready(function () {
 	// APP INIT
 	// ===============================
 	window.app = new App();
-	window.app.init();
 	window.modernTableResizer = new ModernTableResizer();
 	window.modernTableResizer.init();
 	window.moduleMutationPolicy = function (tbl, req) {
-		const role = window.app?.user?.type_user || "viewer";
+		const rawRole = window.app?.user?.type_user || "viewer";
+		const role = rawRole === "editor" ? "staf_opd" : rawRole === "user" ? "viewer" : rawRole;
+		const general = () => {
+			const write = !["tapd","viewer"].includes(role);
+			return {add:write,edit:write,delete:["super_admin","admin_wilayah","admin_opd","kepala_opd","pa_kpa"].includes(role),import:write};
+		};
 		const path = window.location.pathname.replace(window.APP_BASE_PATH || "", "");
 		const result = (allowed) => ({ add: allowed, edit: allowed, delete: false, import: false });
 		if (path.startsWith("/standar_harga")) return result(role === "tapd");
@@ -26,7 +30,7 @@ $(document).ready(function () {
 			}
 			// These screens use their own action/profile rules; the technical-reference
 			// read-only rule must not hide every add/edit control on them.
-			if (["rekanan","usulan_pembangunan","peraturan"].includes(tbl)) return null;
+			if (["rekanan","usulan_pembangunan","peraturan"].includes(tbl)) return general();
 			return result(false);
 		}
 		if (path.startsWith("/kepegawaian")) {
@@ -39,8 +43,11 @@ $(document).ready(function () {
 			return { add:allowed, edit:allowed, delete:allowed, import:allowed };
 		}
 		if(path.startsWith("/kontrak")&&tbl==="realisasi")return {add:false,edit:false,delete:false,import:false};
-		return null;
+		if(tbl==="pengaturan")return {add:["super_admin","admin_wilayah"].includes(role),edit:["super_admin","admin_wilayah"].includes(role),delete:false,import:false};
+		return general();
 	};
+
+	window.app.init();
 
     // All OPD mutation controls use the same schedule status as the server.
     const scheduleStages = ['renstra','rkpd','renja','rka','dpa','rkpd_p','renja_p','rka_p','dppa','kua_ppas','rapbd','rak','kua_ppas_perubahan','apbd_perubahan'];

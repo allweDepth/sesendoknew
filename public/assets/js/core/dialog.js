@@ -40,6 +40,7 @@ const DialogEngine = {
 			$modal
 				.modal({
 					closable: false,
+					allowMultiple: true,
 					transition: "fade up",
 					duration: 200,
 

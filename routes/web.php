@@ -49,6 +49,9 @@ return [
   '/kontrak/procurement/delete' => ['KontrakController', 'procurementDelete'],
   '/kontrak/procurement/pdf' => ['KontrakController', 'procurementPdf'],
   '/kontrak/procurement/bundle-pdf' => ['KontrakController', 'procurementBundlePdf'],
+  '/kontrak/penawaran/settings' => ['KontrakController', 'offerPrintSettings'],
+  '/kontrak/penawaran/save' => ['KontrakController', 'saveOfferPrint'],
+  '/kontrak/penawaran/pdf' => ['KontrakController', 'offerPrintPdf'],
   '/kontrak/print-settings' => ['KontrakController', 'printSettings'],
   '/kontrak/print-settings/save' => ['KontrakController', 'savePrintSettings'],
   '/halaman_berita' => ['HalamanBeritaController', 'index'], //Controller hanya return HTML shell BUKAN data tabel

@@ -1,0 +1,117 @@
+{
+  "passed": 14,
+  "total": 14,
+  "results": [
+    {
+      "role": "super_admin",
+      "add_control": true,
+      "add": true,
+      "edit": true,
+      "delete_control": true,
+      "delete": true,
+      "status": "PASS"
+    },
+    {
+      "role": "admin_wilayah",
+      "add_control": true,
+      "add": true,
+      "edit": true,
+      "delete_control": true,
+      "delete": true,
+      "status": "PASS"
+    },
+    {
+      "role": "tapd",
+      "add_control": true,
+      "status": "PASS"
+    },
+    {
+      "role": "admin_opd",
+      "add_control": true,
+      "add": true,
+      "edit": true,
+      "delete_control": true,
+      "delete": true,
+      "status": "PASS"
+    },
+    {
+      "role": "kepala_opd",
+      "add_control": true,
+      "add": true,
+      "edit": true,
+      "delete_control": true,
+      "delete": true,
+      "status": "PASS"
+    },
+    {
+      "role": "pa_kpa",
+      "add_control": true,
+      "add": true,
+      "edit": true,
+      "delete_control": true,
+      "delete": true,
+      "status": "PASS"
+    },
+    {
+      "role": "ppk",
+      "add_control": true,
+      "add": true,
+      "edit": true,
+      "delete_control": true,
+      "status": "PASS"
+    },
+    {
+      "role": "pptk",
+      "add_control": true,
+      "add": true,
+      "edit": true,
+      "delete_control": true,
+      "status": "PASS"
+    },
+    {
+      "role": "ppk_skpd",
+      "add_control": true,
+      "add": true,
+      "edit": true,
+      "delete_control": true,
+      "status": "PASS"
+    },
+    {
+      "role": "bendahara",
+      "add_control": true,
+      "add": true,
+      "edit": true,
+      "delete_control": true,
+      "status": "PASS"
+    },
+    {
+      "role": "pejabat_pengadaan",
+      "add_control": true,
+      "add": true,
+      "edit": true,
+      "delete_control": true,
+      "status": "PASS"
+    },
+    {
+      "role": "pokja_ulp",
+      "add_control": true,
+      "add": true,
+      "edit": true,
+      "delete_control": true,
+      "status": "PASS"
+    },
+    {
+      "role": "staf_opd",
+      "add_control": true,
+      "add": true,
+      "edit": true,
+      "delete_control": true,
+      "status": "PASS"
+    },
+    {
+      "role": "viewer",
+      "add_control": true,
+      "status": "PASS"
+    }
+  ]
+}

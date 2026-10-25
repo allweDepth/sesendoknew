@@ -10,7 +10,7 @@ final class RequestGuard
     'DynamicController' => ['import'],
     'KontrakController' => ['saveRealization', 'deleteRealizationDocument', 'saveItems',
       'saveRab', 'saveSchedule', 'importRab', 'uploadDocument', 'deleteDocument',
-      'procurementSave', 'procurementDelete', 'procurementBundlePdf', 'savePrintSettings'],
+      'procurementSave', 'procurementGenerateSwakelola', 'procurementDelete', 'procurementBundlePdf', 'savePrintSettings', 'saveOfferPrint'],
     'ReferensiController' => ['store', 'update', 'delete'],
     'RenstraController' => ['storeMisi', 'storeTujuan', 'storeSasaran', 'storeIndikator',
       'storeProgram', 'storeAnggaran', 'update', 'delete', 'importExcel'],

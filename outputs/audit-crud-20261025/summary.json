@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-25",
+  "environment": "Salinan aplikasi dan database QA terpisah; data contoh CRUD tidak dimasukkan ke database utama",
+  "sidebar_crud_modules": 42,
+  "modal_crud_modules": 42,
+  "browser_role_profiles": 14,
+  "role_list_checks": 1190,
+  "menu_http_checks": 932,
+  "form_structure_checks": 145,
+  "budget_browser_pages": 8,
+  "offer_print_http_checks": 7,
+  "backup": {
+    "tables_verified": 109,
+    "triggers_verified": 15,
+    "views_verified": 2
+  },
+  "coverage_limits": [
+    "Siklus CRUD 42 modul dijalankan dengan role yang berwenang per modul; bukan seluruh kombinasi 42 modul × 14 role.",
+    "Uji 14 role di browser mencakup CRUD rekanan dan penyembunyian kontrol sesuai izin; matriks 85 modul × 14 role memeriksa daftar dan akses baca.",
+    "Alur khusus di luar form generik tidak semuanya menjalani siklus CRUD penuh di browser.",
+    "SAKIP membutuhkan struktur OPD aktif yang benar; fixture struktur untuk audit hanya dibuat di database QA.",
+    "Empat paket konsultansi belum memiliki penyedia dan tidak diisi nama atau nilai kontrak rekaan."
+  ]
+}

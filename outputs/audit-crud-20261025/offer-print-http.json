@@ -1,0 +1,11 @@
+{
+  "passed": [
+    "missing letterhead field validation",
+    "real multipart upload",
+    "PDF with uploaded image",
+    "reuse saved letterhead",
+    "disable letterhead",
+    "PDF without letterhead",
+    "invalid date feedback"
+  ]
+}

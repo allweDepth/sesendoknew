@@ -1,0 +1,702 @@
+[
+    {
+        "profile": "renstra_neo",
+        "field": "periode_id",
+        "source": "periode_rpjmd",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "misi_renstra_neo",
+        "field": "renstra_id",
+        "source": "renstra_neo",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "tujuan_renstra_neo",
+        "field": "misi_id",
+        "source": "misi_renstra_neo",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "sasaran_renstra_neo",
+        "field": "tujuan_id",
+        "source": "tujuan_renstra_neo",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "indikator_sasaran_renstra_neo",
+        "field": "sasaran_id",
+        "source": "sasaran_renstra_neo",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "program_renstra_neo",
+        "field": "sasaran_id",
+        "source": "sasaran_renstra_neo",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "program_renstra_neo",
+        "field": "kode_program",
+        "source": "rekening_kegiatan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "indikator_program_renstra_neo",
+        "field": "program_id",
+        "source": "program_renstra_neo",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kegiatan_renstra_neo",
+        "field": "program_id",
+        "source": "program_renstra_neo",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "sub_kegiatan_renstra_neo",
+        "field": "kegiatan_renstra_id",
+        "source": "kegiatan_renstra_neo",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "sub_kegiatan_renstra_neo",
+        "field": "master_sub_kegiatan_id",
+        "source": "referensi_sub_kegiatan_renstra",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "bidang",
+        "field": "parent_kode",
+        "source": "rekening_kegiatan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "program",
+        "field": "parent_kode",
+        "source": "rekening_kegiatan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kegiatan",
+        "field": "parent_kode",
+        "source": "rekening_kegiatan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "sub_kegiatan",
+        "field": "parent_kode",
+        "source": "rekening_kegiatan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "sub_kegiatan",
+        "field": "satuan",
+        "source": "satuan_teks",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "sub_kegiatan_anggaran",
+        "field": "kd_sub_keg",
+        "source": "rekening_kegiatan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "sub_kegiatan_anggaran",
+        "field": "satuan_output",
+        "source": "satuan_teks",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "mapping",
+        "field": "kd_akun",
+        "source": "akun_neo",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "sbu",
+        "field": "kode_aset",
+        "source": "aset",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "sbu",
+        "field": "satuan_id",
+        "source": "satuan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "ssh",
+        "field": "kode_aset",
+        "source": "aset",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "ssh",
+        "field": "satuan_id",
+        "source": "satuan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "asb",
+        "field": "kode_aset",
+        "source": "aset",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "asb",
+        "field": "satuan_id",
+        "source": "satuan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "hspk",
+        "field": "kode_aset",
+        "source": "aset",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "hspk",
+        "field": "satuan_id",
+        "source": "satuan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "riwayat_jabatan",
+        "field": "pegawai_id",
+        "source": "asn",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "riwayat_pangkat",
+        "field": "pegawai_id",
+        "source": "asn",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "cuti",
+        "field": "pegawai_id",
+        "source": "asn",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "sk_pegawai",
+        "field": "pegawai_id",
+        "source": "asn",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "pejabat_tahunan",
+        "field": "pegawai_id",
+        "source": "asn",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "pejabat_tahunan",
+        "field": "kd_sub_keg",
+        "source": "rekening_kegiatan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "evaluasi_renja",
+        "field": "renja_kinerja_id",
+        "source": "renja_kinerja_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "evaluasi_renja",
+        "field": "kd_sub_keg",
+        "source": "sub_kegiatan_penugasan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "rkpd",
+        "field": "kd_sub_keg",
+        "source": "sub_kegiatan_penugasan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "rkpd",
+        "field": "sumber_dana_id",
+        "source": "sumber_dana",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "rkpd_p",
+        "field": "kd_sub_keg",
+        "source": "sub_kegiatan_penugasan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "rkpd_p",
+        "field": "sumber_dana_id",
+        "source": "sumber_dana",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "renja",
+        "field": "kd_akun",
+        "source": "akun",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "renja",
+        "field": "id_standar_harga",
+        "source": "ssh",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "renja",
+        "field": "sat_5",
+        "source": "satuan_teks",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "renja",
+        "field": "sumber_dana_id",
+        "source": "sumber_dana",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "rka",
+        "field": "kd_akun",
+        "source": "akun",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "rka",
+        "field": "id_standar_harga",
+        "source": "ssh",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "rka",
+        "field": "sat_5",
+        "source": "satuan_teks",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "rka",
+        "field": "sumber_dana_id",
+        "source": "sumber_dana",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "dpa",
+        "field": "kd_akun",
+        "source": "akun",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "dpa",
+        "field": "id_standar_harga",
+        "source": "ssh",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "dpa",
+        "field": "sat_5",
+        "source": "satuan_teks",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "dpa",
+        "field": "sumber_dana_id",
+        "source": "sumber_dana",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "renja_p",
+        "field": "kd_akun",
+        "source": "akun",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "renja_p",
+        "field": "id_standar_harga",
+        "source": "ssh",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "renja_p",
+        "field": "sat_5",
+        "source": "satuan_teks",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "renja_p",
+        "field": "sumber_dana_id",
+        "source": "sumber_dana",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "rka_p",
+        "field": "kd_akun",
+        "source": "akun",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "rka_p",
+        "field": "id_standar_harga",
+        "source": "ssh",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "rka_p",
+        "field": "sat_5",
+        "source": "satuan_teks",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "rka_p",
+        "field": "sumber_dana_id",
+        "source": "sumber_dana",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "dppa",
+        "field": "kd_akun",
+        "source": "akun",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "dppa",
+        "field": "id_standar_harga",
+        "source": "ssh",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "dppa",
+        "field": "sat_5",
+        "source": "satuan_teks",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "dppa",
+        "field": "sumber_dana_id",
+        "source": "sumber_dana",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kontrak",
+        "field": "ppk_id",
+        "source": "pejabat_ppk",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kontrak",
+        "field": "pptk_id",
+        "source": "pejabat_pptk",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kontrak",
+        "field": "pejabat_pengadaan_id",
+        "source": "pejabat_pengadaan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kontrak",
+        "field": "rekanan_id",
+        "source": "rekanan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kontrak_dpa",
+        "field": "ppk_id",
+        "source": "pejabat_ppk",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kontrak_dpa",
+        "field": "pptk_id",
+        "source": "pejabat_pptk",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kontrak_dpa",
+        "field": "pejabat_pengadaan_id",
+        "source": "pejabat_pengadaan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kontrak_dpa",
+        "field": "rekanan_id",
+        "source": "rekanan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kontrak_dppa",
+        "field": "ppk_id",
+        "source": "pejabat_ppk",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kontrak_dppa",
+        "field": "pptk_id",
+        "source": "pejabat_pptk",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kontrak_dppa",
+        "field": "pejabat_pengadaan_id",
+        "source": "pejabat_pengadaan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "kontrak_dppa",
+        "field": "rekanan_id",
+        "source": "rekanan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "realisasi",
+        "field": "kontrak_id",
+        "source": "kontrak",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "realisasi",
+        "field": "rab_id",
+        "source": "rab_kontrak",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "absensi",
+        "field": "pegawai_id",
+        "source": "asn",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "penugasan_subkegiatan",
+        "field": "user_id",
+        "source": "user_opd_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "penugasan_subkegiatan",
+        "field": "kd_sub_keg",
+        "source": "sub_kegiatan_penugasan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "iku_opd",
+        "field": "renstra_id",
+        "source": "renstra_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "iku_opd",
+        "field": "sasaran_renstra_id",
+        "source": "sasaran_renstra_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "iku_opd",
+        "field": "program_renstra_id",
+        "source": "program_renstra_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "iku_opd",
+        "field": "penanggung_jawab_struktur_id",
+        "source": "struktur_jabatan_aktif_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "pohon_kinerja",
+        "field": "parent_id",
+        "source": "pohon_kinerja_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "pohon_kinerja",
+        "field": "renstra_id",
+        "source": "renstra_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "pohon_kinerja",
+        "field": "sumber_kinerja_key",
+        "source": "sakip_sumber_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "pohon_kinerja",
+        "field": "iku_id",
+        "source": "iku_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "pohon_kinerja",
+        "field": "penanggung_jawab_struktur_id",
+        "source": "struktur_jabatan_aktif_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "perjanjian_kinerja",
+        "field": "pihak_pertama_struktur_id",
+        "source": "struktur_jabatan_aktif_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "perjanjian_kinerja_detail",
+        "field": "perjanjian_kinerja_id",
+        "source": "pk_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "perjanjian_kinerja_detail",
+        "field": "pohon_kinerja_id",
+        "source": "pohon_kinerja_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "perjanjian_kinerja_detail",
+        "field": "iku_id",
+        "source": "iku_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "perjanjian_kinerja_detail",
+        "field": "kd_sub_keg",
+        "source": "sub_kegiatan_penugasan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "pengukuran_kinerja",
+        "field": "perjanjian_kinerja_detail_id",
+        "source": "pk_detail_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "evaluasi_renstra",
+        "field": "renstra_id",
+        "source": "renstra_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "evaluasi_renstra",
+        "field": "iku_id",
+        "source": "iku_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "renja_kinerja",
+        "field": "sub_kegiatan_renstra_id",
+        "source": "sub_kegiatan_renstra_dropdown",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "renja_kinerja",
+        "field": "kd_sub_keg",
+        "source": "sub_kegiatan_penugasan",
+        "success": true,
+        "message": ""
+    },
+    {
+        "profile": "renja_kinerja",
+        "field": "pohon_kinerja_id",
+        "source": "pohon_kinerja_dropdown",
+        "success": true,
+        "message": ""
+    }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "route": "rkpd",
+    "summary": "73\nSUB KEGIATAN\nRP 241.474.151.501\nTOTAL PAGU\n0\nDISETUJUI\n0\nDIKUNCI",
+    "tables": 1
+  },
+  {
+    "route": "rkpd_perubahan",
+    "summary": "73\nSUB KEGIATAN\nRP 241.474.151.501\nTOTAL PAGU\n0\nDISETUJUI\n0\nDIKUNCI",
+    "tables": 1
+  },
+  {
+    "route": "renja",
+    "summary": "33\nSUB KEGIATAN\nRP 42.280.799.999\nTOTAL PAGU\n0\nDISETUJUI\n0\nDIKUNCI",
+    "tables": 1
+  },
+  {
+    "route": "renja_perubahan",
+    "summary": "43\nSUB KEGIATAN\nRP 71.262.055.709\nTOTAL PAGU\n0\nDISETUJUI\n0\nDIKUNCI",
+    "tables": 1
+  },
+  {
+    "route": "rka",
+    "summary": "33\nSUB KEGIATAN\nRP 42.280.799.999\nTOTAL PAGU\n0\nDISETUJUI\n0\nDIKUNCI",
+    "tables": 1
+  },
+  {
+    "route": "rka_perubahan",
+    "summary": "43\nSUB KEGIATAN\nRP 71.262.055.709\nTOTAL PAGU\n0\nDISETUJUI\n0\nDIKUNCI",
+    "tables": 1
+  },
+  {
+    "route": "dpa",
+    "summary": "33\nSUB KEGIATAN\nRP 42.280.799.999\nTOTAL PAGU\n33\nDISETUJUI\n33\nDIKUNCI",
+    "tables": 1
+  },
+  {
+    "route": "dppa",
+    "summary": "43\nSUB KEGIATAN\nRP 71.262.055.709\nTOTAL PAGU\n11\nDISETUJUI\n11\nDIKUNCI",
+    "tables": 1
+  }
+]

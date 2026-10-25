@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../Core/Auth.php';
+require_once __DIR__.'/../Services/ContractOfferPrintService.php';
 require_once __DIR__ . '/../Services/KontrakRealisasiService.php';
 require_once __DIR__ . '/../Services/JsonResponse.php';
 require_once __DIR__ . '/../Services/ProcurementDocumentService.php';
@@ -270,6 +271,24 @@ class KontrakController extends Controller
     $payload=json_decode((string)file_get_contents('php://input'),true);if(!is_array($payload))$payload=$_POST;
     $this->json(fn()=>(new ProcurementDocumentService($_SESSION['user']??[]))->printSettings((int)($payload['contract_id']??0),$payload),'Pengaturan cetak disimpan');
   }
+  public function offerPrintSettings()
+  {
+    $this->json(fn()=>(new ContractOfferPrintService($_SESSION['user']??[]))->get((int)($_GET['contract_id']??0)));
+  }
+  public function saveOfferPrint()
+  {
+    $this->json(fn()=>(new ContractOfferPrintService($_SESSION['user']??[]))->save((int)($_POST['contract_id']??0),$_POST,$_FILES['kop_file']??[]),'Pengaturan penawaran disimpan');
+  }
+  public function offerPrintPdf()
+  {
+    try {
+      if(!Auth::check())throw new RuntimeException('Silakan masuk kembali');
+      $id=(int)($_GET['contract_id']??0);
+      $body=(new ContractOfferPrintService($_SESSION['user']??[]))->pdf($id,(string)($_GET['kind']??'bundle'));
+      header('Content-Type: application/pdf');header('Content-Disposition: attachment; filename="penawaran-'.$id.'.pdf"');echo $body;
+    } catch(Throwable $e) {header('Content-Type: application/json;charset=UTF-8');echo JsonResponse::error($e->getMessage(),400);}
+    exit;
+  }
   private function json(callable $callback, string $message = 'Data berhasil dimuat'): void
   {
     header('Content-Type: application/json;charset=UTF-8');
@@ -280,7 +299,7 @@ class KontrakController extends Controller
     try {
       echo JsonResponse::success($message, [], $callback());
     } catch (Throwable $e) {
-      echo JsonResponse::error($e->getMessage(), 400);
+      echo JsonResponse::error($e->getMessage(), $e instanceof FieldValidationException ? 422 : 400, $e instanceof FieldValidationException ? $e->errors : []);
     }
   }
   private function payload(): array

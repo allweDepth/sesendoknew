@@ -1,0 +1,384 @@
+{
+  "passed": 42,
+  "total": 42,
+  "results": [
+    {
+      "profile": "peraturan",
+      "role": "admin_opd",
+      "url": "/referensi?tbl=peraturan",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "rekanan",
+      "role": "admin_opd",
+      "url": "/referensi?tbl=rekanan",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "asn",
+      "role": "admin_opd",
+      "url": "/kepegawaian?tbl=asn",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "pppk",
+      "role": "admin_opd",
+      "url": "/kepegawaian?tbl=pppk",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "riwayat_jabatan",
+      "role": "admin_opd",
+      "url": "/kepegawaian?tbl=riwayat_jabatan",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "riwayat_pangkat",
+      "role": "admin_opd",
+      "url": "/kepegawaian?tbl=riwayat_pangkat",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "cuti",
+      "role": "admin_opd",
+      "url": "/kepegawaian?tbl=cuti",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "sk_pegawai",
+      "role": "admin_opd",
+      "url": "/kepegawaian?tbl=sk_pegawai",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "pejabat_tahunan",
+      "role": "admin_opd",
+      "url": "/kepegawaian?tbl=pejabat_tahunan",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "misi_renstra_neo",
+      "role": "admin_opd",
+      "url": "/renstra?tbl=misi_renstra_neo",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "tujuan_renstra_neo",
+      "role": "admin_opd",
+      "url": "/renstra?tbl=tujuan_renstra_neo",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "sasaran_renstra_neo",
+      "role": "admin_opd",
+      "url": "/renstra?tbl=sasaran_renstra_neo",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "indikator_sasaran_renstra_neo",
+      "role": "admin_opd",
+      "url": "/renstra?tbl=indikator_sasaran_renstra_neo",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "program_renstra_neo",
+      "role": "admin_opd",
+      "url": "/renstra?tbl=program_renstra_neo",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "indikator_program_renstra_neo",
+      "role": "admin_opd",
+      "url": "/renstra?tbl=indikator_program_renstra_neo",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "kegiatan_renstra_neo",
+      "role": "admin_opd",
+      "url": "/renstra?tbl=kegiatan_renstra_neo",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "sub_kegiatan_renstra_neo",
+      "role": "admin_opd",
+      "url": "/renstra?tbl=sub_kegiatan_renstra_neo",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "renstra_neo",
+      "role": "admin_opd",
+      "url": "/renstra?tbl=renstra_neo",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "absensi",
+      "role": "admin_opd",
+      "url": "/kepegawaian?tbl=absensi",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "usulan_pembangunan",
+      "role": "admin_opd",
+      "url": "/referensi?tbl=usulan_pembangunan",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "evaluasi_renja",
+      "role": "admin_opd",
+      "url": "/referensi?tbl=evaluasi_renja",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "iku_opd",
+      "role": "admin_opd",
+      "url": "/referensi?tbl=iku_opd",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "pohon_kinerja",
+      "role": "admin_opd",
+      "url": "/referensi?tbl=pohon_kinerja",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "perjanjian_kinerja",
+      "role": "admin_opd",
+      "url": "/referensi?tbl=perjanjian_kinerja",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "perjanjian_kinerja_detail",
+      "role": "admin_opd",
+      "url": "/referensi?tbl=perjanjian_kinerja_detail",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "pengukuran_kinerja",
+      "role": "admin_opd",
+      "url": "/referensi?tbl=pengukuran_kinerja",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "evaluasi_renstra",
+      "role": "admin_opd",
+      "url": "/referensi?tbl=evaluasi_renstra",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "renja_kinerja",
+      "role": "admin_opd",
+      "url": "/referensi?tbl=renja_kinerja",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "organisasi",
+      "role": "admin_wilayah",
+      "url": "/referensi?tbl=organisasi",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "rpjmd_kabupaten",
+      "role": "admin_wilayah",
+      "url": "/referensi?tbl=rpjmd_kabupaten",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "penugasan_subkegiatan",
+      "role": "kepala_opd",
+      "url": "/kepegawaian?tbl=penugasan_subkegiatan",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "wilayah",
+      "role": "super_admin",
+      "url": "/referensi?tbl=wilayah",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "akun",
+      "role": "tapd",
+      "url": "/referensi?tbl=akun",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "sbu",
+      "role": "tapd",
+      "url": "/standar_harga?tbl=sbu",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "ssh",
+      "role": "tapd",
+      "url": "/standar_harga?tbl=ssh",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "asb",
+      "role": "tapd",
+      "url": "/standar_harga?tbl=asb",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "hspk",
+      "role": "tapd",
+      "url": "/standar_harga?tbl=hspk",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "mapping",
+      "role": "tapd",
+      "url": "/mapping?tbl=mapping",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "aset",
+      "role": "tapd",
+      "url": "/referensi?tbl=aset",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "satuan",
+      "role": "tapd",
+      "url": "/referensi?tbl=satuan",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "sumber_dana",
+      "role": "tapd",
+      "url": "/referensi?tbl=sumber_dana",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "profile": "rekening_kegiatan",
+      "role": "tapd",
+      "url": "/referensi?tbl=rekening_kegiatan",
+      "saved": true,
+      "message": "Data berhasil diupdate",
+      "errors": {},
+      "status": "PASS"
+    }
+  ]
+}

@@ -2430,7 +2430,7 @@ $profiles['absensi'] = [
   'soft_delete' => ['field' => 'is_deleted', 'value_active' => 0, 'value_deleted' => 1],
   'validation' => ['pegawai_id' => ['required', 'numeric'], 'tanggal' => ['required'], 'status' => ['required']],
   'import' => ['enabled' => true, 'allowed_roles' => ['super_admin', 'admin_wilayah', 'admin_opd']],
-  'modes' => ['default' => ['select' => ['absensi_pegawai_neo.id', 'db_asn_pemda_neo.nama AS pegawai', 'absensi_pegawai_neo.tanggal', 'absensi_pegawai_neo.jam_masuk', 'absensi_pegawai_neo.jam_pulang', 'absensi_pegawai_neo.status', 'absensi_pegawai_neo.keterangan'], 'searchable' => ['db_asn_pemda_neo.nama', 'absensi_pegawai_neo.status'], 'where' => ['absensi_pegawai_neo.kd_wilayah' => 'user', 'absensi_pegawai_neo.kd_opd' => 'user', 'absensi_pegawai_neo.tahun' => 'user', 'absensi_pegawai_neo.is_deleted' => 0], 'order_by' => 'absensi_pegawai_neo.tanggal DESC'], 'edit' => ['select' => ['absensi_pegawai_neo.*'], 'searchable' => ['absensi_pegawai_neo.status'], 'order_by' => 'absensi_pegawai_neo.id DESC']],
+  'modes' => ['default' => ['select' => ['absensi_pegawai_neo.id', 'db_asn_pemda_neo.nama AS pegawai', 'absensi_pegawai_neo.tanggal', 'absensi_pegawai_neo.jam_masuk', 'absensi_pegawai_neo.jam_pulang', 'absensi_pegawai_neo.status', 'absensi_pegawai_neo.keterangan'], 'searchable' => ['db_asn_pemda_neo.nama', 'absensi_pegawai_neo.tanggal', 'absensi_pegawai_neo.status', 'absensi_pegawai_neo.keterangan'], 'where' => ['absensi_pegawai_neo.kd_wilayah' => 'user', 'absensi_pegawai_neo.kd_opd' => 'user', 'absensi_pegawai_neo.tahun' => 'user', 'absensi_pegawai_neo.is_deleted' => 0], 'order_by' => 'absensi_pegawai_neo.tanggal DESC'], 'edit' => ['select' => ['absensi_pegawai_neo.*'], 'searchable' => ['absensi_pegawai_neo.status'], 'order_by' => 'absensi_pegawai_neo.id DESC']],
   'join' => [['table' => 'db_asn_pemda_neo', 'on' => 'db_asn_pemda_neo.id=absensi_pegawai_neo.pegawai_id']]
 ];
 $profiles['penugasan_subkegiatan'] = [
@@ -2486,4 +2486,7 @@ $profiles['program_renstra_neo']['modes']['dropdown']['order_by'] = 'uraian ASC'
 unset($profiles['indikator_program_renstra_neo']['modes']['dropdown']);
 // $profiles['sub_kegiatan_ref'] = $profiles['sub_kegiatan'];
 // $profiles['sub_kegiatan_ref']['module_alias'] = 'sub_kegiatan_ref';
+// Legacy API names follow the current Renstra hierarchy; the old tables no longer exist.
+$profiles['renstra_skpd']=$profiles['renstra_neo'];
+$profiles['tujuan_sasaran_renstra']=$profiles['sasaran_renstra_neo'];
 return $profiles;

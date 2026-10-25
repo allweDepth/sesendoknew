@@ -338,7 +338,7 @@ UIConfig.kegiatan_renstra_neo = {
 	validation: {
 		program_id: { required: true },
 		kode_kegiatan: { required: true },
-		nama_kegiatan: { required: true },
+		uraian: { required: true },
 	},
 	form: {
 		elements: [
@@ -356,7 +356,7 @@ UIConfig.kegiatan_renstra_neo = {
 				tag: "fieldTextarea",
 				prop: {
 					label: "Nama Kegiatan",
-					name: "nama_kegiatan",
+					name: "uraian",
 					atribut: `rows="2"`,
 				},
 			},
@@ -649,6 +649,7 @@ UIConfig.akun = {
 	},
 	form: {
 		elements: [
+            {tag:"fieldDropdown",prop:{label:"Peraturan",name:"peraturan",source:"peraturan",search:true}},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
 			{ tag: "fieldTextarea", prop: { label: "Keterangan", name: "keterangan", atribut: `rows="3"` } },
@@ -706,13 +707,21 @@ UIConfig.wilayah = {
 };
 
 UIConfig.peraturan = {
-	form: {
-		elements: [
-			{ tag: "field", prop: { label: "Nomor", name: "nomor" } },
-			{ tag: "field", prop: { label: "Judul", name: "judul" } },
-			{ tag: "field", prop: { label: "Status", name: "status" } },
-		],
-	},
+ validation:{kode:{required:true},nomor:{required:true},judul:{required:true},type_dok:{required:true},bentuk:{required:true},bentuk_singkat:{required:true},t4_penetapan:{required:true},tgl_penetapan:{required:true},tgl_pengundangan:{required:true},keterangan:{required:true}},
+ form:{elements:[
+  {tag:"field",prop:{label:"Kode Dokumen",name:"kode"}},
+  {tag:"field",prop:{label:"Jenis Dokumen",name:"type_dok"}},
+  {tag:"field",prop:{label:"Nomor",name:"nomor"}},
+  {tag:"fieldTextarea",prop:{label:"Judul",name:"judul"}},
+  {tag:"field",prop:{label:"Judul Singkat",name:"judul_singkat"}},
+  {tag:"field",prop:{label:"Bentuk Peraturan",name:"bentuk"}},
+  {tag:"field",prop:{label:"Singkatan Bentuk",name:"bentuk_singkat"}},
+  {tag:"field",prop:{label:"Tempat Penetapan",name:"t4_penetapan"}},
+  {tag:"fieldCalendar",prop:{label:"Tanggal Penetapan",name:"tgl_penetapan",calendarType:"date"}},
+  {tag:"fieldCalendar",prop:{label:"Tanggal Pengundangan",name:"tgl_pengundangan",calendarType:"date"}},
+  {tag:"field",prop:{label:"Status",name:"status"}},
+  {tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan",atribut:'maxlength="255"'}}
+ ]}
 };
 // ======================================================
 // 🔥 TATA NASKAH VALIDATION
@@ -788,8 +797,6 @@ UIConfig.rekanan = {
 			{ tag: "field", prop: { label: "Nama Direktur", name: "direktur" } },
 			{ tag: "field", prop: { label: "Jabatan", name: "jabatan" } },
 			{ tag: "field", prop: { label: "No KTP", name: "no_ktp" } },
-			{ tag: "field", prop: { label: "Golongan", name: "golongan", required:true } },
-			{ tag: "field", prop: { label: "Ruang", name: "ruang", required:true, atribut:'maxlength="10"' } },
 
 			{
 				tag: "fieldTextarea",
@@ -977,6 +984,7 @@ AKUN BELANJA
 UIConfig.aset = {
 	form: {
 		elements: [
+            {tag:"fieldDropdown",prop:{label:"Peraturan",name:"peraturan",source:"peraturan",search:true}},
 			{ tag: "field", prop: { label: "Kode", name: "kode" } },
 			{ tag: "field", prop: { label: "Uraian", name: "uraian" } },
 		],
@@ -1047,9 +1055,11 @@ UIConfig.hspk = {
 };
 UIConfig.asn = {
 	layout: { columns: 1 },
-	validation: { nama: { required: true }, nip: { required: true } },
+	validation: { nama: { required: true }, nip: { required: true },golongan:{required:true},ruang:{required:true} },
 	form: {
 		elements: [
+            {tag:"fieldDropdown",prop:{label:"Golongan",name:"golongan",options:[{value:"1",text:"I"},{value:"2",text:"II"},{value:"3",text:"III"},{value:"4",text:"IV"}]}},
+            {tag:"fieldDropdown",prop:{label:"Ruang",name:"ruang",options:["a","b","c","d","e"].map(x=>({value:x,text:x}))}},
 			{ tag: "field", prop: { label: "Nama Lengkap", name: "nama" } },
 			{ tag: "fieldAction", prop: { label: "NIP", name: "nip" } },
 			{ tag: "field", prop: { label: "Gelar", name: "gelar" } },
@@ -1275,8 +1285,16 @@ UIConfig.dokumen = {
 };
 UIConfig.satuan.import = UIConfig.__importFactory("satuan", "9. Satuan 1 Header.xlsx");
 UIConfig.rekanan.import = UIConfig.__importFactory("rekanan", "10. rekanan.xlsx");
-UIConfig.rekening_kegiatan = UIConfig.rekening_kegiatan || {
-	form: { elements: [] },
+UIConfig.rekening_kegiatan = {
+ validation:{kode:{required:true},uraian:{required:true},level:{required:true}},
+ form:{elements:[
+  {tag:"fieldDropdown",prop:{label:"Tingkat Nomenklatur",name:"level",options:[{value:"urusan",text:"Urusan"},{value:"bidang",text:"Bidang"},{value:"program",text:"Program"},{value:"kegiatan",text:"Kegiatan"},{value:"sub_kegiatan",text:"Sub Kegiatan"}]}},
+  {tag:"field",prop:{label:"Kode",name:"kode"}},
+  {tag:"field",prop:{label:"Kode Induk (kosong untuk Urusan)",name:"parent_kode"}},
+  {tag:"fieldTextarea",prop:{label:"Uraian",name:"uraian"}},
+  {tag:"fieldHidden",prop:{name:"status",default:1}},
+  {tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan"}}
+ ]}
 };
 UIConfig.rekening_kegiatan.import = UIConfig.__importFactory("rekening_kegiatan", "11. Referensi Hierarki.xlsx");
 UIConfig.sbu.import = UIConfig.__importFactory("sbu", null);

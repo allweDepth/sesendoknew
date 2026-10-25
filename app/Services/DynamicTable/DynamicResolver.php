@@ -95,6 +95,8 @@ class DynamicResolver
       'kegiatan'     => 'aturan_sub_kegiatan',
       'sub_kegiatan' => 'aturan_sub_kegiatan',
       'rekening_kegiatan' => 'aturan_sub_kegiatan',
+      'organisasi' => 'aturan_sub_kegiatan',
+      'sumber_dana' => 'aturan_sub_kegiatan',
       'ssh'          => 'aturan_ssh',
       'sbu'          => 'aturan_sbu',
       'asb'          => 'aturan_asb',

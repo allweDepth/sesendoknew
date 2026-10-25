@@ -255,7 +255,11 @@ class FormEngine {
 		const tbl = this.state.tbl; // // ambil tabel utama
 		const req = this.state.req || null; // // optional request tambahan
 
-		this.ajax.request({
+		const form=$(this.formSelector).addClass('loading').attr('aria-busy','true');
+        const controls=form.closest('.sidebarkanan,.modal').find('.btnSubmit').addClass('disabled');
+        this.isLoadingData=true;
+        const finish=()=>{this.isLoadingData=false;form.removeClass('loading').removeAttr('aria-busy');controls.removeClass('disabled');};
+        this.ajax.request({
 			data: {
 				// ==================================================
 				// 🔥 ACTION HARUS EDIT (BUKAN DROPDOWN)
@@ -279,18 +283,21 @@ class FormEngine {
 			},
 
 			success: async (res) => {
-				if (!res || !res.data || Object.keys(res.data).length === 0) return; // // 🔥 handle empty object
+				try {
+                if (!res?.success || !res.data || Object.keys(res.data).length === 0) return; // // 🔥 handle empty object
 
 				// ==================================================
 				// 🔥 POPULATE FORM
 				// ==================================================
 				await this.populateForm(res.data); // 🔥 WAJIB
 				$(document).trigger("form:populated", [this.state.tbl, res.data, this.formSelector]);
+                } finally { finish(); }
 
 				// ==================================================
 				// 🔥 TRIGGER DROPDOWN RELOAD (EDIT MODE)
 				// ==================================================
 			},
+            error: finish,
 		});
 	}
 
@@ -332,7 +339,7 @@ class FormEngine {
 
 			const processField = async (key) => {
 				const field = $(`${this.formSelector} [name="${key}"]`);
-				if (!field.length) return;
+				if (!field.length || field.attr("type") === "file") return;
 
 				// =========================
 				// CHECKBOX
@@ -484,6 +491,7 @@ class FormEngine {
 	//  * ============================================================
 
 	submit(e) {
+        if(this.isLoadingData)return;
 		if (e) {
 			e.preventDefault(); // // cegah submit default browser
 			e.stopImmediatePropagation(); // // cegah event lain
