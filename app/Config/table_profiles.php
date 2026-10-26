@@ -726,8 +726,8 @@ $profiles = [
     ],
     'modes' => [
       'default' => [
-        'select' => ['id', 'nama_perusahaan', 'npwp'],
-        'searchable' => ['nama_perusahaan', 'npwp'],
+        'select' => ['id', 'nama_perusahaan', 'npwp', 'alamat', 'direktur'],
+        'searchable' => ['nama_perusahaan', 'npwp', 'alamat', 'direktur'],
         'order_by' => 'nama_perusahaan ASC',
         'where' => [
           'kd_wilayah' => 'user'

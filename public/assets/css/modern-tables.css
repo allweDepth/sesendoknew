@@ -84,12 +84,12 @@ body.resizing-table-row, body.resizing-table-row * { cursor: row-resize !importa
 .modern-data-table td.table-action-column,
 .modern-data-table th.collapsing:last-child,
 .modern-data-table td.collapsing:last-child {
-  width: 1%;
+  width: 1% !important;
   min-width: max-content;
   white-space: nowrap;
 }
 .modern-data-table td.table-action-column .ui.buttons,
-.modern-data-table td.collapsing:last-child .ui.buttons { flex-wrap: nowrap; }
+.modern-data-table td.collapsing:last-child .ui.buttons { flex-wrap: nowrap; width: max-content; }
 
 .modern-data-table th.table-sortable {
   cursor: pointer;
@@ -115,6 +115,18 @@ body.resizing-table-row, body.resizing-table-row * { cursor: row-resize !importa
 .modern-data-table .table-col-normal { min-width: 135px; }
 .modern-data-table[data-managed-table="kontrak"] .table-col-wide { min-width: 320px; width: 43%; }
 .modern-data-table[data-managed-table="kontrak"] .table-col-money { min-width: 112px; width: 11%; }
+.table-wrapper > .ui.table[data-managed-table="rekanan"] { table-layout: fixed; min-width: 1000px; }
+.modern-data-table[data-managed-table="rekanan"] th,
+.modern-data-table[data-managed-table="rekanan"] td { min-width: 0 !important; max-width: none !important; }
+.modern-data-table[data-managed-table="rekanan"] [data-sort-key="nama_perusahaan"],
+.modern-data-table[data-managed-table="rekanan"] td[data-label="Nama Perusahaan"] { width: var(--rekanan-company-width, 30%) !important; }
+.modern-data-table[data-managed-table="rekanan"] [data-sort-key="npwp"],
+.modern-data-table[data-managed-table="rekanan"] td[data-label="NPWP"] { width: var(--rekanan-npwp-width, 16%) !important; white-space: nowrap; }
+.modern-data-table[data-managed-table="rekanan"] [data-sort-key="alamat"],
+.modern-data-table[data-managed-table="rekanan"] td[data-label="Alamat Perusahaan"] { width: var(--rekanan-address-width, 25%) !important; }
+.modern-data-table[data-managed-table="rekanan"] [data-sort-key="direktur"],
+.modern-data-table[data-managed-table="rekanan"] td[data-label="Nama Direktur"] { width: var(--rekanan-director-width, 18%) !important; }
+.modern-data-table[data-managed-table="rekanan"] .table-action-column { width: var(--table-action-width, 110px) !important; }
 .budget-tree-table .budget-pagu-column,
 .budget-detail-table .budget-pagu-column {
   min-width: 170px !important;

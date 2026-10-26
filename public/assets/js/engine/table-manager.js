@@ -472,6 +472,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 	renderPagination() {
 		if (this.totalPages <= 1) {
 			$(this.pagination).html("");
+			window.modernTableResizer?.enhanceAll();
 			return;
 		}
 
@@ -524,6 +525,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		html += `</div>`;
 
 		$(this.pagination).html(html);
+		window.modernTableResizer?.enhanceAll();
 	}
 
 	/* =====================================================

@@ -37,7 +37,7 @@ class ModernTableResizer {
 					handle.addEventListener("dblclick", event => { event.preventDefault(); event.stopPropagation(); this.autoColumn(table, columnIndex); });
 					header.appendChild(handle);
 				}
-				if (saved[columnIndex]) this.setColumnWidth(table, columnIndex, saved[columnIndex]);
+				if (saved[columnIndex] && !actionColumn && table.dataset.managedTable !== 'rekanan') this.setColumnWidth(table, columnIndex, saved[columnIndex]);
 			});
 			Array.from(table.tBodies).forEach(body => Array.from(body.rows).forEach(row => this.enhanceRow(table, row)));
 			this.fitActionColumn(table, saved);
@@ -137,9 +137,33 @@ class ModernTableResizer {
 	fitActionColumn(table, saved) {
 		const headers = Array.from(table.tHead.rows[table.tHead.rows.length - 1]?.cells || []);
 		headers.forEach((header, index) => {
-			if (!header.classList.contains("table-action-column") || saved[index]) return;
-			const buttons = Array.from(table.tBodies).flatMap(body => Array.from(body.rows).map(row => row.cells[index])).filter(Boolean);
-			const width = Math.min(240, Math.max(58, ...buttons.map(cell => cell.scrollWidth + 2)));
+			if (!header.classList.contains("table-action-column")) return;
+			const cells = Array.from(table.tBodies).flatMap(body => Array.from(body.rows).map(row => row.cells[index])).filter(cell => cell && cell.colSpan === 1);
+			const width = Math.ceil(Math.max(58, ...cells.map(cell => {
+				const style = getComputedStyle(cell);
+				const controls = Array.from(cell.querySelectorAll('.ui.button, button, a.button'));
+				return controls.reduce((sum, child) => {
+					const css = getComputedStyle(child);
+					return sum + child.getBoundingClientRect().width + (parseFloat(css.marginLeft) || 0) + (parseFloat(css.marginRight) || 0);
+				}, 0) + parseFloat(style.paddingLeft) + parseFloat(style.paddingRight) + 8;
+			})));
+			table.style.setProperty('--table-action-width', `${width}px`);
+			if (table.dataset.managedTable === 'rekanan') {
+				const available = Math.max(1000, table.closest('.table-wrapper')?.clientWidth || table.clientWidth);
+				const remaining = Math.max(0, 1 - width / available);
+				for (const [key, share] of Object.entries({company: 34, npwp: 18, address: 28, director: 20})) {
+					table.style.setProperty(`--rekanan-${key}-width`, `${remaining * share}%`);
+				}
+				let columns = table.querySelector(':scope > colgroup[data-rekanan-layout]');
+				if (!columns) {
+					columns = document.createElement('colgroup');
+					columns.dataset.rekananLayout = '';
+					for (let i = 0; i < 5; i++) columns.appendChild(document.createElement('col'));
+					table.prepend(columns);
+				}
+				const shares = [remaining * 34, remaining * 18, remaining * 28, remaining * 20, 100 * width / available];
+				Array.from(columns.children).forEach((col, i) => col.style.width = `${shares[i]}%`);
+			}
 			this.setColumnWidth(table, index, width);
 		});
 	}

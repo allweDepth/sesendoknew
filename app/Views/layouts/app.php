@@ -501,7 +501,7 @@
   <script src="/assets/js/ui/modern-table-resizer.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/ui/modern-table-resizer.js') ?>"></script>
   <!-- ================= ENGINE ================= -->
 
-  <script src="/assets/js/engine/table-manager.js"></script>
+  <script src="/assets/js/engine/table-manager.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/engine/table-manager.js') ?>"></script>
   <script src="/assets/js/engine/form-engine.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/engine/form-engine.js') ?>"></script>
   <script src="/assets/js/engine/form-container-manager.js"></script>
   <script src="/assets/js/engine/flyout-controller.js"></script>
