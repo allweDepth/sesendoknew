@@ -866,17 +866,20 @@ $profiles = [
       'default' => [
         'select' => ['*'],
         'searchable' => ['id', 'kd_opd', 'nama', 'nip', 'jabatan', 'kelompok', 'npwp'],
-        'order_by' => 'nama ASC'
+        'order_by' => 'kelompok ASC, golongan DESC, ruang DESC, nama ASC',
+        'default_sort' => 'opd_jabatan'
       ],
       'kepegawaian' => [
         'select' => ['id', 'nama', 'nip', 'alamat', 'golongan', 'ruang', 'jabatan', 'keterangan'],
         'searchable' => ['id', 'kd_opd', 'nama', 'nip', 'npwp'],
-        'order_by' => 'nama ASC'
+        'order_by' => 'kelompok ASC, golongan DESC, ruang DESC, nama ASC',
+        'default_sort' => 'opd_jabatan'
       ],
       'edit' => [
         'select' => ['*'],
         'searchable' => ['*'],
-        'order_by' => 'nama ASC'
+        'order_by' => 'kelompok ASC, golongan DESC, ruang DESC, nama ASC',
+        'default_sort' => 'opd_jabatan'
       ]
     ]
   ],
@@ -897,11 +900,12 @@ $profiles = [
   'riwayat_jabatan' => [
     'table' => 'riwayat_jabatan_neo',
     'primary_key' => 'id',
+    'soft_delete' => ['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
     'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
     'validation' => ['pegawai_id' => ['required'], 'jabatan' => ['required'], 'tmt' => ['required']],
     'modes' => [
-      'kepegawaian' => ['select' => ['id', 'pegawai_id', 'nomor_sk', 'jabatan', 'unit_kerja', 'tmt', 'tanggal_selesai', 'keterangan'], 'searchable' => ['nomor_sk', 'jabatan', 'unit_kerja'], 'order_by' => 'tmt DESC'],
-      'default' => ['select' => ['*'], 'searchable' => ['nomor_sk', 'jabatan', 'unit_kerja'], 'order_by' => 'tmt DESC'],
+      'kepegawaian' => ['select' => ['id', 'pegawai_id', 'nomor_sk', 'jabatan', 'unit_kerja', 'tanggal_sk', 'kelompok', 'tmt', 'tanggal_selesai', 'keterangan'], 'searchable' => ['nomor_sk', 'jabatan', 'unit_kerja'], 'order_by' => 'tmt DESC, id DESC'],
+      'default' => ['select' => ['*'], 'searchable' => ['nomor_sk', 'jabatan', 'unit_kerja'], 'order_by' => 'tmt DESC, id DESC'],
       'edit' => ['select' => ['*'], 'searchable' => ['*'], 'order_by' => 'id DESC']
     ]
   ],
@@ -909,11 +913,12 @@ $profiles = [
   'riwayat_pangkat' => [
     'table' => 'riwayat_pangkat_neo',
     'primary_key' => 'id',
+    'soft_delete' => ['field'=>'is_deleted','value_active'=>0,'value_deleted'=>1],
     'auto_session' => ['kd_wilayah', 'kd_opd', 'tahun'],
-    'validation' => ['pegawai_id' => ['required'], 'golongan' => ['required'], 'tmt' => ['required']],
+    'validation' => ['pegawai_id' => ['required'], 'golongan' => ['required'], 'ruang' => ['required'], 'tmt' => ['required']],
     'modes' => [
-      'kepegawaian' => ['select' => ['id', 'pegawai_id', 'nomor_sk', 'golongan', 'ruang', 'tmt', 'masa_kerja_tahun', 'keterangan'], 'searchable' => ['nomor_sk', 'golongan', 'ruang'], 'order_by' => 'tmt DESC'],
-      'default' => ['select' => ['*'], 'searchable' => ['nomor_sk', 'golongan', 'ruang'], 'order_by' => 'tmt DESC'],
+      'kepegawaian' => ['select' => ['id', 'pegawai_id', 'nomor_sk', 'golongan', 'ruang', 'tanggal_sk', 'tmt', 'masa_kerja_tahun', 'keterangan'], 'searchable' => ['nomor_sk', 'golongan', 'ruang'], 'order_by' => 'tmt DESC, id DESC'],
+      'default' => ['select' => ['*'], 'searchable' => ['nomor_sk', 'golongan', 'ruang'], 'order_by' => 'tmt DESC, id DESC'],
       'edit' => ['select' => ['*'], 'searchable' => ['*'], 'order_by' => 'id DESC']
     ]
   ],

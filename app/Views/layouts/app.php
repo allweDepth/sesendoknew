@@ -450,7 +450,7 @@
   <!-- JS -->
   <script>
     window.ASSET_VERSION =
-      "<?= (string)max((int)@filemtime(__DIR__ . '/../../../public/assets/js/app.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/pengaturan.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/anggaran-document.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/profil.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/kontrak.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/validation-engine.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/toast.js')) ?>";
+      "<?= (string)max((int)@filemtime(__DIR__ . '/../../../public/assets/js/app.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/pengaturan.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/anggaran-document.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/profil.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/kepegawaian.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/kontrak.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/validation-engine.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/toast.js')) ?>";
     window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
   </script>
   <script>
@@ -495,6 +495,7 @@
   <script src="/assets/js/core/page-loader.js"></script>
   <script src="/assets/js/core/validation-engine.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/validation-engine.js') ?>"></script>
   <script src="/assets/js/core/dialog.js"></script>
+  <script src="/assets/js/core/permission-engine.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/permission-engine.js') ?>"></script>
   <!-- UI REGISTRY -->
   <script src="/assets/js/ui/ui-registry.js"></script>
   <script src="/assets/js/ui/rich-document-editor.js?v=20260905.6"></script>

@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../Services/RegionalLeadershipService.php';
+require_once __DIR__ . '/../Services/AsnHistoryService.php';
 
 class KepegawaianController extends Controller
 {
@@ -151,6 +152,8 @@ class KepegawaianController extends Controller
           $data += ['tgl_update' => date('Y-m-d H:i:s'), 'username_update' => $u['username'] ?? 'system'];
           $db->update('struktur_jabatan_opd_neo', $data, 'WHERE id=?', [$id]);
         }
+        AsnHistoryService::sync($db, $employeeId);
+        if (!empty($old['pegawai_id']) && (int)$old['pegawai_id'] !== $employeeId) AsnHistoryService::sync($db, (int)$old['pegawai_id']);
         $db->commit();
       } catch (Throwable $e) { $db->rollback(); throw $e; }
       echo json_encode(['success' => true, 'message' => 'Struktur jabatan berhasil disimpan', 'data' => ['id' => $id]], JSON_UNESCAPED_UNICODE);
@@ -179,6 +182,7 @@ class KepegawaianController extends Controller
         $db->query('UPDATE struktur_jabatan_opd_neo SET parent_id=NULL,parent_kd_opd=NULL,tgl_update=NOW(),username_update=? WHERE parent_id=? AND parent_kd_opd=? AND kd_wilayah=? AND tahun=? AND is_deleted=0', [$u['username'] ?? 'system', $id, $targetOpd, $u['kd_wilayah'], $u['tahun']]);
         $db->query("UPDATE struktur_jabatan_opd_neo SET berlaku_sampai=CURDATE(),status_jabatan='BERAKHIR',tgl_update=NOW(),username_update=? WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=?", [$u['username'] ?? 'system', $id, $u['kd_wilayah'], $targetOpd, $u['tahun']]);
         $db->query('UPDATE riwayat_jabatan_neo SET tanggal_selesai=CURDATE(),tgl_update=NOW(),username_update=? WHERE sumber_struktur_id=? AND is_deleted=0 AND tanggal_selesai IS NULL', [$u['username'] ?? 'system', $id]);
+        AsnHistoryService::sync($db, (int)$existing['pegawai_id']);
         $db->commit();
       } catch (Throwable $e) {
         $db->rollback();

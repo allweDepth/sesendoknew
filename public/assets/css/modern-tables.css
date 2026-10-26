@@ -150,3 +150,14 @@ body.dark-mode .modern-data-table tbody tr:hover { background: #263449 !importan
   .table-wrapper > .ui.table.modern-data-table { min-width: 680px; }
   .modern-data-table .table-col-wide { min-width: 190px; }
 }
+
+/* ASN: reserve the reading width for identity and position, not rank codes. */
+.modern-data-table[data-managed-table="asn"] [data-sort-key="nama"],
+.modern-data-table[data-managed-table="asn"] td[data-label="Nama Lengkap"] { min-width: 220px; width: 25%; }
+.modern-data-table[data-managed-table="asn"] [data-sort-key="jabatan"],
+.modern-data-table[data-managed-table="asn"] td[data-label="Jabatan"] { min-width: 220px; width: 27%; }
+.modern-data-table[data-managed-table="asn"] [data-sort-key="golongan"],
+.modern-data-table[data-managed-table="asn"] td[data-label="Golongan"] { width: 96px !important; min-width: 96px !important; max-width: 96px !important; white-space: nowrap; }
+.modern-data-table[data-managed-table="asn"] [data-sort-key="ruang"],
+.modern-data-table[data-managed-table="asn"] td[data-label="Ruang"] { width: 76px !important; min-width: 76px !important; max-width: 76px !important; white-space: nowrap; }
+.modern-data-table[data-managed-table="asn"] td[data-label="NIP"] { white-space: nowrap; }

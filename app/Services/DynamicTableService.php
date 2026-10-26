@@ -5,6 +5,7 @@ require_once __DIR__ . '/FieldValidationException.php';
 require_once __DIR__ . '/BudgetScheduleService.php';
 require_once __DIR__ . '/ProcurementDocumentService.php';
 require_once __DIR__ . '/ProcurementContractTypeService.php';
+require_once __DIR__ . '/AsnHistoryService.php';
 
 /**
  * ============================================================
@@ -1216,6 +1217,7 @@ kd_sub_keg → nama_sub_keg
     $filtered = $this->normalizeSakipMetrics($table, $filtered);
     $filtered = $this->normalizeContractProcurement($table, $filtered);
     if ($table === 'pejabat_tahunan_neo') $filtered = $this->normalizeAnnualOfficial($filtered);
+    $filtered = AsnHistoryService::normalize($this->db, $table, $filtered, [], $this->user);
     $this->enforceSubActivityAssignment($table, $filtered, 'add');
     $this->enforceDocumentRowLock($table, $filtered);
 
@@ -1265,7 +1267,13 @@ kd_sub_keg → nama_sub_keg
 
       // menggunakan safe insert
       (new PaguLimitService($this->user))->validate($table, $filtered);
+      if (AsnHistoryService::isHistory($table)) {
+        $employee = $this->db->query('SELECT * FROM db_asn_pemda_neo WHERE id=? FOR UPDATE', [(int)$filtered['pegawai_id']])->fetch();
+        AsnHistoryService::seed($this->db, $employee, (int)substr(AsnHistoryService::today(), 0, 4));
+      }
       $id = $this->insertSafe($table, $filtered);
+      if (AsnHistoryService::isHistory($table)) AsnHistoryService::afterHistory($this->db, $table, (int)$id);
+      if ($table === 'db_asn_pemda_neo') AsnHistoryService::afterMaster($this->db, (int)$id);
       $profile = $this->getProfileByTable($table);
 
       // =====================================================
@@ -1554,6 +1562,7 @@ IGNORE SYSTEM FIELD
     $filtered = $this->normalizeSakipMetrics($table, $filtered);
     $filtered = $this->normalizeContractProcurement($table, $filtered);
     if ($table === 'pejabat_tahunan_neo') $filtered = $this->normalizeAnnualOfficial($filtered);
+    $filtered = AsnHistoryService::normalize($this->db, $table, $filtered, $oldData, $this->user);
     $this->enforceSubActivityAssignment($table, $filtered, 'edit');
     $this->enforceDocumentRowLock($table, $filtered);
     if ($table === 'rpjmd_kabupaten_neo' && ($filtered['berlaku_mulai'] ?? '') > ($filtered['berlaku_sampai'] ?? '')) {
@@ -1653,6 +1662,8 @@ UPDATE DATA DENGAN DUPLICATE HANDLER
         throw $e;
       }
 
+      if (AsnHistoryService::isHistory($table)) AsnHistoryService::afterHistory($this->db, $table, (int)$id, $oldData);
+      if ($table === 'db_asn_pemda_neo') AsnHistoryService::afterMaster($this->db, (int)$id, $oldData);
       $this->logActivity($table, $id, 'update', $oldData, $diff);
 
       return JsonResponse::success("Data berhasil diupdate");
@@ -1782,6 +1793,7 @@ DELETE (FULL IDENTIK LOGIC ASLI)
       }
       // var_dump($primaryKey);
       // die();
+      if (AsnHistoryService::isHistory($table)) AsnHistoryService::afterHistory($this->db, $table, (int)$id, $oldData);
       $this->logActivity($table, $id, 'delete', $oldData, null);
       return JsonResponse::success("Data berhasil dihapus");
     });
@@ -1842,6 +1854,13 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     list($scopeWhere, $scopeParams) =
       $this->resolveScope($table, $profile, $mode);
 
+    if ($table === 'db_asn_pemda_neo' || AsnHistoryService::isHistory($table)) {
+      $ownsHistoryTransaction = !$this->db->inTransaction();
+      if ($ownsHistoryTransaction) $this->db->begin();
+      try { AsnHistoryService::refreshScope($this->db, $this->user); if ($ownsHistoryTransaction) $this->db->commit(); }
+      catch (Throwable $e) { if ($ownsHistoryTransaction) $this->db->rollback(); throw $e; }
+    }
+
     // Kolom scope milik tabel utama wajib diberi alias ketika query memakai JOIN.
     // Tanpa kualifikasi ini, kolom umum seperti kd_wilayah menjadi ambigu.
     if (!empty($profile['join'])) {
@@ -1874,6 +1893,13 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     // parameter query
     $params = [];
     $req = $request['req'] ?? null;
+    if (AsnHistoryService::isHistory($table) && !empty($request['pegawai_id'])) {
+      $employeeId = filter_var($request['pegawai_id'], FILTER_VALIDATE_INT);
+      if (!$employeeId || $employeeId < 1) throw new FieldValidationException('pegawai_id', 'Pilih ASN yang valid.');
+      $whereParts[] = "`$table`.`pegawai_id` = ?";
+      $params[] = $employeeId;
+    }
+
 
     if ($req && $table === 'rekening_kegiatan') {
 
@@ -2046,6 +2072,7 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     $requestedSort = isset($request['sort_by']) && is_string($request['sort_by'])
       ? trim($request['sort_by']) : '';
     $requestedDirection = strtoupper((string)($request['sort_dir'] ?? 'ASC')) === 'DESC' ? 'DESC' : 'ASC';
+    $hasRequestedSort = false;
     $selectAliases = [];
     foreach (($modeConfig['select'] ?? []) as $selectField) {
       $selectField = trim((string)$selectField);
@@ -2059,6 +2086,7 @@ DELETE (FULL IDENTIK LOGIC ASLI)
       $requestedSort !== '' && preg_match('/^[a-zA-Z0-9_]+$/', $requestedSort)
       && (in_array($requestedSort, $columns, true) || in_array($requestedSort, $selectAliases, true))
     ) {
+      $hasRequestedSort = true;
       $orderBy = in_array($requestedSort, $columns, true) && !empty($profile['join'])
         ? "`$table`.`$requestedSort` $requestedDirection"
         : "`$requestedSort` $requestedDirection";
@@ -2087,6 +2115,13 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     if (!empty($profile['join']) && preg_match('/^`?([a-zA-Z0-9_]+)`?\s+(ASC|DESC)$/i', trim($orderBy), $plainOrder)
         && in_array($plainOrder[1], $columns, true)) {
       $orderBy = "`$table`.`{$plainOrder[1]}` {$plainOrder[2]}";
+    }
+
+    // The hierarchy is server-owned; browser sorting still overrides it.
+    if (!$hasRequestedSort && $table === 'db_asn_pemda_neo'
+        && ($modeConfig['default_sort'] ?? '') === 'opd_jabatan') {
+      require_once __DIR__ . '/AsnTableOrderService.php';
+      $orderBy = AsnTableOrderService::sql();
     }
 
     /* ======================================================
@@ -2126,6 +2161,27 @@ DELETE (FULL IDENTIK LOGIC ASLI)
     )->fetchAll();
 
 
+
+    if (AsnHistoryService::isHistory($table) && $rows) {
+      $ids = array_values(array_unique(array_map('intval', array_column($rows, 'pegawai_id'))));
+      $marks = implode(',', array_fill(0, count($ids), '?'));
+      $employees = array_column($this->db->query("SELECT id,nama,gelar_depan,gelar,nip,kd_wilayah,kd_opd FROM db_asn_pemda_neo WHERE id IN ($marks)", $ids)->fetchAll(), null, 'id');
+      $current = []; $today = AsnHistoryService::today();
+      foreach ($employees as $e) {
+        $end = $table === AsnHistoryService::JOB ? ' AND (tanggal_selesai IS NULL OR tanggal_selesai>=?)' : '';
+        $args = [$e['id'], $e['kd_wilayah'], $e['kd_opd'], $today, $today]; if ($end) $args[]=$today;
+        $r=$this->db->query("SELECT id FROM $table WHERE pegawai_id=? AND kd_wilayah=? AND kd_opd=? AND is_deleted=0 AND disable=0 AND tmt<=? AND (tanggal_sk IS NULL OR tanggal_sk<=?)$end ORDER BY tmt DESC,COALESCE(tanggal_sk,tmt) DESC,id DESC LIMIT 1",$args)->fetch();
+        $current[$e['id']] = (int)($r['id']??0);
+      }
+      foreach ($rows as &$row) {
+        $e=$employees[$row['pegawai_id']]??[];
+        $row['nama_pegawai']=trim(($e['gelar_depan']??'').' '.($e['nama']??''));
+        if (!empty($e['gelar'])) $row['nama_pegawai'].=', '.$e['gelar'];
+        $row['nip_pegawai']=$e['nip']??'';
+        $row['status_riwayat']=(int)$row['id']===($current[$row['pegawai_id']]??0)?'Berlaku sekarang':((!empty($row['disable']))?'Nonaktif':(($row['tmt']>$today||($row['tanggal_sk']??'')>$today)?'Terjadwal':'Riwayat'));
+      }
+      unset($row);
+    }
 
     // Aggregate RAB only for contracts on the current, already-scoped page.
     // Incomplete drafts may have RAB even though their contract value is unset.
@@ -2401,7 +2457,7 @@ HANYA PERIODE AKTIF DI-CACHE
         $params[] = $this->user['kd_wilayah'] ?? null;
       }
 
-      if (in_array('tahun', $columns) && isset($this->user['tahun'])) {
+      if (!AsnHistoryService::isHistory($table) && in_array('tahun', $columns) && isset($this->user['tahun'])) {
         $whereParts[] = "`tahun` = ?";
         $params[] = $this->user['tahun'];
       }
@@ -3922,7 +3978,7 @@ LIMIT 1",
         $where[] = "`kd_opd` = ?";
         $params[] = $this->user['kd_opd'];
       }
-      if (in_array($role, ['admin_wilayah', 'tapd'], true) && in_array('tahun', $columns) && isset($this->user['tahun'])) {
+      if (!AsnHistoryService::isHistory($table) && in_array($role, ['admin_wilayah', 'tapd'], true) && in_array('tahun', $columns) && isset($this->user['tahun'])) {
         $where[] = "`tahun` = ?";
         $params[] = $this->user['tahun'];
       }
@@ -3932,7 +3988,8 @@ LIMIT 1",
         foreach (['kd_opd', 'kd_wilayah', 'tahun'] as $field) {
 
           if (
-            in_array($field, $columns)
+            !($field === 'tahun' && AsnHistoryService::isHistory($table))
+            && in_array($field, $columns)
             && isset($this->user[$field])
             && $this->user[$field] !== null
           ) {

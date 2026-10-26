@@ -1054,16 +1054,17 @@ UIConfig.hspk = {
 	form: { elements: [...UIConfig.sbu.form.elements] },
 };
 UIConfig.asn = {
+	table: { maxColumns: 7, columnOrder: ['nama', 'jabatan', 'golongan', 'ruang', 'nip', 'gelar', 'gelar_depan'] },
 	layout: { columns: 1 },
 	validation: { nama: { required: true }, nip: { required: true },golongan:{required:true},ruang:{required:true} },
 	form: {
 		elements: [
-            {tag:"fieldDropdown",prop:{label:"Golongan",name:"golongan",options:[{value:"1",text:"I"},{value:"2",text:"II"},{value:"3",text:"III"},{value:"4",text:"IV"}]}},
-            {tag:"fieldDropdown",prop:{label:"Ruang",name:"ruang",options:["a","b","c","d","e"].map(x=>({value:x,text:x}))}},
-			{ tag: "field", prop: { label: "Nama Lengkap", name: "nama" } },
-			{ tag: "fieldAction", prop: { label: "NIP", name: "nip" } },
-			{ tag: "field", prop: { label: "Gelar", name: "gelar" } },
-			{ tag: "field", prop: { label: "Gelar Depan", name: "gelar_depan" } },
+            {tag:"fieldDropdown",prop:{label:"Golongan",name:"golongan", tablePriority: 10, tableWidth: "compact",options:[{value:"1",text:"I"},{value:"2",text:"II"},{value:"3",text:"III"},{value:"4",text:"IV"}]}},
+            {tag:"fieldDropdown",prop:{label:"Ruang",name:"ruang", tablePriority: 10, tableWidth: "compact",options:["a","b","c","d","e"].map(x=>({value:x,text:x}))}},
+			{ tag: "field", prop: { label: "Nama Lengkap", name: "nama", tablePriority: 10 } },
+			{ tag: "fieldAction", prop: { label: "NIP", name: "nip", tablePriority: 10 } },
+			{ tag: "field", prop: { label: "Gelar", name: "gelar", tablePriority: 10 } },
+			{ tag: "field", prop: { label: "Gelar Depan", name: "gelar_depan", tablePriority: 10 } },
 
 			{
 				tag: "fieldDropdown",
@@ -1080,7 +1081,7 @@ UIConfig.asn = {
 				},
 			},
 
-			{ tag: "field", prop: { label: "Jabatan", name: "jabatan" } },
+			{ tag: "field", prop: { label: "Jabatan", name: "jabatan", tablePriority: 10 } },
 			{ tag: "field", prop: { label: "Tempat Lahir", name: "t4_lahir" } },
 			{
 				tag: "fieldCalendar",
@@ -1124,18 +1125,33 @@ UIConfig.pppk = {
 };
 
 const pegawaiDropdown = { source: "asn", valueField: "id", textField: "nama", search: true };
-UIConfig.riwayat_jabatan = { layout: { columns: 1 }, validation: { pegawai_id:{required:true},jabatan:{required:true},tmt:{required:true} }, form:{elements:[
-	{tag:"fieldDropdown",prop:{label:"Pegawai",name:"pegawai_id",...pegawaiDropdown}}, {tag:"field",prop:{label:"Nomor SK",name:"nomor_sk"}},
-	{tag:"field",prop:{label:"Jabatan",name:"jabatan"}}, {tag:"field",prop:{label:"Unit Kerja",name:"unit_kerja"}},
-	{tag:"fieldCalendar",prop:{label:"TMT",name:"tmt",calendarType:"date"}}, {tag:"fieldCalendar",prop:{label:"Tanggal Selesai",name:"tanggal_selesai",calendarType:"date"}},
-	{tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan"}}
-]}};
-UIConfig.riwayat_pangkat = { layout: { columns: 1 }, validation: { pegawai_id:{required:true},golongan:{required:true},tmt:{required:true} }, form:{elements:[
-	{tag:"fieldDropdown",prop:{label:"Pegawai",name:"pegawai_id",...pegawaiDropdown}}, {tag:"field",prop:{label:"Nomor SK",name:"nomor_sk"}},
-	{tag:"field",prop:{label:"Golongan",name:"golongan"}}, {tag:"field",prop:{label:"Ruang",name:"ruang"}},
-	{tag:"fieldCalendar",prop:{label:"TMT",name:"tmt",calendarType:"date"}}, {tag:"field",prop:{label:"Masa Kerja (tahun)",name:"masa_kerja_tahun",type:"number"}},
-	{tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan"}}
-]}};
+UIConfig.riwayat_jabatan = {
+ table:{title:"Riwayat Jabatan ASN",maxColumns:7,columnOrder:["pegawai_id","jabatan","unit_kerja","tmt","tanggal_selesai","nomor_sk","tanggal_sk"]},
+ layout:{columns:1},validation:{pegawai_id:{required:true},jabatan:{required:true},tmt:{required:true}},form:{elements:[
+ {tag:"fieldDropdown",prop:{label:"Nama ASN",name:"pegawai_id",...pegawaiDropdown,tablePriority:10}},
+ {tag:"field",prop:{label:"Nomor SK",name:"nomor_sk",tablePriority:10}},
+ {tag:"fieldCalendar",prop:{label:"Tanggal SK",name:"tanggal_sk",calendarType:"date",tablePriority:10}},
+ {tag:"field",prop:{label:"Jabatan",name:"jabatan",tablePriority:10}},
+ {tag:"fieldDropdown",prop:{label:"Kelompok Jabatan",name:"kelompok",table:false,options:[{value:"1",text:"Kepala OPD"},{value:"2",text:"Sekretaris"},{value:"3",text:"Kepala Bidang"},{value:"4",text:"ASN"},{value:"5",text:"Non ASN"}]}},
+ {tag:"field",prop:{label:"Unit Kerja",name:"unit_kerja",tablePriority:10,roles:["super_admin","admin_wilayah","tapd"]}},
+ {tag:"fieldCalendar",prop:{label:"TMT / Mulai Berlaku",tableLabel:"TMT",name:"tmt",calendarType:"date",tablePriority:10}},
+ {tag:"fieldCalendar",prop:{label:"Tanggal Selesai",name:"tanggal_selesai",calendarType:"date",tablePriority:10}},
+ {tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan",table:false}},
+ {tag:"fieldCheckbox",prop:{label:"Nonaktifkan Riwayat",name:"disable",table:false}}
+ ]}};
+UIConfig.riwayat_pangkat = {
+ table:{title:"Riwayat Pangkat ASN",maxColumns:7,columnOrder:["pegawai_id","golongan","ruang","tmt","nomor_sk","tanggal_sk","masa_kerja_tahun"]},
+ layout:{columns:1},validation:{pegawai_id:{required:true},golongan:{required:true},ruang:{required:true},tmt:{required:true}},form:{elements:[
+ {tag:"fieldDropdown",prop:{label:"Nama ASN",name:"pegawai_id",...pegawaiDropdown,tablePriority:10}},
+ {tag:"field",prop:{label:"Nomor SK",name:"nomor_sk",tablePriority:10}},
+ {tag:"fieldCalendar",prop:{label:"Tanggal SK",name:"tanggal_sk",calendarType:"date",tablePriority:10}},
+ {tag:"fieldDropdown",prop:{label:"Golongan",name:"golongan",tablePriority:10,options:["I","II","III","IV"].map((v,i)=>({value:String(i+1),text:v}))}},
+ {tag:"fieldDropdown",prop:{label:"Ruang",name:"ruang",tablePriority:10,options:["a","b","c","d","e"].map(v=>({value:v,text:v}))}},
+ {tag:"fieldCalendar",prop:{label:"TMT / Mulai Berlaku",tableLabel:"TMT",name:"tmt",calendarType:"date",tablePriority:10}},
+ {tag:"field",prop:{label:"Masa Kerja (tahun)",name:"masa_kerja_tahun",type:"number",tablePriority:10}},
+ {tag:"fieldTextarea",prop:{label:"Keterangan",name:"keterangan",table:false}},
+ {tag:"fieldCheckbox",prop:{label:"Nonaktifkan Riwayat",name:"disable",table:false}}
+ ]}};
 UIConfig.cuti = { layout: { columns: 1 }, validation: { pegawai_id:{required:true},jenis_cuti:{required:true},tanggal_mulai:{required:true},tanggal_selesai:{required:true} }, form:{elements:[
 	{tag:"fieldDropdown",prop:{label:"Pegawai",name:"pegawai_id",...pegawaiDropdown}}, {tag:"field",prop:{label:"Nomor Surat",name:"nomor_surat"}},
 	{tag:"fieldDropdown",prop:{label:"Jenis Cuti",name:"jenis_cuti",options:[{value:"tahunan",text:"Cuti Tahunan"},{value:"sakit",text:"Cuti Sakit"},{value:"melahirkan",text:"Cuti Melahirkan"},{value:"alasan_penting",text:"Alasan Penting"}]}},

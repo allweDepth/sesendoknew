@@ -868,10 +868,7 @@ class FormEngine {
 	 * ============================================================
 	 */
 	static element(el) {
-		console.log("PERMISSION ENGINE:", typeof PermissionEngine);
-		console.log("USER ROLE:", window.USER_ROLE);
 		const { tag, prop = {} } = el;
-		console.log("RENDER TAG:", tag);
 		if (prop.roles && !PermissionEngine.allow(window.USER_ROLE, prop.roles)) {
 			return "";
 		}

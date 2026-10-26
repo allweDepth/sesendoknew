@@ -137,6 +137,8 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			sort_dir: this.sortDir,
 		};
 
+		if (this.personnelEmployeeId) payload.pegawai_id = this.personnelEmployeeId;
+
 		// kirim req jika ada
 		if (this.state.req) {
 			payload.req = this.state.req;
@@ -229,6 +231,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 				(item) =>
 					item.prop?.name &&
 					item.prop?.table !== false &&
+					(!item.prop.roles || item.prop.roles.includes(window.USER_ROLE)) &&
 					(!availableKeys.size || availableKeys.has(item.prop.name)) &&
 					!["divider", "header", "fieldHidden", "fieldCustom"].includes(item.tag),
 			)
@@ -416,6 +419,11 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			columns.forEach((col) => {
 				let value = row[col.key] ?? "";
 				value = this.formatValue(value, col.format);
+				if (["riwayat_jabatan","riwayat_pangkat"].includes(this.state.tbl)) {
+					if (col.key === "pegawai_id") value = this.escapeHtml(row.nama_pegawai || row.pegawai_id) + `<div class="ui small grey text">${this.escapeHtml(row.nip_pegawai || "")}</div>`;
+					if (col.key === "golongan") value = ["", "I", "II", "III", "IV"][Number(row.golongan)] || this.escapeHtml(row.golongan);
+					if (col.key === "tmt") value += `<div class="ui mini ${row.status_riwayat === "Berlaku sekarang" ? "green" : row.status_riwayat === "Terjadwal" ? "blue" : "basic"} label">${this.escapeHtml(row.status_riwayat || "Riwayat")}</div>`;
+				}
 				if (this.state.tbl === "kontrak") {
 					const count = Number(row.jumlah_rab || 0);
 					if (col.key === "uraian_kontrak" && count > 0) {
