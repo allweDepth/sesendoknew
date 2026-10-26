@@ -18,6 +18,7 @@ class ModernTableResizer {
 	}
 
 	enhanceAll() {
+		this.separatePagination();
 		this.root.querySelectorAll("table").forEach((table, index) => {
 			if (table.closest(".ui.form, .document-preview, .doc-editor") || !table.tHead || !table.tBodies.length) return;
 			table.classList.add("modern-data-table", "resizable-data-table");
@@ -40,6 +41,40 @@ class ModernTableResizer {
 			});
 			Array.from(table.tBodies).forEach(body => Array.from(body.rows).forEach(row => this.enhanceRow(table, row)));
 			this.fitActionColumn(table, saved);
+		});
+	}
+
+	separatePagination() {
+		// Keep the original controls and their handlers outside horizontal scrolling.
+		const selector = '[name^="pagination_"], #crud-pagination, .ui.pagination.menu';
+		this.root.querySelectorAll(selector).forEach(control => {
+			if (control.matches('.ui.pagination.menu') && control.parentElement.closest('[name^="pagination_"], #crud-pagination')) return;
+			const wrapper = control.closest('.table-wrapper');
+			if (!wrapper || control.closest('.document-preview, .doc-editor')) return;
+			if (!wrapper.hasAttribute('tabindex')) wrapper.tabIndex = 0;
+			if (!wrapper.hasAttribute('aria-label')) wrapper.setAttribute('aria-label', 'Tabel data, geser untuk melihat kolom lainnya');
+			let frame = wrapper.parentElement;
+			if (!frame.classList.contains('paginated-table-frame')) {
+				frame = document.createElement('div');
+				frame.className = 'paginated-table-frame';
+				wrapper.before(frame);
+				frame.appendChild(wrapper);
+			}
+			let footer = frame.querySelector(':scope > .table-pagination-footer');
+			if (!footer) {
+				footer = document.createElement('div');
+				footer.className = 'table-pagination-footer';
+				frame.appendChild(footer);
+			}
+			const row = control.closest('tfoot tr');
+			const cell = control.closest('td, th');
+			if (cell?.classList.contains('right') && cell.classList.contains('aligned')) footer.classList.add('right-aligned');
+			footer.appendChild(control);
+			if (row && !row.textContent.trim() && !row.querySelector('input, button, select, a')) {
+				const section = row.parentElement;
+				row.remove();
+				if (!section.children.length) section.remove();
+			}
 		});
 	}
 

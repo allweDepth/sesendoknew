@@ -20,6 +20,21 @@
   table-layout: auto;
 }
 
+.paginated-table-frame { width: 100%; min-width: 0; }
+.paginated-table-frame > .table-wrapper { border-radius: 10px 10px 0 0; }
+.table-pagination-footer {
+  padding: .75rem;
+  border: 1px solid var(--table-border);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+  background: #f8fafc;
+  max-width: 100%;
+}
+.table-pagination-footer:has(> :empty) { display: none; }
+.table-pagination-footer.right-aligned { text-align: right; }
+.table-pagination-footer .ui.pagination.menu { margin: 0; flex-wrap: wrap; min-height: 0; }
+body.dark-mode .table-pagination-footer { background: #1e293b; border-color: #334155; }
+
 .modern-data-table thead th {
   position: sticky;
   top: 0;
