@@ -1,0 +1,12 @@
+{
+    "id": 867,
+    "package": "Perencanaan Jalan Status Kabupaten",
+    "before": {
+        "id": 436,
+        "company": "CV. AQILA KARYA KONSULTAN"
+    },
+    "after": {
+        "id": 475,
+        "company": "PT. Anindya Rekacipta Utama"
+    }
+}

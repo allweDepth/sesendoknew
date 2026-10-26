@@ -1,0 +1,1812 @@
+{
+  "source": "/Users/nabiila_inayah/Library/Mobile Documents/com~apple~CloudDocs/2026/Pengadaan 2026/Perubahan 2026/aggr perubahan fix.xlsx",
+  "sha256": "934dfd9be62dec3b7624d130db48d9f3ec047965d4224c73e72e408420a6ffb5",
+  "sheet": "Lembar3",
+  "template": "/Users/nabiila_inayah/Desktop/HPS dan penawaran konsultan 2026.xlsx",
+  "template_sha256": "01e85518df835cb9cc1c72e1c153b3218e5c71e84a468a85a4f3d5446625ce99",
+  "contracts": [
+    {
+      "source_row": 18,
+      "package": "Stock Design Jalan Status Kabupaten (Inpres) Ruas I",
+      "company": "cv mezzanine dua empat",
+      "vendor_id": 468,
+      "budget": 100000000,
+      "target": "99916000",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500",
+          "price": "8981980.889264567030",
+          "total": "9969998.79",
+          "hps_total": "9978345.00"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100",
+          "price": "17964061.694885875421",
+          "total": "19940108.48",
+          "hps_total": "19956801.00"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22455102.097696529616",
+          "total": "24925163.33",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22455102.097696529616",
+          "total": "24925163.33",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700",
+          "price": "4490940.486453912835",
+          "total": "4984943.94",
+          "hps_total": "4989117.00"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300",
+          "price": "13473021.292075221225",
+          "total": "14955053.63",
+          "hps_total": "14967573.00"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "price": "215568.500539374326",
+          "total": "215568.50",
+          "hps_total": "215748.96"
+        }
+      ]
+    },
+    {
+      "source_row": 19,
+      "package": "Stock Design Jalan Status Kabupaten (Inpres) Ruas II",
+      "company": "cv mezzanine dua empat",
+      "vendor_id": 468,
+      "budget": 100000000,
+      "target": "99912000",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500",
+          "price": "8981621.316989727023",
+          "total": "9969599.66",
+          "hps_total": "9978345.00"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100",
+          "price": "17963342.528318163107",
+          "total": "19939310.21",
+          "hps_total": "19956801.00"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22454203.138486885654",
+          "total": "24924165.48",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22454203.138486885654",
+          "total": "24924165.48",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700",
+          "price": "4490760.697811995468",
+          "total": "4984744.37",
+          "hps_total": "4989117.00"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300",
+          "price": "13472481.918149440561",
+          "total": "14954454.93",
+          "hps_total": "14967573.00"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "price": "215559.870550161812",
+          "total": "215559.87",
+          "hps_total": "215748.96"
+        }
+      ]
+    },
+    {
+      "source_row": 20,
+      "package": "Stock Design Jalan Status Kabupaten (Inpres) Ruas III",
+      "company": "cv mezzanine dua empat",
+      "vendor_id": 468,
+      "budget": 100000000,
+      "target": "99908000",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500",
+          "price": "8981261.726696868999",
+          "total": "9969200.52",
+          "hps_total": "9978345.00"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100",
+          "price": "17962623.361750450794",
+          "total": "19938511.93",
+          "hps_total": "19956801.00"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22453304.179277241691",
+          "total": "24923167.64",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22453304.179277241691",
+          "total": "24923167.64",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700",
+          "price": "4490580.909170078101",
+          "total": "4984544.81",
+          "hps_total": "4989117.00"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300",
+          "price": "13471942.544223659896",
+          "total": "14953856.22",
+          "hps_total": "14967573.00"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "price": "215551.240560949299",
+          "total": "215551.24",
+          "hps_total": "215748.96"
+        }
+      ]
+    },
+    {
+      "source_row": 21,
+      "package": "Stock Design Jalan Status Kabupaten (Inpres) Ruas IV",
+      "company": "cv mezzanine dua empat",
+      "vendor_id": 468,
+      "budget": 100000000,
+      "target": "99904000",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500",
+          "price": "8980902.154422028992",
+          "total": "9968801.39",
+          "hps_total": "9978345.00"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100",
+          "price": "17961904.195182738480",
+          "total": "19937713.66",
+          "hps_total": "19956801.00"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22452405.220067597729",
+          "total": "24922169.79",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22452405.220067597729",
+          "total": "24922169.79",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700",
+          "price": "4490401.120528160734",
+          "total": "4984345.24",
+          "hps_total": "4989117.00"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300",
+          "price": "13471403.170297879232",
+          "total": "14953257.52",
+          "hps_total": "14967573.00"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "price": "215542.610571736785",
+          "total": "215542.61",
+          "hps_total": "215748.96"
+        }
+      ]
+    },
+    {
+      "source_row": 22,
+      "package": "Stock Design Jalan Status Kabupaten (Inpres) Ruas V",
+      "company": "cv mezzanine dua empat",
+      "vendor_id": 468,
+      "budget": 100000000,
+      "target": "99900000",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500",
+          "price": "8980542.564129170967",
+          "total": "9968402.25",
+          "hps_total": "9978345.00"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100",
+          "price": "17961185.028615026167",
+          "total": "19936915.38",
+          "hps_total": "19956801.00"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22451506.260857953767",
+          "total": "24921171.95",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22451506.260857953767",
+          "total": "24921171.95",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700",
+          "price": "4490221.331886243367",
+          "total": "4984145.68",
+          "hps_total": "4989117.00"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300",
+          "price": "13470863.796372098567",
+          "total": "14952658.81",
+          "hps_total": "14967573.00"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "price": "215533.980582524272",
+          "total": "215533.98",
+          "hps_total": "215748.96"
+        }
+      ]
+    },
+    {
+      "source_row": 23,
+      "package": "Stock Design Jalan Status Kabupaten (Inpres) Ruas VI",
+      "company": "cv adidaya cipta utama",
+      "vendor_id": 479,
+      "budget": 100000000,
+      "target": "99860000",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500",
+          "price": "8976946.769308698826",
+          "total": "9964410.91",
+          "hps_total": "9978345.00"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100",
+          "price": "17953993.362937903033",
+          "total": "19928932.63",
+          "hps_total": "19956801.00"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22442516.668761514146",
+          "total": "24911193.50",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22442516.668761514146",
+          "total": "24911193.50",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700",
+          "price": "4488423.445467069696",
+          "total": "4982150.02",
+          "hps_total": "4989117.00"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300",
+          "price": "13465470.057114291921",
+          "total": "14946671.76",
+          "hps_total": "14967573.00"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "price": "215447.680690399137",
+          "total": "215447.68",
+          "hps_total": "215748.96"
+        }
+      ]
+    },
+    {
+      "source_row": 24,
+      "package": "Stock Design Jalan Status Kabupaten (Inpres) Ruas VII",
+      "company": "cv adidaya cipta utama",
+      "vendor_id": 479,
+      "budget": 100000000,
+      "target": "99855000",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500",
+          "price": "8976497.274685869538",
+          "total": "9963911.97",
+          "hps_total": "9978345.00"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100",
+          "price": "17953094.404728262642",
+          "total": "19927934.79",
+          "hps_total": "19956801.00"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22441392.969749459193",
+          "total": "24909946.20",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22441392.969749459193",
+          "total": "24909946.20",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700",
+          "price": "4488198.709664672987",
+          "total": "4981900.57",
+          "hps_total": "4989117.00"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300",
+          "price": "13464795.839707066090",
+          "total": "14945923.38",
+          "hps_total": "14967573.00"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "price": "215436.893203883495",
+          "total": "215436.89",
+          "hps_total": "215748.96"
+        }
+      ]
+    },
+    {
+      "source_row": 25,
+      "package": "Stock Design Jalan Status Kabupaten (Inpres) Ruas VIII",
+      "company": "cv adidaya cipta utama",
+      "vendor_id": 479,
+      "budget": 100000000,
+      "target": "99850000",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500",
+          "price": "8976047.789072049260",
+          "total": "9963413.05",
+          "hps_total": "9978345.00"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100",
+          "price": "17952195.446518622250",
+          "total": "19926936.95",
+          "hps_total": "19956801.00"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22440269.270737404241",
+          "total": "24908698.89",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900",
+          "price": "22440269.270737404241",
+          "total": "24908698.89",
+          "hps_total": "24946029.00"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700",
+          "price": "4487973.973862276278",
+          "total": "4981651.11",
+          "hps_total": "4989117.00"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300",
+          "price": "13464121.622299840259",
+          "total": "14945175.00",
+          "hps_total": "14967573.00"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "price": "215426.105717367853",
+          "total": "215426.11",
+          "hps_total": "215748.96"
+        }
+      ]
+    },
+    {
+      "source_row": 8,
+      "package": "Perencanaan Jalan Status Kabupaten",
+      "company": "PT. Anindya Rekacipta Utama",
+      "vendor_id": 475,
+      "budget": "100000000.0000",
+      "excel_budget": 50000000,
+      "target": "9.9911E+7",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500.00",
+          "hps_total": "9978345.00",
+          "price": "8981531.421668764769",
+          "total": "9969499.88"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100.00",
+          "hps_total": "19956801.00",
+          "price": "17963162.736676235029",
+          "total": "19939110.64"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22453978.398684474663",
+          "total": "24923916.02"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22453978.398684474663",
+          "total": "24923916.02"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700.00",
+          "hps_total": "4989117.00",
+          "price": "4490715.750651516126",
+          "total": "4984694.48"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300.00",
+          "hps_total": "14967573.00",
+          "price": "13472347.074667995395",
+          "total": "14954305.25"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "hps_total": "215748.96",
+          "price": "215557.713052858684",
+          "total": "215557.71"
+        }
+      ],
+      "provider_source": "Instruksi pengguna 26 Oktober 2026"
+    },
+    {
+      "source_row": 13,
+      "package": "Perencanaan Jalan Status Kabupaten DAK I",
+      "company": "cv mezzanine dua empat",
+      "vendor_id": 468,
+      "budget": "100000000.0000",
+      "excel_budget": 100000000,
+      "target": "9.9906E+7",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500.00",
+          "hps_total": "9978345.00",
+          "price": "8981081.927045935482",
+          "total": "9969000.94"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100.00",
+          "hps_total": "19956801.00",
+          "price": "17962263.778466594637",
+          "total": "19938112.79"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22452854.699672419710",
+          "total": "24922668.72"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22452854.699672419710",
+          "total": "24922668.72"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700.00",
+          "hps_total": "4989117.00",
+          "price": "4490491.014849119417",
+          "total": "4984445.03"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300.00",
+          "hps_total": "14967573.00",
+          "price": "13471672.857260769564",
+          "total": "14953556.87"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "hps_total": "215748.96",
+          "price": "215546.925566343042",
+          "total": "215546.93"
+        }
+      ]
+    },
+    {
+      "source_row": 14,
+      "package": "Perencanaan Jalan Status Kabupaten DAK II",
+      "company": "cv mezzanine dua empat",
+      "vendor_id": 468,
+      "budget": "63192657.0000",
+      "excel_budget": 100000000,
+      "target": "6.3098E+7",
+      "hps": "63192431.37",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "5680703.90",
+          "hps_total": "6305581.33",
+          "price": "5672214.970694538470",
+          "total": "6296158.62"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "11361470.99",
+          "hps_total": "12611232.80",
+          "price": "11344493.018943322231",
+          "total": "12592387.25"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "14201854.54",
+          "hps_total": "15764058.54",
+          "price": "14180632.052564746885",
+          "total": "15740501.58"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "14201854.54",
+          "hps_total": "15764058.54",
+          "price": "14180632.052564746885",
+          "total": "15740501.58"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "2840320.35",
+          "hps_total": "3152755.59",
+          "price": "2836075.928064104807",
+          "total": "3148044.28"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8521087.45",
+          "hps_total": "9458407.07",
+          "price": "8508353.995306954115",
+          "total": "9444272.93"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "136337.50",
+          "hps_total": "136337.50",
+          "price": "136133.764574281168",
+          "total": "136133.76"
+        }
+      ]
+    },
+    {
+      "source_row": 27,
+      "package": "Stock Design Jembatan Jalan Status Kabupaten (DAK) I",
+      "company": "cv adidaya cipta utama",
+      "vendor_id": 479,
+      "budget": "100000000.0000",
+      "excel_budget": 100000000,
+      "target": "9.9852E+7",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500.00",
+          "hps_total": "9978345.00",
+          "price": "8976227.606741000795",
+          "total": "9963612.64"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100.00",
+          "hps_total": "19956801.00",
+          "price": "17952555.029802478407",
+          "total": "19927336.08"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22440718.750342226222",
+          "total": "24909197.81"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22440718.750342226222",
+          "total": "24909197.81"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700.00",
+          "hps_total": "4989117.00",
+          "price": "4488063.868183234961",
+          "total": "4981750.89"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300.00",
+          "hps_total": "14967573.00",
+          "price": "13464391.309262730592",
+          "total": "14945474.35"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "hps_total": "215748.96",
+          "price": "215430.420711974110",
+          "total": "215430.42"
+        }
+      ]
+    },
+    {
+      "source_row": 28,
+      "package": "Stock Design Jembatan Jalan Status Kabupaten (DAK) II",
+      "company": "cv adidaya cipta utama",
+      "vendor_id": 479,
+      "budget": "100000000.0000",
+      "excel_budget": 100000000,
+      "target": "9.9851E+7",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500.00",
+          "hps_total": "9978345.00",
+          "price": "8976137.702411029532",
+          "total": "9963512.85"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100.00",
+          "hps_total": "19956801.00",
+          "price": "17952375.238160550328",
+          "total": "19927136.51"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22440494.010539815231",
+          "total": "24908948.35"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22440494.010539815231",
+          "total": "24908948.35"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700.00",
+          "hps_total": "4989117.00",
+          "price": "4488018.921022755620",
+          "total": "4981701.00"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300.00",
+          "hps_total": "14967573.00",
+          "price": "13464256.465781285426",
+          "total": "14945324.68"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "hps_total": "215748.96",
+          "price": "215428.263214670982",
+          "total": "215428.26"
+        }
+      ]
+    },
+    {
+      "source_row": 36,
+      "package": "Stock Design Inpres Daerah Irigasi Letawa",
+      "company": "cv adidaya cipta utama",
+      "vendor_id": 479,
+      "budget": "100000000.0000",
+      "excel_budget": 100000000,
+      "target": "9.9843E+7",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500.00",
+          "hps_total": "9978345.00",
+          "price": "8975418.539843331500",
+          "total": "9962714.58"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100.00",
+          "hps_total": "19956801.00",
+          "price": "17950936.905025125702",
+          "total": "19925539.96"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22438696.092120527307",
+          "total": "24906952.66"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22438696.092120527307",
+          "total": "24906952.66"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700.00",
+          "hps_total": "4989117.00",
+          "price": "4487659.343738920885",
+          "total": "4981301.87"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300.00",
+          "hps_total": "14967573.00",
+          "price": "13463177.717929724096",
+          "total": "14944127.27"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "hps_total": "215748.96",
+          "price": "215411.003236245955",
+          "total": "215411.00"
+        }
+      ]
+    },
+    {
+      "source_row": 37,
+      "package": "Stock Design Inpres Daerah Irigasi Sarude",
+      "company": "cv adidaya cipta utama",
+      "vendor_id": 479,
+      "budget": "100000000.0000",
+      "excel_budget": 100000000,
+      "target": "9.9842E+7",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500.00",
+          "hps_total": "9978345.00",
+          "price": "8975328.626504351228",
+          "total": "9962614.78"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100.00",
+          "hps_total": "19956801.00",
+          "price": "17950757.113383197623",
+          "total": "19925340.40"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22438471.352318116317",
+          "total": "24906703.20"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22438471.352318116317",
+          "total": "24906703.20"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700.00",
+          "hps_total": "4989117.00",
+          "price": "4487614.396578441544",
+          "total": "4981251.98"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300.00",
+          "hps_total": "14967573.00",
+          "price": "13463042.874448278930",
+          "total": "14943977.59"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "hps_total": "215748.96",
+          "price": "215408.845738942826",
+          "total": "215408.85"
+        }
+      ]
+    },
+    {
+      "source_row": 38,
+      "package": "Stock Design Inpres Daerah Irigasi Randomayang",
+      "company": "pt anindya rekacipta utama",
+      "vendor_id": 475,
+      "budget": "100000000.0000",
+      "excel_budget": 100000000,
+      "target": "9.9841E+7",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500.00",
+          "hps_total": "9978345.00",
+          "price": "8975238.740192397983",
+          "total": "9962515.00"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100.00",
+          "hps_total": "19956801.00",
+          "price": "17950577.321741269545",
+          "total": "19925140.83"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22438246.612515705326",
+          "total": "24906453.74"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22438246.612515705326",
+          "total": "24906453.74"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700.00",
+          "hps_total": "4989117.00",
+          "price": "4487569.449417962202",
+          "total": "4981202.09"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300.00",
+          "hps_total": "14967573.00",
+          "price": "13462908.030966833764",
+          "total": "14943827.91"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "hps_total": "215748.96",
+          "price": "215406.688241639698",
+          "total": "215406.69"
+        }
+      ]
+    },
+    {
+      "source_row": 39,
+      "package": "Stock Design Inpres Daerah Irigasi Pedongga",
+      "company": "pt anindya rekacipta utama",
+      "vendor_id": 475,
+      "budget": "100000000.0000",
+      "excel_budget": 100000000,
+      "target": "9.9840E+7",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500.00",
+          "hps_total": "9978345.00",
+          "price": "8975148.835862426720",
+          "total": "9962415.21"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100.00",
+          "hps_total": "19956801.00",
+          "price": "17950397.530099341467",
+          "total": "19924941.26"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22438021.872713294336",
+          "total": "24906204.28"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22438021.872713294336",
+          "total": "24906204.28"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700.00",
+          "hps_total": "4989117.00",
+          "price": "4487524.502257482860",
+          "total": "4981152.20"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300.00",
+          "hps_total": "14967573.00",
+          "price": "13462773.187485388598",
+          "total": "14943678.24"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "hps_total": "215748.96",
+          "price": "215404.530744336570",
+          "total": "215404.53"
+        }
+      ]
+    },
+    {
+      "source_row": 40,
+      "package": "Stock Design Inpres Daerah Irigasi Martajaya",
+      "company": "pt anindya rekacipta utama",
+      "vendor_id": 475,
+      "budget": "100000000.0000",
+      "excel_budget": 100000000,
+      "target": "9.9839E+7",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500.00",
+          "hps_total": "9978345.00",
+          "price": "8975058.949550473475",
+          "total": "9962315.43"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100.00",
+          "hps_total": "19956801.00",
+          "price": "17950217.738457413388",
+          "total": "19924741.69"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22437797.132910883345",
+          "total": "24905954.82"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22437797.132910883345",
+          "total": "24905954.82"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700.00",
+          "hps_total": "4989117.00",
+          "price": "4487479.555097003518",
+          "total": "4981102.31"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300.00",
+          "hps_total": "14967573.00",
+          "price": "13462638.344003943432",
+          "total": "14943528.56"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "hps_total": "215748.96",
+          "price": "215402.373247033441",
+          "total": "215402.37"
+        }
+      ]
+    },
+    {
+      "source_row": 41,
+      "package": "Stock Design Inpres Daerah Irigasi Masabo",
+      "company": "pt anindya rekacipta utama",
+      "vendor_id": 475,
+      "budget": "100000000.0000",
+      "excel_budget": 100000000,
+      "target": "9.9838E+7",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500.00",
+          "hps_total": "9978345.00",
+          "price": "8974969.045220502212",
+          "total": "9962215.64"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100.00",
+          "hps_total": "19956801.00",
+          "price": "17950037.946815485310",
+          "total": "19924542.12"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22437572.393108472354",
+          "total": "24905705.36"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22437572.393108472354",
+          "total": "24905705.36"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700.00",
+          "hps_total": "4989117.00",
+          "price": "4487434.607936524177",
+          "total": "4981052.41"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300.00",
+          "hps_total": "14967573.00",
+          "price": "13462503.500522498266",
+          "total": "14943378.89"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "hps_total": "215748.96",
+          "price": "215400.215749730313",
+          "total": "215400.22"
+        }
+      ]
+    },
+    {
+      "source_row": 42,
+      "package": "Stock Design Inpres Daerah Irigasi Bambaira",
+      "company": "pt anindya rekacipta utama",
+      "vendor_id": 475,
+      "budget": "100000000.0000",
+      "excel_budget": 100000000,
+      "target": "9.9837E+7",
+      "hps": "99999642.96",
+      "rows": [
+        {
+          "nomor": "1",
+          "uraian": "tahap konsepsi perancangan sebesar 10%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "8989500.00",
+          "hps_total": "9978345.00",
+          "price": "8974879.149899539958",
+          "total": "9962115.86"
+        },
+        {
+          "nomor": "2",
+          "uraian": "tahap pra rancangan sebesar 20%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "17979100.00",
+          "hps_total": "19956801.00",
+          "price": "17949858.155173557232",
+          "total": "19924342.55"
+        },
+        {
+          "nomor": "3",
+          "uraian": "tahap pengembangan rancangan sebesar 25%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22437347.653306061364",
+          "total": "24905455.90"
+        },
+        {
+          "nomor": "4",
+          "uraian": "tahap rancangan detail meliputi penyusunan rancangan gambar detail dan penyusunan Rencana Kerja dan Syarat (RKS), serta Rencana Anggaran Biaya (RAB) sebesar 25% \n",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "22473900.00",
+          "hps_total": "24946029.00",
+          "price": "22437347.653306061364",
+          "total": "24905455.90"
+        },
+        {
+          "nomor": "5",
+          "uraian": "tahap pelelangan penyedia jasa pelaksanaan konstruksi sebesar 5%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "4494700.00",
+          "hps_total": "4989117.00",
+          "price": "4487389.660776044835",
+          "total": "4981002.52"
+        },
+        {
+          "nomor": "6",
+          "uraian": "tahap pengawasan berkala sebesar 15%",
+          "satuan": "LS",
+          "pajak": "11",
+          "volume": "1",
+          "hps_price": "13484300.00",
+          "hps_total": "14967573.00",
+          "price": "13462368.657041053099",
+          "total": "14943229.21"
+        },
+        {
+          "nomor": "7",
+          "uraian": "JKK/JKM",
+          "satuan": "LS",
+          "pajak": "0",
+          "volume": "1",
+          "hps_price": "215748.96",
+          "hps_total": "215748.96",
+          "price": "215398.058252427184",
+          "total": "215398.06"
+        }
+      ]
+    }
+  ],
+  "issues": [
+    {
+      "row": 15,
+      "package": "Perencanaan Jalan Status Kabupaten DAK III",
+      "reason": "Pagu DPPA nol atau belum ditemukan",
+      "excel_budget": 100000000
+    },
+    {
+      "row": 16,
+      "package": "Perencanaan Jalan Status Kabupaten DAK IV",
+      "reason": "Pagu DPPA nol atau belum ditemukan",
+      "excel_budget": 100000000
+    },
+    {
+      "row": 17,
+      "package": "Perencanaan Jalan Status Kabupaten DAK V",
+      "reason": "Pagu DPPA nol atau belum ditemukan",
+      "excel_budget": 100000000
+    },
+    {
+      "row": 9,
+      "package": "Perencanaan Jalan Status Kabupaten V",
+      "reason": "Tidak ditemukan uraian tersebut di DPPA; Excel Rp50 juta."
+    },
+    {
+      "row": 32,
+      "package": "Master Plan Drainase Dalam Kota Pasangkayu",
+      "reason": "Pagu Rp800 juta; identitas LEMBAGA perlu dipastikan dan contoh RAB khusus belum tersedia."
+    }
+  ]
+}

@@ -1,0 +1,2261 @@
+{
+  "matched": [
+    {
+      "id": 3,
+      "nama": "SYAMSUNAR",
+      "source": {
+        "row": 11,
+        "name_source": "SYAMSUNAR,SP.,M.M",
+        "nama": "SYAMSUNAR",
+        "gelar": "SP.,M.M",
+        "nip_source": "NIP. 197503102009031001",
+        "nip": "197503102009031001",
+        "rank_source": "Pembina,IV/a",
+        "golongan": "4",
+        "ruang": "a",
+        "jabatan": "Kepala Dinas",
+        "bidang": "Sekretariat",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {}
+    },
+    {
+      "id": 111,
+      "nama": "SRI IRDA AYU",
+      "source": {
+        "row": 14,
+        "name_source": "SRI IRDA AYU,SP.,M.Si",
+        "nama": "SRI IRDA AYU",
+        "gelar": "SP.,M.Si",
+        "nip_source": "NIP. 198306252005022003",
+        "nip": "198306252005022003",
+        "rank_source": "Pembina Tk.I,IV/b",
+        "golongan": "4",
+        "ruang": "b",
+        "jabatan": "Sekertaris Dinas",
+        "bidang": "Sekretariat",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Sekretaris",
+          "after": "Sekertaris Dinas"
+        },
+        "ruang": {
+          "before": "a",
+          "after": "b"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "nama": "kamaruddin",
+      "source": {
+        "row": 17,
+        "name_source": "KAMARUDDIN, ST.,M.P.W.P",
+        "nama": "KAMARUDDIN",
+        "gelar": "ST.,M.P.W.P",
+        "nip_source": "NIP. 197308142005021003",
+        "nip": "197308142005021003",
+        "rank_source": "Pembina IV/a",
+        "golongan": "4",
+        "ruang": "a",
+        "jabatan": "Kabid Pembinaan Jasa Konstruksi",
+        "bidang": "Pembinaan Jasa Konstruksi",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "ST",
+          "after": "ST.,M.P.W.P"
+        },
+        "jabatan": {
+          "before": "Kepala bidang pembinaan jasa konstruksi",
+          "after": "Kabid Pembinaan Jasa Konstruksi"
+        }
+      }
+    },
+    {
+      "id": 110,
+      "nama": "Bachtiar B.Sumay",
+      "source": {
+        "row": 20,
+        "name_source": "BACHTIAR B SUMAY,SH",
+        "nama": "BACHTIAR B SUMAY",
+        "gelar": "SH",
+        "nip_source": "NIP. 197409192006041007",
+        "nip": "197409192006041007",
+        "rank_source": "Pembina IV/a",
+        "golongan": "4",
+        "ruang": "a",
+        "jabatan": "Kabid Bina Marga",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Kepala Bidang Binamarga",
+          "after": "Kabid Bina Marga"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "nama": "i nyoman sumerta",
+      "source": {
+        "row": 23,
+        "name_source": "I NYOMAN SUMERTA, ST.,M.P.W.P",
+        "nama": "I NYOMAN SUMERTA",
+        "gelar": "ST.,M.P.W.P",
+        "nip_source": "NIP. 198301012010011020",
+        "nip": "198301012010011020",
+        "rank_source": "Penata Tk.I,III/d",
+        "golongan": "3",
+        "ruang": "d",
+        "jabatan": "Kabid Sumber Daya Air",
+        "bidang": "Sumber Daya Air",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "ST",
+          "after": "ST.,M.P.W.P"
+        },
+        "jabatan": {
+          "before": "Kepala sumber daya air",
+          "after": "Kabid Sumber Daya Air"
+        },
+        "ruang": {
+          "before": "c",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "nama": "nurmadina",
+      "source": {
+        "row": 26,
+        "name_source": "NURMADINA,S.Sos.M.SI",
+        "nama": "NURMADINA",
+        "gelar": "S.Sos.M.SI",
+        "nip_source": "NIP. 198208022003122003",
+        "nip": "198208022003122003",
+        "rank_source": "Pembina IV/a",
+        "golongan": "4",
+        "ruang": "a",
+        "jabatan": "Kabid tata ruang",
+        "bidang": "Tata Ruang",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "S.Sos.M.Si",
+          "after": "S.Sos.M.SI"
+        },
+        "jabatan": {
+          "before": "Kepala bidang penataan dan pemanfaatan ruang",
+          "after": "Kabid tata ruang"
+        },
+        "golongan": {
+          "before": "3",
+          "after": "4"
+        },
+        "ruang": {
+          "before": "d",
+          "after": "a"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "nama": "nardin",
+      "source": {
+        "row": 29,
+        "name_source": "NARDIN,ST",
+        "nama": "NARDIN",
+        "gelar": "ST",
+        "nip_source": "NIP. 197910012011011004",
+        "nip": "197910012011011004",
+        "rank_source": "Penata TK I, III/d",
+        "golongan": "3",
+        "ruang": "d",
+        "jabatan": "Kabid Cipta Karya",
+        "bidang": "Cipta Karya",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Kepala bidang cipta karya",
+          "after": "Kabid Cipta Karya"
+        },
+        "ruang": {
+          "before": "c",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 17,
+      "nama": "felix datuan",
+      "source": {
+        "row": 32,
+        "name_source": "FELIX DATUAN, ST",
+        "nama": "FELIX DATUAN",
+        "gelar": "ST",
+        "nip_source": "NIP. 198407252009031001",
+        "nip": "198407252009031001",
+        "rank_source": "Penata TK I, III/d",
+        "golongan": "3",
+        "ruang": "d",
+        "jabatan": "Kasubag Keuangan",
+        "bidang": "Sekretariat",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Kasubag keuangan",
+          "after": "Kasubag Keuangan"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "nama": "irmawati",
+      "source": {
+        "row": 35,
+        "name_source": "IRMAWATI, SE.,M.P.W.P",
+        "nama": "IRMAWATI",
+        "gelar": "SE.,M.P.W.P",
+        "nip_source": "NIP. 197601032006042007",
+        "nip": "197601032006042007",
+        "rank_source": "Penata Tk.I,III/d",
+        "golongan": "3",
+        "ruang": "d",
+        "jabatan": "Kasubag Umum Dan Kepegawaian",
+        "bidang": "Sekretariat",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "SE",
+          "after": "SE.,M.P.W.P"
+        },
+        "jabatan": {
+          "before": "Kasubag umum dan kepegawaian",
+          "after": "Kasubag Umum Dan Kepegawaian"
+        },
+        "ruang": {
+          "before": "c",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 28,
+      "nama": "i made sulawa",
+      "source": {
+        "row": 38,
+        "name_source": "I MADE SULAWA, SE.,M.P.W.P",
+        "nama": "I MADE SULAWA",
+        "gelar": "SE.,M.P.W.P",
+        "nip_source": "NIP. 197307132009031001",
+        "nip": "197307132009031001",
+        "rank_source": "Penata TK I, III/d",
+        "golongan": "3",
+        "ruang": "d",
+        "jabatan": "Kepala UPTD Pengelolaan Limbah Domestik",
+        "bidang": "UPTD Pengelolaan Air Limbah Domestik",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "SE",
+          "after": "SE.,M.P.W.P"
+        },
+        "jabatan": {
+          "before": "Teknik Penyehatan Lingkungan Ahli Muda",
+          "after": "Kepala UPTD Pengelolaan Limbah Domestik"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 35,
+      "nama": "as&#39;at",
+      "source": {
+        "row": 41,
+        "name_source": "AS'AT,ST",
+        "nama": "AS'AT",
+        "gelar": "ST",
+        "nip_source": "NIP:197109072014091001",
+        "nip": "197109072014091001",
+        "rank_source": "Penata, III/c",
+        "golongan": "3",
+        "ruang": "c",
+        "jabatan": "Kasubag TU UPTD Pengelolaan Air Limbah Domestik",
+        "bidang": "UPTD Pengelolaan Air Limbah Domestik",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Kasubag TU UPTD Pengelolaan Air Limbah Domestik"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 48,
+      "nama": "munawir z",
+      "source": {
+        "row": 44,
+        "name_source": "MUNAWIR Z,SH",
+        "nama": "MUNAWIR Z",
+        "gelar": "SH",
+        "nip_source": "NIP. 198305022007011008",
+        "nip": "198305022007011008",
+        "rank_source": "Penata,III/c",
+        "golongan": "3",
+        "ruang": "c",
+        "jabatan": "Kepala UPTD Pengelolaan Air Bersih",
+        "bidang": "UPTD Pengelolaan Air Bersih",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Analis Pengamanan Lingkungan",
+          "after": "Kepala UPTD Pengelolaan Air Bersih"
+        },
+        "ruang": {
+          "before": "a",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 32,
+      "nama": "fuady kahar",
+      "source": {
+        "row": 47,
+        "name_source": "FUADY KAHAR, SH",
+        "nama": "FUADY KAHAR",
+        "gelar": "SH",
+        "nip_source": "NIP. 198308082012121002",
+        "nip": "198308082012121002",
+        "rank_source": "Penata,III/c",
+        "golongan": "3",
+        "ruang": "c",
+        "jabatan": "Kasubag TU UPTD Pengelolaan Air Bersih",
+        "bidang": "UPTD Pengelolaan Air Bersih",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Kasubag Keuangan",
+          "after": "Kasubag TU UPTD Pengelolaan Air Bersih"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "nama": "patahuddin",
+      "source": {
+        "row": 50,
+        "name_source": "PATAHUDDIN, ST.M.AP",
+        "nama": "PATAHUDDIN",
+        "gelar": "ST.M.AP",
+        "nip_source": "NIP. 197110122009031001",
+        "nip": "197110122009031001",
+        "rank_source": "Pembina IV/a",
+        "golongan": "4",
+        "ruang": "a",
+        "jabatan": "Teknik Jalan dan Jembatan Ahli Muda",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "",
+          "after": "Teknik Jalan dan Jembatan Ahli Muda"
+        },
+        "golongan": {
+          "before": "3",
+          "after": "4"
+        },
+        "ruang": {
+          "before": "d",
+          "after": "a"
+        }
+      }
+    },
+    {
+      "id": 16,
+      "nama": "rahmania",
+      "source": {
+        "row": 53,
+        "name_source": "RAHMANIA, ST.,MT",
+        "nama": "RAHMANIA",
+        "gelar": "ST.,MT",
+        "nip_source": "NIP. 198406172009032002",
+        "nip": "198406172009032002",
+        "rank_source": "Penata TK I, III/d",
+        "golongan": "3",
+        "ruang": "d",
+        "jabatan": "Teknik Penyehatan Lingkungan Ahli Muda",
+        "bidang": "Cipta Karya",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "ST.MT",
+          "after": "ST.,MT"
+        },
+        "jabatan": {
+          "before": "Tehnik penyehatan lingkungan",
+          "after": "Teknik Penyehatan Lingkungan Ahli Muda"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "nama": "syahruddin",
+      "source": {
+        "row": 56,
+        "name_source": "SYAHRUDDIN, ST.,M.AP",
+        "nama": "SYAHRUDDIN",
+        "gelar": "ST.,M.AP",
+        "nip_source": "NIP. 198012062009031001",
+        "nip": "198012062009031001",
+        "rank_source": "Penata Tk.I,III/d",
+        "golongan": "3",
+        "ruang": "d",
+        "jabatan": "Teknik Pengairan Ahli Muda",
+        "bidang": "Sumber Daya Air",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "ST.M.AP",
+          "after": "ST.,M.AP"
+        },
+        "jabatan": {
+          "before": "Tehnik pengairan",
+          "after": "Teknik Pengairan Ahli Muda"
+        },
+        "ruang": {
+          "before": "c",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 25,
+      "nama": "zakaria",
+      "source": {
+        "row": 59,
+        "name_source": "ZAKARIA,ST",
+        "nama": "ZAKARIA",
+        "gelar": "ST",
+        "nip_source": "NIP. 197410142009031001",
+        "nip": "197410142009031001",
+        "rank_source": "Penata Tk.I,III/d",
+        "golongan": "3",
+        "ruang": "d",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Pembinaan Jasa Konstruksi",
+        "pppk": false
+      },
+      "matched_by": "nama unik",
+      "changes": {
+        "jabatan": {
+          "before": "Analis Jalan dan Jembatan",
+          "after": "Penelaah Teknis Kebijakan"
+        }
+      }
+    },
+    {
+      "id": 20,
+      "nama": "muh. hirman madjid",
+      "source": {
+        "row": 62,
+        "name_source": "MUH. HIRMAN MADJID, ST.,M.P.W.P",
+        "nama": "MUH. HIRMAN MADJID",
+        "gelar": "ST.,M.P.W.P",
+        "nip_source": "NIP. 197511282011011002",
+        "nip": "197511282011011002",
+        "rank_source": "Penata Tk.I,III/d",
+        "golongan": "3",
+        "ruang": "d",
+        "jabatan": "Penata Ruang Ahli Muda",
+        "bidang": "Tata Ruang",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "ST",
+          "after": "ST.,M.P.W.P"
+        },
+        "jabatan": {
+          "before": "Tehnik tata bangunan dan perumahan",
+          "after": "Penata Ruang Ahli Muda"
+        },
+        "ruang": {
+          "before": "c",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 19,
+      "nama": "i ketut suriyana",
+      "source": {
+        "row": 65,
+        "name_source": "I KETUT SURIANA,ST.,M.AP",
+        "nama": "I KETUT SURIANA",
+        "gelar": "ST.,M.AP",
+        "nip_source": "NIP. 198404262011011011",
+        "nip": "198404262011011011",
+        "rank_source": "Penata Tk.I,III/d",
+        "golongan": "3",
+        "ruang": "d",
+        "jabatan": "Teknik Penyehatan Lingkungan Ahli Muda",
+        "bidang": "Cipta Karya",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "ST",
+          "after": "ST.,M.AP"
+        },
+        "jabatan": {
+          "before": "Tehnik pengaiTehnik penyehatan lingkungan",
+          "after": "Teknik Penyehatan Lingkungan Ahli Muda"
+        },
+        "ruang": {
+          "before": "c",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 26,
+      "nama": "sulsia husen",
+      "source": {
+        "row": 68,
+        "name_source": "SULSIA HUSEN,SE",
+        "nama": "SULSIA HUSEN",
+        "gelar": "SE",
+        "nip_source": "NIP. 198209172010012009",
+        "nip": "198209172010012009",
+        "rank_source": "Penata Tk.I,III/d",
+        "golongan": "3",
+        "ruang": "d",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Pembinaan Jasa Konstruksi",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Analis Pengelolaan SDA",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "ruang": {
+          "before": "c",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "nama": "suriyana",
+      "source": {
+        "row": 74,
+        "name_source": "SURIYANA, ST",
+        "nama": "SURIYANA",
+        "gelar": "ST",
+        "nip_source": "NIP. 198001282012122003",
+        "nip": "198001282012122003",
+        "rank_source": "Penata, III/c",
+        "golongan": "3",
+        "ruang": "c",
+        "jabatan": "Pembina Jasa Konstruksi Ahli Muda",
+        "bidang": "Pembinaan Jasa Konstruksi",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Tehnik tata bangunan dan perumahan",
+          "after": "Pembina Jasa Konstruksi Ahli Muda"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 23,
+      "nama": "hamka",
+      "source": {
+        "row": 77,
+        "name_source": "HAMKA,SH",
+        "nama": "HAMKA",
+        "gelar": "SH",
+        "nip_source": "NIP. 198410152010011003",
+        "nip": "198410152010011003",
+        "rank_source": "Penata, III/c",
+        "golongan": "3",
+        "ruang": "c",
+        "jabatan": "Pembina Jasa Konstruksi Ahli Muda",
+        "bidang": "Pembinaan Jasa Konstruksi",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pembina jasa konstruksi",
+          "after": "Pembina Jasa Konstruksi Ahli Muda"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 34,
+      "nama": "yulita veryanti siahaan",
+      "source": {
+        "row": 80,
+        "name_source": "YULITA VERYANTI SIAHAAN, SE.,M.P.W.P",
+        "nama": "YULITA VERYANTI SIAHAAN",
+        "gelar": "SE.,M.P.W.P",
+        "nip_source": "NIP. 197510032014102002",
+        "nip": "197510032014102002",
+        "rank_source": "Penata, III/c",
+        "golongan": "3",
+        "ruang": "c",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "SE",
+          "after": "SE.,M.P.W.P"
+        },
+        "jabatan": {
+          "before": "Pemeriksa Jalan dan Jembatan",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 36,
+      "nama": "hertasming",
+      "source": {
+        "row": 83,
+        "name_source": "HERTASMING,SE.,M.P.W.P",
+        "nama": "HERTASMING",
+        "gelar": "SE.,M.P.W.P",
+        "nip_source": "NIP:197106222014091001",
+        "nip": "197106222014091001",
+        "rank_source": "Penata, III/c",
+        "golongan": "3",
+        "ruang": "c",
+        "jabatan": "Penata Layanan Operasional",
+        "bidang": "Cipta Karya",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "SE",
+          "after": "SE.,M.P.W.P"
+        },
+        "jabatan": {
+          "before": "Pengadministrasi Perencanaan dan Program",
+          "after": "Penata Layanan Operasional"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 33,
+      "nama": "andi jamil zainal",
+      "source": {
+        "row": 86,
+        "name_source": "ANDI JAMIL ZAINAL, ST",
+        "nama": "ANDI JAMIL ZAINAL",
+        "gelar": "ST",
+        "nip_source": "NIP. 197504022014091001",
+        "nip": "197504022014091001",
+        "rank_source": "Penata, III/c",
+        "golongan": "3",
+        "ruang": "c",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Cipta Karya",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pemeriksa Jalan dan Jembatan",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 39,
+      "nama": "muhammad dirgantara",
+      "source": {
+        "row": 89,
+        "name_source": "MUHAMMAD DIRGANTARA,ST",
+        "nama": "MUHAMMAD DIRGANTARA",
+        "gelar": "ST",
+        "nip_source": "NIP. 198502112015031004",
+        "nip": "198502112015031004",
+        "rank_source": "Penata,III/c",
+        "golongan": "3",
+        "ruang": "c",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Penata Ruang Ahli Muda",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 31,
+      "nama": "santi",
+      "source": {
+        "row": 92,
+        "name_source": "SANTI,SE",
+        "nama": "SANTI",
+        "gelar": "SE",
+        "nip_source": "NIP. 198509192010012002",
+        "nip": "198509192010012002",
+        "rank_source": "Penata,III/c",
+        "golongan": "3",
+        "ruang": "c",
+        "jabatan": "Penelaah Tehnis Kebijakan",
+        "bidang": "Sekretariat",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Penelaah Tehnis Kebijakan"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 29,
+      "nama": "kamaruddin",
+      "source": {
+        "row": 98,
+        "name_source": "KAMARUDDIN, SE",
+        "nama": "KAMARUDDIN",
+        "gelar": "SE",
+        "nip_source": "NIP. 197009302012121003",
+        "nip": "197009302012121003",
+        "rank_source": "Penata,III/c",
+        "golongan": "3",
+        "ruang": "c",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Penyusun Rencana Tata Ruang",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 38,
+      "nama": "tahmil",
+      "source": {
+        "row": 104,
+        "name_source": "TAHMIL,SH",
+        "nama": "TAHMIL",
+        "gelar": "SH",
+        "nip_source": "NIP. 197804012006041024",
+        "nip": "197804012006041024",
+        "rank_source": "Penata,III/c",
+        "golongan": "3",
+        "ruang": "c",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "ruang": {
+          "before": "a",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 64,
+      "nama": "abd. rifai",
+      "source": {
+        "row": 107,
+        "name_source": "ABD. RIFAI,SH",
+        "nama": "ABD. RIFAI",
+        "gelar": "SH",
+        "nip_source": "NIP. 198610102012121001",
+        "nip": "198610102012121001",
+        "rank_source": "Penata Muda Tk.I,III/b",
+        "golongan": "3",
+        "ruang": "b",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "ruang": {
+          "before": "a",
+          "after": "b"
+        }
+      }
+    },
+    {
+      "id": 27,
+      "nama": "alwi mansyur",
+      "source": {
+        "row": 110,
+        "name_source": "ALWI MANSYUR,  A.Md",
+        "nama": "ALWI MANSYUR",
+        "gelar": "A.Md",
+        "nip_source": "NIP. 198007112006041010",
+        "nip": "198007112006041010",
+        "rank_source": "Penata,III/c",
+        "golongan": "3",
+        "ruang": "c",
+        "jabatan": "Pengolah Data dan Informasi",
+        "bidang": "Cipta Karya",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Verifikator Keuangan",
+          "after": "Pengolah Data dan Informasi"
+        }
+      }
+    },
+    {
+      "id": 40,
+      "nama": "mawaddah",
+      "source": {
+        "row": 113,
+        "name_source": "MAWADDAH,ST.,M.P.W.P",
+        "nama": "MAWADDAH",
+        "gelar": "ST.,M.P.W.P",
+        "nip_source": "NIP. 198406072019032008",
+        "nip": "198406072019032008",
+        "rank_source": "Penata Muda Tk.I,III/b",
+        "golongan": "3",
+        "ruang": "b",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "ST",
+          "after": "ST.,M.P.W.P"
+        },
+        "jabatan": {
+          "before": "Sekretaris Dinas",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "ruang": {
+          "before": "a",
+          "after": "b"
+        }
+      }
+    },
+    {
+      "id": 41,
+      "nama": "vilma erhid salla",
+      "source": {
+        "row": 116,
+        "name_source": "VILMA ERHID SALLA,ST.,M.T",
+        "nama": "VILMA ERHID SALLA",
+        "gelar": "ST.,M.T",
+        "nip_source": "NIP. 198504172019032010",
+        "nip": "198504172019032010",
+        "rank_source": "Penata Muda Tk.I,III/b",
+        "golongan": "3",
+        "ruang": "b",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "ST",
+          "after": "ST.,M.T"
+        },
+        "jabatan": {
+          "before": "Pemeriksa Jalan dan Jembatan",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "ruang": {
+          "before": "a",
+          "after": "b"
+        }
+      }
+    },
+    {
+      "id": 43,
+      "nama": "wawan prasetya karbayah",
+      "source": {
+        "row": 119,
+        "name_source": "WAWAN PRASETYA KARBAYAH,ST.,M.P.W.P",
+        "nama": "WAWAN PRASETYA KARBAYAH",
+        "gelar": "ST.,M.P.W.P",
+        "nip_source": "NIP. 199201272019031015",
+        "nip": "199201272019031015",
+        "rank_source": "Penata Muda Tk.I,III/b",
+        "golongan": "3",
+        "ruang": "b",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "nama unik",
+      "changes": {
+        "gelar": {
+          "before": "ST",
+          "after": "ST.,M.P.W.P"
+        },
+        "jabatan": {
+          "before": "Pengawas Jalan dan Jembatan",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "ruang": {
+          "before": "a",
+          "after": "b"
+        }
+      }
+    },
+    {
+      "id": 82,
+      "nama": "HERMAN HADDANG",
+      "source": {
+        "row": 122,
+        "name_source": "HERMAN HADDANG",
+        "nama": "HERMAN HADDANG",
+        "gelar": "",
+        "nip_source": "NIP. 198301022007011006",
+        "nip": "198301022007011006",
+        "rank_source": "Penata Muda,III/a",
+        "golongan": "3",
+        "ruang": "a",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "Cipta Karya",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Perencanaan dan Program",
+          "after": "Pengadministrasi Perkantoran"
+        }
+      }
+    },
+    {
+      "id": 72,
+      "nama": "muh. ari gunawan syahputra",
+      "source": {
+        "row": 128,
+        "name_source": "MUH. ARI GUNAWAN SYAHPUTRA,S.Sos",
+        "nama": "MUH. ARI GUNAWAN SYAHPUTRA",
+        "gelar": "S.Sos",
+        "nip_source": "NIP. 198608182014091003",
+        "nip": "198608182014091003",
+        "rank_source": "Penata Muda Tk.I,III/b",
+        "golongan": "3",
+        "ruang": "b",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Tata Ruang",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengawas Jalan dan Jembatan",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "golongan": {
+          "before": "2",
+          "after": "3"
+        }
+      }
+    },
+    {
+      "id": 73,
+      "nama": "iswanto",
+      "source": {
+        "row": 131,
+        "name_source": "ISWANTO,ST",
+        "nama": "ISWANTO",
+        "gelar": "ST",
+        "nip_source": "NIP. 198509092014101003",
+        "nip": "198509092014101003",
+        "rank_source": "Penata Muda Tk.I,III/b",
+        "golongan": "3",
+        "ruang": "b",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Tata Ruang",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Kasubag Umum Dan Kepegawaian",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "ruang": {
+          "before": "a",
+          "after": "b"
+        }
+      }
+    },
+    {
+      "id": 79,
+      "nama": "Serius pahu&#39;u",
+      "source": {
+        "row": 134,
+        "name_source": "SERIUS PAHU'U,ST",
+        "nama": "SERIUS PAHU'U",
+        "gelar": "ST",
+        "nip_source": "NIP. 198311112014101003",
+        "nip": "198311112014101003",
+        "rank_source": "Panata Muda,III/a",
+        "golongan": "3",
+        "ruang": "a",
+        "jabatan": "Pengamat Operasi dan Pemeliharaan Sumber Daya Air",
+        "bidang": "Sumber Daya Air",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Analis Pengelolaan SDA",
+          "after": "Pengamat Operasi dan Pemeliharaan Sumber Daya Air"
+        }
+      }
+    },
+    {
+      "id": 54,
+      "nama": "NURPATIMA",
+      "source": {
+        "row": 137,
+        "name_source": "NURPATIMA,ST",
+        "nama": "NURPATIMA",
+        "gelar": "ST",
+        "nip_source": "NIP: 199708152022032010",
+        "nip": "199708152022032010",
+        "rank_source": "Panata Muda,III/a",
+        "golongan": "3",
+        "ruang": "a",
+        "jabatan": "Tehnik Pengairan Ahli Pertama",
+        "bidang": "Sumber Daya Air",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Tehnik Pengairan",
+          "after": "Tehnik Pengairan Ahli Pertama"
+        }
+      }
+    },
+    {
+      "id": 58,
+      "nama": "adil bakry",
+      "source": {
+        "row": 140,
+        "name_source": "ADIL BAKRY,S.M",
+        "nama": "ADIL BAKRY",
+        "gelar": "S.M",
+        "nip_source": "NIP. 197408262012121002",
+        "nip": "197408262012121002",
+        "rank_source": "Panata Muda,III/a",
+        "golongan": "3",
+        "ruang": "a",
+        "jabatan": "Penata Layanan Operasional",
+        "bidang": "Sumber Daya Air",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "",
+          "after": "S.M"
+        },
+        "jabatan": {
+          "before": "Pengadministrasi Kepegawaian",
+          "after": "Penata Layanan Operasional"
+        },
+        "golongan": {
+          "before": "2",
+          "after": "3"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "a"
+        }
+      }
+    },
+    {
+      "id": 46,
+      "nama": "rasmi lumai",
+      "source": {
+        "row": 143,
+        "name_source": "RASMI LUMAI",
+        "nama": "RASMI LUMAI",
+        "gelar": "",
+        "nip_source": "NIP. 198004112007011015",
+        "nip": "198004112007011015",
+        "rank_source": "Panata Muda,III/a",
+        "golongan": "3",
+        "ruang": "a",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "Tata Ruang",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengadministrasi Perkantoran"
+        },
+        "golongan": {
+          "before": "2",
+          "after": "3"
+        },
+        "ruang": {
+          "before": "d",
+          "after": "a"
+        }
+      }
+    },
+    {
+      "id": 77,
+      "nama": "agussalim t",
+      "source": {
+        "row": 146,
+        "name_source": "AGUSSALIM T,S.AP",
+        "nama": "AGUSSALIM T",
+        "gelar": "S.AP",
+        "nip_source": "NIP. 198510092014091002",
+        "nip": "198510092014091002",
+        "rank_source": "Panata Muda,III/a",
+        "golongan": "3",
+        "ruang": "a",
+        "jabatan": "Penelaah Tehnis Kebijakan",
+        "bidang": "Sekretariat",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "",
+          "after": "S.AP"
+        },
+        "jabatan": {
+          "before": "Analis Pengelolaan SDA",
+          "after": "Penelaah Tehnis Kebijakan"
+        },
+        "golongan": {
+          "before": "2",
+          "after": "3"
+        }
+      }
+    },
+    {
+      "id": 70,
+      "nama": "surya ros",
+      "source": {
+        "row": 149,
+        "name_source": "SURYA ROS,S.AP",
+        "nama": "SURYA ROS",
+        "gelar": "S.AP",
+        "nip_source": "NIP. 197708022014102002",
+        "nip": "197708022014102002",
+        "rank_source": "Panata Muda,III/a",
+        "golongan": "3",
+        "ruang": "a",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Cipta Karya",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "",
+          "after": "S.AP"
+        },
+        "jabatan": {
+          "before": "Pembina Jasa Konstruksi Ahli Muda",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "golongan": {
+          "before": "2",
+          "after": "3"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "a"
+        }
+      }
+    },
+    {
+      "id": 60,
+      "nama": "rachmiy. s",
+      "source": {
+        "row": 152,
+        "name_source": "RACHMIY. S,S.A.P",
+        "nama": "RACHMIY. S",
+        "gelar": "S.A.P",
+        "nip_source": "NIP. 197709302012122002",
+        "nip": "197709302012122002",
+        "rank_source": "Panata Muda,III/a",
+        "golongan": "3",
+        "ruang": "a",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "",
+          "after": "S.A.P"
+        },
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "golongan": {
+          "before": "2",
+          "after": "3"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "a"
+        }
+      }
+    },
+    {
+      "id": 81,
+      "nama": "Abd.Jabbar",
+      "source": {
+        "row": 155,
+        "name_source": "ABD JABBAR,S.A.P",
+        "nama": "ABD JABBAR",
+        "gelar": "S.A.P",
+        "nip_source": "NIP. 197809202014091003",
+        "nip": "197809202014091003",
+        "rank_source": "Pengatur, III/a",
+        "golongan": "3",
+        "ruang": "a",
+        "jabatan": "Penelaah Teknis Kebijakan",
+        "bidang": "Cipta Karya",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "",
+          "after": "S.A.P"
+        },
+        "jabatan": {
+          "before": "Pengawas Jalan dan Jembatan",
+          "after": "Penelaah Teknis Kebijakan"
+        },
+        "golongan": {
+          "before": "2",
+          "after": "3"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "a"
+        }
+      }
+    },
+    {
+      "id": 44,
+      "nama": "syamsuddin sangkala",
+      "source": {
+        "row": 161,
+        "name_source": "SYAMSUDDIN SANGKALA",
+        "nama": "SYAMSUDDIN SANGKALA",
+        "gelar": "",
+        "nip_source": "NIP. 197201221995041001",
+        "nip": "197201221995041001",
+        "rank_source": "Pengatur Tk.I, II/d",
+        "golongan": "2",
+        "ruang": "d",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "Sumber Daya Air",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengadministrasi Perkantoran"
+        },
+        "ruang": {
+          "before": "c",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 53,
+      "nama": "safaruddin bakry",
+      "source": {
+        "row": 164,
+        "name_source": "SAFARUDDIN BAKRY,S.A.P",
+        "nama": "SAFARUDDIN BAKRY",
+        "gelar": "S.A.P",
+        "nip_source": "NIP. 198012142011011005",
+        "nip": "198012142011011005",
+        "rank_source": "Penata Muda, III/a",
+        "golongan": "3",
+        "ruang": "a",
+        "jabatan": "Pengamat Operasi dan Pemeliharaan Sumber Daya Air",
+        "bidang": "Cipta Karya",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "gelar": {
+          "before": "",
+          "after": "S.A.P"
+        },
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengamat Operasi dan Pemeliharaan Sumber Daya Air"
+        },
+        "golongan": {
+          "before": "2",
+          "after": "3"
+        },
+        "ruang": {
+          "before": "c",
+          "after": "a"
+        }
+      }
+    },
+    {
+      "id": 80,
+      "nama": "Darwan",
+      "source": {
+        "row": 170,
+        "name_source": "DARWAN",
+        "nama": "DARWAN",
+        "gelar": "",
+        "nip_source": "NIP. 198209182009031002",
+        "nip": "198209182009031002",
+        "rank_source": "Penata Muda, III/a",
+        "golongan": "3",
+        "ruang": "a",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "Cipta Karya",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengadministrasi Perkantoran"
+        },
+        "golongan": {
+          "before": "2",
+          "after": "3"
+        },
+        "ruang": {
+          "before": "d",
+          "after": "a"
+        }
+      }
+    },
+    {
+      "id": 49,
+      "nama": "budi rahmadi basri",
+      "source": {
+        "row": 173,
+        "name_source": "BUDI RAHMADI BASRI",
+        "nama": "BUDI RAHMADI BASRI",
+        "gelar": "",
+        "nip_source": "NIP. 197905062009021008",
+        "nip": "197905062009021008",
+        "rank_source": "Penata Muda, III/a",
+        "golongan": "3",
+        "ruang": "a",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "UPTD Pengelolaan Air Bersih",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengadministrasi Perkantoran"
+        },
+        "golongan": {
+          "before": "2",
+          "after": "3"
+        },
+        "ruang": {
+          "before": "c",
+          "after": "a"
+        }
+      }
+    },
+    {
+      "id": 50,
+      "nama": "asham",
+      "source": {
+        "row": 176,
+        "name_source": "ASHAM",
+        "nama": "ASHAM",
+        "gelar": "",
+        "nip_source": "NIP. 197807012010011002",
+        "nip": "197807012010011002",
+        "rank_source": "Pengatur Tk.I, II/d",
+        "golongan": "2",
+        "ruang": "d",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "UPTD Pengelolaan Air Limbah Domestik",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengadministrasi Perkantoran"
+        },
+        "ruang": {
+          "before": "c",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 42,
+      "nama": "abdul haris rustam",
+      "source": {
+        "row": 179,
+        "name_source": "ABDUL HARIS RUSTAM,A.Md",
+        "nama": "ABDUL HARIS RUSTAM",
+        "gelar": "A.Md",
+        "nip_source": "NIP. 198808212019031010",
+        "nip": "198808212019031010",
+        "rank_source": "Pengatur Tk.I, II/d",
+        "golongan": "2",
+        "ruang": "d",
+        "jabatan": "Penata Laksana Agraria dan Tata Ruang",
+        "bidang": "Tata Ruang",
+        "pppk": false
+      },
+      "matched_by": "nama unik",
+      "changes": {
+        "jabatan": {
+          "before": "Pengawas Jalan dan Jembatan",
+          "after": "Penata Laksana Agraria dan Tata Ruang"
+        },
+        "golongan": {
+          "before": "3",
+          "after": "2"
+        },
+        "ruang": {
+          "before": "a",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 57,
+      "nama": "nur rachmadsyah",
+      "source": {
+        "row": 185,
+        "name_source": "NUR RACHMADSYAH",
+        "nama": "NUR RACHMADSYAH",
+        "gelar": "",
+        "nip_source": "NIP. 196910042012121001",
+        "nip": "196910042012121001",
+        "rank_source": "Pengatur Tk.I, II/d",
+        "golongan": "2",
+        "ruang": "d",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "Tata Ruang",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengadministrasi Perkantoran"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 62,
+      "nama": "muhammad mustaqim nur",
+      "source": {
+        "row": 188,
+        "name_source": "MUHAMMAD MUSTAQIM NUR",
+        "nama": "MUHAMMAD MUSTAQIM NUR",
+        "gelar": "",
+        "nip_source": "NIP. 198303262012121004",
+        "nip": "198303262012121004",
+        "rank_source": "Pengatur Tk.I, II/d",
+        "golongan": "2",
+        "ruang": "d",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengadministrasi Perkantoran"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 63,
+      "nama": "dina astuty",
+      "source": {
+        "row": 191,
+        "name_source": "DINA ASTUTY",
+        "nama": "DINA ASTUTY",
+        "gelar": "",
+        "nip_source": "NIP. 198506172012122001",
+        "nip": "198506172012122001",
+        "rank_source": "Pengatur Tk.I, II/d",
+        "golongan": "2",
+        "ruang": "d",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "Tata Ruang",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengadministrasi Perkantoran"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 65,
+      "nama": "rijal",
+      "source": {
+        "row": 194,
+        "name_source": "RIJAL",
+        "nama": "RIJAL",
+        "gelar": "",
+        "nip_source": "NIP. 198602082012121004",
+        "nip": "198602082012121004",
+        "rank_source": "Pengatur Tk.I, II/d",
+        "golongan": "2",
+        "ruang": "d",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "Cipta Karya",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengadministrasi Perkantoran"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "d"
+        }
+      }
+    },
+    {
+      "id": 66,
+      "nama": "asnawir",
+      "source": {
+        "row": 200,
+        "name_source": "ASNAWIR",
+        "nama": "ASNAWIR",
+        "gelar": "",
+        "nip_source": "NIP.197804022014051001",
+        "nip": "197804022014051001",
+        "rank_source": "Pengatur, II/c",
+        "golongan": "2",
+        "ruang": "c",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengadministrasi Perkantoran"
+        },
+        "ruang": {
+          "before": "b",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 59,
+      "nama": "a. pajarungi",
+      "source": {
+        "row": 203,
+        "name_source": "A. PAJARUNGI",
+        "nama": "A. PAJARUNGI",
+        "gelar": "",
+        "nip_source": "NIP. 197707242012121003",
+        "nip": "197707242012121003",
+        "rank_source": "Pengatur Muda Tk. I, II/b",
+        "golongan": "2",
+        "ruang": "b",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengadministrasi Perkantoran"
+        }
+      }
+    },
+    {
+      "id": 75,
+      "nama": "boby s. pakaya",
+      "source": {
+        "row": 206,
+        "name_source": "BOBY S. PAKAYA",
+        "nama": "BOBY S. PAKAYA",
+        "gelar": "",
+        "nip_source": "NIP. 197706132014091002",
+        "nip": "197706132014091002",
+        "rank_source": "Pengatur, II/c",
+        "golongan": "2",
+        "ruang": "c",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "Bina Marga",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengadministrasi Perkantoran"
+        },
+        "ruang": {
+          "before": "a",
+          "after": "c"
+        }
+      }
+    },
+    {
+      "id": 78,
+      "nama": "ahmad yani",
+      "source": {
+        "row": 212,
+        "name_source": "AHMAD YANI",
+        "nama": "AHMAD YANI",
+        "gelar": "",
+        "nip_source": "NIP. 198205252014091001",
+        "nip": "198205252014091001",
+        "rank_source": "Pengatur Muda Tk. I, II/b",
+        "golongan": "2",
+        "ruang": "b",
+        "jabatan": "Pengadministrasi Perkantoran",
+        "bidang": "Cipta Karya",
+        "pppk": false
+      },
+      "matched_by": "NIP",
+      "changes": {
+        "jabatan": {
+          "before": "Pengadministrasi Umum",
+          "after": "Pengadministrasi Perkantoran"
+        },
+        "ruang": {
+          "before": "a",
+          "after": "b"
+        }
+      }
+    },
+    {
+      "id": 88,
+      "nama": "Sri Suhartina",
+      "source": {
+        "row": 215,
+        "name_source": "SRI SUHARTINA,S.AP",
+        "nama": "SRI SUHARTINA",
+        "gelar": "S.AP",
+        "nip_source": "NIPPPK.199606122025212037",
+        "nip": "199606122025212037",
+        "rank_source": "",
+        "golongan": null,
+        "ruang": null,
+        "jabatan": "Penata Layanan Operasional",
+        "bidang": "Sumber Daya Air",
+        "pppk": true
+      },
+      "matched_by": "nama unik",
+      "changes": {
+        "jabatan": {
+          "before": "",
+          "after": "Penata Layanan Operasional"
+        }
+      }
+    },
+    {
+      "id": 93,
+      "nama": "rosmayani",
+      "source": {
+        "row": 224,
+        "name_source": "ROSMAYANI",
+        "nama": "ROSMAYANI",
+        "gelar": "",
+        "nip_source": "NIPPPK. 198502062025212033",
+        "nip": "198502062025212033",
+        "rank_source": "",
+        "golongan": null,
+        "ruang": null,
+        "jabatan": "Operator Layanan Operasional",
+        "bidang": "Cipta Karya",
+        "pppk": true
+      },
+      "matched_by": "nama unik",
+      "changes": {
+        "jabatan": {
+          "before": "",
+          "after": "Operator Layanan Operasional"
+        }
+      }
+    },
+    {
+      "id": 95,
+      "nama": "Budiman",
+      "source": {
+        "row": 239,
+        "name_source": "BUDIMAN,S.A.P",
+        "nama": "BUDIMAN",
+        "gelar": "S.A.P",
+        "nip_source": "NIPPPK.199403172025211106",
+        "nip": "199403172025211106",
+        "rank_source": "",
+        "golongan": null,
+        "ruang": null,
+        "jabatan": "Penata Layanan Operasional",
+        "bidang": "UPTD Pengelolaan Air Bersih",
+        "pppk": true
+      },
+      "matched_by": "nama unik",
+      "changes": {
+        "gelar": {
+          "before": "S,A.P",
+          "after": "S.A.P"
+        },
+        "jabatan": {
+          "before": "",
+          "after": "Penata Layanan Operasional"
+        }
+      }
+    },
+    {
+      "id": 94,
+      "nama": "gusti ayu nastuti",
+      "source": {
+        "row": 242,
+        "name_source": "GUSTI AYU NASTUTI,S.Agr",
+        "nama": "GUSTI AYU NASTUTI",
+        "gelar": "S.Agr",
+        "nip_source": "NIPPPK.199506192025212122",
+        "nip": "199506192025212122",
+        "rank_source": "",
+        "golongan": null,
+        "ruang": null,
+        "jabatan": "Penata Layanan Operasional",
+        "bidang": "Sekretariat",
+        "pppk": true
+      },
+      "matched_by": "nama unik",
+      "changes": {
+        "gelar": {
+          "before": "",
+          "after": "S.Agr"
+        },
+        "jabatan": {
+          "before": "",
+          "after": "Penata Layanan Operasional"
+        }
+      }
+    },
+    {
+      "id": 83,
+      "nama": "Nurafni Rusdin",
+      "source": {
+        "row": 245,
+        "name_source": "NURAFNI RUSDIN,SE",
+        "nama": "NURAFNI RUSDIN",
+        "gelar": "SE",
+        "nip_source": "NIPPPK.198804212025212183",
+        "nip": "198804212025212183",
+        "rank_source": "",
+        "golongan": null,
+        "ruang": null,
+        "jabatan": "Penata Layanan Operasional",
+        "bidang": "Sekretariat",
+        "pppk": true
+      },
+      "matched_by": "nama unik",
+      "changes": {
+        "jabatan": {
+          "before": "",
+          "after": "Penata Layanan Operasional"
+        }
+      }
+    },
+    {
+      "id": 99,
+      "nama": "Rahma",
+      "source": {
+        "row": 248,
+        "name_source": "RAHMA,S.Si",
+        "nama": "RAHMA",
+        "gelar": "S.Si",
+        "nip_source": "NIPPPK.199103132025212161",
+        "nip": "199103132025212161",
+        "rank_source": "",
+        "golongan": null,
+        "ruang": null,
+        "jabatan": "Penata Layanan Operasional",
+        "bidang": "UPTD Pengelolaan Air Bersih",
+        "pppk": true
+      },
+      "matched_by": "nama unik",
+      "changes": {
+        "gelar": {
+          "before": "",
+          "after": "S.Si"
+        },
+        "jabatan": {
+          "before": "",
+          "after": "Penata Layanan Operasional"
+        }
+      }
+    },
+    {
+      "id": 91,
+      "nama": "St. Rahma Aris",
+      "source": {
+        "row": 251,
+        "name_source": "ST RAHMA ARIS,S.Pd",
+        "nama": "ST RAHMA ARIS",
+        "gelar": "S.Pd",
+        "nip_source": "NIPPPK.199510052025212215",
+        "nip": "199510052025212215",
+        "rank_source": "",
+        "golongan": null,
+        "ruang": null,
+        "jabatan": "Penata Layanan Operasional",
+        "bidang": "UPTD Pengelolaan Air Bersih",
+        "pppk": true
+      },
+      "matched_by": "nama unik",
+      "changes": {
+        "gelar": {
+          "before": "S,Pd",
+          "after": "S.Pd"
+        },
+        "jabatan": {
+          "before": "",
+          "after": "Penata Layanan Operasional"
+        }
+      }
+    },
+    {
+      "id": 97,
+      "nama": "sukri",
+      "source": {
+        "row": 254,
+        "name_source": "SUKRI,S.Sos",
+        "nama": "SUKRI",
+        "gelar": "S.Sos",
+        "nip_source": "NIPPPK.198805092025211183",
+        "nip": "198805092025211183",
+        "rank_source": "",
+        "golongan": null,
+        "ruang": null,
+        "jabatan": "Penata Layanan Operasional",
+        "bidang": "Sekretariat",
+        "pppk": true
+      },
+      "matched_by": "nama unik",
+      "changes": {
+        "gelar": {
+          "before": "",
+          "after": "S.Sos"
+        },
+        "jabatan": {
+          "before": "",
+          "after": "Penata Layanan Operasional"
+        }
+      }
+    },
+    {
+      "id": 84,
+      "nama": "Musdalipa",
+      "source": {
+        "row": 266,
+        "name_source": "MUSDALIPA",
+        "nama": "MUSDALIPA",
+        "gelar": "",
+        "nip_source": "NIPPPK.198706122025212174",
+        "nip": "198706122025212174",
+        "rank_source": "",
+        "golongan": null,
+        "ruang": null,
+        "jabatan": "Operator Layanan Operasional",
+        "bidang": "Sekretariat",
+        "pppk": true
+      },
+      "matched_by": "nama unik",
+      "changes": {
+        "jabatan": {
+          "before": "",
+          "after": "Operator Layanan Operasional"
+        }
+      }
+    }
+  ],
+  "issues": [
+    {
+      "row": 59,
+      "nama": "ZAKARIA",
+      "issue": "NIP Excel berbeda/tidak valid; NIP database dipertahankan",
+      "source_nip": "197410142009031001",
+      "database_nip": "197410142009031000"
+    },
+    {
+      "row": 71,
+      "nama": "AMIRUDDIN",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 95,
+      "nama": "HAIRIL ANWAR",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 101,
+      "nama": "MUNAFRI",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 119,
+      "nama": "WAWAN PRASETYA KARBAYAH",
+      "issue": "NIP Excel berbeda/tidak valid; NIP database dipertahankan",
+      "source_nip": "199201272019031015",
+      "database_nip": "199201272019031000"
+    },
+    {
+      "row": 125,
+      "nama": "AMRAN",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 158,
+      "nama": "SUKMAWATI.N",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 167,
+      "nama": "ANWAR IBRAHIM",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 179,
+      "nama": "ABDUL HARIS RUSTAM",
+      "issue": "NIP Excel berbeda/tidak valid; NIP database dipertahankan",
+      "source_nip": "198808212019031010",
+      "database_nip": "199908212019031010"
+    },
+    {
+      "row": 182,
+      "nama": "MUH.YUSUF",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 197,
+      "nama": "ACHMAD",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 209,
+      "nama": "SYAFRUDDIN.S",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 215,
+      "nama": "SRI SUHARTINA",
+      "issue": "NIP Excel berbeda/tidak valid; NIP database dipertahankan",
+      "source_nip": "199606122025212037",
+      "database_nip": "135742790342525000"
+    },
+    {
+      "row": 218,
+      "nama": "ASWAR",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 221,
+      "nama": "FADLIATI",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 224,
+      "nama": "ROSMAYANI",
+      "issue": "NIP Excel berbeda/tidak valid; NIP database dipertahankan",
+      "source_nip": "198502062025212033",
+      "database_nip": "352782285393646000"
+    },
+    {
+      "row": 227,
+      "nama": "MINARTI",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 230,
+      "nama": "ADIA NOVAYANTI",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 233,
+      "nama": "ANGGARA BASRI",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 236,
+      "nama": "APRISAL",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 239,
+      "nama": "BUDIMAN",
+      "issue": "NIP Excel berbeda/tidak valid; NIP database dipertahankan",
+      "source_nip": "199403172025211106",
+      "database_nip": "828466953145709000"
+    },
+    {
+      "row": 242,
+      "nama": "GUSTI AYU NASTUTI",
+      "issue": "NIP Excel berbeda/tidak valid; NIP database dipertahankan",
+      "source_nip": "199506192025212122",
+      "database_nip": "819950307868545000"
+    },
+    {
+      "row": 245,
+      "nama": "NURAFNI RUSDIN",
+      "issue": "NIP Excel berbeda/tidak valid; NIP database dipertahankan",
+      "source_nip": "198804212025212183",
+      "database_nip": "807006633669587000"
+    },
+    {
+      "row": 248,
+      "nama": "RAHMA",
+      "issue": "NIP Excel berbeda/tidak valid; NIP database dipertahankan",
+      "source_nip": "199103132025212161",
+      "database_nip": "413285156152683000"
+    },
+    {
+      "row": 251,
+      "nama": "ST RAHMA ARIS",
+      "issue": "NIP Excel berbeda/tidak valid; NIP database dipertahankan",
+      "source_nip": "199510052025212215",
+      "database_nip": "414212358906171000"
+    },
+    {
+      "row": 254,
+      "nama": "SUKRI",
+      "issue": "NIP Excel berbeda/tidak valid; NIP database dipertahankan",
+      "source_nip": "198805092025211183",
+      "database_nip": "974997149712197000"
+    },
+    {
+      "row": 257,
+      "nama": "RISMAYANTI",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 260,
+      "nama": "ANWAR",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 263,
+      "nama": "ARDIANSYA NURDIN",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 266,
+      "nama": "MUSDALIPA",
+      "issue": "NIP Excel berbeda/tidak valid; NIP database dipertahankan",
+      "source_nip": "198706122025212174",
+      "database_nip": "849554402730169000"
+    },
+    {
+      "row": 269,
+      "nama": "RUSTAN",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    },
+    {
+      "row": 272,
+      "nama": "SAHARUN",
+      "issue": "Tidak ditemukan pasangan yang pasti",
+      "nip_matches": [],
+      "name_matches": []
+    }
+  ]
+}
