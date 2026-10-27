@@ -556,6 +556,11 @@ GET SINGLE ROW
     }
     if ($table === 'trx_naskah_dinas' && !empty($row['_read']['trx_naskah_struktur'][0]['struktur_json'])) {
       $row['struktur_json'] = $row['_read']['trx_naskah_struktur'][0]['struktur_json'];
+      require_once __DIR__.'/TataNaskahFormatService.php';
+      if(!TataNaskahFormatService::isDecision($row)){
+        $payload=json_decode($row['struktur_json'],true);
+        $schema=TataNaskahFormatService::withStoredFields(TataNaskahFormatService::schema((int)$row['jenis_id'],is_array($schema)?$schema:[]),is_array($payload)?$payload:[]);
+      }
     }
 
     $row = $this->normalizeBudgetEditRow($table, $row);

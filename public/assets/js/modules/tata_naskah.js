@@ -398,9 +398,9 @@ class TataNaskahModule {
 					// =====================================
 					// 🔥 FIX: AMBIL SCHEMA PRIORITAS CACHE
 					// =====================================
-					let schema = null;
+					let schema = resData.meta?.schema || null;
 
-					if (resData.data?._read?.cache_schema_naskah?.length) {
+					if (!schema && resData.data?._read?.cache_schema_naskah?.length) {
 						try {
 							schema = JSON.parse(resData.data._read.cache_schema_naskah[0].schema_json);
 						} catch (e) {

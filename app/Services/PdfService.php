@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
 require_once __DIR__ . '/PdfTemplateService.php';
 require_once __DIR__ . '/PageSetupService.php';
+require_once __DIR__ . '/TataNaskahPdfRenderer.php';
 require_once __DIR__ . '/../Core/DB.php';
 
 class PdfService
@@ -101,6 +102,12 @@ class PdfService
     $schemaData   = json_decode($jenis['schema_json'], true); // template
     if (!is_array($strukturData)) throw new RuntimeException('Struktur naskah tidak valid');
     if (isset($schemaData['sections'])) $schemaData = $schemaData['sections'];
+    $isDecision=TataNaskahFormatService::isDecision($naskah);
+    if(!$isDecision){
+      $schemaData=TataNaskahFormatService::withStoredFields(
+        TataNaskahFormatService::schema((int)$naskah['jenis_id'],is_array($schemaData)?$schemaData:[]),$strukturData
+      );
+    }
     if (empty($strukturData['tempat_ditetapkan'])) {
       $wilayah=$this->db->query('SELECT uraian FROM wilayah_neo WHERE kode=? AND is_deleted=0 LIMIT 1',[$naskah['kd_wilayah']])->fetch();
       $strukturData['tempat_ditetapkan']=$wilayah['uraian']??'';
@@ -113,6 +120,10 @@ class PdfService
         $strukturData['nama_penandatangan']=$nama;
         $strukturData['jabatan_penandatangan']=$strukturData['jbt_pemberi_tgs']??$pegawai['jabatan']??'';
         $strukturData['pangkat_penandatangan']=$strukturData['pangkat_pemberi_tgs']??trim(implode('/',array_filter([$pegawai['golongan']??null,$pegawai['ruang']??null])));
+        if(!$isDecision){
+          $masterRank=TataNaskahFormatService::rank('',(string)($pegawai['golongan']??''),(string)($pegawai['ruang']??''));
+          $strukturData['pangkat_penandatangan']=$masterRank!==''?$masterRank:TataNaskahFormatService::rank((string)($strukturData['pangkat_pemberi_tgs']??''));
+        }
         $strukturData['nip_penandatangan']=$pegawai['nip']??'';
       }
     }
@@ -128,7 +139,16 @@ class PdfService
     // INIT PDF
     // =====================================================
     $setup=PageSetupService::current();
-    $pdf = PageSetupService::createPdf($setup,'P');
+    if(!$isDecision){
+      // Permendagri 1/2023 Pasal 32(2), 34(2). SK retains its existing setup.
+      $setup['font']='arial_tata_naskah';$setup['font_size']=12;
+      $setup['margin_left']=max(30,$setup['margin_left']);$setup['margin_right']=max(20,$setup['margin_right']);
+      $setup['margin_bottom']=max(25,$setup['margin_bottom']);$setup['margin_top']=max(20,$setup['margin_top']);
+    }
+    $layout=TataNaskahFormatService::profile((int)$naskah['jenis_id'])['layout']??'';
+    if(!$isDecision&&$layout==='regulation')$setup['font']='bookmanoldstyle';
+    $pdf = PageSetupService::createPdf($setup,!$isDecision&&$layout==='training'?'L':'P');
+    if(!$isDecision&&$layout==='regulation')foreach([''=>'bookmanoldstyle','B'=>'bookmanoldstyleb','I'=>'bookmanoldstylei','BI'=>'bookmanoldstylebi'] as $style=>$file)$pdf->AddFont('bookmanoldstyle',$style,__DIR__.'/../../resources/fonts/tata_naskah/'.$file.'.php');
     $pdf->SetCreator('seSendok Tata Naskah');
     $pdf->SetTitle(($naskah['jenis_naskah'] ?? 'Naskah Dinas').' '.$naskah['nomor']);
     $pdf->SetMargins(25, 18, 20);
@@ -143,7 +163,8 @@ class PdfService
     // =====================================================
     $tpl = new PdfTemplateService($setup);
     $logo = __DIR__.'/../../public/assets/img/umum/logo.png';
-    $tpl->renderOfficial($pdf, $naskah, $schemaData, $strukturData, is_file($logo)?$logo:null);
+    if($isDecision)$tpl->renderOfficial($pdf, $naskah, $schemaData, $strukturData, is_file($logo)?$logo:null);
+    else (new TataNaskahPdfRenderer())->render($pdf,$naskah,$schemaData,$strukturData,$setup,is_file($logo)?$logo:null);
 
     return $pdf->Output('', 'S');
   }

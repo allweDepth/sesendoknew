@@ -72,6 +72,11 @@ class DocumentBuilder {
 		Object.entries(this.data || {}).forEach(([section, rows]) => {
 			let table = self.container.find(`table[name="${section}"]`);
 			if (!table.length) return;
+			// Old forms stored a paragraph as a string; updated forms use rows.
+			// Keep the user's text visible when opening and saving those documents.
+			if (!Array.isArray(rows) && typeof rows === "string" && table.data("type") === "editable_table") {
+				rows = rows.trim() ? [{ type: "paragraph", text: rows, align: "justify" }] : [];
+			}
 
 			if (!Array.isArray(rows)) return;
 
@@ -243,6 +248,7 @@ class DocumentBuilder {
 		<tr>
 			${columns.map((c) => `<th>${c}</th>`).join("")}
 			${showAction ? `<th class="collapsing">Aksi</th>` : ""}
+			${field.editable_rows ? `<th class="collapsing"><button type="button" class="ui mini green icon button btn-add-row" data-section="${key}"><i class="plus icon"></i></button></th>` : ""}
 		</tr>
 		</thead>
 		<tbody></tbody>

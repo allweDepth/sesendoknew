@@ -63,6 +63,9 @@ class TataNaskahController extends Controller
   }
   public function generate_pdf()
   {
+    // PDF rendering is read-only. Do not hold PHP's session lock while TCPDF
+    // works or while Safari streams a PDF in another tab.
+    if(session_status()===PHP_SESSION_ACTIVE)session_write_close();
     // ambil parameter GET
     $tbl = $_GET['tbl'] ?? null; // ambil nama tabel
     $id  = $_GET['id'] ?? null;  // ambil id data
@@ -80,11 +83,15 @@ class TataNaskahController extends Controller
       $pdfService = new PdfService(); // init service
 
       // generate PDF (string binary)
+      $started=microtime(true);
       $pdfContent = $pdfService->generate($tbl, (int)$id);
 
       // set header browser → PDF
       header('Content-Type: application/pdf'); // tipe file PDF
       header('Content-Disposition: inline; filename="naskah.pdf"'); // tampil di browser
+      header('Content-Length: '.strlen($pdfContent));
+      header('Cache-Control: private, no-store');
+      header('Server-Timing: tcpdf;dur='.round((microtime(true)-$started)*1000,1));
 
       echo $pdfContent; // output PDF
     } catch (Exception $e) {
@@ -468,6 +475,9 @@ class TataNaskahController extends Controller
     /* ===============================
        PRELOAD NOMOR OTOMATIS
     =============================== */
+
+    require_once __DIR__.'/../Services/TataNaskahFormatService.php';
+    if(!TataNaskahFormatService::isDecision($jenis))$schema=TataNaskahFormatService::schema((int)$jenisId,$schema);
 
     $nomor = null;
 
