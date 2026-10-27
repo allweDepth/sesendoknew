@@ -1,4 +1,4 @@
-/*M!999999\- enable the sandbox mode */ 
+/*M!999999\- enable the sandbox mode */
 -- MariaDB dump 10.20-13.0.2-MariaDB, for osx10.23 (arm64)
 --
 -- Host: localhost    Database: sesendoknew_db
@@ -4666,7 +4666,7 @@ CREATE TABLE `analisa_rab` (
   `tgl_update` datetime DEFAULT NULL,
   `username_update` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -9074,7 +9074,7 @@ SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
 LOCK TABLES `auth_rate_limits` WRITE;
 /*!40000 ALTER TABLE `auth_rate_limits` DISABLE KEYS */;
 INSERT INTO `auth_rate_limits` VALUES
-('549f23efad7d30949c74c9b0b95c53e76b6040881d28f56cb44eef410391416f',1,1793034277);
+('549f23efad7d30949c74c9b0b95c53e76b6040881d28f56cb44eef410391416f',1,1793088191);
 /*!40000 ALTER TABLE `auth_rate_limits` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;
@@ -9226,7 +9226,7 @@ CREATE TABLE `cuti_pegawai_neo` (
   PRIMARY KEY (`id`),
   KEY `idx_cuti_scope` (`kd_wilayah`,`kd_opd`,`tahun`),
   KEY `idx_cuti_pegawai` (`pegawai_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -9347,9 +9347,9 @@ DROP TABLE IF EXISTS `daftar_realisasi_neo`;
 CREATE TABLE `daftar_realisasi_neo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `tahun` year(4) NOT NULL,
-  `kd_wilayah` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci DEFAULT NULL,
-  `kd_opd` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci DEFAULT NULL,
-  `kd_sub_keg` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci DEFAULT NULL,
+  `kd_wilayah` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `kd_opd` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `kd_sub_keg` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `kd_akun` varchar(100) NOT NULL,
   `id_paket` int(11) NOT NULL,
   `kontrak_id` bigint(20) DEFAULT NULL,
@@ -9746,18 +9746,18 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_realisasi_validate_insert` BEFORE INSERT ON `daftar_realisasi_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_realisasi_validate_insert` BEFORE INSERT ON `daftar_realisasi_neo` FOR EACH ROW BEGIN
   DECLARE contract_value DECIMAL(20,2) DEFAULT NULL; DECLARE realized DECIMAL(20,2) DEFAULT 0;
   SELECT nilai_kontrak INTO contract_value FROM kontrak_neo WHERE id=NEW.kontrak_id AND kd_wilayah=NEW.kd_wilayah AND kd_opd=NEW.kd_opd AND tahun=NEW.tahun AND is_deleted=0 LIMIT 1;
   IF contract_value IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Kontrak realisasi tidak valid'; END IF;
   SELECT COALESCE(SUM(jumlah),0) INTO realized FROM daftar_realisasi_neo WHERE kontrak_id=NEW.kontrak_id AND is_deleted=0;
   IF realized+NEW.jumlah>contract_value THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Realisasi melebihi nilai kontrak'; END IF;
   IF NEW.progress_fisik<0 OR NEW.progress_fisik>100 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Progress fisik harus 0 sampai 100'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -9769,17 +9769,17 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_realisasi_validate_update` BEFORE UPDATE ON `daftar_realisasi_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_realisasi_validate_update` BEFORE UPDATE ON `daftar_realisasi_neo` FOR EACH ROW BEGIN
   DECLARE contract_value DECIMAL(20,2) DEFAULT NULL; DECLARE realized DECIMAL(20,2) DEFAULT 0;
   SELECT nilai_kontrak INTO contract_value FROM kontrak_neo WHERE id=NEW.kontrak_id AND kd_wilayah=NEW.kd_wilayah AND kd_opd=NEW.kd_opd AND tahun=NEW.tahun AND is_deleted=0 LIMIT 1;
   SELECT COALESCE(SUM(jumlah),0) INTO realized FROM daftar_realisasi_neo WHERE kontrak_id=NEW.kontrak_id AND id<>OLD.id AND is_deleted=0;
   IF contract_value IS NULL OR realized+NEW.jumlah>contract_value THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Realisasi melebihi nilai kontrak atau kontrak tidak valid'; END IF;
   IF NEW.progress_fisik<0 OR NEW.progress_fisik>100 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Progress fisik harus 0 sampai 100'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -56692,16 +56692,16 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_dpa_contract_guard_update` BEFORE UPDATE ON `dpa_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_dpa_contract_guard_update` BEFORE UPDATE ON `dpa_neo` FOR EACH ROW BEGIN
   DECLARE contracted DECIMAL(20,2) DEFAULT 0;
   SELECT COALESCE(SUM(i.nilai_kontrak),0) INTO contracted FROM kontrak_item_neo i JOIN kontrak_neo k ON k.id=i.kontrak_id AND k.setujui=1 AND k.is_deleted=0 WHERE BINARY i.tahap=BINARY 'dpa' AND i.anggaran_id=OLD.id AND i.is_deleted=0;
   IF NEW.jumlah<contracted THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Pagu DPA tidak boleh lebih kecil dari akumulasi kontrak yang disetujui'; END IF;
   IF NEW.is_deleted=1 AND EXISTS(SELECT 1 FROM kontrak_item_neo WHERE BINARY tahap=BINARY 'dpa' AND anggaran_id=OLD.id AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPA sudah terhubung kontrak dan tidak dapat dihapus'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -56713,13 +56713,13 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_dpa_contract_guard_delete` BEFORE DELETE ON `dpa_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_dpa_contract_guard_delete` BEFORE DELETE ON `dpa_neo` FOR EACH ROW BEGIN
   IF EXISTS(SELECT 1 FROM kontrak_item_neo WHERE tahap='dpa' AND anggaran_id=OLD.id AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPA sudah berkontrak dan tidak dapat dihapus'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -63279,16 +63279,16 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_dppa_contract_guard_update` BEFORE UPDATE ON `dppa_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_dppa_contract_guard_update` BEFORE UPDATE ON `dppa_neo` FOR EACH ROW BEGIN
   DECLARE contracted DECIMAL(20,2) DEFAULT 0;
   SELECT COALESCE(SUM(i.nilai_kontrak),0) INTO contracted FROM kontrak_item_neo i JOIN kontrak_neo k ON k.id=i.kontrak_id AND k.setujui=1 AND k.is_deleted=0 WHERE BINARY i.tahap=BINARY 'dppa' AND i.anggaran_id=OLD.id AND i.is_deleted=0;
   IF NEW.jumlah<contracted THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Pagu DPPA tidak boleh lebih kecil dari akumulasi kontrak yang disetujui'; END IF;
   IF NEW.is_deleted=1 AND EXISTS(SELECT 1 FROM kontrak_item_neo WHERE BINARY tahap=BINARY 'dppa' AND anggaran_id=OLD.id AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPPA sudah terhubung kontrak dan tidak dapat dihapus'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -63300,13 +63300,13 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_dppa_contract_guard_delete` BEFORE DELETE ON `dppa_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_dppa_contract_guard_delete` BEFORE DELETE ON `dppa_neo` FOR EACH ROW BEGIN
   IF EXISTS(SELECT 1 FROM kontrak_item_neo WHERE tahap='dppa' AND anggaran_id=OLD.id AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPPA sudah berkontrak dan tidak dapat dihapus'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -63989,7 +63989,7 @@ CREATE TABLE `evaluasi_renstra_neo` (
   PRIMARY KEY (`id`),
   KEY `idx_eval_renstra_scope` (`kd_wilayah`,`kd_opd`,`renstra_id`,`tahun_evaluasi`,`is_deleted`),
   KEY `idx_eval_renstra_iku` (`iku_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -64200,7 +64200,7 @@ CREATE TABLE `iku_opd_neo` (
   KEY `idx_iku_scope` (`kd_wilayah`,`kd_opd`,`is_deleted`),
   KEY `idx_iku_program_renstra` (`program_renstra_id`),
   KEY `idx_iku_penanggung_struktur` (`penanggung_jawab_struktur_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91892,17 +91892,17 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_kontrak_item_final_budget_insert` BEFORE INSERT ON `kontrak_item_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_item_final_budget_insert` BEFORE INSERT ON `kontrak_item_neo` FOR EACH ROW BEGIN
   DECLARE final_count INT DEFAULT 0;
   IF BINARY NEW.tahap=BINARY 'dpa' THEN SELECT COUNT(*) INTO final_count FROM dpa_neo WHERE id=NEW.anggaran_id AND setujui=1 AND kunci=1 AND is_deleted=0;
   ELSEIF BINARY NEW.tahap=BINARY 'dppa' THEN SELECT COUNT(*) INTO final_count FROM dppa_neo WHERE id=NEW.anggaran_id AND setujui=1 AND kunci=1 AND is_deleted=0;
   END IF;
   IF final_count=0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Rincian kontrak hanya dapat memakai DPA/DPPA yang disetujui dan dikunci'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -91914,11 +91914,11 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_kontrak_item_validate_insert` BEFORE INSERT ON `kontrak_item_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_item_validate_insert` BEFORE INSERT ON `kontrak_item_neo` FOR EACH ROW BEGIN
   DECLARE budget DECIMAL(20,2) DEFAULT NULL;
   DECLARE used_value DECIMAL(20,2) DEFAULT 0;
   DECLARE approved TINYINT DEFAULT 0;
@@ -91931,7 +91931,7 @@ DELIMITER ;;
   SELECT COALESCE(SUM(i.nilai_kontrak),0) INTO used_value FROM kontrak_item_neo i JOIN kontrak_neo k ON k.id=i.kontrak_id AND k.setujui=1 AND k.is_deleted=0 WHERE BINARY i.tahap=BINARY NEW.tahap AND i.anggaran_id=NEW.anggaran_id AND i.kontrak_id<>NEW.kontrak_id AND i.is_deleted=0;
   IF budget IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPA/DPPA tidak ditemukan atau belum disetujui'; END IF;
   IF NEW.nilai_kontrak<=0 OR NEW.nilai_kontrak>budget OR (approved=1 AND used_value+NEW.nilai_kontrak>budget) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Akumulasi kontrak disetujui melebihi pagu uraian DPA/DPPA'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -91943,17 +91943,17 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_kontrak_item_final_budget_update` BEFORE UPDATE ON `kontrak_item_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_item_final_budget_update` BEFORE UPDATE ON `kontrak_item_neo` FOR EACH ROW BEGIN
   DECLARE final_count INT DEFAULT 0;
   IF BINARY NEW.tahap=BINARY 'dpa' THEN SELECT COUNT(*) INTO final_count FROM dpa_neo WHERE id=NEW.anggaran_id AND setujui=1 AND kunci=1 AND is_deleted=0;
   ELSEIF BINARY NEW.tahap=BINARY 'dppa' THEN SELECT COUNT(*) INTO final_count FROM dppa_neo WHERE id=NEW.anggaran_id AND setujui=1 AND kunci=1 AND is_deleted=0;
   END IF;
   IF final_count=0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Rincian kontrak hanya dapat memakai DPA/DPPA yang disetujui dan dikunci'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -91965,11 +91965,11 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_kontrak_item_validate_update` BEFORE UPDATE ON `kontrak_item_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_item_validate_update` BEFORE UPDATE ON `kontrak_item_neo` FOR EACH ROW BEGIN
   DECLARE budget DECIMAL(20,2) DEFAULT NULL;
   DECLARE used_value DECIMAL(20,2) DEFAULT 0;
   DECLARE approved TINYINT DEFAULT 0;
@@ -91981,7 +91981,7 @@ DELIMITER ;;
   SELECT COALESCE(setujui,0) INTO approved FROM kontrak_neo WHERE id=NEW.kontrak_id AND is_deleted=0 LIMIT 1;
   SELECT COALESCE(SUM(i.nilai_kontrak),0) INTO used_value FROM kontrak_item_neo i JOIN kontrak_neo k ON k.id=i.kontrak_id AND k.setujui=1 AND k.is_deleted=0 WHERE BINARY i.tahap=BINARY NEW.tahap AND i.anggaran_id=NEW.anggaran_id AND i.kontrak_id<>NEW.kontrak_id AND i.is_deleted=0;
   IF budget IS NULL OR NEW.nilai_kontrak<=0 OR NEW.nilai_kontrak>budget OR (approved=1 AND used_value+NEW.nilai_kontrak>budget) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Akumulasi kontrak disetujui melebihi pagu uraian DPA/DPPA'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -92097,7 +92097,7 @@ CREATE TABLE `kontrak_neo` (
   KEY `idx_kontrak_anggaran` (`tahap`,`anggaran_id`),
   KEY `idx_kontrak_rekanan` (`rekanan_id`),
   KEY `idx_kontrak_pejabat_pengadaan` (`pejabat_pengadaan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=907 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=907 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -92479,11 +92479,11 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_kontrak_final_budget_insert` BEFORE INSERT ON `kontrak_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_final_budget_insert` BEFORE INSERT ON `kontrak_neo` FOR EACH ROW BEGIN
   DECLARE sub_code VARCHAR(50) DEFAULT NULL;
   IF BINARY NEW.tahap=BINARY 'dpa' THEN
     SELECT kd_sub_keg INTO sub_code FROM dpa_neo WHERE id=NEW.anggaran_id AND BINARY kd_wilayah=BINARY NEW.kd_wilayah AND BINARY kd_opd=BINARY NEW.kd_opd AND tahun=NEW.tahun AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1;
@@ -92492,7 +92492,7 @@ DELIMITER ;;
   END IF;
   IF sub_code IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Kontrak hanya dapat memakai DPA/DPPA yang disetujui dan dikunci'; END IF;
   IF BINARY NEW.tahap=BINARY 'dpa' AND EXISTS (SELECT 1 FROM dppa_neo WHERE BINARY kd_wilayah=BINARY NEW.kd_wilayah AND BINARY kd_opd=BINARY NEW.kd_opd AND tahun=NEW.tahun AND BINARY kd_sub_keg=BINARY sub_code AND setujui=1 AND kunci=1 AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Gunakan DPPA final untuk sub kegiatan ini'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -92504,11 +92504,11 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_kontrak_final_budget_update` BEFORE UPDATE ON `kontrak_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_final_budget_update` BEFORE UPDATE ON `kontrak_neo` FOR EACH ROW BEGIN
   DECLARE sub_code VARCHAR(50) DEFAULT NULL;
   IF BINARY NEW.tahap=BINARY 'dpa' THEN
     SELECT kd_sub_keg INTO sub_code FROM dpa_neo WHERE id=NEW.anggaran_id AND BINARY kd_wilayah=BINARY NEW.kd_wilayah AND BINARY kd_opd=BINARY NEW.kd_opd AND tahun=NEW.tahun AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1;
@@ -92517,7 +92517,7 @@ DELIMITER ;;
   END IF;
   IF sub_code IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Kontrak hanya dapat memakai DPA/DPPA yang disetujui dan dikunci'; END IF;
   IF (NOT (NEW.`kd_wilayah` <=> OLD.`kd_wilayah`) OR NOT (NEW.`kd_opd` <=> OLD.`kd_opd`) OR NOT (NEW.`tahun` <=> OLD.`tahun`) OR NOT (NEW.`kd_sub_keg` <=> OLD.`kd_sub_keg`) OR NOT (NEW.`tahap` <=> OLD.`tahap`) OR NOT (NEW.`anggaran_id` <=> OLD.`anggaran_id`) OR NOT (NEW.`total_anggaran` <=> OLD.`total_anggaran`) OR NOT (NEW.`nilai_hps` <=> OLD.`nilai_hps`) OR NOT (NEW.`nilai_kontrak` <=> OLD.`nilai_kontrak`) OR NOT (NEW.`rekanan_id` <=> OLD.`rekanan_id`) OR NOT (NEW.`setujui` <=> OLD.`setujui`) OR NOT (NEW.`kunci` <=> OLD.`kunci`)) AND BINARY NEW.tahap=BINARY 'dpa' AND EXISTS (SELECT 1 FROM dppa_neo WHERE BINARY kd_wilayah=BINARY NEW.kd_wilayah AND BINARY kd_opd=BINARY NEW.kd_opd AND tahun=NEW.tahun AND BINARY kd_sub_keg=BINARY sub_code AND setujui=1 AND kunci=1 AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Gunakan DPPA final untuk sub kegiatan ini'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -92529,11 +92529,11 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_kontrak_validate_update` BEFORE UPDATE ON `kontrak_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_validate_update` BEFORE UPDATE ON `kontrak_neo` FOR EACH ROW BEGIN
   DECLARE budget DECIMAL(20,2) DEFAULT NULL;
   DECLARE sub_code VARCHAR(50) DEFAULT NULL;
   DECLARE provider VARCHAR(255) DEFAULT NULL;
@@ -92620,7 +92620,7 @@ DELIMITER ;;
     SET provider=OLD.nama_penyedia;
   END IF;
   SET NEW.total_anggaran=budget,NEW.kd_sub_keg=sub_code,NEW.nama_penyedia=provider;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -174097,7 +174097,7 @@ CREATE TABLE `page_setup_opd_neo` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_page_setup_opd` (`kd_wilayah`,`kd_opd`,`tahun`),
   KEY `idx_page_setup_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174196,16 +174196,16 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_pejabat_fill_insert` BEFORE INSERT ON `pejabat_tahunan_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_pejabat_fill_insert` BEFORE INSERT ON `pejabat_tahunan_neo` FOR EACH ROW BEGIN
   SET NEW.nama_pegawai=(SELECT nama FROM db_asn_pemda_neo WHERE id=NEW.pegawai_id LIMIT 1);
   SET NEW.nip=(SELECT nip FROM db_asn_pemda_neo WHERE id=NEW.pegawai_id LIMIT 1);
   IF NEW.berlaku_sampai<NEW.berlaku_mulai THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Tanggal berakhir jabatan tidak boleh sebelum tanggal mulai'; END IF;
   IF NEW.jenis_pejabat IN ('PPK','PPTK') AND (NEW.kd_sub_keg IS NULL OR NEW.kd_sub_keg='') THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='PPK dan PPTK wajib dihubungkan ke sub kegiatan'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -174217,16 +174217,16 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`nabiila_inayah`@`localhost`*/ /*!50003 TRIGGER `trg_pejabat_fill_update` BEFORE UPDATE ON `pejabat_tahunan_neo` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50003 TRIGGER `trg_pejabat_fill_update` BEFORE UPDATE ON `pejabat_tahunan_neo` FOR EACH ROW BEGIN
   SET NEW.nama_pegawai=(SELECT nama FROM db_asn_pemda_neo WHERE id=NEW.pegawai_id LIMIT 1);
   SET NEW.nip=(SELECT nip FROM db_asn_pemda_neo WHERE id=NEW.pegawai_id LIMIT 1);
   IF NEW.berlaku_sampai<NEW.berlaku_mulai THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Tanggal berakhir jabatan tidak boleh sebelum tanggal mulai'; END IF;
   IF NEW.jenis_pejabat IN ('PPK','PPTK') AND (NEW.kd_sub_keg IS NULL OR NEW.kd_sub_keg='') THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='PPK dan PPTK wajib dihubungkan ke sub kegiatan'; END IF;
-END 
+END
 */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -174384,7 +174384,7 @@ CREATE TABLE `pengukuran_kinerja_neo` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_ukur_pk_periode` (`perjanjian_kinerja_detail_id`,`periode`,`nomor_periode`),
   KEY `idx_ukur_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`status`,`is_deleted`)
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174579,7 +174579,7 @@ CREATE TABLE `perjanjian_kinerja_detail_neo` (
   KEY `idx_pk_detail_iku` (`iku_id`),
   KEY `idx_pk_detail_sub` (`kd_sub_keg`),
   KEY `idx_pk_detail_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174644,7 +174644,7 @@ CREATE TABLE `perjanjian_kinerja_neo` (
   UNIQUE KEY `uq_pk_nomor` (`kd_wilayah`,`kd_opd`,`tahun`,`nomor_dokumen`),
   KEY `idx_pk_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`),
   KEY `idx_pk_pihak_struktur` (`pihak_pertama_struktur_id`,`pihak_kedua_struktur_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174742,7 +174742,7 @@ CREATE TABLE `pohon_kinerja_neo` (
   KEY `idx_pohon_iku` (`iku_id`),
   KEY `idx_pohon_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`is_deleted`),
   KEY `idx_pohon_penanggung_struktur` (`penanggung_jawab_struktur_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -182269,7 +182269,7 @@ CREATE TABLE `rekening_kegiatan_historis` (
   `sumber` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_rekening_historis` (`tahun`,`kd_wilayah`,`kode`,`level`)
-) ENGINE=InnoDB AUTO_INCREMENT=942 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=942 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -198695,7 +198695,7 @@ CREATE TABLE `renja_sub_kegiatan_kinerja_neo` (
   UNIQUE KEY `uq_renja_kinerja_scope` (`kd_wilayah`,`kd_opd`,`tahun`,`kd_sub_keg`),
   KEY `idx_renja_kinerja_renstra` (`sub_kegiatan_renstra_id`),
   KEY `idx_renja_kinerja_pohon` (`pohon_kinerja_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=147 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=147 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -198932,7 +198932,7 @@ CREATE TABLE `riwayat_jabatan_neo` (
   KEY `idx_rj_pegawai` (`pegawai_id`),
   KEY `idx_rj_sumber_struktur` (`sumber_struktur_id`),
   KEY `idx_history_current` (`pegawai_id`,`kd_wilayah`,`kd_opd`,`tmt`,`is_deleted`)
-) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199061,7 +199061,7 @@ CREATE TABLE `riwayat_pangkat_neo` (
   KEY `idx_rp_scope` (`kd_wilayah`,`kd_opd`,`tahun`),
   KEY `idx_rp_pegawai` (`pegawai_id`),
   KEY `idx_history_current` (`pegawai_id`,`kd_wilayah`,`kd_opd`,`tmt`,`is_deleted`)
-) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -210117,7 +210117,7 @@ CREATE TABLE `sk_asn_neo` (
   `disable` tinyint(1) NOT NULL DEFAULT 0,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=134 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=135 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -210252,7 +210252,8 @@ INSERT INTO `sk_asn_neo` VALUES
 (130,2026,'76.01','1.03.0.00.0.00.01.0000','01 TAHUN 2026','2026-01-05','Pengangkatan Pejabat Pembuat Komitmen (PPK)  Dinas Pekerjaan Umum Dan Penataan Ruang Kabupaten Pasangkayu Tahun 2026','197503102009031001','Kepala','Pembina, IV/a','SYAMSUNAR, SP.,M.M','[{\"nama\":\"I Nyoman Sumerta, ST\",\"pangkat\":\"Penata tingkat I, III\\/d<br>\",\"nip\":\"198301012010011020\",\"jabatan\":\"Kepala sumber daya air\",\"jabatan_sk\":\"Pejabat Pembuat Komitmen (PPK) Bidang Sumber Daya Air\"},{\"nama\":\"Felix Datuan, ST\",\"pangkat\":\"Penata tingkat I, III\\/d<br>\",\"nip\":\"198407252009031001\",\"jabatan\":\"Kasubag keuangan\",\"jabatan_sk\":\"Pejabat Pembuat Komitmen (PPK) Bidang Sekretariat, UPTD Pengelolaan Limbah Domestik, UPTD Pengelolaan Air Limbah Domestik\"}]',1,'[{\"isi\":\"Bahwa untuk pelaksanaan proses kerja pengadaan barang \\/ jasa pemerintah yang efektif, efisien dan akuntabel pada Dinas Pekerjaan Umum dan Penataan Ruang Pemerintah Daerah Kabupaten Pasangkayu, maka dipandang perlu mengangkat Pejabat Pembuat Komitmen (PPK) pada Dinas Pekerjaan Umum Kabupaten Pasangkayu\",\"p_l\":\"L\"},{\"isi\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas\",\"p_l\":\"L\"},{\"isi\":\"bahwa pengangkatan sebagaimana dimaksud pada point a perlu ditetapkan dalam Keputusan Kepala Dinas\",\"p_l\":\"L\"}]','{\"0\":{\"isi\":\"Undang-Undang Nomor 28 Tahun 1999 tentang Penyelenggaraan Pemerintahan yang bersih dan bebas Korupsi, Kolusi dan Nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Republik Indonesia Nomor 3581);\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Undang-Undang Nomor 28 tahun 2000 tentang usaha dan peran masyarakat Jasa Konstruksi (Lembaran Negara Republik Indonesia tahun 2000 Nomor 63);\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Republik Indonesia Nomor 4286);\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Republik Indonesia Nomor 4355);\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Undang-Undang Nomor 32 Tahun 2004 tentang Pemerintahan Daerah (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 125, Tambahan Lembaran Negara Republik Indonesia Nomor 4437) sebagaimana telah diubah dengan Undang-Undang Nomor 8 Tahun 2005 tentang Penetapan Peraturan Pemerintah Pengganti Undang-Undang Nomor 3 Tahun 2005 tentang Perubahan Undang-Undang Nomor 32 Tahun 2004 tentang Pemerintahan Daerah menjadi Undang-Undang (Lembaran Negara Republik Indonesia Tahun 2005 Nomor 108, Tambahan Lembaran Negara Republik Indonesia Nomor 4548);\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Undang-Undang Nomor 2 Tahun 2017 tentang Jasa Konstruksi;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"Peraturan Presiden Republik Indonesia Nomor 12 Tahun 2021 tentang Pengadaan Barang\\/Jasa Pemerintah;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"10\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 14 Tahun 2025 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;<br>\",\"p_l\":\"L\"},\"11\":{\"isi\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 9 Tahun 2025 tanggal 31 Desember 2025 tentang Anggaran pendapatan dan Belanja Daerah Tahun Anggaran 2026;<br>\",\"p_l\":\"L\"},\"12\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 26 Tahun 2025 tanggal 31 Desember 2025 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kebupaten Pasangkayu Tahun Anggaran 2026;<br>\",\"p_l\":\"L\"},\"13\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"p_l\":\"L\"}}','{\"0\":{\"isi\":\"Tugas Pejabat sebagaimana dimaksud pada diktum Kesatu adalah :\",\"p_l\":\"P\"},\"1\":{\"isi\":\"menyusun perencanaan pengadaan;\",\"p_l\":\"L\"},\"2\":{\"isi\":\"menetapkan spesifikasi teknis\\/Kerangka Acuan Kerja (KAK);\",\"p_l\":\"L\"},\"3\":{\"isi\":\"menetapkan rancangan kontrak;\",\"p_l\":\"L\"},\"4\":{\"isi\":\"menetapkan HPS;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"menetapkan besaran uang muka yang akan dibayarkan kepada Penyedia;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"mengusulkan perubahan jadwal kegiatan;\",\"p_l\":\"L\"},\"7\":{\"isi\":\"menetapkan tim pendukung;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"menetapkan tim atau tenaga ahli;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"melaksanakan E-purchasing untuk nilai paling sedikit di atas Rp200.000.000,00 (dua ratus juta rupiah);\",\"p_l\":\"L\"},\"10\":{\"isi\":\"mengendalikan Kontrak;\",\"p_l\":\"L\"},\"11\":{\"isi\":\"melaporkan pelaksanaan dan penyelesaian kegiatan kepada PA\\/KPA;\",\"p_l\":\"L\"},\"12\":{\"isi\":\"menyerahkan hasil pekerjaan pelaksanaan kegiatan kepada PA\\/KPA dengan berita acara penyerahan;\",\"p_l\":\"L\"},\"13\":{\"isi\":\"menyimpan dan menjaga keutuhan seluruh dokumen pelaksanaan kegiatan;\",\"p_l\":\"L\"},\"14\":{\"isi\":\"menilai kinerja Penyedia;\",\"p_l\":\"L\"},\"15\":{\"isi\":\"menetapkan Surat Penunjukan Penyedia Barang\\/Jasa.\",\"p_l\":\"L\"}}','{\"0\":{\"isi\":\"Selain tugas pokok dan kewenangan sebagaimana dimaksud, dalam hal diperlukan, PPK,dapat\",\"p_l\":\"P\"},\"1\":{\"isi\":\"Melaporkan kemajuan pekerjaan termasuk penyerapan anggaran dan hambatan pelaksanaan pekerjaan kepada PA\\/KPA setiap triwulan\",\"p_l\":\"L\"}}','{\"0\":{\"isi\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada APBD Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2026.\",\"p_l\":\"P\"}}','{\"0\":{\"isi\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya.\",\"p_l\":\"P\"}}','{\"0\":{\"isi\":\"Bupati Pasangkayu, di Pasangkayu\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Masing-masing yang bersangkutan\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Pertinggal\",\"p_l\":\"L\"}}','','','0000-00-00 00:00:00','','2026-01-28 03:27:28','nabiila',0,0),
 (131,2026,'76.01','1.03.0.00.0.00.01.0000','03 TAHUN 2026','2026-01-05','pengangkatan pejabat penatausahaan keuangan  dinas pekerjaan umum dan penataan ruang kabupaten pasangkayu tahun 2026','197503102009031001','Kepala','Pembina, IV/a','SYAMSUNAR, SP.,M.M','[{\"nama\":\"SRI IRDA AYU, SP.,M.Si\",\"pangkat\":\"Pembina, IV\\/a\",\"nip\":\"198306252005022003\",\"jabatan\":\"Sekretaris\",\"jabatan_sk\":\"Pejabat Penatausahaan Keuangan\"}]',0,'[{\"isi\":\"bahwa untuk menyediakan pengelolaan keuangan Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu, maka dipandang perlu mengangkat Pejabat Penatausahaan Keuangan pada Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu;\",\"p_l\":\"L\"},{\"isi\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas;\",\"p_l\":\"L\"},{\"isi\":\"bahwa sebagaimana dimaksud pada point a perlu ditetapkan dalam keputusan Kepala Dinas Pekerjaan Umum dan Penataan Ruang.\",\"p_l\":\"L\"}]','{\"0\":{\"isi\":\"Undang-Undang Nomor 28 Tahun 1999 tentang penyelenggaraan Negara yang bersih dan bebas dari korupsi dan nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Nomor 3851);\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Nomor 4286);\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Nomor 4355);\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Peraturan Pemerintah Nomor 12 Tahun 2019 tentang Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 14 Tahun 2025 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 9 Tahun 2025 tanggal 31 Desember 2025 tentang Anggaran pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 26 Tahun 2025 tanggal 31 Desember 2025 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kebupaten Pasangkayu Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"10\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"p_l\":\"L\"}}','{\"0\":{\"isi\":\"PPK SKPD mempunyai tugas dan wewenang:\",\"p_l\":\"P\"},\"1\":{\"isi\":\"melakukan verifikasi SPP-UP, SPP-GU, SPP-TU, dan SPP-LS beserta bukti kelengkapannya yang diajukan oleh Bendahara Pengeluaran;\",\"p_l\":\"L\"},\"2\":{\"isi\":\"menyiapkan SPM;\",\"p_l\":\"L\"},\"3\":{\"isi\":\"melakukan verifikasi laporan pertanggungjawaban Bendahara Penerimaan dan Bendahara Pengeluaran;\",\"p_l\":\"L\"},\"4\":{\"isi\":\"melaksanakan fungsi akuntansi pada SKPD; dan\",\"p_l\":\"L\"},\"5\":{\"isi\":\"menyusun laporan keuangan SKPD.\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Verifikasi oleh PPK SKPD dilakukan dengan tujuan untuk meneliti kelengkapan dan keabsahan.\",\"p_l\":\"P\"}}','{\"0\":{\"isi\":\"Selain melaksanakan tugas dan wewenang pada angka 5, PPK SKPD melaksanakan tugas dan wewenang lainnya yaitu:\",\"p_l\":\"P\"},\"1\":{\"isi\":\"melakukan verifikasi SPP-UP, SPP-GU, SPP-TU, dan SPP-LS beserta bukti kelengkapannya yang diajukan oleh Bendahara lainnya;\",\"p_l\":\"L\"},\"2\":{\"isi\":\"melakukan verifikasi surat permintaan pembayaran atas pengembalian kelebihan pendapatan daerah dari bendahara penerimaan; dan\",\"p_l\":\"L\"},\"3\":{\"isi\":\"menerbitkan surat pernyataan verifikasi kelengkapan dan keabsahan SPP-UP, SPP-GU, SPP-TU dan SPP-LS beserta bukti kelengkapannya sebagai dasar penyiapan SPM.\",\"p_l\":\"L\"}}','{\"0\":{\"isi\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada APBD Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2026.\",\"p_l\":\"P\"}}','{\"0\":{\"isi\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya.\",\"p_l\":\"P\"}}','{\"0\":{\"isi\":\"Bupati Pasangkayu, di Pasangkayu;\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu;\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu;\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu;\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Masing-masing yang bersangkutan;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Pertinggal.\",\"p_l\":\"L\"}}','','','0000-00-00 00:00:00','','2026-01-28 03:41:02','nabiila',0,0),
 (132,2026,'76.01','1.03.0.00.0.00.01.0000','25 TAHUN 2026','2026-01-05','pengangkatan pelaksana tugas kepala Peralatan Alat Berat dinas pekerjaan umum dan penataan ruang kabupaten pasangkayu tahun 2026','197503102009031001','Kepala','Pembina, IV/a','SYAMSUNAR, SP.,M.M','[{\"nama\":\"Boby S. Pakaya\",\"pangkat\":\"Pengatur, II\\/c\",\"nip\":\"197706132014091002\",\"jabatan\":\"<div>Pengadministrasi Perkantoran<\\/div>\",\"jabatan_sk\":\"Plt. Kepala Peralatan Alat Berat\"}]',1,'[{\"isi\":\"bahwa untuk menyediakan pengelolaan Peralatan Alat Berat Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu, maka dipandang perlu mengangkat Kepala&nbsp;Peralatan Alat Berat pada Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu;\",\"p_l\":\"L\"},{\"isi\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas;\",\"p_l\":\"L\"},{\"isi\":\"bahwa sebagaimana dimaksud pada point a perlu ditetapkan dalam keputusan Kepala Dinas Pekerjaan Umum dan Penataan Ruang.\",\"p_l\":\"L\"}]','{\"0\":{\"isi\":\"Undang-Undang Nomor 28 Tahun 1999 tentang penyelenggaraan Negara yang bersih dan bebas dari korupsi dan nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Nomor 3851);\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Nomor 4286);\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Nomor 4355);\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Peraturan Pemerintah Nomor 12 Tahun 2019 tentang Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 14 Tahun 2025 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 9 Tahun 2025 tanggal 31 Desember 2025 tentang Anggaran pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 26 Tahun 2025 tanggal 31 Desember 2025 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kebupaten Pasangkayu Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"10\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"p_l\":\"L\"}}','{\"0\":{\"isi\":\"Kepala Peralatan Alat Berat mempunyai tugas dan wewenang:\",\"p_l\":\"P\"},\"1\":{\"isi\":\"<div>Penyusunan program jangka pendek, jangka menengah, dan jangka panjang;<\\/div>\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Pengelolaan alat berat;\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Koordinasi penggunaan peralatan dengan instansi terkait;\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Pemberian pertimbangan teknis pengelolaan alat berat;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Pelaksanaan pembinaan terhadap operator alat berat dan mekanik;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Penyiapan bahan dan perlengkapan perbengkelan;\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Pelaksanaan pemeriksaaan dan perbaikan alat;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"Penyusunan data riwayat peralatan;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"Penyusunan laporan kegiatan atau perjanjian pelayanan peralatan dan pemeliharaan peralatan;\",\"p_l\":\"L\"},\"10\":{\"isi\":\"<div>Pemberian saran-saran atau pertimbangan kepada atasan tentang langkah-<span style=\\\"text-align: inherit; font-size: 1em;\\\">langkah dan tindakan yang perlu diambil di bidang tugasnya;<\\/span><\\/div>\",\"p_l\":\"L\"}}','{\"0\":{\"isi\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada APBD Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2026.\",\"p_l\":\"P\"}}','{\"0\":{\"isi\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya.\",\"p_l\":\"P\"}}','{}','{\"0\":{\"isi\":\"Bupati Pasangkayu, di Pasangkayu;\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu;\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu;\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu;\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Masing-masing yang bersangkutan;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Pertinggal.\",\"p_l\":\"L\"}}','','','0000-00-00 00:00:00','','2026-02-15 06:45:17','nabiila',0,0),
-(133,2026,'76.01','1.03.0.00.0.00.01.0000','06 TAHUN 2026','2026-01-05','pengangkatan pejabat pengadaan barang / jasa pemerintah pada dinas pekerjaan umum dan penataan ruang kabupaten pasangkayu tahun 2026','197503102009031001','Kepala','Pembina, IV/a','SYAMSUNAR, SP.,M.M','[{\"nama\":\"Alwi Mansyur, A.Md\",\"pangkat\":\"Penata, III\\/c\",\"nip\":\"198007112006041010\",\"jabatan\":\"Verifikator Keuangan\",\"jabatan_sk\":\"Pejabat Pengadaan Dinas Pekerjaan Umum dan Penataan Ruang Kab. Pasangkayu\"}]',0,'[{\"isi\":\"bahwa untuk pelaksanaan proses kerja pengelolaan Barang \\/ Jasa yang efektif, efisien dan akuntabel pada Dinas Pekerjaan Umum dan Penataan Ruang Pemerintah Daerah Kabupaten Pasangkayu, maka dipandang perlu mengangkat Pejabat Pengadaan Barang \\/ Jasa pada Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu\",\"p_l\":\"L\"},{\"isi\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas\",\"p_l\":\"L\"},{\"isi\":\"bahwa pengangkatan sebagaimana dimaksud pada point a perlu ditetapkan dalam Keputusan Kepala Dinas\",\"p_l\":\"L\"}]','{\"0\":{\"isi\":\"Undang-Undang Nomor 28 Tahun 1999 tentang Penyelenggaraan Pemerintahan yang bersih dan bebas Korupsi, Kolusi dan Nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Republik Indonesia Nomor 3581);\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Undang-Undang Nomor 28 tahun 2000 tentang usaha dan peran masyarakat Jasa Konstruksi (Lembaran Negara Republik Indonesia tahun 2000 Nomor 63);\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Republik Indonesia Nomor 4286);\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Republik Indonesia Nomor 4355);\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Undang-Undang Nomor 23 Tahun 2014 tentang Pemerintahan Daerah;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah;\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Undang-Undang Nomor 2 Tahun 2017 tentang Jasa Konstruksi;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"Peraturan Presiden Republik Indonesia Nomor 12 Tahun 2021 tentang Pengadaan Barang/Jasa Pemerintah;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"10\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 14 Tahun 2025 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"11\":{\"isi\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 9 Tahun 2025 tanggal 31 Desember 2025 tentang Anggaran pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"12\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 26 Tahun 2025 tanggal 31 Desember 2025 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kebupaten Pasangkayu Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"13\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"p_l\":\"L\"}}','{\"0\":{\"isi\":\"Tugas Pejabat sebagaimana dimaksud pada diktum Kesatu adalah :\",\"p_l\":\"P\"},\"1\":{\"isi\":\"melaksanakan persiapan dan pelaksanaan Pengadaan Langsung;\",\"p_l\":\"L\"},\"2\":{\"isi\":\"melaksanakan persiapan dan pelaksanaan Penunjukan Langsung untuk pengadaan Barang\\/Pekerjaan Konstruksi\\/Jasa Lainnya yang bernilai paling banyak Rp200.000.000,00 (dua ratus juta rupiah);\",\"p_l\":\"L\"},\"3\":{\"isi\":\"melaksanakan persiapan dan pelaksanaan Penunjukan Langsung untuk pengadaan Jasa Konsultansi yang bernilai paling banyak Rp100.000.000,00 (seratus juta rupiah);\",\"p_l\":\"L\"},\"4\":{\"isi\":\"melaksanakan E-purchasing yang bernilai paling banyak Rp200.000.000,00 (dua ratus juta rupiah);\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Menyerahkan dokumen asli pemilihan penyedia barang \\/ jasa Pemerintah kepada pengguna anggaran;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Membuat laporan mengenai proses dan hasil pengadaan kepada pengguna anggaran; dan\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Memberikan pertanggungjawaban atas pelaksanaan kegiatan pengadaan barang \\/ jasa Konstruksi kepada pengguna anggaran\",\"p_l\":\"L\"}}','{\"0\":{\"isi\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada Pos Anggaran Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2026\",\"p_l\":\"P\"}}','{\"0\":{\"isi\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya\",\"p_l\":\"P\"}}','{}','{\"0\":{\"isi\":\"Bupati Pasangkayu, di Pasangkayu\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Masing-masing yang bersangkutan\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Pertinggal\",\"p_l\":\"L\"}}','','','2026-10-23 02:38:45','codex_sk_pejabat_pengadaan',NULL,NULL,0,0);
+(133,2026,'76.01','1.03.0.00.0.00.01.0000','06 TAHUN 2026','2026-01-05','pengangkatan pejabat pengadaan barang / jasa pemerintah pada dinas pekerjaan umum dan penataan ruang kabupaten pasangkayu tahun 2026','197503102009031001','Kepala','Pembina, IV/a','SYAMSUNAR, SP.,M.M','[{\"nama\":\"Alwi Mansyur, A.Md\",\"pangkat\":\"Penata, III\\/c\",\"nip\":\"198007112006041010\",\"jabatan\":\"Verifikator Keuangan\",\"jabatan_sk\":\"Pejabat Pengadaan Dinas Pekerjaan Umum dan Penataan Ruang Kab. Pasangkayu\"}]',0,'[{\"isi\":\"bahwa untuk pelaksanaan proses kerja pengelolaan Barang \\/ Jasa yang efektif, efisien dan akuntabel pada Dinas Pekerjaan Umum dan Penataan Ruang Pemerintah Daerah Kabupaten Pasangkayu, maka dipandang perlu mengangkat Pejabat Pengadaan Barang \\/ Jasa pada Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu\",\"p_l\":\"L\"},{\"isi\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas\",\"p_l\":\"L\"},{\"isi\":\"bahwa pengangkatan sebagaimana dimaksud pada point a perlu ditetapkan dalam Keputusan Kepala Dinas\",\"p_l\":\"L\"}]','{\"0\":{\"isi\":\"Undang-Undang Nomor 28 Tahun 1999 tentang Penyelenggaraan Pemerintahan yang bersih dan bebas Korupsi, Kolusi dan Nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Republik Indonesia Nomor 3581);\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Undang-Undang Nomor 28 tahun 2000 tentang usaha dan peran masyarakat Jasa Konstruksi (Lembaran Negara Republik Indonesia tahun 2000 Nomor 63);\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Republik Indonesia Nomor 4286);\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Republik Indonesia Nomor 4355);\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Undang-Undang Nomor 23 Tahun 2014 tentang Pemerintahan Daerah;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah;\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Undang-Undang Nomor 2 Tahun 2017 tentang Jasa Konstruksi;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"Peraturan Presiden Republik Indonesia Nomor 12 Tahun 2021 tentang Pengadaan Barang/Jasa Pemerintah;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"10\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 14 Tahun 2025 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"11\":{\"isi\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 9 Tahun 2025 tanggal 31 Desember 2025 tentang Anggaran pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"12\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 26 Tahun 2025 tanggal 31 Desember 2025 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kebupaten Pasangkayu Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"13\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"p_l\":\"L\"}}','{\"0\":{\"isi\":\"Tugas Pejabat sebagaimana dimaksud pada diktum Kesatu adalah :\",\"p_l\":\"P\"},\"1\":{\"isi\":\"melaksanakan persiapan dan pelaksanaan Pengadaan Langsung;\",\"p_l\":\"L\"},\"2\":{\"isi\":\"melaksanakan persiapan dan pelaksanaan Penunjukan Langsung untuk pengadaan Barang\\/Pekerjaan Konstruksi\\/Jasa Lainnya yang bernilai paling banyak Rp200.000.000,00 (dua ratus juta rupiah);\",\"p_l\":\"L\"},\"3\":{\"isi\":\"melaksanakan persiapan dan pelaksanaan Penunjukan Langsung untuk pengadaan Jasa Konsultansi yang bernilai paling banyak Rp100.000.000,00 (seratus juta rupiah);\",\"p_l\":\"L\"},\"4\":{\"isi\":\"melaksanakan E-purchasing yang bernilai paling banyak Rp200.000.000,00 (dua ratus juta rupiah);\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Menyerahkan dokumen asli pemilihan penyedia barang \\/ jasa Pemerintah kepada pengguna anggaran;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Membuat laporan mengenai proses dan hasil pengadaan kepada pengguna anggaran; dan\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Memberikan pertanggungjawaban atas pelaksanaan kegiatan pengadaan barang \\/ jasa Konstruksi kepada pengguna anggaran\",\"p_l\":\"L\"}}','{\"0\":{\"isi\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada Pos Anggaran Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2026\",\"p_l\":\"P\"}}','{\"0\":{\"isi\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya\",\"p_l\":\"P\"}}','{}','{\"0\":{\"isi\":\"Bupati Pasangkayu, di Pasangkayu\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Masing-masing yang bersangkutan\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Pertinggal\",\"p_l\":\"L\"}}','','','2026-10-23 02:38:45','codex_sk_pejabat_pengadaan',NULL,NULL,0,0),
+(134,2026,'76.01','1.03.0.00.0.00.01.0000','22 TAHUN 2026','2026-01-05','Pengangkatan Operator Alat Berat/Alat Besar Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun 2026','197503102009031001','Kepala Dinas','Pembina, IV/a','Syamsunar, SP, MM','[{\"nama\":\"SUAIB\",\"pangkat\":\"\",\"nip\":\"\",\"jabatan\":\"Non ASN\",\"jabatan_sk\":\"Operator Alat Berat/Alat Besar Kebencanaan\"},{\"nama\":\"SUDIRMAN\",\"pangkat\":\"\",\"nip\":\"\",\"jabatan\":\"Non ASN\",\"jabatan_sk\":\"Operator Alat Berat/Alat Besar Kebencanaan\"},{\"nama\":\"MURSYID\",\"pangkat\":\"\",\"nip\":\"\",\"jabatan\":\"Non ASN\",\"jabatan_sk\":\"Operator Alat Berat/Alat Besar Kebencanaan\"},{\"nama\":\"SUGISMA WIJAYA\",\"pangkat\":\"\",\"nip\":\"\",\"jabatan\":\"Non ASN\",\"jabatan_sk\":\"Operator Alat Berat/Alat Besar Kebencanaan\"}]',1,'[{\"isi\":\"bahwa untuk kelancaran pelaksanaan sewa-menyewa\\/penggunaan alat berat daerah pada Dinas Pekerjaan Umum dan Penataan Ruang Pemerintah Daerah Kabupaten Pasangkayu, maka dipandang perlu mengangkat Operator Alat Berat\\/Besar pada Dinas Pekerjaan Umum Kabupaten Pasangkayu;\",\"p_l\":\"L\"},{\"isi\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas;\",\"p_l\":\"L\"},{\"isi\":\"bahwa pengangkatan sebagaimana dimaksud pada point a perlu ditetapkan dalam Keputusan Kepala Dinas.\",\"p_l\":\"L\"}]','{\"0\":{\"isi\":\"Undang-Undang Nomor 28 Tahun 1999 tentang penyelenggaraan Negara yang bersih dan bebas dari korupsi dan nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Nomor 3851);\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Nomor 4286);\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Nomor 4355);\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Peraturan Pemerintah Nomor 12 Tahun 2019 tentang Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Peraturan Menteri Dalam Negeri Nomor 14 Tahun 2025 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 9 Tahun 2025 tanggal 31 Desember 2025 tentang Anggaran pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 26 Tahun 2025 tanggal 31 Desember 2025 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kebupaten Pasangkayu Tahun Anggaran 2026;\",\"p_l\":\"L\"},\"10\":{\"isi\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"p_l\":\"L\"}}','{\"0\":{\"isi\":\"Tugas Personil sebagaimana dimaksud pada diktum Penetapan adalah sebagai berikut :\",\"p_l\":\"P\"},\"1\":{\"isi\":\"Sebelum mengoperasikan alat, seorang operator alat wajib melakukan pemeriksaan standar rutin seperti, pemeriksaan bahan bakar dan oli;\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Mengoperasikan alat berat untuk aktivitas peralatan sesuai spesifikasi pabrik asal alat berat, Melakukan manuver alat berat bermotor untuk memastikan pemindahan dan penempatan material secara akurat;\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Melaporkan jika terjadi kerusakan alat berat;\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Bertanggung jawab dalam hal pengangkutan dan pengiriman, serta memastikan memarkir alat berat di area yang aman;\",\"p_l\":\"L\"},\"5\":{\"isi\":\"Menjaga kesehatan alat berat, dengan cara merawat dan memperbaiki ketika ada kerusakan. Dalam hal perawatan, operator wajib melakukannya sesuai standar pabrik sehingga hasilnya optimal. Sedangkan dalam hal perbaikan, lalu wajib bekerja sama dengan mekanik dan pabrik asal alat berat jadi tidak salah dalam penanganan;\",\"p_l\":\"L\"},\"6\":{\"isi\":\"Memastikan mesin alat berat dalam keadaan mati saat tidak digunakan, dengan memeriksa kunci masih terpasang atau tidak;\",\"p_l\":\"L\"},\"7\":{\"isi\":\"Memberikan saran untuk menyempurnakan alur kerja dan meningkatkan efisiensi;\",\"p_l\":\"L\"},\"8\":{\"isi\":\"Mematuhi kode keselamatan yang ditetapkan setiap saat;\",\"p_l\":\"L\"},\"9\":{\"isi\":\"Melaksanakan tugas kedinasan lain yang diperintahkan pimpinan baik tertulis maupun lisan.\",\"p_l\":\"L\"}}','{\"0\":{\"isi\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada Pos Anggaran Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2026.\",\"p_l\":\"P\"}}','{\"0\":{\"isi\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya.\",\"p_l\":\"P\"}}','{}','{\"0\":{\"isi\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"1\":{\"isi\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"2\":{\"isi\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu\",\"p_l\":\"L\"},\"3\":{\"isi\":\"Masing-masing yang bersangkutan\",\"p_l\":\"L\"},\"4\":{\"isi\":\"Pertinggal\",\"p_l\":\"L\"}}','','SK_OPERATOR_2026_FOTO_IMG_5714','2026-10-27 16:00:53','codex_sk_operator','2026-10-27 16:04:16','codex_sk_operator',0,0);
 /*!40000 ALTER TABLE `sk_asn_neo` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;
@@ -210286,7 +210287,7 @@ CREATE TABLE `sk_pegawai_neo` (
   PRIMARY KEY (`id`),
   KEY `idx_sk_scope` (`kd_wilayah`,`kd_opd`,`tahun`),
   KEY `idx_sk_pegawai` (`pegawai_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -211461,7 +211462,7 @@ CREATE TABLE `trx_naskah_dinas` (
   `final_at` datetime DEFAULT NULL,
   `document_hash` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -211529,7 +211530,8 @@ INSERT INTO `trx_naskah_dinas` VALUES
 (58,'0e455e1073ce1b3f466d5306026e7ab4',5,'55 DPUPR 2025',55,2025,1,'2025-09-01','PERUBAHAN PENGANGKATAN TENAGA NON PNS JASA KEBERSIHAN KANTOR MALL PELAYANAN PUBLIK (MPP) KABUPATEN PASANGKAYU TAHUN 2025','draft',NULL,'76.01','1.03.0.00.0.00.01.0000','inayah','2026-10-20 05:12:58',NULL,NULL,'IMPORT_SK_2025:perubahan kebersihan mpp.pdf','draft',NULL,NULL,NULL,NULL,NULL,NULL),
 (59,NULL,5,'15 Tahun 2026',NULL,2026,1,'2026-01-05','Pengangkatan Tim Serah Terima Pekerjaan Konstruksi/Konsultansi Provisional Hand Over / PHO Dan Final Hand Over /FHO Bidang Binamarga Dinas Pekerjaan Umum Dan Penataan Ruang Kabupaten Pasangkayu Tahun 2026','draft',NULL,'76.01','1.03.0.00.0.00.01.0000','nabiila','2026-10-22 02:58:55','nabiila','2026-10-22 03:04:48','Import SK 2026 dari SK PPK.pdf','draft',NULL,NULL,NULL,NULL,NULL,NULL),
 (60,'c409affdbb790de10fe581925148f967',5,'06 TAHUN 2025',6,2025,1,'2025-01-06','pengangkatan pejabat pengadaan barang / jasa pemerintah pada dinas pekerjaan umum dan penataan ruang kabupaten pasangkayu tahun 2025','draft',NULL,'76.01','1.03.0.00.0.00.01.0000','codex_sk_pengadaan','2026-10-23 10:43:56',NULL,NULL,'SYNC_SK_ASN:115','draft',NULL,NULL,NULL,NULL,NULL,NULL),
-(61,'f74a19aa2266e20d4df79c1a67ed2230',5,'06 TAHUN 2026',6,2026,1,'2026-01-05','pengangkatan pejabat pengadaan barang / jasa pemerintah pada dinas pekerjaan umum dan penataan ruang kabupaten pasangkayu tahun 2026','draft',NULL,'76.01','1.03.0.00.0.00.01.0000','codex_sk_pengadaan','2026-10-23 10:43:56','nabiila','2026-10-23 03:12:33','SYNC_SK_ASN:133','draft',NULL,NULL,NULL,NULL,NULL,NULL);
+(61,'f74a19aa2266e20d4df79c1a67ed2230',5,'06 TAHUN 2026',6,2026,1,'2026-01-05','pengangkatan pejabat pengadaan barang / jasa pemerintah pada dinas pekerjaan umum dan penataan ruang kabupaten pasangkayu tahun 2026','draft',NULL,'76.01','1.03.0.00.0.00.01.0000','codex_sk_pengadaan','2026-10-23 10:43:56','nabiila','2026-10-27 04:46:31','SYNC_SK_ASN:133','draft',NULL,NULL,NULL,NULL,NULL,NULL),
+(62,'9379466963cfab2288da28a23e203402',5,'22 TAHUN 2026',22,2026,1,'2026-01-05','Pengangkatan Operator Alat Berat/Alat Besar Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun 2026','draft',NULL,'76.01','1.03.0.00.0.00.01.0000','codex_sk_operator','2026-10-27 16:00:53',NULL,NULL,'SYNC_SK_ASN:134','draft',NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `trx_naskah_dinas` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;
@@ -211613,7 +211615,7 @@ CREATE TABLE `trx_naskah_status_history` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `idx_naskah_status_history` (`naskah_id`,`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -211650,7 +211652,7 @@ CREATE TABLE `trx_naskah_struktur` (
   `username_update` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_naskah_struktur` (`naskah_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=130 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -211718,7 +211720,8 @@ INSERT INTO `trx_naskah_struktur` VALUES
 (123,59,'{\"menimbang\":[{\"type\":\"numbered\",\"text\":\"Bahwa untuk kelancaran pelaksanaan pemeriksaan hasil pekerjaan konstruksi\\/Konsultansi Bidang Binamarga sampai dengan serah terima pertama (Provisional Hand Over \\/ PHO) dan Serah Terima Pekerjaan (Final Hand Over \\/FHO) dipandang perlu membentuk Tim PHO\\/FHO pada Dinas Pekerjaan Umum Kabupaten Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"bahwa pengangkatan sebagaimana dimaksud pada point a perlu ditetapkan dalam Keputusan Kepala Dinas\",\"align\":\"justify\"}],\"mengingat\":[{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 28 Tahun 1999 tentang Penyelenggaraan Pemerintahan yang bersih dan bebas Korupsi, Kolusi dan Nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Republik Indonesia Nomor 3581);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 28 tahun 2000 tentang usaha dan peran masyarakat Jasa Konstruksi (Lembaran Negara Republik Indonesia tahun 2000 Nomor 63);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Republik Indonesia Nomor 4286);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Republik Indonesia Nomor 4355);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 32 Tahun 2004 tentang Pemerintahan Daerah (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 125, Tambahan Lembaran Negara Republik Indonesia Nomor 4437) sebagaimana telah diubah dengan Undang-Undang Nomor 8 Tahun 2005 tentang Penetapan Peraturan Pemerintah Pengganti Undang-Undang Nomor 3 Tahun 2005 tentang Perubahan Undang-Undang Nomor 32 Tahun 2004 tentang Pemerintahan Daerah menjadi Undang-Undang (Lembaran Negara Republik Indonesia Tahun 2005 Nomor 108, Tambahan Lembaran Negara Republik Indonesia Nomor 4548);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 2 Tahun 2017 tentang Jasa Konstruksi;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Presiden Republik Indonesia Nomor 12 Tahun 2021 tentang Pengadaan Barang\\/Jasa Pemerintah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Menteri Dalam Negeri Nomor 14 Tahun 2025 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 9 Tahun 2025 tanggal 31 Desember 2025 tentang Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 26 Tahun 2025 tanggal 31 Desember 2025 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kabupaten Pasangkayu Tahun Anggaran 2026;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"align\":\"justify\"}],\"menetapkan\":[{\"type\":\"paragraph\",\"text\":\"Keputusan Kepala Dinas Pekerjaan Umum Dan Penataan Ruang Tentang Pengangkatan Tim Serah Terima Pekerjaan Konstruksi\\/Konsultansi Provisional Hand Over \\/ PHO Dan Final Hand Over \\/FHO Bidang Binamarga Dinas Pekerjaan Umum Dan Penataan Ruang Kabupaten Pasangkayu Tahun 2026\",\"align\":\"justify\"}],\"menetapkan_1\":[{\"type\":\"paragraph\",\"text\":\"Tugas Pejabat sebagaimana dimaksud pada diktum Kesatu adalah\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Melakukan pemeriksaan fisik dan administratif hasil pekerjaan konstruksi di lapangan.\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Melakukan pemeriksaan administratif hasil pekerjaan konsultansi.\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Mencatat hasil pemeriksaan kemajuan pekerjaan serta mencatat adanya kekurangan atau cacat hasil pekerjaan (jika ada).\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Membuat Berita Acara Pemeriksaan Pekerjaan dan Berita Acara Serah Terima Pekerjaan Konstruksi\\/Konsultansi (Provisional Hand Over \\/ PHO) dan (Final Hand Over \\/FHO).\",\"align\":\"justify\"},{\"type\":\"paragraph\",\"text\":\"Memberikan masukan kepada Pejabat Pembuat Komitmen (PPK).\",\"align\":\"justify\"}],\"menetapkan_2\":[{\"type\":\"paragraph\",\"text\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada APBD Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2026.\",\"align\":\"justify\"}],\"menetapkan_3\":[{\"type\":\"paragraph\",\"text\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya.\",\"align\":\"justify\"}],\"menetapkan_4\":[],\"nama_ditugaskan\":[{\"nama\":\"PATAHUDDIN, ST.M.AP\",\"pangkat\":\"Pembina IV\\/a\",\"nip\":\"197110122009031001\",\"jabatan\":\"Teknik Jalan dan Jembatan Ahli Muda\",\"jabatan_sk\":\"Serah Terima Pekerjaan Konstruksi\\/Konsultansi\",\"_id\":\"198502112015031004\"},{\"nama\":\"MUHAMMAD DIRGANTARA,ST\",\"pangkat\":\"Penata,III\\/c\",\"nip\":\"197110122009031001\",\"jabatan\":\"Penelaah Teknis Kebijakan\",\"jabatan_sk\":\"Serah Terima Pekerjaan Konstruksi\\/Konsultansi\",\"_id\":\"197110122009031001\"},{\"nama\":\"WAWAN PRASETYA KARBAYAH,ST.,M.P.W.P\",\"pangkat\":\"Penata Muda Tk.I,III\\/b\",\"nip\":\"199201272019031000\",\"jabatan\":\"Penelaah Teknis Kebijakan\",\"jabatan_sk\":\"Serah Terima Pekerjaan Konstruksi\\/Konsultansi\",\"_id\":\"199201272019031000\"}],\"tembusan\":[{\"type\":\"numbered\",\"text\":\"Bupati Pasangkayu, di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Masing-masing yang bersangkutan\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Pertinggal\",\"align\":\"justify\"}],\"jenis_id\":\"5\",\"nomor\":\"15 Tahun 2026\",\"klasifikasi_id\":1,\"tanggal_surat\":\"5 Januari 2026\",\"perihal\":\"Pengangkatan Tim Serah Terima Pekerjaan Konstruksi\\/Konsultansi Provisional Hand Over \\/ PHO Dan Final Hand Over \\/FHO Bidang Binamarga Dinas Pekerjaan Umum Dan Penataan Ruang Kabupaten Pasangkayu Tahun 2026\",\"file\":\"\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"Pembina, IV\\/a\",\"asn\":\"43\",\"bentuk_lampiran\":0,\"keterangan\":\"Import SK 2026 dari SK PPK.pdf\",\"disable\":0}','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-22 03:04:48','nabiila',NULL,NULL),
 (124,28,'{\"jenis_id\":23,\"nomor\":\"TRACE\\/023\\/1.03.0.00.0.00.01.0000\\/2026\",\"klasifikasi_id\":1,\"tanggal_surat\":\"2026-08-31\",\"perihal\":\"Contoh Sertifikat\",\"file\":\"\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"ivb\",\"nama\":\"Alwi\",\"kegiatan\":\"mencapai sholat 5 waktu\",\"tanggal\":\"2 Oktober 2026\"}','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-22 05:24:51','nabiila',NULL,NULL),
 (125,60,'{\"jenis_id\":\"5\",\"nomor\":\"06 TAHUN 2025\",\"klasifikasi_id\":1,\"tanggal_surat\":\"6 Januari 2025\",\"perihal\":\"pengangkatan pejabat pengadaan barang / jasa pemerintah pada dinas pekerjaan umum dan penataan ruang kabupaten pasangkayu tahun 2025\",\"file\":\"\",\"penandatangan\":\"1\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"Pembina tingkat I, IV/b\",\"nama_penandatangan\":\"Sumarlin, ST.M.AP\",\"jabatan_penandatangan\":\"Kepala Dinas\",\"nip_penandatangan\":\"198006152006041018\",\"nama_ditugaskan\":[{\"nama\":\"Alwi Mansyur, A.Md\",\"pangkat\":\"Penata, III/c\",\"nip\":\"198007112006041010\",\"jabatan\":\"Verifikator Keuangan\",\"jabatan_sk\":\"Pejabat Pengadaan Dinas Pekerjaan Umum dan Penataan Ruang Kab. Pasangkayu\",\"id\":27,\"_id\":\"27\"}],\"asn\":\"27\",\"bentuk_lampiran\":0,\"disable\":0,\"personnel_rows_are_individual\":true,\"keterangan\":\"Disalin dari sk_asn_neo ID 115\",\"menimbang\":[{\"type\":\"numbered\",\"text\":\"bahwa untuk pelaksanaan proses kerja pengelolaan Barang / Jasa yang efektif, efisien dan akuntabel pada Dinas Pekerjaan Umum dan Penataan Ruang Pemerintah Daerah Kabupaten Pasangkayu, maka dipandang perlu mengangkat Pejabat Pengadaan Barang / Jasa pada Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"bahwa pengangkatan sebagaimana dimaksud pada point a perlu ditetapkan dalam Keputusan Kepala Dinas\",\"align\":\"justify\"}],\"mengingat\":[{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 28 Tahun 1999 tentang Penyelenggaraan Pemerintahan yang bersih dan bebas Korupsi, Kolusi dan Nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Republik Indonesia Nomor 3581);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 28 tahun 2000 tentang usaha dan peran masyarakat Jasa Konstruksi (Lembaran Negara Republik Indonesia tahun 2000 Nomor 63);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Republik Indonesia Nomor 4286);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Republik Indonesia Nomor 4355);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 23 Tahun 2014 tentang Pemerintahan Daerah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 2 Tahun 2017 tentang Jasa Konstruksi;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Presiden Republik Indonesia Nomor 12 Tahun 2021 tentang Pengadaan Barang/Jasa Pemerintah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Menteri Dalam Negeri Nomor 15 Tahun 2024 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2025;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 5 Tahun 2024 tanggal 31 Desember 2024 tentang Anggaran pendapatan dan Belanja Daerah Tahun Anggaran 2025;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 39 Tahun 2024 tanggal 31 Desember 2024 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kebupaten Pasangkayu Tahun Anggaran 2025;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"align\":\"justify\"}],\"menetapkan_1\":[{\"type\":\"paragraph\",\"text\":\"Tugas Pejabat sebagaimana dimaksud pada diktum Kesatu adalah :\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melaksanakan persiapan dan pelaksanaan Pengadaan Langsung;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melaksanakan persiapan dan pelaksanaan Penunjukan Langsung untuk pengadaan Barang/Pekerjaan Konstruksi/Jasa Lainnya yang bernilai paling banyak Rp200.000.000,00 (dua ratus juta rupiah);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melaksanakan persiapan dan pelaksanaan Penunjukan Langsung untuk pengadaan Jasa Konsultansi yang bernilai paling banyak Rp100.000.000,00 (seratus juta rupiah);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melaksanakan E-purchasing yang bernilai paling banyak Rp200.000.000,00 (dua ratus juta rupiah);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Menyerahkan dokumen asli pemilihan penyedia barang / jasa Pemerintah kepada pengguna anggaran;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Membuat laporan mengenai proses dan hasil pengadaan kepada pengguna anggaran; dan\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Memberikan pertanggungjawaban atas pelaksanaan kegiatan pengadaan barang / jasa Konstruksi kepada pengguna anggaran\",\"align\":\"justify\"}],\"menetapkan_2\":[{\"type\":\"paragraph\",\"text\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada Pos Anggaran Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2025\",\"align\":\"justify\"}],\"menetapkan_3\":[{\"type\":\"paragraph\",\"text\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya\",\"align\":\"justify\"}],\"menetapkan_4\":[],\"tembusan\":[{\"type\":\"numbered\",\"text\":\"Bupati Pasangkayu, di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Masing-masing yang bersangkutan\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Pertinggal\",\"align\":\"justify\"}],\"menetapkan\":[{\"type\":\"paragraph\",\"text\":\"KEPUTUSAN KEPALA DINAS PEKERJAAN UMUM DAN PENATAAN RUANG TENTANG PENGANGKATAN PEJABAT PENGADAAN BARANG / JASA PEMERINTAH PADA DINAS PEKERJAAN UMUM DAN PENATAAN RUANG KABUPATEN PASANGKAYU TAHUN 2025\",\"align\":\"justify\"}]}','76.01','1.03.0.00.0.00.01.0000',2025,'2026-10-23 10:43:56','codex_sk_pengadaan',NULL,NULL),
-(127,61,'{\"menimbang\":[{\"type\":\"numbered\",\"text\":\"bahwa untuk pelaksanaan proses kerja pengelolaan Barang \\/ Jasa yang efektif, efisien dan akuntabel pada Dinas Pekerjaan Umum dan Penataan Ruang Pemerintah Daerah Kabupaten Pasangkayu, maka dipandang perlu mengangkat Pejabat Pengadaan Barang \\/ Jasa pada Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"bahwa pengangkatan sebagaimana dimaksud pada point a perlu ditetapkan dalam Keputusan Kepala Dinas\",\"align\":\"justify\"}],\"mengingat\":[{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 28 Tahun 1999 tentang Penyelenggaraan Pemerintahan yang bersih dan bebas Korupsi, Kolusi dan Nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Republik Indonesia Nomor 3581);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 28 tahun 2000 tentang usaha dan peran masyarakat Jasa Konstruksi (Lembaran Negara Republik Indonesia tahun 2000 Nomor 63);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Republik Indonesia Nomor 4286);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Republik Indonesia Nomor 4355);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 23 Tahun 2014 tentang Pemerintahan Daerah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 2 Tahun 2017 tentang Jasa Konstruksi;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Presiden Republik Indonesia Nomor 12 Tahun 2021 tentang Pengadaan Barang\\/Jasa Pemerintah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Menteri Dalam Negeri Nomor 14 Tahun 2025 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 9 Tahun 2025 tanggal 31 Desember 2025 tentang Anggaran pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 26 Tahun 2025 tanggal 31 Desember 2025 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kebupaten Pasangkayu Tahun Anggaran 2026;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"align\":\"justify\"}],\"menetapkan\":[{\"type\":\"paragraph\",\"text\":\"KEPUTUSAN KEPALA DINAS PEKERJAAN UMUM DAN PENATAAN RUANG TENTANG PENGANGKATAN PEJABAT PENGADAAN BARANG \\/ JASA PEMERINTAH PADA DINAS PEKERJAAN UMUM DAN PENATAAN RUANG KABUPATEN PASANGKAYU TAHUN 2026\",\"align\":\"justify\"}],\"menetapkan_1\":[{\"type\":\"paragraph\",\"text\":\"Tugas Pejabat sebagaimana dimaksud pada diktum Kesatu adalah :\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melaksanakan persiapan dan pelaksanaan Pengadaan Langsung;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melaksanakan persiapan dan pelaksanaan Penunjukan Langsung untuk pengadaan Barang\\/Jasa Lainnya yang bernilai paling banyak Rp200.000.000,00 (dua ratus juta rupiah) dan Pekerjaan Konstruksi yang bernilai paling banyak Rp400.000.000,00 (empat ratus juta rupiah);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melaksanakan persiapan dan pelaksanaan Penunjukan Langsung untuk pengadaan Jasa Konsultansi yang bernilai paling banyak Rp100.000.000,00 (seratus juta rupiah);\",\"align\":\"justify\",\"format\":\"label\"},{\"type\":\"numbered\",\"text\":\"melaksanakan E-purchasing yang bernilai paling banyak Rp200.000.000,00 (dua ratus juta rupiah) dan Pekerjaan Konstruksi yang bernilai paling banyak Rp400.000.000,00 (empat ratus juta rupiah);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Menyerahkan dokumen asli pemilihan penyedia barang \\/ jasa Pemerintah kepada pengguna anggaran;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Membuat laporan mengenai proses dan hasil pengadaan kepada pengguna anggaran; dan\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Memberikan pertanggungjawaban atas pelaksanaan kegiatan pengadaan barang \\/ jasa Konstruksi kepada pengguna anggaran\",\"align\":\"justify\"}],\"menetapkan_2\":[{\"type\":\"paragraph\",\"text\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada Pos Anggaran Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2026\",\"align\":\"justify\"}],\"menetapkan_3\":[{\"type\":\"paragraph\",\"text\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya\",\"align\":\"justify\"}],\"menetapkan_4\":[],\"nama_ditugaskan\":[{\"nama\":\"Alwi Mansyur, A.Md\",\"pangkat\":\"Penata, III\\/c\",\"nip\":\"198007112006041010\",\"jabatan\":\"Verifikator Keuangan\",\"jabatan_sk\":\"Pejabat Pengadaan Dinas Pekerjaan Umum dan Penataan Ruang Kab. Pasangkayu\",\"_id\":\"27\"}],\"tembusan\":[{\"type\":\"numbered\",\"text\":\"Bupati Pasangkayu, di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Masing-masing yang bersangkutan\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Pertinggal\",\"align\":\"justify\"}],\"jenis_id\":\"5\",\"nomor\":\"06 TAHUN 2026\",\"klasifikasi_id\":1,\"tanggal_surat\":\"5 Januari 2026\",\"perihal\":\"pengangkatan pejabat pengadaan barang \\/ jasa pemerintah pada dinas pekerjaan umum dan penataan ruang kabupaten pasangkayu tahun 2026\",\"file\":\"\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"Pembina, IV\\/a\",\"asn\":\"27\",\"bentuk_lampiran\":0,\"keterangan\":\"Disalin dari sk_asn_neo ID 133\",\"disable\":0}','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-23 03:12:33','nabiila',NULL,NULL);
+(128,61,'{\"menimbang\":[{\"type\":\"numbered\",\"text\":\"bahwa untuk pelaksanaan proses kerja pengelolaan Barang \\/ Jasa yang efektif, efisien dan akuntabel pada Dinas Pekerjaan Umum dan Penataan Ruang Pemerintah Daerah Kabupaten Pasangkayu, maka dipandang perlu mengangkat Pejabat Pengadaan Barang \\/ Jasa pada Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"bahwa pengangkatan sebagaimana dimaksud pada point a perlu ditetapkan dalam Keputusan Kepala Dinas\",\"align\":\"justify\"}],\"mengingat\":[{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 28 Tahun 1999 tentang Penyelenggaraan Pemerintahan yang bersih dan bebas Korupsi, Kolusi dan Nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Republik Indonesia Nomor 3581);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 28 tahun 2000 tentang usaha dan peran masyarakat Jasa Konstruksi (Lembaran Negara Republik Indonesia tahun 2000 Nomor 63);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Republik Indonesia Nomor 4286);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Republik Indonesia Nomor 4355);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 23 Tahun 2014 tentang Pemerintahan Daerah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 2 Tahun 2017 tentang Jasa Konstruksi;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Presiden Republik Indonesia Nomor 12 Tahun 2021 tentang Pengadaan Barang\\/Jasa Pemerintah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Menteri Dalam Negeri Nomor 14 Tahun 2025 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 9 Tahun 2025 tanggal 31 Desember 2025 tentang Anggaran pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 26 Tahun 2025 tanggal 31 Desember 2025 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kebupaten Pasangkayu Tahun Anggaran 2026;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"align\":\"justify\"}],\"menetapkan\":[{\"type\":\"paragraph\",\"text\":\"KEPUTUSAN KEPALA DINAS PEKERJAAN UMUM DAN PENATAAN RUANG TENTANG PENGANGKATAN PEJABAT PENGADAAN BARANG \\/ JASA PEMERINTAH PADA DINAS PEKERJAAN UMUM DAN PENATAAN RUANG KABUPATEN PASANGKAYU TAHUN 2026\",\"align\":\"justify\"}],\"menetapkan_1\":[{\"type\":\"paragraph\",\"text\":\"Tugas Pejabat sebagaimana dimaksud pada diktum Kesatu adalah :\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melaksanakan persiapan dan pelaksanaan Pengadaan Langsung;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melaksanakan persiapan dan pelaksanaan Penunjukan Langsung untuk pengadaan Barang\\/Jasa Lainnya yang bernilai paling banyak Rp200.000.000,00 (dua ratus juta rupiah) dan Pekerjaan Konstruksi yang bernilai paling banyak Rp400.000.000,00 (empat ratus juta rupiah);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melaksanakan persiapan dan pelaksanaan Penunjukan Langsung untuk pengadaan Jasa Konsultansi yang bernilai paling banyak Rp100.000.000,00 (seratus juta rupiah);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"melaksanakan E-purchasing yang bernilai paling banyak Rp200.000.000,00 (dua ratus juta rupiah) dan Pekerjaan Konstruksi yang bernilai paling banyak Rp400.000.000,00 (empat ratus juta rupiah);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Menyerahkan dokumen asli pemilihan penyedia barang \\/ jasa Pemerintah kepada pengguna anggaran;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Membuat laporan mengenai proses dan hasil pengadaan kepada pengguna anggaran; dan\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Memberikan pertanggungjawaban atas pelaksanaan kegiatan pengadaan barang \\/ jasa Konstruksi kepada pengguna anggaran\",\"align\":\"justify\"}],\"menetapkan_2\":[{\"type\":\"paragraph\",\"text\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada Pos Anggaran Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2026\",\"align\":\"justify\"}],\"menetapkan_3\":[{\"type\":\"paragraph\",\"text\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya\",\"align\":\"justify\"}],\"menetapkan_4\":[],\"nama_ditugaskan\":[{\"nama\":\"Alwi Mansyur, A.Md\",\"pangkat\":\"Penata, III\\/c\",\"nip\":\"198007112006041010\",\"jabatan\":\"Pengolah Data dan Informasi\",\"jabatan_sk\":\"Pejabat Pengadaan Dinas Pekerjaan Umum dan Penataan Ruang Kab. Pasangkayu\",\"_id\":\"27\"}],\"tembusan\":[{\"type\":\"numbered\",\"text\":\"Bupati Pasangkayu, di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Masing-masing yang bersangkutan\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Pertinggal\",\"align\":\"justify\"}],\"jenis_id\":\"5\",\"nomor\":\"06 TAHUN 2026\",\"klasifikasi_id\":1,\"tanggal_surat\":\"5 Januari 2026\",\"perihal\":\"pengangkatan pejabat pengadaan barang \\/ jasa pemerintah pada dinas pekerjaan umum dan penataan ruang kabupaten pasangkayu tahun 2026\",\"file\":\"\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"Pembina, IV\\/a\",\"asn\":\"27\",\"bentuk_lampiran\":0,\"keterangan\":\"Disalin dari sk_asn_neo ID 133\",\"disable\":0}','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-27 04:46:31','nabiila',NULL,NULL),
+(129,62,'{\"jenis_id\":\"5\",\"nomor\":\"22 TAHUN 2026\",\"klasifikasi_id\":1,\"tanggal_surat\":\"5 Januari 2026\",\"perihal\":\"Pengangkatan Operator Alat Berat/Alat Besar Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun 2026\",\"file\":\"\",\"penandatangan\":\"3\",\"jbt_pemberi_tgs\":\"Kepala Dinas\",\"pangkat_pemberi_tgs\":\"Pembina, IV/a\",\"nama_penandatangan\":\"Syamsunar, SP, MM\",\"jabatan_penandatangan\":\"Kepala Dinas\",\"nip_penandatangan\":\"197503102009031001\",\"nama_ditugaskan\":[{\"nama\":\"SUAIB\",\"pangkat\":\"\",\"nip\":\"\",\"jabatan\":\"Non ASN\",\"jabatan_sk\":\"Operator Alat Berat/Alat Besar Kebencanaan\"},{\"nama\":\"SUDIRMAN\",\"pangkat\":\"\",\"nip\":\"\",\"jabatan\":\"Non ASN\",\"jabatan_sk\":\"Operator Alat Berat/Alat Besar Kebencanaan\"},{\"nama\":\"MURSYID\",\"pangkat\":\"\",\"nip\":\"\",\"jabatan\":\"Non ASN\",\"jabatan_sk\":\"Operator Alat Berat/Alat Besar Kebencanaan\"},{\"nama\":\"SUGISMA WIJAYA\",\"pangkat\":\"\",\"nip\":\"\",\"jabatan\":\"Non ASN\",\"jabatan_sk\":\"Operator Alat Berat/Alat Besar Kebencanaan\"}],\"asn\":\"\",\"bentuk_lampiran\":1,\"disable\":0,\"personnel_rows_are_individual\":true,\"keterangan\":\"SK operator 2026; nama sesuai IMG_5714.JPG; nomor sesuai instruksi pengguna. Tanggal mengikuti SK alat berat 2026.\",\"menimbang\":[{\"type\":\"numbered\",\"text\":\"bahwa untuk kelancaran pelaksanaan sewa-menyewa/penggunaan alat berat daerah pada Dinas Pekerjaan Umum dan Penataan Ruang Pemerintah Daerah Kabupaten Pasangkayu, maka dipandang perlu mengangkat Operator Alat Berat/Besar pada Dinas Pekerjaan Umum Kabupaten Pasangkayu;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"bahwa yang tersebut namanya dalam lampiran keputusan ini dipandang cakap dan mampu melaksanakan tugas;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"bahwa pengangkatan sebagaimana dimaksud pada point a perlu ditetapkan dalam Keputusan Kepala Dinas.\",\"align\":\"justify\"}],\"mengingat\":[{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 28 Tahun 1999 tentang penyelenggaraan Negara yang bersih dan bebas dari korupsi dan nepotisme (Lembaran Negara Republik Indonesia Tahun 1999 Nomor 75, Tambahan Lembaran Negara Nomor 3851);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 7 Tahun 2003 tentang Pembentukan Kabupaten Luwu Timur dan Kabupaten Mamuju Utara di Provinsi Sulawesi Selatan (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 27, Tambahan Lembaran Negara Nomor 4270);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 17 Tahun 2003 tentang Keuangan Negara (Lembaran Negara Republik Indonesia Tahun 2003 Nomor 47, Tambahan Lembaran Negara Nomor 4286);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 1 Tahun 2004 tentang Perbendaharaan Negara (Lembaran Negara Republik Indonesia Tahun 2004 Nomor 5, Tambahan Lembaran Negara Nomor 4355);\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Undang-Undang Nomor 1 Tahun 2022 tentang Hubungan Keuangan Antara Pemerintah Pusat dan Pemerintah Daerah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Pemerintah Nomor 12 Tahun 2019 tentang Pengelolaan Keuangan Daerah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Menteri Dalam Negeri Nomor 77 Tahun 2020 tentang Pedoman Teknis Pengelolaan Keuangan Daerah;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Menteri Dalam Negeri Nomor 14 Tahun 2025 tentang Pedoman Penyusunan Anggaran Pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Daerah Kabupaten Pasangkayu Nomor 9 Tahun 2025 tanggal 31 Desember 2025 tentang Anggaran pendapatan dan Belanja Daerah Tahun Anggaran 2026;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 26 Tahun 2025 tanggal 31 Desember 2025 tentang Penjabaran Anggaran Pendapatan dan Belanja Daerah Kebupaten Pasangkayu Tahun Anggaran 2026;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Peraturan Bupati Kabupaten Pasangkayu Nomor 33 Tahun 2021 tanggal 30 Desember 2021 tentang Kedudukan, Susunan Organisasi, Tugas dan Fungsi serta Tata Kerja Perangkat Daerah.\",\"align\":\"justify\"}],\"menetapkan_1\":[{\"type\":\"paragraph\",\"text\":\"Tugas Personil sebagaimana dimaksud pada diktum Penetapan adalah sebagai berikut :\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Sebelum mengoperasikan alat, seorang operator alat wajib melakukan pemeriksaan standar rutin seperti, pemeriksaan bahan bakar dan oli;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Mengoperasikan alat berat untuk aktivitas peralatan sesuai spesifikasi pabrik asal alat berat, Melakukan manuver alat berat bermotor untuk memastikan pemindahan dan penempatan material secara akurat;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Melaporkan jika terjadi kerusakan alat berat;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Bertanggung jawab dalam hal pengangkutan dan pengiriman, serta memastikan memarkir alat berat di area yang aman;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Menjaga kesehatan alat berat, dengan cara merawat dan memperbaiki ketika ada kerusakan. Dalam hal perawatan, operator wajib melakukannya sesuai standar pabrik sehingga hasilnya optimal. Sedangkan dalam hal perbaikan, lalu wajib bekerja sama dengan mekanik dan pabrik asal alat berat jadi tidak salah dalam penanganan;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Memastikan mesin alat berat dalam keadaan mati saat tidak digunakan, dengan memeriksa kunci masih terpasang atau tidak;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Memberikan saran untuk menyempurnakan alur kerja dan meningkatkan efisiensi;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Mematuhi kode keselamatan yang ditetapkan setiap saat;\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Melaksanakan tugas kedinasan lain yang diperintahkan pimpinan baik tertulis maupun lisan.\",\"align\":\"justify\"}],\"menetapkan_2\":[{\"type\":\"paragraph\",\"text\":\"Segala biaya yang timbul akibat keputusan ini dibebankan kepada Pos Anggaran Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu Tahun Anggaran 2026.\",\"align\":\"justify\"}],\"menetapkan_3\":[{\"type\":\"paragraph\",\"text\":\"Keputusan ini mulai berlaku pada tanggal ditetapkan dan apabila terdapat kekeliruan didalamnya akan diperbaharui sebagaimana mestinya.\",\"align\":\"justify\"}],\"menetapkan_4\":[],\"tembusan\":[{\"type\":\"numbered\",\"text\":\"Sekretaris Daerah Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Inspektur Inspektorat Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Kepala Badan PKAD Kabupaten Pasangkayu di Pasangkayu\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Masing-masing yang bersangkutan\",\"align\":\"justify\"},{\"type\":\"numbered\",\"text\":\"Pertinggal\",\"align\":\"justify\"}],\"menetapkan\":[{\"type\":\"paragraph\",\"text\":\"KEPUTUSAN KEPALA DINAS PEKERJAAN UMUM DAN PENATAAN RUANG TENTANG PENGANGKATAN OPERATOR ALAT BERAT/ALAT BESAR DINAS PEKERJAAN UMUM DAN PENATAAN RUANG KABUPATEN PASANGKAYU TAHUN 2026\",\"align\":\"justify\"}]}','76.01','1.03.0.00.0.00.01.0000',2026,'2026-10-27 16:00:53','codex_sk_operator',NULL,NULL);
 /*!40000 ALTER TABLE `trx_naskah_struktur` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;
@@ -212134,9 +212137,9 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50013 SQL SECURITY INVOKER */
 /*!50001 VIEW `daftar_realisasi_transaksi_neo` AS select min(`dr`.`id`) AS `id`,coalesce(`dr`.`transaksi_uuid`,concat('legacy-',`dr`.`id`)) AS `transaksi_uuid`,`dr`.`kontrak_id` AS `kontrak_id`,`dr`.`kd_wilayah` AS `kd_wilayah`,`dr`.`kd_opd` AS `kd_opd`,`dr`.`tahun` AS `tahun`,`dr`.`tanggal` AS `tanggal`,`dr`.`periode` AS `periode`,group_concat(distinct `dr`.`kd_sub_keg` order by `dr`.`kd_sub_keg` ASC separator ', ') AS `kd_sub_keg`,group_concat(distinct `dr`.`kd_akun` order by `dr`.`kd_akun` ASC separator ', ') AS `kd_akun`,sum(`dr`.`jumlah`) AS `jumlah`,max(`dr`.`progress_fisik`) AS `progress_fisik`,max(`dr`.`nomor_bukti`) AS `nomor_bukti`,max(`dr`.`uraian_progress`) AS `uraian_progress`,max(`dr`.`keterangan`) AS `keterangan`,0 AS `is_deleted` from `daftar_realisasi_neo` `dr` where `dr`.`is_deleted` = 0 group by coalesce(`dr`.`transaksi_uuid`,concat('legacy-',`dr`.`id`)),`dr`.`kontrak_id`,`dr`.`kd_wilayah`,`dr`.`kd_opd`,`dr`.`tahun`,`dr`.`tanggal`,`dr`.`periode` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -212152,7 +212155,7 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
+/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY INVOKER */
 /*!50001 VIEW `sakip_sumber_kinerja_v` AS select convert(concat('sasaran_renstra:',`s`.`id`) using utf8mb4) collate utf8mb4_unicode_ci AS `value_key`,`s`.`id` AS `sumber_id`,_utf8mb4'sasaran_renstra' collate utf8mb4_unicode_ci AS `sumber_ref`,convert(`s`.`nama_sasaran` using utf8mb4) collate utf8mb4_unicode_ci AS `uraian`,convert(`r`.`kd_wilayah` using utf8mb4) collate utf8mb4_unicode_ci AS `kd_wilayah`,convert(`r`.`kd_opd` using utf8mb4) collate utf8mb4_unicode_ci AS `kd_opd`,0 AS `is_deleted` from (((`sasaran_renstra_neo` `s` join `tujuan_renstra_neo` `t` on(`t`.`id` = `s`.`tujuan_id` and `t`.`is_deleted` = 0)) join `misi_renstra_neo` `m` on(`m`.`id` = `t`.`misi_id` and `m`.`is_deleted` = 0)) join `renstra_neo` `r` on(`r`.`id` = `m`.`renstra_id` and `r`.`is_deleted` = 0)) where `s`.`is_deleted` = 0 union all select convert(concat('program_renstra:',`p`.`id`) using utf8mb4) collate utf8mb4_unicode_ci AS `value_key`,`p`.`id` AS `sumber_id`,_utf8mb4'program_renstra' collate utf8mb4_unicode_ci AS `sumber_ref`,convert(`p`.`uraian` using utf8mb4) collate utf8mb4_unicode_ci AS `uraian`,convert(`r`.`kd_wilayah` using utf8mb4) collate utf8mb4_unicode_ci AS `kd_wilayah`,convert(`r`.`kd_opd` using utf8mb4) collate utf8mb4_unicode_ci AS `kd_opd`,0 AS `is_deleted` from ((((`program_renstra_neo` `p` join `sasaran_renstra_neo` `s` on(`s`.`id` = `p`.`sasaran_id` and `s`.`is_deleted` = 0)) join `tujuan_renstra_neo` `t` on(`t`.`id` = `s`.`tujuan_id` and `t`.`is_deleted` = 0)) join `misi_renstra_neo` `m` on(`m`.`id` = `t`.`misi_id` and `m`.`is_deleted` = 0)) join `renstra_neo` `r` on(`r`.`id` = `m`.`renstra_id` and `r`.`is_deleted` = 0)) where `p`.`is_deleted` = 0 union all select convert(concat('kegiatan_renstra:',`k`.`id`) using utf8mb4) collate utf8mb4_unicode_ci AS `value_key`,`k`.`id` AS `sumber_id`,_utf8mb4'kegiatan_renstra' collate utf8mb4_unicode_ci AS `sumber_ref`,convert(`k`.`uraian` using utf8mb4) collate utf8mb4_unicode_ci AS `uraian`,convert(`r`.`kd_wilayah` using utf8mb4) collate utf8mb4_unicode_ci AS `kd_wilayah`,convert(`r`.`kd_opd` using utf8mb4) collate utf8mb4_unicode_ci AS `kd_opd`,0 AS `is_deleted` from (((((`kegiatan_renstra_neo` `k` join `program_renstra_neo` `p` on(`p`.`id` = `k`.`program_id` and `p`.`is_deleted` = 0)) join `sasaran_renstra_neo` `s` on(`s`.`id` = `p`.`sasaran_id` and `s`.`is_deleted` = 0)) join `tujuan_renstra_neo` `t` on(`t`.`id` = `s`.`tujuan_id` and `t`.`is_deleted` = 0)) join `misi_renstra_neo` `m` on(`m`.`id` = `t`.`misi_id` and `m`.`is_deleted` = 0)) join `renstra_neo` `r` on(`r`.`id` = `m`.`renstra_id` and `r`.`is_deleted` = 0)) where `k`.`is_deleted` = 0 union all select convert(concat('sub_kegiatan_renstra:',`sk`.`id`) using utf8mb4) collate utf8mb4_unicode_ci AS `value_key`,`sk`.`id` AS `sumber_id`,_utf8mb4'sub_kegiatan_renstra' collate utf8mb4_unicode_ci AS `sumber_ref`,convert(`rk`.`uraian` using utf8mb4) collate utf8mb4_unicode_ci AS `uraian`,convert(`r`.`kd_wilayah` using utf8mb4) collate utf8mb4_unicode_ci AS `kd_wilayah`,convert(`r`.`kd_opd` using utf8mb4) collate utf8mb4_unicode_ci AS `kd_opd`,0 AS `is_deleted` from (((((((`sub_kegiatan_renstra_neo` `sk` join `rekening_kegiatan` `rk` on(`rk`.`id` = `sk`.`master_sub_kegiatan_id`)) join `kegiatan_renstra_neo` `k` on(`k`.`id` = `sk`.`kegiatan_renstra_id` and `k`.`is_deleted` = 0)) join `program_renstra_neo` `p` on(`p`.`id` = `k`.`program_id` and `p`.`is_deleted` = 0)) join `sasaran_renstra_neo` `s` on(`s`.`id` = `p`.`sasaran_id` and `s`.`is_deleted` = 0)) join `tujuan_renstra_neo` `t` on(`t`.`id` = `s`.`tujuan_id` and `t`.`is_deleted` = 0)) join `misi_renstra_neo` `m` on(`m`.`id` = `t`.`misi_id` and `m`.`is_deleted` = 0)) join `renstra_neo` `r` on(`r`.`id` = `m`.`renstra_id` and `r`.`is_deleted` = 0)) where `sk`.`is_deleted` = 0 */;
@@ -212169,4 +212172,4 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-10-27  1:27:15
+-- Dump completed on 2026-10-27 16:04:17
