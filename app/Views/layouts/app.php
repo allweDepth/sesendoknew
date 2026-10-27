@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="/assets/css/fomantic.min.css">
   <link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="/assets/css/modern-tables.css?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/css/modern-tables.css') ?>">
-  <link rel="stylesheet" href="/assets/css/dark.css">
+  <link rel="stylesheet" href="/assets/css/dark.css?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/css/dark.css') ?>">
   <style>
     .table-content-excerpt {
       display: -webkit-box;
@@ -111,6 +111,8 @@
     .sidebarkanan {
       width: 420px !important;
       display: flex;
+      background: #fff !important;
+      color: #1b1c1d;
     }
 
     /* Tablet */
@@ -148,8 +150,8 @@
     #toastContainer {
       position: fixed;
       /* Toast tidak menutupi header, pencarian, dan dropdown utama. */
-      top: auto;
-      bottom: 20px;
+      top: var(--app-toast-top, 150px);
+      bottom: auto;
       right: 20px;
       width: 350px;
       z-index: 99999;
@@ -487,7 +489,7 @@
   <!-- ================= CORE ================= -->
   <script src="/assets/js/core/config.js"></script>
   <script src="/assets/js/core/state.js"></script>
-  <script src="/assets/js/core/toast.js"></script>
+  <script src="/assets/js/core/toast.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/toast.js') ?>"></script>
   <script src="/assets/js/services/e2e-message.js"></script>
   <script src="/assets/js/core/ajax.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/ajax.js') ?>"></script> <!-- HARUS SEBELUM app.js -->
   <script src="/assets/js/config/ui-config.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/config/ui-config.js') ?>"></script>

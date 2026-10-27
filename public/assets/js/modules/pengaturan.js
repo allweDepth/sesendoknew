@@ -56,6 +56,7 @@ class PengaturanModule {
 			});
 
 			this.bindSubmit();
+            window.Toast?.bindSettings(document.getElementById("pengaturan-html"));
 			this.initPaguLimits();
 			this.bindPeriodTable();
 			this.initUI();

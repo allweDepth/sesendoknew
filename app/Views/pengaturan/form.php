@@ -41,7 +41,22 @@ $tahunLabel = $user['tahun'] ?? '-';
         <?php if($isRegional): ?><a class="item" data-tab="periode">Periode RPJMD</a><?php endif; ?>
         <a class="item" data-tab="page-setup">Page Setup PDF</a>
         <a class="item" data-tab="kop-surat">Kop Surat Resmi</a>
+        <a class="item" data-tab="notifikasi">Notifikasi</a>
         <?php if($isRegional): ?><a class="item" data-tab="identitas">Logo &amp; Peta Daerah</a><a class="item" data-tab="batas-pagu">Batas Pagu OPD</a><?php endif; ?>
+    </div>
+
+    <div class="ui bottom attached tab segment" data-tab="notifikasi">
+      <h3 class="ui dividing header"><i class="bell outline icon"></i>Posisi Notifikasi</h3>
+      <form class="ui form" id="form-notification-settings">
+        <div class="field"><label for="notificationPosition">Tempat notifikasi</label>
+          <select class="ui dropdown" id="notificationPosition">
+            <option value="top right">Kanan atas (default)</option><option value="top left">Kiri atas</option><option value="top center">Tengah atas</option>
+            <option value="bottom right">Kanan bawah</option><option value="bottom left">Kiri bawah</option><option value="bottom center">Tengah bawah</option>
+          </select>
+        </div>
+        <p>Posisi atas berada di bawah menu utama dan judul halaman. Pilihan disimpan untuk akun Anda di browser ini.</p>
+        <button class="ui primary button" type="submit"><i class="save icon"></i>Simpan &amp; Coba Notifikasi</button>
+      </form>
     </div>
 
     <!-- TAB 1 -->

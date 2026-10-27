@@ -117,6 +117,7 @@ $(document).ready(function () {
 	// SIDEBAR KIRI (STABIL)
 	// ===============================
 	const $sidebarUtama = $(".sidebarutama");
+	if($sidebarUtama.length) document.documentElement.style.setProperty("--main-sidebar-width", $sidebarUtama.outerWidth()+"px");
 
 	$sidebarUtama.sidebar({
 		context: $context,

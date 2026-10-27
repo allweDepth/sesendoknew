@@ -11,8 +11,9 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
   </nav>
   <?php if ($mode === 'map'): ?>
     <div class="ui segment maps-full-toolbar">
-      <label for="mapsBasemap">Peta dasar</label>
-      <select id="mapsBasemap" class="ui search dropdown" aria-label="Pilih peta dasar">
+      <div class="ui stackable top aligned grid maps-controls-grid">
+        <div class="four wide column"><div class="ui form"><div class="field"><label for="mapsBasemap">Peta dasar</label>
+      <select id="mapsBasemap" class="ui fluid search dropdown" aria-label="Pilih peta dasar">
         <option value="osm">OpenStreetMap</option>
         <option value="open-topo">OpenTopoMap</option>
         <option value="carto-positron">CARTO Positron (terang)</option>
@@ -25,13 +26,28 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
         <option value="google-hybrid">Google Hybrid</option>
         <option value="google-terrain">Google Terrain</option>
       </select>
-      <?php require __DIR__ . '/search.php'; ?>
-      <span id="mapCoordinates">Peta siap · pilih layer pada panel Layer</span>
-      <span class="maps-toolbar-spacer"></span>
-      <button class="ui icon button" id="mapZoomIn" type="button" title="Perbesar" aria-label="Perbesar"><i class="plus icon"></i></button>
-      <button class="ui icon button" id="mapZoomOut" type="button" title="Perkecil" aria-label="Perkecil"><i class="minus icon"></i></button>
-      <button class="ui icon button" id="mapFit" type="button" title="Sesuaikan layer" aria-label="Sesuaikan layer"><i class="expand icon"></i></button>
-      <a class="ui basic button maps-layer-shortcut" href="/maps/layers" data-spa="server" data-title="Maps/Atur Layer SHP"><i class="layers icon"></i>Layer</a>
+        </div></div></div>
+        <div class="five wide column"><div class="ui form"><div class="field"><label>Cari lokasi atau alamat</label><?php require __DIR__ . '/search.php'; ?></div></div></div>
+        <div class="seven wide column">
+          <form id="mapsGoCoordinates" class="ui form maps-coordinate-form" aria-label="Menuju koordinat">
+            <div class="three fields">
+              <div class="field"><label for="mapsLatitude">Latitude</label><input id="mapsLatitude" type="text" inputmode="decimal" placeholder="-1.25" aria-describedby="mapsCoordinateError" required></div>
+              <div class="field"><label for="mapsLongitude">Longitude</label><input id="mapsLongitude" type="text" inputmode="decimal" placeholder="119.35" aria-describedby="mapsCoordinateError" required></div>
+              <div class="field"><label class="maps-action-label" aria-hidden="true">Tujuan</label><button type="submit" class="ui primary fluid button"><i class="crosshairs icon"></i>Ke koordinat</button></div>
+            </div>
+            <div id="mapsCoordinateError" class="ui pointing red basic label" role="alert" hidden></div>
+          </form>
+        </div>
+      </div>
+      <div class="maps-controls-footer">
+        <span id="mapCoordinates" role="status">Peta siap · pilih layer pada panel Layer</span>
+        <div class="ui compact icon buttons" aria-label="Kontrol peta">
+          <button class="ui button" id="mapZoomIn" type="button" title="Perbesar" aria-label="Perbesar"><i class="plus icon"></i></button>
+          <button class="ui button" id="mapZoomOut" type="button" title="Perkecil" aria-label="Perkecil"><i class="minus icon"></i></button>
+          <button class="ui button" id="mapFit" type="button" title="Sesuaikan layer" aria-label="Sesuaikan layer"><i class="expand icon"></i></button>
+          <a class="ui button" href="/maps/layers" data-spa="server" data-title="Maps/Atur Layer SHP"><i class="layers icon"></i>Layer</a>
+        </div>
+      </div>
     </div>
     <div class="maps-full-shell">
       <div id="mapsViewport" class="maps-viewport" role="application" aria-label="Peta interaktif"></div>
@@ -44,7 +60,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
     <div id="shapefileStatus" class="ui hidden positive message maps-toast" role="status"></div>
   <?php elseif ($mode === 'layers'): ?>
     <div class="maps-page-heading"><div><h1 class="ui header"><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></h1><p>Atur visibilitas, simbologi, label, dan periksa field atribut shapefile.</p></div></div>
-    <div class="maps-layout">
+    <div class="ui stackable grid maps-layout">
       <aside class="ui segment form maps-panel">
         <div class="maps-basemap-field"><label for="mapsBasemap">Peta dasar</label><select id="mapsBasemap" class="ui fluid search dropdown">
           <option value="osm">OpenStreetMap</option><option value="open-topo">OpenTopoMap</option><option value="carto-positron">CARTO Positron (terang)</option><option value="carto-dark">CARTO Dark Matter (gelap)</option><option value="esri-street">Esri World Street Map</option><option value="esri-terrain">Esri Terrain / Topographic</option><option value="esri-satellite">Esri World Imagery (Satellite)</option>
@@ -104,7 +120,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
     </div>
   <?php else: ?>
     <div class="maps-page-heading"><div><h1 class="ui header"><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></h1><p>Unggah shapefile dan komponen pendamping ke ruang data wilayah/OPD aktif.</p></div></div>
-    <div class="maps-layout maps-upload-layout">
+    <div class="ui stackable grid maps-layout maps-upload-layout">
       <section class="ui segment maps-panel">
         <?php if ($canManageLayers): ?>
           <form class="ui form maps-upload-form" id="shapefileForm">
@@ -320,4 +336,25 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
   .maps-navigation.ui.menu button.item { background: transparent; border: 0; cursor: pointer; font: inherit; }
   body.dark-mode .maps-editor-hint { color: #cbd5e1; }
   @media (max-width: 600px) { .maps-preview-panel > .maps-inspector { width: min(320px, calc(100% - 24px)); max-height: 65%; } }
+
+  .maps-page .maps-full-toolbar { display:block; padding:14px; }
+  .maps-controls-grid.ui.grid { margin:-.5rem; }
+  .maps-controls-grid.ui.grid > .column { padding:.5rem; min-width:0; }
+  .maps-controls-grid .ui.form .fields { margin-bottom:0; }
+  .maps-controls-grid .ui.form .field { margin-bottom:0; }
+  .maps-controls-grid .maps-location-search { width:100%; max-width:none; }
+  .maps-page .maps-location-search .ui.action.input { display:flex; min-width:0; }
+  .maps-page .maps-location-search .ui.action.input > input { flex:1 1 0; width:0; }
+  .maps-page .maps-location-search .ui.action.input > button { flex:0 0 auto; }
+  .maps-controls-grid .maps-search-caption { position:absolute; font-size:.75rem; }
+  .maps-controls-footer { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; margin-top:18px; }
+  .maps-controls-footer #mapCoordinates { flex:1 1 360px; order:0; }
+  .maps-controls-footer .buttons { flex:0 0 auto; }
+  .maps-page .maps-floating-layers { width:min(340px,calc(100% - 24px)); background:#fff; }
+  .maps-layer-row { flex-wrap:wrap; }
+  .maps-layer-label { flex-basis:160px; }
+  .maps-layer-actions { margin-left:auto; }
+  .maps-layout.ui.grid { display:grid; margin:0; }
+  .maps-layout.ui.grid > .ui.segment { width:auto; }
+  @media(max-width:767px) { .maps-page .maps-controls-grid.ui.grid > .column { padding:.75rem!important; } .maps-controls-grid .maps-search-caption { position:static; } .maps-controls-footer { margin-top:10px; } .maps-page .maps-floating-layers { max-width:270px; } }
 </style>

@@ -21,7 +21,6 @@ body.dark-mode .ui.sidebar {
     color: #f1f5f9 !important;
     border: 1px solid #334155 !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
-    border-radius: 10px !important;
 }
 
 /* ===============================
@@ -70,7 +69,6 @@ body.dark-mode .ui.form input:focus {
 body.dark-mode .ui.button {
     background: #334155 !important;
     color: #ffffff !important;
-    border-radius: 8px !important;
 }
 
 body.dark-mode .ui.primary.button {
@@ -155,3 +153,125 @@ body.dark-mode .ui.table th,
 body.dark-mode .ui.form label {
     color: #f1f5f9 !important;
 }
+/* Fomantic surfaces remain opaque, including basic segments inside the flyout. */
+body.dark-mode { --app-surface:#1e293b; --app-raised:#29384d; --app-border:#526278; --app-text:#f1f5f9; --app-muted:#c4d0df; }
+body.dark-mode #mainContext .sidebarkanan,
+body.dark-mode .sidebarkanan .flyout-container,
+body.dark-mode .sidebarkanan .flyout-body,
+body.dark-mode .sidebarkanan .flyout-footer,
+body.dark-mode .ui.modal > .content,
+body.dark-mode .ui.modal > .actions,
+body.dark-mode .ui.cards > .card,
+body.dark-mode .ui.steps .step,
+body.dark-mode .ui.steps .step:after,
+body.dark-mode .budget-summary,
+body.dark-mode .p4-cards > div,
+body.dark-mode .p4-grid > section,
+body.dark-mode .sw-sheet,
+body.dark-mode .sw-toolbar,
+body.dark-mode .contract-schedule-item {
+    background:var(--app-surface) !important;
+    color:var(--app-text) !important;
+    border-color:var(--app-border) !important;
+}
+body.dark-mode .ui.card > .content > .header,
+body.dark-mode .ui.cards > .card > .content > .header,
+body.dark-mode .ui.card .description,
+body.dark-mode .ui.cards > .card .description,
+body.dark-mode .ui.steps .step .title,
+body.dark-mode .ui.steps .step .description,
+body.dark-mode .ui.steps .step:before,
+body.dark-mode .ui.statistics .statistic > .value,
+body.dark-mode .ui.statistics .statistic > .label,
+body.dark-mode .ui.statistic > .value,
+body.dark-mode .ui.statistic > .label,
+body.dark-mode .ui.checkbox label,
+body.dark-mode .ui.checkbox + label,
+body.dark-mode .ui.form .field > label { color:var(--app-text) !important; }
+body.dark-mode .ui.card .meta,
+body.dark-mode .ui.cards > .card .meta,
+body.dark-mode .ui.header .sub.header,
+body.dark-mode .ui.steps .disabled.step .title,
+body.dark-mode .ui.steps .disabled.step:before { color:var(--app-muted) !important; }
+body.dark-mode .ui.steps .active.step,
+body.dark-mode .ui.steps .active.step:after { background:#244669 !important; }
+body.dark-mode a:not(.ui.button):not(.item),
+body.dark-mode .budget-tree-table a { color:#8bceff; }
+body.dark-mode .ui.input > i.icon { color:var(--app-muted); }
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder,
+body.dark-mode .ui.dropdown > .default.text { color:#b2bfd0 !important; opacity:1; }
+body.dark-mode .ui.form select,
+body.dark-mode .ui.dropdown .menu,
+body.dark-mode .ui.selection.dropdown .menu > .item,
+body.dark-mode .ui.search > .results,
+body.dark-mode .ui.search > .results .result { background:#162238 !important; color:var(--app-text) !important; border-color:var(--app-border) !important; }
+body.dark-mode .ui.dropdown .menu > .item,
+body.dark-mode .ui.search > .results .result .title,
+body.dark-mode .ui.search > .results .result .description { color:var(--app-text) !important; }
+body.dark-mode .ui.dropdown .menu > .selected.item,
+body.dark-mode .ui.dropdown .menu > .item:hover { background:#304b69 !important; }
+body.dark-mode .ui.form .field.error input,
+body.dark-mode .ui.form .field.error textarea,
+body.dark-mode .ui.form .field.error .ui.dropdown { background:#42232c !important; border-color:#ff9b9b !important; color:#ffe1e1 !important; }
+body.dark-mode .ui.form .field.error > label { color:#ffb4b4 !important; }
+body.dark-mode .ui.form input[readonly],
+body.dark-mode .ui.disabled.input input { color:#c4d0df !important; background:#29384d !important; }
+body.dark-mode .ui.table tbody tr:nth-child(even) { background:#233146; }
+body.dark-mode .budget-tree-table .program td { background:#264b69 !important; color:#f1f5f9 !important; }
+body.dark-mode .budget-tree-table .kegiatan td { background:#263e54 !important; color:#f1f5f9 !important; }
+body.dark-mode .budget-tree-table .account td { background:#29384d !important; color:#f1f5f9 !important; }
+body.dark-mode .ui.label { background:#35465e; color:#f1f5f9; }
+body.dark-mode .ui.basic.button { box-shadow:0 0 0 1px #738398 inset !important; color:#f1f5f9 !important; }
+body.dark-mode .ui.green.button, body.dark-mode .ui.positive.button { background:#167342 !important; }
+body.dark-mode .ui.red.button, body.dark-mode .ui.negative.button { background:#b6313c !important; }
+body.dark-mode .ui.teal.button { background:#006b70 !important; }
+body.dark-mode .ui.orange.button { background:#974b10 !important; }
+body.dark-mode .ui.purple.button, body.dark-mode .ui.violet.button { background:#7048bd !important; }
+body.dark-mode .ui.blue.button, body.dark-mode .ui.primary.button { background:#2367b7 !important; }
+body.dark-mode .ui.yellow.button { background:#f2c037 !important; color:#191919 !important; }
+body.dark-mode .ui.positive.message, body.dark-mode .ui.success.message { background:#173c31 !important; border-color:#54b98f !important; color:#d9ffeb !important; }
+body.dark-mode .ui.negative.message, body.dark-mode .ui.error.message { background:#482632 !important; border-color:#f098a2 !important; color:#ffe2e7 !important; }
+body.dark-mode .ui.warning.message { background:#49391e !important; border-color:#d8b15e !important; color:#ffedc5 !important; }
+body.dark-mode .ui.info.message { background:#1c3c54 !important; border-color:#72b9e5 !important; color:#e0f4ff !important; }
+body.dark-mode .doc-toolbar { background:#29384d !important; }
+body.dark-mode .ui.toast { background:#29384d; color:#f1f5f9; }
+body.dark-mode .p4-status { border-color:var(--app-border); }
+#mapsCoordinateError[hidden] { display:none !important; }
+.maps-full-toolbar { flex-wrap:wrap; }
+#toastContainer .app-toast { width:100%; }
+#toastContainer { max-width:calc(100vw - 28px); }
+body.dark-mode .dash-panel,
+body.dark-mode .quick-chat,
+body.dark-mode .workflow-steps > div,
+body.dark-mode .ui.popup,
+body.dark-mode .ui.calendar .ui.table { background:var(--app-surface) !important; color:var(--app-text) !important; border-color:var(--app-border) !important; }
+body.dark-mode .metric-value { color:var(--app-text) !important; }
+body.dark-mode .quick-chat small { color:var(--app-muted) !important; }
+body.dark-mode .chart-row > div { background:#3b4b60; }
+body.dark-mode .ui.modal > .close { color:#f1f5f9; }
+body.dark-mode .ui.list > .item .header,
+body.dark-mode .ui.list > .item .description,
+body.dark-mode .ui.dropdown .menu > a.item,
+body.dark-mode #userMenu .menu > .item,
+body.dark-mode #userMenu .menu > .item > i,
+body.dark-mode #userMenu .menu > .item > span { color:#f1f5f9 !important; }
+body.dark-mode #userMenu .menu { background:#1e293b !important; }
+body.dark-mode .maps-page .maps-full-toolbar,
+body.dark-mode .maps-page .maps-floating-layers,
+body.dark-mode .maps-page .maps-feature-properties { background:#1e293b !important; border-color:#526278 !important; color:#f1f5f9 !important; }
+body.dark-mode .maps-search-caption { color:#c4d0df; }
+body.dark-mode .leaflet-popup-content-wrapper,
+body.dark-mode .leaflet-popup-tip { background:#1e293b; color:#f1f5f9; }
+body.dark-mode .leaflet-container a.leaflet-popup-close-button { color:#f1f5f9; }
+@media(min-width:769px) {
+ #mainContext .sidebarutama.visible ~ .pusher { width:calc(100% - var(--main-sidebar-width,260px)); }
+}
+body.dark-mode .leaflet-control-attribution,
+body.dark-mode .leaflet-control-scale-line { background:#1e293b; color:#f1f5f9; border-color:#9eafc2; }
+body.dark-mode .ui.form .maps-coordinate-form .field { min-width:0; }
+body.dark-mode .ui.green.label { background:#167342 !important; color:#fff !important; }
+body.dark-mode .ui.red.label { background:#a72f3a !important; color:#fff !important; }
+body.dark-mode .ui.blue.label, body.dark-mode .ui.teal.label { background:#235b88 !important; color:#fff !important; }
+body.dark-mode .ui.grey.label { background:#4b596c !important; color:#fff !important; }
+body.dark-mode .ui.basic.red.label { background:#482632 !important; border-color:#f098a2 !important; color:#ffe2e7 !important; }

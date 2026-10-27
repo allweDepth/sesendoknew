@@ -986,6 +986,35 @@
       map.zoomOut();
     });
     page.querySelector("#mapFit")?.addEventListener("click", fitActiveMap);
+    page.querySelector("#mapsGoCoordinates")?.addEventListener("submit", event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const latitude = page.querySelector("#mapsLatitude");
+      const longitude = page.querySelector("#mapsLongitude");
+      const error = page.querySelector("#mapsCoordinateError");
+      const parse = input => {
+        const text = input.value.trim().replace(",", ".");
+        return /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(text) ? Number(text) : NaN;
+      };
+      const lat = parse(latitude), lng = parse(longitude);
+      const invalidLat = !Number.isFinite(lat) || Math.abs(lat) > 90;
+      const invalidLng = !Number.isFinite(lng) || Math.abs(lng) > 180;
+      [latitude, longitude].forEach((input, i) => {
+        const invalid = i === 0 ? invalidLat : invalidLng;
+        input.closest(".field").classList.toggle("error", invalid);
+        input.setAttribute("aria-invalid", String(invalid));
+      });
+      form.classList.toggle("error", invalidLat || invalidLng);
+      error.hidden = !(invalidLat || invalidLng);
+      if (invalidLat || invalidLng) {
+        error.textContent = "Latitude harus −90 sampai 90 dan longitude −180 sampai 180 (derajat desimal).";
+        (invalidLat ? latitude : longitude).focus();
+        return;
+      }
+      clearFeatureSelection();
+      map.setView([lat, lng], Math.min(16, map.getMaxZoom()));
+      showCoordinates({ lat, lng }, "Koordinat tujuan");
+    });
     baseSelect.addEventListener("change", () => {
       if (syncingControls) return;
       try {
@@ -1002,6 +1031,8 @@
       map.invalidateSize();
     };
     window.addEventListener("resize", onResize);
+    const viewportObserver = typeof ResizeObserver === "function" ? new ResizeObserver(onResize) : null;
+    viewportObserver?.observe(page.querySelector("#mapsViewport"));
 
     const saveStyleButton = page.querySelector("#saveMapsStyle");
     if (saveStyleButton) {
@@ -1149,6 +1180,7 @@
     });
     destroyActiveMapPage = () => {
       window.removeEventListener("resize", onResize);
+      viewportObserver?.disconnect();
       document.removeEventListener("keydown", onEscape);
       shapeEditor?.destroy();
       ++searchVersion; searchAbort?.abort();
