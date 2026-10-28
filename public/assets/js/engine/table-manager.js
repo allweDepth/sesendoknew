@@ -238,6 +238,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			.map((item) => ({
 				key: item.prop.name,
 				label: item.prop.tableLabel || item.prop.label || item.prop.name,
+				labelLines: item.prop.tableLabelLines,
 				format: item.prop.format || (/(nilai|jumlah|total|pagu|harga|anggaran)/i.test(item.prop.name) ? "currency" : null),
 				priority: Number(item.prop.tablePriority || 0),
 				width: item.prop.tableWidth || this.inferColumnWidth(item.prop.name),
@@ -288,7 +289,10 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		columns.forEach((col) => {
 			const active = this.sortBy === col.key;
 			const direction = active ? this.sortDir : "none";
-			html += `<th class="table-sortable table-col-${col.width} ${active ? `sorted ${this.sortDir === "asc" ? "ascending" : "descending"}` : ""}" data-sort-key="${this.escapeHtml(col.key)}" aria-sort="${direction === "none" ? "none" : direction === "asc" ? "ascending" : "descending"}" tabindex="0">${this.escapeHtml(col.label)}<i class="sort icon" aria-hidden="true"></i></th>`;
+			const label = Array.isArray(col.labelLines)
+				? col.labelLines.map(line => this.escapeHtml(line)).join("<br>")
+				: this.escapeHtml(col.label);
+			html += `<th class="table-sortable table-col-${col.width} ${active ? `sorted ${this.sortDir === "asc" ? "ascending" : "descending"}` : ""}" data-sort-key="${this.escapeHtml(col.key)}" aria-sort="${direction === "none" ? "none" : direction === "asc" ? "ascending" : "descending"}" tabindex="0">${label}<i class="sort icon" aria-hidden="true"></i></th>`;
 		});
 
 		html += "<th class='collapsing table-action-column'>Aksi</th></tr>";

@@ -59,7 +59,8 @@ final class ContractOfferPrintService
     }
     private function page(TCPDF $pdf,array $setup,array $p,string $orientation):void
     {
-        $pdf->AddPage(PageSetupService::orientation($setup,$orientation));
+        // RAB tables require a landscape page even when the general letter setup is portrait.
+        $pdf->AddPage($orientation==='L'?'L':PageSetupService::orientation($setup,$orientation));
         if(!empty($p['kop_aktif'])){$root=realpath(dirname(__DIR__,2).'/storage/uploads');$file=realpath(dirname(__DIR__,2).'/'.$p['kop_path']);if(!$root||!$file||!str_starts_with($file,$root.DIRECTORY_SEPARATOR))throw new RuntimeException('File kop rekanan tidak ditemukan. Unggah ulang atau nonaktifkan kop.');$size=getimagesize($file);$m=$pdf->getMargins();$width=$pdf->getPageWidth()-$m['left']-$m['right'];$width=min($width,45*$size[0]/$size[1]);$height=$width*$size[1]/$size[0];$pdf->Image($file,$m['left'],$pdf->GetY(),$width,$height);$pdf->SetY($pdf->GetY()+$height+5);}
     }
     private function letter(TCPDF $pdf,array $c,array $v,array $p,float $total):void

@@ -1591,8 +1591,8 @@ UIConfig.__akunMapFactory = function (entityName) {
 };
 UIConfig.kontrak = {
 	table: {
-		maxColumns: 7,
-		columnOrder: ["uraian_kontrak", "nilai_hps", "nilai_kontrak", "total_anggaran", "nomor_kontrak", "tanggal_kontrak", "status_kontrak"]
+		maxColumns: 8,
+		columnOrder: ["uraian_kontrak", "nilai_hps", "nilai_kontrak", "total_anggaran", "nomor_kontrak", "tanggal_kontrak", "waktu_pelaksanaan", "status_kontrak"]
 	},
 	validation: { cara_pengadaan:{required:true},jenis_pengadaan:{required:true},nomor_kontrak:{required:true},rekanan_id:{required:true} },
 	form: {
@@ -1609,12 +1609,12 @@ UIConfig.kontrak = {
 			{ tag:"input", prop:{label:"Total Pagu Terpilih (otomatis dari rincian)",tableLabel:"Total Pagu",tableWidth:"money",tablePriority:18,name:"total_anggaran",type:"number",atribut:"readonly"} },
 			{ tag:"input", prop:{label:"Nilai Kontrak (otomatis dari rincian)",tableLabel:"Nilai Kontrak",tableWidth:"money",tablePriority:19,name:"nilai_kontrak",type:"number",atribut:"readonly"} },
 			{ tag:"input", prop:{label:"Nomor Kontrak / SPK",name:"nomor_kontrak"} },
-			{ tag:"fieldCalendar", prop:{label:"Tanggal Kontrak",name:"tanggal_kontrak",calendarType:"date"} },
-			{ tag:"input", prop:{label:"Nomor SPMK",name:"nomor_spmk"} },
+			{ tag:"fieldCalendar", prop:{label:"Tanggal Kontrak",name:"tanggal_kontrak",tablePriority:17,calendarType:"date"} },
+			{ tag:"input", prop:{label:"Nomor SPMK",name:"nomor_spmk",table:false} },
 			{ tag:"fieldCalendar", prop:{label:"Tanggal SPMK",name:"tanggal_spmk",calendarType:"date"} },
 			{ tag:"fieldCalendar", prop:{label:"Tanggal Mulai",name:"tanggal_mulai",calendarType:"date"} },
 			{ tag:"fieldCalendar", prop:{label:"Tanggal Selesai",name:"tanggal_selesai",calendarType:"date"} },
-			{ tag:"input", prop:{label:"Waktu Pelaksanaan (hari)",name:"waktu_pelaksanaan",type:"number"} },
+			{ tag:"input", prop:{label:"Waktu Pelaksanaan (hari)",tableLabel:"Waktu Pelaksanaan (hari)",tableLabelLines:["Waktu","Pelaksanaan (hari)"],tableWidth:"duration",tablePriority:16,name:"waktu_pelaksanaan",type:"number"} },
 			{ tag:"input", prop:{name:"proses_pengadaan",type:"hidden"} },
 			{ tag:"fieldDropdown", prop:{label:"PPK aktif",name:"ppk_id",source:"pejabat_ppk",search:true} },
 			{ tag:"fieldDropdown", prop:{label:"PPTK aktif (jika ada)",name:"pptk_id",source:"pejabat_pptk",search:true} },

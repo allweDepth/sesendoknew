@@ -112,6 +112,7 @@ body.resizing-table-row, body.resizing-table-row * { cursor: row-resize !importa
 .modern-data-table .table-col-money { min-width: 118px; width: 12%; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .modern-data-table .table-col-date { min-width: 125px; width: 13%; white-space: nowrap; }
 .modern-data-table .table-col-compact { min-width: 105px; width: 12%; }
+.modern-data-table .table-col-duration { min-width: 135px; width: 1%; white-space: nowrap; }
 .modern-data-table .table-col-normal { min-width: 135px; }
 .modern-data-table[data-managed-table="kontrak"] .table-col-wide { min-width: 320px; width: 43%; }
 .modern-data-table[data-managed-table="kontrak"] .table-col-money { min-width: 112px; width: 11%; }
