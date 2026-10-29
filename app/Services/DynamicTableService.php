@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__.'/BudgetApprovalService.php';
+require_once __DIR__.'/ContractValueService.php';
 
 require_once __DIR__ . '/JsonResponse.php';
 require_once __DIR__ . '/FieldValidationException.php';
@@ -942,6 +944,7 @@ AUDIT TRAIL (TIDAK DIUBAH)
     $data['jenis_kontrak'] = ProcurementContractTypeService::normalize($data);
     $data['bentuk_kontrak'] = ProcurementDocumentService::recommendForm($way, $kind, $method, $value, $data['tipe_swakelola'] ?? null);
     if(array_key_exists('proses_pengadaan',$data))$data['proses_pengadaan']=ProcurementProcessService::normalize($data['proses_pengadaan'],$data);
+    if(!empty($data['anggaran_id'])&&!empty($data['tahap'])){$snapshot=BudgetApprovalService::assertBudget($data,$data['tahap'],(int)$data['anggaran_id']);if($snapshot)$data['pengesahan_anggaran_id']=$snapshot['pengesahan_anggaran_id'];}
     return $data;
   }
   private function performancePercentage(float $target, float $realization, string $polarity): float
@@ -1189,11 +1192,9 @@ INSERT (FIXED STABLE VERSION v3.1)
       }
       $budgetTable = $stage === 'dppa' ? 'dppa_neo' : 'dpa_neo';
       $budget = $this->db->query("SELECT kd_sub_keg FROM `$budgetTable` WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1", [$budgetId, $filtered['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? '', $filtered['kd_opd'] ?? $this->user['kd_opd'] ?? '', (int)($filtered['tahun'] ?? $this->user['tahun'] ?? date('Y'))])->fetch();
+      $approvalBudget=BudgetApprovalService::assertBudget($filtered,$stage,$budgetId,(int)($filtered['pengesahan_anggaran_id']??0));
+      if($approvalBudget){$budget=$approvalBudget;$filtered['pengesahan_anggaran_id']=$approvalBudget['pengesahan_anggaran_id'];}
       if (!$budget) return JsonResponse::error('Uraian DPA/DPPA belum disetujui dan dikunci. Kontrak belum dapat dibuat.');
-      if ($stage === 'dpa' && !empty($budget['kd_sub_keg'])) {
-        $dppa = $this->db->query('SELECT id FROM dppa_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1', [$filtered['kd_wilayah'] ?? $this->user['kd_wilayah'] ?? '', $filtered['kd_opd'] ?? $this->user['kd_opd'] ?? '', (int)($filtered['tahun'] ?? $this->user['tahun'] ?? date('Y')), $budget['kd_sub_keg']])->fetch();
-        if ($dppa) return JsonResponse::error('Gunakan uraian DPPA final untuk sub kegiatan ini.');
-      }
     }
 
     /* =====================================================
@@ -1362,9 +1363,12 @@ kd_sub_keg → nama_sub_keg
       }
       $table = $stage === 'dppa' ? 'dppa_neo' : 'dpa_neo';
       $budget = $this->db->query("SELECT kd_sub_keg,kd_akun,uraian,jumlah FROM `$table` WHERE id=? AND kd_wilayah=? AND kd_opd=? AND tahun=? AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1", [$budgetId, $header['kd_wilayah'], $header['kd_opd'], $header['tahun']])->fetch();
+      $snapshot=BudgetApprovalService::assertBudget($header,$stage,$budgetId,(int)($item['pengesahan_anggaran_id']??$header['pengesahan_anggaran_id']??0));
+      if($snapshot)$budget=$snapshot;
       if (!$budget) throw new InvalidArgumentException('Rincian DPA/DPPA tidak ditemukan, belum disetujui, atau belum dikunci');
       $this->db->insert('kontrak_item_neo', [
         'kontrak_id' => $contractId,
+        'pengesahan_anggaran_id'=>$snapshot['pengesahan_anggaran_id']??null,
         'tahap' => $stage,
         'anggaran_id' => $budgetId,
         'kd_wilayah' => $header['kd_wilayah'],
@@ -1653,6 +1657,7 @@ UPDATE DATA DENGAN DUPLICATE HANDLER
           $request,
           $profile
         );
+        if($table==='kontrak_neo'&&array_key_exists('nilai_kontrak',$diff))ContractValueService::sync($this->db,(int)$id,(float)$diff['nilai_kontrak']);
         if($table==='kontrak_neo')ProcurementProcessService::syncDocuments($this->db,(int)$id,array_merge($oldData,$diff),(string)($this->user['username']??'system'));
       } catch (PDOException $e) {
 

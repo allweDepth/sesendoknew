@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/RabTotalService.php';
 require_once __DIR__.'/PageSetupService.php';
 require_once __DIR__.'/OfficialLetterheadPdfService.php';
 require_once __DIR__.'/ProcurementDocumentFormatService.php';
@@ -60,7 +61,7 @@ final class ProcurementZipPdfService
     private function package(array $c):array{return[['Sub Kegiatan',$this->v($c,'nama_sub_kegiatan','nama_sub_keg','kd_sub_keg')],['Nama Paket',$this->v($c,'uraian_kontrak')],['Sumber Dana',$this->v($c,'sumber_dana')],['Tahun Anggaran',$this->v($c,'tahun')],['Kode Rekening',$this->v($c,'kd_sub_keg')],['Nilai HPS/OE',$this->money($c['nilai_hps']??0)]];}
     private function provider(array $c):array
     {
-        $offer=array_sum(array_column($c['rab']??[],'jumlah_penawaran'));$nego=$c['nilai_kontrak']??null;
+        $offer=RabTotalService::totals((int)$c['id'])['stages']['penawaran']['total'];$nego=($c['rab_totals']['stages']['negoisasi']['manual']??false)?$c['rab_totals']['stages']['negoisasi']['total']:($c['nilai_kontrak']??null);
         return [['Nama Penyedia Barang/Jasa',$this->v($c,'nama_penyedia_resmi','nama_perusahaan','nama_penyedia')],['Nama Direktur Utama',$this->v($c,'direktur')],['Alamat',$this->v($c,'alamat_penyedia','alamat')],['NPWP',$this->v($c,'npwp')],['Harga Penawaran',$this->money($offer).' ('.ucwords($this->words((int)round($offer))).' Rupiah)'],['Harga Klarifikasi dan Negosiasi',isset($nego)?$this->money($nego).' ('.ucwords($this->words((int)round($nego))).' Rupiah)':'Belum ditetapkan'],['Jangka waktu pelaksanaan',$this->v($c,'waktu_pelaksanaan').' ('.ucwords($this->words((int)($c['waktu_pelaksanaan']??0))).') Hari Kalender']];
     }
     private function invitation(array $d,array $c,array $setup):string
@@ -123,7 +124,7 @@ final class ProcurementZipPdfService
     {
         $pdf=$this->page($setup);$this->title($pdf,"BERITA ACARA\nHASIL KLARIFIKASI DAN NEGOSIASI",$d['nomor_dokumen']??'');
         $this->para($pdf,'Pada hari ini '.$this->dayWords($d,$c).', bertempat di Kantor '.$this->v($this->user,'nama_opd').', yang bertanda tangan dibawah ini Pejabat Pengadaan Barang/Jasa pada '.$this->v($this->user,'nama_opd').' yang ditetapkan berdasarkan Surat Keputusan Kepala '.$this->v($this->user,'nama_opd').' nomor '.$this->v($c,'nomor_sk_pejabat_pengadaan').' tanggal '.$this->date(['tanggal_dokumen'=>$c['tanggal_sk_pejabat_pengadaan']??''],$c).', telah melakukan klarifikasi dan negosiasi untuk:');
-        $offer=array_sum(array_column($c['rab']??[],'jumlah_penawaran'));$nego=$c['nilai_kontrak']??null;
+        $offer=RabTotalService::totals((int)$c['id'])['stages']['penawaran']['total'];$nego=($c['rab_totals']['stages']['negoisasi']['manual']??false)?$c['rab_totals']['stages']['negoisasi']['total']:($c['nilai_kontrak']??null);
         $pdf->writeHTML($this->fields($this->package($c)).'<p>Dengan hasil sebagai berikut:</p><p>1. Klarifikasi dan Negosiasi dilaksanakan pada hari '.$this->e($this->dayWords($d,$c)).' sampai selesai, antara Pejabat Pengadaan Barang/Jasa dengan Direktur '.$this->e($this->v($c,'nama_penyedia_resmi','nama_penyedia')).'</p><p>2. Klarifikasi dan Negosiasi dilakukan untuk mendapatkan kesepakatan besarnya biaya dengan tetap mempertahankan hasil yang ingin dicapai dengan penawaran teknis yang diajukan.</p><p>3. Sebagai hasil klarifikasi dan negosiasi adalah sebagai berikut:</p><p>3.1. Dokumen penawaran dari penyedia jasa telah sesuai dengan persyaratan dokumen pemilihan / RKS</p><p>3.2. Sebagai calon penyedia jasa, untuk pekerjaan tersebut, '.$this->e($this->v($c,'nama_penyedia_resmi','nama_penyedia')).' sepakat dan bersedia menurunkan biaya, yang semula penawarannya sebesar '.$this->money($offer).' ('.$this->e(ucwords($this->words((int)round($offer)))).' Rupiah) diturunkan menjadi '.(isset($nego)?$this->money($nego).' ('.$this->e(ucwords($this->words((int)round($nego)))).' Rupiah)':'Belum ditetapkan').'. Lampiran I Berita Acara Klarifikasi dan Negoisasi serta daftar kuantitas harga setelah klarifikasi dan negosiasi merupakan bagian yang tidak terpisahkan dari berita acara ini.</p><p>3.3. Jika terjadi penurunan biaya yang disepakati tetap memenuhi persyaratan teknis yang telah ditentukan dalam dokumen pemilihan / RKS.</p><p>Demikian Berita Acara Hasil Klarifikasi dan Negosiasi ini dibuat dengan sebenarnya, ditandatangani oleh Pejabat Pengadaan Barang / Jasa, untuk dipergunakan sebagaimana mestinya.</p>',true,false,true,false,'');
         $this->signatureBlock($pdf,$this->pairedSignatures($c));return $this->finish($pdf);
     }
@@ -151,9 +152,9 @@ final class ProcurementZipPdfService
         $summary='<table cellpadding="2">';
         foreach(['Jumlah Total (A)','Jumlah Terkena Pajak (B)','PPN sesuai rincian (C)','Jumlah Total termasuk PPN (D)','Jumlah Total dibulatkan (E)'] as $i=>$label){
             $summary.='<tr nobr="true"><td width="73%" align="right" style="border-top:0.5px solid black">'.$label.'</td>';
-            foreach($totals as $t){$amount=$i<3?$t[$i]:$t[0]+$t[2];$summary.='<td width="9%" align="right" style="border-top:0.5px solid black">'.number_format($amount,2,',','.').'</td>';}$summary.='</tr>';
+            foreach($totals as $stage=>$t){$amount=$i<3?$t[$i]:$t[0]+$t[2];if($i===4)$amount=$c['rab_totals']['stages'][$stage]['total']??$amount;$summary.='<td width="9%" align="right" style="border-top:0.5px solid black">'.number_format($amount,2,',','.').'</td>';}$summary.='</tr>';
         }
-        $nego=$c['nilai_kontrak']??null;
+        $nego=($c['rab_totals']['stages']['negoisasi']['manual']??false)?$c['rab_totals']['stages']['negoisasi']['total']:($c['nilai_kontrak']??null);
         $summary.='</table><p><b>Terbilang ## '.(isset($nego)?$this->e(ucwords($this->words((int)round($nego)))).' Rupiah':'Belum ditetapkan').' ##</b></p><p>Keterangan:<br>Harga sudah memperhitungkan pajak yang berlaku</p>';
         // Continue in the available space; only individual rows and signatures stay intact.
         $pdf->writeHTML($summary,true,false,true,false,'');
@@ -183,7 +184,7 @@ final class ProcurementZipPdfService
     {
         $pdf=$this->page($setup);$this->title($pdf,$final?"Berita Acara\nHasil Pemilihan":"Berita Acara\nHasil Evaluasi Penawaran",$d['nomor_dokumen']??'');$pdf->SetFont($this->font,'',$this->size);
         $this->para($pdf,'Pada hari dan tanggal '.$this->date($d,$c).' telah dibuat '.($final?'Berita Acara Hasil Pemilihan':'Berita Acara Hasil Evaluasi Penawaran').' untuk paket pekerjaan berikut:',$final?4.2:5);
-        $provider=$this->e($this->v($c,'nama_penyedia_resmi','nama_penyedia'));$address=$this->e($this->v($c,'alamat_penyedia','alamat'));$price=$this->money(array_sum(array_column($c['rab']??[],'jumlah_penawaran')));
+        $provider=$this->e($this->v($c,'nama_penyedia_resmi','nama_penyedia'));$address=$this->e($this->v($c,'alamat_penyedia','alamat'));$price=$this->money(RabTotalService::totals((int)$c['id'])['stages']['penawaran']['total']);
         $html=$this->fields([['Kode Paket',$this->v($c,'kode_paket','kd_sub_keg')],['Nama Paket',$this->v($c,'uraian_kontrak')],['Nilai Total HPS',$this->money($c['nilai_hps']??0)],['Sumber Dana',$this->v($c,'sumber_dana')],['Metode Evaluasi','Pengadaan Langsung']]);
         $html.='<p><b>Dengan hasil sebagai berikut:</b></p><p><b>A. Pembukaan Penawaran</b><br>Dari 1 (satu) peserta yang mendaftar terdapat 1 (satu) peserta yang memasukkan dokumen penawaran, yaitu:</p><table border="1" cellpadding="4"><tr><th width="8%">No.</th><th width="32%">Nama Peserta</th><th width="40%">Alamat Peserta</th><th width="20%">Nilai Penawaran</th></tr><tr><td>1</td><td>'.$provider.'</td><td>'.$address.'</td><td>'.$price.'</td></tr></table>';
         foreach(['Evaluasi Administrasi','Evaluasi Teknis','Evaluasi Harga'] as $i=>$stage){$html.='<p><b>'.($i+1).'. '.$stage.'</b></p><table border="1" cellpadding="'.($final?'3':'4').'"><tr><th width="8%">No.</th><th width="'.($i===2?'32':'42').'%">Nama Peserta</th>'.($i===2?'<th width="22%">Penawaran</th>':'').'<th width="'.($i===2?'18':'25').'%">Hasil Evaluasi</th><th width="'.($i===2?'20':'25').'%">Keterangan</th></tr><tr><td>1</td><td>'.$provider.'</td>'.($i===2?'<td>'.$price.'</td>':'').'<td>LULUS</td><td></td></tr></table>';}

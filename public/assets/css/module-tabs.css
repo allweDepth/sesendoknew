@@ -1,0 +1,42 @@
+/* Fomantic tab menus share one width and complete panel boundaries. */
+#main-content :where(.ui.menu:has(> .item[data-tab]),#crudMenu,.maps-navigation) {
+  display:flex;flex-wrap:wrap;width:100%!important;max-width:100%;margin:1rem 0 .75rem!important;
+  border:0;box-shadow:none;background:transparent;gap:6px;min-height:0;
+}
+#main-content :where(.ui.menu:has(> .item[data-tab]),#crudMenu,.maps-navigation) > .item {
+  flex:1 1 140px;width:auto!important;min-width:0;justify-content:center;text-align:center;
+  margin:0!important;padding:1em .85em;border:1px solid #dbe4ee!important;border-radius:7px!important;
+  background:#f5f8fc;color:#40546a;font-weight:600;line-height:1.35;white-space:normal;
+}
+#main-content :where(.ui.menu:has(> .item[data-tab]),#crudMenu,.maps-navigation) > .item:before {display:none;}
+#main-content :where(.ui.menu:has(> .item[data-tab]),#crudMenu,.maps-navigation)::after {display:none;}
+#main-content :where(.ui.menu:has(> .item[data-tab]),#crudMenu,.maps-navigation) > .item.active {background:#eaf4ff;color:#1678c2;border-color:#9fcaf0!important;box-shadow:inset 0 -3px 0 currentColor;}
+#main-content :where(.ui.menu:has(> .item[data-tab]),#crudMenu,.maps-navigation) > .item:focus-visible {outline:2px solid #2185d0;outline-offset:2px;}
+#main-content .ui.tab.segment[data-tab] {
+  width:100%!important;max-width:100%;margin:0!important;border:1px solid #dbe4ee!important;border-radius:8px!important;
+  padding:1rem;box-sizing:border-box;min-width:0;
+}
+#main-content .ui.menu.contract-section-tabs {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));}
+#main-content .ui.menu.contract-section-tabs>.item {width:100%!important;min-height:48px;}
+#main-content .ui.menu.contract-section-tabs>.blue.item {color:#1678c2;background:#edf6ff;}
+#main-content .ui.menu.contract-section-tabs>.teal.item {color:#00827c;background:#edfafa;}
+#main-content .ui.menu.contract-section-tabs>.orange.item {color:#9d5600;background:#fff7eb;}
+#main-content .ui.menu.contract-section-tabs>.violet.item {color:#6435c9;background:#f5f0ff;}
+#pengaturan-tabs {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));}
+#main-content #pengaturan-tabs>.item {min-height:52px;}
+#procurementDocumentContent .ui.segment>.right.floated.buttons {float:none!important;display:flex;width:max-content;max-width:100%;margin:0 0 .8rem auto;}
+#procurementDocumentContent .ui.segment>b {display:block;line-height:1.45;}
+#procurementDocumentContent .ui.segment>.right.floated.buttons .button {white-space:nowrap;}
+body.dark-mode #main-content :where(.ui.menu:has(> .item[data-tab]),#crudMenu,.maps-navigation)>.item {background:#17273c;color:#dae9fa;border-color:#42556c!important;}
+body.dark-mode #main-content :where(.ui.menu:has(> .item[data-tab]),#crudMenu,.maps-navigation)>.active.item {background:#214566;color:#bfe4ff;border-color:#70b5ec!important;}
+body.dark-mode #main-content .ui.tab.segment[data-tab] {background:#1e293b;border-color:#42556c!important;}
+@media(max-width:700px){#main-content .ui.menu.contract-section-tabs {grid-template-columns:repeat(2,minmax(0,1fr));}#pengaturan-tabs{grid-template-columns:repeat(2,minmax(0,1fr));}.contract-delivery-heading{flex-wrap:wrap;}.contract-rab-toolbar.ui.menu .right.menu{margin-left:0!important;}.contract-rab-toolbar.ui.menu{gap:8px;}}
+
+#main-content #crudMenu.ui.menu,#main-content .maps-navigation.ui.menu{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;}
+#main-content #crudMenu.ui.menu>.item,#main-content .maps-navigation.ui.menu>.item{border-bottom-width:1px!important;min-height:48px;}
+
+/* Portaled Fomantic calendars must sit above modal/flyout stacking contexts. */
+body>.ui.calendar.popup{z-index:100010!important;max-width:calc(100vw - 16px);}
+
+body.dark-mode #main-content .ui.menu.contract-section-tabs>.item{color:#dae9fa;background:#17273c;border-color:#42556c!important;}
+body.dark-mode #main-content .ui.menu.contract-section-tabs>.active.item{background:#214566;color:#bfe4ff;border-color:#70b5ec!important;}

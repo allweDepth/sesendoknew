@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/RabTotalService.php';
 require_once __DIR__.'/ContractAccessService.php';
 require_once __DIR__.'/../Core/DB.php';
 require_once __DIR__.'/../Core/Auth.php';
@@ -40,6 +41,7 @@ final class ProcurementDocumentService
         if($o!==''&&$o!=='0'){$sql.=' AND k.kd_opd=?';$p[]=$o;}$row=$this->db->query($sql.' LIMIT 1',$p)->fetch();if(!$row)throw new RuntimeException('Kontrak tidak ditemukan dalam lingkup pengguna');
         ContractAccessService::assert($this->user,$row);$row=ContractOfficialService::resolve($row);$row['sumber_dana']='APBD';$row['print_settings']=ContractPrintSettingsService::get($id);
         $row['rab']=$this->db->query('SELECT * FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY COALESCE(NULLIF(urutan,0),id),id',[$id])->fetchAll();
+        $row['rab_totals']=RabTotalService::totals($id);if($row['rab_totals']['stages']['hps']['manual'])$row['nilai_hps']=$row['rab_totals']['stages']['hps']['total'];
         $row['dokumen_referensi']=[];foreach($this->db->query('SELECT kode_dokumen,nomor_dokumen,tanggal_dokumen FROM dokumen_pengadaan_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY id',[$id])->fetchAll() as $ref)$row['dokumen_referensi'][$ref['kode_dokumen']]=$ref;
         $vendor=$row['rekanan_id']?$this->db->query('SELECT no_rekening,bank_rekening,atas_nama_rekening,nama_notaris_pendirian FROM rekanan_neo WHERE id=? AND is_deleted=0',[$row['rekanan_id']])->fetch():[];
         return $row+($vendor?:[]);

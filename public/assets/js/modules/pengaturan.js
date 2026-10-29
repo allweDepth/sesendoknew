@@ -29,6 +29,19 @@ class PengaturanModule {
 	// ==================================================
 	// ROLE CHECK (ANTI ERROR)
 	// ==================================================
+    initBudgetApprovals() {
+        const f=$('#budgetApprovalForm'),body=$('#budgetApprovalRows'),esc=v=>$('<div>').text(v??'').html();
+        const reset=()=>{f[0]?.reset();f.find('[name=id]').val('');f.removeClass('error');f.find('.field.error').removeClass('error');f.find('[name=jenis]').dropdown('set selected','DPA');f.find('[name=kd_opd]').dropdown('clear');};
+        const load=()=>window.Ajax.request({url:'/pengaturan/pengesahan',method:'GET',success:r=>{
+            this.approvalRows=r.data?.rows||[];
+            const selected=f.find('[name=kd_opd]').val();f.find('[name=kd_opd]').html('<option value="">Pilih OPD</option>'+(r.data?.opd||[]).map(o=>`<option value="${esc(o.kode)}">${esc(o.uraian)}</option>`).join('')).dropdown({fullTextSearch:true});if(selected)f.find('[name=kd_opd]').dropdown('set selected',selected);
+            body.html(this.approvalRows.length?this.approvalRows.map(x=>`<tr><td>${esc(x.nama_opd||x.kd_opd)}</td><td>${esc(x.label)}<br><small>${esc(x.dasar_hukum)}</small></td><td class="single line">${esc(x.tanggal)}</td><td><span class="ui tiny ${x.status==='DISAHKAN'?'green':'grey'} label">${esc(x.status)}</span></td><td>${Number(x.jumlah_rincian)}</td><td class="collapsing">${r.data?.can_manage&&x.status==='DRAFT'?`<div class="ui mini basic icon buttons"><button class="ui button" data-approval-edit="${Number(x.id)}" title="Edit draft"><i class="edit icon"></i></button><button class="ui red button" data-approval-delete="${Number(x.id)}" title="Hapus draft"><i class="trash icon"></i></button></div>`:'Versi tetap'}</td></tr>`).join(''):'<tr><td colspan="6">Belum ada nomor/tanggal pengesahan yang dicatat TAPD. Tanggal tidak diambil dari waktu input data.</td></tr>');
+        },error:()=>body.html('<tr><td colspan="6">Riwayat gagal dimuat. Muat ulang halaman.</td></tr>')});
+        f.off('submit.approval').on('submit.approval',async e=>{e.preventDefault();const data=new FormData(f[0]);data.set('status',e.originalEvent?.submitter?.value||'DRAFT');f.addClass('loading').removeClass('error');try{const res=await fetch(window.appUrl('/pengaturan/pengesahan/save'),{method:'POST',credentials:'same-origin',headers:{'X-CSRF-TOKEN':window.CSRF_TOKEN||'','X-Requested-With':'XMLHttpRequest'},body:data}),r=await res.json();if(!r.success)throw Error(r.message||'Pengesahan gagal disimpan');reset();load();Toast.success(r.message);}catch(error){f.addClass('error').find('.error.message').text(error.message);}finally{f.removeClass('loading');}});
+        $('#budgetApprovalPanel').off('click.approvals').on('click.approvals','[data-approval-reset]',reset).on('click.approvals','[data-approval-edit]',e=>{const x=this.approvalRows.find(x=>Number(x.id)===Number($(e.currentTarget).data('approval-edit')));if(!x)return;Object.entries(x).forEach(([k,v])=>f.find(`[name="${k}"]`).val(v));f.find('[name=kd_opd]').dropdown('set selected',x.kd_opd);f.find('[name=jenis]').dropdown('set selected',x.jenis);}).on('click.approvals','[data-approval-delete]',async e=>{const id=$(e.currentTarget).data('approval-delete');const data=new FormData();data.set('id',id);try{const res=await fetch(window.appUrl('/pengaturan/pengesahan/delete'),{method:'POST',credentials:'same-origin',headers:{'X-CSRF-TOKEN':window.CSRF_TOKEN||'','X-Requested-With':'XMLHttpRequest'},body:data}),r=await res.json();if(!r.success)throw Error(r.message);reset();load();}catch(error){Toast.error(error.message);}});
+        f.find('[name=jenis]').dropdown({onChange:v=>f.find('[name=urutan]').prop('disabled',v!=='PARSIAL').closest('.field').toggleClass('disabled',v!=='PARSIAL')});load();
+    }
+
 	canEdit() {
 		const role = (this.user.type_user || "").toLowerCase().replace(/\s+/g, "_");
 
@@ -46,6 +59,7 @@ class PengaturanModule {
 
 			$("#pengaturan-tabs .item").tab({
 				onVisible: (tabPath) => {
+					$('#pengaturan-tabs > .item').removeClass('active').filter(function(){return $(this).attr('data-tab')===tabPath;}).addClass('active');
 					if (tabPath === "periode") {
 						if (!periodeModule) {
 							periodeModule = new PeriodeRPJMDModule();
@@ -54,10 +68,15 @@ class PengaturanModule {
 					}
 				},
 			});
+			$('#pengaturan-tabs').off('click.activeTab').on('click.activeTab','> .item',function(){
+				$(this).siblings('.item').removeClass('active');
+				$(this).addClass('active');
+			});
 
 			this.bindSubmit();
             window.Toast?.bindSettings(document.getElementById("pengaturan-html"));
 			this.initPaguLimits();
+            this.initBudgetApprovals();
 			this.bindPeriodTable();
 			this.initUI();
 			this.bindPageSectionEditors();

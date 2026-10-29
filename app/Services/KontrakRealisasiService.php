@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__.'/BudgetApprovalService.php';
+require_once __DIR__.'/RabTotalService.php';
+require_once __DIR__.'/RabImportService.php';
 require_once __DIR__ . '/ExcelPresentationService.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../Core/DB.php';
@@ -71,7 +74,7 @@ class KontrakRealisasiService
     if ($opd) $dppaParams[] = $o;
     [$accessSql,$accessParams]=ContractAccessService::condition($this->user,'b');$opd.=$accessSql;array_push($dpaParams,...$accessParams);array_push($dppaParams,...$accessParams);
         $sql = "SELECT b.kd_sub_keg,MAX(CONVERT(COALESCE(h.uraian,r.uraian,'') USING utf8mb4) COLLATE utf8mb4_general_ci) nama_sub_kegiatan,MAX(CONVERT(COALESCE(b.uraian,'') USING utf8mb4) COLLATE utf8mb4_general_ci) contoh_uraian,COUNT(*) jumlah_uraian,SUM(b.jumlah) pagu,'dppa' sumber FROM dppa_neo b LEFT JOIN rekening_kegiatan r ON CONVERT(r.kode USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_sub_keg USING utf8mb4) COLLATE utf8mb4_general_ci AND r.level='sub_kegiatan' LEFT JOIN rekening_kegiatan_historis h ON h.tahun=b.tahun AND CONVERT(h.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci AND CONVERT(h.kode USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_sub_keg USING utf8mb4) COLLATE utf8mb4_general_ci AND h.level='sub_kegiatan' WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0 GROUP BY b.kd_sub_keg
-          UNION ALL SELECT b.kd_sub_keg,MAX(CONVERT(COALESCE(h.uraian,r.uraian,'') USING utf8mb4) COLLATE utf8mb4_general_ci),MAX(CONVERT(COALESCE(b.uraian,'') USING utf8mb4) COLLATE utf8mb4_general_ci),COUNT(*),SUM(b.jumlah),'dpa' FROM dpa_neo b LEFT JOIN rekening_kegiatan r ON CONVERT(r.kode USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_sub_keg USING utf8mb4) COLLATE utf8mb4_general_ci AND r.level='sub_kegiatan' LEFT JOIN rekening_kegiatan_historis h ON h.tahun=b.tahun AND CONVERT(h.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci AND CONVERT(h.kode USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_sub_keg USING utf8mb4) COLLATE utf8mb4_general_ci AND h.level='sub_kegiatan' WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0 AND NOT EXISTS (SELECT 1 FROM dppa_neo p WHERE p.kd_wilayah=b.kd_wilayah AND p.kd_opd=b.kd_opd AND p.tahun=b.tahun AND p.kd_sub_keg=b.kd_sub_keg AND p.setujui=1 AND p.kunci=1 AND p.is_deleted=0) GROUP BY b.kd_sub_keg";
+          UNION ALL SELECT b.kd_sub_keg,MAX(CONVERT(COALESCE(h.uraian,r.uraian,'') USING utf8mb4) COLLATE utf8mb4_general_ci),MAX(CONVERT(COALESCE(b.uraian,'') USING utf8mb4) COLLATE utf8mb4_general_ci),COUNT(*),SUM(b.jumlah),'dpa' FROM dpa_neo b LEFT JOIN rekening_kegiatan r ON CONVERT(r.kode USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_sub_keg USING utf8mb4) COLLATE utf8mb4_general_ci AND r.level='sub_kegiatan' LEFT JOIN rekening_kegiatan_historis h ON h.tahun=b.tahun AND CONVERT(h.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci AND CONVERT(h.kode USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(b.kd_sub_keg USING utf8mb4) COLLATE utf8mb4_general_ci AND h.level='sub_kegiatan' WHERE b.kd_wilayah=? AND b.tahun=?$opd AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0 GROUP BY b.kd_sub_keg";
     $rows = $this->db->query("SELECT kd_sub_keg,MAX(nama_sub_kegiatan) nama_sub_kegiatan,MAX(contoh_uraian) contoh_uraian,SUM(jumlah_uraian) jumlah_uraian,SUM(pagu) pagu,MAX(sumber) sumber FROM ($sql) x GROUP BY kd_sub_keg ORDER BY CASE WHEN MAX(sumber)='dppa' THEN 0 ELSE 1 END,kd_sub_keg", array_merge($dppaParams, $dpaParams))->fetchAll();
     $needle = trim(mb_strtolower($search));
     if ($needle === '') return $rows;
@@ -81,8 +84,18 @@ class KontrakRealisasiService
     }));
   }
 
-  public function availableItems(string $search = '', int $contractId = 0, string $subActivity = '', int $limit = 50): array
+  public function availableItems(string $search = '', int $contractId = 0, string $subActivity = '', int $limit = 50,string $contractDate='',string $chosenOpd=''): array
   {
+    if($contractId){$context=$this->contractHeader($contractId);if($contractDate!=='')$context['tanggal_kontrak']=$contractDate;}
+    else{[$cw,$co,$cy]=$this->scope();$context=['kd_wilayah'=>$cw,'kd_opd'=>$co&&$co!=='0'?$co:$chosenOpd,'tahun'=>$cy,'tanggal_kontrak'=>$contractDate];}
+    if(!empty($context['kd_opd'])&&$context['kd_opd']!=='0'&&$context['tanggal_kontrak']){
+      $approval=BudgetApprovalService::forContract($context);
+      if($approval){$stage=BudgetApprovalService::stage($approval);$params=[$approval['id']];$where='s.pengesahan_id=?';if($subActivity!==''){$where.=' AND s.kd_sub_keg=?';$params[]=$subActivity;}if(trim($search)!==''){$where.=' AND (s.uraian LIKE ? OR s.kd_sub_keg LIKE ? OR s.kd_akun LIKE ?)';array_push($params,...array_fill(0,3,'%'.trim($search).'%'));}
+        [$access,$accessParams]=ContractAccessService::condition($this->user,'a');$where.=str_replace('a.kd_sub_keg','s.kd_sub_keg',$access);array_push($params,...$accessParams);
+        $rows=$this->db->query('SELECT s.tahap,s.anggaran_id,s.kd_sub_keg,s.kd_akun,s.uraian,s.pagu,s.pengesahan_id pengesahan_anggaran_id FROM anggaran_pengesahan_rincian_neo s JOIN anggaran_pengesahan_neo a ON a.id=s.pengesahan_id WHERE '.$where.' ORDER BY s.kd_sub_keg,s.kd_akun,s.uraian LIMIT '.max(10,min($limit,100)),$params)->fetchAll();
+        foreach($rows as&$r){$used=(float)($this->db->query('SELECT COALESCE(SUM(i.nilai_kontrak),0) n FROM kontrak_item_neo i JOIN kontrak_neo k ON k.id=i.kontrak_id AND k.is_deleted=0 AND k.setujui=1 WHERE i.tahap=? AND i.anggaran_id=? AND i.kontrak_id<>? AND i.is_deleted=0',[$stage,$r['anggaran_id'],$contractId])->fetch()['n']??0);$r['pagu']=(float)$r['pagu'];$r['nilai_terpakai']=$used;$r['pagu_tersedia']=max(0,$r['pagu']-$used);$r['dokumen_anggaran']=BudgetApprovalService::label($approval);}unset($r);return$rows;
+      }
+    }
     [$w, $o, $y] = $this->scope();
     $params = [];
     $scope = 'b.kd_wilayah=? AND b.tahun=? AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0';
@@ -97,7 +110,7 @@ class KontrakRealisasiService
     $limit = max(10, min($limit, 100));
     $sql = function (string $table, string $stage) use ($scope, $contractId): string {
       $fallback = $stage === 'dpa'
-        ? " AND NOT EXISTS (SELECT 1 FROM dppa_neo p WHERE p.kd_wilayah=b.kd_wilayah AND p.kd_opd=b.kd_opd AND p.tahun=b.tahun AND p.kd_sub_keg=b.kd_sub_keg AND p.setujui=1 AND p.kunci=1 AND p.is_deleted=0)"
+        ? ""
         : '';
       return "SELECT '$stage' tahap,b.id anggaran_id,b.kd_sub_keg,b.kd_akun,b.uraian,b.jumlah pagu,
                     COALESCE(ci.nilai_terpakai,0) nilai_terpakai,
@@ -245,17 +258,38 @@ class KontrakRealisasiService
     return (string)($this->db->query("SELECT CONCAT(r.kode,' ',r.uraian) label FROM rekening_kegiatan r WHERE r.level=? AND $condition ORDER BY CHAR_LENGTH(r.kode) DESC LIMIT 1", [$level, $code])->fetch()['label'] ?? '');
   }
 
+  public function budgetContext(int $id,string $date='',string $opd=''):array
+  {
+    $c=$id?$this->contractHeader($id):['kd_wilayah'=>$this->user['kd_wilayah'],'kd_opd'=>$this->user['kd_opd']??'','tahun'=>$this->user['tahun']];
+    if(!$id&&BudgetScheduleService::canManage($this->user)&&$opd!=='')$c['kd_opd']=$opd;
+    if($date!=='')$c['tanggal_kontrak']=$date;
+    $approval=BudgetApprovalService::forContract($c);
+    return ['approval'=>$approval?['id'=>$approval['id'],'label'=>BudgetApprovalService::label($approval)]:null,'rab'=>$id?RabTotalService::totals($id):[]];
+  }
+
   public function delivery(int $contractId): array
   {
     $header = $this->contractHeader($contractId);
     $rab = $this->db->query('SELECT * FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY COALESCE(NULLIF(urutan,0),id),id', [$contractId])->fetchAll();
     $schedule = $this->db->query('SELECT j.* FROM kontrak_jadwal_neo j LEFT JOIN rab_paket_neo r ON r.id=j.rab_id AND r.kontrak_id=j.kontrak_id WHERE j.kontrak_id=? AND j.is_deleted=0 AND (j.rab_id IS NULL OR r.id IS NOT NULL) ORDER BY COALESCE(r.nomor,\'\'),j.rab_id,j.minggu_ke,j.id', [$contractId])->fetchAll();
     $documents = $this->db->query('SELECT id,jenis_dokumen,nomor_dokumen,tanggal_dokumen,judul,nama_file_asli,path_file,mime_type,ukuran,versi,keterangan,tgl_insert FROM kontrak_dokumen_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY jenis_dokumen,versi DESC', [$contractId])->fetchAll();
-    return ['contract' => $header, 'rab' => $rab, 'schedule' => $schedule, 'curve' => $this->contractCurve($rab, $schedule), 'documents' => $documents, 'can_manage_documents' => !in_array($this->user['type_user'] ?? 'viewer', ['tapd', 'viewer', 'user'], true) && ContractAccessService::canInput($this->user,$header)];
+    return ['contract' => $header, 'rab_totals'=>RabTotalService::totals($contractId), 'rab' => $rab, 'schedule' => $schedule, 'curve' => $this->contractCurve($rab, $schedule), 'documents' => $documents, 'can_manage_documents' => !in_array($this->user['type_user'] ?? 'viewer', ['tapd', 'viewer', 'user'], true) && ContractAccessService::canInput($this->user,$header)];
   }
 
-  public function saveRab(int $contractId, array $items): array
+  public function saveRabTotal(int $id,string $stage,?float $value):array
   {
+    $this->assertCanWrite();$header=$this->contractHeader($id,true);
+    if(!in_array($stage,['hps','penawaran','negoisasi'],true))throw new InvalidArgumentException('Tahap RAB tidak valid.');
+    $totals=RabTotalService::totals($id);
+    if($value!==null){RabTotalService::validate($value,$totals['stages'][$stage]['raw'],(float)$header['total_anggaran']);
+      $this->db->query('INSERT INTO kontrak_rab_total_neo(kontrak_id,tahap,nilai,username_update) VALUES(?,?,?,?) ON DUPLICATE KEY UPDATE nilai=VALUES(nilai),username_update=VALUES(username_update),tgl_update=CURRENT_TIMESTAMP',[$id,$stage,round($value,2),$this->user['username']??'']);
+    }else $this->db->query('DELETE FROM kontrak_rab_total_neo WHERE kontrak_id=? AND tahap=?',[$id,$stage]);
+    return RabTotalService::totals($id);
+  }
+
+  public function saveRab(int $contractId, array $items,string $stage='negoisasi',bool $transaction=true,?float $importRounded=null): array
+  {
+    if(!in_array($stage,['hps','penawaran','negoisasi'],true))throw new InvalidArgumentException('Tahap RAB tidak valid.');
     $this->assertCanWrite();
     $header = $this->contractHeader($contractId,true);
     if (!$items) throw new InvalidArgumentException('RAB minimal memiliki satu uraian');
@@ -271,28 +305,30 @@ class KontrakRealisasiService
       $row['type']=(string)($row['type']??$existingLookup[$row['id']]['type']??'PEKERJAAN');
       if($row['type']==='KETERANGAN'){
         if($row['uraian']==='')throw new InvalidArgumentException('Uraian keterangan RAB wajib diisi');
-        $row['satuan']='';$row['vol_negoisasi']=null;$row['harga_sat_negoisasi']=null;$row['pajak']=null;$row['jumlah_negoisasi']=null;continue;
+        $row['satuan']='';$row[('vol_'.$stage)]=null;$row[('harga_sat_'.$stage)]=null;$row['pajak']=null;$row[('jumlah_'.$stage)]=null;continue;
       }
       $row['satuan'] = trim((string)($row['satuan'] ?? ''));
-      $row['vol_negoisasi'] = (float)($row['volume'] ?? $row['vol_negoisasi'] ?? 0);
-      $row['harga_sat_negoisasi'] = (float)($row['harga_satuan'] ?? $row['harga_sat_negoisasi'] ?? 0);
+      $row[('vol_'.$stage)] = (float)($row['volume'] ?? $row[('vol_'.$stage)] ?? 0);
+      $row[('harga_sat_'.$stage)] = (float)($row['harga_satuan'] ?? $row[('harga_sat_'.$stage)] ?? 0);
       $row['pajak'] = (float)($row['pajak'] ?? $existingLookup[$row['id']]['pajak'] ?? 0);
       if($row['pajak']<0||$row['pajak']>100)throw new InvalidArgumentException('Pajak RAB ke-'.($i+1).' tidak valid');
-      $row['jumlah_negoisasi'] = round($row['vol_negoisasi'] * $row['harga_sat_negoisasi'] * (1+$row['pajak']/100),2);
-      if (!$row['uraian'] || !$row['satuan'] || $row['vol_negoisasi'] <= 0 || $row['harga_sat_negoisasi'] <= 0) throw new InvalidArgumentException('Uraian RAB ke-' . ($i + 1) . ' belum lengkap');
-      $total += $row['jumlah_negoisasi'];
+      $row[('jumlah_'.$stage)] = round($row[('vol_'.$stage)] * $row[('harga_sat_'.$stage)] * (1+$row['pajak']/100),2);
+      if (!$row['uraian'] || !$row['satuan'] || $row[('vol_'.$stage)] <= 0 || $row[('harga_sat_'.$stage)] <= 0) throw new InvalidArgumentException('Uraian RAB ke-' . ($i + 1) . ' belum lengkap');
+      $total += $row[('jumlah_'.$stage)];
     }
     unset($row);
-    $limit=$header['nilai_kontrak']!==null?(float)$header['nilai_kontrak']:((($header['status_kontrak']??'')==='draft'&&!$header['setujui'])?(float)$header['total_anggaran']:0);
-    if ($total > $limit + 0.01) throw new InvalidArgumentException('Total RAB Rp ' . number_format($total, 0, ',', '.') . ' melebihi batas kontrak/pagu Rp ' . number_format($limit, 0, ',', '.'));
+    $limit=(float)$header['total_anggaran'];
+    if($importRounded!==null)RabTotalService::validate($importRounded,$total,$limit);
+    if (($importRounded??$total) > $limit + 0.01) throw new InvalidArgumentException('Total RAB Rp ' . number_format($total, 0, ',', '.') . ' melebihi batas kontrak/pagu Rp ' . number_format($limit, 0, ',', '.'));
     $kept = [];
-    $this->db->begin();
+    if($transaction)$this->db->begin();
     try {
       foreach ($items as $i => $row) {
         $old = (int)$row['id'] > 0 ? ($existingLookup[(int)$row['id']] ?? []) : [];
-        $values = ['kontrak_id' => $contractId, 'kontrak_item_id' => array_key_exists('kontrak_item_id', $row) ? (!empty($row['kontrak_item_id']) ? (int)$row['kontrak_item_id'] : null) : ($old['kontrak_item_id'] ?? null), 'tahun' => $header['tahun'], 'kd_wilayah' => $header['kd_wilayah'], 'kd_opd' => $header['kd_opd'], 'id_renja_p' => (int)($row['id_renja_p'] ?? $old['id_renja_p'] ?? 0), 'id_dpa' => (int)($row['id_dpa'] ?? $old['id_dpa'] ?? 0), 'id_dppa' => (int)($row['id_dppa'] ?? $old['id_dppa'] ?? 0), 'nomor' => (string)($row['nomor'] ?? ($i + 1)), 'uraian' => $row['uraian'], 'satuan' => $row['satuan'], 'type' => (string)($row['type'] ?? $old['type'] ?? 'PEKERJAAN'), 'vol_negoisasi' => $row['vol_negoisasi'], 'harga_sat_negoisasi' => $row['harga_sat_negoisasi'], 'pajak' => $row['pajak'], 'jumlah_negoisasi' => $row['jumlah_negoisasi'], 'bobot' => $total > 0 ? ($row['jumlah_negoisasi'] / $total * 100) : 0, 'keterangan' => (string)($row['keterangan'] ?? $old['keterangan'] ?? ''), 'is_deleted' => 0];
+        $values = ['kontrak_id' => $contractId, 'kontrak_item_id' => array_key_exists('kontrak_item_id', $row) ? (!empty($row['kontrak_item_id']) ? (int)$row['kontrak_item_id'] : null) : ($old['kontrak_item_id'] ?? null), 'tahun' => $header['tahun'], 'kd_wilayah' => $header['kd_wilayah'], 'kd_opd' => $header['kd_opd'], 'id_renja_p' => (int)($row['id_renja_p'] ?? $old['id_renja_p'] ?? 0), 'id_dpa' => (int)($row['id_dpa'] ?? $old['id_dpa'] ?? 0), 'id_dppa' => (int)($row['id_dppa'] ?? $old['id_dppa'] ?? 0), 'nomor' => (string)($row['nomor'] ?? ($i + 1)), 'uraian' => $row['uraian'], 'satuan' => $row['satuan'], 'type' => (string)($row['type'] ?? $old['type'] ?? 'PEKERJAAN'), ('vol_'.$stage) => $row[('vol_'.$stage)], ('harga_sat_'.$stage) => $row[('harga_sat_'.$stage)], 'pajak' => $row['pajak'], ('jumlah_'.$stage) => $row[('jumlah_'.$stage)], 'bobot' => $total > 0 ? ($row[('jumlah_'.$stage)] / $total * 100) : 0, 'keterangan' => (string)($row['keterangan'] ?? $old['keterangan'] ?? ''), 'is_deleted' => 0];
+        if($stage!=='negoisasi')unset($values['bobot']);
         $values['urutan']=$i+1;
-        if($row['type']==='KETERANGAN'){foreach(['hps','penawaran','negoisasi'] as $stage)foreach(['vol_','harga_sat_','jumlah_'] as $prefix)$values[$prefix.$stage]=null;$values['bobot']=0;}
+        if($row['type']==='KETERANGAN'){foreach(['hps','penawaran','negoisasi'] as $noteStage)foreach(['vol_','harga_sat_','jumlah_'] as $prefix)$values[$prefix.$noteStage]=null;$values['bobot']=0;}
         if ((int)$row['id'] > 0) {
           $values['username_update'] = $this->user['username'] ?? 'system';
           $values['tgl_update'] = date('Y-m-d H:i:s');
@@ -310,9 +346,10 @@ class KontrakRealisasiService
         $this->db->query("DELETE FROM kontrak_jadwal_neo WHERE kontrak_id=? AND rab_id IN ($marks)", array_merge([$contractId], $removed));
         $this->db->query("DELETE FROM rab_paket_neo WHERE kontrak_id=? AND id IN ($marks)", array_merge([$contractId], $removed));
       }
-      $this->db->commit();
+      $this->db->query('DELETE FROM kontrak_rab_total_neo WHERE kontrak_id=? AND tahap=?',[$contractId,$stage]);
+      if($transaction)$this->db->commit();
     } catch (Throwable $e) {
-      $this->db->rollback();
+      if($transaction)$this->db->rollback();
       throw $e;
     }
     return ['total' => $total, 'items' => $this->delivery($contractId)['rab']];
@@ -429,10 +466,23 @@ class KontrakRealisasiService
     $tmp=tempnam(sys_get_temp_dir(),'rab_').'.xlsx';(new Xlsx($book))->save($tmp);return$tmp;
   }
 
-  public function importRab(int $contractId,string $filePath):array
+  public function importRab(int $contractId,string $filePath,array $rounding=[]):array
   {
     $this->assertCanWrite();$this->contractHeader($contractId,true);
     if(!is_file($filePath))throw new InvalidArgumentException('File RAB tidak ditemukan');
+    $combined=RabImportService::parse($filePath);
+    if($combined){
+      $existing=$this->db->query('SELECT id,nomor,uraian FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0',[$contractId])->fetchAll();$used=[];
+      foreach($combined as&$r){$matches=array_values(array_filter($existing,fn($x)=>!isset($used[$x['id']])&&(string)$x['nomor']===(string)$r['nomor']&&(string)$x['uraian']===(string)$r['uraian']));if(count($matches)===1){$r['id']=$matches[0]['id'];$used[$r['id']]=true;}}unset($r);
+      $this->db->begin();try{
+        foreach(['hps','penawaran','negoisasi']as$stage){$items=array_map(fn($r)=>$r+['volume'=>$r['vol_'.$stage]??null,'harga_satuan'=>$r['harga_sat_'.$stage]??null],$combined);$rounded=$rounding[$stage]??null;if($rounded!==null&&$rounded!==''&&!is_numeric($rounded))throw new InvalidArgumentException('Pembulatan impor harus angka.');$saved=$this->saveRab($contractId,$items,$stage,false,$rounded!==null&&$rounded!==''?(float)$rounded:null);
+          // Reuse IDs assigned to new rows in all three stages.
+          foreach($saved['items']as$i=>$row)$combined[$i]['id']=$row['id'];
+        }
+        foreach($rounding as$stage=>$value)if($value!==''&&$value!==null){if(!is_numeric($value))throw new InvalidArgumentException('Pembulatan impor harus angka.');$this->saveRabTotal($contractId,$stage,(float)$value);}
+        $this->db->commit();return ['imported'=>count($combined),'stages'=>3,'totals'=>RabTotalService::totals($contractId)];
+      }catch(Throwable$e){$this->db->rollback();throw$e;}
+    }
     $book=IOFactory::load($filePath);$sheet=$book->getSheetByName('RAB')??$book->getActiveSheet();
     $rows=$sheet->toArray(null,true,false,true);$items=[];$map=[];$header=0;
     $normalize=fn($v)=>preg_replace('/[^a-z0-9]/','',strtolower(trim((string)$v)));
@@ -608,7 +658,7 @@ class KontrakRealisasiService
   public function contractItems(int $contractId): array
   {
     $this->contractHeader($contractId);
-    return $this->db->query('SELECT id,kontrak_id,tahap,anggaran_id,kd_sub_keg,kd_akun,uraian,pagu,nilai_kontrak FROM kontrak_item_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY kd_sub_keg,kd_akun,uraian', [$contractId])->fetchAll();
+    return $this->db->query('SELECT id,kontrak_id,tahap,anggaran_id,pengesahan_anggaran_id,kd_sub_keg,kd_akun,uraian,pagu,nilai_kontrak FROM kontrak_item_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY kd_sub_keg,kd_akun,uraian', [$contractId])->fetchAll();
   }
 
   public function saveContractItems(int $contractId, array $items): array
@@ -636,16 +686,14 @@ class KontrakRealisasiService
         $params[] = $header['kd_opd'];
       }
       $budget = $this->db->query("SELECT id,kd_sub_keg,kd_akun,uraian,jumlah FROM $table WHERE id=? AND kd_wilayah=? AND tahun=?$opdSql AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1", $params)->fetch();
+      $snapshot=BudgetApprovalService::assertBudget($header,$stage,$budgetId,(int)($item['pengesahan_anggaran_id']??$header['pengesahan_anggaran_id']??0));
+      if($snapshot)$budget=$snapshot;
       if (!$budget) throw new InvalidArgumentException('Uraian kontrak ke-' . ($index + 1) . ' tidak ditemukan atau DPA/DPPA belum disetujui dan dikunci');
       ContractAccessService::assert($this->user,array_replace($header,['kd_sub_keg'=>$budget['kd_sub_keg']]),'dapat_input');
-      if ($stage === 'dpa') {
-        $dppaFinal = $this->db->query('SELECT id FROM dppa_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg=? AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1', [$header['kd_wilayah'], $header['kd_opd'], $header['tahun'], $budget['kd_sub_keg']])->fetch();
-        if ($dppaFinal) throw new InvalidArgumentException('Gunakan uraian DPPA final untuk sub kegiatan ' . $budget['kd_sub_keg']);
-      }
       $used = (float)($this->db->query('SELECT COALESCE(SUM(ci.nilai_kontrak),0) total FROM kontrak_item_neo ci JOIN kontrak_neo k ON k.id=ci.kontrak_id AND k.is_deleted=0 AND k.setujui=1 WHERE ci.tahap=? AND ci.anggaran_id=? AND ci.kontrak_id<>? AND ci.is_deleted=0', [$stage, $budgetId, $contractId])->fetch()['total'] ?? 0);
       $available = (float)$budget['jumlah'] - $used;
       if ($value > $available) throw new InvalidArgumentException('Nilai kontrak untuk ' . $budget['kd_sub_keg'] . ' / ' . $budget['uraian'] . ' melebihi pagu tersedia Rp ' . number_format($available, 0, ',', '.'));
-      $validated[] = ['tahap' => $stage, 'anggaran_id' => $budgetId, 'kd_sub_keg' => $budget['kd_sub_keg'], 'kd_akun' => $budget['kd_akun'], 'uraian' => $budget['uraian'], 'pagu' => (float)$budget['jumlah'], 'nilai_kontrak' => $value];
+      $validated[] = ['pengesahan_anggaran_id'=>$snapshot['pengesahan_anggaran_id']??null,'tahap' => $stage, 'anggaran_id' => $budgetId, 'kd_sub_keg' => $budget['kd_sub_keg'], 'kd_akun' => $budget['kd_akun'], 'uraian' => $budget['uraian'], 'pagu' => (float)$budget['jumlah'], 'nilai_kontrak' => $value];
       $totalPagu += (float)$budget['jumlah'];
       $totalContract += $value;
     }

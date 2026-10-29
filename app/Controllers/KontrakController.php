@@ -25,7 +25,7 @@ class KontrakController extends Controller
   }
   public function availableItems()
   {
-    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->availableItems((string)($_GET['q'] ?? ''), (int)($_GET['contract_id'] ?? 0), (string)($_GET['kd_sub_keg'] ?? ''), (int)($_GET['limit'] ?? 50)));
+    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->availableItems((string)($_GET['q'] ?? ''), (int)($_GET['contract_id'] ?? 0), (string)($_GET['kd_sub_keg'] ?? ''), (int)($_GET['limit'] ?? 50),(string)($_GET['tanggal_kontrak']??''),(string)($_GET['kd_opd']??'')));
   }
   public function realizationContracts()
   {
@@ -62,6 +62,7 @@ class KontrakController extends Controller
     if (is_string($items)) $items = json_decode($items, true);
     $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->saveContractItems((int)($payload['contract_id'] ?? 0), is_array($items) ? $items : []), 'Rincian uraian kontrak berhasil disimpan');
   }
+  public function budgetContext(){ $this->json(fn()=>(new KontrakRealisasiService($_SESSION['user']??[]))->budgetContext((int)($_GET['contract_id']??0),(string)($_GET['tanggal_kontrak']??''),(string)($_GET['kd_opd']??''))); }
   public function delivery()
   {
     $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->delivery((int)($_GET['contract_id'] ?? 0)));
@@ -69,8 +70,9 @@ class KontrakController extends Controller
   public function saveRab()
   {
     $p = $this->payload();
-    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->saveRab((int)($p['contract_id'] ?? 0), $this->arrayValue($p['items'] ?? [])), 'RAB berhasil disimpan dan bobot item dihitung ulang');
+    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->saveRab((int)($p['contract_id'] ?? 0), $this->arrayValue($p['items'] ?? []),(string)($p['stage']??'negoisasi')), 'RAB berhasil disimpan dan bobot item dihitung ulang');
   }
+  public function saveRabTotal(){ $p=$this->payload();$raw=$p['nilai']??'';if($raw!==''&&!is_numeric($raw)){$this->json(fn()=>throw new InvalidArgumentException('Nilai pembulatan tidak valid'));return;}$this->json(fn()=>(new KontrakRealisasiService($_SESSION['user']??[]))->saveRabTotal((int)($p['contract_id']??0),(string)($p['stage']??''),$raw===''?null:(float)$raw),'Pembulatan RAB disimpan'); }
   public function saveSchedule()
   {
     $p = $this->payload();
@@ -120,9 +122,10 @@ class KontrakController extends Controller
     }
     exit;
   }
+  public function rabImportTemplate(){if(!Auth::check()){http_response_code(401);return;}$file=RabImportService::template();header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');header('Content-Disposition: attachment; filename="Template-Import-RAB-HPS-Penawaran-Negosiasi.xlsx"');readfile($file);unlink($file);exit;}
   public function importRab()
   {
-    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->importRab((int)($_POST['contract_id'] ?? 0), (string)($_FILES['file']['tmp_name'] ?? '')), 'RAB berhasil diimpor');
+    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->importRab((int)($_POST['contract_id'] ?? 0), (string)($_FILES['file']['tmp_name'] ?? ''),is_array($_POST['rounding']??null)?$_POST['rounding']:[]), 'RAB berhasil diimpor');
   }
   public function uploadDocument()
   {

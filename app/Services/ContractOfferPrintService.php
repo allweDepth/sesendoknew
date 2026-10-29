@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/RabTotalService.php';
 require_once __DIR__.'/KontrakRealisasiService.php';
 require_once __DIR__.'/FieldValidationException.php';
 /** Native TCPDF supplier offer letter and offer RAB, scoped to one contract. */
@@ -49,6 +50,7 @@ final class ContractOfferPrintService
     {
         if(!in_array($kind,['bundle','letter','rab'],true))throw new InvalidArgumentException('Jenis cetak penawaran tidak valid.');
         $d=$this->data($id);$c=$d['contract'];$rows=$d['rab'];$total=round(array_sum(array_map(fn($r)=>$r['type']==='KETERANGAN'?0:(float)$r['jumlah_penawaran'],$rows)),2);
+        $total=RabTotalService::totals($id)['stages']['penawaran']['total'];
         if($total<=0)throw new RuntimeException('RAB penawaran belum terisi. Lengkapi RAB penawaran sebelum mencetak.');
         $vendor=$this->db->query('SELECT nama_perusahaan,direktur,jabatan FROM rekanan_neo WHERE id=? AND is_deleted=0',[(int)($c['rekanan_id']??0)])->fetch();if(!$vendor)throw new RuntimeException('Pilih perusahaan dan lengkapi identitas penyedia sebelum mencetak surat penawaran.');
         $p=$this->settings($id,$c);if(empty($p['tanggal_surat']))throw new RuntimeException('Lengkapi tanggal surat penawaran terlebih dahulu.');
@@ -78,6 +80,7 @@ final class ContractOfferPrintService
         $e=fn($s)=>htmlspecialchars((string)$s,ENT_QUOTES,'UTF-8');$money=fn($n)=>number_format((float)$n,2,',','.');
         $html='<h3 align="center">Rincian Penawaran</h3><table border="1" cellpadding="5"><tr><td width="30%"><b>Kode PL / RUP</b></td><td width="70%">'.$e($c['nomor_rup']).'</td></tr><tr><td width="30%"><b>Nama Paket</b></td><td width="70%">'.$e($c['uraian_kontrak']).'</td></tr><tr><td width="30%"><b>Nama Peserta</b></td><td width="70%">'.$e($v['nama_perusahaan']).'</td></tr></table><br><br><table border="1" cellpadding="4"><thead><tr style="font-weight:bold"><th width="27%">Jenis Barang/Jasa</th><th width="7%">Satuan Unit</th><th width="8%">Volume</th><th width="13%">Harga Satuan</th><th width="13%">Total sebelum Pajak</th><th width="7%">Pajak (%)</th><th width="15%">Total setelah Pajak</th><th width="10%">Keterangan</th></tr></thead><tbody>';
         foreach($rows as $r){if($r['type']==='KETERANGAN'){$html.='<tr nobr="true"><td width="100%" colspan="8"><b>'.$e($r['uraian']).'</b></td></tr>';continue;}$net=(float)$r['vol_penawaran']*(float)$r['harga_sat_penawaran'];$html.='<tr nobr="true"><td width="27%">'.$e($r['uraian']).'</td><td width="7%" align="center">'.$e($r['satuan']).'</td><td width="8%" align="right">'.$money($r['vol_penawaran']).'</td><td width="13%" align="right">'.$money($r['harga_sat_penawaran']).'</td><td width="13%" align="right">'.$money($net).'</td><td width="7%" align="center">'.$money($r['pajak']).'</td><td width="15%" align="right">'.$money($r['jumlah_penawaran']).'</td><td width="10%"></td></tr>';}
+        if(RabTotalService::totals((int)$c['id'])['stages']['penawaran']['manual'])$html.='<tr nobr="true"><td width="75%" colspan="6">Jumlah rincian sebelum pembulatan</td><td width="15%" align="right">'.$money(RabTotalService::totals((int)$c['id'])['stages']['penawaran']['raw']).'</td><td width="10%"></td></tr>';
         $html.='<tr nobr="true" style="font-weight:bold"><td width="75%" colspan="6">Total Penawaran</td><td width="15%" align="right">'.$money($total).'</td><td width="10%"></td></tr></tbody></table>';$pdf->writeHTML($html,true,false,true,false,'');
     }
     private function place(array $c):string{$r=$this->db->query('SELECT uraian FROM wilayah_neo WHERE kode=? AND is_deleted=0 LIMIT 1',[$c['kd_wilayah']])->fetch();return mb_convert_case(trim(preg_replace('/^(Kabupaten|Kota|Kab\.)\s+/iu','',$r['uraian']??'')),MB_CASE_TITLE,'UTF-8')?:'—';}

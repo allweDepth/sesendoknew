@@ -1607,7 +1607,7 @@ UIConfig.kontrak = {
 			{ tag:"fieldDropdown", prop:{label:"Jenis Kontrak",name:"jenis_kontrak",options:[]} },
 			{ tag:"fieldTextarea", prop:{label:"Nama/Ruang Lingkup Pekerjaan",tableLabel:"Nama/Ruang Lingkup Pekerjaan",tableWidth:"wide",tablePriority:30,name:"uraian_kontrak",atribut:`rows="2"`} },
 			{ tag:"input", prop:{label:"Total Pagu Terpilih (otomatis dari rincian)",tableLabel:"Total Pagu",tableWidth:"money",tablePriority:18,name:"total_anggaran",type:"number",atribut:"readonly"} },
-			{ tag:"input", prop:{label:"Nilai Kontrak (otomatis dari rincian)",tableLabel:"Nilai Kontrak",tableWidth:"money",tablePriority:19,name:"nilai_kontrak",type:"number",atribut:"readonly"} },
+			{ tag:"input", prop:{label:"Nilai Kontrak (dapat dibulatkan manual)",tableLabel:"Nilai Kontrak",tableWidth:"money",tablePriority:19,name:"nilai_kontrak",type:"number",atribut:"min=0 step=0.01"} },
 			{ tag:"input", prop:{label:"Nomor Kontrak / SPK",name:"nomor_kontrak"} },
 			{ tag:"fieldCalendar", prop:{label:"Tanggal Kontrak",name:"tanggal_kontrak",tablePriority:17,calendarType:"date"} },
 			{ tag:"input", prop:{label:"Nomor SPMK",name:"nomor_spmk",table:false} },

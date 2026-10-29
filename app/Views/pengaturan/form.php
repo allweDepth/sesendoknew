@@ -39,6 +39,7 @@ $tahunLabel = $user['tahun'] ?? '-';
     <div class="ui top attached tabular menu" id="pengaturan-tabs">
         <a class="active item" data-tab="pengaturan"><?= $isRegional?'Pengaturan Wilayah':'Jadwal Perencanaan & Anggaran' ?></a>
         <?php if($isRegional): ?><a class="item" data-tab="periode">Periode RPJMD</a><?php endif; ?>
+        <a class="item" data-tab="pengesahan">Pengesahan DPA/DPPA</a>
         <a class="item" data-tab="page-setup">Page Setup PDF</a>
         <a class="item" data-tab="kop-surat">Kop Surat Resmi</a>
         <a class="item" data-tab="notifikasi">Notifikasi</a>
@@ -59,6 +60,20 @@ $tahunLabel = $user['tahun'] ?? '-';
       </form>
     </div>
 
+    <div class="ui bottom attached tab segment" data-tab="pengesahan" id="budgetApprovalPanel">
+      <h3 class="ui dividing header">Riwayat Pengesahan DPA/DPPA OPD</h3>
+      <div class="ui info message">Nomor dan tanggal diisi TAPD sesuai dokumen pengesahan resmi. DPPA Parsial dapat dibuat beberapa kali sebelum DPPA Perubahan. Saat disahkan, rincian yang disetujui dan dikunci disimpan sebagai versi tetap. Kontrak menggunakan versi yang berlaku pada tanggal kontrak.</div>
+      <?php if($canSchedule): ?>
+      <form class="ui form" id="budgetApprovalForm">
+        <input type="hidden" name="id"><div class="field required"><label>OPD</label><select class="ui fluid search dropdown" name="kd_opd" required></select></div>
+        <div class="three fields"><div class="field required"><label>Jenis dokumen</label><select class="ui dropdown" name="jenis"><option value="DPA">DPA Awal</option><option value="PARSIAL">DPPA Parsial (Pergeseran)</option><option value="PERUBAHAN">DPPA Perubahan</option></select></div><div class="field"><label>Urutan parsial</label><input type="number" min="1" name="urutan" value="1"></div><div class="field required"><label>Tanggal pengesahan / mulai berlaku</label><input type="date" name="tanggal" required></div></div>
+        <div class="field required"><label>Nomor pengesahan</label><input type="text" name="nomor" maxlength="255" required></div>
+        <div class="field"><label>Dasar penetapan / peraturan daerah</label><textarea name="dasar_hukum" rows="2"></textarea></div>
+        <div class="ui error message"></div><button class="ui button" type="submit" name="status" value="DRAFT">Simpan Draft</button><button class="ui primary button" type="submit" name="status" value="DISAHKAN"><i class="check icon"></i>Sahkan &amp; Simpan Versi Rincian</button><button class="ui basic button" type="button" data-approval-reset>Form Baru</button>
+      </form><div class="ui divider"></div>
+      <?php endif; ?>
+      <div class="table-wrapper"><table class="ui compact celled striped table"><thead><tr><th>OPD</th><th>Dokumen / Nomor</th><th>Tanggal Pengesahan</th><th>Status</th><th>Rincian</th><th class="collapsing">Aksi</th></tr></thead><tbody id="budgetApprovalRows"><tr><td colspan="6">Memuat...</td></tr></tbody></table></div>
+    </div>
     <!-- TAB 1 -->
     <div class="ui bottom attached tab segment active <?= !$isRegional ? ($canSchedule ? 'tapd-schedule-only' : 'opd-schedule-only') : '' ?>" data-tab="pengaturan">
         <?php if(!$isRegional): ?><style>.opd-schedule-only #form-pengaturan>*{display:none!important}.opd-schedule-only #form-pengaturan>.schedule-section{display:block!important}.opd-schedule-only .schedule-section>*:not(#schedule-status-cards){display:none!important}.opd-schedule-only:before{content:'Jadwal input ditetapkan oleh TAPD wilayah. OPD hanya melihat status dan rentang waktu dokumen.';display:block;padding:12px;margin-bottom:12px;background:#eaf6ff;border-radius:6px}</style><?php endif; ?>

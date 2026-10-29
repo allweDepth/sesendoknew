@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="/assets/css/modern-tables.css?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/css/modern-tables.css') ?>">
   <link rel="stylesheet" href="/assets/css/dark.css?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/css/dark.css') ?>">
+  <link rel="stylesheet" href="/assets/css/module-tabs.css?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/css/module-tabs.css') ?>">
   <style>
     .table-content-excerpt {
       display: -webkit-box;
@@ -462,6 +463,14 @@
   <!-- LIBRARY -->
   <script src="/assets/js/jquery.min.js"></script>
   <script src="/assets/js/fomantic.min.js"></script>
+  <script>
+    // Keep Fomantic calendar popups outside horizontally scrolling tables and flyouts.
+    $.fn.calendar.settings.context = 'body';
+    $.extend($.fn.calendar.settings.popupOptions, {
+      context: 'body', boundary: window, position: 'bottom left',
+      prefer: 'opposite', lastResort: 'bottom left', hideOnScroll: true
+    });
+  </script>
   <script>
     window.APP_BASE_PATH = <?= json_encode(APP_BASE_PATH) ?>;
     window.appUrl = function(path) {

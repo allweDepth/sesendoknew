@@ -4,6 +4,8 @@ require_once __DIR__.'/../Core/DB.php';
 require_once __DIR__.'/../Services/JsonResponse.php';
 require_once __DIR__.'/../Services/BudgetScheduleService.php';
 
+require_once __DIR__.'/../Services/BudgetApprovalService.php';
+
 class PengaturanController extends Controller
 {
     public function index()
@@ -34,6 +36,21 @@ class PengaturanController extends Controller
         $row=$row?:['tahun'=>$user['tahun']];
         $row['_schedule_defaults']=BudgetScheduleDefaults::generate((int)$user['tahun'],$user['kd_wilayah'],json_decode($row['jadwal_acuan_json']??'{}',true)?:[]);
         echo JsonResponse::success('Jadwal tahun aktif', [], $row);
+    }
+    public function approvals():void
+    {
+        header('Content-Type: application/json;charset=UTF-8');
+        try{if(!Auth::check())throw new RuntimeException('Unauthorized');$u=Auth::scopedUser();$db=DB::getInstance();$opd=BudgetScheduleService::canManage($u)?$db->query('SELECT kode,uraian FROM organisasi_neo WHERE kd_wilayah=? AND is_deleted=0 AND kode<>"0" ORDER BY uraian',[$u['kd_wilayah']])->fetchAll():[];echo JsonResponse::success('Riwayat pengesahan',[],['rows'=>BudgetApprovalService::rows($u),'opd'=>$opd,'can_manage'=>BudgetScheduleService::canManage($u)]);}catch(Throwable$e){echo JsonResponse::error($e->getMessage(),400);}
+    }
+    public function saveApproval():void
+    {
+        header('Content-Type: application/json;charset=UTF-8');
+        try{if(!Auth::check())throw new RuntimeException('Unauthorized');if(($_SERVER['REQUEST_METHOD']??'')!=='POST'||empty($_SESSION['csrf_token'])||($_SERVER['HTTP_X_CSRF_TOKEN']??'')!==$_SESSION['csrf_token'])throw new RuntimeException('Permintaan/CSRF tidak valid');echo JsonResponse::success('Pengesahan tersimpan',[],BudgetApprovalService::save(Auth::scopedUser(),$_POST));}catch(Throwable$e){echo JsonResponse::error($e->getMessage(),400);}
+    }
+    public function deleteApproval():void
+    {
+        header('Content-Type: application/json;charset=UTF-8');
+        try{if(!Auth::check())throw new RuntimeException('Unauthorized');if(($_SERVER['REQUEST_METHOD']??'')!=='POST'||empty($_SESSION['csrf_token'])||($_SERVER['HTTP_X_CSRF_TOKEN']??'')!==$_SESSION['csrf_token'])throw new RuntimeException('Permintaan/CSRF tidak valid');BudgetApprovalService::delete(Auth::scopedUser(),(int)($_POST['id']??0));echo JsonResponse::success('Draft pengesahan dihapus');}catch(Throwable$e){echo JsonResponse::error($e->getMessage(),400);}
     }
     public function schedules(): void
     {
