@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>404 - Halaman Tidak Ditemukan</title>
 
-    <link rel="stylesheet" href="/assets/css/fomantic.min.css">
+    <link rel="stylesheet" href="<?= asset_url('/assets/vendor/fomantic-ui/semantic.min.css') ?>">
     <link rel="stylesheet" href="/assets/css/dark.css">
 
     <style>

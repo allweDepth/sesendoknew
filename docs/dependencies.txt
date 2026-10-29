@@ -1,0 +1,52 @@
+PENGELOLAAN DEPENDENSI seSendok
+
+Jalankan dari folder utama aplikasi:
+
+  php bin/dependencies.php
+    Memasang versi yang dikunci, memperbaiki aset yang hilang/berubah,
+    dan memakai cache. Aset yang hash-nya sudah sesuai tidak diunduh/disalin ulang.
+    Composer memasang paket PHP beserta dependensi yang dibutuhkan, tanpa paket dev.
+
+  php bin/dependencies.php --update
+    Mencari versi stabil terbaru pada major yang kompatibel dan memperbarui lock.
+    Composer memperbarui paket PHP dalam batas versi composer.json.
+    Perubahan major memerlukan penyesuaian manifest dan pemeriksaan kompatibilitas.
+
+  php bin/dependencies.php --check
+    Memeriksa checksum aset dan kesesuaian paket PHP dengan lock, tanpa jaringan.
+
+SUSUNAN FILE
+  config/dependencies.json       Paket browser yang benar-benar dipakai; daftar file runtime.
+  config/assets.lock.json        Versi, integritas arsip npm, dan checksum setiap aset.
+  composer.json / composer.lock  Paket PHP: TCPDF, PhpSpreadsheet dan dependensinya.
+  public/assets/vendor/          Hanya distribusi browser, font/gambar yang dirujuk, lisensi.
+    fomantic-ui/                 CSS, JS, font lokal yang dirujuk CSS.
+    jquery/                      jQuery penuh untuk Ajax dan Fomantic.
+    leaflet/                     Mesin peta serta gambar kontrol/marker.
+    proj4/                       Konversi koordinat (terpisah dari Leaflet).
+    polygon-clipping/            Operasi geometri peta.
+    versions.json                Ringkasan versi browser.
+  public/assets/css/             CSS buatan aplikasi.
+  public/assets/js/              JS buatan aplikasi.
+  vendor/                        Paket PHP dari Composer, bukan aset web.
+  resources/fonts/              Font khusus cetak aplikasi, tidak ditimpa pembaruan TCPDF.
+  storage/dependencies/          Cache unduhan, Composer, dan arsip salinan lama; diabaikan Git.
+
+Pustaka browser memakai bundle siap pakai dari paket npm resmi, diperiksa dengan
+integritas tarball registry. Hanya file runtime dalam allowlist yang dipublikasikan.
+Tidak perlu Node.js, npm, Gulp, node_modules, atau paket build untuk menjalankan ini.
+Bundle Proj4/polygon-clipping sudah menyertakan dependensi browser internalnya.
+Quill dan CryptoJS tidak dirujuk kode aplikasi; salinan lama dipindah ke arsip privat.
+
+jQuery dipertahankan pada major 3 karena Fomantic UI 2.9.x mensyaratkan ^3.4.0.
+Mengganti ke major 4 tanpa migrasi dapat memutus API yang digunakan aplikasi.
+
+Git menyimpan perubahan kode, manifest, lock, dan aset distribusi yang sudah dipakai
+checkout ini. Git pull sendiri tidak memperbarui versi pustaka. Tinjau diff manifest,
+lock, serta aset setelah --update; jalankan --check dan periksa aplikasi sebelum commit.
+Salinan cache tidak perlu dikirim ke Git atau server.
+
+Jika Composer belum ada, perintah mengunduh installer resmi satu kali, memverifikasi
+SHA-384 dari composer.github.io, lalu menyimpan composer.phar di cache privat.
+Persyaratan: PHP CLI, cURL, Phar, proc_open dan ekstensi PHP sesuai composer.lock.
+Jangan menjalankan --update pada request web; tool ini hanya dapat dijalankan via CLI.

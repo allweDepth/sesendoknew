@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <title>seSendok</title>
 
-  <link rel="stylesheet" href="<?= app_url('/assets/css/fomantic.min.css') ?>">
-  <script src="<?= app_url('/assets/js/jquery.min.js') ?>"></script>
-  <script src="<?= app_url('/assets/js/fomantic.min.js') ?>"></script>
+  <link rel="stylesheet" href="<?= asset_url('/assets/vendor/fomantic-ui/semantic.min.css') ?>">
+  <script src="<?= asset_url('/assets/vendor/jquery/jquery.min.js') ?>"></script>
+  <script src="<?= asset_url('/assets/vendor/fomantic-ui/semantic.min.js') ?>"></script>
   <script>window.APP_BASE_PATH = <?= json_encode(APP_BASE_PATH) ?>;</script>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>

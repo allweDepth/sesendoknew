@@ -38,6 +38,13 @@ function app_url(string $path = '/'): string
   return APP_BASE_PATH . ($path === '/' ? '/' : $path);
 }
 
+/** Version local assets by content so browsers refresh after a dependency update. */
+function asset_url(string $path): string
+{
+  $file=__DIR__ . '/' . ltrim(preg_replace('#^/assets/#','assets/',$path),'/');
+  return app_url($path) . (is_file($file) ? '?v=' . substr(hash_file('sha256',$file),0,12) : '');
+}
+
 ob_start(function ($output) {
   if (APP_BASE_PATH === '') return $output;
   return preg_replace_callback('#(href|src|action)=([\'\"])(/(?!/)[^\'\"]*)#i', static function (array $match): string {

@@ -1,0 +1,7 @@
+{
+    "jquery": "3.7.1",
+    "fomantic-ui-css": "2.9.4",
+    "leaflet": "1.9.4",
+    "proj4": "2.22.0",
+    "polygon-clipping": "0.15.7"
+}

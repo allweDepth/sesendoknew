@@ -1,0 +1,83 @@
+{
+    "jquery": {
+        "version": "3.7.1",
+        "spec_hash": "e779af9816e10281360712eab5415ee74356608992c7cdfd1e05b65af8be3b13",
+        "tarball": "https://registry.npmjs.org/jquery/-/jquery-3.7.1.tgz",
+        "integrity": "sha512-m4avr8yL8kmFN8psrbFFFmB/If14iN5o9nw/NgnnM+kybDJpRsAynV2BsfpTYrTRysYUdADVD7CkUUizgkpLfg==",
+        "files": {
+            "jquery/jquery.min.js": "fc9a93dd241f6b045cbff0481cf4e1901becd0e12fb45166a8f17f95823f0b1a",
+            "jquery/LICENSE.txt": "d4db9ebe6f29f5168eac45ad713f055623ac5d0dcd5ba92da23d650ae012020d"
+        }
+    },
+    "fomantic-ui-css": {
+        "version": "2.9.4",
+        "spec_hash": "a07faac37ab629838cebc3c6271fe64cd7b8ba96ea4371f5a7db91c4f3fad457",
+        "tarball": "https://registry.npmjs.org/fomantic-ui-css/-/fomantic-ui-css-2.9.4.tgz",
+        "integrity": "sha512-4U8enaBjxAdjMfpTKhf0Of9/XZJo/WSh90FaF85gIYy669eGYe0tRFzE9T0lIiLRmxa20yKLhT6TvLxGau13dA==",
+        "files": {
+            "fomantic-ui/semantic.min.css": "c65a775db5c256570a60ca570e7ce20b543337d8f44908838d1899d2abba20e7",
+            "fomantic-ui/semantic.min.js": "661e8d6708f379f2d7b6421827282406ec08c548598ce3e0c4a1ef9463e8ebcf",
+            "fomantic-ui/LICENSE.md": "20a7cde0809fde6bf497360ba56ab2c08c9f39631415170e09d8c2ff5d00dc23",
+            "fomantic-ui/themes/default/assets/fonts/LICENSE_Lato.txt": "ad246bbb599de448a22c5af0b4018e11aae7ec70a0c15368163e2f9f1ea16afa",
+            "fomantic-ui/themes/default/assets/fonts/LICENSE_icons.txt": "968baa6eecbe183738a1a56f62e23e0c561ea44031cc6ecea5f6b4ca303ce251",
+            "fomantic-ui/themes/default/assets/fonts/LatoLatin-Regular.woff2": "f1a5932ac70017fcf8343f1a8f7415b9409fb7b8441cebd5b1f2a9e9c3e7539e",
+            "fomantic-ui/themes/default/assets/fonts/LatoLatin-Regular.woff": "44a264a95857534f6e8941a054f1f443285f83d0d871609b69a2d373e4a98ff7",
+            "fomantic-ui/themes/default/assets/fonts/LatoLatin-Bold.woff2": "d952174432302829bdc762952b19b7865f62b6310959c83e99d742252d7e1791",
+            "fomantic-ui/themes/default/assets/fonts/LatoLatin-Bold.woff": "a350a0d2ecd3f3164c56a9d8ed9a42e3c5cc0ef5033cd2f0d93c0a15920f63d0",
+            "fomantic-ui/themes/default/assets/fonts/LatoLatin-Italic.woff2": "fb5c3963ac864443411ae075eb8b74224a6eddd41cf037bfd5ec68dfa48d6956",
+            "fomantic-ui/themes/default/assets/fonts/LatoLatin-Italic.woff": "6ac434bd07180877f7be6e1e897f896d20510b8f9ac31e53e35726af6a5ad9f0",
+            "fomantic-ui/themes/default/assets/fonts/LatoLatin-BoldItalic.woff2": "667bf7ed0a1384d9e40ad9556c5d581e7c9cfe63bb8731e2e37cf522544b3ccf",
+            "fomantic-ui/themes/default/assets/fonts/LatoLatin-BoldItalic.woff": "ca42f6395c59db1923de0e75ec71978ff3a4287ba288d439e48ce35654e63956",
+            "fomantic-ui/themes/default/assets/fonts/Lato-Regular.woff2": "f7847d2a13c0176076d2c7cd3e9b146e07e6b469f0ff98d7a99056b65c007679",
+            "fomantic-ui/themes/default/assets/fonts/Lato-Regular.woff": "2c8b10c6333130bba491b4883e072440aae883f0ce7dcffad725d37d7a717fff",
+            "fomantic-ui/themes/default/assets/fonts/Lato-Bold.woff2": "33a783a2593ac76850821c34af6c72be73b519c7d499c3acdc836e1072916e1c",
+            "fomantic-ui/themes/default/assets/fonts/Lato-Bold.woff": "c32aab68ff9c1dac8a9f707711d572e770eab317b24d4db481175c3f177d30b8",
+            "fomantic-ui/themes/default/assets/fonts/Lato-Italic.woff2": "a607a7af5d6b3005de84dc6da924c2621e924abc63ef2ffc02dd7ff381b08994",
+            "fomantic-ui/themes/default/assets/fonts/Lato-Italic.woff": "b0161773893b0f45fdb0ca0156319bb8b529373039ccdb0c6676fa143241d234",
+            "fomantic-ui/themes/default/assets/fonts/Lato-BoldItalic.woff2": "bc7ed640ece5151a15f42554a6c2a2e4dc04ae91aa0a6fc7d4a04bb44319cb3d",
+            "fomantic-ui/themes/default/assets/fonts/Lato-BoldItalic.woff": "c774134e3a65c41c42a1866ff3b25827e544465bab436f3676d476e57e2f1b92",
+            "fomantic-ui/themes/default/assets/fonts/icons.woff2": "9834b82ad26e2a37583d22676a12dd2eb0fe7c80356a2114d0db1aa8b3899537",
+            "fomantic-ui/themes/default/assets/fonts/icons.woff": "3f6d3488cf65374f6f676c315340b0ac2be832bd55240c809448e36ef9b96326",
+            "fomantic-ui/themes/default/assets/fonts/outline-icons.woff2": "e42a88444448ac3d60549cc7c1ff2c8a9cac721034c073d80a14a44e79730cca",
+            "fomantic-ui/themes/default/assets/fonts/outline-icons.woff": "cb9e9e693192413cde2b1f21c1dc1d44b6fe7b27cc2b458e8b359d18f9ff8f4e",
+            "fomantic-ui/themes/default/assets/fonts/brand-icons.woff2": "8ea8791754915a898a3100e63e32978a6d1763be6df8e73a39d3a90d691cdeef",
+            "fomantic-ui/themes/default/assets/fonts/brand-icons.woff": "f9217f66874b0c01cd8c10b6a295dbc4f609acb6f5adc41c37da46641b57eb02"
+        }
+    },
+    "leaflet": {
+        "version": "1.9.4",
+        "spec_hash": "a1e89cb57417da6f473239100ebde7f1a9d03f616c54a0c4a2b034df76840f14",
+        "tarball": "https://registry.npmjs.org/leaflet/-/leaflet-1.9.4.tgz",
+        "integrity": "sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==",
+        "files": {
+            "leaflet/leaflet.js": "db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a",
+            "leaflet/leaflet.css": "a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6",
+            "leaflet/LICENSE": "53e8dc25862014e4324741ca18fbe3611e11d42ef69f59f86ea8c5389647d4cb",
+            "leaflet/images/layers.png": "1dbbe9d028e292f36fcba8f8b3a28d5e8932754fc2215b9ac69e4cdecf5107c6",
+            "leaflet/images/layers-2x.png": "066daca850d8ffbef007af00b06eac0015728dee279c51f3cb6c716df7c42edf",
+            "leaflet/images/marker-icon.png": "574c3a5cca85f4114085b6841596d62f00d7c892c7b03f28cbfa301deb1dc437",
+            "leaflet/images/marker-icon-2x.png": "00179c4c1ee830d3a108412ae0d294f55776cfeb085c60129a39aa6fc4ae2528",
+            "leaflet/images/marker-shadow.png": "264f5c640339f042dd729062cfc04c17f8ea0f29882b538e3848ed8f10edb4da"
+        }
+    },
+    "proj4": {
+        "version": "2.22.0",
+        "spec_hash": "9b1e55ee90447337882890a8d032bb2adb2f82628680854fb32df0fefd7f6ac4",
+        "tarball": "https://registry.npmjs.org/proj4/-/proj4-2.22.0.tgz",
+        "integrity": "sha512-MVvH09QrYm3A235rcX39WDiCKanrBiblu28l0KYIn/B2DofmYhvP/LLS43kE66jNDfx/P1l/nah3JmsAq8UgbQ==",
+        "files": {
+            "proj4/proj4.js": "af7df653d91ea591f33d26fb958990bbd3071b2db644a4edaba441cc9861a474",
+            "proj4/LICENSE.md": "d514fd8b286fc00a5c97a29f8a99b73f1a4053bbdd00c400aee5f24a1b6b301e"
+        }
+    },
+    "polygon-clipping": {
+        "version": "0.15.7",
+        "spec_hash": "fe0b5b7da31b529eed84bf24de7a065202226bac02da52f9fefcb81a726f7b81",
+        "tarball": "https://registry.npmjs.org/polygon-clipping/-/polygon-clipping-0.15.7.tgz",
+        "integrity": "sha512-nhfdr83ECBg6xtqOAJab1tbksbBAOMUltN60bU+llHVOL0e5Onm1WpAXXWXVB39L8AJFssoIhEVuy/S90MmotA==",
+        "files": {
+            "polygon-clipping/polygon-clipping.min.js": "7f8619e84a86ce8dd400c9b50430e9c8cf8f26027b19eeb479f109f5c1a9d688",
+            "polygon-clipping/LICENSE.md": "864ae9e4ed75e1571a3bcf5dc9070264213445b32e7e2af5bf60eba46fb656d0"
+        }
+    }
+}

@@ -1,0 +1,54 @@
+{
+    "jquery": {
+        "version": "3.7.1",
+        "major": 3,
+        "reason": "Fomantic UI 2.9.x requires jQuery ^3.4.0; jQuery 4 removes APIs used by the application.",
+        "files": {
+            "dist/jquery.min.js": "jquery.min.js",
+            "LICENSE.txt": "LICENSE.txt"
+        }
+    },
+    "fomantic-ui-css": {
+        "version": "2.9.4",
+        "major": 2,
+        "directory": "fomantic-ui",
+        "cssAssets": true,
+        "files": {
+            "semantic.min.css": "semantic.min.css",
+            "semantic.min.js": "semantic.min.js",
+            "LICENSE.md": "LICENSE.md",
+            "themes/default/assets/fonts/LICENSE_Lato.txt": "themes/default/assets/fonts/LICENSE_Lato.txt",
+            "themes/default/assets/fonts/LICENSE_icons.txt": "themes/default/assets/fonts/LICENSE_icons.txt"
+        }
+    },
+    "leaflet": {
+        "version": "1.9.4",
+        "major": 1,
+        "files": {
+            "dist/leaflet.js": "leaflet.js",
+            "dist/leaflet.css": "leaflet.css",
+            "LICENSE": "LICENSE",
+            "dist/images/layers.png": "images/layers.png",
+            "dist/images/layers-2x.png": "images/layers-2x.png",
+            "dist/images/marker-icon.png": "images/marker-icon.png",
+            "dist/images/marker-icon-2x.png": "images/marker-icon-2x.png",
+            "dist/images/marker-shadow.png": "images/marker-shadow.png"
+        }
+    },
+    "proj4": {
+        "version": "2.22.0",
+        "major": 2,
+        "files": {
+            "dist/proj4.js": "proj4.js",
+            "LICENSE.md": "LICENSE.md"
+        }
+    },
+    "polygon-clipping": {
+        "version": "0.15.7",
+        "major": 0,
+        "files": {
+            "dist/polygon-clipping.umd.min.js": "polygon-clipping.min.js",
+            "LICENSE.md": "LICENSE.md"
+        }
+    }
+}

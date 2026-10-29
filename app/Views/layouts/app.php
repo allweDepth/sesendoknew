@@ -6,8 +6,8 @@
   <meta charset="UTF-8">
   <title>seSendok</title>
 
-  <link rel="stylesheet" href="/assets/css/fomantic.min.css">
-  <link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="<?= asset_url('/assets/vendor/fomantic-ui/semantic.min.css') ?>">
+  <link rel="stylesheet" href="<?= asset_url('/assets/vendor/leaflet/leaflet.css') ?>">
   <link rel="stylesheet" href="/assets/css/modern-tables.css?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/css/modern-tables.css') ?>">
   <link rel="stylesheet" href="/assets/css/dark.css?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/css/dark.css') ?>">
   <link rel="stylesheet" href="/assets/css/module-tabs.css?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/css/module-tabs.css') ?>">
@@ -461,8 +461,8 @@
     window.app.user = <?= json_encode(Auth::scopedUser(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
   </script>
   <!-- LIBRARY -->
-  <script src="/assets/js/jquery.min.js"></script>
-  <script src="/assets/js/fomantic.min.js"></script>
+  <script src="<?= asset_url('/assets/vendor/jquery/jquery.min.js') ?>"></script>
+  <script src="<?= asset_url('/assets/vendor/fomantic-ui/semantic.min.js') ?>"></script>
   <script>
     // Keep Fomantic calendar popups outside horizontally scrolling tables and flyouts.
     $.fn.calendar.settings.context = 'body';
@@ -524,13 +524,13 @@
   <!-- ================= APP CORE ================= -->
   <script src="/assets/js/app.js"></script> <!-- SETELAH semua dependency -->
 
-  <script src="/assets/vendor/leaflet/leaflet.js"></script>
-  <script src="/assets/vendor/leaflet/proj4.js"></script>
+  <script src="<?= asset_url('/assets/vendor/leaflet/leaflet.js') ?>"></script>
+  <script src="<?= asset_url('/assets/vendor/proj4/proj4.js') ?>"></script>
 
   <!-- UI COMPONENTS -->
   <script src="/assets/js/ui/ui-components.js"></script>
   <script src="/assets/js/ui/ui-extensions.js"></script>
-  <script src="/assets/vendor/polygon-clipping/polygon-clipping.min.js"></script>
+  <script src="<?= asset_url('/assets/vendor/polygon-clipping/polygon-clipping.min.js') ?>"></script>
   <script src="/assets/js/maps-geometry.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/maps-geometry.js') ?>"></script>
   <script src="/assets/js/maps-editor.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/maps-editor.js') ?>"></script>
   <script src="/assets/js/maps.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/maps.js') ?>"></script>

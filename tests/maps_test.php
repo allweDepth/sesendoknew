@@ -24,7 +24,14 @@ $view = file_get_contents(__DIR__ . '/../app/Views/maps/index.php');
 $script = file_get_contents(__DIR__ . '/../public/assets/js/maps.js');
 $router = file_get_contents(__DIR__ . '/../public/assets/js/core/spa-router.js');
 $controller = file_get_contents(__DIR__ . '/../app/Controllers/MapsController.php');
-$migration = file_get_contents(__DIR__ . '/../database/migrations/20261002_phase59_maps_layers.sql');
+// Schema is maintained in the consolidated database backup, not a deleted migration.
+$schemaFile=fopen(__DIR__.'/../config/sesendoknew_db.sql','r');
+$migration='';$reading=false;
+while(($line=fgets($schemaFile))!==false){
+    if(str_starts_with($line,'CREATE TABLE `maps_layers`'))$reading=true;
+    if($reading){$migration.=$line;if(str_contains($line,') ENGINE='))break;}
+}
+fclose($schemaFile);
 $layout = file_get_contents(__DIR__ . '/../app/Views/layouts/app.php');
 $frontController = file_get_contents(__DIR__ . '/../public/index.php');
 
@@ -90,10 +97,10 @@ try {
     if (is_file($archivePath)) unlink($archivePath);
 }
 $assert(str_contains($migration, 'kd_wilayah') && str_contains($migration, 'kd_opd') && str_contains($migration, 'maps_layers'), 'migrasi menyimpan layer berdasarkan wilayah dan OPD');
-$assert(str_contains($layout, '/assets/vendor/leaflet/leaflet.js') && str_contains($layout, '/assets/vendor/leaflet/proj4.js'), 'Leaflet dan proj4 dibundel lokal');
+$assert(str_contains($layout, '/assets/vendor/leaflet/leaflet.js') && str_contains($layout, '/assets/vendor/proj4/proj4.js'), 'Leaflet dan proj4 dibundel lokal');
 $assert(str_contains($frontController, '/maps/upload') && str_contains($frontController, '100 * 1024 * 1024'), 'front controller memberi batas request khusus paket SHP');
 $assert(str_contains($controller, 'readShapefileArchive') && str_contains($controller, 'getFromIndex') && str_contains($controller, 'MAX_LAYER_BYTES'), 'server memvalidasi dan menyimpan komponen shapefile dari ZIP');
-$assert(str_contains($migration, 'components_json TEXT'), 'metadata mendukung banyak komponen sidecar');
+$assert((bool)preg_match('/`?components_json`?\s+text\b/i',$migration), 'metadata mendukung banyak komponen sidecar');
 $assert(str_contains($router, 'window.initMapsPage()'), 'router menginisialisasi halaman Maps saat navigasi SPA');
 $assert(str_contains($router, '!routePath.startsWith("/maps")'), 'router tidak mencoba memuat modul client untuk route server Maps');
 $assert(str_contains($layout, 'spa-router.js?v=') && str_contains($layout, "filemtime(__DIR__ . '/../../../public/assets/js/core/spa-router.js')"), 'perubahan router SPA mendapat versi aset baru agar browser tidak memakai cache lama');
