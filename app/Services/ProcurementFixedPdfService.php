@@ -57,7 +57,16 @@ final class ProcurementFixedPdfService
         $pdf->SetXY($x+4,$y+3);OfficialLetterheadPdfService::draw($pdf,$letterheadUser);$pdf->SetMargins($x,$m['top'],$m['right']);
         $pdf->SetTextColor(0,0,0);$pdf->SetFont($coverFont,'B',23*$fontScale);$pdf->SetXY($x+3,$y+44*$layoutScale);$pdf->MultiCell($w-6,10,'SURAT PERINTAH KERJA (SPK)',0,'C');
         $pdf->SetFont($coverFont,'B',11*$fontScale);$pdf->MultiCell($w-6,6,'SPK '.ProcurementContractTypeService::label($c),0,'C');
-        $pdf->SetFillColor(255,211,0);$pdf->Rect($x,$y+72*$layoutScale,$w,10*$layoutScale,'F');$pdf->SetXY($x,$y+74*$layoutScale);$pdf->SetFont($coverFont,'B',12*$fontScale);$pdf->MultiCell($w,6,str_contains($c['jenis_pengadaan']??'','KONSULTANSI')?'Paket Jasa Konsultansi':'Paket Pengadaan',0,'C');
+        $kind=strtoupper(trim((string)($c['jenis_pengadaan']??'')));
+        $packageLabel=match(true){
+            strtoupper($c['cara_pengadaan']??'')==='SWAKELOLA'=>'Paket Swakelola',
+            str_starts_with($kind,'KONSULTANSI')=>'Paket Pengadaan Konsultansi',
+            $kind==='PEKERJAAN_KONSTRUKSI'=>'Paket Pengadaan Pekerjaan Konstruksi',
+            $kind==='BARANG'=>'Paket Pengadaan Barang',
+            $kind==='JASA_LAINNYA'=>'Paket Pengadaan Jasa Lainnya',
+            default=>'Paket Pengadaan',
+        };
+        $pdf->SetFillColor(255,211,0);$pdf->Rect($x,$y+72*$layoutScale,$w,10*$layoutScale,'F');$pdf->SetXY($x,$y+74*$layoutScale);$pdf->SetFont($coverFont,'B',12*$fontScale);$pdf->MultiCell($w,6,$packageLabel,0,'C');
         $pdf->SetFillColor(255,224,126);$pdf->Rect($x,$y+82*$layoutScale,$w,26*$layoutScale,'F');$pdf->SetXY($x+6,$y+88*$layoutScale);$pdf->SetFont($coverFont,'B',13*$fontScale);$pdf->MultiCell($w-12,6,$this->value($c,'uraian_kontrak'),0,'C');
         $pdf->SetXY($x+12,$y+120*$layoutScale);$pdf->SetFont($coverFont,'B',12*$fontScale);
         $fields=[['Nomor',$this->value($c,'nomor_kontrak')],['Tanggal',$this->displayDate($c['tanggal_kontrak']??'')],['Sumber Dana',$c['sumber_dana']??'APBD'],['Uraian Kontrak',$this->value($c,'uraian_kontrak')],['Nilai Kontrak',isset($c['nilai_kontrak'])?$this->coverAmount($c['nilai_kontrak']):'Belum ditetapkan'],['Waktu Pelaksanaan',isset($c['waktu_pelaksanaan'])?$c['waktu_pelaksanaan']." hari kalender\n".$this->displayDate($c['tanggal_mulai']??'').' s.d. '.$this->displayDate($c['tanggal_selesai']??''):'Belum ditetapkan']];
