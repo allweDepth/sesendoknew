@@ -280,7 +280,9 @@ $(document).ready(function () {
 			try { localStorage.setItem("sesendok-theme", dark ? "dark" : "light"); } catch (_) {}
 			$("#userMenu").dropdown("hide");
 		});
-	$(".ui.sticky:not(.dashboard-messenger-notice)").sticky({
+	// The page header is already outside content-scroll; do not let the sticky
+	// plugin insert sizing/positioning into the flex viewport shell.
+	$(".ui.sticky:not(.dashboard-messenger-notice)").not('#mainContext > .pusher > .ui.sticky').sticky({
 		context: $context,
 	});
 

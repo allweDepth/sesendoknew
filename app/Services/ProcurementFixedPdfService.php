@@ -60,7 +60,7 @@ final class ProcurementFixedPdfService
         $pdf->SetFillColor(255,211,0);$pdf->Rect($x,$y+72*$layoutScale,$w,10*$layoutScale,'F');$pdf->SetXY($x,$y+74*$layoutScale);$pdf->SetFont($coverFont,'B',12*$fontScale);$pdf->MultiCell($w,6,str_contains($c['jenis_pengadaan']??'','KONSULTANSI')?'Paket Jasa Konsultansi':'Paket Pengadaan',0,'C');
         $pdf->SetFillColor(255,224,126);$pdf->Rect($x,$y+82*$layoutScale,$w,26*$layoutScale,'F');$pdf->SetXY($x+6,$y+88*$layoutScale);$pdf->SetFont($coverFont,'B',13*$fontScale);$pdf->MultiCell($w-12,6,$this->value($c,'uraian_kontrak'),0,'C');
         $pdf->SetXY($x+12,$y+120*$layoutScale);$pdf->SetFont($coverFont,'B',12*$fontScale);
-        $fields=[['Nomor',$this->value($c,'nomor_kontrak')],['Tanggal',$this->displayDate($c['tanggal_kontrak']??'')],['Sumber Dana',$c['sumber_dana']??'APBD'],['Uraian Kontrak',$this->value($c,'uraian_kontrak')],['Nilai Kontrak',isset($c['nilai_kontrak'])?'Rp'.$this->money($c['nilai_kontrak']):'Belum ditetapkan'],['Waktu Pelaksanaan',isset($c['waktu_pelaksanaan'])?$c['waktu_pelaksanaan']." hari kalender\n".$this->displayDate($c['tanggal_mulai']??'').' s.d. '.$this->displayDate($c['tanggal_selesai']??''):'Belum ditetapkan']];
+        $fields=[['Nomor',$this->value($c,'nomor_kontrak')],['Tanggal',$this->displayDate($c['tanggal_kontrak']??'')],['Sumber Dana',$c['sumber_dana']??'APBD'],['Uraian Kontrak',$this->value($c,'uraian_kontrak')],['Nilai Kontrak',isset($c['nilai_kontrak'])?$this->coverAmount($c['nilai_kontrak']):'Belum ditetapkan'],['Waktu Pelaksanaan',isset($c['waktu_pelaksanaan'])?$c['waktu_pelaksanaan']." hari kalender\n".$this->displayDate($c['tanggal_mulai']??'').' s.d. '.$this->displayDate($c['tanggal_selesai']??''):'Belum ditetapkan']];
         foreach($fields as [$label,$value]){
             $at=$pdf->GetY();$pdf->SetXY($x+10,$at);$pdf->MultiCell(48*$layoutScale,6*$layoutScale,$label,0,'L');$labelBottom=$pdf->GetY();
             $pdf->SetXY($x+58*$layoutScale,$at);$pdf->MultiCell(4*$layoutScale,6*$layoutScale,':',0,'C');
@@ -94,6 +94,13 @@ final class ProcurementFixedPdfService
     private function e($v):string{return htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');}
     private function value(array $c,string ...$keys):string{foreach($keys as $key)if(trim((string)($c[$key]??''))!=='')return(string)$c[$key];return'-';}
     private function money($value):string{return number_format((float)$value,2,',','.');}
+    private function coverAmount($value):string
+    {
+        [$rupiah,$sen]=explode('.',number_format((float)$value,2,'.',''));
+        $words=ucwords(trim($this->numberWords((int)$rupiah))).' Rupiah';
+        if((int)$sen>0)$words.=' '.ucwords(trim($this->numberWords((int)$sen))).' Sen';
+        return 'Rp'.$this->money($value).' ('.$words.')';
+    }
     private function paragraphs(array $document,array $contract,bool $jsonOnly=false):array
     {
         $code=strtoupper((string)($document['kode_dokumen']??''));

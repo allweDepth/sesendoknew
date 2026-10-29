@@ -26,25 +26,26 @@
       color: #cbd5e1;
     }
 
-    #mainContext {
-      min-height: calc(100vh - 40px);
-    }
-
     .pusher .ui .container {
       padding: 20px !important;
     }
 
-    /* 🔥 FIX GLOBAL SCROLL (JANGAN LOCK TOTAL) */
+    /* Let the toolbar take its actual height; the remaining viewport scrolls. */
     html,
     body {
       height: 100%;
       overflow: hidden;
-      /* 🔥 KUNCI UTAMA */
     }
+    body { display: flex; flex-direction: column; height: 100dvh; }
+    body > .ui.top.attached.menu { flex: 0 0 auto; width: 100%; margin: 0; }
 
     /* FIX SEGMENT PUSHABLE */
     #mainContext.ui.segment {
-      height: calc(100vh - 40px);
+      flex: 1 1 0;
+      min-height: 0;
+      height: auto;
+      width: 100%;
+      margin: 0;
       padding: 0 !important;
       overflow: hidden;
     }
@@ -52,6 +53,7 @@
     /* PUSHER */
     #mainContext .pusher {
       height: 100%;
+      min-height: 0;
       display: flex;
       flex-direction: column;
     }
@@ -63,7 +65,9 @@
 
     /* SCROLL AREA */
     #mainContext .content-scroll {
-      flex: 1;
+      flex: 1 1 0;
+      min-height: 0;
+      min-width: 0;
       overflow-y: auto;
       padding: 20px;
     }
