@@ -7,3 +7,4 @@
 
 # Verified download caches, tools and recoverable copies of obsolete assets
 /storage/dependencies/
+/storage/backups/

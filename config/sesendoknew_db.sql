@@ -9843,7 +9843,7 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_realisasi_validate_insert` BEFORE INSERT ON `daftar_realisasi_neo` FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_realisasi_validate_insert` BEFORE INSERT ON `daftar_realisasi_neo` FOR EACH ROW BEGIN
   DECLARE contract_value DECIMAL(20,2) DEFAULT NULL; DECLARE realized DECIMAL(20,2) DEFAULT 0;
   SELECT nilai_kontrak INTO contract_value FROM kontrak_neo WHERE id=NEW.kontrak_id AND kd_wilayah=NEW.kd_wilayah AND kd_opd=NEW.kd_opd AND tahun=NEW.tahun AND is_deleted=0 LIMIT 1;
   IF contract_value IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Kontrak realisasi tidak valid'; END IF;
@@ -9851,7 +9851,7 @@ DELIMITER ;;
   IF realized+NEW.jumlah>contract_value THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Realisasi melebihi nilai kontrak'; END IF;
   IF NEW.progress_fisik<0 OR NEW.progress_fisik>100 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Progress fisik harus 0 sampai 100'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -9866,14 +9866,14 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_realisasi_validate_update` BEFORE UPDATE ON `daftar_realisasi_neo` FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_realisasi_validate_update` BEFORE UPDATE ON `daftar_realisasi_neo` FOR EACH ROW BEGIN
   DECLARE contract_value DECIMAL(20,2) DEFAULT NULL; DECLARE realized DECIMAL(20,2) DEFAULT 0;
   SELECT nilai_kontrak INTO contract_value FROM kontrak_neo WHERE id=NEW.kontrak_id AND kd_wilayah=NEW.kd_wilayah AND kd_opd=NEW.kd_opd AND tahun=NEW.tahun AND is_deleted=0 LIMIT 1;
   SELECT COALESCE(SUM(jumlah),0) INTO realized FROM daftar_realisasi_neo WHERE kontrak_id=NEW.kontrak_id AND id<>OLD.id AND is_deleted=0;
   IF contract_value IS NULL OR realized+NEW.jumlah>contract_value THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Realisasi melebihi nilai kontrak atau kontrak tidak valid'; END IF;
   IF NEW.progress_fisik<0 OR NEW.progress_fisik>100 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Progress fisik harus 0 sampai 100'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -57006,13 +57006,13 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_dpa_contract_guard_update` BEFORE UPDATE ON `dpa_neo` FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_dpa_contract_guard_update` BEFORE UPDATE ON `dpa_neo` FOR EACH ROW BEGIN
   DECLARE contracted DECIMAL(20,2) DEFAULT 0;
   SELECT COALESCE(SUM(i.nilai_kontrak),0) INTO contracted FROM kontrak_item_neo i JOIN kontrak_neo k ON k.id=i.kontrak_id AND k.setujui=1 AND k.is_deleted=0 WHERE BINARY i.tahap=BINARY 'dpa' AND i.anggaran_id=OLD.id AND i.is_deleted=0;
   IF NEW.jumlah<contracted THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Pagu DPA tidak boleh lebih kecil dari akumulasi kontrak yang disetujui'; END IF;
   IF NEW.is_deleted=1 AND EXISTS(SELECT 1 FROM kontrak_item_neo WHERE BINARY tahap=BINARY 'dpa' AND anggaran_id=OLD.id AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPA sudah terhubung kontrak dan tidak dapat dihapus'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -57027,10 +57027,10 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_dpa_contract_guard_delete` BEFORE DELETE ON `dpa_neo` FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_dpa_contract_guard_delete` BEFORE DELETE ON `dpa_neo` FOR EACH ROW BEGIN
   IF EXISTS(SELECT 1 FROM kontrak_item_neo WHERE tahap='dpa' AND anggaran_id=OLD.id AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPA sudah berkontrak dan tidak dapat dihapus'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -63593,13 +63593,13 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_dppa_contract_guard_update` BEFORE UPDATE ON `dppa_neo` FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_dppa_contract_guard_update` BEFORE UPDATE ON `dppa_neo` FOR EACH ROW BEGIN
   DECLARE contracted DECIMAL(20,2) DEFAULT 0;
   SELECT COALESCE(SUM(i.nilai_kontrak),0) INTO contracted FROM kontrak_item_neo i JOIN kontrak_neo k ON k.id=i.kontrak_id AND k.setujui=1 AND k.is_deleted=0 WHERE BINARY i.tahap=BINARY 'dppa' AND i.anggaran_id=OLD.id AND i.is_deleted=0;
   IF NEW.jumlah<contracted THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Pagu DPPA tidak boleh lebih kecil dari akumulasi kontrak yang disetujui'; END IF;
   IF NEW.is_deleted=1 AND EXISTS(SELECT 1 FROM kontrak_item_neo WHERE BINARY tahap=BINARY 'dppa' AND anggaran_id=OLD.id AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPPA sudah terhubung kontrak dan tidak dapat dihapus'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -63614,10 +63614,10 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_dppa_contract_guard_delete` BEFORE DELETE ON `dppa_neo` FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_dppa_contract_guard_delete` BEFORE DELETE ON `dppa_neo` FOR EACH ROW BEGIN
   IF EXISTS(SELECT 1 FROM kontrak_item_neo WHERE tahap='dppa' AND anggaran_id=OLD.id AND is_deleted=0) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPPA sudah berkontrak dan tidak dapat dihapus'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -92226,7 +92226,7 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_item_final_budget_insert` BEFORE INSERT ON kontrak_item_neo FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_kontrak_item_final_budget_insert` BEFORE INSERT ON kontrak_item_neo FOR EACH ROW BEGIN
   DECLARE final_count INT DEFAULT 0;
   IF BINARY NEW.tahap=BINARY 'dpa' THEN SELECT COUNT(*) INTO final_count FROM dpa_neo WHERE id=NEW.anggaran_id AND setujui=1 AND kunci=1 AND is_deleted=0;
   ELSEIF BINARY NEW.tahap=BINARY 'dppa' THEN SELECT COUNT(*) INTO final_count FROM dppa_neo WHERE id=NEW.anggaran_id AND setujui=1 AND kunci=1 AND is_deleted=0;
@@ -92236,7 +92236,7 @@ DELIMITER ;;
   IF NEW.pengesahan_anggaran_id IS NOT NULL THEN SELECT COUNT(*) INTO final_count FROM anggaran_pengesahan_rincian_neo s JOIN anggaran_pengesahan_neo a ON a.id=s.pengesahan_id WHERE s.pengesahan_id=NEW.pengesahan_anggaran_id AND a.status='DISAHKAN' AND BINARY a.kd_wilayah=BINARY NEW.kd_wilayah AND BINARY a.kd_opd=BINARY NEW.kd_opd AND a.tahun=NEW.tahun AND BINARY s.tahap=BINARY NEW.tahap AND s.anggaran_id=NEW.anggaran_id; END IF;
   IF final_count=0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Rincian kontrak hanya dapat memakai DPA/DPPA yang disetujui dan dikunci'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -92251,7 +92251,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_item_validate_insert` BEFORE INSERT ON kontrak_item_neo FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_kontrak_item_validate_insert` BEFORE INSERT ON kontrak_item_neo FOR EACH ROW BEGIN
   DECLARE budget DECIMAL(20,2) DEFAULT NULL;
   DECLARE used_value DECIMAL(20,2) DEFAULT 0;
   DECLARE approved TINYINT DEFAULT 0;
@@ -92268,7 +92268,7 @@ DELIMITER ;;
   IF budget IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Uraian DPA/DPPA tidak ditemukan atau belum disetujui'; END IF;
   IF NEW.nilai_kontrak<=0 OR NEW.nilai_kontrak>budget OR (approved=1 AND used_value+NEW.nilai_kontrak>budget) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Akumulasi kontrak disetujui melebihi pagu uraian DPA/DPPA'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -92283,7 +92283,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_item_final_budget_update` BEFORE UPDATE ON kontrak_item_neo FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_kontrak_item_final_budget_update` BEFORE UPDATE ON kontrak_item_neo FOR EACH ROW BEGIN
   DECLARE final_count INT DEFAULT 0;
   IF BINARY NEW.tahap=BINARY 'dpa' THEN SELECT COUNT(*) INTO final_count FROM dpa_neo WHERE id=NEW.anggaran_id AND setujui=1 AND kunci=1 AND is_deleted=0;
   ELSEIF BINARY NEW.tahap=BINARY 'dppa' THEN SELECT COUNT(*) INTO final_count FROM dppa_neo WHERE id=NEW.anggaran_id AND setujui=1 AND kunci=1 AND is_deleted=0;
@@ -92293,7 +92293,7 @@ DELIMITER ;;
   IF NEW.pengesahan_anggaran_id IS NOT NULL THEN SELECT COUNT(*) INTO final_count FROM anggaran_pengesahan_rincian_neo s JOIN anggaran_pengesahan_neo a ON a.id=s.pengesahan_id WHERE s.pengesahan_id=NEW.pengesahan_anggaran_id AND a.status='DISAHKAN' AND BINARY a.kd_wilayah=BINARY NEW.kd_wilayah AND BINARY a.kd_opd=BINARY NEW.kd_opd AND a.tahun=NEW.tahun AND BINARY s.tahap=BINARY NEW.tahap AND s.anggaran_id=NEW.anggaran_id; END IF;
   IF final_count=0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Rincian kontrak hanya dapat memakai DPA/DPPA yang disetujui dan dikunci'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -92308,7 +92308,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_item_validate_update` BEFORE UPDATE ON kontrak_item_neo FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_kontrak_item_validate_update` BEFORE UPDATE ON kontrak_item_neo FOR EACH ROW BEGIN
   DECLARE budget DECIMAL(20,2) DEFAULT NULL;
   DECLARE used_value DECIMAL(20,2) DEFAULT 0;
   DECLARE approved TINYINT DEFAULT 0;
@@ -92324,7 +92324,7 @@ DELIMITER ;;
   SELECT COALESCE(SUM(i.nilai_kontrak),0) INTO used_value FROM kontrak_item_neo i JOIN kontrak_neo k ON k.id=i.kontrak_id AND k.setujui=1 AND k.is_deleted=0 WHERE BINARY i.tahap=BINARY NEW.tahap AND i.anggaran_id=NEW.anggaran_id AND i.kontrak_id<>NEW.kontrak_id AND i.is_deleted=0;
   IF budget IS NULL OR NEW.nilai_kontrak<=0 OR NEW.nilai_kontrak>budget OR (approved=1 AND used_value+NEW.nilai_kontrak>budget) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Akumulasi kontrak disetujui melebihi pagu uraian DPA/DPPA'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -92829,7 +92829,7 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_final_budget_insert` BEFORE INSERT ON kontrak_neo FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_kontrak_final_budget_insert` BEFORE INSERT ON kontrak_neo FOR EACH ROW BEGIN
   DECLARE sub_code VARCHAR(50) DEFAULT NULL;
   IF BINARY NEW.tahap=BINARY 'dpa' THEN
     SELECT kd_sub_keg INTO sub_code FROM dpa_neo WHERE id=NEW.anggaran_id AND BINARY kd_wilayah=BINARY NEW.kd_wilayah AND BINARY kd_opd=BINARY NEW.kd_opd AND tahun=NEW.tahun AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1;
@@ -92846,7 +92846,7 @@ DELIMITER ;;
   END IF;
   IF sub_code IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Kontrak hanya dapat memakai DPA/DPPA yang disetujui dan dikunci'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -92861,7 +92861,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_final_budget_update` BEFORE UPDATE ON kontrak_neo FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_kontrak_final_budget_update` BEFORE UPDATE ON kontrak_neo FOR EACH ROW BEGIN
   DECLARE sub_code VARCHAR(50) DEFAULT NULL;
   IF BINARY NEW.tahap=BINARY 'dpa' THEN
     SELECT kd_sub_keg INTO sub_code FROM dpa_neo WHERE id=NEW.anggaran_id AND BINARY kd_wilayah=BINARY NEW.kd_wilayah AND BINARY kd_opd=BINARY NEW.kd_opd AND tahun=NEW.tahun AND setujui=1 AND kunci=1 AND is_deleted=0 LIMIT 1;
@@ -92878,7 +92878,7 @@ DELIMITER ;;
   END IF;
   IF sub_code IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Kontrak hanya dapat memakai DPA/DPPA yang disetujui dan dikunci'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -92893,7 +92893,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_kontrak_validate_update` BEFORE UPDATE ON kontrak_neo FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_kontrak_validate_update` BEFORE UPDATE ON kontrak_neo FOR EACH ROW BEGIN
   DECLARE budget DECIMAL(20,2) DEFAULT NULL;
   DECLARE sub_code VARCHAR(50) DEFAULT NULL;
   DECLARE provider VARCHAR(255) DEFAULT NULL;
@@ -92983,7 +92983,7 @@ DELIMITER ;;
   END IF;
   SET NEW.total_anggaran=budget,NEW.kd_sub_keg=sub_code,NEW.nama_penyedia=provider;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -174604,13 +174604,13 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_pejabat_fill_insert` BEFORE INSERT ON `pejabat_tahunan_neo` FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_pejabat_fill_insert` BEFORE INSERT ON `pejabat_tahunan_neo` FOR EACH ROW BEGIN
   SET NEW.nama_pegawai=(SELECT nama FROM db_asn_pemda_neo WHERE id=NEW.pegawai_id LIMIT 1);
   SET NEW.nip=(SELECT nip FROM db_asn_pemda_neo WHERE id=NEW.pegawai_id LIMIT 1);
   IF NEW.berlaku_sampai<NEW.berlaku_mulai THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Tanggal berakhir jabatan tidak boleh sebelum tanggal mulai'; END IF;
   IF NEW.jenis_pejabat IN ('PPK','PPTK') AND (NEW.kd_sub_keg IS NULL OR NEW.kd_sub_keg='') THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='PPK dan PPTK wajib dihubungkan ke sub kegiatan'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -174625,13 +174625,13 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50003 TRIGGER `trg_pejabat_fill_update` BEFORE UPDATE ON `pejabat_tahunan_neo` FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_pejabat_fill_update` BEFORE UPDATE ON `pejabat_tahunan_neo` FOR EACH ROW BEGIN
   SET NEW.nama_pegawai=(SELECT nama FROM db_asn_pemda_neo WHERE id=NEW.pegawai_id LIMIT 1);
   SET NEW.nip=(SELECT nip FROM db_asn_pemda_neo WHERE id=NEW.pegawai_id LIMIT 1);
   IF NEW.berlaku_sampai<NEW.berlaku_mulai THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Tanggal berakhir jabatan tidak boleh sebelum tanggal mulai'; END IF;
   IF NEW.jenis_pejabat IN ('PPK','PPTK') AND (NEW.kd_sub_keg IS NULL OR NEW.kd_sub_keg='') THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='PPK dan PPTK wajib dihubungkan ke sub kegiatan'; END IF;
 END
-*/;;
+;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
