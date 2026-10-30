@@ -69,7 +69,47 @@ final class AsnHistoryService
     }
     public static function refreshScope(DB $db,array $user):void
     {
-        if(empty($user['kd_wilayah']))return;$sql='SELECT * FROM db_asn_pemda_neo WHERE kd_wilayah=? AND is_deleted=0';$args=[$user['kd_wilayah']];if(!empty($user['kd_opd'])&&$user['kd_opd']!=='0'){$sql.=' AND kd_opd=?';$args[]=$user['kd_opd'];}
-        foreach($db->query($sql,$args)->fetchAll()as$r){ self::seed($db,$r,(int)substr(self::today(),0,4)); self::sync($db,(int)$r['id']); }
+        if(empty($user['kd_wilayah']))return;
+        $where='kd_wilayah=? AND is_deleted=0';$args=[$user['kd_wilayah']];
+        if(!empty($user['kd_opd'])&&$user['kd_opd']!=='0'){$where.=' AND kd_opd=?';$args[]=$user['kd_opd'];}
+        // One scoped read replaces seed/sync SELECTs for every ASN on each table request.
+        $employees=$db->query("SELECT * FROM db_asn_pemda_neo WHERE $where ORDER BY id FOR UPDATE",$args)->fetchAll();
+        if(!$employees)return;
+        $byId=array_column($employees,null,'id');$histories=[];$today=self::today();
+        foreach([self::JOB,self::GRADE]as$table){
+            $hw='h.kd_wilayah=?';$ha=[$user['kd_wilayah']];
+            if(!empty($user['kd_opd'])&&$user['kd_opd']!=='0'){$hw.=' AND h.kd_opd=?';$ha[]=$user['kd_opd'];}
+            $histories[$table]=[];
+            foreach($db->query("SELECT h.* FROM $table h WHERE $hw ORDER BY h.tmt DESC,COALESCE(h.tanggal_sk,h.tmt) DESC,h.id DESC",$ha)->fetchAll()as$h){
+                $e=$byId[$h['pegawai_id']]??null;
+                if($e&&(string)$h['kd_opd']===(string)$e['kd_opd'])$histories[$table][$h['pegawai_id']][]=$h;
+            }
+        }
+        foreach($employees as$e){
+            $needSeed=false;
+            foreach([self::JOB,self::GRADE]as$table){
+                $active=array_filter($histories[$table][$e['id']]??[],fn($h)=>!(int)$h['is_deleted']);
+                $known=$table===self::JOB?!in_array(trim((string)$e['jabatan']),['','-','0','non'],true):(in_array((string)$e['golongan'],['1','2','3','4'],true)&&in_array(strtolower((string)$e['ruang']),['a','b','c','d','e'],true));
+                if(!$active&&$known)$needSeed=true;
+            }
+            if($needSeed){
+                $inserted=self::seed($db,$e,(int)substr($today,0,4));
+                foreach($inserted as$table=>$id)$histories[$table][$e['id']][]=$db->query("SELECT * FROM $table WHERE id=?",[$id])->fetch();
+            }
+            $changes=[];
+            foreach([self::JOB,self::GRADE]as$table){
+                $history=$histories[$table][$e['id']]??[];$current=null;
+                foreach($history as$h){
+                    if((int)$h['is_deleted']||(int)$h['disable']||$h['tmt']>$today||(!empty($h['tanggal_sk'])&&$h['tanggal_sk']>$today))continue;
+                    if($table===self::JOB&&!empty($h['tanggal_selesai'])&&$h['tanggal_selesai']<$today)continue;
+                    $current=$h;break;
+                }
+                if(!$history)continue;
+                if($table===self::JOB){$values=$current?['jabatan'=>$current['jabatan'],'kelompok'=>$current['kelompok']?:self::group($current['jabatan'])]:['jabatan'=>'','kelompok'=>4];if($current&&trim((string)$current['unit_kerja'])!=='')$values['unit_kerja']=$current['unit_kerja'];}
+                else $values=$current?['golongan'=>$current['golongan'],'ruang'=>$current['ruang']]:['golongan'=>'','ruang'=>''];
+                foreach($values as$k=>$v)if((string)$e[$k] !== (string)$v)$changes[$k]=$v;
+            }
+            if($changes)$db->update('db_asn_pemda_neo',$changes+['username_update'=>'SINKRON_RIWAYAT_ASN','tgl_update'=>date('Y-m-d H:i:s')],'WHERE id=?',[$e['id']]);
+        }
     }
 }

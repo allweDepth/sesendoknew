@@ -39,8 +39,8 @@ final class OpdStructureAutomationService
             if($level===null){$skipped++;continue;}
             $old=null;foreach($existing as$s)if((int)$s['pegawai_id']===(int)$e['id']){$old=$s;break;}
             $conflict=false;foreach($existing as$s)if(!$old&&mb_strtolower($s['nama_jabatan'])===mb_strtolower($job))$conflict=true;
-            $date=$h['tmt']??$e['tgl_tmt_akhir']??null;
-            $rows[]=['employee_id'=>(int)$e['id'],'name'=>trim($e['nama'].($e['gelar']?', '.$e['gelar']:'')),'job'=>$job,'unit'=>$e['unit_kerja']??'','level'=>$level,'parent_employee_id'=>null,'existing_id'=>$old?(int)$old['id']:null,'number'=>$h['nomor_sk']??$e['nmr_sk_terakhir']??null,'sk_date'=>$h['tanggal_sk']??$e['tgl_sk_terakhir']??null,'tmt'=>$date,'status'=>$old?'existing':($conflict?'conflict':(!$date?'missing_tmt':'new')),'review'=>[]];
+            $date=$h['tmt']??null;
+            $rows[]=['employee_id'=>(int)$e['id'],'name'=>trim($e['nama'].($e['gelar']?', '.$e['gelar']:'')),'job'=>$job,'unit'=>$e['unit_kerja']??'','level'=>$level,'parent_employee_id'=>null,'existing_id'=>$old?(int)$old['id']:null,'number'=>$h['nomor_sk']??null,'sk_date'=>$h['tanggal_sk']??null,'tmt'=>$date,'status'=>$old?'existing':($conflict?'conflict':(!$date?'missing_tmt':'new')),'review'=>[]];
         }
         $jobs=[];
         foreach($rows as$r)$jobs[mb_strtolower($r['job'])]=($jobs[mb_strtolower($r['job'])]??0)+1;

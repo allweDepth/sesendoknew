@@ -168,7 +168,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 				if (currentRequest !== this.requestId) return;
 
 				if (!res || !res.success) {
-					Toast.error(res?.message || "Gagal memuat data");
+					this.renderLoadError(res?.message || "Gagal memuat data");
 					return;
 				}
 
@@ -181,10 +181,11 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 				this.renderBody();
 				this.renderPagination();
 			},
-			error: () => {
-				Toast.error("Terjadi kesalahan sistem");
+			error: (res) => {
+				if (currentRequest !== this.requestId) return;
+				this.renderLoadError(res?.message || "Data belum dapat dimuat");
 			},
-			complete: () => { this.pendingRequest = null; },
+			complete: () => { if (currentRequest === this.requestId) this.pendingRequest = null; },
 		});
 	}
 
@@ -201,6 +202,14 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 	/* =====================================================
 			RENDER LOADER
 		===================================================== */
+	renderLoadError(message) {
+		const cell = $('<td colspan="100%">');
+		const notice = $('<div class="ui negative message">').append($('<p>').text(message));
+		notice.append($('<button type="button" class="ui small basic button">').text('Coba lagi').on('click', () => this.fetchData()));
+		$(this.tbody).empty().append($('<tr>').append(cell.append(notice)));
+		$(this.pagination).empty();
+	}
+
 	renderLoader() {
 		$(this.tbody).html(`
 			<tr>

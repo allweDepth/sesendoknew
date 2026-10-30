@@ -59,6 +59,9 @@ class DynamicController
 
     $action = $_POST['action'] ?? null;
 
+    // Read requests must not serialize other AJAX calls behind the PHP session lock.
+    if (in_array($action, ['list','dropdown'], true) && session_status() === PHP_SESSION_ACTIVE) session_write_close();
+
     if ($action === 'import') {
       $this->import();
       return;

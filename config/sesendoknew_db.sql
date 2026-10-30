@@ -10074,7 +10074,7 @@ CREATE TABLE `db_asn_pemda_neo` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `nip` (`nip`)
-) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=135 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199453,7 +199453,7 @@ CREATE TABLE `riwayat_jabatan_neo` (
   KEY `idx_rj_pegawai` (`pegawai_id`),
   KEY `idx_rj_sumber_struktur` (`sumber_struktur_id`),
   KEY `idx_history_current` (`pegawai_id`,`kd_wilayah`,`kd_opd`,`tmt`,`is_deleted`)
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199598,7 +199598,7 @@ CREATE TABLE `riwayat_pangkat_neo` (
   KEY `idx_rp_scope` (`kd_wilayah`,`kd_opd`,`tahun`),
   KEY `idx_rp_pegawai` (`pegawai_id`),
   KEY `idx_history_current` (`pegawai_id`,`kd_wilayah`,`kd_opd`,`tmt`,`is_deleted`)
-) ENGINE=InnoDB AUTO_INCREMENT=122 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=134 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -210899,16 +210899,16 @@ LOCK TABLES `struktur_jabatan_opd_neo` WRITE;
 /*!40000 ALTER TABLE `struktur_jabatan_opd_neo` DISABLE KEYS */;
 INSERT INTO `struktur_jabatan_opd_neo` VALUES
 (17,'76.01','1.03.0.00.0.00.01.0000',2026,3,NULL,NULL,'Kepala OPD','Pimpinan Tinggi','IV.a','001','2026-01-01','2026-01-01','2026-01-01',NULL,'AKTIF',1,'','2026-10-26 04:25:41','nabiila',NULL,NULL,0),
-(37,'76.01','1.03.0.00.0.00.01.0000',2026,111,17,'1.03.0.00.0.00.01.0000','Sekertaris Dinas','Struktural',NULL,NULL,'1970-01-01','2026-01-01','2026-01-01',NULL,'AKTIF',200,'Disusun otomatis dari jabatan ASN/riwayat berlaku. Lengkapi nomor/tanggal SK','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
-(38,'76.01','1.03.0.00.0.00.01.0000',2026,110,17,'1.03.0.00.0.00.01.0000','Kabid Bina Marga','Struktural',NULL,NULL,'1970-01-01','2026-01-01','2026-01-01',NULL,'AKTIF',301,'Disusun otomatis dari jabatan ASN/riwayat berlaku. Lengkapi nomor/tanggal SK','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
-(39,'76.01','1.03.0.00.0.00.01.0000',2026,5,17,'1.03.0.00.0.00.01.0000','Kabid Cipta Karya','Struktural',NULL,'823.3/624/BKDD','2015-04-13','2026-01-01','2026-01-01',NULL,'AKTIF',302,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
-(40,'76.01','1.03.0.00.0.00.01.0000',2026,4,17,'1.03.0.00.0.00.01.0000','Kabid Pembinaan Jasa Konstruksi','Struktural',NULL,'823.4-01','2018-05-03','2026-01-01','2026-01-01',NULL,'AKTIF',303,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
-(41,'76.01','1.03.0.00.0.00.01.0000',2026,6,17,'1.03.0.00.0.00.01.0000','Kabid Sumber Daya Air','Struktural',NULL,'823.3/202/BKPPD','1970-01-01','2026-01-01','2026-01-01',NULL,'AKTIF',304,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
-(42,'76.01','1.03.0.00.0.00.01.0000',2026,7,17,'1.03.0.00.0.00.01.0000','Kabid tata ruang','Struktural',NULL,'823.3/10079/BKPPD','2017-07-09','2026-01-01','2026-01-01',NULL,'AKTIF',305,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
-(43,'76.01','1.03.0.00.0.00.01.0000',2026,48,17,'1.03.0.00.0.00.01.0000','Kepala UPTD Pengelolaan Air Bersih','Struktural',NULL,'823.3/1077/BKPPD','2017-07-09','2026-01-01','2026-01-01',NULL,'AKTIF',306,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
-(44,'76.01','1.03.0.00.0.00.01.0000',2026,17,37,'1.03.0.00.0.00.01.0000','Kasubag Keuangan','Struktural',NULL,'823.3/506/BKPP','1970-01-01','2026-01-01','2026-01-01',NULL,'AKTIF',407,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
-(45,'76.01','1.03.0.00.0.00.01.0000',2026,32,43,'1.03.0.00.0.00.01.0000','Kasubag TU UPTD Pengelolaan Air Bersih','Struktural',NULL,'823.3/311/BKPPD','1970-01-01','2026-01-01','2026-01-01',NULL,'AKTIF',408,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
-(46,'76.01','1.03.0.00.0.00.01.0000',2026,14,37,'1.03.0.00.0.00.01.0000','Kasubag Umum Dan Kepegawaian','Struktural',NULL,'823.3/202/BKPPD','1970-01-01','2026-01-01','2026-01-01',NULL,'AKTIF',409,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0);
+(37,'76.01','1.03.0.00.0.00.01.0000',2026,111,17,'1.03.0.00.0.00.01.0000','Sekertaris Dinas','Struktural',NULL,NULL,NULL,'2026-01-01','2026-01-01',NULL,'AKTIF',200,'Disusun otomatis dari jabatan ASN/riwayat berlaku. Lengkapi nomor/tanggal SK','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
+(38,'76.01','1.03.0.00.0.00.01.0000',2026,110,17,'1.03.0.00.0.00.01.0000','Kabid Bina Marga','Struktural',NULL,NULL,NULL,'2026-01-01','2026-01-01',NULL,'AKTIF',301,'Disusun otomatis dari jabatan ASN/riwayat berlaku. Lengkapi nomor/tanggal SK','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
+(39,'76.01','1.03.0.00.0.00.01.0000',2026,5,17,'1.03.0.00.0.00.01.0000','Kabid Cipta Karya','Struktural',NULL,NULL,NULL,'2026-01-01','2026-01-01',NULL,'AKTIF',302,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
+(40,'76.01','1.03.0.00.0.00.01.0000',2026,4,17,'1.03.0.00.0.00.01.0000','Kabid Pembinaan Jasa Konstruksi','Struktural',NULL,NULL,NULL,'2026-01-01','2026-01-01',NULL,'AKTIF',303,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
+(41,'76.01','1.03.0.00.0.00.01.0000',2026,6,17,'1.03.0.00.0.00.01.0000','Kabid Sumber Daya Air','Struktural',NULL,NULL,NULL,'2026-01-01','2026-01-01',NULL,'AKTIF',304,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
+(42,'76.01','1.03.0.00.0.00.01.0000',2026,7,17,'1.03.0.00.0.00.01.0000','Kabid tata ruang','Struktural',NULL,NULL,NULL,'2026-01-01','2026-01-01',NULL,'AKTIF',305,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
+(43,'76.01','1.03.0.00.0.00.01.0000',2026,48,17,'1.03.0.00.0.00.01.0000','Kepala UPTD Pengelolaan Air Bersih','Struktural',NULL,NULL,NULL,'2026-01-01','2026-01-01',NULL,'AKTIF',306,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
+(44,'76.01','1.03.0.00.0.00.01.0000',2026,17,37,'1.03.0.00.0.00.01.0000','Kasubag Keuangan','Struktural',NULL,NULL,NULL,'2026-01-01','2026-01-01',NULL,'AKTIF',407,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
+(45,'76.01','1.03.0.00.0.00.01.0000',2026,32,43,'1.03.0.00.0.00.01.0000','Kasubag TU UPTD Pengelolaan Air Bersih','Struktural',NULL,NULL,NULL,'2026-01-01','2026-01-01',NULL,'AKTIF',408,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0),
+(46,'76.01','1.03.0.00.0.00.01.0000',2026,14,37,'1.03.0.00.0.00.01.0000','Kasubag Umum Dan Kepegawaian','Struktural',NULL,NULL,NULL,'2026-01-01','2026-01-01',NULL,'AKTIF',409,'Disusun otomatis dari jabatan ASN/riwayat berlaku. ','2026-10-30 09:18:59','nabiila',NULL,NULL,0);
 /*!40000 ALTER TABLE `struktur_jabatan_opd_neo` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;
@@ -212483,7 +212483,7 @@ LOCK TABLES `user_sesendok_biila` WRITE;
 /*!40000 ALTER TABLE `user_sesendok_biila` DISABLE KEYS */;
 INSERT INTO `user_sesendok_biila` VALUES
 (1,NULL,'alwi_mansyur','alwi@gmail.com','Alwi Mansyur','1980','$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi',NULL,NULL,'1.03.0.00.0.00.01.0000','DINAS PEKERJAAN UMUM DAN PENATAAN RUANG','76.01','admin_wilayah','images/avatar/default.jpeg',NULL,0,'2018-06-04 21:57:05','2024-10-23 15:03:04',2024,NULL,'pasangkayu ji',NULL,90.00,'auto','non','short',0,0,0,0,1,'apa yang dapat saya berikan',0),
-(2,NULL,'nabiila','nabiila@gmail.com','Najwan Nabiila','123456789012345678','$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy','{\"alg\":\"RSA-OAEP-256\",\"e\":\"AQAB\",\"ext\":true,\"key_ops\":[\"encrypt\"],\"kty\":\"RSA\",\"n\":\"k0B04BH_DyQWMtSH_9uVlF0RDMqcRw1B6jRX-b1gRU--PwDz7iZ6XyLHq-62DkbYUWawEkxd9_9LhtbUWqf0y9DzTyV3ZPLLZ-p915Z1gqLT99RwrdnGdP0kpppkkJVklhGyho-C1_D7IS1fZuziW-AjRJRm6aSzsfYFk2PLbUbTvSwZ79qn39KX3k2mkeOpdmCtKG9ZbB8IOrDo8E2awemlO3WU_LbovKjAa5arNi_Fx-eR1r4pqi7TQ35cQEc6-FiALiRUMC1IejfHgNRf_gkzCDplMtL_mLZGxoJeP5SaAR-O5qlR5C3aUdyehU0PVmofYjBhJTS606wMdJZFioFY9a71wBoRL-G8xTEcTM_9YBm02AbR6_YF5j0jwtXtjNq0BNwlcCVWyh2VCENHqiUXBRl8t3wRKepAYECCLa2cjSA1Dcahm92U1ol6wEHskspw0PF_MpdvqnwFg7Cg1UiwI7qt2YTVYWcjX5x2jMxn4aKSD9E62FvLKp0aT_xt\"}',NULL,'1.03.0.00.0.00.01.0000','DINAS PEKERJAAN UMUM DAN PENATAAN RUANG','76.01','admin_opd','storage/uploads/76.01-1.03.0.00.0.00.01.0000/profil/user-2-a117707fbe3e.webp',NULL,0,'2018-06-09 15:54:29','2026-02-24 21:15:01',2026,1,'08128888',NULL,80.00,'auto','non','short',0,0,0,0,1,'Apa yang dapat saya berikan untuk Pasangkayu',0),
+(2,NULL,'nabiila','nabiila@gmail.com','Najwan Nabiila','123456789012345678','$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy','{\"alg\":\"RSA-OAEP-256\",\"e\":\"AQAB\",\"ext\":true,\"key_ops\":[\"encrypt\"],\"kty\":\"RSA\",\"n\":\"4RQu99m5VeUR0rrsJVMuuAeyjRtnyHIFG_yFgLvXLh4p8GujKdq5Lyq4nb3kmi-4RqF06dzuPVJSijwPGyOdMc_XCESgC-CwUyrWHIslD6RuRI3EF87v7JmGhVfFf-hxwzDGuxiEZrKoPo4FChdsfpESsK-9KZr7IZKE4tUo3_46_zcIHts_mjXzFhLxz7gVy0MURMuPle71TXvzzDeqMOonnS3h0lrUkhsKQeLQ7fKYXw7QBsatiTie5-wA25BB7lIjHvhKgtpeYf4Si3QfoaZbMnBspb0u3MxJ19kVkEXIczHZGKYVWqd95kxOfOaIptAvlT39GDEJygoshc-WuEs0RLYy61wkBBGyjHSqlofypW9m_iA4hOaZLndNG4bdxin2NA6J5FqnB2jb7myuSIJjwuEJkL3Oa9XlLP5a9v12yfwiYR7KS-2k4L1zwk02qcdZYX2BpF9f-FRtjZ5RPK2zd9p6LbM8yLuFFsUtKPCkGU1D2sQ5-xzd5fL349uz\"}',NULL,'1.03.0.00.0.00.01.0000','DINAS PEKERJAAN UMUM DAN PENATAAN RUANG','76.01','admin_opd','storage/uploads/76.01-1.03.0.00.0.00.01.0000/profil/user-2-a117707fbe3e.webp',NULL,0,'2018-06-09 15:54:29','2026-02-24 21:15:01',2026,1,'08128888',NULL,80.00,'auto','non','short',0,0,0,0,1,'Apa yang dapat saya berikan untuk Pasangkayu',0),
 (3,NULL,'inayah','inayah@gmail.com','Inayah Nadhilah',NULL,'$2y$10$wkIJCe8dk3YaLaaIScBOBOAY4M8cLEyDsFm66Xhwo9U3p/wcik9Bi',NULL,NULL,'1.03.0.00.0.00.01.0000','DINAS PEKERJAAN UMUM DAN PENATAAN RUANG','76.01','super_admin','images/avatar/default.jpeg',NULL,0,'2018-06-22 22:04:17','2020-03-08 02:30:41',2026,1,'',NULL,80.00,'auto',NULL,'short',0,0,0,0,1,'dimana mana hatiku senang oke',0),
 (4,NULL,'Arlinda','arlinda@gmail.com','Arlinda Achmad',NULL,'$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy',NULL,NULL,'','Prof','','admin_opd','images/avatar/default.jpeg',NULL,0,'2018-07-10 14:27:06','2018-10-21 12:23:09',2024,NULL,'',NULL,80.00,'auto',NULL,'short',0,0,0,0,1,'Apa yang dapat saya berikan untuk Pasangkayu.',0),
 (5,NULL,'administrator','alwi.mansyur@gmail.com','administrator',NULL,'$2y$12$1qb72gQsUL.UlMLmkOZ8KOtPjhZhxDIf.AiY7kaD7zqs90GaAZJdy',NULL,NULL,'','administrator AHSP','','user','images/avatar/c14719a7f71e46badf2cf93ae373ae9797281782_9.png',NULL,0,'2023-02-09 23:41:34','2023-02-23 00:05:26',2024,NULL,'08128886665',NULL,80.00,'auto','non','short',0,0,0,0,1,'Apa yang dapat saya berikan untuk mu',0),
@@ -212819,4 +212819,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-10-30 17:34:57
+-- Dump completed on 2026-10-30 18:57:55

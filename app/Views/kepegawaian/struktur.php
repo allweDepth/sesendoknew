@@ -23,15 +23,8 @@ $scopeOpd = $scopeOpd ?? ''; ?>
       <div class="two fields">
         <div class="required field"><label>Nama Jabatan</label><select class="ui fluid search dropdown" name="nama_jabatan_preset">
             <option value="">Pilih jabatan struktural</option>
-            <option>Kepala OPD</option>
-            <option>Sekretaris</option>
-            <option>Kepala Bidang</option>
-            <option>Kepala Bagian</option>
-            <option>Kepala UPTD</option>
-            <option>Kepala Subbagian</option>
-            <option>Kepala Seksi</option>
             <option value="__custom__">Jabatan lainnya...</option>
-          </select><input class="ui small input" name="nama_jabatan" maxlength="255" required placeholder="Nama jabatan sesuai SK" style="margin-top:8px"></div>
+          </select><input class="ui small input" name="nama_jabatan" maxlength="255" required placeholder="Nama jabatan sesuai SK" style="margin-top:8px"><small>Pilihan mengikuti data ASN, riwayat jabatan, dan struktur OPD ini. Pilih Jabatan lainnya untuk menambah nama jabatan sesuai SK.</small></div>
         <div class="required field"><label>Pejabat ASN</label><select class="ui fluid search dropdown" name="pegawai_id" required></select></div>
       </div>
       <div class="three fields">
@@ -108,6 +101,12 @@ $scopeOpd = $scopeOpd ?? ''; ?>
         par = $('#strukturForm [name="parent_id"]');
       emp.html('<option value="">Pilih ASN</option>' + data.employees.map(x => `<option value="${x.id}">${esc(x.nama)} — ${esc(x.nip||'-')} (${esc(x.jabatan||'tanpa jabatan')})</option>`).join(''));
       par.html('<option value="">Tidak ada (pimpinan tertinggi)</option>' + data.rows.filter(x => !x.jenis_pimpinan).map(x => `<option value="${x.kd_opd}:${x.id}">${esc(x.nama_jabatan)} — ${esc(x.nama_pegawai||'-')} [${esc(x.kd_opd)}]</option>`).join(''));
+      const presets=$('#strukturForm [name="nama_jabatan_preset"]'),selected=presets.val();
+      presets.empty().append(new Option('Pilih jabatan dalam OPD',''));
+      (data.jobs||[]).forEach(x=>presets.append(new Option(x,x)));
+      presets.append(new Option('Jabatan lainnya...','__custom__'));
+      presets.dropdown('refresh');
+      if(selected)presets.dropdown('set selected',selected);
       $('#jabatanAsn').html([...new Set(data.employees.map(x => x.jabatan).filter(Boolean))].map(x => `<option value="${esc(x)}">`).join(''));
       $('.ui.dropdown').dropdown('refresh');
     }

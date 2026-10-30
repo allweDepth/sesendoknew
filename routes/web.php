@@ -140,6 +140,7 @@ return [
     |--------------------------------------------------------------------------
     */
   '/kepegawaian'        => ['KepegawaianController', 'index'],
+  '/kepegawaian/asn-options' => ['KepegawaianController', 'employeeOptions'],
   '/kepegawaian/struktur' => ['KepegawaianController', 'structure'],
   '/kepegawaian/struktur/data' => ['KepegawaianController', 'structureData'],
   '/kepegawaian/struktur/automate' => ['KepegawaianController', 'structureAutomate'],

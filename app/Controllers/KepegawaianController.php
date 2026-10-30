@@ -68,11 +68,29 @@ class KepegawaianController extends Controller
     $this->view('kepegawaian/struktur', ['canManage' => $this->canManageStructure($user), 'regionalScope' => (($user['structure_scope'] ?? '') === 'regional'), 'scopeOpd' => $user['kd_opd']], 'app');
   }
 
+  public function employeeOptions(): void
+  {
+    header('Content-Type: application/json;charset=UTF-8');
+    try {
+      if (!Auth::check()) throw new RuntimeException('Sesi login tidak valid');
+      $u=Auth::scopedUser();
+      if (empty($u['kd_wilayah'])) throw new RuntimeException('Wilayah pengguna belum dipilih');
+      $regional=in_array($u['type_user']??'', ['super_admin','admin_wilayah','tapd'],true);
+      if (!$regional && (empty($u['kd_opd']) || $u['kd_opd']==='0')) throw new RuntimeException('OPD pengguna belum dipilih');
+      if (session_status()===PHP_SESSION_ACTIVE) session_write_close();
+      $where='kd_wilayah=? AND is_deleted=0 AND disable=0';$args=[$u['kd_wilayah']];
+      if (!empty($u['kd_opd']) && $u['kd_opd']!=='0') {$where.=' AND kd_opd=?';$args[]=$u['kd_opd'];}
+      $rows=DB::getInstance()->query("SELECT id,nama,gelar_depan,gelar,nip FROM db_asn_pemda_neo WHERE $where ORDER BY nama,id",$args)->fetchAll();
+      echo json_encode(['success'=>true,'data'=>$rows],JSON_UNESCAPED_UNICODE);
+    } catch(Throwable $e) {http_response_code(400);echo json_encode(['success'=>false,'message'=>$e->getMessage()]);}
+  }
+
   public function structureData(): void
   {
     header('Content-Type: application/json;charset=UTF-8');
     try {
       $u = $this->structureUser();
+      if (session_status()===PHP_SESSION_ACTIVE) session_write_close();
       $db = DB::getInstance();
       $scopeOpds = array_values(array_unique([$u['kd_opd'], 'SETDA', 'BUPATI', 'GUBERNUR', 'WALIKOTA']));
       $marks = implode(',', array_fill(0, count($scopeOpds), '?'));
@@ -81,6 +99,11 @@ class KepegawaianController extends Controller
       $employeeOpds = (($u['structure_scope'] ?? '') === 'regional') ? ['BUPATI', 'SETDA'] : [$u['kd_opd']];
       $marks = implode(',', array_fill(0, count($employeeOpds), '?'));
       $employees = $db->query("SELECT id,CONCAT_WS(' ',gelar_depan,nama,gelar) nama,nip,jabatan,kd_opd FROM db_asn_pemda_neo WHERE kd_wilayah=? AND kd_opd IN ($marks) AND is_deleted=0 AND disable=0 AND COALESCE(aktif,1)=1 ORDER BY nama", array_merge([$u['kd_wilayah']], $employeeOpds))->fetchAll();
+      $jobParams=array_merge([$u['kd_wilayah']],$employeeOpds);
+      $jobRows=$db->query("SELECT DISTINCT jabatan FROM riwayat_jabatan_neo WHERE kd_wilayah=? AND kd_opd IN ($marks) AND is_deleted=0 AND disable=0 AND TRIM(jabatan)<>''",$jobParams)->fetchAll();
+      $jobNames=[];
+      foreach(array_merge(array_column($employees,'jabatan'),array_column(array_filter($rows,fn($r)=>in_array($r['kd_opd'],$employeeOpds,true)),'nama_jabatan'),array_column($jobRows,'jabatan'))as$name){$name=trim((string)$name);if($name!=='')$jobNames[mb_strtolower($name)]=$name;}
+      natcasesort($jobNames);
       $region = $db->query('SELECT uraian FROM wilayah_neo WHERE kode=? AND is_deleted=0 LIMIT 1', [$u['kd_wilayah']])->fetch();
       $officials = $db->query('SELECT * FROM pimpinan_wilayah_neo WHERE kd_wilayah=? AND tahun=?', [$u['kd_wilayah'], $u['tahun']])->fetchAll();
       $titles = RegionalLeadershipService::titles($u['kd_wilayah'], $region['uraian'] ?? $u['kd_wilayah']);
@@ -90,7 +113,7 @@ class KepegawaianController extends Controller
         foreach (['foto', 'file_sk'] as $field) $row[$field . '_url'] = !empty($row[$field]) ? app_url('/' . $row[$field]) : null;
       }
       unset($row);
-      echo json_encode(['success' => true, 'data' => ['rows' => $rows, 'employees' => $employees]], JSON_UNESCAPED_UNICODE);
+      echo json_encode(['success' => true, 'data' => ['rows' => $rows, 'employees' => $employees, 'jobs'=>array_values($jobNames)]], JSON_UNESCAPED_UNICODE);
     } catch (Throwable $e) {
       http_response_code(400);
       echo json_encode(['success' => false, 'message' => $e->getMessage()]);
