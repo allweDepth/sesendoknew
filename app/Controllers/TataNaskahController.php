@@ -4,6 +4,7 @@ require_once __DIR__ . '/../Core/Controller.php';
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../Services/JsonResponse.php';
+require_once __DIR__ . '/../Services/TataNaskahFormatService.php';
 
 class TataNaskahController extends Controller
 {
@@ -224,7 +225,7 @@ class TataNaskahController extends Controller
       unset($payload[$field]);
     }
 
-    return $payload;
+    return TataNaskahFormatService::personalNames($payload);
   }
   private function resolveNomor($post)
   {
@@ -519,7 +520,7 @@ class TataNaskahController extends Controller
       // perbaiki titik tanpa spasi → kasih spasi
       $nama = preg_replace('/\.(\S)/', '. $1', $nama);
 
-      $nama = ucwords($nama);
+      $nama = TataNaskahFormatService::personName($nama);
 
       // ============================
       // 2. GELAR (JANGAN DIUBAH LOGIKA)
@@ -529,7 +530,7 @@ class TataNaskahController extends Controller
       $gelar = $row['gelar'] ?? '';
 
       // optional: rapikan gelar belakang saja
-      $gelar = $gelar ? strtoupper($gelar) : '';
+      $gelar = trim((string)$gelar);
 
       // ============================
       // 3. GABUNGKAN (TANPA UBAH FORMAT LAGI)

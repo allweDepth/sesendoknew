@@ -128,6 +128,8 @@ class PdfService
       }
     }
 
+    $strukturData = TataNaskahFormatService::personalNames($strukturData);
+
     // =====================================================
     // FALLBACK TEMPLATE
     // =====================================================

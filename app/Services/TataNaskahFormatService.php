@@ -3,6 +3,26 @@
 /** Form and print share these field names. SK (jenis 5) deliberately stays separate. */
 final class TataNaskahFormatService
 {
+    /** Capitalize personal names only; preserve academic titles after the comma. */
+    public static function personName(string $name): string
+    {
+        $parts = explode(',', html_entity_decode(trim($name), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 2);
+        $base = preg_replace('/\.(?=\p{L})/u', '. ', $parts[0]);
+        $base = mb_convert_case(preg_replace('/\s+/u', ' ', $base), MB_CASE_TITLE, 'UTF-8');
+        $base = preg_replace_callback("/(?<=\p{L})['’](\p{L})/u", static fn($m) => mb_strtolower($m[0], 'UTF-8'), $base);
+        return $base . (isset($parts[1]) ? ', ' . trim($parts[1]) : '');
+    }
+
+    public static function personalNames(array $data): array
+    {
+        $keys = ['nama', 'nama_penandatangan', 'nama_pemberi_tgs', 'nama_pemberi_tugas', 'nama_pejabat', 'penanda_tangan'];
+        foreach ($data as $key => $value) {
+            if (is_array($value)) $data[$key] = self::personalNames($value);
+            elseif (in_array($key, $keys, true) && is_string($value)) $data[$key] = self::personName($value);
+        }
+        return $data;
+    }
+
     public static function profile(int $id): array
     {
         return match ($id) {

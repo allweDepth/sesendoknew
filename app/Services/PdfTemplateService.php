@@ -264,7 +264,7 @@ class PdfTemplateService
     $pdf->SetX($box['x']);$pdf->MultiCell($box['width'],6,'pada tanggal '.$this->decisionDate((string)($header['tanggal_surat']??'')),0,$align);
     $pdf->SetX($box['x']);$pdf->MultiCell($box['width'],6,$caption!==''?$caption:$position,0,$align);
     $pdf->Ln(($space-1)*6);$pdf->SetX($box['x']);$pdf->SetFont($this->font,'B',$this->fs());
-    $pdf->MultiCell($box['width'],6,strtoupper($name),0,$align);
+    $pdf->MultiCell($box['width'],6,TataNaskahFormatService::personName($name),0,$align);
     if($rank!==''){$pdf->SetX($box['x']);$pdf->SetFont($this->font,'',$this->fs(-1));$pdf->MultiCell($box['width'],5,$rank,0,$align);}
     if($nip!==''){$pdf->SetX($box['x']);$pdf->MultiCell($box['width'],5,'NIP. '.$nip,0,$align);}
   }
@@ -304,7 +304,7 @@ class PdfTemplateService
     $pdf->Ln(9);$pdf->SetXY($layout['x'],$pdf->GetY());$pdf->SetFont($this->font,'',$this->fs());
     $pdf->MultiCell($layout['width'],6,$caption!==''?$caption:$position,0,$align);
     $pdf->Ln($gap);$pdf->SetX($layout['x']);$pdf->SetFont($this->font,'B',$this->fs());
-    $pdf->MultiCell($layout['width'],6,strtoupper($name),0,$align);
+    $pdf->MultiCell($layout['width'],6,TataNaskahFormatService::personName($name),0,$align);
     if($rank!==''){$pdf->SetX($layout['x']);$pdf->SetFont($this->font,'',$this->fs(-1));$pdf->MultiCell($layout['width'],5,$rank,0,$align);}
     if($nip!==''){$pdf->SetX($layout['x']);$pdf->SetFont($this->font,'',$this->fs(-1));$pdf->MultiCell($layout['width'],5,'NIP. '.$nip,0,$align);}
   }

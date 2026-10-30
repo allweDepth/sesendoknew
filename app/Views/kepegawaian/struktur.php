@@ -8,12 +8,13 @@ $scopeOpd = $scopeOpd ?? ''; ?>
       <p><?= $regionalScope ? 'Role daerah mengisi kepala daerah, wakil kepala daerah, dan Sekretaris Daerah. Data tampil di seluruh OPD wilayah ini.' : 'Kepala daerah, wakil, dan Sekda ditampilkan sesuai wilayah dan dikelola role daerah. Susun jabatan OPD di bawahnya.' ?> Nomor, tanggal SK, dan TMT wajib dicatat.</p>
     </div>
   </div>
-  <?php if ($canManage && !$regionalScope): ?><button class="ui primary button" id="tambahJabatan"><i class="plus icon"></i>Tambah Pejabat Struktural</button><?php elseif (!$canManage): ?><div class="ui label">Mode baca — pengaturan dilakukan Admin OPD, Kepala OPD, atau PA/KPA</div><?php endif; ?>
+  <?php if ($canManage && !$regionalScope): ?><button class="ui teal button" id="susunOtomatis"><i class="magic icon"></i>Susun Otomatis</button><button class="ui primary button" id="tambahJabatan"><i class="plus icon"></i>Tambah Pejabat Struktural</button><?php elseif (!$canManage): ?><div class="ui label">Mode baca — pengaturan dilakukan Admin OPD, Kepala OPD, atau PA/KPA</div><?php endif; ?>
   <div class="ui divider"></div>
   <div id="strukturList">
     <div class="ui active centered inline loader"></div>
   </div>
 </div>
+<div class="ui modal" id="strukturAutoModal"><i class="close icon"></i><div class="header"><i class="sitemap icon"></i>Susun Otomatis Struktur OPD</div><div class="scrolling content"><div class="ui info message">Berdasarkan jabatan ASN dan riwayat yang sudah berlaku. Struktur yang telah diisi tetap dipertahankan. Nomor SK, tanggal SK, dan eselon yang belum tersedia perlu dilengkapi melalui tombol edit.</div><div id="strukturAutoPreview"></div></div><div class="actions"><button class="ui cancel button">Tutup</button><button class="ui teal button" id="terapkanStruktur"><i class="check icon"></i>Terapkan Susunan</button></div></div>
 <div class="ui modal" id="strukturModal"><i class="close icon"></i>
   <div class="header">Atur Jabatan Struktural</div>
   <div class="content">
@@ -76,7 +77,8 @@ $scopeOpd = $scopeOpd ?? ''; ?>
   <div class="actions"><button class="ui deny button">Batal</button><button class="ui primary button" id="simpanPimpinan">Simpan</button></div>
 </div>
 <script>
-  (() => {
+(() => {
+  const initStrukturOrganisasi = () => {
     const root = $('#strukturOrganisasi'),
       canManage = Number(root.data('manage')) === 1;
     let data = {
@@ -92,11 +94,12 @@ $scopeOpd = $scopeOpd ?? ''; ?>
         url: '/kepegawaian/struktur/data',
         method: 'GET',
         success: r => {
-          if (!r?.success) return;
+          if (!r?.success) { $('#strukturList').html('<div class="ui negative message">Struktur belum dapat dimuat.</div>'); return; }
           data = r.data;
           render();
           fill();
-        }
+        },
+        error: () => $('#strukturList').html('<div class="ui negative message">Struktur belum dapat dimuat. Muat ulang halaman untuk mencoba kembali.</div>')
       })
     }
 
@@ -130,12 +133,25 @@ $scopeOpd = $scopeOpd ?? ''; ?>
           : (x.can_manage ? `<button class="ui mini basic blue icon button edit-struktur" data-id="${x.id}"><i class="edit icon"></i></button><button class="ui mini basic red icon button hapus-struktur" title="Akhiri masa berlaku" data-id="${x.id}" data-kd-opd="${esc(x.kd_opd)}"><i class="calendar times icon"></i></button>` : '');
         const photo = x.foto_url ? `<img src="${esc(x.foto_url)}" alt="Foto ${esc(title)}" style="width:64px;height:80px;object-fit:cover;border-radius:6px;float:left;margin:0 14px 8px 0">` : '';
         const sk = x.file_sk_url ? ` · <a href="${esc(x.file_sk_url)}" target="_blank" rel="noopener">Lihat file SK</a>` : '';
-        return `<div class="ui segment" style="margin-left:${Math.min(depth,5)*28}px;border-left:4px solid ${depth?'#21ba45':'#2185d0'};overflow:auto"><div class="ui right floated buttons">${actions}</div>${photo}<div class="ui ${depth?'teal':'blue'} label">${x.jenis_pimpinan ? 'Pimpinan Wilayah' : esc(x.eselon||'Non-eselon')}</div> <b>${esc(title)}</b><div class="ui small header" style="margin:8px 0 2px">${esc(x.nama_pegawai||'Belum diisi')}</div><div class="meta">${x.jenis_pimpinan ? '' : `NIP ${esc(x.nip||'-')} · `}${esc(x.nomor_sk_pengangkatan||'SK belum diisi')} · Tanggal SK ${esc(x.tanggal_sk_pengangkatan||'-')} · TMT ${esc(x.tmt_jabatan||x.berlaku_mulai||'-')}${sk}</div></div>${branch(x.struktur_key,depth+1)}`;
+        return `<div class="ui segment" style="margin-left:${Math.min(depth,5)*28}px;border-left:4px solid ${depth?'#21ba45':'#2185d0'};overflow:auto"><div class="ui right floated buttons">${actions}</div>${photo}<div class="ui ${depth?'teal':'blue'} label">${x.jenis_pimpinan ? 'Pimpinan Wilayah' : esc(x.eselon||x.kelompok_jabatan||'Struktural')}</div> <b>${esc(title)}</b><div class="ui small header" style="margin:8px 0 2px">${esc(x.nama_pegawai||'Belum diisi')}</div><div class="meta">${x.jenis_pimpinan ? '' : `NIP ${esc(x.nip||'-')} · `}${esc(x.nomor_sk_pengangkatan||'SK belum diisi')} · Tanggal SK ${esc(x.tanggal_sk_pengangkatan||'-')} · TMT ${esc(x.tmt_jabatan||x.berlaku_mulai||'-')}${sk}</div></div>${branch(x.struktur_key,depth+1)}`;
       }).join('');
       const roots = [...new Set(data.rows.map(x => x.parent_key).filter(key => !keys.has(key)))];
       $('#strukturList').html(roots.map(key => branch(key)).join('') || '<div class="ui warning message">Belum ada struktur jabatan pada scope ini.</div>');
     }
-    $(document).off('.struktur').on('change.struktur', '#strukturForm [name="parent_id"]', function() {
+    $(document).off('.struktur').on('click.struktur', '#susunOtomatis', function() {
+      const button=$(this).addClass('loading disabled');
+      Ajax.request({url:'/kepegawaian/struktur/automate',method:'GET',success:r=>{
+        if(!r?.success)return;
+        const rows=r.data.rows, names=new Map(rows.map(x=>[x.employee_id,x.name]));
+        const labels={existing:'Sudah ada',new:'Akan ditambahkan',conflict:'Jabatan sudah terisi',missing_tmt:'TMT belum tersedia',ambiguous_parent:'Atasan perlu dipilih',duplicate_job:'Pejabat ganda; periksa riwayat'};
+        $('#strukturAutoPreview').html('<table class="ui compact celled table"><thead><tr><th>Nama ASN / Jabatan</th><th>Atasan</th><th>Status</th></tr></thead><tbody>'+rows.map(x=>`<tr><td><b>${esc(x.name)}</b><br>${esc(x.job)}</td><td>${esc(names.get(x.parent_employee_id)||'Pimpinan OPD')}</td><td>${esc(labels[x.status])}${x.review.length?'<br><small>'+esc(x.review.join('; '))+'</small>':''}</td></tr>`).join('')+'</tbody></table><div class="ui small message">'+r.data.skipped+' jabatan nonstruktural tidak dimasukkan dalam bagan struktural.</div>');
+        $('#terapkanStruktur').toggleClass('disabled',!rows.some(x=>x.status==='new'));
+        $('#strukturAutoModal').modal('show');
+      },complete:()=>button.removeClass('loading disabled')});
+    }).on('click.struktur','#terapkanStruktur',function(){
+      const button=$(this);if(button.hasClass('disabled'))return;button.addClass('loading disabled');
+      Ajax.request({url:'/kepegawaian/struktur/automate',method:'POST',data:{},success:r=>{if(r?.success){$('#strukturAutoModal').modal('hide');load();}},complete:()=>button.removeClass('loading disabled')});
+    }).on('change.struktur', '#strukturForm [name="parent_id"]', function() {
       const value = String($(this).val() || '').split(':');
       $('#strukturForm [name="parent_kd_opd"]').val(value.length === 2 ? value[0] : '');
     }).on('change.struktur', '#strukturForm [name="nama_jabatan_preset"]', function() {
@@ -202,5 +218,8 @@ $scopeOpd = $scopeOpd ?? ''; ?>
     });
     $('#pimpinanForm').on('submit', function(event) { event.preventDefault(); $('#simpanPimpinan').trigger('click'); });
     load();
-  })();
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initStrukturOrganisasi, {once:true});
+  else initStrukturOrganisasi();
+})();
 </script>

@@ -8,6 +8,12 @@ class DocumentBuilder {
 		this.rowOptions = new Map();
 	}
 
+	static personName(value) {
+		const [base, ...titles] = String(value ?? "").split(",");
+		const name = base.replace(/\.(?=\p{L})/gu, ". ").toLocaleLowerCase("id-ID").replace(/(^|[\s.-])(\p{L})/gu, (_, space, letter) => space + letter.toLocaleUpperCase("id-ID"));
+		return name.trim() + (titles.length ? ", " + titles.join(",").trim() : "");
+	}
+
 	// ======================================================
 	// RENDER
 	// ======================================================
@@ -335,6 +341,10 @@ class DocumentBuilder {
 		// ==============================
 		// DELETE ROW
 		// ==============================
+		this.container.on("focusout.documentBuilder", 'table[name="nama_ditugaskan"] [data-key="nama"][contenteditable], input[name="nama"], input[name="nama_penandatangan"]', function () {
+			if (this.isContentEditable) $(this).text(DocumentBuilder.personName($(this).text()));
+			else $(this).val(DocumentBuilder.personName($(this).val()));
+		});
 		this.container.off("click", ".btn-del-row");
 		this.container.on("click", ".btn-del-row", function () {
 			$(this).closest("tr").remove();
@@ -538,6 +548,7 @@ class DocumentBuilder {
 				value = data[key] ?? data[col] ?? data.nama ?? data.text ?? "";
 			}
 
+			if (target === "nama_ditugaskan" && key === "nama") value = DocumentBuilder.personName(value);
 			row.append(
 				$("<td>")
 					.attr({ contenteditable: "true", "data-key": key })

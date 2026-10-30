@@ -97,6 +97,28 @@ class KepegawaianController extends Controller
     }
   }
 
+  public function structureAutomate(): void
+  {
+    header('Content-Type: application/json;charset=UTF-8');
+    try {
+      $u = $this->structureUser();
+      require_once __DIR__.'/../Services/OpdStructureAutomationService.php';
+      $db = DB::getInstance();
+      if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+        if (empty($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '')) throw new RuntimeException('CSRF validation gagal');
+        $db->begin();
+        try { $result = OpdStructureAutomationService::apply($db, $u); $db->commit(); }
+        catch (Throwable $e) { $db->rollback(); throw $e; }
+        echo json_encode(['success'=>true,'message'=>'Struktur OPD berhasil disusun','data'=>$result]);
+      } else {
+        echo json_encode(['success'=>true,'data'=>OpdStructureAutomationService::plan($db,$u)], JSON_UNESCAPED_UNICODE);
+      }
+    } catch (Throwable $e) {
+      http_response_code(400);
+      echo json_encode(['success'=>false,'message'=>$e->getMessage()], JSON_UNESCAPED_UNICODE);
+    }
+  }
+
   public function structureSave(): void
   {
     header('Content-Type: application/json;charset=UTF-8');

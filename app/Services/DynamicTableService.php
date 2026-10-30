@@ -5726,6 +5726,10 @@ AND is_deleted = 0
         }
         // 🔥 FIX WAJIB DI SINI
         $data = $this->sanitizeStruktur($data);
+        if ($relTable === 'trx_naskah_struktur') {
+          require_once __DIR__.'/TataNaskahFormatService.php';
+          $data = TataNaskahFormatService::personalNames($data);
+        }
         $this->db->insert($relTable, [
           $fk => $id,
           $jsonField => json_encode($data)
@@ -5958,6 +5962,10 @@ AND is_deleted = 0
     }
 
     $json = $this->sanitizeStruktur($json);
+    if ($table === 'trx_naskah_dinas') {
+      require_once __DIR__.'/TataNaskahFormatService.php';
+      $json = TataNaskahFormatService::personalNames($json);
+    }
 
     // =====================================
     // MODE: DIRECT
