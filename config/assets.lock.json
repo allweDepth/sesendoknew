@@ -46,7 +46,7 @@
     },
     "leaflet": {
         "version": "1.9.4",
-        "spec_hash": "a1e89cb57417da6f473239100ebde7f1a9d03f616c54a0c4a2b034df76840f14",
+        "spec_hash": "a343cdc63dacbf70f24f857cd99485a3b523a1dc048b94677f8debf9c2f219a0",
         "tarball": "https://registry.npmjs.org/leaflet/-/leaflet-1.9.4.tgz",
         "integrity": "sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==",
         "files": {
@@ -57,7 +57,8 @@
             "leaflet/images/layers-2x.png": "066daca850d8ffbef007af00b06eac0015728dee279c51f3cb6c716df7c42edf",
             "leaflet/images/marker-icon.png": "574c3a5cca85f4114085b6841596d62f00d7c892c7b03f28cbfa301deb1dc437",
             "leaflet/images/marker-icon-2x.png": "00179c4c1ee830d3a108412ae0d294f55776cfeb085c60129a39aa6fc4ae2528",
-            "leaflet/images/marker-shadow.png": "264f5c640339f042dd729062cfc04c17f8ea0f29882b538e3848ed8f10edb4da"
+            "leaflet/images/marker-shadow.png": "264f5c640339f042dd729062cfc04c17f8ea0f29882b538e3848ed8f10edb4da",
+            "leaflet/leaflet.js.map": "600a10dc5cd110de0699510d322afcbe01c7ca90b4c5f48adc20314c70aac753"
         }
     },
     "proj4": {
@@ -72,12 +73,13 @@
     },
     "polygon-clipping": {
         "version": "0.15.7",
-        "spec_hash": "fe0b5b7da31b529eed84bf24de7a065202226bac02da52f9fefcb81a726f7b81",
+        "spec_hash": "e114c91d62cfe9e1e57895e5a598b3ba6635e1dc50d8f5d4c6a10f28ddeadde0",
         "tarball": "https://registry.npmjs.org/polygon-clipping/-/polygon-clipping-0.15.7.tgz",
         "integrity": "sha512-nhfdr83ECBg6xtqOAJab1tbksbBAOMUltN60bU+llHVOL0e5Onm1WpAXXWXVB39L8AJFssoIhEVuy/S90MmotA==",
         "files": {
             "polygon-clipping/polygon-clipping.min.js": "7f8619e84a86ce8dd400c9b50430e9c8cf8f26027b19eeb479f109f5c1a9d688",
-            "polygon-clipping/LICENSE.md": "864ae9e4ed75e1571a3bcf5dc9070264213445b32e7e2af5bf60eba46fb656d0"
+            "polygon-clipping/LICENSE.md": "864ae9e4ed75e1571a3bcf5dc9070264213445b32e7e2af5bf60eba46fb656d0",
+            "polygon-clipping/polygon-clipping.umd.min.js.map": "83bd8f692d2c8b06466409199f472df668202ee2597a27434318d9932153bb1a"
         }
     }
 }

@@ -32,7 +32,8 @@
             "dist/images/layers-2x.png": "images/layers-2x.png",
             "dist/images/marker-icon.png": "images/marker-icon.png",
             "dist/images/marker-icon-2x.png": "images/marker-icon-2x.png",
-            "dist/images/marker-shadow.png": "images/marker-shadow.png"
+            "dist/images/marker-shadow.png": "images/marker-shadow.png",
+            "dist/leaflet.js.map": "leaflet.js.map"
         }
     },
     "proj4": {
@@ -48,7 +49,8 @@
         "major": 0,
         "files": {
             "dist/polygon-clipping.umd.min.js": "polygon-clipping.min.js",
-            "LICENSE.md": "LICENSE.md"
+            "LICENSE.md": "LICENSE.md",
+            "dist/polygon-clipping.umd.min.js.map": "polygon-clipping.umd.min.js.map"
         }
     }
 }

@@ -533,6 +533,8 @@
 
   <!-- UI COMPONENTS -->
   <script src="/assets/js/ui/ui-components.js"></script>
+  <link rel="stylesheet" href="<?= asset_url('/assets/css/export-buttons.css') ?>?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/css/export-buttons.css') ?>">
+  <script src="<?= asset_url('/assets/js/ui/export-buttons.js') ?>?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/ui/export-buttons.js') ?>"></script>
   <script src="/assets/js/ui/ui-extensions.js"></script>
   <script src="<?= asset_url('/assets/vendor/polygon-clipping/polygon-clipping.min.js') ?>"></script>
   <script src="/assets/js/maps-geometry.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/maps-geometry.js') ?>"></script>

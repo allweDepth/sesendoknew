@@ -1,0 +1,9 @@
+/* The label remains available to assistive technology while the action stays compact. */
+.app-export-label { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important; }
+.ui.button.app-export-button { flex:0 0 auto!important; white-space:nowrap; }
+/* Let text and actions share available space without pushing outside their panel. */
+.anggaran-hero, .p4-hero { flex-wrap:wrap; gap:1rem; }
+.anggaran-hero > div:first-child, .p4-hero > div:first-child { flex:1 1 24rem; min-width:0; }
+.anggaran-hero > .ui.buttons, .p4-hero > .ui.buttons { flex:0 1 auto; max-width:100%; flex-wrap:wrap; row-gap:.5rem; margin-left:0; }
+.anggaran-hero > .ui.buttons > .button, .p4-hero > .ui.buttons > .button { flex:0 1 auto; white-space:normal; }
+.budget-secondary-export.ui.buttons { max-width:100%; flex-wrap:wrap; gap:.25rem; }
