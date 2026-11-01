@@ -1,13 +1,13 @@
 <?php
 require_once __DIR__.'/../Core/DB.php';
+require_once __DIR__.'/TataNaskahFormatService.php';
 
 /** Resolve signatories from the contract's own OPD/year, never from the viewer's name. */
 final class ContractOfficialService
 {
     public static function employeeName(array $e):string
     {
-        $name=trim((string)($e['nama']??''));
-        if($name===mb_strtolower($name)||$name===mb_strtoupper($name))$name=mb_convert_case($name,MB_CASE_TITLE,'UTF-8');
+        $name=TataNaskahFormatService::personName((string)($e['nama']??''));
         $name=trim(trim((string)($e['gelar_depan']??'')).' '.$name);
         if(trim((string)($e['gelar']??''))!=='')$name.=', '.trim($e['gelar']);return $name;
     }

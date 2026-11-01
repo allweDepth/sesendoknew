@@ -23,6 +23,17 @@ class DynamicSanitizer
 
       $rules = $profile['sanitize'][$field] ?? null; // //
 
+      // Names are stored as plain text, never as HTML entities. Decode before
+      // sanitizeValue strips tags, including tags hidden behind entity encoding.
+      if (($table === 'db_asn_pemda_neo' && in_array($field, ['nama', 'gelar_depan', 'gelar'], true))
+          || ($table === 'pejabat_tahunan_neo' && $field === 'nama_pegawai')) {
+        for ($i = 0; $i < 5; $i++) {
+          $decoded = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+          if ($decoded === $value) break;
+          $value = $decoded;
+        }
+      }
+
       $data[$field] = $this->sanitizeValue($value, $rules); // //
     }
 

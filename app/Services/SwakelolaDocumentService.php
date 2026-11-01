@@ -130,21 +130,59 @@ final class SwakelolaDocumentService
         }
     }
 
+    /** Layout metadata is shared by the editor and native TCPDF output. */
+    public static function normalizeLayout(array $blocks): array
+    {
+        $out=[];
+        foreach($blocks as $b){
+            if(($b['type']??'')==='paragraph')$b['text']=preg_replace('~^\s*([•●▪◦–-]|\([a-zA-Z0-9]+\)|\d+(?:\.\d+)*[.)]|[a-zA-Z][.)]|[ivxlcdmIVXLCDM]+[.)])[ \t]+~u','$1 ',$b['text']);
+            if(($b['type']??'')==='table'){
+                foreach($b['rows'] as &$row)foreach($row as &$cell){$cell['colspan']=(int)($cell['colspan']??1);$cell['blocks']=self::normalizeLayout($cell['blocks']);}
+                unset($row,$cell);
+                if(($b['layout']??'')==='identity' && count($b['column_widths']??[])===3 && count(array_filter($b['rows'],fn($r)=>count($r)!==3||count(array_filter($r,fn($c)=>$c['colspan']!==1))))===0 && count(array_filter($b['rows'],fn($r)=>preg_match('/^[•●]\s+/u',$r[0]['blocks'][0]['text']??'')))){
+                    foreach($b['rows'] as &$row){$match=[];preg_match('/^([•●])\s+([\s\S]*)$/u',$row[0]['blocks'][0]['text']??'',$match);if($match)$row[0]['blocks'][0]['text']=$match[2];array_unshift($row,['colspan'=>1,'blocks'=>[['type'=>'paragraph','text'=>$match[1]??'','align'=>'left']]]);}unset($row);
+                    [$label,$colon,$value]=$b['column_widths'];$marker=min(5,$label/4);$b['column_widths']=[$marker,$label-$marker,$colon,$value];
+                }
+                $first=trim($b['rows'][0][0]['blocks'][0]['text']??'');
+                $count=max(array_map(fn($r)=>array_sum(array_map(fn($c)=>(int)($c['colspan']??1),$r)),$b['rows'])?:[1]);
+                if(empty($b['column_widths'])){
+                    $b['column_widths']=array_fill(0,$count,100/$count);
+                    if($count>1 && preg_match('/^No\.?$/iu',$first))$b['column_widths']=array_merge([6],array_fill(0,$count-1,94/($count-1)));
+                }
+                if($first==='→' && count($b['rows'])===1 && $count===2 && empty($b['borderless'])){$b['borderless']=true;$b['column_widths']=[6,94];}
+            }elseif(preg_match('~^\s*((?:[•●]\s*)?(?:Paket Pengadaan|Instansi Penanggung\s*Jawab Anggaran|Tahun Anggaran|Sasaran/Output|Nama\b[^:\n]{0,130}|Alamat\b[^:\n]{0,130}|E-?mail\b[^:\n]{0,130}|Website\b[^:\n]{0,130}|Nomor\b[^:\n]{0,100}|NIP|NPWP|Jabatan|Pangkat(?:/Golongan)?))\s*:\s*([\s\S]*)$~iu',$b['text']??'', $m)){
+                $cell=fn($text)=>['colspan'=>1,'blocks'=>[['type'=>'paragraph','text'=>$text,'align'=>'left']]];
+                $row=[$cell($m[1]),$cell(':'),$cell($m[2])];
+                $last=count($out)-1;
+                if($last>=0 && ($out[$last]['layout']??'')==='identity'){$out[$last]['rows'][]=$row;continue;}
+                $b=['type'=>'table','layout'=>'identity','borderless'=>true,'column_widths'=>[38,7,55],'rows'=>[$row]];
+            }
+            $out[]=$b;
+        }
+        foreach($out as &$item){
+            if(($item['layout']??'')==='identity' && count($item['column_widths']??[])===3 && count(array_filter($item['rows'],fn($r)=>preg_match('/^[•●]\s+/u',$r[0]['blocks'][0]['text']??''))))$item=self::normalizeLayout([$item])[0];
+        }unset($item);
+        return $out;
+    }
+
     public static function html(array $blocks): string
     {
         self::validate($blocks);
         $html='';$escape=fn($v)=>htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');
-        foreach ($blocks as $b) {
+        foreach (self::normalizeLayout($blocks) as $b) {
             if ($b['type']==='table') {
-                $html.='<table border="1" cellpadding="4" width="100%">';
+                $identity=($b['layout']??'')==='identity';
+                $html.='<table border="'.(!empty($b['borderless'])?'0':'1').'" cellpadding="'.($identity?'1':'4').'" width="100%">';
                 foreach ($b['rows'] as $row) {
                     // TCPDF retries a row on the next page when it does not fit.
                     // Its nobr fallback still permits rows taller than a full page.
-                    $html.='<tr nobr="true">';$column=0;
+                    $html.=$identity?'<tr>':'<tr nobr="true">';$column=0;
                     foreach ($row as $cell) {
                         $span=(int)($cell['colspan']??1);$width='';
                         if(!empty($b['column_widths']))$width=' width="'.array_sum(array_slice($b['column_widths'],$column,$span)).'%"';
-                        $html.='<td colspan="'.$span.'"'.$width.'>'.self::html($cell['blocks']).'</td>';$column+=$span;
+                        $body=self::html($cell['blocks']);
+                        if($identity)$body=preg_replace('~</?p[^>]*>~i','',$body);
+                        $html.='<td colspan="'.$span.'"'.$width.'>'.$body.'</td>';$column+=$span;
                     }
                     $html.='</tr>';
                 }
@@ -154,9 +192,19 @@ final class SwakelolaDocumentService
                 if (preg_match('/^\s*\[\s*Kop Surat[^\]]*\]\s*$/iu',$b['text'])) continue;
                 $align=in_array($b['align']??'', ['left','right','center','justify'], true)?$b['align']:'left';
                 $text=nl2br($escape($b['text']),false);
+                if(trim($b['text'])==='→')$text='<span style="font-family:dejavusans">→</span>';
                 if (in_array('italic',$b['style']??[],true)) $text='<i>'.$text.'</i>';
                 if (in_array('underline',$b['style']??[],true)) $text='<u>'.$text.'</u>';
-                $html.='<p align="'.$align.'">'.(!empty($b['bold'])?'<b>'.$text.'</b>':$text).'</p>';
+                if(preg_match('~^\s*([•●▪◦–-]|\([a-zA-Z0-9]+\)|\d+(?:\.\d+)*[.)]|[a-zA-Z][.)]|[ivxlcdmIVXLCDM]+[.)])\s+([\s\S]*)$~u',$b['text'],$list)){
+                    $markerWidth=min(18,max(6,mb_strlen($list[1])*3));
+                    $body=nl2br($escape($list[2]),false);
+                    if(!empty($b['bold'])||in_array('bold',$b['style']??[],true))$body='<b>'.$body.'</b>';
+                    if(in_array('italic',$b['style']??[],true))$body='<i>'.$body.'</i>';
+                    if(in_array('underline',$b['style']??[],true))$body='<u>'.$body.'</u>';
+                    $html.='<table border="0" cellpadding="0" width="100%"><tr><td width="'.$markerWidth.'%">'.$escape($list[1]).'</td><td width="'.(100-$markerWidth).'%" align="'.$align.'">'.$body.'</td></tr></table>';
+                }else{
+                    $html.='<p align="'.$align.'">'.(!empty($b['bold'])?'<b>'.$text.'</b>':$text).'</p>';
+                }
             }
         }
         return $html;

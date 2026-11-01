@@ -716,29 +716,34 @@ class KontrakModule extends BaseCrudModule {
 		$("#procurementEditorModal .ui.dropdown").dropdown();this.initContractCalendars($("#procurementEditorModal"));$("#procurementEditorModal").modal({closable:false}).modal("show");
 	}
 	renderSwakelolaEditor(sections,kop={}) {
-		this.swakelolaSections=sections.map(section=>({...section,blocks:JSON.parse(section.isi||section.isi_template||"[]")}));
-		this.swakelolaNodes=new Map();this.swakelolaActive=null;
+		this.swakelolaSections=sections.map(section=>({...section,blocks:this.normalizeSwakelolaLayout(JSON.parse(section.isi||section.isi_template||"[]"))}));
+		this.swakelolaNodes=new Map();this.swakelolaParents=new Map();this.swakelolaTables=new Map();this.swakelolaActive=null;this.swakelolaCell=null;this.swakelolaKop=kop;
 		$("#procurementEditorModal").addClass("swakelola-modal");
 		if(!$("#swakelolaEditorStyle").length)$("head").append(`<style id="swakelolaEditorStyle">
-		.swakelola-modal{width:min(1180px,96vw)!important}.swakelola-modal .scrolling.content{background:#f3f5f7!important;padding:20px!important}.sw-toolbar{position:sticky;top:-20px;z-index:30;display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:12px 16px;background:#fff;border:1px solid #dde3e8;border-radius:8px;margin-bottom:20px;box-shadow:0 2px 8px #0000000a}.sw-toolbar .ui.button{margin:0!important}.sw-toolbar .sw-hint{margin-left:auto;color:#657180;font-size:12px}.sw-sheet{background:#fff;max-width:880px;margin:0 auto 20px;padding:42px 44px;border:1px solid #e0e5e9;border-radius:4px;box-shadow:0 3px 12px #00000008;font-size:14px;line-height:1.65}.sw-sheet p{margin:0 0 12px;white-space:pre-wrap;overflow-wrap:anywhere;min-height:1.5em;outline:none;border-radius:3px}.sw-sheet p:focus{background:#f0f7ff;box-shadow:0 0 0 2px #b9d8f4}.sw-sheet .sw-table-wrap{overflow-x:auto}.sw-sheet table.sw-rab{min-width:620px}.sw-sheet table.sw-rab td{font-size:12px;padding:8px}.sw-sheet table.sw-rab td:nth-child(n+5){white-space:nowrap}.sw-sheet table{width:100%;border-collapse:collapse;table-layout:fixed;margin:16px 0 24px}.sw-sheet td{border:1px solid #b9c2cb;padding:10px 12px;vertical-align:top;overflow-wrap:anywhere}.sw-sheet td p{margin-bottom:7px}.sw-sheet td p:last-child{margin-bottom:0}.sw-kop{font-size:12px;color:#617487;border-bottom:2px solid #a6b2bf;text-align:center;padding:8px 0 16px;margin-bottom:24px}.sw-auto-note{max-width:880px;margin:0 auto 16px;color:#4a6175;font-size:13px}.sw-data-warning{max-width:880px;margin:0 auto 16px!important}@media(max-width:700px){.sw-sheet{padding:22px 16px}.sw-sheet td{padding:7px;font-size:12px}.sw-toolbar .sw-hint{display:none}}
+		.swakelola-modal{width:min(1180px,96vw)!important}.swakelola-modal .scrolling.content{background:#f3f5f7!important;padding:20px!important}.sw-toolbar{position:sticky;top:-20px;z-index:30;display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:12px 16px;background:#fff;border:1px solid #dde3e8;border-radius:8px;margin-bottom:20px;box-shadow:0 2px 8px #0000000a}.sw-toolbar .ui.button{margin:0!important}.sw-toolbar .sw-hint{margin-left:auto;color:#657180;font-size:12px}.sw-sheet{background:#fff;max-width:880px;margin:0 auto 20px;padding:42px 44px;border:1px solid #e0e5e9;border-radius:4px;box-shadow:0 3px 12px #00000008;font-size:14px;line-height:1.65}.sw-sheet p{margin:0 0 12px;white-space:pre-wrap;overflow-wrap:anywhere;min-height:1.5em;outline:none;border-radius:3px}.sw-sheet p:focus{background:#f0f7ff;box-shadow:0 0 0 2px #b9d8f4}.sw-sheet .sw-table-wrap{overflow-x:auto}.sw-sheet table.sw-rab{min-width:620px}.sw-sheet table.sw-rab td{font-size:12px;padding:8px}.sw-sheet table.sw-rab td:nth-child(n+5){white-space:nowrap}.sw-sheet table{width:100%;border-collapse:collapse;table-layout:fixed;margin:16px 0 24px}.sw-sheet td{position:relative;border:1px solid #b9c2cb;padding:10px 12px;vertical-align:top;overflow-wrap:anywhere}.sw-sheet table.sw-borderless>tbody>tr>td{border:0}.sw-sheet table.sw-borderless{margin:8px 0}.sw-sheet td.sw-selected{box-shadow:inset 0 0 0 2px #2185d0}.sw-col-resize{position:absolute;right:-4px;top:0;bottom:0;width:8px;cursor:col-resize;z-index:2;touch-action:none}.sw-col-resize:hover{background:#2185d066}.sw-table-tools{display:flex;gap:10px;flex-wrap:wrap}.sw-table-tool-group{display:flex;align-items:center;gap:5px}.sw-table-tool-group>span{font-size:11px;color:#526575}.sw-context-menu.ui.menu{position:fixed;z-index:10050;margin:0;min-width:290px;max-width:calc(100vw - 16px);background:#fff;color:#263746;box-shadow:0 5px 24px #0003;border:1px solid #c9d5df;border-radius:6px;padding:10px}.sw-context-menu .sw-table-tools{display:block}.sw-context-menu .sw-table-tool-group{justify-content:space-between;padding:8px 2px}.sw-context-menu .sw-table-tool-group>span{font-size:13px;min-width:54px}.sw-context-menu[hidden]{display:none!important}.sw-context-caption{font-size:12px;padding:3px 2px 9px;border-bottom:1px solid #e1e7ed;color:#526575}.sw-sheet td p{margin-bottom:7px}.sw-sheet td p:last-child{margin-bottom:0}.sw-kop{font-size:12px;color:#617487;border-bottom:2px solid #a6b2bf;text-align:center;padding:8px 0 16px;margin-bottom:24px}.sw-auto-note{max-width:880px;margin:0 auto 16px;color:#4a6175;font-size:13px}.sw-data-warning{max-width:880px;margin:0 auto 16px!important}@media(max-width:700px){.sw-sheet{padding:22px 16px}.sw-sheet td{padding:7px;font-size:12px}.sw-toolbar .sw-hint{display:none}}
 		</style>`);
 		const safeImage=value=>/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(value||"")?value:"";
 		const kopImage=safeImage(kop.gambar_kop),leftLogo=safeImage(kop.logo_kiri),rightLogo=safeImage(kop.logo_kanan);
 		const kopHtml=kop.gunakan_gambar_kop&&kopImage?`<img alt="Kop surat resmi" src="${kopImage}" style="width:100%;height:auto">`:`<div style="display:flex;align-items:center;gap:16px">${leftLogo?`<img alt="Logo kiri" src="${leftLogo}" style="width:64px;max-height:80px;object-fit:contain">`:""}<div style="flex:1;text-align:center;color:#111"><div style="font-size:15px;font-weight:bold">${this.esc(kop.nama_pemerintah||"")}</div><div style="font-size:20px;font-weight:bold">${this.esc(kop.nama_opd||"")}</div><div>${this.esc(kop.alamat||"")}</div><div>${this.esc(kop.kontak||"")}</div></div>${rightLogo?`<img alt="Logo kanan" src="${rightLogo}" style="width:64px;max-height:80px;object-fit:contain">`:""}</div>`;
 		const render=(blocks,locked=false)=>blocks.map(block=>{
-			if(block.type==="table")return `<div class="sw-table-wrap"><table class="${block.layout==="rab"?"sw-rab":""}">${block.column_widths?`<colgroup>${block.column_widths.map(w=>`<col style="width:${Number(w)}%">`).join("")}</colgroup>`:""}<tbody>${block.rows.map(row=>`<tr>${row.map(cell=>`<td colspan="${Number(cell.colspan)||1}">${render(cell.blocks,locked||block.readonly)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+            if(block.type==="table"){
+                const key=String(this.swakelolaTables.size),readonly=locked||block.readonly;
+                this.swakelolaTables.set(key,{block,readonly});
+                return `<div class="sw-table-wrap"><table data-sw-table="${key}" class="${block.layout==="rab"?"sw-rab":""} ${block.borderless?"sw-borderless":""}"><colgroup>${block.column_widths.map(w=>`<col style="width:${Number(w)}%">`).join("")}</colgroup><tbody>${block.rows.map((row,r)=>{let column=0;return `<tr>${row.map((cell,c)=>{const start=column;column+=Number(cell.colspan)||1;return `<td data-sw-row="${r}" data-sw-cell="${c}" colspan="${Number(cell.colspan)||1}">${render(cell.blocks,readonly)}${column<block.column_widths.length?`<span contenteditable="false" class="sw-col-resize" data-sw-boundary="${column}" title="Geser lebar kolom" role="separator" aria-orientation="vertical"></span>`:""}</td>`;}).join("")}</tr>`;}).join("")}</tbody></table></div>`;
+            }
 			if(/^\s*\[(?:Kop|Logo)[^\]]*\]\s*$/i.test(block.text||""))return "";
-			const key=String(this.swakelolaNodes.size);this.swakelolaNodes.set(key,block);
+			const key=String(this.swakelolaNodes.size);this.swakelolaNodes.set(key,block);this.swakelolaParents.set(key,blocks);
 			const styles=block.style||(block.bold?["bold"]:[]),align=["left","center","right","justify"].includes(block.align)?block.align:"left";
 			return `<p contenteditable="${locked?"false":"true"}" role="${locked?"paragraph":"textbox"}" aria-label="Paragraf dokumen" data-sw-node="${key}" style="text-align:${align};font-weight:${styles.includes("bold")?"bold":"normal"};font-style:${styles.includes("italic")?"italic":"normal"};text-decoration:${styles.includes("underline")?"underline":"none"}">${this.esc(block.text||"")}</p>`;
 		}).join("");
-		$("#procurementParagraphEditor").html(`<div class="sw-toolbar" role="toolbar" aria-label="Format paragraf"><button type="button" class="ui mini button" data-sw-style="bold" title="Tebal"><b>B</b></button><button type="button" class="ui mini button" data-sw-style="italic" title="Miring"><i>I</i></button><button type="button" class="ui mini button" data-sw-style="underline" title="Garis bawah"><u>U</u></button>${[["left","Rata kiri"],["center","Tengah"],["right","Rata kanan"],["justify","Rata penuh"]].map(([value,label])=>`<button type="button" class="ui mini basic button" data-sw-align="${value}">${label}</button>`).join("")}<span class="sw-hint">Klik paragraf atau sel untuk mengoreksi isi</span></div><div class="sw-auto-note"><i class="check circle green icon"></i>Dokumen disusun otomatis dari master swakelola dan data paket.</div>${this.swakelolaSections.map(section=>`<article class="sw-sheet"><div class="sw-kop">${kopHtml}</div>${render(section.blocks)}</article>`).join("")}`);
-		const editor=$("#procurementParagraphEditor");
+		$("#procurementParagraphEditor").html(`<div class="sw-toolbar" role="toolbar" aria-label="Format paragraf"><button type="button" class="ui mini button" data-sw-style="bold" title="Tebal"><b>B</b></button><button type="button" class="ui mini button" data-sw-style="italic" title="Miring"><i>I</i></button><button type="button" class="ui mini button" data-sw-style="underline" title="Garis bawah"><u>U</u></button>${[["left","Rata kiri"],["center","Tengah"],["right","Rata kanan"],["justify","Rata penuh"]].map(([value,label])=>`<button type="button" class="ui mini basic button" data-sw-align="${value}">${label}</button>`).join("")}${this.swakelolaParagraphButtons()}${this.swakelolaTableButtons()}<span class="sw-hint">Pilih sel untuk mengatur baris/kolom · geser batas kolom</span></div><div class="sw-auto-note"><i class="check circle green icon"></i>Dokumen disusun otomatis dari master swakelola dan data paket.</div>${this.swakelolaSections.map(section=>`<article class="sw-sheet"><div class="sw-kop">${kopHtml}</div>${render(section.blocks)}</article>`).join("")}`);
+		const editor=$("#procurementParagraphEditor");editor.off(".swakelola");
+        this.bindSwakelolaTables(editor);this.bindSwakelolaParagraphs(editor);
 		if(editor.find(".sw-rab").length)editor.find(".sw-auto-note").after('<div class="sw-auto-note">Rincian RAB ditarik dari RAB kontrak. <button type="button" class="ui mini basic blue button" data-sw-open-rab>Buka RAB Kontrak</button></div>');
 		editor.on("click.swakelola","[data-sw-open-rab]",()=>{$("#procurementEditorModal").modal("hide");this.openDelivery(this.contractId,"rab");});
 		const missing=this.swakelolaData?.data_belum_tersedia||[];if(missing.length)editor.find(".sw-auto-note").after(`<div class="ui visible warning message sw-data-warning"><b>Data sumber belum lengkap.</b> ${missing.length} rincian belum tercatat pada paket/referensi dan ditandai — pada dokumen. Lengkapi data paket untuk pengisian otomatis.</div>`);
-		editor.on("focusin.swakelola click.swakelola","[data-sw-node]",e=>{this.swakelolaActive=e.currentTarget.contentEditable!=="false"?e.currentTarget:null;});
-		editor.on("mousedown.swakelola",".sw-toolbar button",e=>e.preventDefault());
+		editor.on("focusin.swakelola click.swakelola","[data-sw-node]",e=>{this.swakelolaActive=e.currentTarget.contentEditable!=="false"?e.currentTarget:null;editor.find("[data-sw-paragraph-action]").prop("disabled",!this.swakelolaActive);});
+		editor.on("mousedown.swakelola",".sw-toolbar button,.sw-context-menu button",e=>e.preventDefault());
 		editor.on("click.swakelola","[data-sw-style],[data-sw-align]",e=>{
 			const element=this.swakelolaActive;if(!element)return;
 			const block=this.swakelolaNodes.get(element.dataset.swNode),button=e.currentTarget;
@@ -746,6 +751,161 @@ class KontrakModule extends BaseCrudModule {
 			if(button.dataset.swAlign){block.align=button.dataset.swAlign;element.style.textAlign=block.align;}
 		});
 	}
+    normalizeSwakelolaLayout(blocks){
+        const out=[],cell=text=>({colspan:1,blocks:[{type:"paragraph",text,align:"left"}]});
+        for(let b of blocks){
+            if(b.type==="table"){
+                b.rows.forEach(row=>row.forEach(c=>{c.colspan=Number(c.colspan)||1;c.blocks=this.normalizeSwakelolaLayout(c.blocks);}));
+                if(b.layout==="identity"&&b.column_widths?.length===3&&b.rows.every(r=>r.length===3&&r.every(c=>c.colspan===1))&&b.rows.some(r=>/^[•●]\s+/.test(r[0].blocks[0]?.text||""))){
+                    b.rows.forEach(r=>{const first=r[0].blocks[0],match=(first?.text||"").match(/^([•●])\s+(.*)$/s);if(match)first.text=match[2];r.unshift({colspan:1,blocks:[{type:"paragraph",text:match?match[1]:"",align:"left"}]});});
+                    const [label,colon,value]=b.column_widths,marker=Math.min(5,label/4);b.column_widths=[marker,label-marker,colon,value];
+                }
+                const count=Math.max(1,...b.rows.map(row=>row.reduce((n,c)=>n+(Number(c.colspan)||1),0))),first=String(b.rows[0]?.[0]?.blocks[0]?.text||"").trim();
+                if(!b.column_widths?.length)b.column_widths=/^No\.?$/i.test(first)&&count>1?[6,...Array(count-1).fill(94/(count-1))]:Array(count).fill(100/count);
+                if(first==="→"&&b.rows.length===1&&count===2&&!b.borderless){b.borderless=true;b.column_widths=[6,94];}
+            }else{
+                b.text=String(b.text||"").replace(/^\s*([•●▪◦–-]|\([a-zA-Z0-9]+\)|\d+(?:\.\d+)*[.)]|[a-zA-Z][.)]|[ivxlcdmIVXLCDM]+[.)])[ \t]+/,"$1 ");
+                const m=String(b.text||"").match(/^\s*((?:[•●]\s*)?(?:Paket Pengadaan|Instansi Penanggung\s*Jawab Anggaran|Tahun Anggaran|Sasaran\/Output|Nama\b[^:\n]{0,130}|Alamat\b[^:\n]{0,130}|E-?mail\b[^:\n]{0,130}|Website\b[^:\n]{0,130}|Nomor\b[^:\n]{0,100}|NIP|NPWP|Jabatan|Pangkat(?:\/Golongan)?))\s*:\s*([\s\S]*)$/i);
+                if(m){const row=[cell(m[1]),cell(":"),cell(m[2])];if(out.at(-1)?.layout==="identity"){out.at(-1).rows.push(row);continue;}b={type:"table",layout:"identity",borderless:true,column_widths:[38,7,55],rows:[row]};}
+            }out.push(b);
+        }return out.map(b=>b.layout==="identity"&&b.column_widths.length===3&&b.rows.some(r=>/^[•●]\s+/.test(r[0]?.blocks[0]?.text||""))?this.normalizeSwakelolaLayout([b])[0]:b);
+    }
+    swakelolaParagraphButtons(){
+        return `<div class="sw-table-tool-group"><span>Paragraf</span><div class="ui mini icon buttons" role="group" aria-label="Paragraf">${[["before","Sisip paragraf sebelum kursor","plus square outline"],["after","Sisip paragraf sesudah kursor","plus square"],["delete","Hapus paragraf pada kursor","trash alternate outline"]].map(([action,label,icon])=>`<button type="button" class="ui ${action==="delete"?"red":"blue"} basic icon button" data-sw-paragraph-action="${action}" aria-label="${label}" title="${label}" disabled><i class="${icon} icon"></i></button>`).join("")}</div></div>`;
+    }
+    refreshSwakelolaEditor(target,offset=0){
+        let ordinal=0,focus=-1;
+        const walk=blocks=>blocks.forEach(b=>{if(b.type==="table")b.rows.forEach(r=>r.forEach(c=>walk(c.blocks)));else if(!/^\s*\[(?:Kop|Logo)[^\]]*\]\s*$/i.test(b.text||"")){if(b===target)focus=ordinal;ordinal++;}});
+        this.swakelolaSections.forEach(s=>walk(s.blocks));
+        const sections=this.swakelolaSections.map(s=>({...s,isi:JSON.stringify(s.blocks)})),scroller=$("#procurementEditorModal .scrolling.content"),scroll=scroller.scrollTop();
+        this.renderSwakelolaEditor(sections,this.swakelolaKop);scroller.scrollTop(scroll);
+        const element=document.querySelector(`#procurementParagraphEditor [data-sw-node="${focus}"]`);
+        if(element&&element.contentEditable!=="false"){
+            element.focus({preventScroll:true});const range=document.createRange(),selection=window.getSelection();
+            if(element.firstChild){range.setStart(element.firstChild,Math.min(offset,element.firstChild.textContent.length));}else range.selectNodeContents(element);
+            range.collapse(true);selection.removeAllRanges();selection.addRange(range);
+        }
+    }
+    bindSwakelolaParagraphs(editor){
+        const hang=element=>{
+            const match=element.innerText.match(/^(\s*(?:[•●▪◦–-]|\([a-zA-Z0-9]+\)|\d+(?:\.\d+)*[.)]|[a-zA-Z][.)]|[ivxlcdmIVXLCDM]+[.)])\s+)/);
+            element.style.paddingLeft="";element.style.textIndent="";
+            if(match){const canvas=document.createElement("canvas"),context=canvas.getContext("2d");context.font=getComputedStyle(element).font;let width=context.measureText(match[1]).width;
+                if(element.firstChild?.nodeType===3&&element.firstChild.textContent.length>=match[1].length){const range=document.createRange();range.setStart(element.firstChild,0);range.setEnd(element.firstChild,match[1].length);width=range.getBoundingClientRect().width||width;}
+                element.style.paddingLeft=width+"px";element.style.textIndent=-width+"px";}
+        };
+        editor.find("[data-sw-node]").each((i,e)=>hang(e));
+        editor.on("input.swakelola","[data-sw-node]",e=>hang(e.currentTarget));
+        const remove=(block,blocks,index)=>{
+            blocks.splice(index,1);if(!blocks.length)blocks.push({type:"paragraph",text:"",align:"left"});
+            return blocks[Math.min(index,blocks.length-1)];
+        };
+        editor.on("click.swakelola","[data-sw-paragraph-action]",e=>{
+            const element=this.swakelolaActive;if(!element)return;
+            this.collectSwakelolaSections();const block=this.swakelolaNodes.get(element.dataset.swNode),blocks=this.swakelolaParents.get(element.dataset.swNode),index=blocks.indexOf(block),action=e.currentTarget.dataset.swParagraphAction;
+            let target;
+            if(action==="delete")target=remove(block,blocks,index);
+            else{target={type:"paragraph",text:"",align:block.align||"left"};blocks.splice(index+(action==="after"?1:0),0,target);}
+            this.refreshSwakelolaEditor(target);
+        });
+        editor.on("keydown.swakelola","[data-sw-node]",e=>{
+            const element=e.currentTarget;if(element.contentEditable==="false"||e.isComposing||e.originalEvent?.isComposing)return;
+            const selection=window.getSelection();if(!selection.rangeCount)return;
+            const range=selection.getRangeAt(0);if(!element.contains(range.startContainer)||!element.contains(range.endContainer))return;
+            const before=range.cloneRange();before.selectNodeContents(element);before.setEnd(range.startContainer,range.startOffset);
+            const start=before.toString().length,text=element.innerText,end=start+range.toString().length;
+            const block=this.swakelolaNodes.get(element.dataset.swNode),blocks=this.swakelolaParents.get(element.dataset.swNode),index=blocks.indexOf(block);
+            if(e.key==="Enter"&&!e.shiftKey){
+                e.preventDefault();this.collectSwakelolaSections();block.text=text.slice(0,start);
+                const next={...block,text:text.slice(end)};blocks.splice(index+1,0,next);this.refreshSwakelolaEditor(next);return;
+            }
+            if(!selection.isCollapsed)return;
+            if((e.key==="Backspace"&&start===0)||(e.key==="Delete"&&start===text.length)){
+                if(!text.trim()){e.preventDefault();this.collectSwakelolaSections();this.refreshSwakelolaEditor(remove(block,blocks,index));return;}
+                const other=blocks[index+(e.key==="Backspace"?-1:1)];if(other?.type!=="paragraph")return;
+                e.preventDefault();this.collectSwakelolaSections();
+                if(e.key==="Backspace"){const offset=other.text.length;other.text+=block.text;blocks.splice(index,1);this.refreshSwakelolaEditor(other,offset);}
+                else{const offset=block.text.length;block.text+=other.text;blocks.splice(index+1,1);this.refreshSwakelolaEditor(block,offset);}
+            }
+        });
+    }
+    swakelolaTableButtons(){
+        const groups=[
+            ["Baris",[["row-before","Tambah baris di atas","plus square outline"],["row-after","Tambah baris di bawah","plus square"],["row-delete","Hapus baris","trash alternate outline"]]],
+            ["Kolom",[["col-before","Tambah kolom kiri","plus square outline"],["col-after","Tambah kolom kanan","plus square"],["col-delete","Hapus kolom","trash alternate outline"]]],
+            ["Sel",[["cell-before","Sisip sel sebelum kursor (geser kanan)","plus square outline"],["cell-after","Sisip sel sesudah kursor (geser kanan)","plus square"],["cell-delete","Hapus sel (geser kiri)","trash alternate outline"]]]
+        ];
+        return `<div class="sw-table-tools">${groups.map(([label,actions])=>`<div class="sw-table-tool-group"><span>${label}</span><div class="ui mini icon buttons" role="group" aria-label="${label}">${actions.map(([action,title,icon])=>`<button type="button" class="ui ${action.endsWith("delete")?"red":"blue"} basic icon button" data-sw-table-action="${action}" title="${title}" aria-label="${title}" disabled><i class="${icon} icon"></i></button>`).join("")}</div></div>`).join("")}</div>`;
+    }
+    bindSwakelolaTables(editor){
+        editor.append(`<div class="ui vertical menu sw-context-menu" role="dialog" aria-label="Pengaturan tabel" hidden><div class="sw-context-caption">Tabel · sebelum / sesudah / hapus <button type="button" class="ui mini basic icon button right floated" data-sw-context-close title="Tutup panel tabel" aria-label="Tutup panel tabel"><i class="close icon"></i></button></div>${this.swakelolaParagraphButtons()}${this.swakelolaTableButtons()}</div>`);
+        const menu=editor.find(".sw-context-menu"),close=()=>menu.prop("hidden",true);
+        menu.on("click.swakelola","[data-sw-context-close]",close);
+        $(document).off(".swakelolaContext").on("pointerdown.swakelolaContext",e=>{if(!$(e.target).closest(".sw-context-menu").length)close();}).on("keydown.swakelolaContext",e=>{if(e.key==="Escape")close();});
+        editor.closest(".scrolling.content").off("scroll.swakelolaContext").on("scroll.swakelolaContext",close);
+        editor.on("contextmenu.swakelola","td[data-sw-row]",e=>{
+            const td=$(e.target).closest("td[data-sw-row]")[0];if(td!==e.currentTarget)return;
+            $(td).trigger("click");const paragraph=$(e.target).closest("[data-sw-node]")[0];
+            if(paragraph&&paragraph.contentEditable!=="false"){this.swakelolaActive=paragraph;editor.find("[data-sw-paragraph-action]").prop("disabled",false);}
+            if(!this.swakelolaCell){close();return;}
+            menu.prop("hidden",false).css({left:0,top:0});const rect=menu[0].getBoundingClientRect();
+            // Keep the browser context menu intact; show application tools beside the editor instead of replacing it.
+            const sheet=td.closest(".sw-sheet").getBoundingClientRect(),toolbar=editor.find(".sw-toolbar")[0].getBoundingClientRect();
+            menu.css({left:Math.max(8,Math.min(sheet.right-rect.width,window.innerWidth-rect.width-8)),top:Math.max(8,Math.min(toolbar.bottom+8,window.innerHeight-rect.height-8))});
+        });
+        editor.on("click.swakelola focusin.swakelola","td[data-sw-row]",e=>{
+            const td=$(e.target).closest("td[data-sw-row]")[0];if(td!==e.currentTarget)return;
+            const table=td.closest("table[data-sw-table]"),entry=this.swakelolaTables.get(table.dataset.swTable);
+            this.swakelolaCell=entry.readonly?null:{td,table,...entry,row:Number(td.dataset.swRow),cell:Number(td.dataset.swCell)};
+            editor.find(".sw-selected").removeClass("sw-selected");if(this.swakelolaCell)$(td).addClass("sw-selected");
+            editor.find("[data-sw-table-action]").prop("disabled",!this.swakelolaCell);
+            if(this.swakelolaCell){editor.find('[data-sw-table-action="row-delete"]').prop("disabled",entry.block.rows.length<=1);editor.find('[data-sw-table-action="col-delete"]').prop("disabled",entry.block.column_widths.length<=1);}
+        });
+        editor.on("pointerdown.swakelola","[data-sw-boundary]",e=>{
+            e.preventDefault();e.stopPropagation();const handle=e.currentTarget,table=handle.closest("table"),entry=this.swakelolaTables.get(table.dataset.swTable),boundary=Number(handle.dataset.swBoundary);
+            if(entry.readonly)return;
+            const widths=entry.block.column_widths,start=e.originalEvent.clientX,total=table.getBoundingClientRect().width,left=widths[boundary-1],right=widths[boundary],min=Math.min(2,(left+right)/4);
+            const move=event=>{const delta=Math.max(min-left,Math.min(right-min,(event.clientX-start)/total*100));widths[boundary-1]=left+delta;widths[boundary]=right-delta;Array.from(table.querySelector(":scope > colgroup").children).forEach((col,i)=>col.style.width=widths[i]+"%");};
+            const end=()=>{document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",end);document.removeEventListener("pointercancel",end);};
+            document.addEventListener("pointermove",move);document.addEventListener("pointerup",end);document.addEventListener("pointercancel",end);
+        });
+        editor.on("click.swakelola","[data-sw-table-action]",e=>{
+            const active=this.swakelolaCell;if(!active)return;
+            this.collectSwakelolaSections();
+            this.editSwakelolaTable(active.block,active.row,active.cell,e.currentTarget.dataset.swTableAction);
+            const sections=this.swakelolaSections.map(section=>({...section,isi:JSON.stringify(section.blocks)})),scroll=$("#procurementEditorModal .scrolling.content").scrollTop();
+            this.renderSwakelolaEditor(sections,this.swakelolaKop);
+            $("#procurementEditorModal .scrolling.content").scrollTop(scroll);
+        });
+    }
+    editSwakelolaTable(table,rowIndex,cellIndex,action){
+        const empty=()=>({colspan:1,blocks:[{type:"paragraph",text:"",align:"left"}]}),row=table.rows[rowIndex],start=row.slice(0,cellIndex).reduce((n,c)=>n+(Number(c.colspan)||1),0),span=Number(row[cellIndex].colspan)||1,n=table.column_widths.length;
+        if(action.startsWith("cell-")){
+            if(action==="cell-delete"){
+                row.splice(cellIndex,1);for(let i=0;i<span;i++)row.push(empty());
+            }else{
+                if(span>1){row[cellIndex].colspan=span-1;row.splice(cellIndex+(action==="cell-after"?1:0),0,empty());}
+                else{
+                    row.splice(cellIndex+(action==="cell-after"?1:0),0,empty());
+                    table.rows.forEach((r,i)=>{if(i!==rowIndex)r.push(empty());});
+                    table.column_widths.push(100/n);const total=table.column_widths.reduce((a,b)=>a+b,0);table.column_widths=table.column_widths.map(w=>w/total*100);
+                }
+            }return;
+        }
+        if(action==="row-delete"){if(table.rows.length>1)table.rows.splice(rowIndex,1);return;}
+        if(action.startsWith("row-")){table.rows.splice(rowIndex+(action==="row-after"?1:0),0,Array.from({length:n},empty));return;}
+        if(action==="col-delete"){
+            if(n===1)return;
+            // Delete the logical column containing the cursor; merged cells shrink by one.
+            table.rows.forEach(r=>{let col=0;for(let i=0;i<r.length;i++){const width=Number(r[i].colspan)||1;if(start>=col&&start<col+width){if(width>1)r[i].colspan=width-1;else r.splice(i,1);break;}col+=width;}});
+            table.column_widths.splice(start,1);
+        }else{
+            const at=start+(action==="col-after"?span:0);
+            table.rows.forEach(r=>{let col=0;for(let i=0;i<r.length;i++){const width=Number(r[i].colspan)||1;if(at===col){r.splice(i,0,empty());return;}if(at>col&&at<col+width){r[i].colspan=width+1;return;}col+=width;}r.push(empty());});
+            table.column_widths.splice(at,0,100/n);
+        }
+        const sum=table.column_widths.reduce((a,b)=>a+b,0);table.column_widths=table.column_widths.map(w=>w/sum*100);
+    }
 	collectSwakelolaSections() {
 		$("#procurementParagraphEditor [data-sw-node]").each((i,element)=>{const block=this.swakelolaNodes.get(element.dataset.swNode);if(block)block.text=element.innerText;});
 		return this.swakelolaSections.map(section=>({kode_bagian:section.kode_bagian,judul:section.judul,isi:JSON.stringify(section.blocks)}));

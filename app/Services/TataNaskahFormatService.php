@@ -6,7 +6,14 @@ final class TataNaskahFormatService
     /** Capitalize personal names only; preserve academic titles after the comma. */
     public static function personName(string $name): string
     {
-        $parts = explode(',', html_entity_decode(trim($name), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 2);
+        // Legacy imports may have escaped a name more than once. Keep the
+        // canonical name as text; HTML renderers escape it at their boundary.
+        for ($i = 0; $i < 5; $i++) {
+            $decoded = html_entity_decode($name, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            if ($decoded === $name) break;
+            $name = $decoded;
+        }
+        $parts = explode(',', trim($name), 2);
         $base = preg_replace('/\.(?=\p{L})/u', '. ', $parts[0]);
         $base = mb_convert_case(preg_replace('/\s+/u', ' ', $base), MB_CASE_TITLE, 'UTF-8');
         $base = preg_replace_callback("/(?<=\p{L})['’](\p{L})/u", static fn($m) => mb_strtolower($m[0], 'UTF-8'), $base);
