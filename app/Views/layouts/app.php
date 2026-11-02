@@ -457,7 +457,7 @@
   <!-- JS -->
   <script>
     window.ASSET_VERSION =
-      "<?= (string)max((int)@filemtime(__DIR__ . '/../../../public/assets/js/app.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/pengaturan.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/anggaran-document.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/profil.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/kepegawaian.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/kontrak.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/validation-engine.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/toast.js')) ?>";
+      "<?= (string)max((int)@filemtime(__DIR__ . '/../../../public/assets/js/app.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/pengaturan.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/anggaran-document.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/profil.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/kepegawaian.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/kontrak.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/modules/laporan-keuangan.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/validation-engine.js'), (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/toast.js')) ?>";
     window.USER_ROLE = "<?= $_SESSION['user']['type_user'] ?? '' ?>";
   </script>
   <script>

@@ -2,8 +2,9 @@
 $role = (string)($_SESSION['user']['type_user'] ?? 'viewer');
 $regional = in_array($role, ['super_admin', 'admin_wilayah', 'tapd'], true);
 $manager = in_array($role, ['super_admin', 'admin_wilayah', 'tapd', 'admin_opd', 'kepala_opd', 'pa_kpa'], true);
+$financialReader = in_array($role, ['super_admin', 'admin_wilayah', 'tapd', 'admin_opd', 'kepala_opd', 'pa_kpa', 'bendahara'], true);
 $group = static function (string $title, string $icon, array $items): void {
-  $mods = ['Referensi' => 'referensi', 'Standar Harga' => 'standar_harga', 'Usulan' => 'usulan', 'Perencanaan' => 'perencanaan', 'Penganggaran' => 'penganggaran', 'Kontrak' => 'kontrak', 'Realisasi' => 'realisasi', 'SAKIP & Kinerja' => 'sakip', 'Kepegawaian' => 'kepegawaian', 'Tata Naskah' => 'tata_naskah', 'User & Role OPD' => 'user_role', 'Berita' => 'berita', 'Pesan' => 'pesan', 'Profil' => 'profil'];
+  $mods = ['Referensi' => 'referensi', 'Standar Harga' => 'standar_harga', 'Usulan' => 'usulan', 'Perencanaan' => 'perencanaan', 'Penganggaran' => 'penganggaran', 'Kontrak' => 'kontrak', 'Realisasi' => 'realisasi', 'Laporan Keuangan' => 'laporan_keuangan', 'SAKIP & Kinerja' => 'sakip', 'Kepegawaian' => 'kepegawaian', 'Tata Naskah' => 'tata_naskah', 'User & Role OPD' => 'user_role', 'Berita' => 'berita', 'Pesan' => 'pesan', 'Profil' => 'profil'];
   $items = array_values(array_filter($items, fn($x) => strtolower($x[0]) !== 'dashboard'));
   if (isset($mods[$title])) array_unshift($items, ['Dashboard', '/dashboard?mod=' . $mods[$title], $title . '/Dashboard']); ?><div class="item">
     <div class="title"><i class="dropdown icon"></i> <i class="<?= $icon ?> icon"></i> <?= $title ?></div>
@@ -46,7 +47,8 @@ $group = static function (string $title, string $icon, array $items): void {
     $group('Perencanaan', 'project diagram', [['RPJMD Kabupaten', '/referensi?tbl=rpjmd_kabupaten', 'Perencanaan/RPJMD'], ['RENSTRA', '/renstra', 'Perencanaan/Renstra'], ['RKPD', '/rkpd', 'Perencanaan/RKPD'], ['RENJA', '/renja', 'Perencanaan/Renja']]);
     $group('Penganggaran', 'shopping cart', [['RKA', '/rka', 'Penganggaran/RKA'], ['DPA', '/dpa', 'Penganggaran/DPA'], ['RKPD Perubahan', '/rkpd_perubahan', 'Penganggaran/RKPD Perubahan'], ['RENJA Perubahan', '/renja_perubahan', 'Penganggaran/Renja Perubahan'], ['RKA Perubahan', '/rka_perubahan', 'Penganggaran/RKA Perubahan'], ['DPPA', '/dppa', 'Penganggaran/DPPA']]);
     $group('Kontrak', 'file signature', [['Daftar Kontrak', '/kontrak?tbl=kontrak', 'Kontrak/Daftar Kontrak']]);
-    $group('Realisasi', 'chart line', [['Dashboard Realisasi', '/kontrak?tbl=__laporan', 'Realisasi/Dashboard'], ['Penginputan', '/kontrak?tbl=realisasi', 'Realisasi/Penginputan']]);
+    $group('Realisasi', 'chart line', [['Dashboard Realisasi', '/kontrak?tbl=__laporan', 'Realisasi/Dashboard'], ['Penginputan', '/kontrak?tbl=realisasi', 'Realisasi/Penginputan'], ['LRA dari Realisasi', '/laporan-keuangan?laporan=lra', 'Laporan Keuangan/LRA']]);
+    if ($financialReader) $group('Laporan Keuangan', 'balance scale', [['LRA', '/laporan-keuangan?laporan=lra', 'Laporan Keuangan/LRA'], ['Neraca', '/laporan-keuangan?laporan=neraca', 'Laporan Keuangan/Neraca'], ['CaLK', '/laporan-keuangan?laporan=calk', 'Laporan Keuangan/CaLK']]);
     $group('SAKIP & Kinerja', 'bullseye', [['IKU OPD', '/referensi?tbl=iku_opd', 'SAKIP/IKU OPD'], ['Pohon Kinerja', '/referensi?tbl=pohon_kinerja', 'SAKIP/Pohon Kinerja'], ['Target Renja', '/referensi?tbl=renja_kinerja', 'SAKIP/Target Renja'], ['Perjanjian Kinerja', '/referensi?tbl=perjanjian_kinerja', 'SAKIP/Perjanjian Kinerja'], ['Indikator PK', '/referensi?tbl=perjanjian_kinerja_detail', 'SAKIP/Indikator PK'], ['Pengukuran Kinerja', '/referensi?tbl=pengukuran_kinerja', 'SAKIP/Pengukuran'], ['Evaluasi Renja', '/referensi?tbl=evaluasi_renja', 'SAKIP/Evaluasi Renja'], ['Evaluasi Renstra', '/referensi?tbl=evaluasi_renstra', 'SAKIP/Evaluasi Renstra']]);
     if ($manager) {
       $pegawaiItems = [['Struktur Organisasi', '/kepegawaian/struktur', 'Kepegawaian/Struktur Organisasi']];

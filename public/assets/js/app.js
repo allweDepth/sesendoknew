@@ -243,6 +243,9 @@ class App {
 			case "kontrak":
 				if (typeof KontrakModule === "function") new KontrakModule().init(); // // init module kontrak
 				break;
+			case "laporan-keuangan":
+				if (typeof LaporanKeuanganModule === "function") new LaporanKeuanganModule().init();
+				break;
 			case "renstra": // module renstra
 				if (typeof RenstraModule === "function") new RenstraModule().init(); // jalankan module
 				break;
@@ -312,6 +315,7 @@ window.appModuleMap = {
 	"/wallchat": "wallchat",
 	"/dashboard": "dashboard",
 	"/kontrak": "kontrak",
+	"/laporan-keuangan": "laporan-keuangan",
 	"/halaman_berita": "halaman_berita",
 };
 

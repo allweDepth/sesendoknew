@@ -11,6 +11,7 @@ final class RequestGuard
     'KontrakController' => ['saveRealization', 'deleteRealizationDocument', 'saveItems',
       'saveRab', 'saveSchedule', 'importRab', 'uploadDocument', 'deleteDocument',
       'procurementSave', 'procurementGenerateSwakelola', 'procurementDelete', 'procurementBundlePdf', 'savePrintSettings', 'saveOfferPrint'],
+    'LaporanKeuanganController' => ['saveBalances', 'saveNotes', 'importBalances'],
     'ReferensiController' => ['store', 'update', 'delete'],
     'RenstraController' => ['storeMisi', 'storeTujuan', 'storeSasaran', 'storeIndikator',
       'storeProgram', 'storeAnggaran', 'update', 'delete', 'importExcel'],
