@@ -15,6 +15,7 @@ return [
   '/pelayanan'     => ['HomeController', 'pelayanan'],
   '/kontrak' => ['KontrakController', 'index'],
   '/kontrak/summary' => ['KontrakController', 'summary'],
+  '/kontrak/financial-data' => ['KontrakController', 'financialReportData'],
   '/kontrak/available-items' => ['KontrakController', 'availableItems'],
   '/kontrak/available-subactivities' => ['KontrakController', 'availableSubActivities'],
   '/kontrak/realization-contracts' => ['KontrakController', 'realizationContracts'],

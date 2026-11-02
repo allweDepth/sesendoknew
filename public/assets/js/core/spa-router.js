@@ -11,8 +11,9 @@ class SpaRouter {
 	// ================================
 	resolveMode(url) {
 		const routeUrl = window.appRoutePath ? window.appRoutePath(url) : url;
-		if (routeUrl.split(/[?#]/)[0] === "/kepegawaian/struktur") return "server";
-		const firstSegment = "/" + routeUrl.split("/")[1];
+		const routePath = routeUrl.split(/[?#]/)[0];
+		if (routePath === "/kepegawaian/struktur") return "server";
+		const firstSegment = "/" + routePath.split("/")[1];
 
 		// Jika ada module JS untuk segment ini → client
 		if (window.appModuleMap && window.appModuleMap[firstSegment]) {
@@ -26,12 +27,13 @@ class SpaRouter {
 	// INITIAL LOAD (REFRESH)
 	// ================================
 	handleInitialLoad() {
-		const url = window.appRoutePath ? window.appRoutePath(window.location.pathname) : window.location.pathname;
+		const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+		const url = window.appRoutePath ? window.appRoutePath(currentUrl) : currentUrl;
 		this.updateHeaderFromCurrentUrl();
 		const mode = this.resolveMode(url);
 
 		if (mode === "client") {
-			this.loadClientModule(url);
+			window.app?.loadModule?.(url);
 		} else {
 			if (window.app?.initPage) {
 				window.app.initPage();
@@ -212,7 +214,8 @@ class SpaRouter {
 	// ================================
 	bindPopState() {
 		window.addEventListener("popstate", (event) => {
-			const url = window.appRoutePath ? window.appRoutePath(window.location.pathname) : window.location.pathname;
+			const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+			const url = window.appRoutePath ? window.appRoutePath(currentUrl) : currentUrl;
 			const mode = event.state?.mode || this.resolveMode(url);
 
 			if (mode === "client") {

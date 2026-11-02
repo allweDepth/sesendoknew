@@ -878,7 +878,7 @@ class KontrakRealisasiService
   public function financialRows(): array
   {
     [$w, $o, $y] = $this->scope();
-    $sql = "SELECT dr.tanggal,dr.periode,dr.nomor_bukti,k.nomor_kontrak,k.kd_sub_keg,dr.kd_akun,COALESCE(dr.uraian_progress,dr.ket_uraian_paket) uraian,dr.vol,dr.jumlah,dr.progress_fisik,dr.progress_keuangan,COALESCE(r.nama_perusahaan,k.nama_penyedia) penyedia FROM daftar_realisasi_neo dr JOIN kontrak_neo k ON k.id=dr.kontrak_id LEFT JOIN rekanan_neo r ON r.id=k.rekanan_id LEFT JOIN laporan_keuangan_transaksi_neo t ON CONVERT(t.transaksi_uuid USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(dr.transaksi_uuid USING utf8mb4) COLLATE utf8mb4_general_ci AND CONVERT(t.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(dr.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci AND CONVERT(t.kd_opd USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(dr.kd_opd USING utf8mb4) COLLATE utf8mb4_general_ci AND t.tahun=dr.tahun WHERE dr.is_deleted=0 AND COALESCE(t.jenis_transaksi,'')<>'GU' AND k.is_deleted=0 AND k.kd_wilayah=? AND k.tahun=?";
+    $sql = "SELECT dr.id,dr.kontrak_id,dr.tanggal,dr.periode,dr.nomor_bukti,k.nomor_kontrak,k.nilai_kontrak,k.kd_sub_keg,dr.kd_akun,COALESCE(dr.uraian_progress,dr.ket_uraian_paket) uraian,dr.vol,dr.jumlah,dr.progress_fisik,dr.progress_keuangan,COALESCE(r.nama_perusahaan,k.nama_penyedia) penyedia FROM daftar_realisasi_neo dr JOIN kontrak_neo k ON k.id=dr.kontrak_id LEFT JOIN rekanan_neo r ON r.id=k.rekanan_id LEFT JOIN laporan_keuangan_transaksi_neo t ON CONVERT(t.transaksi_uuid USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(dr.transaksi_uuid USING utf8mb4) COLLATE utf8mb4_general_ci AND CONVERT(t.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(dr.kd_wilayah USING utf8mb4) COLLATE utf8mb4_general_ci AND CONVERT(t.kd_opd USING utf8mb4) COLLATE utf8mb4_general_ci=CONVERT(dr.kd_opd USING utf8mb4) COLLATE utf8mb4_general_ci AND t.tahun=dr.tahun WHERE dr.is_deleted=0 AND COALESCE(t.jenis_transaksi,'')<>'GU' AND k.is_deleted=0 AND k.kd_wilayah=? AND k.tahun=?";
     $p = [$w, $y];
     if ($o && $o !== '0') {
       $sql .= ' AND k.kd_opd=?';
@@ -1009,19 +1009,416 @@ class KontrakRealisasiService
     return array_values($months);
   }
 
-  public function financialExcel(string $format): string
+  private function physicalReportCategory(string $account): string
   {
-    $format = in_array($format, ['spj', 'lra', 'bulanan_fisik_keuangan'], true) ? $format : 'lra';
+    if (str_starts_with($account, '5.1.01')) return 'pegawai';
+    if (str_starts_with($account, '5.1.02')) return 'barang_jasa';
+    if (str_starts_with($account, '5.2')) return 'modal';
+    return 'lainnya';
+  }
+
+  private function physicalReportBudgetRows(): array
+  {
+    [$w, $o, $year] = $this->scope();
+    $opdSql = $o && $o !== '0' ? ' AND b.kd_opd=?' : '';
+    $params = [$w, $year];
+    if ($opdSql) $params[] = $o;
+    [$accessSql, $accessParams] = ContractAccessService::condition($this->user, 'b');
+    $opdSql .= $accessSql;
+    array_push($params, ...$accessParams);
+
+    $dppaCount = $this->db->query(
+      "SELECT COUNT(*) jumlah FROM dppa_neo b WHERE b.kd_wilayah=? AND b.tahun=? AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0$opdSql",
+      $params
+    )->fetch();
+    $table = (int)($dppaCount['jumlah'] ?? 0) > 0 ? 'dppa_neo' : 'dpa_neo';
+    $rows = $this->db->query(
+      "SELECT b.kd_sub_keg,b.kd_akun,MAX(COALESCE(ak.uraian,NULLIF(b.uraian,''),b.kd_akun)) uraian,
+              MAX(COALESCE(ak.uraian,b.kd_akun)) uraian_rekening,SUM(b.jumlah) pagu
+       FROM `$table` b
+       LEFT JOIN akun_neo ak ON ak.kode=b.kd_akun AND ak.is_deleted=0
+       WHERE b.kd_wilayah=? AND b.tahun=? AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0$opdSql
+       GROUP BY b.kd_sub_keg,b.kd_akun ORDER BY b.kd_sub_keg,b.kd_akun",
+      $params
+    )->fetchAll();
+    foreach ($rows as &$row) {
+      $row['pagu'] = (float)$row['pagu'];
+      $row['kategori'] = $this->physicalReportCategory((string)$row['kd_akun']);
+      $row['realisasi'] = 0.0;
+      $row['fisik'] = null;
+    }
+    unset($row);
+    return $rows;
+  }
+
+  private function physicalFinancialReportData(int $month): array
+  {
+    if ($month < 1 || $month > 12) throw new InvalidArgumentException('Bulan laporan harus antara 1 dan 12.');
+    [$w, $o, $year] = $this->scope();
+    $monthNames = [1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    $budgetRows = $this->physicalReportBudgetRows();
+    $grouped = [];
+    foreach ($budgetRows as $row) {
+      $key = $row['kd_sub_keg'] . '|' . $row['kd_akun'];
+      $grouped[$key] = $row;
+    }
+
+    $transactions = $this->financialRows();
+    $actualMonthly = array_fill(1, 12, 0.0);
+    $actualByDetail = [];
+    $actualCumulativeByDetail = [];
+    $actualProgress = [];
+    $progressRows = [];
+    foreach ($transactions as $row) {
+      $date = (string)($row['tanggal'] ?? '');
+      $period = (int)($row['periode'] ?? 0);
+      if ($period < 1 || $period > 12) $period = (int)date('n', strtotime($date));
+      if ($period < 1 || $period > 12) continue;
+      $amount = (float)$row['jumlah'];
+      $actualMonthly[$period] += $amount;
+      $key = (string)$row['kd_sub_keg'] . '|' . (string)$row['kd_akun'];
+      if ($period <= $month) $actualCumulativeByDetail[$key] = ($actualCumulativeByDetail[$key] ?? 0.0) + $amount;
+      if (!isset($grouped[$key])) {
+        $grouped[$key] = [
+          'kd_sub_keg' => (string)$row['kd_sub_keg'],
+          'kd_akun' => (string)$row['kd_akun'],
+          'uraian' => (string)($row['uraian'] ?: $row['kd_akun']),
+          'uraian_rekening' => (string)$row['kd_akun'],
+          'pagu' => 0.0,
+          'kategori' => $this->physicalReportCategory((string)$row['kd_akun']),
+          'realisasi' => 0.0,
+          'fisik' => null,
+        ];
+      }
+      if ($period === $month) {
+        $actualByDetail[$key] = ($actualByDetail[$key] ?? 0.0) + $amount;
+        $progressRows[$key][] = (float)$row['progress_fisik'];
+      }
+      $contractId = (int)$row['kontrak_id'];
+      $actualProgress[$contractId]['nilai_kontrak'] = (float)$row['nilai_kontrak'];
+      $actualProgress[$contractId]['rows'][$period][] = [
+        'id' => (int)$row['id'],
+        'tanggal' => $date,
+        'fisik' => (float)$row['progress_fisik'],
+      ];
+    }
+
+    foreach ($grouped as $key => &$row) {
+      $row['realisasi'] = (float)($actualByDetail[$key] ?? 0.0);
+      $row['realisasi_kumulatif'] = (float)($actualCumulativeByDetail[$key] ?? 0.0);
+      $row['persen'] = (float)$row['pagu'] > 0 ? $row['realisasi'] / (float)$row['pagu'] * 100 : 0.0;
+      if (!empty($progressRows[$key])) $row['fisik'] = array_sum($progressRows[$key]) / count($progressRows[$key]);
+    }
+    unset($row);
+
+    $logical = 'dpa';
+    if ($budgetRows) {
+      $dppaOpdSql = $o && $o !== '0' ? ' AND b.kd_opd=?' : '';
+      $dppaParams = [$w, $year];
+      if ($dppaOpdSql) $dppaParams[] = $o;
+      [$dppaAccessSql, $dppaAccessParams] = ContractAccessService::condition($this->user, 'b');
+      $dppaOpdSql .= $dppaAccessSql;
+      array_push($dppaParams, ...$dppaAccessParams);
+      $dppaCount = $this->db->query(
+        "SELECT COUNT(*) jumlah FROM dppa_neo b WHERE b.kd_wilayah=? AND b.tahun=? AND b.setujui=1 AND b.kunci=1 AND b.is_deleted=0$dppaOpdSql",
+        $dppaParams
+      )->fetch();
+      if ((int)($dppaCount['jumlah'] ?? 0) > 0) $logical = 'dppa';
+    }
+    $planOpdSql = $o && $o !== '0' ? ' AND p.kd_opd=?' : '';
+    $planParams = [$logical, $w, $year];
+    if ($planOpdSql) $planParams[] = $o;
+    [$planAccessSql, $planAccessParams] = ContractAccessService::condition($this->user, 'p');
+    $planOpdSql .= $planAccessSql;
+    array_push($planParams, ...$planAccessParams);
+    $plans = $this->db->query(
+      "SELECT p.bulan,SUM(p.nilai) nilai,COUNT(*) jumlah FROM rencana_rekening_anggaran_neo p
+       WHERE p.dokumen=? AND p.kd_wilayah=? AND p.tahun=? AND p.jenis='belanja' AND p.is_deleted=0$planOpdSql
+       GROUP BY p.bulan ORDER BY p.bulan",
+      $planParams
+    )->fetchAll();
+    $plannedMonthly = array_fill(1, 12, 0.0);
+    foreach ($plans as $plan) $plannedMonthly[(int)$plan['bulan']] = (float)$plan['nilai'];
+    $hasFinancialPlan = count($plans) > 0;
+
+    $scheduleOpdSql = $o && $o !== '0' ? ' AND k.kd_opd=?' : '';
+    $scheduleParams = [$w, $year];
+    if ($scheduleOpdSql) $scheduleParams[] = $o;
+    [$scheduleAccessSql, $scheduleAccessParams] = ContractAccessService::condition($this->user, 'k');
+    $scheduleOpdSql .= $scheduleAccessSql;
+    array_push($scheduleParams, ...$scheduleAccessParams);
+    $scheduleRows = $this->db->query(
+      "SELECT k.id kontrak_id,k.nilai_kontrak,r.id rab_id,r.bobot,j.tanggal_selesai,j.rencana_kumulatif
+       FROM kontrak_neo k
+       JOIN rab_paket_neo r ON r.kontrak_id=k.id AND r.is_deleted=0
+       LEFT JOIN kontrak_jadwal_neo j ON j.kontrak_id=k.id AND j.rab_id=r.id AND j.is_deleted=0
+       WHERE k.kd_wilayah=? AND k.tahun=? AND k.is_deleted=0
+         AND EXISTS (SELECT 1 FROM kontrak_jadwal_neo j0 WHERE j0.kontrak_id=k.id AND j0.is_deleted=0)$scheduleOpdSql
+       ORDER BY j.tanggal_selesai,j.id",
+      $scheduleParams
+    )->fetchAll();
+    $scheduleByContract = [];
+    foreach ($scheduleRows as $row) {
+      $scheduleByContract[(int)$row['kontrak_id']]['nilai_kontrak'] = (float)$row['nilai_kontrak'];
+      $scheduleByContract[(int)$row['kontrak_id']]['items'][(int)$row['rab_id']]['bobot'] = (float)$row['bobot'];
+      $scheduleByContract[(int)$row['kontrak_id']]['items'][(int)$row['rab_id']]['rows'][] = $row;
+    }
+
+    $months = [];
+    $actualToDate = 0.0;
+    $plannedToDate = 0.0;
+    $knownActualProgress = [];
+    for ($m = 1; $m <= 12; $m++) {
+      $actualToDate += $actualMonthly[$m];
+      $plannedToDate += $plannedMonthly[$m];
+      $monthEnd = date('Y-m-t', strtotime(sprintf('%04d-%02d-01', $year, $m)));
+      $physicalPlanNumerator = 0.0;
+      $physicalPlanWeight = 0.0;
+      foreach ($scheduleByContract as $contract) {
+        $totalWeight = 0.0;
+        $weightedProgress = 0.0;
+        foreach ($contract['items'] as $item) {
+          $weight = (float)$item['bobot'];
+          if ($weight <= 0) continue;
+          $latest = null;
+          foreach ($item['rows'] as $scheduleRow) {
+            if ((string)$scheduleRow['tanggal_selesai'] <= $monthEnd) {
+              $latest = $scheduleRow;
+            }
+          }
+          $totalWeight += $weight;
+          if ($latest) $weightedProgress += $weight * (float)$latest['rencana_kumulatif'] / 100;
+        }
+        if ($totalWeight > 0) {
+          $physicalPlanNumerator += (float)$contract['nilai_kontrak'] * $weightedProgress / $totalWeight;
+          $physicalPlanWeight += (float)$contract['nilai_kontrak'];
+        }
+      }
+      $targetPhysical = $physicalPlanWeight > 0 ? $physicalPlanNumerator / $physicalPlanWeight * 100 : null;
+
+      foreach ($actualProgress as $contractId => $contract) {
+        $rows = $contract['rows'][$m] ?? [];
+        if ($rows) {
+          usort($rows, static fn(array $a, array $b): int => ($a['tanggal'] <=> $b['tanggal']) ?: ($a['id'] <=> $b['id']));
+          $latest = end($rows);
+          $knownActualProgress[$contractId] = (float)$latest['fisik'];
+        }
+      }
+      $physicalActualNumerator = 0.0;
+      $physicalActualWeight = 0.0;
+      foreach ($knownActualProgress as $contractId => $progress) {
+        $weight = (float)($actualProgress[$contractId]['nilai_kontrak'] ?? 0);
+        $physicalActualNumerator += $weight * $progress;
+        $physicalActualWeight += $weight;
+      }
+      $actualPhysical = $physicalActualWeight > 0 ? $physicalActualNumerator / $physicalActualWeight : null;
+      $withinSelectedMonth = $m <= $month;
+      $months[] = [
+        'bulan' => $m,
+        'target_keuangan' => $withinSelectedMonth && $hasFinancialPlan ? $plannedToDate : null,
+        'realisasi_keuangan' => $withinSelectedMonth ? $actualToDate : null,
+        'target_keuangan_persen' => $withinSelectedMonth && $hasFinancialPlan && array_sum(array_column($budgetRows, 'pagu')) > 0 ? $plannedToDate / array_sum(array_column($budgetRows, 'pagu')) * 100 : null,
+        'realisasi_keuangan_persen' => $withinSelectedMonth && array_sum(array_column($budgetRows, 'pagu')) > 0 ? $actualToDate / array_sum(array_column($budgetRows, 'pagu')) * 100 : null,
+        'target_fisik' => $withinSelectedMonth ? $targetPhysical : null,
+        'realisasi_fisik' => $withinSelectedMonth ? $actualPhysical : null,
+      ];
+    }
+
+    $categoryNames = [
+      'pegawai' => 'Belanja Pegawai',
+      'barang_jasa' => 'Belanja Barang dan Jasa',
+      'modal' => 'Belanja Modal',
+      'lainnya' => 'Belanja Lainnya',
+    ];
+    $categories = [];
+    foreach ($categoryNames as $key => $name) {
+      $categories[$key] = ['kategori' => $name, 'pagu' => 0.0, 'realisasi' => 0.0, 'realisasi_kumulatif' => 0.0, 'persen' => 0.0];
+    }
+    foreach ($grouped as $row) {
+      $category = $row['kategori'];
+      $categories[$category]['pagu'] += (float)$row['pagu'];
+      $categories[$category]['realisasi'] += (float)$row['realisasi'];
+      $categories[$category]['realisasi_kumulatif'] += (float)$row['realisasi_kumulatif'];
+    }
+    foreach ($categories as &$category) {
+      $category['persen'] = $category['pagu'] > 0 ? $category['realisasi_kumulatif'] / $category['pagu'] * 100 : 0.0;
+    }
+    unset($category);
+    $detailRows = array_values($grouped);
+    usort($detailRows, static fn(array $a, array $b): int => [$a['kd_sub_keg'], $a['kd_akun']] <=> [$b['kd_sub_keg'], $b['kd_akun']]);
+
+    return [
+      'tahun' => $year,
+      'bulan' => $month,
+      'nama_bulan' => $monthNames[$month],
+      'sumber_anggaran' => $budgetRows ? strtoupper($logical) : null,
+      'ada_rencana_keuangan' => $hasFinancialPlan,
+      'ada_rencana_fisik' => count($scheduleRows) > 0,
+      'rows' => $detailRows,
+      'kategori' => array_values($categories),
+      'bulan_kumulatif' => $months,
+      'total_pagu' => array_sum(array_column($detailRows, 'pagu')),
+      'total_realisasi_bulan' => $actualMonthly[$month],
+      'total_realisasi_kumulatif' => array_sum(array_slice($actualMonthly, 0, $month, true)),
+    ];
+  }
+
+  public function financialReportData(string $format, int $month = 0): array
+  {
+    [,, $year] = $this->scope();
+    if ($format === 'realisasi') {
+      $rows = $this->financialRows();
+      return [
+        'tahun' => $year,
+        'rows' => $rows,
+        'jumlah_transaksi' => count($rows),
+        'total_realisasi' => array_sum(array_column($rows, 'jumlah')),
+      ];
+    }
+    if ($format === 'fisik_keuangan') {
+      return $this->physicalFinancialReportData($month ?: (int)date('n'));
+    }
+    throw new InvalidArgumentException('Jenis laporan realisasi tidak dikenal.');
+  }
+
+  private function physicalFinancialExcel(string $format, int $month): string
+  {
+    $data = $this->physicalFinancialReportData($month);
+    $book = new Spreadsheet();
+    $sheet = $book->getActiveSheet();
+    if ($format === 'fisik_keuangan_detail') {
+      $sheet->setTitle('Rincian Fisik Keuangan');
+      $headers = ['NO', 'KODE SUB KEGIATAN', 'KODE REKENING', 'URAIAN', 'JUMLAH ANGGARAN', 'REALISASI BULAN INI', 'CAPAIAN KEUANGAN %', 'PROGRES FISIK %'];
+      $sheet->mergeCells('A1:H1')->setCellValue('A1', 'RINCIAN REALISASI FISIK DAN KEUANGAN ' . strtoupper($data['nama_bulan']) . ' ' . $data['tahun']);
+      $sheet->mergeCells('A2:H2')->setCellValue('A2', 'Sumber pagu: ' . ($data['sumber_anggaran'] ?? 'Dokumen anggaran disahkan belum tersedia') . ' | Dicetak ' . date('d-m-Y H:i'));
+      $sheet->fromArray($headers, null, 'A4', true);
+      $rowNumber = 5;
+      foreach ($data['rows'] as $index => $row) {
+        $sheet->fromArray([
+          $index + 1,
+          $row['kd_sub_keg'],
+          $row['kd_akun'],
+          $row['uraian'],
+          (float)$row['pagu'],
+          (float)$row['realisasi'],
+          (float)$row['persen'],
+          $row['fisik'] === null ? null : (float)$row['fisik'],
+        ], null, 'A' . $rowNumber++, true);
+      }
+      $sheet->setCellValue('A' . $rowNumber, 'TOTAL');
+      $sheet->mergeCells('A' . $rowNumber . ':D' . $rowNumber);
+      $sheet->setCellValue('E' . $rowNumber, '=SUM(E5:E' . max(5, $rowNumber - 1) . ')');
+      $sheet->setCellValue('F' . $rowNumber, '=SUM(F5:F' . max(5, $rowNumber - 1) . ')');
+      $sheet->setCellValue('G' . $rowNumber, '=IF(E' . $rowNumber . '=0,0,F' . $rowNumber . '/E' . $rowNumber . '*100)');
+      $lastColumn = 'H';
+      $sheet->getStyle('E5:F' . $rowNumber)->getNumberFormat()->setFormatCode('#,##0.00');
+      $sheet->getStyle('G5:H' . $rowNumber)->getNumberFormat()->setFormatCode('0.00"%"');
+      $sheet->setAutoFilter('A4:H' . max(4, $rowNumber - 1));
+    } else {
+      $sheet->setTitle('Ringkasan Fisik Keuangan');
+      $sheet->mergeCells('A1:E1')->setCellValue('A1', 'RINGKASAN FISIK DAN KEUANGAN S.D. ' . strtoupper($data['nama_bulan']) . ' ' . $data['tahun']);
+      $sheet->mergeCells('A2:E2')->setCellValue('A2', 'Target diambil dari rencana anggaran bulanan dan jadwal kontrak. Nilai target yang tidak tersedia dibiarkan kosong.');
+      $sheet->fromArray(['JENIS BELANJA', 'PAGU', 'REALISASI BULAN INI', 'REALISASI KUMULATIF', 'CAPAIAN KEUANGAN %'], null, 'A4', true);
+      $rowNumber = 5;
+      foreach ($data['kategori'] as $category) {
+        $sheet->fromArray([
+          $category['kategori'],
+          (float)$category['pagu'],
+          array_sum(array_map(static fn(array $row): float => $row['kategori'] === self::categoryKeyForLabel($category['kategori']) ? (float)$row['realisasi'] : 0.0, $data['rows'])),
+          (float)$category['realisasi_kumulatif'],
+          (float)$category['persen'],
+        ], null, 'A' . $rowNumber++, true);
+      }
+      $sheet->setCellValue('A' . $rowNumber, 'TOTAL');
+      $sheet->setCellValue('B' . $rowNumber, '=SUM(B5:B' . ($rowNumber - 1) . ')');
+      $sheet->setCellValue('C' . $rowNumber, '=SUM(C5:C' . ($rowNumber - 1) . ')');
+      $sheet->setCellValue('D' . $rowNumber, '=SUM(D5:D' . ($rowNumber - 1) . ')');
+      $sheet->setCellValue('E' . $rowNumber, '=IF(B' . $rowNumber . '=0,0,D' . $rowNumber . '/B' . $rowNumber . '*100)');
+      $sheet->fromArray(['BULAN', 'TARGET KEUANGAN KUMULATIF', 'REALISASI KEUANGAN KUMULATIF', 'TARGET KEUANGAN %', 'REALISASI KEUANGAN %', 'TARGET FISIK %', 'REALISASI FISIK %'], null, 'A11', true);
+      $monthNames = [1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+      $monthRow = 12;
+      foreach ($data['bulan_kumulatif'] as $monthly) {
+        $sheet->fromArray([
+          $monthNames[$monthly['bulan']],
+          $monthly['target_keuangan'],
+          $monthly['realisasi_keuangan'],
+          $monthly['target_keuangan_persen'],
+          $monthly['realisasi_keuangan_persen'],
+          $monthly['target_fisik'],
+          $monthly['realisasi_fisik'],
+        ], null, 'A' . $monthRow++, true);
+      }
+      $lastMonthRow = $monthRow - 1;
+      $financialLabels = [new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, "'{$sheet->getTitle()}'!\$B\$11", null, 1), new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, "'{$sheet->getTitle()}'!\$C\$11", null, 1)];
+      $financialValues = [new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, "'{$sheet->getTitle()}'!\$B\$12:\$B\$$lastMonthRow", null, 12), new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, "'{$sheet->getTitle()}'!\$C\$12:\$C\$$lastMonthRow", null, 12)];
+      $monthCategories = [new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, "'{$sheet->getTitle()}'!\$A\$12:\$A\$$lastMonthRow", null, 12)];
+      $financialSeries = new DataSeries(DataSeries::TYPE_LINECHART, DataSeries::GROUPING_STANDARD, [0, 1], $financialLabels, $monthCategories, $financialValues);
+      $financialChart = new Chart('financial_cumulative_chart', new Title('Target dan Realisasi Keuangan Kumulatif'), new Legend(Legend::POSITION_BOTTOM), new PlotArea(null, [$financialSeries]));
+      $financialChart->setTopLeftPosition('G3');
+      $financialChart->setBottomRightPosition('O18');
+      $sheet->addChart($financialChart);
+
+      $physicalLabels = [new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, "'{$sheet->getTitle()}'!\$F\$11", null, 1), new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_STRING, "'{$sheet->getTitle()}'!\$G\$11", null, 1)];
+      $physicalValues = [new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, "'{$sheet->getTitle()}'!\$F\$12:\$F\$$lastMonthRow", null, 12), new DataSeriesValues(DataSeriesValues::DATASERIES_TYPE_NUMBER, "'{$sheet->getTitle()}'!\$G\$12:\$G\$$lastMonthRow", null, 12)];
+      $physicalSeries = new DataSeries(DataSeries::TYPE_LINECHART, DataSeries::GROUPING_STANDARD, [0, 1], $physicalLabels, $monthCategories, $physicalValues);
+      $physicalChart = new Chart('physical_cumulative_chart', new Title('Target dan Realisasi Fisik Kumulatif'), new Legend(Legend::POSITION_BOTTOM), new PlotArea(null, [$physicalSeries]));
+      $physicalChart->setTopLeftPosition('G20');
+      $physicalChart->setBottomRightPosition('O35');
+      $sheet->addChart($physicalChart);
+      $sheet->getStyle('B5:D' . $rowNumber)->getNumberFormat()->setFormatCode('#,##0.00');
+      $sheet->getStyle('E5:E' . $rowNumber)->getNumberFormat()->setFormatCode('0.00"%"');
+      $sheet->getStyle('B12:C' . $lastMonthRow)->getNumberFormat()->setFormatCode('#,##0.00');
+      $sheet->getStyle('D12:G' . $lastMonthRow)->getNumberFormat()->setFormatCode('0.00"%"');
+      $sheet->getStyle('A11:G11')->getFont()->setBold(true);
+      $sheet->getStyle('A11:G11')->getFill()->setFillType('solid')->getStartColor()->setARGB('FF2185D0');
+      $sheet->getStyle('A11:G11')->getFont()->getColor()->setARGB('FFFFFFFF');
+      $sheet->getStyle('A11:G' . $lastMonthRow)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+      $lastColumn = 'G';
+    }
+
+    $sheet->getStyle("A1:{$lastColumn}1")->getFont()->setBold(true)->setSize(14)->getColor()->setARGB('FFFFFFFF');
+    $sheet->getStyle("A1:{$lastColumn}1")->getFill()->setFillType('solid')->getStartColor()->setARGB('FF174A68');
+    $sheet->getStyle('A4:' . $lastColumn . '4')->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');
+    $sheet->getStyle('A4:' . $lastColumn . '4')->getFill()->setFillType('solid')->getStartColor()->setARGB('FF2185D0');
+    $sheet->getStyle('A4:' . $lastColumn . max(4, $rowNumber))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+    $sheet->getStyle('A' . $rowNumber . ':' . $lastColumn . $rowNumber)->getFont()->setBold(true);
+    foreach (range('A', $lastColumn) as $column) $sheet->getColumnDimension($column)->setAutoSize(true);
+    $sheet->freezePane($format === 'fisik_keuangan_detail' ? 'A5' : 'A12');
+    PageSetupService::applyExcel($sheet, PageSetupService::current($this->user), 'L');
+    ExcelPresentationService::apply($book, $this->user);
+    $tmp = tempnam(sys_get_temp_dir(), 'physical_report_') . '.xlsx';
+    $writer = new Xlsx($book);
+    $writer->setIncludeCharts(true);
+    $writer->save($tmp);
+    return $tmp;
+  }
+
+  private static function categoryKeyForLabel(string $label): string
+  {
+    return match ($label) {
+      'Belanja Pegawai' => 'pegawai',
+      'Belanja Barang dan Jasa' => 'barang_jasa',
+      'Belanja Modal' => 'modal',
+      default => 'lainnya',
+    };
+  }
+
+  public function financialExcel(string $format, int $month = 0): string
+  {
+    if (in_array($format, ['fisik_keuangan_detail', 'fisik_keuangan_ringkasan'], true)) {
+      return $this->physicalFinancialExcel($format, $month ?: (int)date('n'));
+    }
+    $format = in_array($format, ['realisasi', 'spj', 'lra', 'bulanan_fisik_keuangan'], true) ? $format : 'lra';
     [,, $year] = $this->scope();
     $book = new Spreadsheet();
     $s = $book->getActiveSheet();
-    $titles = ['spj' => 'SPJ Bendahara', 'lra' => 'Laporan Realisasi Anggaran', 'bulanan_fisik_keuangan' => 'Bulanan Fisik Keuangan'];
+    $titles = ['realisasi' => 'Laporan Realisasi', 'spj' => 'SPJ Bendahara', 'lra' => 'Laporan Realisasi Anggaran', 'bulanan_fisik_keuangan' => 'Bulanan Fisik Keuangan'];
     $s->setTitle($titles[$format]);
     $headers = [];
     $dataRows = [];
     $moneyColumns = [];
     $percentColumns = [];
-    if ($format === 'spj') {
+    if (in_array($format, ['realisasi', 'spj'], true)) {
       $headers = ['NO', 'TANGGAL', 'NOMOR BUKTI', 'NOMOR KONTRAK', 'PENYEDIA', 'URAIAN', 'KODE REKENING', 'JUMLAH'];
       foreach ($this->financialRows() as $i => $x) $dataRows[] = [$i + 1, $x['tanggal'], $x['nomor_bukti'], $x['nomor_kontrak'], $x['penyedia'], $x['uraian'], $x['kd_akun'], (float)$x['jumlah']];
       $moneyColumns = ['H'];
@@ -1046,16 +1443,17 @@ class KontrakRealisasiService
     $totalRow = $row;
     $s->setCellValue('A' . $totalRow, 'TOTAL');
     $s->mergeCells('A' . $totalRow . ':C' . $totalRow);
-    if ($format === 'spj') $s->setCellValue('H' . $totalRow, $dataRows?'=SUM(H5:H' . ($row - 1) . ')':0);
+    if (in_array($format, ['realisasi', 'spj'], true)) $s->setCellValue('H' . $totalRow, $dataRows?'=SUM(H5:H' . ($row - 1) . ')':0);
     elseif ($format === 'lra') {
       foreach (['D', 'E', 'F'] as $column) $s->setCellValue($column . $totalRow, $dataRows?'=SUM(' . $column . '5:' . $column . ($row - 1) . ')':0);
       $s->setCellValue('G' . $totalRow, "=IF(D{$totalRow}=0,0,E{$totalRow}/D{$totalRow}*100)");
     } else {
       $s->setCellValue('D' . $totalRow, '=SUM(D5:D' . ($row - 1) . ')');
     }
-    if(in_array($format,['spj','lra'],true)){
-      $source=$format==='spj'?$this->financialRows():$this->lraRows();
-      $summary=$this->accountLevelSummary($source,$format==='spj'?'jumlah':'realisasi');
+    if(in_array($format,['realisasi','spj','lra'],true)){
+      $isRealization=in_array($format,['realisasi','spj'],true);
+      $source=$isRealization?$this->financialRows():$this->lraRows();
+      $summary=$this->accountLevelSummary($source,$isRealization?'jumlah':'realisasi');
       if($summary){$summaryRow=$totalRow+3;$s->setCellValue('A'.$summaryRow,'REKAP NOMOR REKENING BELANJA PER LEVEL');$s->mergeCells('A'.$summaryRow.':'.$last.$summaryRow);$s->getStyle('A'.$summaryRow.':'.$last.$summaryRow)->getFont()->setBold(true);$summaryRow++;$s->fromArray(['KODE REKENING','URAIAN','JUMLAH'],null,'A'.$summaryRow,true);$s->getStyle('A'.$summaryRow.':C'.$summaryRow)->getFont()->setBold(true);$summaryRow++;foreach($summary as $level){$s->fromArray([$level['kode'],$level['uraian'],$level['jumlah']],null,'A'.$summaryRow++,true);}$s->getStyle('C'.($totalRow+5).':C'.max($totalRow+5,$summaryRow-1))->getNumberFormat()->setFormatCode('#,##0.00');}
     }
     $s->getStyle("A1:{$last}1")->getFont()->setBold(true)->setSize(14)->getColor()->setARGB('FFFFFFFF');
@@ -1069,7 +1467,7 @@ class KontrakRealisasiService
     foreach (range('A', $last) as $column) $s->getColumnDimension($column)->setAutoSize(true);
     $s->freezePane('A5');
     $s->setAutoFilter("A4:{$last}" . max(4, $row - 1));
-    if ($format !== 'spj' && $dataRows) {
+    if (!in_array($format, ['realisasi', 'spj'], true) && $dataRows) {
       $count = count($dataRows);
       $categoryColumn = $format === 'lra' ? 'C' : 'B';
       $valueColumns = $format === 'lra' ? ['D', 'E'] : ['E', 'F'];
@@ -1095,11 +1493,89 @@ class KontrakRealisasiService
     return $tmp;
   }
 
-  public function financialPdf(string $format): string
+  private function physicalFinancialPdf(string $format, int $month): string
   {
-    $format = in_array($format, ['spj', 'lra', 'bulanan_fisik_keuangan'], true) ? $format : 'lra';
+    $data = $this->physicalFinancialReportData($month);
+    $pdf = PageSetupService::createPdf(PageSetupService::current($this->user), 'L');
+    $pdf->SetMargins(10, 10, 10);
+    PageSetupService::applyPdf($pdf, PageSetupService::current($this->user), [10, 10, 10, 10]);
+    $pdf->AddPage();
+    $pdf->SetFont('helvetica', 'B', 13);
+    $title = $format === 'fisik_keuangan_detail' ? 'RINCIAN REALISASI FISIK DAN KEUANGAN' : 'RINGKASAN FISIK DAN KEUANGAN';
+    $pdf->Cell(0, 8, $title . ' ' . strtoupper($data['nama_bulan']) . ' ' . $data['tahun'], 0, 1, 'C');
+    $pdf->SetFont('helvetica', '', 7);
+    $e = static fn($value) => htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+    if ($format === 'fisik_keuangan_detail') {
+      $html = '<table border="1" cellpadding="3"><tr style="font-weight:bold;background-color:#dcecff"><th>No</th><th>Sub Kegiatan</th><th>Rekening</th><th>Uraian</th><th>Pagu</th><th>Realisasi Bulan Ini</th><th>Keuangan %</th><th>Fisik %</th></tr>';
+      $pagu = $actual = 0.0;
+      foreach ($data['rows'] as $index => $row) {
+        $pagu += (float)$row['pagu'];
+        $actual += (float)$row['realisasi'];
+        $physical = $row['fisik'] === null ? '-' : number_format((float)$row['fisik'], 2, ',', '.') . '%';
+        $html .= '<tr><td>' . ($index + 1) . '</td><td>' . $e($row['kd_sub_keg']) . '</td><td>' . $e($row['kd_akun']) . '</td><td>' . $e($row['uraian']) . '</td><td align="right">' . number_format((float)$row['pagu'], 0, ',', '.') . '</td><td align="right">' . number_format((float)$row['realisasi'], 0, ',', '.') . '</td><td align="right">' . number_format((float)$row['persen'], 2, ',', '.') . '%</td><td align="right">' . $physical . '</td></tr>';
+      }
+      $html .= '<tr style="font-weight:bold"><td colspan="4" align="right">TOTAL</td><td align="right">' . number_format($pagu, 0, ',', '.') . '</td><td align="right">' . number_format($actual, 0, ',', '.') . '</td><td align="right">' . number_format($pagu > 0 ? $actual / $pagu * 100 : 0, 2, ',', '.') . '%</td><td align="right">-</td></tr></table>';
+      $pdf->writeHTML($html, true, false, true, false, '');
+      return $pdf->Output('', 'S');
+    }
+
+    $html = '<table border="1" cellpadding="3"><tr style="font-weight:bold;background-color:#dcecff"><th>Jenis Belanja</th><th>Pagu</th><th>Realisasi Bulan Ini</th><th>Realisasi Kumulatif</th><th>Capaian Keuangan</th></tr>';
+    foreach ($data['kategori'] as $category) {
+      $monthActual = 0.0;
+      foreach ($data['rows'] as $row) if ($row['kategori'] === self::categoryKeyForLabel($category['kategori'])) $monthActual += (float)$row['realisasi'];
+      $html .= '<tr><td>' . $e($category['kategori']) . '</td><td align="right">' . number_format((float)$category['pagu'], 0, ',', '.') . '</td><td align="right">' . number_format($monthActual, 0, ',', '.') . '</td><td align="right">' . number_format((float)$category['realisasi_kumulatif'], 0, ',', '.') . '</td><td align="right">' . number_format((float)$category['persen'], 2, ',', '.') . '%</td></tr>';
+    }
+    $html .= '<tr style="font-weight:bold"><td>TOTAL</td><td align="right">' . number_format((float)$data['total_pagu'], 0, ',', '.') . '</td><td align="right">' . number_format((float)$data['total_realisasi_bulan'], 0, ',', '.') . '</td><td align="right">' . number_format((float)$data['total_realisasi_kumulatif'], 0, ',', '.') . '</td><td align="right">' . number_format($data['total_pagu'] > 0 ? $data['total_realisasi_kumulatif'] / $data['total_pagu'] * 100 : 0, 2, ',', '.') . '%</td></tr></table>';
+    $monthNames = [1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    $html .= '<br><table border="1" cellpadding="3"><tr style="font-weight:bold;background-color:#dcecff"><th>Bulan</th><th>Target Keuangan Kumulatif</th><th>Realisasi Keuangan Kumulatif</th><th>Target Fisik Kumulatif</th><th>Realisasi Fisik Kumulatif</th></tr>';
+    foreach ($data['bulan_kumulatif'] as $monthly) {
+      $formatValue = static fn($value, $percent = false) => $value === null ? '-' : number_format((float)$value, $percent ? 2 : 0, ',', '.') . ($percent ? '%' : '');
+      $html .= '<tr><td>' . $monthNames[$monthly['bulan']] . '</td><td align="right">' . $formatValue($monthly['target_keuangan']) . '</td><td align="right">' . $formatValue($monthly['realisasi_keuangan']) . '</td><td align="right">' . $formatValue($monthly['target_fisik'], true) . '</td><td align="right">' . $formatValue($monthly['realisasi_fisik'], true) . '</td></tr>';
+    }
+    $html .= '</table><br><i>Target fisik hanya ditampilkan jika jadwal kontrak tersedia. Target keuangan hanya ditampilkan jika rencana bulanan anggaran tersedia.</i>';
+    $pdf->writeHTML($html, true, false, true, false, '');
+    $pdf->AddPage();
+    $drawChart = static function ($pdf, float $x, float $y, float $width, float $height, string $title, array $target, array $actual, bool $percent): void {
+      $pdf->SetFont('helvetica', 'B', 10);
+      $pdf->Text($x, $y, $title);
+      $chartTop = $y + 8;
+      $baseline = $chartTop + $height;
+      $pdf->Line($x, $baseline, $x + $width, $baseline);
+      $max = 1.0;
+      foreach (array_merge($target, $actual) as $value) if ($value !== null) $max = max($max, (float)$value);
+      $slot = $width / 12;
+      for ($i = 0; $i < 12; $i++) {
+        $targetValue = $target[$i] ?? null;
+        $actualValue = $actual[$i] ?? null;
+        $barX = $x + $i * $slot + 2;
+        if ($targetValue !== null) {
+          $pdf->SetFillColor(33, 133, 208);
+          $pdf->Rect($barX, $baseline - ((float)$targetValue / $max * $height), 3, (float)$targetValue / $max * $height, 'F');
+        }
+        if ($actualValue !== null) {
+          $pdf->SetFillColor(242, 113, 28);
+          $pdf->Rect($barX + 4, $baseline - ((float)$actualValue / $max * $height), 3, (float)$actualValue / $max * $height, 'F');
+        }
+        $pdf->SetFont('helvetica', '', 6);
+        $pdf->Text($barX, $baseline + 1, (string)($i + 1));
+      }
+      $pdf->SetFont('helvetica', '', 7);
+      $pdf->Text($x, $baseline + 6, 'Biru: target | Oranye: realisasi' . ($percent ? ' (%)' : ''));
+    };
+    $monthlyRows = $data['bulan_kumulatif'];
+    $drawChart($pdf, 12, 24, 126, 45, 'Target dan Realisasi Keuangan Kumulatif (%)', array_column($monthlyRows, 'target_keuangan_persen'), array_column($monthlyRows, 'realisasi_keuangan_persen'), true);
+    $drawChart($pdf, 158, 24, 126, 45, 'Target dan Realisasi Fisik Kumulatif (%)', array_column($monthlyRows, 'target_fisik'), array_column($monthlyRows, 'realisasi_fisik'), true);
+    return $pdf->Output('', 'S');
+  }
+
+  public function financialPdf(string $format, int $month = 0): string
+  {
+    if (in_array($format, ['fisik_keuangan_detail', 'fisik_keuangan_ringkasan'], true)) {
+      return $this->physicalFinancialPdf($format, $month ?: (int)date('n'));
+    }
+    $format = in_array($format, ['realisasi', 'spj', 'lra', 'bulanan_fisik_keuangan'], true) ? $format : 'lra';
     [,, $year] = $this->scope();
-    $title = ['spj' => 'FORMAT SPJ BENDAHARA', 'lra' => 'LAPORAN REALISASI ANGGARAN', 'bulanan_fisik_keuangan' => 'LAPORAN BULANAN FISIK DAN KEUANGAN'][$format];
+    $title = ['realisasi' => 'LAPORAN REALISASI', 'spj' => 'FORMAT SPJ BENDAHARA', 'lra' => 'LAPORAN REALISASI ANGGARAN', 'bulanan_fisik_keuangan' => 'LAPORAN BULANAN FISIK DAN KEUANGAN'][$format];
     $pdf = PageSetupService::createPdf(PageSetupService::current($this->user),'L');
     $pdf->SetMargins(8, 10, 8);
     PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[8,10,8,10]);
@@ -1108,7 +1584,7 @@ class KontrakRealisasiService
     $pdf->Cell(0, 8, $title . ' TAHUN ' . $year, 0, 1, 'C');
     $pdf->SetFont('helvetica', '', 7);
     $e = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
-    if ($format === 'spj') {
+    if (in_array($format, ['realisasi', 'spj'], true)) {
       $rows = $this->financialRows();
       $html = '<table border="1" cellpadding="3"><tr style="font-weight:bold;background-color:#dcecff"><th>No</th><th>Tanggal</th><th>Bukti</th><th>Kontrak</th><th>Penyedia</th><th>Uraian</th><th>Rekening</th><th>Jumlah</th></tr>';
       $total = 0;
@@ -1152,8 +1628,9 @@ class KontrakRealisasiService
       $pdf->Text(22, $baseY + 7, 'Biru: fisik | Oranye: keuangan');
       return $pdf->Output('', 'S');
     }
-    if(in_array($format,['spj','lra'],true)){
-      $summary=$this->accountLevelSummary($format==='spj'?$this->financialRows():$this->lraRows(),$format==='spj'?'jumlah':'realisasi');
+    if(in_array($format,['realisasi','spj','lra'],true)){
+      $isRealization=in_array($format,['realisasi','spj'],true);
+      $summary=$this->accountLevelSummary($isRealization?$this->financialRows():$this->lraRows(),$isRealization?'jumlah':'realisasi');
       if($summary){$html.='<br><b>REKAP NOMOR REKENING BELANJA PER LEVEL</b><table border="1" cellpadding="3"><tr style="font-weight:bold;background-color:#dcecff"><th width="22%">Kode Rekening</th><th width="58%">Uraian</th><th width="20%">Jumlah</th></tr>';foreach($summary as $level)$html.='<tr><td>'.$e($level['kode']).'</td><td>'.$e($level['uraian']).'</td><td width="20%" align="right">'.number_format((float)$level['jumlah'],0,',','.').'</td></tr>';$html.='</table>';}
     }
     $pdf->writeHTML($html, true, false, true, false, '');

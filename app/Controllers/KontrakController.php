@@ -20,6 +20,12 @@ class KontrakController extends Controller
   {
     $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->summary());
   }
+  public function financialReportData()
+  {
+    $format = (string)($_GET['format'] ?? '');
+    $month = (int)($_GET['month'] ?? 0);
+    $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->financialReportData($format, $month));
+  }
   public function availableSubActivities()
   {
     $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->availableSubActivities((int)($_GET['contract_id'] ?? 0), (string)($_GET['q'] ?? '')));
@@ -199,10 +205,11 @@ class KontrakController extends Controller
   public function financialExcel()
   {
     $f = (string)($_GET['format'] ?? 'lra');
+    $month = (int)($_GET['month'] ?? 0);
     try {
       $file = $f === 'lra'
         ? (new LaporanKeuanganService($_SESSION['user'] ?? []))->export('lra', 'xlsx')
-        : (new KontrakRealisasiService($_SESSION['user'] ?? []))->financialExcel($f);
+        : (new KontrakRealisasiService($_SESSION['user'] ?? []))->financialExcel($f, $month);
       header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       header('Content-Disposition: attachment; filename="' . $f . '.xlsx"');
       readfile($file);
@@ -216,10 +223,11 @@ class KontrakController extends Controller
   public function financialPdf()
   {
     $f = (string)($_GET['format'] ?? 'lra');
+    $month = (int)($_GET['month'] ?? 0);
     try {
       $body = $f === 'lra'
         ? (new LaporanKeuanganService($_SESSION['user'] ?? []))->export('lra', 'pdf')
-        : (new KontrakRealisasiService($_SESSION['user'] ?? []))->financialPdf($f);
+        : (new KontrakRealisasiService($_SESSION['user'] ?? []))->financialPdf($f, $month);
       header('Content-Type: application/pdf');
       header('Content-Disposition: attachment; filename="' . $f . '.pdf"');
       echo $body;

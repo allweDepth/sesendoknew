@@ -158,6 +158,26 @@ class KontrakModule extends BaseCrudModule {
 			.off("click.realizationClose", ".sidebarkanan .btnFlyoutClose")
 			.on("click.realizationClose", ".sidebarkanan .btnFlyoutClose", () => this.resetRealizationSidebar());
 		$(document)
+			.off("click.realizationExport", "[data-realization-export]")
+			.on("click.realizationExport", "[data-realization-export]", (e) => {
+				const [format, type] = String($(e.currentTarget).data("realization-export")).split(":");
+				const month = Number(this.reportMonth || new Date().getMonth() + 1);
+				const monthQuery = format.startsWith("fisik_keuangan_") ? `&month=${month}` : "";
+				const endpoint = type === "xlsx" ? "excel" : type;
+				this.download(`/kontrak/financial_${endpoint}?format=${encodeURIComponent(format)}${monthQuery}`);
+			});
+		$(document)
+			.off("change.realizationReportMonth", "[data-report-month]")
+			.on("change.realizationReportMonth", "[data-report-month]", (e) => {
+				const month = Number(e.currentTarget.value);
+				if (month < 1 || month > 12) return;
+				const params = new URLSearchParams(window.location.search);
+				params.set("month", String(month));
+				const url = window.appUrl ? window.appUrl(`/kontrak?${params}`) : `/kontrak?${params}`;
+				window.history.replaceState({ mode: "client" }, "", url);
+				this.renderReport();
+			});
+		$(document)
 			.off("click.phase4", "[data-p4]")
 			.on("click.phase4", "[data-p4]", (e) => {
 				const a = $(e.currentTarget).data("p4");
@@ -1195,13 +1215,84 @@ class KontrakModule extends BaseCrudModule {
 	}
 
 	renderReport() {
-		window.history.replaceState(
-			null,
-			"",
-			window.appUrl ? window.appUrl("/kontrak?tab=laporan") : "/kontrak?tab=laporan",
-		);
+		const params = new URLSearchParams(window.location.search);
+		const report = params.get("report") || "dashboard";
+		const supported = ["dashboard", "realisasi", "fisik_keuangan"];
+		this.realizationReport = supported.includes(report) ? report : "dashboard";
+		this.state.tbl = "__laporan";
+		this.reportMonth = Math.min(12, Math.max(1, Number(params.get("month")) || new Date().getMonth() + 1));
+		const query = this.realizationReport === "dashboard"
+			? ""
+			: `&report=${this.realizationReport}${this.realizationReport === "fisik_keuangan" ? `&month=${this.reportMonth}` : ""}`;
+		const url = window.appUrl ? window.appUrl(`/kontrak?tbl=__laporan${query}`) : `/kontrak?tbl=__laporan${query}`;
+		window.history.replaceState({ mode: "client" }, "", url);
 		$("#crud-table-container").html('<div class="ui active centered inline loader"></div>');
-		window.Ajax.request({ url: "/kontrak/summary", method: "GET", success: (r) => this.drawDashboard(r.data || {}) });
+		if (this.realizationReport === "dashboard") {
+			window.Ajax.request({
+				url: "/kontrak/summary",
+				method: "GET",
+				success: (r) => this.drawDashboard(r.data || {}),
+				error: (r) => this.showRealizationReportError(r),
+			});
+			return;
+		}
+		window.Ajax.request({
+			url: `/kontrak/financial-data?format=${encodeURIComponent(this.realizationReport)}${this.realizationReport === "fisik_keuangan" ? `&month=${this.reportMonth}` : ""}`,
+			method: "GET",
+			success: (r) => this.drawFinancialReport(this.realizationReport, r.data || {}),
+			error: (r) => this.showRealizationReportError(r),
+		});
+	}
+
+	showRealizationReportError(response) {
+		const message = response?.message || "Laporan realisasi gagal dimuat.";
+		$("#crud-table-container").html(`<div class="ui negative message">${this.esc(message)}</div>`);
+	}
+
+	drawFinancialReport(report, data) {
+		const rows = data.rows || [];
+		const isPhysical = report === "fisik_keuangan";
+		const title = isPhysical ? "Laporan Fisik & Keuangan" : "Laporan Realisasi";
+		const exportButtons = (format) => `<div class="ui buttons"><button type="button" class="ui green button" data-realization-export="${format}:xlsx"><i class="file excel icon"></i>Excel</button><button type="button" class="ui red button" data-realization-export="${format}:pdf"><i class="file pdf icon"></i>PDF</button></div>`;
+		if (isPhysical) {
+			const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+			const numberPercent = (value) => value === null || value === undefined ? "—" : `${Number(value).toFixed(2)}%`;
+			const monthly = data.bulan_kumulatif || [];
+			const chart = (titleText, targetKey, actualKey) => {
+				const values = monthly.flatMap((row) => [row[targetKey], row[actualKey]]).filter((value) => value !== null && value !== undefined).map(Number);
+				const max = Math.max(1, ...values);
+				const bars = monthly.map((row) => {
+					const target = row[targetKey];
+					const actual = row[actualKey];
+					const targetHeight = target === null || target === undefined ? 0 : Math.max(2, Number(target) / max * 130);
+					const actualHeight = actual === null || actual === undefined ? 0 : Math.max(2, Number(actual) / max * 130);
+					return `<div class="p4-trend-month"><div class="p4-trend-bars"><i class="p4-target" style="height:${targetHeight}px" title="Target ${numberPercent(target)}"></i><i class="p4-actual" style="height:${actualHeight}px" title="Realisasi ${numberPercent(actual)}"></i></div><small>${monthNames[Number(row.bulan) - 1].slice(0, 3)}</small></div>`;
+				}).join("");
+				return `<section class="p4-trend-card"><h3>${titleText}</h3><div class="p4-trend-chart">${bars}</div><div class="p4-trend-legend"><span><i class="p4-target"></i>Target</span><span><i class="p4-actual"></i>Realisasi</span></div></section>`;
+			};
+			const detailRows = rows.map((row, i) => `<tr><td>${i + 1}</td><td>${this.esc(row.kd_sub_keg)}</td><td>${this.esc(row.kd_akun)}</td><td>${this.esc(row.uraian || row.uraian_rekening || "-")}</td><td class="right aligned">${this.money(row.pagu)}</td><td class="right aligned">${this.money(row.realisasi)}</td><td class="right aligned">${numberPercent(row.persen)}</td><td class="right aligned">${numberPercent(row.fisik)}</td></tr>`).join("");
+			const detailTotal = `<tr class="positive"><th colspan="4">TOTAL</th><th class="right aligned">${this.money(data.total_pagu)}</th><th class="right aligned">${this.money(data.total_realisasi_bulan)}</th><th class="right aligned">${numberPercent(data.total_pagu > 0 ? Number(data.total_realisasi_bulan) / Number(data.total_pagu) * 100 : 0)}</th><th>—</th></tr>`;
+			const categoryRows = (data.kategori || []).map((category) => {
+				const monthActual = rows.filter((row) => row.kategori === ({ "Belanja Pegawai": "pegawai", "Belanja Barang dan Jasa": "barang_jasa", "Belanja Modal": "modal" }[category.kategori] || "lainnya")).reduce((sum, row) => sum + Number(row.realisasi || 0), 0);
+				return `<tr><td>${this.esc(category.kategori)}</td><td class="right aligned">${this.money(category.pagu)}</td><td class="right aligned">${this.money(monthActual)}</td><td class="right aligned">${this.money(category.realisasi_kumulatif)}</td><td class="right aligned">${numberPercent(category.persen)}</td></tr>`;
+			}).join("");
+			const monthlyRows = monthly.map((row) => `<tr><td>${monthNames[Number(row.bulan) - 1]}</td><td class="right aligned">${row.target_keuangan === null ? "Belum diisi" : this.money(row.target_keuangan)}</td><td class="right aligned">${row.realisasi_keuangan === null ? "—" : this.money(row.realisasi_keuangan)}</td><td class="right aligned">${numberPercent(row.target_fisik)}</td><td class="right aligned">${numberPercent(row.realisasi_fisik)}</td></tr>`).join("");
+			const reportNotes = `${data.ada_rencana_keuangan ? "" : '<div class="ui warning message">Rencana anggaran bulanan belum tersedia; target keuangan tidak dibuat otomatis.</div>'}${data.ada_rencana_fisik ? "" : '<div class="ui warning message">Jadwal kontrak belum tersedia; target fisik ditampilkan kosong, bukan angka perkiraan.</div>'}`;
+			$("#crud-table-container").html(
+				`<div class="ui clearing segment"><h2>${title} ${this.esc(data.tahun || "")}</h2><p>Rincian realisasi bulan terpilih dan ringkasan kumulatif sampai bulan tersebut. Sumber data: dokumen anggaran disahkan, transaksi realisasi, dan jadwal kontrak.</p><div class="field"><label>Bulan laporan</label><select class="ui dropdown" data-report-month>${monthNames.map((name, i) => `<option value="${i + 1}" ${Number(data.bulan) === i + 1 ? "selected" : ""}>${name}</option>`).join("")}</select></div>${reportNotes}</div><section class="ui segment"><div class="ui clearing"><h3 class="ui left floated header">Rincian Anggaran dan Realisasi — ${this.esc(data.nama_bulan || "")}</h3><div class="ui right floated">${exportButtons("fisik_keuangan_detail")}</div></div><div class="table-wrapper"><table class="ui celled compact striped table"><thead><tr><th>No</th><th>Sub kegiatan</th><th>Kode rekening</th><th>Uraian</th><th class="right aligned">Jumlah anggaran</th><th class="right aligned">Realisasi bulan ini</th><th class="right aligned">Keuangan %</th><th class="right aligned">Fisik %</th></tr></thead><tbody>${detailRows || '<tr><td colspan="8" class="center aligned">Belum ada rincian anggaran/realisasi untuk bulan ini.</td></tr>'}${detailRows ? detailTotal : ""}</tbody></table></div></section><section class="ui segment"><div class="ui clearing"><h3 class="ui left floated header">Ringkasan Fisik & Keuangan s.d. ${this.esc(data.nama_bulan || "")}</h3><div class="ui right floated">${exportButtons("fisik_keuangan_ringkasan")}</div></div><div class="table-wrapper"><table class="ui celled compact striped table"><thead><tr><th>Jenis belanja</th><th class="right aligned">Pagu</th><th class="right aligned">Realisasi bulan ini</th><th class="right aligned">Realisasi kumulatif</th><th class="right aligned">Capaian</th></tr></thead><tbody>${categoryRows}<tr class="positive"><th>TOTAL</th><th class="right aligned">${this.money(data.total_pagu)}</th><th class="right aligned">${this.money(data.total_realisasi_bulan)}</th><th class="right aligned">${this.money(data.total_realisasi_kumulatif)}</th><th class="right aligned">${numberPercent(data.total_pagu > 0 ? Number(data.total_realisasi_kumulatif) / Number(data.total_pagu) * 100 : 0)}</th></tr></tbody></table></div><div class="p4-trend-grid">${chart("Progres Keuangan Kumulatif", "target_keuangan_persen", "realisasi_keuangan_persen")}${chart("Progres Fisik Kumulatif", "target_fisik", "realisasi_fisik")}</div><h4>Rekap kumulatif per bulan</h4><div class="table-wrapper"><table class="ui celled compact striped table"><thead><tr><th>Bulan</th><th class="right aligned">Target keuangan</th><th class="right aligned">Realisasi keuangan</th><th class="right aligned">Target fisik</th><th class="right aligned">Realisasi fisik</th></tr></thead><tbody>${monthlyRows}</tbody></table></div></section>`,
+			);
+			$(".ui.dropdown").dropdown();
+			return;
+		}
+		const format = "realisasi";
+		const exports = exportButtons(format);
+		const body = rows.map((row, i) => `<tr><td>${i + 1}</td><td>${this.esc(row.tanggal || "-")}</td><td>${this.esc(row.nomor_kontrak || "-")}</td><td>${this.esc(row.penyedia || "-")}</td><td>${this.esc(row.uraian || "-")}</td><td>${this.esc(row.kd_akun || "-")}</td><td class="right aligned">${this.money(row.jumlah)}</td><td class="right aligned">${Number(row.progress_fisik || 0).toFixed(2)}%</td><td class="right aligned">${Number(row.progress_keuangan || 0).toFixed(2)}%</td></tr>`).join("");
+		const headers = "<th>No</th><th>Tanggal</th><th>Nomor kontrak</th><th>Penyedia</th><th>Uraian realisasi</th><th>Kode rekening</th><th class=\"right aligned\">Nilai realisasi</th><th class=\"right aligned\">Fisik</th><th class=\"right aligned\">Keuangan</th>";
+		const emptyColumns = 9;
+		const summary = `<div class="p4-cards"><div><small>Jumlah transaksi realisasi</small><strong>${Number(data.jumlah_transaksi || 0)}</strong></div><div><small>Total nilai realisasi</small><strong>${this.money(data.total_realisasi)}</strong></div></div>`;
+		$("#crud-table-container").html(
+			`<div class="ui clearing segment"><div class="ui right floated">${exports}</div><h2>${title} ${this.esc(data.tahun || "")}</h2><p>Data bersumber dari transaksi pada menu Penginputan Realisasi.</p></div>${summary}<div class="table-wrapper"><table class="ui celled compact striped table"><thead><tr>${headers}</tr></thead><tbody>${body || `<tr><td colspan="${emptyColumns}" class="center aligned">Belum ada data realisasi untuk laporan ini.</td></tr>`}</tbody></table></div>`,
+		);
 	}
 
 	drawDashboard(data) {
@@ -1217,7 +1308,7 @@ class KontrakModule extends BaseCrudModule {
 			.map((s) => `<div class="p4-status">${this.esc(s.label)}<b>${s.jumlah}</b></div>`)
 			.join("");
 		$("#crud-table-container").html(
-			`<div class="p4-hero"><div><small>MONITORING PELAKSANAAN</small><h2>Kontrak & Realisasi</h2><p>SPK, SPMK, kontrak, dan kemajuan pekerjaan.</p></div><div class="ui buttons"><button class="ui green button" data-p4="report-excel"><i class="file excel icon"></i>Excel + Grafik</button><button class="ui red button" data-p4="report-pdf"><i class="file pdf icon"></i>PDF</button></div></div><div class="p4-cards"><div><small>Kontrak</small><strong>${t.jumlah_kontrak || 0}</strong></div><div><small>Total Anggaran</small><strong>${this.money(t.total_anggaran)}</strong></div><div><small>Nilai Kontrak</small><strong>${this.money(t.nilai_kontrak)}</strong></div><div><small>Realisasi</small><strong>${this.money(t.realisasi)}</strong></div></div><div class="p4-grid"><section><h3>Realisasi per Bulan</h3><div class="p4-chart">${bars}</div></section><section><h3>Status Kontrak</h3>${statuses || '<div class="ui message">Belum ada data.</div>'}</section></div>`,
+			`<div class="p4-hero"><div><small>MONITORING PELAKSANAAN</small><h2>Dashboard Realisasi</h2><p>Ringkasan kontrak dan transaksi realisasi.</p></div><div class="ui buttons"><button class="ui green button" data-p4="report-excel"><i class="file excel icon"></i>Excel + Grafik</button><button class="ui red button" data-p4="report-pdf"><i class="file pdf icon"></i>PDF</button></div></div><div class="p4-cards"><div><small>Kontrak</small><strong>${t.jumlah_kontrak || 0}</strong></div><div><small>Total Anggaran</small><strong>${this.money(t.total_anggaran)}</strong></div><div><small>Nilai Kontrak</small><strong>${this.money(t.nilai_kontrak)}</strong></div><div><small>Realisasi</small><strong>${this.money(t.realisasi)}</strong></div></div><div class="p4-grid"><section><h3>Realisasi per Bulan</h3><div class="p4-chart">${bars}</div></section><section><h3>Status Kontrak</h3>${statuses || '<div class="ui message">Belum ada data.</div>'}</section></div>`,
 		);
 	}
 
@@ -1226,5 +1317,6 @@ class KontrakModule extends BaseCrudModule {
 		$("head").append(
 			`<style id="phase4Style">.p4-hero{background:linear-gradient(135deg,#112c46,#2185d0);color:#fff;padding:24px;border-radius:14px;display:flex;justify-content:space-between}.p4-cards,.p4-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px}.p4-grid{grid-template-columns:2fr 1fr}.p4-cards>div,.p4-grid section{background:#fff;border:1px solid #e6edf5;border-radius:12px;padding:18px;box-shadow:0 8px 24px rgba(20,52,80,.07)}.p4-cards small,.p4-cards strong{display:block;margin-top:6px}.p4-chart{height:190px;display:flex;align-items:flex-end;gap:8px}.p4-bar-wrap{height:170px;flex:1;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}.p4-bar{background:linear-gradient(#54c8ff,#2185d0);border-radius:5px 5px 0 0}.p4-status{padding:12px;border-bottom:1px solid #eee}.p4-status b{float:right}.contract-item-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.contract-scroll{max-height:52vh;overflow:auto;margin-top:12px}.contract-item-card,.contract-selected-card{display:flex;gap:12px;justify-content:space-between;border:1px solid #e3eaf2;border-radius:10px;padding:12px;margin-bottom:9px}.contract-item-card small,.contract-item-card p,.contract-selected-card p,.contract-selected-card small{display:block;margin:5px 0}.contract-selected-card>div{flex:1}.contract-total{position:sticky;bottom:0;background:#f4f0ff;border:1px solid #d7c9ff;border-radius:9px;padding:12px;display:flex;justify-content:space-between}.contract-section-tabs.ui.menu{gap:6px;border:0;box-shadow:none;background:transparent;margin:16px 0}.contract-section-tabs.ui.menu>.item{border-radius:7px!important;border:1px solid #dce5ee!important;min-height:48px;font-weight:600;justify-content:center}.contract-section-tabs.ui.menu>.item:before{display:none}.contract-section-tabs.ui.menu>.blue.item{color:#1678c2;background:#edf6ff}.contract-section-tabs.ui.menu>.teal.item{color:#00827c;background:#edfafa}.contract-section-tabs.ui.menu>.orange.item{color:#9d5600;background:#fff7eb}.contract-section-tabs.ui.menu>.violet.item{color:#6435c9;background:#f5f0ff}.contract-section-tabs.ui.menu>.active.item{box-shadow:inset 0 -3px 0 currentColor}.contract-rab-toolbar.ui.menu{margin:0 0 12px;min-height:0;box-shadow:none;border:0;flex-wrap:wrap}.contract-rab-toolbar.ui.menu .item{padding:0 6px 0 0}.contract-delivery-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.contract-delivery-page{padding:0 0 24px}.contract-delivery-toolbar{position:sticky;top:0;z-index:20;margin-bottom:14px!important}.contract-delivery-heading{margin:10px 0 14px}.contract-schedule-item{border:1px solid #dfe9ef;border-radius:10px;padding:12px;margin:12px 0;background:#fbfdff}.schedule-item-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.schedule-item-title strong,.schedule-item-title small{display:block;margin-top:4px}.delivery-table input{min-width:90px;width:100%;border:1px solid #d8e0e5;border-radius:4px;padding:7px}.ui.table.contract-rab-table{table-layout:fixed;width:100%;min-width:1000px}.ui.table.contract-rab-table th{overflow-wrap:normal;word-break:normal}.ui.table.contract-rab-table td{padding:7px;vertical-align:middle}.ui.form .contract-rab-table input,.ui.form .contract-rab-table textarea{min-width:0;width:100%;padding:7px 5px}.ui.form .contract-rab-table textarea{min-height:4.4em;resize:vertical;line-height:1.4}.contract-rab-table [data-rab=nomor],.contract-rab-table [data-rab=satuan],.contract-rab-table [data-rab=pajak]{text-align:center}.ui.table.contract-rab-table [data-rab=volume],.ui.table.contract-rab-table [data-rab=harga_satuan],.ui.table.contract-rab-table [data-rab-total],.ui.table.contract-rab-table [data-rab-weight]{text-align:right}.contract-rab-table [data-rab-total],.contract-rab-table [data-rab-weight]{white-space:nowrap;font-variant-numeric:tabular-nums}.contract-rab-table input[type=number]{appearance:textfield;-moz-appearance:textfield}.contract-rab-table input::-webkit-inner-spin-button,.contract-rab-table input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.s-chart{min-height:110px;display:flex;align-items:flex-end;gap:6px;overflow-x:auto;margin:12px 0}.s-point{min-width:34px;height:100px;display:flex;align-items:flex-end;gap:2px;position:relative;padding-bottom:18px}.s-point span,.s-point i{display:block;width:12px;max-height:80px;background:#2185d0}.s-point i{background:#21ba45}.s-point small{position:absolute;bottom:0;left:0}@media(max-width:800px){.p4-cards,.p4-grid,.contract-item-grid{grid-template-columns:1fr}.p4-hero,.schedule-item-title{display:block}.contract-delivery-toolbar{position:static}.contract-delivery-toolbar .right.floated{float:none!important;margin-top:8px}.delivery-table{min-width:850px}.table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch}}</style>`,
 		);
+		$("head").append(`<style id="physicalFinancialReportStyle">.p4-trend-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}.p4-trend-card{border:1px solid #e6edf5;border-radius:10px;padding:14px;background:#fff}.p4-trend-chart{height:160px;display:flex;align-items:flex-end;gap:5px;border-bottom:1px solid #d9e2ec;padding:0 4px}.p4-trend-month{flex:1;min-width:22px;text-align:center}.p4-trend-bars{height:138px;display:flex;justify-content:center;align-items:flex-end;gap:2px}.p4-trend-bars i{display:block;width:8px;min-height:0;border-radius:3px 3px 0 0}.p4-trend-bars .p4-target,.p4-trend-legend .p4-target{background:#2185d0}.p4-trend-bars .p4-actual,.p4-trend-legend .p4-actual{background:#f2711c}.p4-trend-month small{font-size:11px}.p4-trend-legend{display:flex;gap:16px;margin-top:8px}.p4-trend-legend span{display:flex;align-items:center;gap:5px}.p4-trend-legend i{width:10px;height:10px;display:inline-block}@media(max-width:800px){.p4-trend-grid{grid-template-columns:1fr}}</style>`);
 	}
 }
