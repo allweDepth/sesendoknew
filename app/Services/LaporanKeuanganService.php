@@ -125,7 +125,13 @@ class LaporanKeuanganService
       ' WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND is_deleted=0 ORDER BY kode_akun',
       [$region, $opd, $year]
     )->fetchAll();
-    return ['tahun' => $year, 'rows' => $rows, 'summary' => self::balanceSummary($rows)];
+    return [
+      'tahun' => $year,
+      'rows' => $rows,
+      'summary' => self::balanceSummary($rows),
+      'otomatis' => false,
+      'sumber_jurnal' => false,
+    ];
   }
 
   public static function balanceSummary(array $rows): array
@@ -272,6 +278,15 @@ class LaporanKeuanganService
     $user = $this->user;
     $service = new KontrakRealisasiService($user);
     $rows = $service->lraRows();
+    $trace = new RealisasiKeuanganService($user);
+    $pending = $trace->pendingRows();
+    $transactions = $trace->transactionRows();
+    $budgetPublished = $service->lraBudgetPublished();
+    $missing = [];
+    if (!$budgetPublished) $missing[] = 'Belum ada DPA/DPPA yang disahkan dan snapshot rincian anggarannya tersedia untuk scope ini.';
+    if ($pending) $missing[] = 'Ada transaksi realisasi yang belum diklasifikasikan atau diverifikasi per bukti.';
+    if (!$rows && $budgetPublished) $missing[] = 'Belum ada transaksi pengeluaran kas yang terverifikasi untuk periode laporan.';
+    $role = (string)($user['type_user'] ?? '');
     return [
       'tahun' => (int)($user['tahun'] ?? 0),
       'rows' => $rows,
@@ -280,17 +295,28 @@ class LaporanKeuanganService
         'realisasi' => array_sum(array_column($rows, 'realisasi')),
         'sisa' => array_sum(array_column($rows, 'sisa')),
       ],
-      'source' => 'Realisasi transaksi kontrak yang tercatat pada aplikasi.',
+      'source' => 'Snapshot anggaran DPA/DPPA yang disahkan dan transaksi LS/uang muka kontrak/SPJ UP-TU yang diverifikasi.',
+      'status' => $missing ? 'BELUM_LENGKAP' : 'KERTAS_KERJA',
+      'missing_sources' => $missing,
+      'budget_published' => $budgetPublished,
+      'pending_transactions' => $pending,
+      'transactions' => $transactions,
+      'can_verify_transactions' => in_array($role, ['super_admin', 'admin_wilayah', 'admin_opd', 'kepala_opd', 'pa_kpa', 'bendahara'], true),
+      'full_lkpd' => false,
     ];
   }
 
   public function export(string $report, string $format): string
   {
     $this->assertCanRead();
-    if (!in_array($report, ['neraca', 'calk'], true) || !in_array($format, ['xlsx', 'pdf'], true)) {
+    if (!in_array($report, ['lra', 'neraca', 'calk'], true) || !in_array($format, ['xlsx', 'pdf'], true)) {
       throw new InvalidArgumentException('Jenis ekspor laporan tidak valid.');
     }
-    $data = $report === 'neraca' ? $this->balanceData() : $this->noteData();
+    $data = match ($report) {
+      'lra' => $this->lraData(),
+      'neraca' => $this->balanceData(),
+      default => $this->noteData(),
+    };
     return $format === 'xlsx' ? $this->exportExcel($report, $data) : $this->exportPdf($report, $data);
   }
 
@@ -298,7 +324,31 @@ class LaporanKeuanganService
   {
     $book = new Spreadsheet();
     $sheet = $book->getActiveSheet();
-    if ($report === 'neraca') {
+    if ($report === 'lra') {
+      $sheet->setTitle('LRA Kertas Kerja');
+      $sheet->fromArray(['KERTAS KERJA LRA - TAHUN ' . $data['tahun']], null, 'A1');
+      $sheet->fromArray(['STATUS: ' . $data['status']], null, 'A2');
+      $sheet->fromArray(['SUMBER: ' . $data['source']], null, 'A3');
+      $sheet->fromArray(['SUB KEGIATAN', 'KODE REKENING', 'PAGU DISAHKAN', 'BELANJA LRA TERVERIFIKASI', 'SISA', 'REALISASI %'], null, 'A5', true);
+      $rowNo = 6;
+      foreach ($data['rows'] as $row) {
+        $sheet->fromArray([
+          $this->excelText((string)$row['kd_sub_keg']),
+          $this->excelText((string)$row['kd_akun']),
+          (float)$row['pagu'],
+          (float)$row['realisasi'],
+          (float)$row['sisa'],
+          (float)$row['persen'],
+        ], null, 'A' . $rowNo++, true);
+      }
+      $sheet->fromArray(['TOTAL', '', (float)$data['summary']['pagu'], (float)$data['summary']['realisasi'], (float)$data['summary']['sisa'], ''], null, 'A' . $rowNo, true);
+      $sheet->getStyle('C6:E' . $rowNo)->getNumberFormat()->setFormatCode('#,##0.00;[Red](#,##0.00);-');
+      $sheet->getStyle('F6:F' . $rowNo)->getNumberFormat()->setFormatCode('0.00"%"');
+      $sheet->getStyle('A5:F5')->getFont()->setBold(true);
+      if ($data['missing_sources']) {
+        $sheet->fromArray(['SUMBER YANG BELUM LENGKAP: ' . implode(' ', $data['missing_sources'])], null, 'A' . ($rowNo + 2));
+      }
+    } elseif ($report === 'neraca') {
       $sheet->setTitle('Neraca');
       $sheet->fromArray(['KERTAS KERJA NERACA - TAHUN ' . $data['tahun']], null, 'A1');
       $sheet->fromArray([$data['summary']['seimbang'] ? 'STATUS: SEIMBANG' : 'STATUS: BELUM SEIMBANG - PERLU VERIFIKASI'], null, 'A2');
@@ -325,7 +375,7 @@ class LaporanKeuanganService
       $sheet->getStyle('C4:C' . max(4, $rowNo))->getAlignment()->setWrapText(true);
       $sheet->getStyle('A3:C3')->getFont()->setBold(true);
     }
-    foreach (range('A', $report === 'neraca' ? 'F' : 'B') as $column) $sheet->getColumnDimension($column)->setAutoSize(true);
+    foreach (range('A', $report === 'lra' ? 'F' : ($report === 'neraca' ? 'F' : 'B')) as $column) $sheet->getColumnDimension($column)->setAutoSize(true);
     $path = tempnam(sys_get_temp_dir(), 'lkn-export-');
     if ($path === false) throw new RuntimeException('Tidak dapat menyiapkan file ekspor.');
     (new Xlsx($book))->save($path);
@@ -334,15 +384,23 @@ class LaporanKeuanganService
 
   private function exportPdf(string $report, array $data): string
   {
-    $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8');
+    $pdf = new TCPDF($report === 'lra' ? 'L' : 'P', 'mm', 'A4', true, 'UTF-8');
     $pdf->SetCreator('seSendok');
-    $pdf->SetTitle($report === 'neraca' ? 'Kertas Kerja Neraca' : 'Kertas Kerja CaLK');
+    $pdf->SetTitle(['lra' => 'Kertas Kerja LRA', 'neraca' => 'Kertas Kerja Neraca', 'calk' => 'Kertas Kerja CaLK'][$report]);
     $pdf->SetMargins(15, 15, 15);
     $pdf->SetAutoPageBreak(true, 18);
     $pdf->AddPage();
-    $title = $report === 'neraca' ? 'NERACA' : 'CATATAN ATAS LAPORAN KEUANGAN';
+    $title = ['lra' => 'LAPORAN REALISASI ANGGARAN', 'neraca' => 'NERACA', 'calk' => 'CATATAN ATAS LAPORAN KEUANGAN'][$report];
     $html = '<h2 style="text-align:center">' . $title . ' TAHUN ' . (int)$data['tahun'] . '</h2><p style="text-align:center"><b>KERTAS KERJA - perlu verifikasi dan pengesahan pejabat berwenang</b></p>';
-    if ($report === 'neraca') {
+    if ($report === 'lra') {
+      $html .= '<p><b>Status:</b> ' . htmlspecialchars((string)$data['status'], ENT_QUOTES, 'UTF-8') . '<br><b>Sumber:</b> ' . htmlspecialchars((string)$data['source'], ENT_QUOTES, 'UTF-8') . '</p>';
+      if ($data['missing_sources']) $html .= '<p><b>Sumber yang belum lengkap:</b> ' . htmlspecialchars(implode(' ', $data['missing_sources']), ENT_QUOTES, 'UTF-8') . '</p>';
+      $html .= '<table border="1" cellpadding="4"><thead><tr style="font-weight:bold;background-color:#dcebf7"><th>Sub Kegiatan</th><th>Kode Rekening</th><th>Pagu Disahkan</th><th>Belanja LRA Terverifikasi</th><th>Sisa</th><th>Realisasi %</th></tr></thead><tbody>';
+      foreach ($data['rows'] as $row) {
+        $html .= '<tr><td>' . htmlspecialchars((string)$row['kd_sub_keg'], ENT_QUOTES, 'UTF-8') . '</td><td>' . htmlspecialchars((string)$row['kd_akun'], ENT_QUOTES, 'UTF-8') . '</td><td align="right">' . number_format((float)$row['pagu'], 2, ',', '.') . '</td><td align="right">' . number_format((float)$row['realisasi'], 2, ',', '.') . '</td><td align="right">' . number_format((float)$row['sisa'], 2, ',', '.') . '</td><td align="right">' . number_format((float)$row['persen'], 2, ',', '.') . '%</td></tr>';
+      }
+      $html .= '<tr style="font-weight:bold"><td colspan="2">TOTAL KERTAS KERJA</td><td align="right">' . number_format((float)$data['summary']['pagu'], 2, ',', '.') . '</td><td align="right">' . number_format((float)$data['summary']['realisasi'], 2, ',', '.') . '</td><td align="right">' . number_format((float)$data['summary']['sisa'], 2, ',', '.') . '</td><td></td></tr></tbody></table>';
+    } elseif ($report === 'neraca') {
       $html .= '<table border="1" cellpadding="4"><thead><tr style="font-weight:bold;background-color:#dcebf7"><th>Kode</th><th>Uraian</th><th>Kelompok</th><th>Saldo Awal</th><th>Saldo Akhir</th></tr></thead><tbody>';
       foreach ($data['rows'] as $row) {
         $html .= '<tr><td>' . htmlspecialchars((string)$row['kode_akun'], ENT_QUOTES, 'UTF-8') . '</td><td>' . htmlspecialchars((string)$row['uraian'], ENT_QUOTES, 'UTF-8') . '</td><td>' . htmlspecialchars((string)$row['kelompok'], ENT_QUOTES, 'UTF-8') . '</td><td align="right">' . number_format((float)$row['saldo_awal'], 2, ',', '.') . '</td><td align="right">' . number_format((float)$row['saldo_akhir'], 2, ',', '.') . '</td></tr>';

@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__.'/../Services/ContractOfferPrintService.php';
 require_once __DIR__ . '/../Services/KontrakRealisasiService.php';
+require_once __DIR__ . '/../Services/LaporanKeuanganService.php';
 require_once __DIR__ . '/../Services/JsonResponse.php';
 require_once __DIR__ . '/../Services/ProcurementDocumentService.php';
 
@@ -45,6 +46,9 @@ class KontrakController extends Controller
     if (!is_array($payload)) $payload = $_POST;
     $items = $payload['items'] ?? [];
     if (is_string($items)) $items = json_decode($items, true);
+    $finance = $payload['keuangan'] ?? [];
+    if (is_string($finance)) $finance = json_decode($finance, true);
+    $payload['keuangan'] = is_array($finance) ? $finance : [];
     $files=[];$upload=$_FILES['transaction_files']??[];if(isset($upload['name'])&&is_array($upload['name']))foreach($upload['name'] as $i=>$name)$files[]=['name'=>$name,'type'=>$upload['type'][$i]??'','tmp_name'=>$upload['tmp_name'][$i]??'','error'=>$upload['error'][$i]??UPLOAD_ERR_NO_FILE,'size'=>$upload['size'][$i]??0];elseif(!empty($upload))$files[]=$upload;
     $this->json(fn() => (new KontrakRealisasiService($_SESSION['user'] ?? []))->saveRealization($payload, is_array($items) ? $items : [],$files), 'Realisasi berhasil disimpan');
   }
@@ -196,7 +200,9 @@ class KontrakController extends Controller
   {
     $f = (string)($_GET['format'] ?? 'lra');
     try {
-      $file = (new KontrakRealisasiService($_SESSION['user'] ?? []))->financialExcel($f);
+      $file = $f === 'lra'
+        ? (new LaporanKeuanganService($_SESSION['user'] ?? []))->export('lra', 'xlsx')
+        : (new KontrakRealisasiService($_SESSION['user'] ?? []))->financialExcel($f);
       header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       header('Content-Disposition: attachment; filename="' . $f . '.xlsx"');
       readfile($file);
@@ -211,7 +217,9 @@ class KontrakController extends Controller
   {
     $f = (string)($_GET['format'] ?? 'lra');
     try {
-      $body = (new KontrakRealisasiService($_SESSION['user'] ?? []))->financialPdf($f);
+      $body = $f === 'lra'
+        ? (new LaporanKeuanganService($_SESSION['user'] ?? []))->export('lra', 'pdf')
+        : (new KontrakRealisasiService($_SESSION['user'] ?? []))->financialPdf($f);
       header('Content-Type: application/pdf');
       header('Content-Disposition: attachment; filename="' . $f . '.pdf"');
       echo $body;

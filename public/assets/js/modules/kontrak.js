@@ -351,12 +351,99 @@ class KontrakModule extends BaseCrudModule {
 	}
 
 	openRealization(id = 0) {
-		this.realizationId = Number(id || 0);this.realizationItems=[];this.realizationContracts=[];this.realizationFiles=[];this.resetRealizationSidebar();
-		$("#content_flyout").text(this.realizationId ? "Ubah Realisasi Kontrak" : "Input Realisasi Kontrak");$("#icon_flyout").attr("class","chartline icon");$(".sidebarkanan").addClass("realization-sidebar-active");$(".flyout-footer").hide();
-		$("#form_flyout").html(`<div class="ui form" id="realizationSidebarForm"><div class="field required"><label>Kontrak</label><select class="ui fluid search dropdown" id="realizationContract"><option value="">Pilih kontrak</option></select></div><div class="two fields"><div class="field required"><label>Tanggal Transaksi</label><div class="ui calendar contract-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" id="realizationDate" placeholder="YYYY-MM-DD" autocomplete="off"></div></div></div><div class="field"><label>Realisasi kontrak di luar transaksi ini</label><input type="text" id="realizationPrevious" disabled value="Rp 0"></div></div><div class="field required"><label>Uraian Transaksi</label><textarea id="realizationDescription" rows="2" placeholder="Contoh: Pembayaran termin pekerjaan..."></textarea></div><div class="field required"><label>Jumlah Realisasi</label><input type="number" id="realizationTotal" min="0" step="any" inputmode="decimal" placeholder="0"></div><button type="button" class="ui fluid violet button" id="realizationItemsButton" disabled><i class="list alternate outline icon"></i>Atur Uraian Realisasi</button><div class="field"><label>Keterangan</label><textarea id="realizationNote" rows="2"></textarea></div><div class="field ${this.realizationId?'':'required'}"><label>File Transaksi (PDF/gambar/XLSX/DOCX, masing-masing maks. 15 MB)</label><input type="file" id="realizationFiles" multiple ${this.realizationId?'':'required'} accept=".pdf,.jpg,.jpeg,.png,.webp,.xlsx,.docx"><div id="realizationExistingFiles" class="ui relaxed divided list"></div></div><div class="ui info message">Tambah dan edit memakai properti yang sama. Nilai per uraian diatur melalui tombol di atas; file lama dapat diunduh atau dihapus lalu diganti.</div><button type="button" class="ui fluid teal button" id="realizationSubmit"><i class="check icon"></i>${this.realizationId?'Simpan Perubahan':'Simpan Realisasi'}</button></div>`);
-		this.initContractCalendars($("#form_flyout"));$(".sidebarkanan").sidebar("show");
-		const load=(detail=null)=>window.Ajax.request({url:"/kontrak/realization-contracts",method:"GET",success:r=>{this.realizationContracts=r.data||[];const select=$("#realizationContract");select.html('<option value="">Pilih kontrak</option>'+this.realizationContracts.map(x=>`<option value="${x.id}">${this.esc(x.nomor_kontrak)} · ${this.money(x.nilai_kontrak)}</option>`).join(""));if(select.hasClass("noselection"))select.dropdown("destroy");select.dropdown({fullTextSearch:true,highlightMatches:true,onChange:value=>this.loadRealizationContract(Number(value||0),detail)});if(detail){select.dropdown("set selected",String(detail.contract_id));select.closest('.field').toggleClass('disabled',true);select.prop('disabled',true);}}});
-		if(this.realizationId)window.Ajax.request({url:`/kontrak/realization/detail?id=${this.realizationId}`,method:"GET",success:r=>{const d=r.data||{};this.realizationFiles=d.files||[];$("#realizationDate").val(d.tanggal||"");$("#realizationDescription").val(d.uraian_transaksi||"");$("#realizationNote").val(d.keterangan||"");$("#realizationTotal").val(Number(d.jumlah||0));this.renderRealizationFiles();load(d);}});else load();
+		this.realizationId = Number(id || 0);
+		this.realizationItems = [];
+		this.realizationContracts = [];
+		this.realizationFiles = [];
+		this.resetRealizationSidebar();
+		$("#content_flyout").text(this.realizationId ? "Ubah Realisasi Kontrak" : "Input Realisasi Kontrak");
+		$("#icon_flyout").attr("class", "chartline icon");
+		$(".sidebarkanan").addClass("realization-sidebar-active");
+		$(".flyout-footer").hide();
+		$("#form_flyout").html(`<div class="ui form" id="realizationSidebarForm">
+			<div class="field required"><label>Kontrak</label><select class="ui fluid search dropdown" id="realizationContract"><option value="">Pilih kontrak</option></select></div>
+			<div class="two fields"><div class="field required"><label>Tanggal transaksi/progres</label><div class="ui calendar contract-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" id="realizationDate" placeholder="YYYY-MM-DD" autocomplete="off"></div></div></div><div class="field"><label>Realisasi kontrak di luar transaksi ini</label><input type="text" id="realizationPrevious" disabled value="Rp 0"></div></div>
+			<div class="field required"><label>Uraian transaksi/progres</label><textarea id="realizationDescription" rows="2" placeholder="Contoh: Pembayaran termin, uang muka, atau progres pekerjaan..."></textarea></div>
+			<div class="field required"><label>Jenis transaksi keuangan</label><select class="ui fluid dropdown" id="realizationTransactionType">
+				<option value="PROGRES">Progres / BAST / tagihan belum dibayar</option><option value="LS">Pembayaran langsung (LS)</option><option value="UANG_MUKA_KONTRAK">Uang muka kontrak kepada penyedia</option><option value="UP">Belanja melalui UP (SPJ)</option><option value="TU">Belanja melalui TU (SPJ)</option><option value="GU">SP2D GU / penggantian UP</option>
+			</select></div>
+			<div id="realizationFinanceNotice" class="ui info message"></div>
+			<div data-finance-field="ALL" class="field"><label>Nomor bukti transaksi</label><input id="realizationFinanceProof" maxlength="120" placeholder="Nomor kuitansi, bukti transfer, atau dokumen sumber"></div>
+			<div data-finance-field="LS,UANG_MUKA_KONTRAK,GU" class="two fields"><div class="field"><label>Nomor SP2D</label><input id="realizationSp2dNumber" maxlength="120"></div><div class="field"><label>Tanggal SP2D</label><input type="date" id="realizationSp2dDate"></div></div>
+			<div data-finance-field="UP,TU" class="two fields"><div class="field"><label>Nomor register UP/TU</label><input id="realizationUpTuRegister" maxlength="120" placeholder="Nomor register sumber dana"></div><div class="field"><label>Nomor SP2D sumber UP/TU</label><input id="realizationUpTuSp2d" maxlength="120"></div></div>
+			<div data-finance-field="UP,TU,GU" class="three fields"><div class="field"><label>Nomor SPJ</label><input id="realizationSpjNumber" maxlength="120"></div><div class="field"><label>Tanggal SPJ</label><input type="date" id="realizationSpjDate"></div><div class="field"><label>Tanggal pengesahan SPJ</label><input type="date" id="realizationSpjApprovalDate"></div></div>
+			<div data-finance-field="LS" class="two fields"><div class="field"><label>Potongan uang muka kontrak (jika ada)</label><input type="number" min="0" step="0.01" id="realizationAdvanceDeduction" value="0"></div><div class="field"><label>Nomor SP2D uang muka yang dipotong</label><input id="realizationAdvanceSp2d" maxlength="120" placeholder="Wajib diisi jika ada potongan"></div></div>
+			<div class="field"><label>Keterangan tambahan</label><textarea id="realizationNote" rows="2"></textarea></div>
+			<div class="field ${this.realizationId ? "" : "required"}"><label>Bukti transaksi (SP2D/SPJ/BAST/kuitansi/dokumen pengembalian; PDF/gambar/XLSX/DOCX, maks. 15 MB per file)</label><input type="file" id="realizationFiles" multiple ${this.realizationId ? "" : "required"} accept=".pdf,.jpg,.jpeg,.png,.webp,.xlsx,.docx"><div id="realizationExistingFiles" class="ui relaxed divided list"></div></div>
+			<div class="ui info message">Bukti dilampirkan dan dicatat per transaksi. Transaksi keuangan masuk LRA setelah diverifikasi oleh pengguna lain yang berwenang. Progres saja, SP2D GU, dan pencairan UP/TU tidak dihitung sebagai belanja dua kali.</div>
+			<div class="field required"><label>Jumlah transaksi/progres</label><input type="number" id="realizationTotal" min="0" step="any" inputmode="decimal" placeholder="0"></div>
+			<button type="button" class="ui fluid violet button" id="realizationItemsButton" disabled><i class="list alternate outline icon"></i>Atur Uraian per Rekening</button>
+			<button type="button" class="ui fluid teal button" id="realizationSubmit"><i class="check icon"></i>${this.realizationId ? "Simpan Perubahan" : "Simpan Transaksi"}</button></div>`);
+		this.initContractCalendars($("#form_flyout"));
+		$("#form_flyout").off("change.realisasiKeuangan", "#realizationTransactionType").on("change.realisasiKeuangan", "#realizationTransactionType", () => this.updateRealizationFinanceFields());
+		$("#realizationTransactionType").dropdown();
+		this.updateRealizationFinanceFields();
+		$(".sidebarkanan").sidebar("show");
+		const load = (detail = null) => window.Ajax.request({ url: "/kontrak/realization-contracts", method: "GET", success: (r) => {
+			this.realizationContracts = r.data || [];
+			const select = $("#realizationContract");
+			select.html('<option value="">Pilih kontrak</option>' + this.realizationContracts.map((x) => `<option value="${x.id}">${this.esc(x.nomor_kontrak)} · ${this.money(x.nilai_kontrak)}</option>`).join(""));
+			if (select.hasClass("noselection")) select.dropdown("destroy");
+			select.dropdown({ fullTextSearch: true, highlightMatches: true, onChange: (value) => this.loadRealizationContract(Number(value || 0), detail) });
+			if (detail) {
+				select.dropdown("set selected", String(detail.contract_id));
+				select.closest(".field").toggleClass("disabled", true);
+				select.prop("disabled", true);
+			}
+		} });
+		if (this.realizationId) {
+			window.Ajax.request({ url: `/kontrak/realization/detail?id=${this.realizationId}`, method: "GET", success: (r) => {
+				const detail = r.data || {};
+				this.realizationFiles = detail.files || [];
+				$("#realizationDate").val(detail.tanggal || "");
+				$("#realizationDescription").val(detail.uraian_transaksi || "");
+				$("#realizationNote").val(detail.keterangan || "");
+				$("#realizationTotal").val(Number(detail.jumlah || 0));
+				this.populateRealizationFinance(detail.keuangan || {});
+				this.renderRealizationFiles();
+				load(detail);
+			} });
+		} else {
+			load();
+		}
+	}
+
+	updateRealizationFinanceFields() {
+		const type = $("#realizationTransactionType").val() || "PROGRES";
+		$("#form_flyout [data-finance-field]").each((_, field) => {
+			const types = String(field.dataset.financeField || "").split(",");
+			$(field).toggle(types.includes("ALL") ? type !== "PROGRES" : types.includes(type));
+		});
+		const messages = {
+			PROGRES: "Progres, BAST, atau tagihan belum dibayar bukan pengeluaran kas LRA. Tetap dicatat untuk jejak kontrak, tetapi tidak menambah realisasi belanja.",
+			LS: "LS dihitung sebagai belanja LRA hanya setelah nomor/tanggal SP2D dan bukti diverifikasi. Uang muka yang dipotong harus dicatat agar tidak dihitung dua kali.",
+			UANG_MUKA_KONTRAK: "Uang muka kontrak adalah arus kas yang harus ditautkan ke SP2D kontrak. Nilai uang muka juga harus direkonsiliasi terhadap potongan pada pembayaran termin berikutnya.",
+			UP: "Belanja dari UP dicatat per bukti dan nomor sumber UP; bukan saat UP dicairkan. Belanja baru dapat masuk LRA setelah SPJ disahkan dan transaksi diverifikasi.",
+			TU: "Belanja dari TU dicatat per bukti dan nomor sumber TU; pencairan TU bukan belanja kedua. SPJ harus disahkan dan diverifikasi sebelum masuk LRA.",
+			GU: "SP2D GU adalah penggantian uang persediaan, bukan belanja baru. Tautkan ke SPJ yang telah disahkan; GU tidak menambah realisasi LRA lagi.",
+		};
+		$("#realizationFinanceNotice").toggleClass("warning", type === "PROGRES" || type === "GU").toggleClass("info", type !== "PROGRES" && type !== "GU").text(messages[type]);
+		if ($("#realizationItemsModal").hasClass("active")) this.renderRealizationItems();
+	}
+
+	populateRealizationFinance(data = {}) {
+		$("#realizationTransactionType").dropdown("set selected", data.jenis_transaksi || "PROGRES");
+		$("#realizationFinanceProof").val(data.nomor_bukti || "");
+		$("#realizationSp2dNumber").val(data.nomor_sp2d || "");
+		$("#realizationSp2dDate").val(data.tanggal_sp2d || "");
+		$("#realizationUpTuSp2d").val(data.nomor_sp2d_sumber || "");
+		$("#realizationSpjNumber").val(data.nomor_spj || "");
+		$("#realizationSpjDate").val(data.tanggal_spj || "");
+		$("#realizationSpjApprovalDate").val(data.tanggal_pengesahan_spj || "");
+		$("#realizationUpTuRegister").val(data.nomor_up_tu || "");
+		$("#realizationAdvanceDeduction").val(Number(data.nilai_potongan_uang_muka || 0));
+		$("#realizationAdvanceSp2d").val(data.nomor_sp2d_uang_muka || "");
+		this.updateRealizationFinanceFields();
 	}
 
 	renderRealizationFiles(){const list=$("#realizationExistingFiles");if(!list.length)return;list.html(this.realizationFiles.length?this.realizationFiles.map(f=>`<div class="item"><i class="file outline icon"></i><div class="content"><div class="header">${this.esc(f.nama_file_asli)}</div><div class="description">${this.money(Number(f.ukuran||0)/1024).replace('Rp','')} KB &nbsp; <a href="${window.appUrl?window.appUrl(`/kontrak/realization/file/download?id=${f.id}`):`/kontrak/realization/file/download?id=${f.id}`}"><i class="download icon"></i>Unduh</a> &nbsp; <a href="#" data-realization-file-delete="${f.id}"><i class="trash icon"></i>Hapus</a></div></div></div>`).join(""):'<div class="ui tiny warning message">Belum ada file transaksi.</div>');}
@@ -372,8 +459,8 @@ class KontrakModule extends BaseCrudModule {
 		const contract = this.realizationContracts.find((x) => Number(x.id) === id);
 		$("#realizationPrevious").val(this.money(contract?.realisasi || 0));
 		window.Ajax.request({ url: `/kontrak/realization-items?contract_id=${id}`, method: "GET", success: (r) => {
-			this.realizationItems = (r.data?.items || []).map((x) => ({ ...x, jumlah_sekarang: 0, progress_fisik: 0 }));
-			if(detail){const chosen=new Map((detail.items||[]).map(x=>[`${x.tahap}:${x.anggaran_id}`,x]));this.realizationItems.forEach(x=>{const old=chosen.get(`${x.tahap}:${x.anggaran_id}`);if(old){x.realisasi=Math.max(0,Number(x.realisasi||0)-Number(old.jumlah||0));x.jumlah_sekarang=Number(old.jumlah||0);x.progress_fisik=Number(old.progress_fisik||0);}});}
+			this.realizationItems = (r.data?.items || []).map((x) => ({ ...x, jumlah_sekarang: 0, nilai_lra_sekarang: 0, progress_fisik: 0 }));
+			if(detail){const chosen=new Map((detail.items||[]).map(x=>[`${x.tahap}:${x.anggaran_id}`,x]));this.realizationItems.forEach(x=>{const old=chosen.get(`${x.tahap}:${x.anggaran_id}`);if(old){x.realisasi=Math.max(0,Number(x.realisasi||0)-Number(old.jumlah||0));x.jumlah_sekarang=Number(old.jumlah||0);x.nilai_lra_sekarang=Number(old.nilai_lra||0);x.progress_fisik=Number(old.progress_fisik||0);}});}
 			const current = Number(r.data?.contract?.nilai_kontrak || contract?.nilai_kontrak || 0);
 			$("#realizationPrevious").val(this.money(this.realizationItems.reduce((sum, x) => sum + Number(x.realisasi || 0), 0)));
 			$("#realizationTotal").attr("max", Math.max(0, current));
@@ -390,21 +477,30 @@ class KontrakModule extends BaseCrudModule {
 
 	ensureRealizationModal() {
 		if ($("#realizationItemsModal").length) return;
-		$("body").append(`<div class="ui large modal" id="realizationItemsModal"><i class="close icon"></i><div class="header"><i class="list alternate outline icon"></i> Uraian Realisasi per Kontrak</div><div class="content"><div class="ui info message">Nilai realisasi dan persentase fisik diisi per uraian. Persentase keuangan dihitung otomatis dari nilai kontrak.</div><div class="table-wrapper realization-items-table-wrapper"><table class="ui compact celled striped table"><thead><tr><th>DPA/DPPA</th><th>Anggaran</th><th>Nilai Kontrak</th><th>Realisasi Sekarang</th><th>Realisasi</th><th>% Keuangan</th><th>% Fisik</th><th>Aksi</th></tr></thead><tbody id="realizationItemsBody"></tbody><tfoot><tr><th colspan="3" class="right aligned">Total</th><th id="realizationItemsTotal" class="right aligned">Rp 0</th><th colspan="4"></th></tr></tfoot></table></div></div><div class="actions"><button type="button" class="ui deny button">Tutup</button><button class="ui violet button" data-realization-items-done><i class="check icon"></i>Selesai</button></div></div>`);
+		$("body").append(`<div class="ui large modal" id="realizationItemsModal"><i class="close icon"></i><div class="header"><i class="list alternate outline icon"></i> Uraian Realisasi per Kontrak</div><div class="content"><div class="ui info message">Pisahkan progres kontrak dari nilai belanja kas yang diakui LRA. Untuk LS/uang muka kontrak/UP/TU, isi nilai LRA per rekening berdasarkan SP2D atau SPJ yang sah; progres dan GU harus bernilai nol.</div><div class="table-wrapper realization-items-table-wrapper"><table class="ui compact celled striped table"><thead><tr><th>DPA/DPPA</th><th>Anggaran</th><th>Nilai Kontrak</th><th>Realisasi Sekarang</th><th data-lra-column>Belanja LRA Sekarang</th><th>Realisasi</th><th>% Keuangan</th><th>% Fisik</th><th>Aksi</th></tr></thead><tbody id="realizationItemsBody"></tbody><tfoot><tr><th colspan="3" class="right aligned">Total</th><th id="realizationItemsTotal" class="right aligned">Rp 0</th><th data-lra-column id="realizationItemsLraTotal" class="right aligned">Rp 0</th><th colspan="4"></th></tr></tfoot></table></div></div><div class="actions"><button type="button" class="ui deny button">Tutup</button><button class="ui violet button" data-realization-items-done><i class="check icon"></i>Selesai</button></div></div>`);
 		$(document).off("click.realizationItemsDone", "[data-realization-items-done]").on("click.realizationItemsDone", "[data-realization-items-done]", () => { this.syncRealizationTotal(); $("#realizationItemsModal").modal("hide"); });
 	}
 
 	renderRealizationItems() {
-		$("#realizationItemsBody").html(this.realizationItems.map((x, i) => `<tr><td><span class="ui tiny ${x.tahap === "dppa" ? "orange" : "blue"} label">${this.esc(x.tahap.toUpperCase())}</span><br><small>${this.esc(x.kd_sub_keg)}</small></td><td><b>${this.esc(x.kd_akun)}</b><br>${this.esc(x.uraian)}<br><small>${this.money(x.pagu)}</small></td><td class="right aligned">${this.money(x.nilai_kontrak)}</td><td><input class="ui input" type="number" min="0" max="${Math.max(0, Number(x.nilai_kontrak) - Number(x.realisasi || 0))}" step="any" inputmode="decimal" data-realization-amount="${i}" value="${Number(x.jumlah_sekarang || 0)}"></td><td class="right aligned">${this.money(x.realisasi)}</td><td class="right aligned" data-realization-percent="${i}">${Number(x.persen_keuangan || 0).toFixed(2)}%</td><td><input class="ui input" type="number" min="0" max="100" step="0.01" data-realization-physical="${i}" value="${Number(x.progress_fisik || 0)}"></td><td><button type="button" class="ui mini basic teal button" data-realization-detail="${i}"><i class="info circle icon"></i>Detail</button></td></tr>`).join(""));
+		const needsLra = ["LS", "UANG_MUKA_KONTRAK", "UP", "TU"].includes($("#realizationTransactionType").val());
+		$("#realizationItemsBody").html(this.realizationItems.map((x, i) => `<tr><td><span class="ui tiny ${x.tahap === "dppa" ? "orange" : "blue"} label">${this.esc(x.tahap.toUpperCase())}</span><br><small>${this.esc(x.kd_sub_keg)}</small></td><td><b>${this.esc(x.kd_akun)}</b><br>${this.esc(x.uraian)}<br><small>${this.money(x.pagu)}</small></td><td class="right aligned">${this.money(x.nilai_kontrak)}</td><td><input class="ui input" type="number" min="0" max="${Math.max(0, Number(x.nilai_kontrak) - Number(x.realisasi || 0))}" step="any" inputmode="decimal" data-realization-amount="${i}" value="${Number(x.jumlah_sekarang || 0)}"></td><td data-lra-column>${needsLra ? `<input class="ui input" type="number" min="0" step="0.01" inputmode="decimal" data-realization-lra-amount="${i}" value="${Number(x.nilai_lra_sekarang || 0)}">` : ""}</td><td class="right aligned">${this.money(x.realisasi)}</td><td class="right aligned" data-realization-percent="${i}">${Number(x.persen_keuangan || 0).toFixed(2)}%</td><td><input class="ui input" type="number" min="0" max="100" step="0.01" data-realization-physical="${i}" value="${Number(x.progress_fisik || 0)}"></td><td><button type="button" class="ui mini basic teal button" data-realization-detail="${i}"><i class="info circle icon"></i>Detail</button></td></tr>`).join(""));
+		$("[data-lra-column]").toggle(needsLra);
 		$("[data-realization-amount]").on("input", (e) => { const i = Number($(e.currentTarget).data("realization-amount")); this.realizationItems[i].jumlah_sekarang = Number(e.currentTarget.value || 0); const total = Number(this.realizationItems[i].realisasi || 0) + this.realizationItems[i].jumlah_sekarang; $("[data-realization-percent='" + i + "']").text((this.realizationItems[i].nilai_kontrak > 0 ? total / this.realizationItems[i].nilai_kontrak * 100 : 0).toFixed(2) + "%"); this.syncRealizationTotal(); });
+		$("[data-realization-lra-amount]").on("input", (e) => { const i = Number($(e.currentTarget).data("realization-lra-amount")); this.realizationItems[i].nilai_lra_sekarang = Number(e.currentTarget.value || 0); this.syncRealizationLraTotal(); });
 		$("[data-realization-physical]").on("input", (e) => { const i = Number($(e.currentTarget).data("realization-physical")); this.realizationItems[i].progress_fisik = Number(e.currentTarget.value || 0); });
 		this.syncRealizationTotal();
+		this.syncRealizationLraTotal();
 	}
 
 	syncRealizationTotal() {
 		const total = this.realizationItems.reduce((sum, x) => sum + Number(x.jumlah_sekarang || 0), 0);
 		$("#realizationItemsTotal").text(this.money(total));
 		if ($("#realizationTotal").length && document.activeElement?.id !== "realizationTotal") $("#realizationTotal").val(total ? total : "");
+	}
+
+	syncRealizationLraTotal() {
+		const total = this.realizationItems.reduce((sum, x) => sum + Number(x.nilai_lra_sekarang || 0), 0);
+		$("#realizationItemsLraTotal").text(this.money(total));
 	}
 
 	showRealizationDetail(index) {
@@ -417,12 +513,45 @@ class KontrakModule extends BaseCrudModule {
 
 	saveRealization() {
 		const contractId = Number($("#realizationContract").val() || 0), total = Number($("#realizationTotal").val() || 0), rows = this.realizationItems.map((x) => ({ tahap: x.tahap, anggaran_id: x.anggaran_id,
-                pengesahan_anggaran_id:x.pengesahan_anggaran_id||null, jumlah: Number(x.jumlah_sekarang || 0), progress_fisik: Number(x.progress_fisik || 0) }));
+                pengesahan_anggaran_id:x.pengesahan_anggaran_id||null, jumlah: Number(x.jumlah_sekarang || 0), nilai_lra: Number(x.nilai_lra_sekarang || 0), progress_fisik: Number(x.progress_fisik || 0) }));
 		const distributed = rows.reduce((sum, x) => sum + x.jumlah, 0);
 		if (!contractId || !$("#realizationDate").val() || !String($("#realizationDescription").val() || "").trim()) return Toast.error("Kontrak, tanggal, uraian transaksi, dan uraian per item wajib diisi");
 		if (total <= 0 || Math.abs(total - distributed) > 0.01) return Toast.error("Jumlah realisasi harus sama dengan total pembagian pada uraian");
-		const selected=Array.from($("#realizationFiles")[0]?.files||[]);if(!this.realizationId&&!selected.length)return Toast.error("File transaksi wajib ditambahkan saat input realisasi");
-		const form=new FormData();form.set("realization_id",this.realizationId);form.set("contract_id",contractId);form.set("tanggal",$("#realizationDate").val());form.set("uraian_transaksi",$("#realizationDescription").val());form.set("keterangan",$("#realizationNote").val());form.set("items",JSON.stringify(rows));selected.forEach(file=>form.append("transaction_files[]",file));
+		const selected = Array.from($("#realizationFiles")[0]?.files || []);
+		if (!this.realizationId && !selected.length) return Toast.error("File transaksi wajib ditambahkan saat input realisasi");
+		const type = $("#realizationTransactionType").val() || "PROGRES";
+		const lraTotal = rows.reduce((sum, row) => sum + row.nilai_lra, 0);
+		if (["LS", "UANG_MUKA_KONTRAK", "UP", "TU"].includes(type) && lraTotal <= 0) return Toast.error("Isi nilai belanja LRA per rekening berdasarkan SP2D atau SPJ yang sah.");
+		if (["PROGRES", "GU"].includes(type) && lraTotal > 0) return Toast.error("Progres dan SP2D GU tidak boleh menambah nilai belanja LRA.");
+		const keuangan = {
+			jenis_transaksi: type,
+			nomor_bukti: $("#realizationFinanceProof").val(),
+			nomor_sp2d: $("#realizationSp2dNumber").val(),
+			tanggal_sp2d: $("#realizationSp2dDate").val(),
+			nomor_sp2d_uang_muka: $("#realizationAdvanceSp2d").val(),
+			nomor_sp2d_sumber: $("#realizationUpTuSp2d").val(),
+			nomor_spj: $("#realizationSpjNumber").val(),
+			tanggal_spj: $("#realizationSpjDate").val(),
+			tanggal_pengesahan_spj: $("#realizationSpjApprovalDate").val(),
+			nomor_up_tu: $("#realizationUpTuRegister").val(),
+			nilai_potongan_uang_muka: Number($("#realizationAdvanceDeduction").val() || 0),
+		};
+		if (type !== "PROGRES" && !keuangan.nomor_bukti.trim()) return Toast.error("Nomor bukti wajib diisi untuk transaksi keuangan.");
+		if (["LS", "UANG_MUKA_KONTRAK", "GU"].includes(type) && (!keuangan.nomor_sp2d.trim() || !keuangan.tanggal_sp2d)) return Toast.error("Nomor dan tanggal SP2D wajib untuk jenis transaksi ini.");
+		if (["UP", "TU", "GU"].includes(type) && (!keuangan.nomor_spj.trim() || !keuangan.tanggal_spj || !keuangan.tanggal_pengesahan_spj)) return Toast.error("Nomor SPJ, tanggal SPJ, dan tanggal pengesahan wajib untuk UP/TU/GU.");
+		if (["UP", "TU"].includes(type) && (!keuangan.nomor_sp2d_sumber.trim() || !keuangan.nomor_up_tu.trim())) return Toast.error("Tautkan transaksi UP/TU ke register dan SP2D sumbernya.");
+		if (keuangan.nilai_potongan_uang_muka < 0 || keuangan.nilai_potongan_uang_muka > total) return Toast.error("Potongan uang muka tidak boleh melebihi nilai transaksi.");
+		if (type === "LS" && keuangan.nilai_potongan_uang_muka > 0 && !keuangan.nomor_sp2d_uang_muka.trim()) return Toast.error("Cantumkan nomor SP2D uang muka yang dipotong.");
+		if (type !== "PROGRES" && !selected.length && !this.realizationFiles.length) return Toast.error("Lampirkan bukti pembayaran/SPJ/BAST untuk transaksi keuangan.");
+		const form = new FormData();
+		form.set("realization_id", this.realizationId);
+		form.set("contract_id", contractId);
+		form.set("tanggal", $("#realizationDate").val());
+		form.set("uraian_transaksi", $("#realizationDescription").val());
+		form.set("keterangan", $("#realizationNote").val());
+		form.set("items", JSON.stringify(rows));
+		form.set("keuangan", JSON.stringify(keuangan));
+		selected.forEach((file) => form.append("transaction_files[]", file));
 		const button = $("#realizationSubmit").addClass("loading disabled");
 		window.Ajax.request({ url: "/kontrak/realization/save", method: "POST", data:form,processData:false,contentType:false, success: () => { this.resetRealizationSidebar(); $(".sidebarkanan").sidebar("hide"); window.tableManager?.fetchData(); }, complete: () => button.removeClass("loading disabled") });
 	}

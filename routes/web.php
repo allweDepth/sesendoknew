@@ -45,6 +45,7 @@ return [
   '/kontrak/financial_pdf' => ['KontrakController', 'financialPdf'],
   '/laporan-keuangan' => ['LaporanKeuanganController', 'index'],
   '/laporan-keuangan/data' => ['LaporanKeuanganController', 'data'],
+  '/laporan-keuangan/transaksi/verifikasi' => ['LaporanKeuanganController', 'verifyTransaction'],
   '/laporan-keuangan/saldo/save' => ['LaporanKeuanganController', 'saveBalances'],
   '/laporan-keuangan/calk/save' => ['LaporanKeuanganController', 'saveNotes'],
   '/laporan-keuangan/saldo/import' => ['LaporanKeuanganController', 'importBalances'],

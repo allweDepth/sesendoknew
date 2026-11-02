@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../Services/LaporanKeuanganService.php';
+require_once __DIR__ . '/../Services/RealisasiKeuanganService.php';
 require_once __DIR__ . '/../Services/JsonResponse.php';
 
 class LaporanKeuanganController extends Controller
@@ -52,6 +53,16 @@ class LaporanKeuanganController extends Controller
         default => throw new InvalidArgumentException('Jenis laporan tidak dikenal.'),
       };
     });
+  }
+
+  public function verifyTransaction(): void
+  {
+    $payload = $this->payload();
+    $uuid = trim((string)($payload['transaksi_uuid'] ?? ''));
+    $this->json(
+      fn() => (new RealisasiKeuanganService($_SESSION['user'] ?? []))->verify($uuid),
+      'Transaksi berhasil diverifikasi.'
+    );
   }
 
   public function saveBalances(): void

@@ -61,7 +61,7 @@ class LaporanKeuanganModule {
 			...(this.canReadAccounts ? [["neraca", "Neraca", "balance scale"], ["calk", "CaLK", "book"]] : []),
 		];
 		this.root.innerHTML = `<section class="financial-report">
-			<header class="financial-report-hero"><div><span class="eyebrow">REALISASI & AKUNTANSI OPD</span><h1>Laporan Keuangan</h1><p>Tahun kerja ${this.escape(window.app?.user?.tahun || new Date().getFullYear())}. LRA ditarik dari realisasi kontrak; Neraca dan CaLK memakai data saldo serta pengungkapan yang dimasukkan pengguna.</p></div><a class="ui inverted basic button" href="${this.url("/kontrak?tbl=realisasi")}" data-spa="client"><i class="arrow left icon"></i>Ke Penginputan Realisasi</a></header>
+			<header class="financial-report-hero"><div><span class="eyebrow">REALISASI & AKUNTANSI OPD</span><h1>Laporan Keuangan</h1><p>Tahun kerja ${this.escape(window.app?.user?.tahun || new Date().getFullYear())}. LRA memakai snapshot anggaran disahkan dan belanja kontrak terverifikasi. Neraca/CaLK tetap kertas kerja sampai saldo buku besar/jurnal dan pengungkapan tersedia.</p></div><a class="ui inverted basic button" href="${this.url("/kontrak?tbl=realisasi")}" data-spa="client"><i class="arrow left icon"></i>Ke Penginputan Realisasi</a></header>
 			<nav class="ui pointing secondary menu financial-report-tabs" aria-label="Jenis laporan">${tabs.map(([key, title, icon]) => `<button type="button" class="${key === this.report ? "active" : ""} item" data-report="${key}"><i class="${icon} icon"></i>${title}</button>`).join("")}</nav>
 			<div id="financialReportContent"><div class="ui active centered inline loader"></div></div>
 		</section>`;
@@ -85,6 +85,7 @@ class LaporanKeuanganModule {
 				if (target.dataset.action === "add-note") this.addNoteRow();
 				if (target.dataset.action === "remove-note") target.closest("[data-note-row]")?.remove();
 				if (target.dataset.action === "save-notes") await this.saveNotes(target);
+				if (target.dataset.action === "verify-transaction") await this.verifyTransaction(target);
 			} catch (error) {
 				window.Toast?.error?.(error.message);
 			}
@@ -112,10 +113,42 @@ class LaporanKeuanganModule {
 
 	renderLra(data) {
 		const rows = data.rows || [];
+		const transactions = data.transactions || [];
 		const content = this.root.querySelector("#financialReportContent");
-		content.innerHTML = `<div class="ui warning message"><b>Lingkup data:</b> angka di bawah adalah realisasi transaksi yang tercatat pada kontrak di seSendok, dibandingkan pagu kontrak. Ini belum mencakup sumber realisasi lain (misalnya pendapatan, transfer, dan belanja non-kontrak), sehingga merupakan kertas kerja realisasi, bukan LRA LKPD lengkap.</div>
-			<div class="financial-report-toolbar"><div><h2>Laporan Realisasi Anggaran ${this.escape(data.tahun)}</h2><p>Sumber: ${this.escape(data.source || "Realisasi transaksi kontrak")}.</p></div><div class="ui buttons"><a class="ui green button" href="${this.url("/kontrak/financial_excel?format=lra")}"><i class="file excel icon"></i>Excel</a><a class="ui red button" href="${this.url("/kontrak/financial_pdf?format=lra")}"><i class="file pdf icon"></i>PDF</a></div></div>
-			<div class="financial-table-wrap"><table class="ui celled compact table"><thead><tr><th>No</th><th>Sub Kegiatan</th><th>Kode Rekening</th><th class="right aligned">Pagu Kontrak</th><th class="right aligned">Realisasi</th><th class="right aligned">Sisa</th><th class="right aligned">Realisasi %</th></tr></thead><tbody>${rows.map((row, i) => `<tr><td>${i + 1}</td><td>${this.escape(row.kd_sub_keg)}</td><td>${this.escape(row.kd_akun)}</td><td class="right aligned">${this.money(row.pagu)}</td><td class="right aligned">${this.money(row.realisasi)}</td><td class="right aligned">${this.money(row.sisa)}</td><td class="right aligned">${Number(row.persen || 0).toFixed(2)}%</td></tr>`).join("") || '<tr><td colspan="7" class="center aligned">Belum ada realisasi kontrak untuk tahun dan OPD ini.</td></tr>'}</tbody><tfoot><tr><th colspan="3">Total tercatat</th><th class="right aligned">${this.money(data.summary?.pagu)}</th><th class="right aligned">${this.money(data.summary?.realisasi)}</th><th class="right aligned">${this.money(data.summary?.sisa)}</th><th></th></tr></tfoot></table></div>`;
+		const statusClass = data.status === "KERTAS_KERJA" ? "positive" : "warning";
+		const missing = (data.missing_sources || []).map((item) => `<li>${this.escape(item)}</li>`).join("");
+		const pendingRows = transactions.map((row) => {
+			const docs = String(row.file_ids || "").split(",").filter(Boolean).map((id) => `<a href="${this.url(`/kontrak/realization/file/download?id=${encodeURIComponent(id)}`)}" target="_blank" rel="noopener">Bukti #${this.escape(id)}</a>`).join("<br>") || "Belum ada bukti";
+			const known = Boolean(row.jenis_transaksi);
+			const status = row.status_verifikasi || "BELUM_DIKLASIFIKASI";
+			const verify = data.can_verify_transactions && known && status === "MENUNGGU_VERIFIKASI" && Number(row.jumlah_dokumen) > 0
+				? `<button type="button" class="ui mini teal button" data-action="verify-transaction" data-transaction-uuid="${this.escape(row.transaksi_uuid)}"><i class="check icon"></i>Verifikasi</button>`
+				: "";
+			return `<tr><td>${this.escape(row.tanggal || "-")}</td><td>${this.escape(row.nomor_kontrak || "-")}<br><small>${this.escape(row.uraian || row.kd_sub_keg || "")}</small></td><td>${this.escape(row.jenis_transaksi || "Belum diklasifikasikan")}</td><td>${this.escape(row.nomor_bukti || "-")}<br>${this.escape(row.nomor_sp2d || row.nomor_spj || "")}${row.nomor_sp2d_uang_muka ? `<br><small>SP2D uang muka: ${this.escape(row.nomor_sp2d_uang_muka)}</small>` : ""}</td><td class="right aligned">${this.money(row.jumlah)}</td><td class="right aligned">${this.money(row.nilai_lra)}</td><td>${docs}</td><td>${this.escape(status)}${verify ? `<br>${verify}` : ""}</td></tr>`;
+		}).join("");
+		content.innerHTML = `<div class="ui ${statusClass} message"><b>Status kertas kerja LRA: ${this.escape(data.status || "BELUM_LENGKAP")}</b>
+			<ul>${missing || "<li>Sumber data untuk kertas kerja tersedia.</li>"}</ul>
+			<p>Lingkup masih transaksi belanja kontrak yang dicatat di seSendok; belum mencakup pendapatan, transfer, belanja non-kontrak, koreksi, atau konsolidasi LKPD.</p></div>
+			<div class="financial-report-toolbar"><div><h2>Laporan Realisasi Anggaran ${this.escape(data.tahun)}</h2><p>Sumber: ${this.escape(data.source || "Realisasi transaksi kontrak")}.</p></div><div class="ui buttons"><a class="ui green button" href="${this.url("/laporan-keuangan/export?report=lra&format=xlsx")}"><i class="file excel icon"></i>Excel</a><a class="ui red button" href="${this.url("/laporan-keuangan/export?report=lra&format=pdf")}"><i class="file pdf icon"></i>PDF</a></div></div>
+			<div class="financial-table-wrap"><table class="ui celled compact table"><thead><tr><th>No</th><th>Sub Kegiatan</th><th>Kode Rekening</th><th class="right aligned">Pagu disahkan</th><th class="right aligned">Belanja terverifikasi</th><th class="right aligned">Sisa</th><th class="right aligned">Realisasi %</th></tr></thead><tbody>${rows.map((row, i) => `<tr><td>${i + 1}</td><td>${this.escape(row.kd_sub_keg)}</td><td>${this.escape(row.kd_akun)}</td><td class="right aligned">${this.money(row.pagu)}</td><td class="right aligned">${this.money(row.realisasi)}</td><td class="right aligned">${this.money(row.sisa)}</td><td class="right aligned">${Number(row.persen || 0).toFixed(2)}%</td></tr>`).join("") || '<tr><td colspan="7" class="center aligned">Belum ada transaksi belanja yang terverifikasi untuk tahun dan OPD ini.</td></tr>'}</tbody><tfoot><tr><th colspan="3">Total kertas kerja</th><th class="right aligned">${this.money(data.summary?.pagu)}</th><th class="right aligned">${this.money(data.summary?.realisasi)}</th><th class="right aligned">${this.money(data.summary?.sisa)}</th><th></th></tr></tfoot></table></div>
+			<section><div class="financial-report-toolbar"><div><h3>Penelusuran transaksi dan verifikasi</h3><p>Riwayat transaksi ditampilkan bersama dokumen sumber. Nilai transaksi kontrak dipisahkan dari nilai LRA per rekening. Progres dan GU tidak menjadi belanja LRA langsung.</p></div></div><div class="financial-table-wrap"><table class="ui celled compact table"><thead><tr><th>Tanggal</th><th>Kontrak / uraian</th><th>Jenis</th><th>Nomor bukti</th><th class="right aligned">Nilai kontrak/progres</th><th class="right aligned">Nilai LRA</th><th>Dokumen</th><th>Status / aksi</th></tr></thead><tbody>${pendingRows || '<tr><td colspan="8" class="center aligned">Belum ada transaksi pada tahun dan OPD ini.</td></tr>'}</tbody></table></div></section>`;
+	}
+
+	async verifyTransaction(button) {
+		const uuid = button.dataset.transactionUuid;
+		if (!uuid) throw new Error("ID transaksi tidak tersedia.");
+		button.classList.add("loading", "disabled");
+		try {
+			await this.request("/laporan-keuangan/transaksi/verifikasi", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ transaksi_uuid: uuid }),
+			});
+			window.Toast?.success?.("Transaksi berhasil diverifikasi.");
+			await this.load();
+		} finally {
+			button.classList.remove("loading", "disabled");
+		}
 	}
 
 	renderBalanceSheet(data) {
@@ -125,7 +158,8 @@ class LaporanKeuanganModule {
 		const status = this.balanceRows.length ? (summary.seimbang ? "Seimbang pada saldo awal dan akhir." : "Belum seimbang. Periksa kelengkapan saldo dan rekening.") : "Saldo belum diisi.";
 		const rows = this.balanceRows.length ? this.balanceRows : [{}];
 		const content = this.root.querySelector("#financialReportContent");
-		content.innerHTML = `<div class="ui ${summary.seimbang ? "positive" : "warning"} message"><b>Status Neraca:</b> ${this.escape(status)}${this.balanceRows.length ? `<br>Selisih awal: Rp ${this.money(summary.selisih_awal)} · Selisih akhir: Rp ${this.money(summary.selisih_akhir)}` : ""}<br>Kelompok akun mengikuti struktur SAP: 1 Aset, 2 Kewajiban, 3 Ekuitas. Gunakan rekening rinci, bukan akun induk sekaligus anaknya.</div>
+		content.innerHTML = `<div class="ui warning message"><b>Neraca belum dihitung otomatis dari jurnal/buku besar.</b> Aplikasi belum mempunyai sumber saldo awal dan mutasi jurnal terverifikasi untuk membentuk Neraca otomatis. Saldo pada halaman ini harus dimasukkan atau diimpor dari buku besar/daftar aset resmi; jangan menurunkan saldo dari progres atau nilai kontrak.</div>
+			<div class="ui ${summary.seimbang ? "positive" : "warning"} message"><b>Status Neraca:</b> ${this.escape(status)}${this.balanceRows.length ? `<br>Selisih awal: Rp ${this.money(summary.selisih_awal)} · Selisih akhir: Rp ${this.money(summary.selisih_akhir)}` : ""}<br>Kelompok akun mengikuti struktur SAP: 1 Aset, 2 Kewajiban, 3 Ekuitas. Gunakan rekening rinci, bukan akun induk sekaligus anaknya.</div>
 			<div class="financial-report-toolbar"><div><h2>Neraca ${this.escape(data.tahun)}</h2><p>Masukkan saldo awal dan akhir yang bersumber dari buku besar/daftar aset dan dokumen akuntansi OPD. Saldo tidak dibuat dari nilai kontrak.</p></div><div class="ui buttons"><a class="ui basic button" href="${this.url("/laporan-keuangan/saldo/template")}"><i class="download icon"></i>Template Excel</a><a class="ui green button" href="${this.url("/laporan-keuangan/export?report=neraca&format=xlsx")}"><i class="file excel icon"></i>Excel</a><a class="ui red button" href="${this.url("/laporan-keuangan/export?report=neraca&format=pdf")}"><i class="file pdf icon"></i>PDF</a></div></div>
 			${this.canWrite ? `<div class="financial-input-toolbar"><label class="ui teal button" for="balanceImportFile"><i class="upload icon"></i>Impor Excel</label><input id="balanceImportFile" type="file" accept=".xlsx,.xls" hidden><button type="button" class="ui basic button" data-action="add-balance"><i class="plus icon"></i>Tambah Rekening</button><button type="button" class="ui primary button" data-action="save-balances"><i class="save icon"></i>Simpan Neraca</button></div>` : ""}
 			<div class="financial-table-wrap"><table class="ui celled compact table"><thead><tr><th>Kode rekening</th><th>Uraian rekening</th><th>Kelompok</th><th>Saldo awal</th><th>Saldo akhir</th><th>Catatan sumber</th>${this.canWrite ? "<th></th>" : ""}</tr></thead><tbody id="balanceRows">${rows.map((row) => this.balanceRow(row)).join("")}</tbody><tfoot><tr><th colspan="3">Total aset</th><th class="right aligned">${this.money(totals.saldo_awal?.ASET)}</th><th class="right aligned">${this.money(totals.saldo_akhir?.ASET)}</th><th colspan="${this.canWrite ? 2 : 1}"></th></tr><tr><th colspan="3">Total kewajiban + ekuitas</th><th class="right aligned">${this.money(Number(totals.saldo_awal?.KEWAJIBAN || 0) + Number(totals.saldo_awal?.EKUITAS || 0))}</th><th class="right aligned">${this.money(Number(totals.saldo_akhir?.KEWAJIBAN || 0) + Number(totals.saldo_akhir?.EKUITAS || 0))}</th><th colspan="${this.canWrite ? 2 : 1}"></th></tr></tfoot></table></div>
