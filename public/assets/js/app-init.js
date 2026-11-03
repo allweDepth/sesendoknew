@@ -196,38 +196,70 @@ $(document).ready(function () {
 		return active;
 	};
 	window.syncGlobalTableToolbar = syncGlobalToolbar;
+	const clientTablePages = new WeakMap();
+	let clientTableId = 0;
+	const clientTables = () => $('#main-content table:visible:not([data-managed-table])').filter(function () {
+		return !$(this).closest('.ui.form, .document-preview, .doc-editor, [data-global-pagination="off"]').length
+			&& !$(this).parents('table').length && $(this).children('tbody').length;
+	});
 	const filterActiveUi = () => {
-		if (!syncGlobalToolbar()) return;
-		if (window.tableManager && window.TableManager?.instances?.[window.tableManager.tbl]
-			&& $(window.tableManager.tbody).closest('table:visible').length) return;
+		syncGlobalToolbar();
 		const query = String($('#cari_data').val() || '').toLowerCase().trim();
-		const rawLimit = $('#countRow').dropdown('get value') || '5';
-		const limit = rawLimit === 'all' ? Number.MAX_SAFE_INTEGER : (parseInt(rawLimit, 10) || 5);
-		$('#main-content table:visible tbody').each(function () {
-			let shown = 0;
-			$(this).children('tr').each(function () {
-				const match = !query || $(this).text().toLowerCase().includes(query);
-				const visible = match && shown < limit;
-				$(this).toggle(visible);
-				if (visible) shown++;
-			});
+		const limit = parseInt($('#countRow input[name="countRow"]').val() || $('#countRow').dropdown('get value'), 10) || 5;
+		clientTables().each(function () {
+			const table = this;
+			let state = clientTablePages.get(table);
+			if (!state) {
+				state = { page: 1, id: ++clientTableId };
+				clientTablePages.set(table, state);
+			}
+			if (state.query !== query || state.limit !== limit) state.page = 1;
+			state.query = query; state.limit = limit;
+			const rows = $(table).children('tbody').children('tr').get();
+			const matches = rows.filter(row => !query || [row.textContent, ...Array.from(row.querySelectorAll('input,textarea,select'), field => field.value)].join(' ').toLowerCase().includes(query));
+			const pages = Math.max(1, Math.ceil(matches.length / limit));
+			state.page = Math.min(state.page, pages);
+				state.pages = pages;
+			const shown = new Set(matches.slice((state.page - 1) * limit, state.page * limit));
+			rows.forEach(row => { row.hidden = !shown.has(row); $(row).toggle(shown.has(row)); });
+			let pager = document.querySelector(`[data-client-table-pager="${state.id}"]`);
+			if (!pager) {
+				pager = document.createElement('div');
+				pager.dataset.clientTablePager = state.id;
+				pager.className = 'table-pagination-footer';
+				// Controls stay outside the horizontal scrolling area.
+				const wrapper = $(table).closest('.financial-table-wrap, .table-responsive, .table-scroll, .table-scroll-wrapper, .table-wrapper')[0] || table;
+				wrapper.after(pager);
+				pager.addEventListener('click', event => {
+					const button = event.target.closest('[data-page]');
+					if (!button || button.classList.contains('disabled') || button.classList.contains('active')) return;
+					const page = Number(button.dataset.page);
+					if (!Number.isInteger(page) || page < 1 || page > state.pages) return;
+					state.page = page;
+					filterActiveUi();
+				});
+			}
+			const markup = TableManager.paginationMarkup(state.page, pages);
+			if (pager.innerHTML !== markup) pager.innerHTML = markup;
+			pager.hidden = pages <= 1;
 		});
-		$('#main-content .budget-group, #main-content [data-global-search-item]').each(function (index) {
-			const match = !query || $(this).text().toLowerCase().includes(query);
-			$(this).toggle(match && index < limit);
+		$('#main-content [data-global-search-item]').each(function () {
+			$(this).toggle(!query || $(this).text().toLowerCase().includes(query));
 		});
 	};
+	window.refreshGlobalTablePagination = filterActiveUi;
 	let toolbarTimer;
 	$(document).off('.globalTableToolbar')
 		.on('input.globalTableToolbar', '#cari_data', () => { clearTimeout(toolbarTimer); toolbarTimer = setTimeout(filterActiveUi, 450); })
+		.on('change.globalTableToolbar', '#countRow input[name="countRow"]', filterActiveUi)
 		.on('click.globalTableToolbar', '.cari_data .search.icon', filterActiveUi);
-	$('#countRow').dropdown({ onChange: () => setTimeout(filterActiveUi, 0) });
 	let toolbarSyncTimer;
-	new MutationObserver(() => {
+	new MutationObserver((records) => {
+		if (records.every(record => $(record.target).closest('[data-client-table-pager]').length)) return;
 		clearTimeout(toolbarSyncTimer);
-		toolbarSyncTimer = setTimeout(() => { syncGlobalToolbar(); ensureSchedules(); syncScheduleControls(); scheduleNextBoundary(); }, 80);
+		toolbarSyncTimer = setTimeout(() => { filterActiveUi(); ensureSchedules(); syncScheduleControls(); scheduleNextBoundary(); }, 80);
 	}).observe(document.getElementById('main-content'), { childList: true, subtree: true });
-	syncGlobalToolbar();
+	filterActiveUi();
 
 	// Tabel khusus yang tidak memakai TableManager tetap mendapat sortir lokal.
 	$(document).off('.clientTableSort')
@@ -243,7 +275,7 @@ $(document).ready(function () {
 			table.addClass('sortable modern-data-table').find('thead th').removeClass('sorted ascending descending').attr('aria-sort','none');
 			$(this).addClass(`sorted ${ascending?'ascending':'descending'}`).attr('aria-sort',ascending?'ascending':'descending');
 			body.append(rows);
-			syncGlobalToolbar();
+			filterActiveUi();
 		});
 
 	$(document).off('click.clearTableSort', '#clearTableSort').on('click.clearTableSort', '#clearTableSort', function () {
@@ -258,7 +290,7 @@ $(document).ready(function () {
 			table.find('thead th').removeClass('sorted ascending descending').attr('aria-sort','none');
 			body.append(rows);
 		});
-		syncGlobalToolbar();
+		filterActiveUi();
 	});
 
 	// Tema pengguna persisten dan tetap aktif setelah navigasi SPA/refresh.

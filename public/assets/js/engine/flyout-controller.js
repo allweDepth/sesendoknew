@@ -110,14 +110,8 @@ class FlyoutController {
 		// LISTENER LIMIT NAVBAR
 		// =====================================================
 
-		$("#countRow").dropdown({
-			onChange: () => {
-				if (window.tableManager) {
-					window.tableManager.currentPage = 1;
-					window.tableManager.fetchData();
-				}
-			},
-		});
+		// Global toolbar and TableManager own the delegated row-limit change event.
+
 	}
 
 	getActiveForm() {

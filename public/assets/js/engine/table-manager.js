@@ -490,15 +490,8 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			- Smart range
 			- Next
 		===================================================== */
-	renderPagination() {
-		if (this.totalPages <= 1) {
-			$(this.pagination).html("");
-			window.modernTableResizer?.enhanceAll();
-			return;
-		}
-
-		const current = this.currentPage;
-		const total = this.totalPages;
+	static paginationMarkup(current, total) {
+		if (total <= 1) return "";
 		const range = 2;
 
 		let html = `<div class="ui pagination menu">`;
@@ -545,7 +538,11 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 
 		html += `</div>`;
 
-		$(this.pagination).html(html);
+		return html;
+	}
+
+	renderPagination() {
+		$(this.pagination).html(TableManager.paginationMarkup(this.currentPage, this.totalPages));
 		window.modernTableResizer?.enhanceAll();
 	}
 

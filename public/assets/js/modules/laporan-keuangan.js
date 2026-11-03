@@ -23,7 +23,7 @@ class LaporanKeuanganModule {
 		if (document.getElementById("financialStatementsStyle")) return;
 		const style = document.createElement("style");
 		style.id = "financialStatementsStyle";
-		style.textContent = `.financial-report{max-width:1500px;margin:0 auto;padding-bottom:30px}.financial-report-hero{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:24px;border-radius:14px;color:#fff;background:linear-gradient(135deg,#102b43,#2185d0)}.financial-report-hero h1{margin:5px 0}.financial-report-hero p{margin:0;max-width:760px}.financial-report-hero .eyebrow{font-size:.75rem;letter-spacing:.13em;opacity:.8}.financial-report-tabs{margin-top:16px!important}.financial-report-tabs .item{cursor:pointer!important}.financial-report-toolbar,.financial-input-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:15px 0}.financial-report-toolbar h2,.financial-report-toolbar p{margin:0 0 5px}.financial-report-toolbar p,.financial-draft-note{color:#667788}.financial-input-toolbar{justify-content:flex-end}.financial-table-wrap{overflow:auto}.financial-table-wrap input{min-width:110px;width:100%;padding:7px;border:1px solid #d5dee7;border-radius:5px}.financial-table-wrap [data-balance-code]{min-width:130px}.financial-table-wrap [data-balance-name]{min-width:210px}.financial-table-wrap [data-balance-note]{min-width:180px}.financial-table-wrap td{vertical-align:middle!important}.financial-table-wrap tfoot th{background:#f4f8fc!important}.financial-draft-note{font-size:.9rem;margin-top:12px}.calk-entry{position:relative;padding:16px!important}.calk-entry .field{margin-bottom:12px}.calk-entry-toolbar{display:flex;justify-content:flex-end}.calk-entry textarea{width:100%;resize:vertical;border:1px solid #d5dee7;border-radius:5px;padding:9px}@media(max-width:760px){.financial-report-hero{display:block}.financial-report-hero>a{margin-top:14px}.financial-report-toolbar{align-items:flex-start}.financial-report-toolbar>.ui.buttons{display:flex;flex-wrap:wrap}}`;
+		style.textContent = `.financial-report{max-width:1500px;margin:0 auto;padding-bottom:30px}.financial-report-hero{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:24px;border-radius:14px;color:#fff;background:linear-gradient(135deg,#102b43,#2185d0)}.financial-report-hero h1{margin:5px 0}.financial-report-hero p{margin:0;max-width:760px}.financial-report-hero .eyebrow{font-size:.75rem;letter-spacing:.13em;opacity:.8}.financial-report-toolbar,.financial-input-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:15px 0}.financial-report-toolbar h2,.financial-report-toolbar p{margin:0 0 5px}.financial-report-toolbar p,.financial-draft-note{color:#667788}.financial-input-toolbar{justify-content:flex-end}.financial-table-wrap{overflow:auto}.financial-table-wrap table{width:100%;margin:0!important}.financial-table-wrap .financial-balance-table{table-layout:fixed;min-width:900px}.financial-table-wrap input{box-sizing:border-box;display:block;min-width:0;max-width:100%;width:100%;padding:7px;border:1px solid #d5dee7;border-radius:5px}.financial-table-wrap th{white-space:normal;overflow-wrap:break-word;word-break:normal}.financial-table-wrap [data-balance-opening],.financial-table-wrap [data-balance-closing]{text-align:right}.financial-balance-table td:last-child .button{margin:0}.financial-table-wrap td{vertical-align:middle!important}.financial-table-wrap tfoot th{background:#f4f8fc!important}.financial-draft-note{font-size:.9rem;margin-top:12px}.calk-entry{position:relative;padding:16px!important}.calk-entry .field{margin-bottom:12px}.calk-entry-toolbar{display:flex;justify-content:flex-end}.calk-entry textarea{width:100%;resize:vertical;border:1px solid #d5dee7;border-radius:5px;padding:9px}@media(max-width:760px){.financial-report-hero{display:block}.financial-report-hero>a{margin-top:14px}.financial-report-toolbar{align-items:flex-start}.financial-report-toolbar>.ui.buttons{display:flex;flex-wrap:wrap}}`;
 		document.head.appendChild(style);
 	}
 
@@ -56,28 +56,16 @@ class LaporanKeuanganModule {
 	}
 
 	renderShell() {
-		const tabs = [
-			["lra", "LRA", "chart bar"],
-			...(this.canReadAccounts ? [["neraca", "Neraca", "balance scale"], ["calk", "CaLK", "book"]] : []),
-		];
 		this.root.innerHTML = `<section class="financial-report">
 			<header class="financial-report-hero"><div><span class="eyebrow">REALISASI & AKUNTANSI OPD</span><h1>Laporan Keuangan</h1><p>Tahun kerja ${this.escape(window.app?.user?.tahun || new Date().getFullYear())}. LRA memakai snapshot anggaran disahkan dan belanja kontrak terverifikasi. Neraca/CaLK tetap kertas kerja sampai saldo buku besar/jurnal dan pengungkapan tersedia.</p></div><a class="ui inverted basic button" href="${this.url("/kontrak?tbl=realisasi")}" data-spa="client"><i class="arrow left icon"></i>Ke Penginputan Realisasi</a></header>
-			<nav class="ui pointing secondary menu financial-report-tabs" aria-label="Jenis laporan">${tabs.map(([key, title, icon]) => `<button type="button" class="${key === this.report ? "active" : ""} item" data-report="${key}"><i class="${icon} icon"></i>${title}</button>`).join("")}</nav>
 			<div id="financialReportContent"><div class="ui active centered inline loader"></div></div>
 		</section>`;
 	}
 
 	bindEvents() {
 		this.root.addEventListener("click", async (event) => {
-			const target = event.target.closest("[data-report],[data-action]");
+			const target = event.target.closest("[data-action]");
 			if (!target) return;
-			if (target.dataset.report) {
-				this.report = target.dataset.report;
-				window.history.replaceState(null, "", this.url(`/laporan-keuangan?laporan=${this.report}`));
-				this.root.querySelectorAll("[data-report]").forEach((tab) => tab.classList.toggle("active", tab === target));
-				await this.load();
-				return;
-			}
 			try {
 				if (target.dataset.action === "add-balance") this.addBalanceRow();
 				if (target.dataset.action === "save-balances") await this.saveBalances(target);
@@ -106,6 +94,7 @@ class LaporanKeuanganModule {
 			if (this.report === "lra") this.renderLra(data);
 			else if (this.report === "neraca") this.renderBalanceSheet(data);
 			else this.renderNotes(data);
+
 		} catch (error) {
 			content.innerHTML = `<div class="ui negative message">${this.escape(error.message)}</div>`;
 		}
@@ -158,11 +147,11 @@ class LaporanKeuanganModule {
 		const status = this.balanceRows.length ? (summary.seimbang ? "Seimbang pada saldo awal dan akhir." : "Belum seimbang. Periksa kelengkapan saldo dan rekening.") : "Saldo belum diisi.";
 		const rows = this.balanceRows.length ? this.balanceRows : [{}];
 		const content = this.root.querySelector("#financialReportContent");
-		content.innerHTML = `<div class="ui warning message"><b>Neraca belum dihitung otomatis dari jurnal/buku besar.</b> Aplikasi belum mempunyai sumber saldo awal dan mutasi jurnal terverifikasi untuk membentuk Neraca otomatis. Saldo pada halaman ini harus dimasukkan atau diimpor dari buku besar/daftar aset resmi; jangan menurunkan saldo dari progres atau nilai kontrak.</div>
-			<div class="ui ${summary.seimbang ? "positive" : "warning"} message"><b>Status Neraca:</b> ${this.escape(status)}${this.balanceRows.length ? `<br>Selisih awal: Rp ${this.money(summary.selisih_awal)} · Selisih akhir: Rp ${this.money(summary.selisih_akhir)}` : ""}<br>Kelompok akun mengikuti struktur SAP: 1 Aset, 2 Kewajiban, 3 Ekuitas. Gunakan rekening rinci, bukan akun induk sekaligus anaknya.</div>
+		content.innerHTML = `<div class="ui warning message"><b>Neraca belum dihitung otomatis dari jurnal/buku besar.</b> Saldo harus berasal dari buku besar/daftar aset resmi.</div>
 			<div class="financial-report-toolbar"><div><h2>Neraca ${this.escape(data.tahun)}</h2><p>Masukkan saldo awal dan akhir yang bersumber dari buku besar/daftar aset dan dokumen akuntansi OPD. Saldo tidak dibuat dari nilai kontrak.</p></div><div class="ui buttons"><a class="ui basic button" href="${this.url("/laporan-keuangan/saldo/template")}"><i class="download icon"></i>Template Excel</a><a class="ui green button" href="${this.url("/laporan-keuangan/export?report=neraca&format=xlsx")}"><i class="file excel icon"></i>Excel</a><a class="ui red button" href="${this.url("/laporan-keuangan/export?report=neraca&format=pdf")}"><i class="file pdf icon"></i>PDF</a></div></div>
+			<div class="ui ${summary.seimbang ? "positive" : "warning"} message"><b>Status Neraca:</b> ${this.escape(status)}${this.balanceRows.length ? `<br>Selisih awal: Rp ${this.money(summary.selisih_awal)} · Selisih akhir: Rp ${this.money(summary.selisih_akhir)}` : ""}<br>Kelompok akun mengikuti struktur SAP: 1 Aset, 2 Kewajiban, 3 Ekuitas. Gunakan rekening rinci, bukan akun induk sekaligus anaknya.</div>
 			${this.canWrite ? `<div class="financial-input-toolbar"><label class="ui teal button" for="balanceImportFile"><i class="upload icon"></i>Impor Excel</label><input id="balanceImportFile" type="file" accept=".xlsx,.xls" hidden><button type="button" class="ui basic button" data-action="add-balance"><i class="plus icon"></i>Tambah Rekening</button><button type="button" class="ui primary button" data-action="save-balances"><i class="save icon"></i>Simpan Neraca</button></div>` : ""}
-			<div class="financial-table-wrap"><table class="ui celled compact table"><thead><tr><th>Kode rekening</th><th>Uraian rekening</th><th>Kelompok</th><th>Saldo awal</th><th>Saldo akhir</th><th>Catatan sumber</th>${this.canWrite ? "<th></th>" : ""}</tr></thead><tbody id="balanceRows">${rows.map((row) => this.balanceRow(row)).join("")}</tbody><tfoot><tr><th colspan="3">Total aset</th><th class="right aligned">${this.money(totals.saldo_awal?.ASET)}</th><th class="right aligned">${this.money(totals.saldo_akhir?.ASET)}</th><th colspan="${this.canWrite ? 2 : 1}"></th></tr><tr><th colspan="3">Total kewajiban + ekuitas</th><th class="right aligned">${this.money(Number(totals.saldo_awal?.KEWAJIBAN || 0) + Number(totals.saldo_awal?.EKUITAS || 0))}</th><th class="right aligned">${this.money(Number(totals.saldo_akhir?.KEWAJIBAN || 0) + Number(totals.saldo_akhir?.EKUITAS || 0))}</th><th colspan="${this.canWrite ? 2 : 1}"></th></tr></tfoot></table></div>
+			<div class="financial-table-wrap"><table class="ui celled compact table financial-balance-table"><colgroup>${(this.canWrite ? [14,24,10,16,16,16,4] : [14,26,10,16,16,18]).map(width => `<col style="width:${width}%">`).join("")}</colgroup><thead><tr><th>Kode rekening</th><th>Uraian rekening</th><th>Kelompok</th><th>Saldo awal</th><th>Saldo akhir</th><th>Catatan sumber</th>${this.canWrite ? "<th></th>" : ""}</tr></thead><tbody id="balanceRows">${rows.map((row) => this.balanceRow(row)).join("")}</tbody><tfoot><tr><th colspan="3">Total aset</th><th class="right aligned">${this.money(totals.saldo_awal?.ASET)}</th><th class="right aligned">${this.money(totals.saldo_akhir?.ASET)}</th><th colspan="${this.canWrite ? 2 : 1}"></th></tr><tr><th colspan="3">Total kewajiban + ekuitas</th><th class="right aligned">${this.money(Number(totals.saldo_awal?.KEWAJIBAN || 0) + Number(totals.saldo_awal?.EKUITAS || 0))}</th><th class="right aligned">${this.money(Number(totals.saldo_akhir?.KEWAJIBAN || 0) + Number(totals.saldo_akhir?.EKUITAS || 0))}</th><th colspan="${this.canWrite ? 2 : 1}"></th></tr></tfoot></table></div>
 			<p class="financial-draft-note">Keluaran Neraca ditandai sebagai kertas kerja. Seimbangkan saldo, cocokkan dengan daftar aset/buku besar, dan lakukan verifikasi sebelum dipakai sebagai laporan resmi.</p>`;
 	}
 
