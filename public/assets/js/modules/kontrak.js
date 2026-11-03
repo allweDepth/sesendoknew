@@ -152,9 +152,6 @@ class KontrakModule extends BaseCrudModule {
 			.off("click.realizationDetail", "[data-realization-detail]")
 			.on("click.realizationDetail", "[data-realization-detail]", (e) => this.showRealizationDetail(Number($(e.currentTarget).data("realization-detail"))));
 		$(document)
-			.off("click.realizationSave", "#realizationSubmit")
-			.on("click.realizationSave", "#realizationSubmit", () => this.saveRealization());
-		$(document)
 			.off("click.realizationClose", ".sidebarkanan .btnFlyoutClose")
 			.on("click.realizationClose", ".sidebarkanan .btnFlyoutClose", () => this.resetRealizationSidebar());
 		$(document)
@@ -378,13 +375,19 @@ class KontrakModule extends BaseCrudModule {
 		this.resetRealizationSidebar();
 		$("#content_flyout").text(this.realizationId ? "Ubah Realisasi Kontrak" : "Input Realisasi Kontrak");
 		$("#icon_flyout").attr("class", "chartline icon");
-		$(".sidebarkanan").addClass("realization-sidebar-active");
-		$(".flyout-footer").hide();
+		const submit = $(".sidebarkanan .flyout-footer .btnSubmit");
+		submit.attr("id", "realizationSubmit").addClass("disabled").on("click.realizationSave", (event) => {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			if (!submit.hasClass("disabled")) this.saveRealization();
+		});
 		$("#form_flyout").html(`<div class="ui form" id="realizationSidebarForm">
+			<div id="realizationValidation" class="ui negative message" role="alert" hidden></div>
+			<h4 class="ui dividing header">Transaksi dan Kontrak</h4>
 			<div class="field required"><label>Kontrak</label><select class="ui fluid search dropdown" id="realizationContract"><option value="">Pilih kontrak</option></select></div>
 			<div class="two fields"><div class="field required"><label>Tanggal transaksi/progres</label><div class="ui calendar contract-calendar" data-calendar-type="date"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" id="realizationDate" placeholder="YYYY-MM-DD" autocomplete="off"></div></div></div><div class="field"><label>Realisasi kontrak di luar transaksi ini</label><input type="text" id="realizationPrevious" disabled value="Rp 0"></div></div>
 			<div class="field required"><label>Uraian transaksi/progres</label><textarea id="realizationDescription" rows="2" placeholder="Contoh: Pembayaran termin, uang muka, atau progres pekerjaan..."></textarea></div>
-			<div class="field required"><label>Jenis transaksi keuangan</label><select class="ui fluid dropdown" id="realizationTransactionType">
+			<h4 class="ui dividing header">Dokumen Keuangan</h4><div class="field required"><label>Jenis transaksi keuangan</label><select class="ui fluid dropdown" id="realizationTransactionType">
 				<option value="PROGRES">Progres / BAST / tagihan belum dibayar</option><option value="LS">Pembayaran langsung (LS)</option><option value="UANG_MUKA_KONTRAK">Uang muka kontrak kepada penyedia</option><option value="UP">Belanja melalui UP (SPJ)</option><option value="TU">Belanja melalui TU (SPJ)</option><option value="GU">SP2D GU / penggantian UP</option>
 			</select></div>
 			<div id="realizationFinanceNotice" class="ui info message"></div>
@@ -396,9 +399,10 @@ class KontrakModule extends BaseCrudModule {
 			<div class="field"><label>Keterangan tambahan</label><textarea id="realizationNote" rows="2"></textarea></div>
 			<div class="field ${this.realizationId ? "" : "required"}"><label>Bukti transaksi (SP2D/SPJ/BAST/kuitansi/dokumen pengembalian; PDF/gambar/XLSX/DOCX, maks. 15 MB per file)</label><input type="file" id="realizationFiles" multiple ${this.realizationId ? "" : "required"} accept=".pdf,.jpg,.jpeg,.png,.webp,.xlsx,.docx"><div id="realizationExistingFiles" class="ui relaxed divided list"></div></div>
 			<div class="ui info message">Bukti dilampirkan dan dicatat per transaksi. Transaksi keuangan masuk LRA setelah diverifikasi oleh pengguna lain yang berwenang. Progres saja, SP2D GU, dan pencairan UP/TU tidak dihitung sebagai belanja dua kali.</div>
-			<div class="field required"><label>Jumlah transaksi/progres</label><input type="number" id="realizationTotal" min="0" step="any" inputmode="decimal" placeholder="0"></div>
-			<button type="button" class="ui fluid violet button" id="realizationItemsButton" disabled><i class="list alternate outline icon"></i>Atur Uraian per Rekening</button>
-			<button type="button" class="ui fluid teal button" id="realizationSubmit"><i class="check icon"></i>${this.realizationId ? "Simpan Perubahan" : "Simpan Transaksi"}</button></div>`);
+			<h4 class="ui dividing header">Nilai dan Rekening</h4><div class="field required"><label>Jumlah transaksi/progres</label><input type="number" id="realizationTotal" min="0" step="any" inputmode="decimal" placeholder="0"></div>
+			<div id="realizationAllocationSummary" class="ui small message" aria-live="polite">Pilih kontrak untuk memuat rekening.</div><button type="button" class="ui fluid violet button" id="realizationItemsButton" disabled><i class="list alternate outline icon"></i>Atur Uraian per Rekening</button>
+			</div>`);
+		$(".sidebarkanan .flyout-body").scrollTop(0);
 		this.initContractCalendars($("#form_flyout"));
 		$("#form_flyout").off("change.realisasiKeuangan", "#realizationTransactionType").on("change.realisasiKeuangan", "#realizationTransactionType", () => this.updateRealizationFinanceFields());
 		$("#realizationTransactionType").dropdown();
@@ -407,7 +411,7 @@ class KontrakModule extends BaseCrudModule {
 		const load = (detail = null) => window.Ajax.request({ url: "/kontrak/realization-contracts", method: "GET", success: (r) => {
 			this.realizationContracts = r.data || [];
 			const select = $("#realizationContract");
-			select.html('<option value="">Pilih kontrak</option>' + this.realizationContracts.map((x) => `<option value="${x.id}">${this.esc(x.nomor_kontrak)} · ${this.money(x.nilai_kontrak)}</option>`).join(""));
+			select.html('<option value="">Pilih kontrak</option>' + this.realizationContracts.map((x) => `<option value="${x.id}">${this.esc(x.uraian_kontrak || x.nomor_kontrak)} · ${this.money(x.nilai_kontrak)}</option>`).join(""));
 			if (select.hasClass("noselection")) select.dropdown("destroy");
 			select.dropdown({ fullTextSearch: true, highlightMatches: true, onChange: (value) => this.loadRealizationContract(Number(value || 0), detail) });
 			if (detail) {
@@ -448,6 +452,7 @@ class KontrakModule extends BaseCrudModule {
 			GU: "SP2D GU adalah penggantian uang persediaan, bukan belanja baru. Tautkan ke SPJ yang telah disahkan; GU tidak menambah realisasi LRA lagi.",
 		};
 		$("#realizationFinanceNotice").toggleClass("warning", type === "PROGRES" || type === "GU").toggleClass("info", type !== "PROGRES" && type !== "GU").text(messages[type]);
+		this.syncRealizationLraTotal();
 		if ($("#realizationItemsModal").hasClass("active")) this.renderRealizationItems();
 	}
 
@@ -470,7 +475,7 @@ class KontrakModule extends BaseCrudModule {
 
 	loadRealizationContract(id, detail = null) {
 		this.contractId = id || null;
-		$("#realizationItemsButton").prop("disabled", !id);
+		$("#realizationItemsButton, #realizationSubmit").prop("disabled", true).addClass("disabled");
 		if (!id) {
 			$("#realizationPrevious").val("Rp 0");
 			this.realizationItems = [];
@@ -484,6 +489,8 @@ class KontrakModule extends BaseCrudModule {
 			const current = Number(r.data?.contract?.nilai_kontrak || contract?.nilai_kontrak || 0);
 			$("#realizationPrevious").val(this.money(this.realizationItems.reduce((sum, x) => sum + Number(x.realisasi || 0), 0)));
 			$("#realizationTotal").attr("max", Math.max(0, current));
+			$("#realizationItemsButton, #realizationSubmit").prop("disabled", false).removeClass("disabled");
+			this.syncRealizationLraTotal();
 		} });
 	}
 
@@ -521,6 +528,10 @@ class KontrakModule extends BaseCrudModule {
 	syncRealizationLraTotal() {
 		const total = this.realizationItems.reduce((sum, x) => sum + Number(x.nilai_lra_sekarang || 0), 0);
 		$("#realizationItemsLraTotal").text(this.money(total));
+		const needsLra = ["LS", "UANG_MUKA_KONTRAK", "UP", "TU"].includes($("#realizationTransactionType").val());
+		const missing = needsLra && total <= 0 && this.realizationItems.length > 0;
+		$("#realizationAllocationSummary").toggleClass("warning", missing).html(`<b>${this.realizationItems.length} rekening</b> · Belanja LRA: <b>${this.money(total)}</b>${missing ? '<p>Nilai belanja LRA belum diisi. Buka <b>Atur Uraian per Rekening</b>, lalu isi kolom <b>Belanja LRA Sekarang</b> sesuai SP2D/SPJ.</p>' : ''}`);
+		$("#realizationItemsButton").toggleClass("basic", !missing);
 	}
 
 	showRealizationDetail(index) {
@@ -532,17 +543,19 @@ class KontrakModule extends BaseCrudModule {
 	}
 
 	saveRealization() {
+		$("#realizationValidation").prop("hidden", true);
+		$("#realizationSidebarForm .field.error").removeClass("error");
 		const contractId = Number($("#realizationContract").val() || 0), total = Number($("#realizationTotal").val() || 0), rows = this.realizationItems.map((x) => ({ tahap: x.tahap, anggaran_id: x.anggaran_id,
                 pengesahan_anggaran_id:x.pengesahan_anggaran_id||null, jumlah: Number(x.jumlah_sekarang || 0), nilai_lra: Number(x.nilai_lra_sekarang || 0), progress_fisik: Number(x.progress_fisik || 0) }));
 		const distributed = rows.reduce((sum, x) => sum + x.jumlah, 0);
-		if (!contractId || !$("#realizationDate").val() || !String($("#realizationDescription").val() || "").trim()) return Toast.error("Kontrak, tanggal, uraian transaksi, dan uraian per item wajib diisi");
-		if (total <= 0 || Math.abs(total - distributed) > 0.01) return Toast.error("Jumlah realisasi harus sama dengan total pembagian pada uraian");
+		if (!contractId || !$("#realizationDate").val() || !String($("#realizationDescription").val() || "").trim()) return this.realizationError("Kontrak, tanggal, uraian transaksi, dan uraian per item wajib diisi");
+		if (total <= 0 || Math.abs(total - distributed) > 0.01) return this.realizationError("Jumlah realisasi harus sama dengan total pembagian pada uraian", "#realizationTotal");
 		const selected = Array.from($("#realizationFiles")[0]?.files || []);
-		if (!this.realizationId && !selected.length) return Toast.error("File transaksi wajib ditambahkan saat input realisasi");
+		if (!this.realizationId && !selected.length) return this.realizationError("File transaksi wajib ditambahkan saat input realisasi", "#realizationFiles");
 		const type = $("#realizationTransactionType").val() || "PROGRES";
 		const lraTotal = rows.reduce((sum, row) => sum + row.nilai_lra, 0);
-		if (["LS", "UANG_MUKA_KONTRAK", "UP", "TU"].includes(type) && lraTotal <= 0) return Toast.error("Isi nilai belanja LRA per rekening berdasarkan SP2D atau SPJ yang sah.");
-		if (["PROGRES", "GU"].includes(type) && lraTotal > 0) return Toast.error("Progres dan SP2D GU tidak boleh menambah nilai belanja LRA.");
+		if (["LS", "UANG_MUKA_KONTRAK", "UP", "TU"].includes(type) && lraTotal <= 0) return this.realizationError("Nilai belanja LRA belum diisi. Buka Atur Uraian per Rekening dan isi Belanja LRA Sekarang sesuai SP2D/SPJ.", "#realizationItemsButton", true);
+		if (["PROGRES", "GU"].includes(type) && lraTotal > 0) return this.realizationError("Progres dan SP2D GU tidak boleh menambah nilai belanja LRA.");
 		const keuangan = {
 			jenis_transaksi: type,
 			nomor_bukti: $("#realizationFinanceProof").val(),
@@ -556,13 +569,13 @@ class KontrakModule extends BaseCrudModule {
 			nomor_up_tu: $("#realizationUpTuRegister").val(),
 			nilai_potongan_uang_muka: Number($("#realizationAdvanceDeduction").val() || 0),
 		};
-		if (type !== "PROGRES" && !keuangan.nomor_bukti.trim()) return Toast.error("Nomor bukti wajib diisi untuk transaksi keuangan.");
-		if (["LS", "UANG_MUKA_KONTRAK", "GU"].includes(type) && (!keuangan.nomor_sp2d.trim() || !keuangan.tanggal_sp2d)) return Toast.error("Nomor dan tanggal SP2D wajib untuk jenis transaksi ini.");
-		if (["UP", "TU", "GU"].includes(type) && (!keuangan.nomor_spj.trim() || !keuangan.tanggal_spj || !keuangan.tanggal_pengesahan_spj)) return Toast.error("Nomor SPJ, tanggal SPJ, dan tanggal pengesahan wajib untuk UP/TU/GU.");
-		if (["UP", "TU"].includes(type) && (!keuangan.nomor_sp2d_sumber.trim() || !keuangan.nomor_up_tu.trim())) return Toast.error("Tautkan transaksi UP/TU ke register dan SP2D sumbernya.");
-		if (keuangan.nilai_potongan_uang_muka < 0 || keuangan.nilai_potongan_uang_muka > total) return Toast.error("Potongan uang muka tidak boleh melebihi nilai transaksi.");
-		if (type === "LS" && keuangan.nilai_potongan_uang_muka > 0 && !keuangan.nomor_sp2d_uang_muka.trim()) return Toast.error("Cantumkan nomor SP2D uang muka yang dipotong.");
-		if (type !== "PROGRES" && !selected.length && !this.realizationFiles.length) return Toast.error("Lampirkan bukti pembayaran/SPJ/BAST untuk transaksi keuangan.");
+		if (type !== "PROGRES" && !keuangan.nomor_bukti.trim()) return this.realizationError("Nomor bukti wajib diisi untuk transaksi keuangan.", "#realizationFinanceProof");
+		if (["LS", "UANG_MUKA_KONTRAK", "GU"].includes(type) && (!keuangan.nomor_sp2d.trim() || !keuangan.tanggal_sp2d)) return this.realizationError("Nomor dan tanggal SP2D wajib untuk jenis transaksi ini.", !keuangan.nomor_sp2d.trim() ? "#realizationSp2dNumber" : "#realizationSp2dDate");
+		if (["UP", "TU", "GU"].includes(type) && (!keuangan.nomor_spj.trim() || !keuangan.tanggal_spj || !keuangan.tanggal_pengesahan_spj)) return this.realizationError("Nomor SPJ, tanggal SPJ, dan tanggal pengesahan wajib untuk UP/TU/GU.", !keuangan.nomor_spj.trim() ? "#realizationSpjNumber" : !keuangan.tanggal_spj ? "#realizationSpjDate" : "#realizationSpjApprovalDate");
+		if (["UP", "TU"].includes(type) && (!keuangan.nomor_sp2d_sumber.trim() || !keuangan.nomor_up_tu.trim())) return this.realizationError("Tautkan transaksi UP/TU ke register dan SP2D sumbernya.", !keuangan.nomor_up_tu.trim() ? "#realizationUpTuRegister" : "#realizationUpTuSp2d");
+		if (keuangan.nilai_potongan_uang_muka < 0 || keuangan.nilai_potongan_uang_muka > total) return this.realizationError("Potongan uang muka tidak boleh melebihi nilai transaksi.", "#realizationAdvanceDeduction");
+		if (type === "LS" && keuangan.nilai_potongan_uang_muka > 0 && !keuangan.nomor_sp2d_uang_muka.trim()) return this.realizationError("Cantumkan nomor SP2D uang muka yang dipotong.", "#realizationAdvanceSp2d");
+		if (type !== "PROGRES" && !selected.length && !this.realizationFiles.length) return this.realizationError("Lampirkan bukti pembayaran/SPJ/BAST untuk transaksi keuangan.", "#realizationFiles");
 		const form = new FormData();
 		form.set("realization_id", this.realizationId);
 		form.set("contract_id", contractId);
@@ -573,12 +586,27 @@ class KontrakModule extends BaseCrudModule {
 		form.set("keuangan", JSON.stringify(keuangan));
 		selected.forEach((file) => form.append("transaction_files[]", file));
 		const button = $("#realizationSubmit").addClass("loading disabled");
-		window.Ajax.request({ url: "/kontrak/realization/save", method: "POST", data:form,processData:false,contentType:false, success: () => { this.resetRealizationSidebar(); $(".sidebarkanan").sidebar("hide"); window.tableManager?.fetchData(); }, complete: () => button.removeClass("loading disabled") });
+		window.Ajax.request({ url: "/kontrak/realization/save", method: "POST", data:form,processData:false,contentType:false, success: () => { this.resetRealizationSidebar(); $(".sidebarkanan").sidebar("hide"); window.tableManager?.fetchData(); }, error: (r) => this.realizationError(r?.message || "Data belum tersimpan. Periksa kembali isian transaksi dan rekening."), complete: () => button.removeClass("loading disabled") });
+	}
+
+	realizationError(message, selector = "", items = false) {
+		const form = $("#realizationSidebarForm");
+		const target = selector ? $(selector) : form.find("input, textarea, select").filter(function () { return $(this).closest(".field").hasClass("required") && !String($(this).val() || "").trim(); }).first();
+		target.closest(".field").addClass("error");
+		$("#realizationValidation").prop("hidden", false).text(message);
+		if (items) {
+			this.openRealizationItems();
+			$("#realizationItemsBody [data-realization-lra-amount]").first().closest("td").addClass("error");
+			$("#realizationItemsBody [data-realization-lra-amount]").first().trigger("focus");
+		} else if (target.length) target[0].scrollIntoView({block: "center", behavior: "smooth"});
+		else $(".sidebarkanan .flyout-body").scrollTop(0);
+		return false;
 	}
 
 	resetRealizationSidebar() {
-		$(".sidebarkanan").removeClass("realization-sidebar-active");
-		$(".flyout-footer").show();
+		$(".sidebarkanan .flyout-footer .btnSubmit")
+			.off("click.realizationSave").removeAttr("id").prop("disabled", false).removeClass("loading disabled");
+		$(".sidebarkanan .flyout-footer").show();
 	}
 
 	ensureModal() {
@@ -1317,6 +1345,10 @@ class KontrakModule extends BaseCrudModule {
 		$("head").append(
 			`<style id="phase4Style">.p4-hero{background:linear-gradient(135deg,#112c46,#2185d0);color:#fff;padding:24px;border-radius:14px;display:flex;justify-content:space-between}.p4-cards,.p4-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px}.p4-grid{grid-template-columns:2fr 1fr}.p4-cards>div,.p4-grid section{background:#fff;border:1px solid #e6edf5;border-radius:12px;padding:18px;box-shadow:0 8px 24px rgba(20,52,80,.07)}.p4-cards small,.p4-cards strong{display:block;margin-top:6px}.p4-chart{height:190px;display:flex;align-items:flex-end;gap:8px}.p4-bar-wrap{height:170px;flex:1;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}.p4-bar{background:linear-gradient(#54c8ff,#2185d0);border-radius:5px 5px 0 0}.p4-status{padding:12px;border-bottom:1px solid #eee}.p4-status b{float:right}.contract-item-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.contract-scroll{max-height:52vh;overflow:auto;margin-top:12px}.contract-item-card,.contract-selected-card{display:flex;gap:12px;justify-content:space-between;border:1px solid #e3eaf2;border-radius:10px;padding:12px;margin-bottom:9px}.contract-item-card small,.contract-item-card p,.contract-selected-card p,.contract-selected-card small{display:block;margin:5px 0}.contract-selected-card>div{flex:1}.contract-total{position:sticky;bottom:0;background:#f4f0ff;border:1px solid #d7c9ff;border-radius:9px;padding:12px;display:flex;justify-content:space-between}.contract-section-tabs.ui.menu{gap:6px;border:0;box-shadow:none;background:transparent;margin:16px 0}.contract-section-tabs.ui.menu>.item{border-radius:7px!important;border:1px solid #dce5ee!important;min-height:48px;font-weight:600;justify-content:center}.contract-section-tabs.ui.menu>.item:before{display:none}.contract-section-tabs.ui.menu>.blue.item{color:#1678c2;background:#edf6ff}.contract-section-tabs.ui.menu>.teal.item{color:#00827c;background:#edfafa}.contract-section-tabs.ui.menu>.orange.item{color:#9d5600;background:#fff7eb}.contract-section-tabs.ui.menu>.violet.item{color:#6435c9;background:#f5f0ff}.contract-section-tabs.ui.menu>.active.item{box-shadow:inset 0 -3px 0 currentColor}.contract-rab-toolbar.ui.menu{margin:0 0 12px;min-height:0;box-shadow:none;border:0;flex-wrap:wrap}.contract-rab-toolbar.ui.menu .item{padding:0 6px 0 0}.contract-delivery-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.contract-delivery-page{padding:0 0 24px}.contract-delivery-toolbar{position:sticky;top:0;z-index:20;margin-bottom:14px!important}.contract-delivery-heading{margin:10px 0 14px}.contract-schedule-item{border:1px solid #dfe9ef;border-radius:10px;padding:12px;margin:12px 0;background:#fbfdff}.schedule-item-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.schedule-item-title strong,.schedule-item-title small{display:block;margin-top:4px}.delivery-table input{min-width:90px;width:100%;border:1px solid #d8e0e5;border-radius:4px;padding:7px}.ui.table.contract-rab-table{table-layout:fixed;width:100%;min-width:1000px}.ui.table.contract-rab-table th{overflow-wrap:normal;word-break:normal}.ui.table.contract-rab-table td{padding:7px;vertical-align:middle}.ui.form .contract-rab-table input,.ui.form .contract-rab-table textarea{min-width:0;width:100%;padding:7px 5px}.ui.form .contract-rab-table textarea{min-height:4.4em;resize:vertical;line-height:1.4}.contract-rab-table [data-rab=nomor],.contract-rab-table [data-rab=satuan],.contract-rab-table [data-rab=pajak]{text-align:center}.ui.table.contract-rab-table [data-rab=volume],.ui.table.contract-rab-table [data-rab=harga_satuan],.ui.table.contract-rab-table [data-rab-total],.ui.table.contract-rab-table [data-rab-weight]{text-align:right}.contract-rab-table [data-rab-total],.contract-rab-table [data-rab-weight]{white-space:nowrap;font-variant-numeric:tabular-nums}.contract-rab-table input[type=number]{appearance:textfield;-moz-appearance:textfield}.contract-rab-table input::-webkit-inner-spin-button,.contract-rab-table input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.s-chart{min-height:110px;display:flex;align-items:flex-end;gap:6px;overflow-x:auto;margin:12px 0}.s-point{min-width:34px;height:100px;display:flex;align-items:flex-end;gap:2px;position:relative;padding-bottom:18px}.s-point span,.s-point i{display:block;width:12px;max-height:80px;background:#2185d0}.s-point i{background:#21ba45}.s-point small{position:absolute;bottom:0;left:0}@media(max-width:800px){.p4-cards,.p4-grid,.contract-item-grid{grid-template-columns:1fr}.p4-hero,.schedule-item-title{display:block}.contract-delivery-toolbar{position:static}.contract-delivery-toolbar .right.floated{float:none!important;margin-top:8px}.delivery-table{min-width:850px}.table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch}}</style>`,
 		);
-		$("head").append(`<style id="physicalFinancialReportStyle">.p4-trend-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}.p4-trend-card{border:1px solid #e6edf5;border-radius:10px;padding:14px;background:#fff}.p4-trend-chart{height:160px;display:flex;align-items:flex-end;gap:5px;border-bottom:1px solid #d9e2ec;padding:0 4px}.p4-trend-month{flex:1;min-width:22px;text-align:center}.p4-trend-bars{height:138px;display:flex;justify-content:center;align-items:flex-end;gap:2px}.p4-trend-bars i{display:block;width:8px;min-height:0;border-radius:3px 3px 0 0}.p4-trend-bars .p4-target,.p4-trend-legend .p4-target{background:#2185d0}.p4-trend-bars .p4-actual,.p4-trend-legend .p4-actual{background:#f2711c}.p4-trend-month small{font-size:11px}.p4-trend-legend{display:flex;gap:16px;margin-top:8px}.p4-trend-legend span{display:flex;align-items:center;gap:5px}.p4-trend-legend i{width:10px;height:10px;display:inline-block}@media(max-width:800px){.p4-trend-grid{grid-template-columns:1fr}}</style>`);
+		$("head").append(`<style id="physicalFinancialReportStyle">
+#realizationSidebarForm label{line-height:1.4}#realizationSidebarForm .ui.message{font-size:.92em;line-height:1.5}
+#realizationItemsButton{margin-bottom:14px}#realizationValidation[hidden]{display:none!important}
+#realizationItemsModal td.error{background:#fff6f6!important}#realizationItemsModal td.error input{border:1px solid #e0b4b4;background:#fff6f6;color:#9f3a38}
+.p4-trend-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}.p4-trend-card{border:1px solid #e6edf5;border-radius:10px;padding:14px;background:#fff}.p4-trend-chart{height:160px;display:flex;align-items:flex-end;gap:5px;border-bottom:1px solid #d9e2ec;padding:0 4px}.p4-trend-month{flex:1;min-width:22px;text-align:center}.p4-trend-bars{height:138px;display:flex;justify-content:center;align-items:flex-end;gap:2px}.p4-trend-bars i{display:block;width:8px;min-height:0;border-radius:3px 3px 0 0}.p4-trend-bars .p4-target,.p4-trend-legend .p4-target{background:#2185d0}.p4-trend-bars .p4-actual,.p4-trend-legend .p4-actual{background:#f2711c}.p4-trend-month small{font-size:11px}.p4-trend-legend{display:flex;gap:16px;margin-top:8px}.p4-trend-legend span{display:flex;align-items:center;gap:5px}.p4-trend-legend i{width:10px;height:10px;display:inline-block}@media(max-width:800px){.p4-trend-grid{grid-template-columns:1fr}}</style>`);
 	}
 }
