@@ -157,7 +157,7 @@
         fields: {
           username: {
             rules: [{
-                type: 'empty',
+                type: 'notEmpty',
                 prompt: 'Username wajib diisi'
               },
               {
@@ -168,7 +168,7 @@
           },
           email: {
             rules: [{
-                type: 'empty',
+                type: 'notEmpty',
                 prompt: 'Email wajib diisi'
               },
               {
@@ -179,31 +179,31 @@
           },
           nama: {
             rules: [{
-              type: 'empty',
+              type: 'notEmpty',
               prompt: 'Nama wajib diisi'
             }]
           },
           nip: {
             rules: [{
-              type: 'empty',
+              type: 'notEmpty',
               prompt: 'NIP wajib diisi'
             }]
           },
           kontak_person: {
             rules: [{
-              type: 'empty',
+              type: 'notEmpty',
               prompt: 'Kontak wajib diisi'
             }]
           },
           alamat: {
             rules: [{
-              type: 'empty',
+              type: 'notEmpty',
               prompt: 'Alamat wajib diisi'
             }]
           },
           password: {
             rules: [{
-                type: 'empty',
+                type: 'notEmpty',
                 prompt: 'Password wajib diisi'
               },
               {
@@ -214,13 +214,13 @@
           },
           kd_wilayah: {
             rules: [{
-              type: 'empty',
+              type: 'notEmpty',
               prompt: 'Wilayah wajib dipilih'
             }]
           },
           kd_opd: {
             rules: [{
-              type: 'empty',
+              type: 'notEmpty',
               prompt: 'Organisasi wajib dipilih'
             }]
           },
