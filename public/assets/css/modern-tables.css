@@ -12,6 +12,41 @@
   background: #fff;
 }
 
+:is(.table-wrapper, .table-scroll-region) {
+  --table-scroll-thumb: transparent;
+  --table-scroll-active-thumb: #7c8793;
+}
+
+body.dark-mode :is(.table-wrapper, .table-scroll-region) {
+  --table-scroll-active-thumb: #8999ad;
+}
+
+:is(.table-wrapper, .table-scroll-region):is(.is-table-scrolling, :focus-visible) {
+  --table-scroll-thumb: var(--table-scroll-active-thumb);
+}
+
+@media (hover: hover) {
+  :is(.table-wrapper, .table-scroll-region):hover {
+    --table-scroll-thumb: var(--table-scroll-active-thumb);
+  }
+}
+
+/* Keep scrollbar space stable while toggling the thumb on either axis. */
+:root :is(.table-wrapper, .table-scroll-region)::-webkit-scrollbar-track,
+:root :is(.table-wrapper, .table-scroll-region)::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+:root :is(.table-wrapper, .table-scroll-region)::-webkit-scrollbar-thumb {
+  background: var(--table-scroll-thumb);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  :is(.table-wrapper, .table-scroll-region) {
+    scrollbar-color: var(--table-scroll-thumb) transparent;
+  }
+}
+
 .table-wrapper > .ui.table.modern-data-table {
   width: 100%;
   min-width: 760px;
@@ -29,10 +64,16 @@
   border-radius: 0 0 10px 10px;
   background: #f8fafc;
   max-width: 100%;
+  text-align: right;
 }
 .table-pagination-footer:has(> :empty) { display: none; }
-.table-pagination-footer.right-aligned { text-align: right; }
-.table-pagination-footer .ui.pagination.menu { margin: 0; flex-wrap: wrap; min-height: 0; }
+.table-pagination-footer .ui.pagination.menu {
+  margin: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 100%;
+  min-height: 0;
+}
 body.dark-mode .table-pagination-footer { background: #1e293b; border-color: #334155; }
 
 .modern-data-table thead th {

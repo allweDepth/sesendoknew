@@ -219,7 +219,7 @@ $(document).ready(function () {
 			const matches = rows.filter(row => !query || [row.textContent, ...Array.from(row.querySelectorAll('input,textarea,select'), field => field.value)].join(' ').toLowerCase().includes(query));
 			const pages = Math.max(1, Math.ceil(matches.length / limit));
 			state.page = Math.min(state.page, pages);
-				state.pages = pages;
+			state.pages = pages;
 			const shown = new Set(matches.slice((state.page - 1) * limit, state.page * limit));
 			rows.forEach(row => { row.hidden = !shown.has(row); $(row).toggle(shown.has(row)); });
 			let pager = document.querySelector(`[data-client-table-pager="${state.id}"]`);
@@ -228,7 +228,7 @@ $(document).ready(function () {
 				pager.dataset.clientTablePager = state.id;
 				pager.className = 'table-pagination-footer';
 				// Controls stay outside the horizontal scrolling area.
-				const wrapper = $(table).closest('.financial-table-wrap, .table-responsive, .table-scroll, .table-scroll-wrapper, .table-wrapper')[0] || table;
+				const wrapper = $(table).closest('.table-scroll-region, .table-wrapper, .table-responsive, .table-scroll, .table-scroll-wrapper')[0] || table;
 				wrapper.after(pager);
 				pager.addEventListener('click', event => {
 					const button = event.target.closest('[data-page]');

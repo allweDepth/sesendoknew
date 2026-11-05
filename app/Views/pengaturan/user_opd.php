@@ -11,7 +11,7 @@
         Wilayah</a><a class="item" data-tab="regional-tapd">Tim Anggaran Daerah</a></div><?php endif; ?>
   <div class="ui <?= $regional ? 'bottom attached active tab segment' : '' ?>"
     <?= $regional ? 'data-tab="regional-users"' : '' ?>>
-    <div class="user-table-scroll">
+    <div class="user-table-scroll table-scroll-region">
       <table class="ui celled striped table" style="min-width:950px">
         <thead>
           <tr>

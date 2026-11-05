@@ -186,7 +186,7 @@ $pageTitle = ['map' => 'Peta', 'layers' => 'Atur Layer SHP', 'upload' => 'Tambah
     <p id="mapsEditorDivideStatus" class="maps-editor-hint" role="status"></p>
     <h4 class="ui dividing header">Field SHP</h4>
     <p class="maps-editor-hint">Nama unik maksimal 10 karakter. Panjang teks dihitung dalam byte UTF-8.</p>
-    <div class="maps-editor-fields-scroll"><table class="ui compact celled unstackable table"><thead><tr><th>Nama</th><th>Tipe</th><th>Panjang</th><th>Desimal</th><th></th></tr></thead><tbody id="mapsEditorFields"></tbody></table></div>
+    <div class="maps-editor-fields-scroll table-scroll-region"><table class="ui compact celled unstackable table"><thead><tr><th>Nama</th><th>Tipe</th><th>Panjang</th><th>Desimal</th><th></th></tr></thead><tbody id="mapsEditorFields"></tbody></table></div>
     <div class="ui mini buttons"><button class="ui button" id="mapsEditorAddField" type="button">Tambah field</button><button class="ui primary button" id="mapsEditorApplyFields" type="button">Terapkan field</button></div>
     <h4 class="ui dividing header">Atribut feature terpilih</h4>
     <div id="mapsEditorAttributes">Pilih feature pada peta untuk mengedit atribut.</div>

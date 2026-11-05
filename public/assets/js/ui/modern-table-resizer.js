@@ -15,6 +15,15 @@ class ModernTableResizer {
 		this.observer.observe(this.root, { childList: true, subtree: true });
 		document.addEventListener("pointermove", event => this.resize(event));
 		document.addEventListener("pointerup", () => this.finish());
+
+		const scrollTimers = new WeakMap();
+		document.addEventListener("scroll", event => {
+			const wrapper = event.target;
+			if (!wrapper.matches?.(".table-wrapper, .table-scroll-region")) return;
+			wrapper.classList.add("is-table-scrolling");
+			clearTimeout(scrollTimers.get(wrapper));
+			scrollTimers.set(wrapper, setTimeout(() => wrapper.classList.remove("is-table-scrolling"), 700));
+		}, { capture: true, passive: true });
 	}
 
 	enhanceAll() {
@@ -67,8 +76,6 @@ class ModernTableResizer {
 				frame.appendChild(footer);
 			}
 			const row = control.closest('tfoot tr');
-			const cell = control.closest('td, th');
-			if (cell?.classList.contains('right') && cell.classList.contains('aligned')) footer.classList.add('right-aligned');
 			footer.appendChild(control);
 			if (row && !row.textContent.trim() && !row.querySelector('input, button, select, a')) {
 				const section = row.parentElement;

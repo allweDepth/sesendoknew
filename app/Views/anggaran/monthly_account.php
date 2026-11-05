@@ -11,7 +11,7 @@
   </div>
   <div class="ui blue message">Pembagian dilakukan pada kode rekening belanja level akhir. Total Januari-Desember tidak
     boleh melebihi pagu rekening. Sistem merangkum seluruh rekening menjadi rencana bulanan per sub kegiatan.</div>
-  <div class="monthly-account-scroll">
+  <div class="monthly-account-scroll table-scroll-region">
     <table class="ui celled striped table" style="min-width:1500px">
       <thead>
         <tr>
