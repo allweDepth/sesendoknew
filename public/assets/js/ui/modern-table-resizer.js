@@ -1,4 +1,6 @@
 class ModernTableResizer {
+	static scrollRegion = ".table-wrapper, .table-scroll-region";
+
 	constructor(root = "#main-content") {
 		this.root = document.querySelector(root);
 		this.drag = null;
@@ -19,11 +21,20 @@ class ModernTableResizer {
 		const scrollTimers = new WeakMap();
 		document.addEventListener("scroll", event => {
 			const wrapper = event.target;
-			if (!wrapper.matches?.(".table-wrapper, .table-scroll-region")) return;
+			if (!wrapper.matches?.(ModernTableResizer.scrollRegion)) return;
+			this.updateScrollOverlay(wrapper);
 			wrapper.classList.add("is-table-scrolling");
 			clearTimeout(scrollTimers.get(wrapper));
 			scrollTimers.set(wrapper, setTimeout(() => wrapper.classList.remove("is-table-scrolling"), 700));
 		}, { capture: true, passive: true });
+
+		for (const type of ["pointerover", "focusin"]) {
+			document.addEventListener(type, event => {
+				const wrapper = event.target.closest(ModernTableResizer.scrollRegion);
+				if (wrapper && !wrapper.contains(event.relatedTarget)) this.updateScrollOverlay(wrapper);
+			});
+		}
+		window.addEventListener("resize", () => this.refreshScrollOverlays(document));
 	}
 
 	enhanceAll() {
@@ -51,6 +62,67 @@ class ModernTableResizer {
 			Array.from(table.tBodies).forEach(body => Array.from(body.rows).forEach(row => this.enhanceRow(table, row)));
 			this.fitActionColumn(table, saved);
 		});
+		this.refreshScrollOverlays(this.root);
+	}
+
+	refreshScrollOverlays(root) {
+		root.querySelectorAll(".table-scroll-overlay").forEach(overlay => this.updateScrollOverlay(overlay.parentElement));
+	}
+
+	updateScrollOverlay(wrapper) {
+		const width = wrapper.clientWidth;
+		const height = wrapper.clientHeight;
+		const horizontal = wrapper.scrollWidth - width;
+		const vertical = wrapper.scrollHeight - height;
+		let overlay = wrapper.querySelector(":scope > .table-scroll-overlay");
+		if (!overlay && horizontal <= 1 && vertical <= 1) return;
+		if (!overlay) {
+			overlay = document.createElement("div");
+			overlay.className = "table-scroll-overlay";
+			overlay.setAttribute("aria-hidden", "true");
+			for (const axis of ["horizontal", "vertical"]) {
+				const thumb = document.createElement("span");
+				thumb.className = `table-scroll-thumb ${axis}`;
+				this.bindScrollThumb(wrapper, thumb, axis === "horizontal");
+				overlay.appendChild(thumb);
+			}
+			wrapper.prepend(overlay);
+		}
+
+		const inset = 3;
+		const corner = horizontal > 1 && vertical > 1 ? 8 : 0;
+		const setThumb = (thumb, viewport, overflow, scroll, crossSize, isHorizontal) => {
+			const track = viewport - 2 * inset - corner;
+			thumb.hidden = overflow <= 1 || track <= 0;
+			if (thumb.hidden) return;
+			const size = Math.min(track, Math.max(24, track * viewport / (viewport + overflow)));
+			const travel = track - size;
+			const offset = inset + travel * Math.min(1, Math.max(0, scroll / overflow));
+			thumb.dataset.travel = travel;
+			Object.assign(thumb.style, isHorizontal
+				? { left: `${offset}px`, top: `${crossSize - 9}px`, width: `${size}px` }
+				: { top: `${offset}px`, left: `${crossSize - 9}px`, height: `${size}px` });
+		};
+		setThumb(overlay.firstElementChild, width, horizontal, wrapper.scrollLeft, height, true);
+		setThumb(overlay.lastElementChild, height, vertical, wrapper.scrollTop, width, false);
+	}
+
+	bindScrollThumb(wrapper, thumb, horizontal) {
+		const scroll = horizontal ? "scrollLeft" : "scrollTop";
+		const pointer = horizontal ? "clientX" : "clientY";
+		let drag;
+		thumb.addEventListener("pointerdown", event => {
+			const travel = Number(thumb.dataset.travel);
+			if (event.button !== 0 || !travel) return;
+			event.preventDefault();
+			const overflow = horizontal ? wrapper.scrollWidth - wrapper.clientWidth : wrapper.scrollHeight - wrapper.clientHeight;
+			drag = { pointer: event[pointer], scroll: wrapper[scroll], scale: overflow / travel };
+			thumb.setPointerCapture(event.pointerId);
+		});
+		thumb.addEventListener("pointermove", event => {
+			if (drag && thumb.hasPointerCapture(event.pointerId)) wrapper[scroll] = drag.scroll + (event[pointer] - drag.pointer) * drag.scale;
+		});
+		thumb.addEventListener("lostpointercapture", () => { drag = null; });
 	}
 
 	separatePagination() {
@@ -121,6 +193,8 @@ class ModernTableResizer {
 	finish() {
 		if (!this.drag) return;
 		if (this.drag.type === "column") this.saveWidths(this.drag.table);
+		const wrapper = (this.drag.table || this.drag.row).closest(ModernTableResizer.scrollRegion);
+		if (wrapper) this.updateScrollOverlay(wrapper);
 		this.drag = null;
 		document.body.classList.remove("resizing-table-column", "resizing-table-row");
 	}
