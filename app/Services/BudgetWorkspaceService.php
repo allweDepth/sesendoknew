@@ -39,6 +39,21 @@ final class BudgetWorkspaceService
         return [implode('.', array_slice(explode('.', $sub), 0, 3)), substr($sub, 0, strrpos($sub, '.')), $sub];
     }
 
+    private function metadataEditBlock(): ?string
+    {
+        if (!in_array($this->user['type_user'] ?? '',self::EDITORS,true)) {
+            return 'Role ini hanya dapat melihat metadata anggaran.';
+        }
+        $settings = BudgetScheduleService::settings($this->db,$this->user);
+        $schedule = BudgetScheduleService::evaluate($this->document,$settings);
+        if ($schedule['locked']) return $schedule['message'];
+        [, $period] = BudgetScheduleService::STAGES[$this->document];
+        // Draft descriptions and indicators can be prepared before the input window is configured.
+        if ($settings && empty($settings["awal_$period"]) && empty($settings["akhir_$period"])) return null;
+        if (BudgetScheduleService::canManage($this->user) || $schedule['enabled']) return null;
+        return $schedule['message'];
+    }
+
     public function read(string $sub): array
     {
         $scope = $this->scope();
@@ -99,16 +114,15 @@ final class BudgetWorkspaceService
         foreach ([$program=>'program',$sub=>'sub'] as $code=>$level) {
             $default[$code]['indikator'] = BudgetRenstraService::resolve($default[$code]['indikator'],$renstra[$level],!isset($stored[$code]));
         }
+        if (!isset($stored[$activity])) $default[$activity]['keluaran'] = $renstra['activity'];
+        $default[$activity]['keluaran'] = BudgetRenstraService::resolve($default[$activity]['keluaran'],$renstra['activity'],!isset($stored[$activity]));
         $priorities = BudgetPriorityService::rows($scope[0],$scope[2]);
         $currentPriority = (int)($default[$activity]['prioritas_nasional_id'] ?? 0);
         foreach ($priorities as $priority) {
             if ((int)$priority['id'] === $currentPriority) $default[$activity]['prioritas_nasional'] = $priority['uraian'];
         }
         $priorities = array_values(array_filter($priorities,static fn($row) => $row['aktif'] || (int)$row['id'] === $currentPriority));
-        $canEdit = in_array($this->user['type_user'] ?? '',self::EDITORS,true);
-        $schedule = BudgetScheduleService::evaluate($this->document, BudgetScheduleService::settings($this->db,$this->user));
-        $editMessage = !$canEdit ? 'Role ini memiliki akses lihat.' : $schedule['message'];
-        $canEdit = $canEdit && (BudgetScheduleService::canManage($this->user) || $schedule['enabled']);
+        $editBlock = $this->metadataEditBlock();
         $programLocked = $this->db->query(
             "SELECT 1 FROM {$this->table} WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND kd_sub_keg LIKE ?
              AND is_deleted=0 AND (kunci=1 OR setujui=1) LIMIT 1", [...$scope,$program.'.%']
@@ -121,10 +135,10 @@ final class BudgetWorkspaceService
             'budget'=>$meta[in_array($this->document,['renja_p','rka_p','dppa'],true) ? 'jumlah_pagu_p' : 'jumlah_pagu'] ?? $budget['total'], 'detail_total'=>$budget['total'],
             'sub'=>$default[$sub], 'program'=>$default[$program], 'activity'=>$default[$activity],
             'renstra'=>$renstra, 'priorities'=>$priorities,
-            'edit_message'=>$canEdit ? 'Data anggaran sudah disetujui atau dikunci.' : $editMessage,
-            'can_edit_sub'=>$canEdit && !$budget['locked'] && !$budget['approved']
+            'edit_message'=>$editBlock ?? 'Data anggaran sudah disetujui atau dikunci.',
+            'can_edit_sub'=>$editBlock === null && !$budget['locked'] && !$budget['approved']
                 && ($budget['items'] || (empty($meta['kunci']) && empty($meta['setujui']))),
-            'can_edit_indicators'=>$canEdit && !$programLocked,
+            'can_edit_indicators'=>$editBlock === null && !$programLocked,
         ];
     }
 
@@ -136,7 +150,6 @@ final class BudgetWorkspaceService
         if (!in_array($mode,['sub','indicators'],true)) throw new InvalidArgumentException('Jenis penyuntingan tidak valid.');
         $this->db->begin();
         try {
-            BudgetScheduleService::assertOpen($this->db,$this->user,$this->document);
             $filter = $mode === 'sub' ? '=' : 'LIKE';
             $key = $mode === 'sub' ? $sub : $program.'.%';
             $locks = $this->db->query(
@@ -148,13 +161,13 @@ final class BudgetWorkspaceService
             }
             $state = $this->read($sub);
             if (!$state[$mode === 'sub' ? 'can_edit_sub' : 'can_edit_indicators']) {
-                throw new RuntimeException('Metadata anggaran ini tidak dapat diubah.');
+                throw new RuntimeException($state['edit_message']);
             }
             $payload = $mode === 'sub' ? [$sub=>$this->subInput($input,$scope[2],$state)] : [
-                $program=>['indikator'=>$this->indicators($input['indikator_program'] ?? [],$state['renstra']['program'])],
+                $program=>['indikator'=>$this->indicators($input['indikator_program'] ?? [],$state['renstra']['program'],$state['program']['indikator'])],
                 $activity=>[
                     'kelompok_sasaran'=>$this->text($input['kelompok_sasaran'] ?? ''),
-                    'keluaran'=>$this->indicators($input['keluaran'] ?? []),
+                    'keluaran'=>$this->indicators($input['keluaran'] ?? [],$state['renstra']['activity'],$state['activity']['keluaran']),
                     'hasil'=>$this->indicators($input['hasil'] ?? []),
                 ] + $this->priorityInput($input,$state),
             ];
@@ -192,6 +205,20 @@ final class BudgetWorkspaceService
         }
         foreach (['mulai','selesai'] as $field) {
             $value = $this->text($input[$field] ?? '',10);
+            if (array_key_exists("bulan_$field",$input)) {
+                $month = $this->text($input["bulan_$field"],2);
+                if ($month !== '' && !preg_match('/^(0[1-9]|1[0-2])$/D',$month)) {
+                    throw new InvalidArgumentException('Pilih bulan pelaksanaan yang valid.');
+                }
+                $value = '';
+                if ($month !== '') {
+                    $prefix = "$year-$month";
+                    $previous = $state['sub'][$field];
+                    $date = new DateTimeImmutable("$prefix-01");
+                    $value = str_starts_with((string)$previous,"$prefix-") ? $previous
+                        : ($field === 'mulai' ? $date->format('Y-m-d') : $date->format('Y-m-t'));
+                }
+            }
             $date = DateTimeImmutable::createFromFormat('!Y-m-d',$value);
             if ($value !== '' && (!$date || $date->format('Y-m-d') !== $value || (int)$date->format('Y') !== $year)) {
                 throw new InvalidArgumentException('Tanggal pelaksanaan harus berada pada tahun anggaran aktif.');
@@ -204,7 +231,7 @@ final class BudgetWorkspaceService
             if ($value !== '' && !preg_match('/^\d{1,16}(?:\.\d{1,2})?$/D',$value)) throw new InvalidArgumentException('Prakiraan anggaran tidak valid.');
             $data[$field] = $value;
         }
-        $data['indikator'] = $this->indicators($input['indikator'] ?? [],$state['renstra']['sub']);
+        $data['indikator'] = $this->indicators($input['indikator'] ?? [],$state['renstra']['sub'],$state['sub']['indikator']);
         foreach ($data['indikator'] as &$entry) {
             if (preg_match('/^\d+(?:[,.]\d+)?$/D',$entry['target'])) {
                 $entry['target'] = str_replace(',','.',$entry['target']);
@@ -215,7 +242,7 @@ final class BudgetWorkspaceService
         return $data;
     }
 
-    private function indicators($rows, array $references = []): array
+    private function indicators($rows, array $references = [], array $current = []): array
     {
         if (!is_array($rows) || count($rows)>30) throw new InvalidArgumentException('Maksimal 30 indikator per kelompok.');
         $references = array_column($references,null,'renstra_id');
@@ -238,6 +265,9 @@ final class BudgetWorkspaceService
             ];
             if ($entry['tolok_ukur'] !== '') $result[] = $entry;
             elseif ($entry['target'] !== '' || $entry['satuan'] !== '') throw new InvalidArgumentException('Tolok ukur wajib diisi untuk indikator dengan target atau satuan.');
+        }
+        foreach (array_column($current,'renstra_id') as $id) {
+            if (isset($references[$id])) throw new InvalidArgumentException('Indikator yang tertaut ke Renstra tidak dapat dihapus dari dokumen.');
         }
         return $result;
     }

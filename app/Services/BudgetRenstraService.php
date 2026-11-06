@@ -13,7 +13,7 @@ final class BudgetRenstraService
              ORDER BY p.periode_mulai DESC,r.id DESC LIMIT 1', [$region,$opd,$year]
         )->fetch();
         $offset = $period ? $year - (int)$period['periode_mulai'] + 1 : 0;
-        if ($offset < 1 || $offset > 5) return ['program'=>[], 'sub'=>[]];
+        if ($offset < 1 || $offset > 5) return ['program'=>[], 'activity'=>[], 'sub'=>[]];
         $target = "target_t$offset";
         $chain = 'FROM misi_renstra_neo m
             JOIN tujuan_renstra_neo t ON t.misi_id=m.id AND t.is_deleted=0 AND COALESCE(t.disable,0)=0
@@ -26,6 +26,14 @@ final class BudgetRenstraService
                 "SELECT i.id renstra_id,i.nama_indikator tolok_ukur,COALESCE(i.satuan,'') satuan,i.$target target
                  $chain JOIN indikator_program_renstra_neo i ON i.program_id=p.id $filter ORDER BY i.id",
                 [$period['id'],$program]
+            )->fetchAll(),
+            // The PUPR Renstra import stores the activity measure in keterangan.
+            'activity'=>$db->query(
+                "SELECT i.id renstra_id,TRIM(i.keterangan) tolok_ukur,'' satuan,'' target
+                 $chain JOIN kegiatan_renstra_neo i ON i.program_id=p.id
+                 $filter AND i.kode_kegiatan=? AND TRIM(i.keterangan)<>''
+                 AND i.username_insert IN ('IMPORT_RENSTRA_PUPR_2025_2030','CREATE_RPJMD_RENSTRA_2020_2025') ORDER BY i.id",
+                [$period['id'],$program,$activity]
             )->fetchAll(),
             'sub'=>$db->query(
                 "SELECT i.id renstra_id,i.indikator_keluaran tolok_ukur,COALESCE(i.satuan,'') satuan,i.$target target
