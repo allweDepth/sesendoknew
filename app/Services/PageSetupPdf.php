@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__.'/../../vendor/tecnickcom/tcpdf/tcpdf.php';
+require_once __DIR__.'/TableRowsPdf.php';
 
 /** TCPDF dengan header/footer tiga kolom yang dikendalikan Page Setup global. */
-final class PageSetupPdf extends TCPDF
+final class PageSetupPdf extends TableRowsPdf
 {
     private array $pageSetup=[];
     private bool $contractTypography=false;
@@ -12,13 +12,6 @@ final class PageSetupPdf extends TCPDF
     {
         if($this->contractTypography)$html=ProcurementDocumentFormatService::paragraphHtml((string)$html);
         return parent::writeHTML($html,$ln,$fill,$reseth,$cell,$align);
-    }
-
-    public function _destroy($destroyall=false,$preserve_objcopy=false)
-    {
-        // TCPDF transactions may destroy a clone before its destructor runs.
-        if(!isset($this->file_id))return;
-        parent::_destroy($destroyall,$preserve_objcopy);
     }
 
     public function configurePageSetup(array $settings):void{$this->pageSetup=$settings;}

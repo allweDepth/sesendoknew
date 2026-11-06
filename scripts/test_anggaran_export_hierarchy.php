@@ -12,6 +12,10 @@ class HierarchyExportCheck extends AnggaranDocumentService
 }
 $user=['type_user'=>'admin_opd','kd_wilayah'=>'76.01','kd_opd'=>'1.03.0.00.0.00.01.0000','tahun'=>2026,'nama_opd'=>'Dinas Pekerjaan Umum dan Penataan Ruang'];
 $svc=new HierarchyExportCheck($user);
+$db=DB::getInstance();
+$hasRevenue=$db->query("SHOW TABLES LIKE 'rka\_pendapatan\_neo'")->fetchColumn()
+    && $db->query('SELECT 1 FROM rka_pendapatan_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? LIMIT 1',
+        [$user['kd_wilayah'],$user['kd_opd'],$user['tahun']])->fetchColumn();
 $out=$argv[1]??__DIR__.'/../outputs/anggaran-hierarchy-20261029';
 if(!is_dir($out))mkdir($out,0775,true);
 $checks=0;
@@ -19,14 +23,12 @@ function expectHierarchy(bool $ok,string $message):void{global$checks;if(!$ok)th
 foreach(['renja','rka','dpa','renja_p','rka_p','dppa']as$logical){
     $change=in_array($logical,['renja_p','rka_p','dppa'],true);
     $file=$svc->exportExcel($logical);$book=\PhpOffice\PhpSpreadsheet\IOFactory::load($file);
-    $hasSkpd=$logical==='rka';
-    expectHierarchy($book->getSheetCount()===($hasSkpd?5:3),"$logical: expected sheets exported");
-    $recap=$book->getSheet($hasSkpd?2:0);
+    $recapIndex=$hasRevenue?2:1;
+    expectHierarchy($book->getSheetCount()===$recapIndex+3,"$logical: expected sheets exported");
+    $recap=$book->getSheet($recapIndex);
     expectHierarchy($recap->getTitle()==='Rekapitulasi',"$logical: expenditure recap is present");
-    if($hasSkpd){
-        expectHierarchy($book->getSheet(0)->getTitle()==='Rekapitulasi SKPD',"$logical: SKPD recap is first");
-        expectHierarchy($book->getSheet(1)->getTitle()==='Pendapatan',"$logical: revenue sheet is present");
-    }
+    expectHierarchy($book->getSheet(0)->getTitle()==='Rekapitulasi SKPD',"$logical: SKPD recap is first");
+    expectHierarchy(($book->getSheetByName('Pendapatan')!==null)===$hasRevenue,"$logical: revenue sheet reflects data availability");
     $recapRows=[];
     $grandRow=$recap->getHighestDataRow();
     $recapColumn=$change?'D':'C';
@@ -38,7 +40,7 @@ foreach(['renja','rka','dpa','renja_p','rka_p','dppa']as$logical){
     $grandTotal=0;
     $sample=null;
     $expectedRecap=[];
-    foreach(array_slice($book->getAllSheets(),$hasSkpd?3:1)as$sheet){
+    foreach(array_slice($book->getAllSheets(),$recapIndex+1)as$sheet){
         $afterColumn=$change?'L':'G';
         $code=$sheet->getTitle();
         expectHierarchy(isset($recapRows[$code]),"$logical: sub-activity appears in recap");
@@ -86,15 +88,18 @@ foreach(['renja','rka','dpa','renja_p','rka_p','dppa']as$logical){
     }
     $grandCell=$recapColumn.$grandRow;
     expectHierarchy($recap->getCell($grandCell)->isFormula()&&abs($recap->getCell($grandCell)->getCalculatedValue()-$grandTotal)<.01,"$logical: recap grand total");
-    if($hasSkpd){
-        $skpd=$book->getSheet(0);
-        for($r=6;$r<=$skpd->getHighestDataRow();$r++){
-            if($skpd->getCell("B$r")->getValue()!=='JUMLAH BELANJA DENGAN RINCIAN')continue;
-            expectHierarchy(abs($skpd->getCell("C$r")->getCalculatedValue()-$grandTotal)<.01,"$logical: SKPD total matches expense recap");
-            break;
+    $skpd=$book->getSheet(0);
+    for($r=6;$r<=$skpd->getHighestDataRow();$r++){
+        if($skpd->getCell("B$r")->getValue()!=='JUMLAH BELANJA DENGAN RINCIAN')continue;
+        expectHierarchy(abs($skpd->getCell("$recapColumn$r")->getCalculatedValue()-$grandTotal)<.01,"$logical: SKPD total matches expense recap");
+        if ($change) {
+            $before=$recap->getCell("C$grandRow")->getCalculatedValue();
+            expectHierarchy(abs($skpd->getCell("C$r")->getCalculatedValue()-$before)<.01,"$logical: SKPD total before matches expense recap");
+            expectHierarchy(abs($skpd->getCell("E$r")->getCalculatedValue()-($grandTotal-$before))<.01,"$logical: SKPD difference matches expense recap");
         }
-        expectHierarchy($r<=$skpd->getHighestDataRow()," $logical: SKPD summary contains the expense total");
+        break;
     }
+    expectHierarchy($r<=$skpd->getHighestDataRow()," $logical: SKPD summary contains the expense total");
     [$sampleSheet,$input,$sheetTotal,$recapSubtotal]=$sample;
     $previous=$sampleSheet->getCell($input)->getValue();
     $previousSubtotal=$recap->getCell($recapSubtotal)->getCalculatedValue();

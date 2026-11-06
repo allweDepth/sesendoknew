@@ -53,7 +53,8 @@ final class ProcurementZipPdfService
     private function signature(TCPDF $pdf,string $role,string $name,string $nip,string $rank):void{$pdf->Ln(6);$html='<table nobr="true"><tr><td width="55%"></td><td width="45%" align="center">'.nl2br($this->e($role)).'<br><br><br><br><b><u>'.$this->e($name).'</u></b>'.($nip!==''?'<br>NIP. '.$this->e($nip).'<br>'.$this->e($rank):'').'</td></tr></table>';$this->signatureBlock($pdf,$html);}
     private function signatureBlock(TCPDF $pdf,string $html):void
     {
-        $html=str_replace(' nobr="true"','',$html);
+        // The signature block already owns the TCPDF transaction.
+        $html=str_replace(' nobr="true"',' nobr="false"',$html);
         $start=$pdf->getPage();$pdf->startTransaction();$pdf->writeHTML($html,true,false,true,false,'');
         if($pdf->getPage()>$start){$pdf->rollbackTransaction(true);$pdf->AddPage($this->orientation);$pdf->writeHTML($html,true,false,true,false,'');}
         else $pdf->commitTransaction();

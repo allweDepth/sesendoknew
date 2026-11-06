@@ -15,9 +15,21 @@ class RenstraExportService
     private DB $db; private array $user;
     public function __construct(array $user){$this->db=DB::getInstance();$this->user=Auth::scopedUser() ?: $user;}
     private function scope():array{$w=(string)($this->user['kd_wilayah']??'');$o=(string)($this->user['kd_opd']??'');if($w==='')throw new RuntimeException('Scope wilayah pengguna tidak lengkap');$sql='r.kd_wilayah=? AND r.is_deleted=0';$p=[$w];if($o!==''&&$o!=='0'){$sql.=' AND r.kd_opd=?';$p[]=$o;}return[$sql,$p];}
-    public function header():array{[$scope,$p]=$this->scope();$sql="SELECT r.*,pr.periode_mulai,pr.periode_selesai,COALESCE(o.uraian,r.kd_opd) nama_opd,o.nama_kepala,o.nip_kepala FROM renstra_neo r LEFT JOIN periode_rpjmd pr ON pr.id=r.periode_id LEFT JOIN organisasi_neo o ON o.kode=r.kd_opd AND o.kd_wilayah=r.kd_wilayah AND o.is_deleted=0 WHERE $scope ORDER BY r.id DESC LIMIT 1";$row=$this->db->query($sql,$p)->fetch();if(!$row)throw new RuntimeException('Data induk Renstra belum tersedia');return$row;}
+    public function header(): array
+    {
+        [$scope,$params] = $this->scope();
+        $row = $this->db->query(
+            "SELECT r.*,pr.periode_mulai,pr.periode_selesai,COALESCE(o.uraian,r.kd_opd) nama_opd,o.nama_kepala,o.nip_kepala
+             FROM renstra_neo r LEFT JOIN periode_rpjmd pr ON pr.id=r.periode_id
+             LEFT JOIN organisasi_neo o ON o.kode=r.kd_opd AND o.kd_wilayah=r.kd_wilayah AND o.is_deleted=0
+             WHERE $scope ORDER BY COALESCE(? BETWEEN pr.periode_mulai AND pr.periode_selesai,0) DESC,r.id DESC LIMIT 1",
+            [...$params, (int)($this->user['tahun'] ?? 0)]
+        )->fetch();
+        if (!$row) throw new RuntimeException('Data induk Renstra belum tersedia');
+        return $row;
+    }
     public function strategyRows(int $id):array{return $this->db->query("SELECT m.nama_misi,t.kode_tujuan,t.nama_tujuan,s.kode_sasaran,s.nama_sasaran,i.nama_indikator,i.satuan,i.baseline,i.target_t1,i.target_t2,i.target_t3,i.target_t4,i.target_t5,i.target_akhir FROM misi_renstra_neo m LEFT JOIN tujuan_renstra_neo t ON t.misi_id=m.id AND t.is_deleted=0 LEFT JOIN sasaran_renstra_neo s ON s.tujuan_id=t.id AND s.is_deleted=0 LEFT JOIN indikator_sasaran_renstra_neo i ON i.sasaran_id=s.id AND i.is_deleted=0 WHERE m.renstra_id=? AND m.is_deleted=0 ORDER BY m.id,t.id,s.id,i.id",[$id])->fetchAll();}
-    public function programRows(int $id):array{return $this->db->query("SELECT m.nama_misi,t.nama_tujuan,s.nama_sasaran,p.kode_program,p.uraian nama_program,ip.nama_indikator,ip.satuan,k.kode_kegiatan,k.uraian nama_kegiatan,rk.kode kode_sub_kegiatan,rk.uraian nama_sub_kegiatan,sk.lokasi,sk.kelompok_sasaran,sk.baseline,sk.target_t1,sk.anggaran_t1,sk.target_t2,sk.anggaran_t2,sk.target_t3,sk.anggaran_t3,sk.target_t4,sk.anggaran_t4,sk.target_t5,sk.anggaran_t5,sk.target_akhir FROM misi_renstra_neo m JOIN tujuan_renstra_neo t ON t.misi_id=m.id AND t.is_deleted=0 JOIN sasaran_renstra_neo s ON s.tujuan_id=t.id AND s.is_deleted=0 JOIN program_renstra_neo p ON p.sasaran_id=s.id AND p.is_deleted=0 LEFT JOIN indikator_program_renstra_neo ip ON ip.program_id=p.id AND ip.is_deleted=0 LEFT JOIN kegiatan_renstra_neo k ON k.program_id=p.id AND k.is_deleted=0 LEFT JOIN sub_kegiatan_renstra_neo sk ON sk.kegiatan_renstra_id=k.id AND sk.is_deleted=0 LEFT JOIN rekening_kegiatan rk ON rk.id=sk.master_sub_kegiatan_id WHERE m.renstra_id=? AND m.is_deleted=0 ORDER BY m.id,t.id,s.id,p.id,k.id,sk.id",[$id])->fetchAll();}
+    public function programRows(int $id):array{return $this->db->query("SELECT m.nama_misi,t.nama_tujuan,s.nama_sasaran,p.kode_program,p.uraian nama_program,ip.nama_indikator,ip.satuan,k.kode_kegiatan,k.uraian nama_kegiatan,sk.id sub_renstra_id,rk.kode kode_sub_kegiatan,rk.uraian nama_sub_kegiatan,sk.lokasi,sk.kelompok_sasaran,sk.baseline,sk.target_t1,sk.anggaran_t1,sk.target_t2,sk.anggaran_t2,sk.target_t3,sk.anggaran_t3,sk.target_t4,sk.anggaran_t4,sk.target_t5,sk.anggaran_t5,sk.target_akhir FROM misi_renstra_neo m JOIN tujuan_renstra_neo t ON t.misi_id=m.id AND t.is_deleted=0 JOIN sasaran_renstra_neo s ON s.tujuan_id=t.id AND s.is_deleted=0 JOIN program_renstra_neo p ON p.sasaran_id=s.id AND p.is_deleted=0 LEFT JOIN indikator_program_renstra_neo ip ON ip.program_id=p.id AND ip.is_deleted=0 LEFT JOIN kegiatan_renstra_neo k ON k.program_id=p.id AND k.is_deleted=0 LEFT JOIN sub_kegiatan_renstra_neo sk ON sk.kegiatan_renstra_id=k.id AND sk.is_deleted=0 LEFT JOIN rekening_kegiatan rk ON rk.id=sk.master_sub_kegiatan_id WHERE m.renstra_id=? AND m.is_deleted=0 ORDER BY m.id,t.id,s.id,p.id,k.id,sk.id",[$id])->fetchAll();}
     private function title(array $h):string{return 'RENCANA STRATEGIS '.strtoupper((string)$h['nama_opd']).' TAHUN '.($h['periode_mulai']??'-').'-'.($h['periode_selesai']??'-');}
     private function e(mixed $v):string{return htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');}
     public function pdf():string{$h=$this->header();$strategy=$this->strategyRows((int)$h['id']);$program=$this->programRows((int)$h['id']);$setup=PageSetupService::current($this->user);$pdf=PageSetupService::createPdf($setup,'L');$pdf->setPrintHeader(false);$pdf->setPrintFooter(true);$pdf->SetMargins(7,8,7);$pdf->SetAutoPageBreak(true,10);PageSetupService::applyPdf($pdf,$setup,[7,8,7,10]);
@@ -26,7 +38,63 @@ class RenstraExportService
     private function strategyHtml(array $rows):string{$html='<table border="1" cellpadding="2"><tr style="background-color:#dcecff;font-weight:bold"><th width="15%">Misi</th><th width="16%">Tujuan</th><th width="17%">Sasaran</th><th width="20%">Indikator</th><th width="6%">Satuan</th><th width="6%">Awal</th><th width="4%">T1</th><th width="4%">T2</th><th width="4%">T3</th><th width="4%">T4</th><th width="4%">T5</th></tr>';foreach($rows as $r)$html.='<tr><td>'.$this->e($r['nama_misi']).'</td><td>'.$this->e(trim(($r['kode_tujuan']??'').' '.($r['nama_tujuan']??''))).'</td><td>'.$this->e(trim(($r['kode_sasaran']??'').' '.($r['nama_sasaran']??''))).'</td><td>'.$this->e($r['nama_indikator']??'-').'</td><td>'.$this->e($r['satuan']??'-').'</td><td align="right">'.$this->e($r['baseline']??0).'</td><td align="right">'.$this->e($r['target_t1']??0).'</td><td align="right">'.$this->e($r['target_t2']??0).'</td><td align="right">'.$this->e($r['target_t3']??0).'</td><td align="right">'.$this->e($r['target_t4']??0).'</td><td align="right">'.$this->e($r['target_t5']??0).'</td></tr>';return$html.($rows?'':'<tr><td colspan="11" align="center">Belum ada data tujuan dan sasaran.</td></tr>').'</table>';}
     private function programHtml(array $rows):string{$html='<table border="1" cellpadding="2"><tr style="background-color:#dcecff;font-weight:bold"><th width="9%">Kode</th><th width="19%">Program/Kegiatan/Sub Kegiatan</th><th width="12%">Indikator</th><th width="5%">Satuan</th><th width="5%">Awal</th><th width="10%">Tahun 1<br>Target/Pagu</th><th width="10%">Tahun 2<br>Target/Pagu</th><th width="10%">Tahun 3<br>Target/Pagu</th><th width="10%">Tahun 4<br>Target/Pagu</th><th width="10%">Tahun 5<br>Target/Pagu</th></tr>';foreach($rows as $r){$name=trim(($r['nama_program']??'').' / '.($r['nama_kegiatan']??'').' / '.($r['nama_sub_kegiatan']??''));$html.='<tr><td>'.$this->e($r['kode_sub_kegiatan']??$r['kode_kegiatan']??$r['kode_program']??'-').'</td><td>'.$this->e($name).'</td><td>'.$this->e($r['nama_indikator']??'-').'</td><td>'.$this->e($r['satuan']??'-').'</td><td align="right">'.$this->e($r['baseline']??0).'</td>';for($i=1;$i<=5;$i++)$html.='<td align="right">'.$this->e($r['target_t'.$i]??0).'<br>Rp'.number_format((float)($r['anggaran_t'.$i]??0),0,',','.').'</td>';$html.='</tr>';}return$html.($rows?'':'<tr><td colspan="10" align="center">Belum ada data program dan pendanaan.</td></tr>').'</table>';}
     public function excel():string{$h=$this->header();$book=new Spreadsheet();$s=$book->getActiveSheet();$s->setTitle('TC-25 Tujuan Sasaran');$strategy=$this->strategyRows((int)$h['id']);$s->mergeCells('A1:K1')->setCellValue('A1',$this->title($h));$s->mergeCells('A2:K2')->setCellValue('A2','TABEL T-C.25 - TUJUAN DAN SASARAN JANGKA MENENGAH');$s->mergeCells('A3:K3')->setCellValue('A3','Visi: '.$h['visi']);$s->fromArray(['MISI','TUJUAN','SASARAN','INDIKATOR','SATUAN','AWAL','T1','T2','T3','T4','T5'],null,'A5',true);$row=6;foreach($strategy as $r)$s->fromArray([$r['nama_misi'],trim(($r['kode_tujuan']??'').' '.($r['nama_tujuan']??'')),trim(($r['kode_sasaran']??'').' '.($r['nama_sasaran']??'')),$r['nama_indikator']??'-',$r['satuan']??'-',$r['baseline']??0,$r['target_t1']??0,$r['target_t2']??0,$r['target_t3']??0,$r['target_t4']??0,$r['target_t5']??0],null,'A'.$row++,true);$this->style($s,'K',$row,'A5:K5');
-        $p=$book->createSheet();$p->setTitle('TC-27 Program Pendanaan');$p->mergeCells('A1:O1')->setCellValue('A1',$this->title($h));$p->mergeCells('A2:O2')->setCellValue('A2','TABEL T-C.27 - PROGRAM, KEGIATAN, SUB KEGIATAN DAN PENDANAAN');$p->fromArray(['KODE','PROGRAM/KEGIATAN/SUB KEGIATAN','INDIKATOR','SATUAN','AWAL','TARGET T1','PAGU T1','TARGET T2','PAGU T2','TARGET T3','PAGU T3','TARGET T4','PAGU T4','TARGET T5','PAGU T5'],null,'A4',true);$row=5;foreach($this->programRows((int)$h['id']) as $r)$p->fromArray([$r['kode_sub_kegiatan']??$r['kode_kegiatan']??$r['kode_program']??'-',trim(($r['nama_program']??'').' / '.($r['nama_kegiatan']??'').' / '.($r['nama_sub_kegiatan']??'')),$r['nama_indikator']??'-',$r['satuan']??'-',$r['baseline']??0,$r['target_t1']??0,$r['anggaran_t1']??0,$r['target_t2']??0,$r['anggaran_t2']??0,$r['target_t3']??0,$r['anggaran_t3']??0,$r['target_t4']??0,$r['anggaran_t4']??0,$r['target_t5']??0,$r['anggaran_t5']??0],null,'A'.$row++,true);$this->style($p,'O',$row,'A4:O4');foreach(['G','I','K','M','O'] as $c)$p->getStyle($c.'5:'.$c.max(5,$row-1))->getNumberFormat()->setFormatCode('#,##0.00');$book->setActiveSheetIndex(0);ExcelPresentationService::apply($book,$this->user);
+        $p=$book->createSheet();$p->setTitle('TC-27 Program Pendanaan');$p->mergeCells('A1:O1')->setCellValue('A1',$this->title($h));$p->mergeCells('A2:O2')->setCellValue('A2','TABEL T-C.27 - PROGRAM, KEGIATAN, SUB KEGIATAN DAN PENDANAAN');$p->fromArray(['KODE','PROGRAM/KEGIATAN/SUB KEGIATAN','INDIKATOR','SATUAN','AWAL','TARGET T1','PAGU T1','TARGET T2','PAGU T2','TARGET T3','PAGU T3','TARGET T4','PAGU T4','TARGET T5','PAGU T5'],null,'A4',true);$row=5;$fundingRows=[];foreach($this->programRows((int)$h['id']) as $r){if(!empty($r['sub_renstra_id']))$fundingRows[$r['sub_renstra_id']]??=$row;$p->fromArray([$r['kode_sub_kegiatan']??$r['kode_kegiatan']??$r['kode_program']??'-',trim(($r['nama_program']??'').' / '.($r['nama_kegiatan']??'').' / '.($r['nama_sub_kegiatan']??'')),$r['nama_indikator']??'-',$r['satuan']??'-',$r['baseline']??0,$r['target_t1']??0,$r['anggaran_t1']??0,$r['target_t2']??0,$r['anggaran_t2']??0,$r['target_t3']??0,$r['anggaran_t3']??0,$r['target_t4']??0,$r['anggaran_t4']??0,$r['target_t5']??0,$r['anggaran_t5']??0],null,'A'.$row++,true);}$this->style($p,'O',$row,'A4:O4');foreach(['G','I','K','M','O'] as $c)$p->getStyle($c.'5:'.$c.max(5,$row-1))->getNumberFormat()->setFormatCode('#,##0.00');$this->writeSkpdSheets($book,$h,array_values($fundingRows));$book->setActiveSheetIndex(0);ExcelPresentationService::apply($book,$this->user);
     $tmp=tempnam(sys_get_temp_dir(),'renstra_').'.xlsx';(new Xlsx($book))->save($tmp);return$tmp;}
+    private function writeSkpdSheets(Spreadsheet $book, array $header, array $fundingRows): void
+    {
+        $start = (int)$header['periode_mulai'];
+        $end = (int)$header['periode_selesai'];
+        $summary = $book->createSheet(0)->setTitle('Rekapitulasi SKPD');
+        $summary->mergeCells('A1:C1')->setCellValue('A1', 'REKAPITULASI PENDANAAN RENSTRA SKPD');
+        $summary->mergeCells('A2:C2')->setCellValue('A2', $header['nama_opd']);
+        $summary->fromArray(['TAHUN','PAGU RENSTRA (RP)','PENDAPATAN RKA (REFERENSI)'], null, 'A4', true);
+
+        $revenue = [];
+        if ($start && $end && $this->db->query("SHOW TABLES LIKE 'rka\_pendapatan\_neo'")->fetchColumn()) {
+            $revenue = $this->db->query(
+                'SELECT tahun,kd_akun,uraian,volume,satuan,tarif,jumlah FROM rka_pendapatan_neo
+                 WHERE kd_wilayah=? AND kd_opd=? AND tahun BETWEEN ? AND ? ORDER BY tahun,kd_akun,id',
+                [$header['kd_wilayah'],$header['kd_opd'],$start,$end]
+            )->fetchAll();
+        }
+        $revenueRows = [];
+        if ($revenue) {
+            $sheet = $book->createSheet(1)->setTitle('Pendapatan');
+            $sheet->mergeCells('A1:G1')->setCellValue('A1', 'PENDAPATAN SKPD PER TAHUN');
+            $sheet->mergeCells('A2:G2')->setCellValue('A2', $header['nama_opd']);
+            $sheet->mergeCells('A3:G3')->setCellValue('A3', 'Sumber: RKA awal pada tahun yang tercantum.');
+            $sheet->fromArray(['TAHUN','KODE REKENING','URAIAN','VOLUME','SATUAN','TARIF','JUMLAH'], null, 'A4', true);
+            $row = 5;
+            foreach ($revenue as $item) {
+                $sheet->fromArray([(int)$item['tahun'],(string)$item['kd_akun'],null,(float)$item['volume'],
+                    $item['satuan'],(float)$item['tarif'],(float)$item['jumlah']], null, "A$row", true);
+                $sheet->setCellValueExplicit("C$row", $item['uraian'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                $revenueRows[(int)$item['tahun']][] = $row++;
+            }
+            $this->style($sheet, 'G', $row, 'A4:G4');
+            $sheet->getStyle('F5:G'.($row - 1))->getNumberFormat()->setFormatCode('#,##0.00');
+        }
+
+        $row = 5;
+        foreach (['G','I','K','M','O'] as $offset => $column) {
+            $year = $start + $offset;
+            if (!$start || $year > $end) break;
+            $refs = array_map(static fn($detail) => "'TC-27 Program Pendanaan'!".$column.$detail, $fundingRows);
+            $pagu = $refs ? '='.implode('+', array_map(static fn($chunk) => 'SUM('.implode(',', $chunk).')', array_chunk($refs, 255))) : '=0';
+            $summary->fromArray([$year, $pagu], null, "A$row", true);
+            if (isset($revenueRows[$year])) {
+                $yearRows = $revenueRows[$year];
+                $first = $yearRows[0];
+                $last = $yearRows[count($yearRows)-1];
+                $summary->setCellValue("C$row", "=SUM('Pendapatan'!G$first:G$last)");
+            }
+            $row++;
+        }
+        if ($row === 5) $summary->setCellValue('A5', 'Periode Renstra belum tersedia.');
+        $this->style($summary, 'C', max(6, $row), 'A4:C4');
+        $summary->getColumnDimension('C')->setWidth(32);
+        $summary->getStyle('B5:C'.max(5, $row-1))->getNumberFormat()->setFormatCode('#,##0.00');
+    }
+
     private function style($sheet,string $last,int $row,string $header):void{$sheet->getStyle('A1:'.$last.'1')->getFont()->setBold(true)->setSize(13)->getColor()->setARGB('FFFFFFFF');$sheet->getStyle('A1:'.$last.'1')->getFill()->setFillType('solid')->getStartColor()->setARGB('FF174A68');$sheet->getStyle($header)->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');$sheet->getStyle($header)->getFill()->setFillType('solid')->getStartColor()->setARGB('FF2185D0');$start=(int)filter_var(explode(':',$header)[0],FILTER_SANITIZE_NUMBER_INT);$sheet->getStyle('A'.$start.':'.$last.max($start,$row-1))->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);$sheet->getStyle('A1:'.$last.max(1,$row-1))->getAlignment()->setVertical(Alignment::VERTICAL_TOP)->setWrapText(true);$sheet->freezePane('A'.($start+1));$sheet->getColumnDimension('A')->setWidth(18);$sheet->getColumnDimension('B')->setWidth(45);for($i=3;$i<=\PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($last);$i++)$sheet->getColumnDimension(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i))->setWidth(16);PageSetupService::applyExcel($sheet,PageSetupService::current($this->user),'L');}
 }

@@ -4,7 +4,7 @@ require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/KontrakRealisasiService.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
-require_once __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php';
+require_once __DIR__ . '/TableRowsPdf.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -384,7 +384,7 @@ class LaporanKeuanganService
 
   private function exportPdf(string $report, array $data): string
   {
-    $pdf = new TCPDF($report === 'lra' ? 'L' : 'P', 'mm', 'A4', true, 'UTF-8');
+    $pdf = new TableRowsPdf($report === 'lra' ? 'L' : 'P', 'mm', 'A4', true, 'UTF-8');
     $pdf->SetCreator('seSendok');
     $pdf->SetTitle(['lra' => 'Kertas Kerja LRA', 'neraca' => 'Kertas Kerja Neraca', 'calk' => 'Kertas Kerja CaLK'][$report]);
     $pdf->SetMargins(15, 15, 15);
