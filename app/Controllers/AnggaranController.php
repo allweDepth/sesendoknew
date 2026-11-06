@@ -42,6 +42,27 @@ class AnggaranController extends Controller
 
     public function groups(): void { $this->documentJson('groups'); }
     public function details(): void { $this->documentJson('details'); }
+    public function subActivityMetadata(): void
+    {
+        header('Content-Type: application/json;charset=UTF-8');
+        if (!Auth::check()) { echo JsonResponse::error('Unauthorized',401); return; }
+        require_once __DIR__.'/../Services/BudgetWorkspaceService.php';
+        try {
+            $user = Auth::scopedUser();
+            if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
+            $service = new BudgetWorkspaceService($user,(string)($_REQUEST['tbl'] ?? ''));
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $payload = json_decode((string)($_POST['payload'] ?? ''), true, 512, JSON_THROW_ON_ERROR);
+                if (!is_array($payload)) throw new InvalidArgumentException('Data formulir tidak valid.');
+                $service->save((string)($_POST['kode'] ?? ''),(string)($_POST['mode'] ?? ''),$payload);
+                echo JsonResponse::success('Metadata anggaran tersimpan');
+                return;
+            }
+            echo JsonResponse::success('Metadata anggaran dimuat', [], $service->read((string)($_GET['kode'] ?? '')));
+        } catch (Throwable $error) {
+            echo JsonResponse::error($error->getMessage(),400);
+        }
+    }
     public function approval():void
     {
         header('Content-Type: application/json;charset=UTF-8');
@@ -57,14 +78,28 @@ class AnggaranController extends Controller
         // Read-only document requests must not block navigation/status requests on the session lock.
         $user = Auth::scopedUser();
         if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
-        try{$service=new AnggaranDocumentService($user);$data=$action==='groups'?$service->groups($_GET['tbl']??''):$service->details($_GET['tbl']??'',$_GET['kd_sub_keg']??'');echo JsonResponse::success('Data dokumen berhasil dimuat',[],$data);}catch(Throwable $e){echo JsonResponse::error($e->getMessage(),400);}
+        try {
+            $service = new AnggaranDocumentService($user);
+            $document = (string)($_GET['tbl'] ?? '');
+            $workspace = $action === 'groups' && !empty($_GET['workspace'])
+                && in_array($document,['renja','rka','dpa','renja_p','rka_p','dppa'],true);
+            $data = match (true) {
+                $workspace => $service->workspaceGroups($document),
+                $action === 'groups' => $service->groups($document),
+                default => $service->details($document,(string)($_GET['kd_sub_keg'] ?? '')),
+            };
+            $meta = $workspace ? ['pagu_maksimal'=>$service->workspacePaguLimit($document)] : [];
+            echo JsonResponse::success('Data dokumen berhasil dimuat',$meta,$data);
+        } catch (Throwable $e) {
+            echo JsonResponse::error($e->getMessage(),400);
+        }
     }
 
     public function exportPdf(): void
     {
         try {
             if (!Auth::check()) throw new RuntimeException('Sesi login tidak valid');
-            $logical=(string)($_GET['tbl']??'');$pdf=(new AnggaranDocumentService(Auth::scopedUser()))->exportRegulatoryPdf($logical);
+            $logical=(string)($_GET['tbl']??'');$pdf=(new AnggaranDocumentService(Auth::scopedUser()))->exportRegulatoryPdf($logical,isset($_GET['kd_sub_keg'])?(string)$_GET['kd_sub_keg']:null);
             header('Content-Type: application/pdf');header('Content-Disposition: attachment; filename="'.$logical.'-per-sub-kegiatan.pdf"');echo $pdf;
         } catch (Throwable $e) { http_response_code(400); echo $e->getMessage(); }
         exit;

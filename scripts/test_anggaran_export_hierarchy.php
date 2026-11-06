@@ -19,9 +19,14 @@ function expectHierarchy(bool $ok,string $message):void{global$checks;if(!$ok)th
 foreach(['renja','rka','dpa','renja_p','rka_p','dppa']as$logical){
     $change=in_array($logical,['renja_p','rka_p','dppa'],true);
     $file=$svc->exportExcel($logical);$book=\PhpOffice\PhpSpreadsheet\IOFactory::load($file);
-    expectHierarchy($book->getSheetCount()===3,"$logical: both sub-activities and recap exported");
-    $recap=$book->getSheet(0);
-    expectHierarchy($recap->getTitle()==='Rekapitulasi',"$logical: recap is first");
+    $hasSkpd=$logical==='rka';
+    expectHierarchy($book->getSheetCount()===($hasSkpd?5:3),"$logical: expected sheets exported");
+    $recap=$book->getSheet($hasSkpd?2:0);
+    expectHierarchy($recap->getTitle()==='Rekapitulasi',"$logical: expenditure recap is present");
+    if($hasSkpd){
+        expectHierarchy($book->getSheet(0)->getTitle()==='Rekapitulasi SKPD',"$logical: SKPD recap is first");
+        expectHierarchy($book->getSheet(1)->getTitle()==='Pendapatan',"$logical: revenue sheet is present");
+    }
     $recapRows=[];
     $grandRow=$recap->getHighestDataRow();
     $recapColumn=$change?'D':'C';
@@ -33,7 +38,7 @@ foreach(['renja','rka','dpa','renja_p','rka_p','dppa']as$logical){
     $grandTotal=0;
     $sample=null;
     $expectedRecap=[];
-    foreach(array_slice($book->getAllSheets(),1)as$sheet){
+    foreach(array_slice($book->getAllSheets(),$hasSkpd?3:1)as$sheet){
         $afterColumn=$change?'L':'G';
         $code=$sheet->getTitle();
         expectHierarchy(isset($recapRows[$code]),"$logical: sub-activity appears in recap");
@@ -81,6 +86,15 @@ foreach(['renja','rka','dpa','renja_p','rka_p','dppa']as$logical){
     }
     $grandCell=$recapColumn.$grandRow;
     expectHierarchy($recap->getCell($grandCell)->isFormula()&&abs($recap->getCell($grandCell)->getCalculatedValue()-$grandTotal)<.01,"$logical: recap grand total");
+    if($hasSkpd){
+        $skpd=$book->getSheet(0);
+        for($r=6;$r<=$skpd->getHighestDataRow();$r++){
+            if($skpd->getCell("B$r")->getValue()!=='JUMLAH BELANJA DENGAN RINCIAN')continue;
+            expectHierarchy(abs($skpd->getCell("C$r")->getCalculatedValue()-$grandTotal)<.01,"$logical: SKPD total matches expense recap");
+            break;
+        }
+        expectHierarchy($r<=$skpd->getHighestDataRow()," $logical: SKPD summary contains the expense total");
+    }
     [$sampleSheet,$input,$sheetTotal,$recapSubtotal]=$sample;
     $previous=$sampleSheet->getCell($input)->getValue();
     $previousSubtotal=$recap->getCell($recapSubtotal)->getCalculatedValue();

@@ -40,7 +40,7 @@ class ModernTableResizer {
 	enhanceAll() {
 		this.separatePagination();
 		this.root.querySelectorAll("table").forEach((table, index) => {
-			if (table.closest(".ui.form, .document-preview, .doc-editor") || !table.tHead || !table.tBodies.length) return;
+			if (table.matches("[data-fixed-columns]") || table.closest(".ui.form, .document-preview, .doc-editor") || !table.tHead || !table.tBodies.length) return;
 			table.classList.add("modern-data-table", "resizable-data-table");
 			if (!table.dataset.resizeKey) table.dataset.resizeKey = table.dataset.managedTable === "asn" ? "asn-name-first-v2" : table.dataset.managedTable || table.dataset.table || table.id || `table-${index}`;
 			const saved = this.readWidths(table);

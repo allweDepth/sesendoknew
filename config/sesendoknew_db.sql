@@ -5307,6 +5307,38 @@ COMMIT;
 SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 
 --
+-- Table structure for table `anggaran_metadata_neo`
+--
+
+DROP TABLE IF EXISTS `anggaran_metadata_neo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `anggaran_metadata_neo` (
+  `kd_wilayah` varchar(60) NOT NULL,
+  `kd_opd` varchar(60) NOT NULL,
+  `tahun` year(4) NOT NULL,
+  `dokumen` varchar(12) NOT NULL,
+  `kode` varchar(50) NOT NULL,
+  `data_json` longtext NOT NULL CHECK (json_valid(`data_json`)),
+  `username_update` varchar(100) NOT NULL,
+  `tgl_update` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`kd_wilayah`,`kd_opd`,`tahun`,`dokumen`,`kode`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `anggaran_metadata_neo`
+--
+
+SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
+LOCK TABLES `anggaran_metadata_neo` WRITE;
+/*!40000 ALTER TABLE `anggaran_metadata_neo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `anggaran_metadata_neo` ENABLE KEYS */;
+UNLOCK TABLES;
+COMMIT;
+SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
+
+--
 -- Table structure for table `anggaran_pengesahan_neo`
 --
 
@@ -9706,7 +9738,7 @@ SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
 LOCK TABLES `auth_rate_limits` WRITE;
 /*!40000 ALTER TABLE `auth_rate_limits` DISABLE KEYS */;
 INSERT INTO `auth_rate_limits` VALUES
-('549f23efad7d30949c74c9b0b95c53e76b6040881d28f56cb44eef410391416f',1,1793940680);
+('549f23efad7d30949c74c9b0b95c53e76b6040881d28f56cb44eef410391416f',1,1793943903);
 /*!40000 ALTER TABLE `auth_rate_limits` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;
@@ -244800,4 +244832,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-11-06 12:52:34
+-- Dump completed on 2026-11-06 13:31:25

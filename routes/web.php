@@ -318,5 +318,6 @@ return [
   '/anggaran/tapd/save' => ['AnggaranController', 'tapdSave'],
   '/anggaran/groups'       => ['AnggaranController', 'groups'],
   '/anggaran/details'      => ['AnggaranController', 'details'],
+  '/anggaran/sub-kegiatan-metadata' => ['AnggaranController', 'subActivityMetadata'],
   '/anggaran/approval'     => ['AnggaranController', 'approval'],
 ];

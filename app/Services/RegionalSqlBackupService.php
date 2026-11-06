@@ -6,7 +6,7 @@ final class RegionalSqlBackupService
 {
     private const SCOPED_TABLES = [
         'absensi_pegawai_neo', 'akun_dokumen_neo', 'anggaran_approval_log_neo', 'anggaran_pengesahan_neo',
-        'anggaran_perubahan_template', 'anggaran_template', 'anggaran_workflow_log', 'batas_pagu_opd_neo',
+        'anggaran_metadata_neo', 'anggaran_perubahan_template', 'anggaran_template', 'anggaran_workflow_log', 'batas_pagu_opd_neo',
         'cuti_pegawai_neo', 'daftar_paket_neo', 'daftar_realisasi_neo', 'daftar_realisasi_transaksi_neo',
         'daftar_uraian_paket', 'db_asn_pemda_neo', 'dokumen_pegawai_neo', 'dokumen_pengadaan_neo',
         'dpa_neo', 'dppa_neo', 'evaluasi_renja_neo', 'evaluasi_renstra_neo', 'group_rekap_akun', 'group_sub_kegiatan',

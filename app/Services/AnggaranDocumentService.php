@@ -14,8 +14,28 @@ class AnggaranDocumentService
     public function __construct(array $user){$this->db=DB::getInstance();$this->user=Auth::scopedUser() ?: $user;}
     private function assertCanWrite():void{if(in_array($this->user['type_user']??'viewer',['tapd','viewer'],true))throw new RuntimeException('Role ini hanya memiliki akses baca pada dokumen anggaran');}
     private function table(string $logical):string{if(!isset(self::TABLES[$logical]))throw new InvalidArgumentException('Dokumen anggaran tidak valid');return self::TABLES[$logical];}
-    private function scope(string $alias='a'):array{$w=$this->user['kd_wilayah']??'';$o=$this->user['kd_opd']??'';$y=(int)($this->user['tahun']??0);if(!$w||!$y)throw new RuntimeException('Scope pengguna tidak lengkap');$sql="$alias.kd_wilayah=? AND $alias.tahun=? AND $alias.is_deleted=0";$p=[$w,$y];if($o&&$o!=='0'){$sql.=" AND $alias.kd_opd=?";$p[]=$o;}return[$sql,$p];}
+    private function scope(string $alias='a', bool $softDelete=true):array{$w=$this->user['kd_wilayah']??'';$o=$this->user['kd_opd']??'';$y=(int)($this->user['tahun']??0);if(!$w||!$y)throw new RuntimeException('Scope pengguna tidak lengkap');$sql="$alias.kd_wilayah=? AND $alias.tahun=?";if($softDelete)$sql.=" AND $alias.is_deleted=0";$p=[$w,$y];if($o&&$o!=='0'){$sql.=" AND $alias.kd_opd=?";$p[]=$o;}return[$sql,$p];}
     public function groups(string $logical):array
+    {
+        return $this->groupRows($logical, false);
+    }
+
+    public function workspaceGroups(string $logical): array
+    {
+        return $this->groupRows($logical, true);
+    }
+
+    public function workspacePaguLimit(string $logical): ?string
+    {
+        [$scope,$params] = $this->scope('p');
+        $limit = $this->db->query(
+            "SELECT SUM(pagu_maksimal) FROM batas_pagu_opd_neo p WHERE $scope AND dokumen=?",
+            [...$params,$logical]
+        )->fetchColumn();
+        return $limit === null || $limit === false ? null : (string)$limit;
+    }
+
+    private function groupRows(string $logical, bool $workspace): array
     {
         $table = $this->table($logical);
         [$scope, $params] = $this->scope();
@@ -25,8 +45,27 @@ class AnggaranDocumentService
         // thousands of detail rows to converted reference codes prevented index use.
         $rows = $this->db->query("SELECT a.kd_sub_keg, MAX($description) nama_sub_kegiatan,
             COUNT(*) jumlah_uraian, COALESCE(SUM($amount),0) total,
+            COALESCE(SUM(CASE WHEN a.setujui=1 THEN $amount ELSE 0 END),0) pagu_disetujui,
             MAX(a.setujui) setujui, MAX(a.kunci) kunci
             FROM `$table` a WHERE $scope GROUP BY a.kd_sub_keg ORDER BY a.kd_sub_keg", $params)->fetchAll();
+        if ($workspace && in_array($logical, ['renja','rka','renja_p','rka_p'], true)) {
+            [$scope,$params] = $this->scope('p');
+            $change = $this->isChange($logical);
+            $pagu = $change ? 'jumlah_pagu_p' : 'jumlah_pagu';
+            $planned = $this->db->query(
+                "SELECT kd_sub_keg,MAX(uraian) nama_sub_kegiatan,SUM($pagu) pagu
+                 FROM sub_keg_renja_neo p WHERE $scope AND $pagu IS NOT NULL GROUP BY kd_sub_keg", $params
+            )->fetchAll();
+            $rows = array_column($rows, null, 'kd_sub_keg');
+            foreach ($planned as $item) {
+                $code = $item['kd_sub_keg'];
+                if (!$change) $rows[$code] ??= ['kd_sub_keg'=>$code,'nama_sub_kegiatan'=>$item['nama_sub_kegiatan'],
+                    'jumlah_uraian'=>0,'total'=>0,'setujui'=>0,'kunci'=>0];
+                if (isset($rows[$code])) $rows[$code]['pagu'] = $item['pagu'];
+            }
+            ksort($rows, SORT_STRING);
+            $rows = array_values($rows);
+        }
         if (!$rows) return [];
 
         $codes = [];
@@ -264,9 +303,14 @@ class AnggaranDocumentService
         $html.='<tr style="font-weight:bold"><td colspan="'.(count($widths)-1).'">JUMLAH BELANJA</td><td width="'.$widths[array_key_last($widths)].'%" align="right">'.$this->money($total).'</td></tr></table>';$pdf->writeHTML($html,true,false,true,false,'');return$pdf->Output('','S');
     }
 
-    public function exportRegulatoryPdf(string $logical):string
+    public function exportRegulatoryPdf(string $logical, ?string $sub = null):string
     {
-        $groups=$this->groups($logical);$change=$this->isChange($logical);require_once __DIR__.'/../../vendor/tecnickcom/tcpdf/tcpdf.php';
+        $groups=$this->groups($logical);
+        if ($sub !== null) {
+            $groups = array_values(array_filter($groups, fn($group) => $group['kd_sub_keg'] === $sub));
+            if (!$groups) throw new InvalidArgumentException('Subkegiatan tidak ditemukan dalam lingkup aktif.');
+        }
+        $change=$this->isChange($logical);require_once __DIR__.'/../../vendor/tecnickcom/tcpdf/tcpdf.php';
         $pdf=PageSetupService::createPdf(PageSetupService::current($this->user),$change?'L':'P');$pdf->SetMargins(7,7,7);$pdf->SetAutoPageBreak(true,10);PageSetupService::applyPdf($pdf,PageSetupService::current($this->user),[7,7,7,10]);$pdf->SetFont('helvetica','',6.4);
         if(!$groups){$pdf->AddPage();$pdf->Cell(0,8,'TIDAK ADA DATA DALAM LINGKUP PENGGUNA',0,1,'C');return$pdf->Output('','S');}
         foreach($groups as $group){$details=$this->details($logical,(string)$group['kd_sub_keg']);$pdf->AddPage();$label=$this->documentLabel($logical);$heading=$change?'DOKUMEN PELAKSANAAN PERGESERAN ANGGARAN':'DOKUMEN PELAKSANAAN ANGGARAN';
@@ -304,7 +348,153 @@ class AnggaranDocumentService
             $first = $last = $row;
         }
         $ranges[] = $column.$first.($last === $first ? '' : ':'.$column.$last);
-        return '='.implode('+', array_map(fn($chunk) => 'SUM('.implode(',', $chunk).')', array_chunk($ranges, 255)));
+        return $this->excelSumReferences($ranges);
+    }
+
+    private function excelSumReferences(array $references): string
+    {
+        if (!$references) return '=0';
+        return '='.implode('+', array_map(fn($chunk) => 'SUM('.implode(',', $chunk).')', array_chunk($references, 255)));
+    }
+
+
+
+    private function rkaRevenueRows(): array
+    {
+        // Databases set up before the RKA Pendapatan import can still export RKA.
+        if (!$this->db->query("SHOW TABLES LIKE 'rka\_pendapatan\_neo'")->fetchColumn()) return [];
+        [$scope, $params] = $this->scope('p', false);
+        return $this->db->query(
+            "SELECT kd_opd,kd_akun,uraian,spesifikasi,volume,satuan,tarif,jumlah
+             FROM rka_pendapatan_neo p WHERE $scope ORDER BY kd_akun,kd_opd,id", $params
+        )->fetchAll();
+    }
+
+    private function writeRkaRevenueSheet(Spreadsheet $book, array $revenue, string $organization): array
+    {
+        $sheet = $book->createSheet(1)->setTitle('Pendapatan');
+        $sheet->mergeCells('A1:F1')->setCellValue('A1', 'RINCIAN ANGGARAN PENDAPATAN SKPD');
+        $sheet->mergeCells('A2:F2')->setCellValue('A2', $organization);
+        $sheet->mergeCells('A3:F3')->setCellValue('A3', 'Tahun Anggaran '.($this->user['tahun'] ?? ''));
+        $sheet->fromArray(['KODE REKENING','URAIAN','VOLUME','SATUAN','TARIF','JUMLAH'], null, 'A5', true);
+        $row = 6;
+        $printed = $accounts = $children = $rootRows = [];
+        foreach ($revenue as $item) {
+            $account = $item['kd_akun'];
+            foreach ($this->newAccountHierarchy($account, $printed) as $depth => $node) {
+                $code = $node['kode'];
+                $accounts[$code] = ['row' => $row, 'label' => $node['uraian']];
+                if ($depth === 0) {
+                    $rootRows[] = $row;
+                } else {
+                    $parent = substr($code, 0, strrpos($code, '.'));
+                    $children[$accounts[$parent]['row']][] = $row;
+                }
+                $sheet->fromArray([$code, $node['uraian']], null, "A$row", true);
+                $sheet->mergeCells("B$row:E$row");
+                $sheet->getStyle("A$row:F$row")->getFont()->setBold(true);
+                $sheet->getStyle("A$row:F$row")->getFill()->setFillType('solid')
+                    ->getStartColor()->setARGB($depth < 2 ? 'FFD9EAF7' : 'FFEEF5FA');
+                $row++;
+            }
+            $children[$accounts[$account]['row']][] = $row;
+            $label = $item['uraian'];
+            if ($item['spesifikasi'] && $item['spesifikasi'] !== $label) $label .= "\n".$item['spesifikasi'];
+            if (empty($this->user['kd_opd']) || $this->user['kd_opd'] === '0') $label .= "\nOPD ".$item['kd_opd'];
+            $sheet->setCellValueExplicit("B$row", $label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $volume = (float)$item['volume'];
+            $tariff = (float)$item['tarif'];
+            $amount = (float)$item['jumlah'];
+            $formula = abs(round($volume * $tariff, 4) - $amount) < 0.00005 ? "=ROUND(C$row*E$row,4)" : $amount;
+            $sheet->fromArray([$volume, $item['satuan'], $tariff, $formula], null, "C$row", true);
+            $row++;
+        }
+        if (!$revenue) {
+            $sheet->mergeCells('A6:F6')->setCellValue('A6', 'Data pendapatan belum tersedia untuk lingkup ini.');
+        } else {
+            foreach ($children as $accountRow => $directRows) {
+                $sheet->setCellValue("F$accountRow", $this->excelSumRows('F', $directRows));
+            }
+            $sheet->setCellValue("B$row", 'JUMLAH PENDAPATAN');
+            $sheet->setCellValue("F$row", $this->excelSumRows('F', $rootRows));
+            $sheet->getStyle("A$row:F$row")->getFont()->setBold(true);
+            $sheet->getStyle("E6:F$row")->getNumberFormat()->setFormatCode('#,##0.00');
+        }
+        $sheet->freezePane('A6');
+        return [$accounts, $revenue ? $row : null];
+    }
+
+    private function writeRkaSkpdSummary(Spreadsheet $book, array $revenue, array $expense, ?int $expenseTotal): void
+    {
+        $organization = 'Organisasi '.(!empty($this->user['kd_opd']) && $this->user['kd_opd'] !== '0'
+            ? ($this->user['nama_opd'] ?? $this->user['nama_org'] ?? $this->user['kd_opd'])
+            : 'seluruh OPD dalam wilayah '.$this->user['kd_wilayah']);
+        $sheet = $book->createSheet(0)->setTitle('Rekapitulasi SKPD');
+        [$revenueAccounts, $revenueTotal] = $this->writeRkaRevenueSheet($book, $revenue, $organization);
+
+        $sheet->mergeCells('A1:C1')->setCellValue('A1', 'RINGKASAN ANGGARAN PENDAPATAN DAN BELANJA SKPD');
+        $sheet->mergeCells('A2:C2')->setCellValue('A2', $organization);
+        $sheet->mergeCells('A3:C3')->setCellValue('A3', 'Tahun Anggaran '.($this->user['tahun'] ?? ''));
+        $sheet->fromArray(['KODE REKENING','URAIAN','JUMLAH (RP)'], null, 'A5', true);
+
+        $row = 6;
+        foreach ($revenueAccounts as $code => $node) {
+            if (substr_count((string)$code, '.') > 2) continue;
+            $sheet->fromArray([(string)$code, $node['label'], "='Pendapatan'!F".$node['row']], null, "A$row", true);
+            $row++;
+        }
+        if (!$revenueTotal) {
+            $sheet->setCellValue("B$row", 'Data pendapatan belum tersedia');
+            $row++;
+        }
+        $incomeRow = $row++;
+        $sheet->setCellValue("B$incomeRow", 'JUMLAH PENDAPATAN');
+        if ($revenueTotal) $sheet->setCellValue("C$incomeRow", "='Pendapatan'!F$revenueTotal");
+
+        $row++;
+        $rootFormula = $expenseTotal ? "='Rekapitulasi'!C$expenseTotal" : '=0';
+        $sheet->fromArray(['5', 'BELANJA DAERAH', $rootFormula], null, "A$row", true);
+        $root = $row++;
+        ksort($expense, SORT_STRING);
+        foreach ($expense as $code => $node) {
+            $sheet->fromArray([$code, $node['label'], $this->excelSumReferences($node['references'])], null, "A$row", true);
+            $row++;
+        }
+        $expenseRow = $row++;
+        $sheet->fromArray([null, 'JUMLAH BELANJA DENGAN RINCIAN', "=C$root"], null, "A$expenseRow", true);
+
+        [$scope, $params] = $this->scope('p');
+        $pending = $this->db->query(
+            "SELECT p.kd_sub_keg,p.uraian,p.jumlah_pagu FROM sub_keg_renja_neo p
+             WHERE $scope AND p.jumlah_rincian IS NULL AND p.jumlah_pagu>0
+             AND NOT EXISTS (
+                 SELECT 1 FROM rka_neo r WHERE r.kd_wilayah=p.kd_wilayah AND r.kd_opd=p.kd_opd
+                   AND r.tahun=p.tahun AND r.kd_sub_keg=p.kd_sub_keg AND r.is_deleted=0
+             ) ORDER BY p.kd_sub_keg", $params
+        )->fetchAll();
+        $budgetRow = $expenseRow;
+        if ($pending) {
+            $row++;
+            $sheet->setCellValue("B$row", 'PAGU SUBKEGIATAN TANPA RINCIAN RKA');
+            $sheet->getStyle("A$row:C$row")->getFont()->setBold(true);
+            $firstPending = ++$row;
+            foreach ($pending as $item) {
+                $sheet->fromArray([$item['kd_sub_keg'], $item['uraian'], (float)$item['jumlah_pagu']], null, "A$row", true);
+                $row++;
+            }
+            $lastPending = $row - 1;
+            $budgetRow = $row++;
+            $sheet->fromArray([null, 'JUMLAH BELANJA TERMASUK PAGU TANPA RINCIAN', "=SUM(C$expenseRow,C$firstPending:C$lastPending)"], null, "A$budgetRow", true);
+        }
+        $sheet->setCellValue("B$row", 'SURPLUS / (DEFISIT)');
+        if ($revenueTotal) $sheet->setCellValue("C$row", "=C$incomeRow-C$budgetRow");
+
+        foreach (array_unique([$incomeRow, $root, $expenseRow, $budgetRow, $row]) as $totalRow) {
+            $sheet->getStyle("A$totalRow:C$totalRow")->getFont()->setBold(true);
+            $sheet->getStyle("A$totalRow:C$totalRow")->getFill()->setFillType('solid')->getStartColor()->setARGB('FFD9EAF7');
+        }
+        $sheet->getStyle("C6:C$row")->getNumberFormat()->setFormatCode('#,##0.00;(#,##0.00)');
+        $sheet->freezePane('A6');
     }
 
     public function exportExcel(string $logical): string
@@ -312,6 +502,9 @@ class AnggaranDocumentService
         if (str_starts_with($logical, 'rkpd')) return $this->exportRkpdExcel($logical);
 
         $groups = $this->groups($logical);
+        $revenue = $logical === 'rka' ? $this->rkaRevenueRows() : [];
+        $includeSkpd = $logical === 'rka' && ($groups || $revenue);
+        $expenseSummary = [];
         $change = $this->isChange($logical);
         $book = new Spreadsheet();
         $recap = $book->getActiveSheet();
@@ -331,7 +524,7 @@ class AnggaranDocumentService
             $recap->setCellValue('A1', 'Tidak ada data dalam lingkup pengguna.');
         }
 
-        $used = ['rekapitulasi' => true];
+        $used = ['rekapitulasi' => true, 'rekapitulasi skpd' => true, 'pendapatan' => true];
         foreach ($groups as $index => $group) {
             $code = (string)$group['kd_sub_keg'];
             $base = str_replace(['\\','/','?','*','[',']',':'], '-', mb_substr($code, 0, 25)) ?: 'SubKegiatan-'.($index + 1);
@@ -357,6 +550,7 @@ class AnggaranDocumentService
             $row = $head + ($change ? 2 : 1);
             $printedAccounts = [];
             $accountRows = [];
+            $summaryRows = [];
             $children = [];
             $rootRows = [];
             foreach ($details as $detail) {
@@ -364,6 +558,10 @@ class AnggaranDocumentService
                 foreach ($this->newAccountHierarchy($account, $printedAccounts) as $depth => $node) {
                     $nodeCode = $node['kode'];
                     $accountRows[$nodeCode] = $row;
+                    if ($includeSkpd && $depth > 0 && $depth <= 2 && str_starts_with($nodeCode, '5.')) {
+                        $summaryRows[$nodeCode] = $row;
+                        $expenseSummary[$nodeCode]['label'] = $node['uraian'];
+                    }
                     if ($depth === 0) {
                         $rootRows[] = $row;
                     } else {
@@ -408,6 +606,9 @@ class AnggaranDocumentService
 
             $belanjaRow = $accountRows['5'] ?? $row;
             $sheetReference = "'".str_replace("'", "''", $sheet->getTitle())."'!";
+            foreach ($summaryRows as $account => $accountRow) {
+                $expenseSummary[$account]['references'][] = $sheetReference.'G'.$accountRow;
+            }
             $parentRow = 0;
             $parts = explode('.', $code);
             $depth = 0;
@@ -455,6 +656,7 @@ class AnggaranDocumentService
             $recap->freezePane('A4');
         }
 
+        if ($includeSkpd) $this->writeRkaSkpdSummary($book, $revenue, $expenseSummary, $groups ? $recapRow : null);
         $book->setActiveSheetIndex(0);
         ExcelPresentationService::apply($book, $this->user);
         if ($groups) $recap->getColumnDimension('A')->setWidth(34);
