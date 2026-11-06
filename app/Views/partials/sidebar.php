@@ -60,6 +60,7 @@ $group = static function (string $title, string $icon, array $items): void {
     <a class="item" href="/pengaturan" data-spa="client" data-title="Pengaturan"><i class="toolbox icon"></i> Pengaturan</a>
     <?php if ($manager) $group('Berita', 'newspaper', [['Kelola Konten', '/halaman_berita', 'Berita/Kelola Konten']]); ?>
     <?php if ($role === 'super_admin'): ?><a class="item" href="/reset_tabel" data-spa="client" data-title="Reset Tabel"><i class="erase icon"></i> Reset Tabel</a><a class="item" href="/user_pemda" data-spa="server" data-title="User Pemda"><i class="users icon"></i> User Pemda</a><?php endif; ?>
+    <?php if ($role === 'admin_wilayah'): ?><a class="item" href="/reset_tabel" data-spa="server" data-title="Backup SQL Wilayah"><i class="download icon"></i> Backup SQL Wilayah</a><?php endif; ?>
     <?php $group('Pesan', 'comments outline', [['Buka Messenger', '/wallchat', 'Pesan/Messenger']]);
     $group('Profil', 'user', [['Pengaturan Profil', '/profil', 'Profil/Pengaturan']]); ?>
   </div>

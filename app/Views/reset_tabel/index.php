@@ -1,5 +1,20 @@
 <?php
 
+if (isset($backupRegion)) {
+?>
+<div class="ui container">
+    <div class="ui segment">
+        <h3 class="ui header"><i class="download icon"></i> Backup SQL Wilayah</h3>
+        <p>Cadangan data wilayah <?= htmlspecialchars($backupRegion, ENT_QUOTES, 'UTF-8') ?> mencakup semua OPD dan tahun.</p>
+        <a class="ui primary button" href="<?= htmlspecialchars(app_url('/reset_tabel/backup'), ENT_QUOTES, 'UTF-8') ?>" download>
+            <i class="download icon"></i> Unduh Backup SQL Wilayah
+        </a>
+    </div>
+</div>
+<?php
+    return;
+}
+
 /*
 |--------------------------------------------------------------------------
 | AMBIL TABEL DATABASE

@@ -13,6 +13,8 @@ mariadb-dump --socket="$SESENDOK_DB_SOCKET" -u"$SESENDOK_DB_USER" \
 # Hilangkan akun pembuat lokal dan gunakan collation yang tersedia luas pada
 # MariaDB 10.x/11.x. Ini juga menghindari kerusakan parser VIEW phpMyAdmin.
 perl -0pi -e 's{\/\*!50017 DEFINER=`[^`]+`@`[^`]+`\*\/\s*}{}g; s{\/\*!50013 DEFINER=`[^`]+`@`[^`]+` SQL SECURITY DEFINER \*\/}{\/\*!50013 SQL SECURITY INVOKER \*\/}g; s/utf8mb4_uca1400_ai_ci/utf8mb4_unicode_ci/g' "$SESENDOK_DUMP_FILE"
+# Komentar di dalam isi trigger menutup komentar versi MariaDB sebelum waktunya.
+perl -0pi -e 's{(^DELIMITER ;;\r?\n)/\*!50003 CREATE\*/[ \t]+/\*!50003 (TRIGGER\b.*?)^\*/;;(?=\r?$)}{${1}CREATE ${2};;}gms; s{^CREATE DEFINER=`[^`]+`@`[^`]+` ((?:FUNCTION|PROCEDURE)\b)}{CREATE $1}gm' "$SESENDOK_DUMP_FILE"
 perl -pi -e 's/[ \t]+$//' "$SESENDOK_DUMP_FILE"
 
 echo "Dump portabel dibuat: $SESENDOK_DUMP_FILE"

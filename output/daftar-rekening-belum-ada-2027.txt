@@ -1,0 +1,290 @@
+KODE REKENING STANDAR HARGA 2027 YANG BELUM ADA DI REFERENSI AKTIF
+Kabupaten Pasangkayu (76.01)
+
+Sumber: MariaDB sesendoknew_db, data impor standar harga SIPD 2027.
+Pemeriksaan: setiap kode dibandingkan dengan akun_neo (aktif dan belum dihapus).
+280 kode unik. Belanja 195 operasi dan 85 modal.
+Jumlah entri menghitung komponen standar harga yang mencantumkan kode tersebut.
+Nama contoh adalah nama komponen standar harga, bukan uraian resmi rekening.
+
+Kode rekening            Kategori                Jumlah entri  Contoh komponen standar harga
+5.1.01.99.099.09999      SBU                                1  Belanja Pegawai BLUD
+5.1.02.01.001.00008      SBU, SSH                         155  Benih / Bibit Tanaman
+5.1.02.01.001.00009      SSH                                4  Refill Pemadam
+5.1.02.01.001.00011      SSH                               46  Ayam Petelur
+5.1.02.01.001.00012      SSH                              471   Larvasida (AGATA 1 GR)
+5.1.02.01.001.00014      SSH                                4  Adaptor Kuku Baket
+5.1.02.01.001.00023      SSH                                3  Mata Pisau Dorong
+5.1.02.01.001.00029      SSH                               36  Cartridge Printer
+5.1.02.01.001.00034      SSH                                4  Body Protector
+5.1.02.01.001.00035      SSH                               35  Abon Ikan
+5.1.02.01.001.00037      SSH                              135   Obat Hipertensi, Diuretik
+5.1.02.01.001.00038      SSH                              144   Obat Hipertensi, Diuretik
+5.1.02.01.001.00040      SBU, SSH                         312   Larvasida (AGATA 1 GR)
+5.1.02.01.001.00041      SBU, SSH                           6  Beras
+5.1.02.01.001.00043      SBU, SSH                         379  Abon Ayam
+5.1.02.01.001.00053      SBU, SSH                          99  Abon Ayam
+5.1.02.01.001.00055      SBU                                1  Makanan Bergizi
+5.1.02.01.001.00056      SBU                                7  Beban makanan dan minuman Petugas Covid
+5.1.02.01.001.00058      SBU, SSH                          57  Air Mineral Botol
+5.1.02.01.001.00059      SSH                                8  Pakaian Dinas Harian (PDH) KDH/WKDH
+5.1.02.01.001.00060      SSH                                8  Beban Pakaian Dinas dan Atribut Pimpinan dan Anggota DPRD
+5.1.02.01.001.00062      SSH                                2  Pakaian Pkk
+5.1.02.01.001.00063      SSH                                8  Beban Pakaian Dinas dan Atribut Pimpinan dan Anggota DPRD
+5.1.02.01.001.00068      SSH                                3  Mukenah
+5.1.02.01.001.00070      SSH                                3  Pakaian Olahraga
+5.1.02.01.001.00074      SBU, SSH                           5  baju Tari cendrawasih
+5.1.02.01.001.00075      SSH                                9  Baju Batik
+5.1.02.01.001.00076      SSH                                5  BAJU OLAHRAGA
+5.1.02.01.001.00077      SSH                               13  Jaket Olahraga Paskibraka
+5.1.02.01.001.00078      SSH                                1  Pakaian Safari / Semi Jas
+5.1.02.01.004.00040      SSH                                1  Sapu (Mobil Khusus)
+5.1.02.01.004.00043      SSH                                1  Sapu (Mobil Khusus)
+5.1.02.01.004.00103      SSH                                3  Alat Tanam Jagung
+5.1.02.01.004.00104      SSH                                3  Alat Tanam Jagung
+5.1.02.01.004.00109      SSH                                1  RICE MILLING UNIT (RMU)
+5.1.02.01.004.00116      SSH                                7  Container Box
+5.1.02.01.004.00117      SSH                               46  Baterai AAA
+5.1.02.01.004.00118      SSH                               19  Kursi Besi
+5.1.02.01.004.00120      SSH                              184  Alat Pel Microfiber
+5.1.02.01.004.00122      SSH                              231  Baki Alumunium
+5.1.02.01.004.00123      SSH                               44  Asbak
+5.1.02.01.004.00233      SSH                                1  Kotak P3K
+5.1.02.01.004.00318      SSH                               19  Bed Pingpong
+5.1.02.01.004.00405      SSH                                2  Keyboard + Mouse
+5.1.02.01.004.00451      SSH                                2  BAJU  RESCUE PEMADAM 
+5.1.02.01.004.00515      SSH                                1  Tinta Printer Original
+5.1.02.01.004.00644      SSH                                1  Tinta Printer Original
+5.1.02.01.004.00699      SSH                                7  \tPASANG BARU PASCA BAYAR 3 FASA
+5.1.02.01.004.00710      SSH                              110  Buku Umum
+5.1.02.02.001.00003      SBU                               22  Honorarium Moderator Dan Panitia Pelatihan Tematik Pertanian
+5.1.02.02.001.00005      SBU                                2  HONORARIUM PEMBERI KETERANGAN AHLI/ SAKSI AHLI DAN BERACARA
+5.1.02.02.001.00007      SBU                               26  Belanja Jasa Pegawai Sara
+5.1.02.02.001.00008      SBU                                7  HONORARIUM TIM PENGELOLA TEKNOLOGI INFORMASI / PENGELOLA WEBSITE
+5.1.02.02.001.00009      SBU                                8  Belanja Jasa penyelenggaraan ujian Dinas dan ujian penyesuaian ijazah
+5.1.02.02.001.00010      SBU                                4  HONORARIUM PENULISAN BUTIR SOAL TINGKAT PROVINSI-KABUPATEN ATAU KOTA
+5.1.02.02.001.00011      SBU                                1  Honorarium Penyelenggaraan Kegiatan Pendidikan dan Pelatihan 
+5.1.02.02.001.00012      SBU                                9  HONORARIUM SEKRETARIAT TIM ANGGARAN PEMERINTAH DAERAH
+5.1.02.02.001.00013      SBU                                1  Jasa Guru PAUD
+5.1.02.02.001.00014      SBU                              199  belanja jasa pelayanan tenaga kesehatan Non Kapitasi
+5.1.02.02.001.00015      SBU                               21  Jasa D III Laboratorium
+5.1.02.02.001.00016      SBU                                5  Fasilitator Perumahan
+5.1.02.02.001.00017      SBU                               35  Belanja Jasa Kepala Lingkungan
+5.1.02.02.001.00018      SBU                                4  Biaya Kesejahteraan Pemadam Kebakaran
+5.1.02.02.001.00019      SBU                               10  Jasa Pusat pengendalian Operasional (PUSDALOP)
+5.1.02.02.001.00020      SBU                               10  Belanja Jasa Tenaga Kesejahteraan Sosial Kecamatan (TKSK)
+5.1.02.02.001.00023      SBU                                2  Honorarium Pendamping P2L
+5.1.02.02.001.00025      SBU                               14  Belanja Jasa Koreografer
+5.1.02.02.001.00034      SBU                                1  Jasa Pelayanan Kesehatan
+5.1.02.02.001.00035      SBU                                6  Belanja Jasa Teknisi Mesin dan Instalasi Listrik
+5.1.02.02.001.00036      SBU                                5  Belanja Jasa Audit Laporan Keuangan (BLUD)
+5.1.02.02.001.00037      SBU                                5  Biaya Jasa Juri Lomba Tingkat Desa
+5.1.02.02.001.00038      SBU                                5  Jasa Cukur Rambut Paskibraka
+5.1.02.02.001.00043      SBU                               25  HONORARIUM PENULIS ARTIKEL
+5.1.02.02.001.00045      SBU                                1  Biaya Jasa Kantor
+5.1.02.02.001.00046      SBU                               20  Instalasi Database Server
+5.1.02.02.001.00047      SBU                               15  HONORARIUM PENYELENGGARAAN KEGIATAN PENDIDIKAN DAN PELATIHAN (DIKLAT)
+5.1.02.02.001.00048      SBU                                3  IURAN KEANGGOTAAN ADKASI
+5.1.02.02.001.00049      SBU                                2  Belanja Jasa Laundry Kepala Daerah
+5.1.02.02.001.00050      SBU                              165  Biaya Kalibrasi Alat Penguji Kendaraan
+5.1.02.02.001.00051      SBU                                7  Biaya Jasa Kantor
+5.1.02.02.001.00052      SBU                                2  Jasa Pelayanan Kesehatan
+5.1.02.02.001.00053      SBU                                9  Biaya PNBP Pemeriksaan Tanah
+5.1.02.02.001.00055      SBU, SSH                          19  Belanja Advetorial
+5.1.02.02.001.00059      SSH                               32  Iuran Tv Kabel
+5.1.02.02.001.00060      SBU                               27  Tarif Air PDAM Golongan I1
+5.1.02.02.001.00064      SBU                                1  Pengiriman Sampel SHK
+5.1.02.02.001.00065      SSH                                1  Pemssangan Daya/ KWH 
+5.1.02.02.001.00068      SBU                                1  TARIF DASAR LISTRIK
+5.1.02.02.001.00073      SBU                                1  Jasa Pelayanan Medical Check Up Kesehatan Bupati, Wakil Bupati, Pimpinan dan Anggota DPRD
+5.1.02.02.001.00075      SBU                               14  Insentif  Penginput Data Vaksinasi
+5.1.02.02.001.00081      SBU                               81  Honorarium Kelompok Kerja Pemilihan Pengadaan Barang dan Jasa (KONSTRUKSI)
+5.1.02.02.001.00082      SBU                                2  Honorarium Perangkat Unit Kerja Pengadaan Barang dan Jasa (UKPBJ)
+5.1.02.02.001.00083      SBU                               33  Belanja Jasa PPPK Paruh Waktu
+5.1.02.02.001.00084      SBU                               33  Belanja Jasa PPPK Paruh Waktu
+5.1.02.02.001.00085      SBU                               34  Belanja Jasa PPPK Paruh Waktu
+5.1.02.02.001.00086      SBU                               38  Belanja Jasa Front Office/Operator Non PNS
+5.1.02.02.001.00087      SBU                               59  Belanja Jasa Petugas Pasar
+5.1.02.02.002.00001      SBU                                2  Belanja Iuran Kesehatan Bagi Perangkat Desa
+5.1.02.02.002.00002      SBU                                2  Belanja Asuransi Kesehatan Masyarakat
+5.1.02.02.002.00003      SBU                                1  Iuran Jaminan Kesehatan
+5.1.02.02.002.00004      SBU                                1  Belanja Asuransi Kesehatan Masyarakat
+5.1.02.02.002.00005      SBU                                2  Iuran Jaminan Kesehatan bagi Non ASN
+5.1.02.02.002.00006      SBU                                2  Belanja Iuran Jaminan Kecelakaan Kerja bagi Non ASN
+5.1.02.02.002.00007      SBU                                1  Belanja Iuran Jaminan Kematian bagi Non ASN
+5.1.02.02.002.00012      SBU                                2  Belanja Iuran Jaminan Kecelakaan Kerja bagi Pekerja Rentan Kemiskinan
+5.1.02.02.002.00013      SBU                                2  Beban Iuran Jaminan Kematian Pekerja dilahan kebun sawit
+5.1.02.02.002.00022      SBU                                1  Belanja Iuran Jaminan Kecelakaan Kerja bagi PPPK Paruh Waktu
+5.1.02.02.002.00023      SBU                                1  Belanja Iuran Jaminan Kecelakaan Kerja bagi PPPK Paruh Waktu
+5.1.02.02.002.00024      SBU                                1  Belanja Iuran Jaminan Kecelakaan Kerja bagi PPPK Paruh Waktu
+5.1.02.02.002.00025      SBU                                1  Belanja Iuran Jaminan Kecelakaan Kerja bagi PPPK Paruh Waktu
+5.1.02.02.002.00026      SBU                                1  Belanja Iuran Jaminan Kecelakaan Kerja bagi PPPK Paruh Waktu
+5.1.02.02.002.00030      SBU                                1  Belanja Iuran Jaminan Kematian bagi PPPK Paruh Waktu
+5.1.02.02.002.00031      SBU                                1  Belanja Iuran Jaminan Kematian bagi PPPK Paruh Waktu
+5.1.02.02.002.00032      SBU                                1  Belanja Iuran Jaminan Kematian bagi PPPK Paruh Waktu
+5.1.02.02.002.00033      SBU                                1  Belanja Iuran Jaminan Kematian bagi PPPK Paruh Waktu
+5.1.02.02.002.00034      SBU                                1  Belanja Iuran Jaminan Kematian bagi PPPK Paruh Waktu
+5.1.02.02.004.00003      SBU                                4  Sewa Alat Berat
+5.1.02.02.004.00012      SBU                               32  Sewa Alat Berat
+5.1.02.02.004.00037      SBU                                1  Sewa Kendaraan Bermotor Angkutan Barang
+5.1.02.02.004.00038      SBU                                1  Sewa Kendaraan Operasional Lapangan (Roda 2)
+5.1.02.02.004.00043      SBU                                7  Biaya Realokasi PLTS
+5.1.02.02.004.00052      SBU                                1  Sewa Perahu
+5.1.02.02.004.00117      SBU                               12  Biaya Sewa Peralatan
+5.1.02.02.004.00123      SBU                                1  Sewa TV Pameran Nasional
+5.1.02.02.004.00132      SBU                                4  Biaya Sewa Peralatan
+5.1.02.02.004.00133      SBU                                4  Sewa Drone dan GPS Hand Held 
+5.1.02.02.004.00137      SBU                                1  Sewa Peralatan
+5.1.02.02.004.00409      SBU                                1  Sewa Laptop
+5.1.02.02.004.00411      SBU                                1  Sewa Printer
+5.1.02.02.005.00009      SBU                                3  Biaya Sewa Ruang Rapat/ Pertemuan
+5.1.02.02.005.00041      SBU                                1  Sewa Mess Pemda Jakarta
+5.1.02.02.005.00042      SBU                                8  Asrama Mahasiswa Bekasi
+5.1.02.02.005.00043      SBU                                4  Biaya Sewa Penginapan
+5.1.02.02.005.00049      SBU                                7  Biaya Sewa
+5.1.02.02.005.00050      SBU                                3  Biaya Sewa Kos
+5.1.02.02.008.00019      SBU                                1  Tenaga Pendukung Konstruksi
+5.1.02.02.011.00001      SBU                                3  Beasiswa Tugas Belajar dan Ikatan Dinas (S1)
+5.1.02.02.012.00002      SBU                                1  Uang Harian Kegiatan Rapat Atau Pertemuan Di Luar Kantor FULLDAY/HALFDAY DI DALAM KOTA SULAWESI BARAT
+5.1.02.02.012.00004      SBU                                4  Belanja Pendidikan Penjenjangan Strutural/PIM
+5.1.02.02.013.00009      SBU                                1  Insentif bagi Non ASN atas Pemungutan Pajak Reklame
+5.1.02.02.013.00012      SBU                                1  Insentif bagi Non ASN atas Pemungutan Pajak Air Tanah
+5.1.02.02.013.00013      SBU                                1  Insentif bagi Non ASN atas Pemungutan Pajak Sarang Burung Walet
+5.1.02.02.013.00014      SBU                                1  Insentif bagi Non ASN atas Pemungutan Pajak MBLB
+5.1.02.02.013.00015      SBU                                5  Insentif bagi Non ASN atas Pemungutan Pajak PBB-P2
+5.1.02.02.013.00016      SBU                                1  Insentif bagi Non ASN atas Pemungutan BPHTB
+5.1.02.02.013.00019      SBU                                4  Insentif bagi Non ASN atas Pemungutan Pajak Jasa Kesenian dan Hiburan
+5.1.02.02.013.00020      SBU                                2  Insentif bagi Non ASN atas Pemungutan Opsen PKB
+5.1.02.02.013.00021      SBU                                2  Insentif bagi Non ASN atas Pemungutan Opsen BBNKB
+5.1.02.02.015.00001      SBU                                1  Sewa Zoom
+5.1.02.02.015.00002      SBU                                1  Sewa Zoom
+5.1.02.02.015.00003      SBU                                1  Sewa Zoom
+5.1.02.02.015.00004      SBU                                1  Sewa Zoom
+5.1.02.02.015.00005      SBU, SSH                           4  Google Drive Premium
+5.1.02.03.002.00003      SSH                               10  Adaptor Kuku Baket
+5.1.02.03.002.00035      SBU, SSH                         139  Accu / Aki Kering
+5.1.02.03.002.00036      SSH                              135  Accu / Aki Kering
+5.1.02.03.002.00037      SSH                               84  Aki 
+5.1.02.03.002.00038      SBU, SSH                          69  Aki
+5.1.02.03.002.00039      SBU, SSH                          14  Aki 
+5.1.02.03.002.00040      SSH                               63  Accu / Aki Kering
+5.1.02.03.002.00052      SBU                                1  Biaya Pemeliharaan Kendaraan Dinas Operasional
+5.1.02.03.002.00096      SBU                               15  Jasa Pemeliharaan dan Pendampingan Kalibrasi Alat Uji Kendaraan Bermotor 
+5.1.02.03.002.00120      SSH                                3  Gemuk Criss
+5.1.02.03.002.00205      SBU                                1  Pemeliharaan Alat Kesehatan
+5.1.02.03.002.00404      SBU, SSH                         129  Access Point
+5.1.02.03.002.00407      SSH                              110  Access Point
+5.1.02.03.002.00409      SSH                               89  Cartridge Printer
+5.1.02.03.002.00410      SSH                                9  Access Point
+5.1.02.03.003.00010      ASB, SSH                          31  1 M2 Timunan Halaman Sekolah SD
+5.1.02.03.003.00032      ASB, SBU, SSH                     36  Ballpoint
+5.1.02.03.004.00026      HSPK                              12  Nomalisasi Saluran Zona I
+5.1.02.03.004.00027      HSPK                              12  Nomalisasi Saluran Zona I
+5.1.02.03.004.00035      ASB, SBU                           7  Biaya Bahan Bakar Minyak Kendaraan Dinas Wilayah Kabupaten Pasangkayu - Bambaira
+5.1.02.03.004.00069      HSPK, SBU                         30  Biaya Bahan Bakar Minyak Kendaraan Dinas Wilayah Kabupaten Pasangkayu - Bambaira
+5.1.02.03.004.00071      HSPK                              12  Nomalisasi Saluran Zona I
+5.1.02.03.004.00103      SSH                              177  Bohlam/Balon/Lampu Emergency/Cas
+5.1.02.03.004.00126      SSH                                4  Bohlam/Balon/Lampu LED
+5.1.02.03.006.00005      SBU                                2  Biaya Maintenance Software
+5.1.02.04.001.00004      SBU                               12  Biaya Kegiatan Rapat Atau Pertemuan Di Luar Kantor Setingkat Kepala Daerah atau Eselon I FULLBOARD SULAWESI BARAT
+5.1.02.04.001.00005      SBU                              315  Biaya Kegiatan Rapat Atau Pertemuan Di Luar Kantor Setingkat Kepala Daerah atau Eselon I FULLBOARD ACEH
+5.1.02.05.001.00001      SBU, SSH                          69  Hadiah Lomba
+5.1.02.05.001.00002      SBU                                1  Belanja Penghargaan PNS Berprestasi
+5.1.02.05.001.00003      SBU                                2  Beasiswa Anak Putus Sekolah
+5.1.02.05.002.00001      SBU, SSH                           4  Biaya Fasilitasi Pemberangkatan Umrah (ONU)
+5.1.02.05.002.00002      SBU                                2  Uang Harian Kegiatan Rapat Atau Pertemuan Di Luar Kantor FULLDAY/HALFDAY DI DALAM KOTA SULAWESI BARAT
+5.1.02.89.001.00001      SBU, SSH                          92  Cetak Map (Stop Map)
+5.1.02.89.001.00002      SBU, SSH                          93  Cartridge Printer
+5.1.02.89.002.00001      SBU, SSH                          65  Cartridge Printer
+5.1.02.89.002.00002      SBU, SSH                          97  Cartridge Printer
+5.1.02.89.003.00001      SBU, SSH                          94  Cartridge Printer
+5.1.02.89.003.00002      SBU, SSH                          94  Cartridge Printer
+5.1.02.90.001.00001      SBU, SSH                         159  Biaya Transportasi Darat Ke Bambaira
+5.1.05.05.001.00002      ASB, SBU, SSH                    785  1 M2 Pembangunan APE TK
+5.1.05.05.002.00002      SSH                              378  Abon Ikan
+5.1.05.05.006.00002      ASB, SBU, SSH                    117  Biaya Bahan Bakar Minyak Kendaraan Dinas Wilayah Kabupaten Pasangkayu - Bambaira
+5.2.01.01.001.00001      SBU                                4  Nasi Kotak
+5.2.01.01.001.00004      SBU                               47  Biaya Bahan Bakar Minyak Kendaraan Dinas Dalam Wilayah Sulawesi Barat - Majene
+5.2.02.01.003.00005      SSH                               43  Pompa Air
+5.2.02.01.003.00016      SSH                               17  Alat Penangkap Ikan Ramah Lingkungan (Gill Net)
+5.2.02.02.001.00002      SBU                                1  HONORARIUM PEJABAT PEMBUAT KOMITMEN
+5.2.02.02.001.00004      SSH                               69  Motor Roda Dua
+5.2.02.02.001.00005      SSH                                5  Kendaraan Roda Tiga
+5.2.02.02.001.00006      SSH                                2  Mobil Pemadam
+5.2.02.03.002.00007      SBU, SSH                          26  Air Daster
+5.2.02.03.002.00009      SSH                               25  Air Daster
+5.2.02.03.003.00010      SSH                                1  Timbangan 
+5.2.02.03.003.00015      SBU                                7  Biaya Bahan Bakar Minyak Kendaraan Dinas Dalam Wilayah Sulawesi Barat - Mamuju
+5.2.02.04.001.00001      SSH                                4  Alat Tanam Jagung
+5.2.02.04.001.00002      SSH                                2  HAND SPRAYER / ALAT SEMPROT
+5.2.02.04.001.00003      SSH                                2  CORN SHELLER
+5.2.02.04.001.00007      SSH                                1  RICE MILLING UNIT (RMU)
+5.2.02.04.001.00008      SSH                                1  Alat Bantu Penangkap Ikan
+5.2.02.05.001.00004      SBU, SSH                          33  Brankas
+5.2.02.05.001.00005      SBU, SSH                         335  Access Point
+5.2.02.05.002.00001      SBU, SSH                         207  Ballpoint
+5.2.02.05.002.00003      SSH                               80  Mesin Cuci
+5.2.02.05.002.00004      SBU, SSH                         422  Ac
+5.2.02.05.002.00005      SSH                              118  Baskom Stainles
+5.2.02.05.002.00006      SBU, SSH                         293  Bantal
+5.2.02.05.003.00001      SSH                               16  Meja  Kerja 
+5.2.02.05.003.00002      SSH                               16  Meja Bundar
+5.2.02.05.003.00003      SBU, SSH                          24  HONORARIUM PEJABAT PEMBUAT KOMITMEN
+5.2.02.05.003.00004      SSH                               27  Kursi Direktur
+5.2.02.05.003.00005      SSH                               39  Kursi Direktur
+5.2.02.05.003.00006      SSH                               48  Kursi Direktur
+5.2.02.05.003.00007      SSH                               29  Lemari Arsip
+5.2.02.06.001.00001      SSH                                7  Speaker Aktif
+5.2.02.06.001.00002      SBU, SSH                          11  Flash Camera
+5.2.02.06.002.00001      SSH                                4  HANDY TALKY (HT)
+5.2.02.06.002.00002      SSH                                1  HANDY TALKY (HT)
+5.2.02.07.001.00012      SSH                                1  Whell Chair
+5.2.02.07.002.00005      SSH                                1  Kursi Roda
+5.2.02.08.001.00031      SSH                               10  Anak Timbangan Bidur 20 Kg M2
+5.2.02.08.003.00011      SSH                               10  Bed Pingpong
+5.2.02.08.007.00004      SSH                                2  Flow meter
+5.2.02.10.001.00001      SBU                                3  HONORARIUM PEJABAT PEMBUAT KOMITMEN
+5.2.02.10.001.00002      SBU, SSH                         307  Ballpoint
+5.2.02.10.001.00003      SSH                                1  Tablet/ I Pad
+5.2.02.10.002.00004      SSH                               43  Access Point
+5.2.02.10.002.00005      SSH                                1  Projector
+5.2.02.15.002.00006      SSH                                3  Baju Safety
+5.2.02.15.003.00001      SSH                               14  HELM RESCUE
+5.2.02.15.003.00004      SBU, SSH                           7  HELM RESCUE
+5.2.02.18.001.00001      ASB, SBU                           4  HONORARIUM PEJABAT PENGADAAN BARANG/JASA
+5.2.02.18.001.00002      SBU, SSH                           7  Expandable Barrier Road Barricade Fiber 
+5.2.02.19.001.00006      SBU, SSH                          78  Ballpoint
+5.2.02.89.001.00001      SSH                              322  Infocus
+5.2.02.89.001.00002      SSH                              330  Infocus
+5.2.02.89.002.00001      SSH                              318  Infocus
+5.2.02.89.002.00002      SSH                              319  Infocus
+5.2.02.89.003.00001      SSH                                1  Notebook
+5.2.02.89.003.00002      SSH                                1  Notebook
+5.2.03.01.001.00005      ASB, SBU, SSH                     91  1 M2 Pembangunan Lab. Komputer SD
+5.2.03.01.001.00006      ASB, SBU, SSH                    205  1 M2 Pembangunan Gedung Sederhana
+5.2.03.01.001.00008      ASB, SBU, SSH                    124  1 M2 Pembangunan Gedung Sederhana
+5.2.03.01.001.00010      ASB, SBU, SSH                    326  1 M2 Pembangunan APE TK
+5.2.03.01.001.00012      ASB                                2  Jasa Konsultasi Pengawasan BANGUNAN/REHABILITASI BANGUNAN PASAR IKAN IKAN
+5.2.03.01.001.00025      ASB, SBU                          24  Biaya Bahan Bakar Minyak Kendaraan Dinas Wilayah Kabupaten Pasangkayu - Pedongga
+5.2.03.01.001.00030      ASB, SBU, SSH                     69  Biaya Bahan Bakar Minyak Kendaraan Dinas Wilayah Kabupaten Pasangkayu - Dapurang
+5.2.03.01.001.00032      ASB, SBU, SSH                     81  Ballpoint
+5.2.03.01.001.00034      ASB                                3  Pembangunan Pabrik Penggiling Padi
+5.2.03.01.002.00003      ASB, SSH                          25  1 M2 Pembangunan Rumah Dinas SD
+5.2.03.04.001.00004      ASB, SBU, SSH                    130  Album Dokumen
+5.2.04.01.001.00004      SSH                                2  Ballpoint
+5.2.04.01.001.00005      ASB, SBU, SSH                     53  1 m Peningkatan Jalan Zona 2
+5.2.04.01.001.00009      ASB, SBU, SSH                     18  Ballpoint
+5.2.04.01.001.00010      ASB, SBU, SSH                     15  1 M³ Pembuatan  Jalan Lingkungan Rabat Beton Zona I
+5.2.04.01.002.00005      ASB, SSH                          18  1 Unit Pembangunan Plat Duicker 6 meter x 1,5 meter Zona 1
+5.2.04.01.002.00009      SSH                               10  Jilid Spiral Biasa
+5.2.04.01.002.00013      ASB, SBU                           5  HONORARIUM PEJABAT PENGADAAN BARANG/JASA
+5.2.04.02.001.00004      ASB, SSH                          29  Album Dokumen
+5.2.04.02.002.00004      ASB, SBU                          13  Biaya Bahan Bakar Minyak Kendaraan Dinas Wilayah Kabupaten Pasangkayu - Bambaira
+5.2.04.02.004.00004      ASB                                4  Jasa Pengawasan Pembangunan Talud Kelurahan Baras
+5.2.04.02.006.00004      SSH                                1  Amplop Surat
+5.2.04.02.006.00005      ASB                                3  Pembangunan MCK
+5.2.04.03.002.00004      SSH                               45  Amplop Surat
+5.2.04.04.002.00003      SSH                               19  \tPASANG BARU PASCA BAYAR 3 FASA
+5.2.05.01.001.00001      SSH                              222  Buku Umum
+5.2.06.01.001.00005      SBU, SSH                           3  Jasa Pembuatan Aplikasi Berbasis Android / Iphone App Serta Website Plan
+5.2.06.01.001.00006      SBU, SSH                          96  Amplop Surat

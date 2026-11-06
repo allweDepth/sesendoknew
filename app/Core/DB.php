@@ -232,6 +232,25 @@ Perbaikan:
     }
   }
 
+  public function streamRows(string $sql, array $params = []): Generator
+  {
+    $attribute = class_exists(\Pdo\Mysql::class)
+      ? \Pdo\Mysql::ATTR_USE_BUFFERED_QUERY
+      : PDO::MYSQL_ATTR_USE_BUFFERED_QUERY;
+    $buffered = $this->pdo->getAttribute($attribute);
+    $stmt = null;
+    try {
+      $this->pdo->setAttribute($attribute, false);
+      $stmt = $this->query($sql, $params);
+      while (($row = $stmt->fetch(PDO::FETCH_ASSOC)) !== false) {
+        yield $row;
+      }
+    } finally {
+      $stmt?->closeCursor();
+      $this->pdo->setAttribute($attribute, $buffered);
+    }
+  }
+
   // ======================================================
   // SELECT ALL DATA
   // ======================================================

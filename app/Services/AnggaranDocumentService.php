@@ -290,18 +290,146 @@ class AnggaranDocumentService
         $sheet->setCellValue('A'.$r,'TOTAL PAGU')->setCellValue('E'.$r,$total);$sheet->getStyle('A'.$r.':H'.$r)->getFont()->setBold(true);
         ExcelPresentationService::apply($book,$this->user);$file=tempnam(sys_get_temp_dir(),'rkpd_').'.xlsx';(new Xlsx($book))->save($file);return$file;
     }
-    public function exportExcel(string $logical):string
+    private function excelSumRows(string $column, array $rows): string
     {
-        if(str_starts_with($logical,'rkpd'))return $this->exportRkpdExcel($logical);
-        $groups=$this->groups($logical);$book=new Spreadsheet();$book->removeSheetByIndex(0);$used=[];$change=$this->isChange($logical);
-        foreach($groups as $index=>$group){$code=(string)$group['kd_sub_keg'];$name=str_replace(['\\','/','?','*','[',']',':'],'-',substr($code,0,25))?:'SubKegiatan-'.($index+1);while(isset($used[$name]))$name=substr($name,0,28).'-'.($index+1);$used[$name]=1;$sheet=$book->createSheet();$sheet->setTitle($name);$details=$this->details($logical,$code);$last=$change?'M':'G';$afterHierarchy=$this->hierarchyTotals($details,'jumlah');$beforeHierarchy=$change?$this->hierarchyTotals($details,'jumlah_awal'):[];
+        if (!$rows) return '=0';
+        $ranges = [];
+        $first = $last = array_shift($rows);
+        foreach ($rows as $row) {
+            if ($row === $last + 1) {
+                $last = $row;
+                continue;
+            }
+            $ranges[] = $column.$first.($last === $first ? '' : ':'.$column.$last);
+            $first = $last = $row;
+        }
+        $ranges[] = $column.$first.($last === $first ? '' : ':'.$column.$last);
+        return '='.implode('+', array_map(fn($chunk) => 'SUM('.implode(',', $chunk).')', array_chunk($ranges, 255)));
+    }
+
+    public function exportExcel(string $logical): string
+    {
+        if (str_starts_with($logical, 'rkpd')) return $this->exportRkpdExcel($logical);
+
+        $groups = $this->groups($logical);
+        $change = $this->isChange($logical);
+        $book = new Spreadsheet();
+        $recap = $book->getActiveSheet();
+        $recap->setTitle($groups ? 'Rekapitulasi' : 'Kosong');
+        $recapLast = $change ? 'E' : 'C';
+        $recapRow = 4;
+        if ($groups) {
+            $recap->mergeCells("A1:{$recapLast}1")->setCellValue('A1', 'REKAPITULASI SUB KEGIATAN '.$this->documentLabel($logical));
+            $recap->setCellValue('A2', 'Tahun Anggaran '.($this->user['tahun'] ?? ''));
+            $recap->fromArray($change
+                ? ['KODE SUB KEGIATAN','URAIAN SUB KEGIATAN','JUMLAH SEBELUM','JUMLAH SESUDAH','BERTAMBAH/(BERKURANG)']
+                : ['KODE SUB KEGIATAN','URAIAN SUB KEGIATAN','JUMLAH'], null, 'A3', true);
+        } else {
+            $recap->setCellValue('A1', 'Tidak ada data dalam lingkup pengguna.');
+        }
+
+        $used = ['rekapitulasi' => true];
+        foreach ($groups as $index => $group) {
+            $code = (string)$group['kd_sub_keg'];
+            $base = str_replace(['\\','/','?','*','[',']',':'], '-', mb_substr($code, 0, 25)) ?: 'SubKegiatan-'.($index + 1);
+            $name = $base;
+            for ($suffix = 2; isset($used[mb_strtolower($name)]); $suffix++) {
+                $tail = '-'.$suffix;
+                $name = mb_substr($base, 0, 31 - strlen($tail)).$tail;
+            }
+            $used[mb_strtolower($name)] = true;
+            $sheet = $book->createSheet()->setTitle($name);
+            $details = $this->details($logical, $code);
+            $last = $change ? 'M' : 'G';
             $sheet->mergeCells("A1:{$last}1")->setCellValue('A1',($change?'DOKUMEN PELAKSANAAN PERGESERAN ANGGARAN':'DOKUMEN PELAKSANAAN ANGGARAN').' — SATUAN KERJA PERANGKAT DAERAH');$sheet->mergeCells("A2:{$last}2")->setCellValue('A2','FORMULIR '.$this->documentLabel($logical).' RINCIAN BELANJA SKPD');$meta=[['Urusan Pemerintahan',$group['bidang']??'-'],['Program',$group['program']??'-'],['Kegiatan',$group['kegiatan']??'-'],['Organisasi',$this->user['nama_opd']??$this->user['nama_org']??$this->user['kd_opd']??'-'],['Sub Kegiatan',$code.' '.($group['nama_sub_kegiatan']??'')],['Tahun Anggaran',(int)($this->user['tahun']??0)]];$row=3;foreach($meta as[$label,$value]){$sheet->setCellValue("A$row",$label)->setCellValue("B$row",':')->mergeCells("C$row:{$last}$row")->setCellValue("C$row",$value);$row++;}$head=$row+1;
-            if($change){$sheet->mergeCells("A$head:A".($head+1))->mergeCells("B$head:B".($head+1))->mergeCells("C$head:G$head")->mergeCells("H$head:L$head")->mergeCells("M$head:M".($head+1));$sheet->fromArray(['KODE REKENING','URAIAN','SEBELUM PERUBAHAN','','','','','SESUDAH PERUBAHAN','','','','','BERTAMBAH/(BERKURANG)'],null,"A$head",true);$sheet->fromArray(['','','KOEFISIEN/VOLUME','SATUAN','HARGA','PPN','JUMLAH','KOEFISIEN/VOLUME','SATUAN','HARGA','PPN','JUMLAH',''],null,'A'.($head+1),true);$row=$head+2;$before=$after=0;
-                $printedAccounts=[];$lastAccount='';foreach($details as$d){$account=(string)($d['kd_akun']??'');if($account!==$lastAccount){foreach($this->newAccountHierarchy($account,$printedAccounts)as$depth=>$node){$sheet->setCellValue("A$row",$node['kode'])->setCellValue("B$row",$node['uraian'])->setCellValue("G$row",(float)($beforeHierarchy[$node['kode']]??0))->setCellValue("L$row",(float)($afterHierarchy[$node['kode']]??0))->setCellValue("M$row",(float)(($afterHierarchy[$node['kode']]??0)-($beforeHierarchy[$node['kode']]??0)));$sheet->mergeCells("B$row:F$row")->mergeCells("H$row:K$row");$sheet->getStyle("A$row:M$row")->getFont()->setBold(true);$sheet->getStyle("A$row:M$row")->getFill()->setFillType('solid')->getStartColor()->setARGB($depth<2?'FFD9EAF7':'FFEEF5FA');$row++;}$lastAccount=$account;}$ba=(float)($d['jumlah_awal']??0);$aa=(float)($d['jumlah']??0);$before+=$ba;$after+=$aa;$desc=trim(($d['komponen']??$d['uraian']??'').(!empty($d['spesifikasi'])?' — Spesifikasi: '.$d['spesifikasi']:''));$sheet->fromArray(['',$desc,(float)($d['volume_awal']??0),$d['sat_1']??'-',(float)($d['harga_satuan_awal']??0),0,$ba,(float)($d['volume']??0),$d['sat_1']??'-',(float)($d['harga_satuan']??0),0,$aa,$aa-$ba],null,"A$row",true);$row++;}$sheet->fromArray(['JUMLAH ANGGARAN SUB KEGIATAN','','','','','',$before,'','','','',$after,$after-$before],null,"A$row",true);
-            }else{$sheet->fromArray(['KODE REKENING','URAIAN','KOEFISIEN/VOLUME','SATUAN','HARGA','PPN','JUMLAH'],null,"A$head",true);$row=$head+1;$total=0;$printedAccounts=[];$lastAccount='';foreach($details as$d){$account=(string)($d['kd_akun']??'');if($account!==$lastAccount){foreach($this->newAccountHierarchy($account,$printedAccounts)as$depth=>$node){$sheet->setCellValue("A$row",$node['kode'])->setCellValue("B$row",$node['uraian'])->setCellValue("G$row",(float)($afterHierarchy[$node['kode']]??0));$sheet->mergeCells("B$row:F$row");$sheet->getStyle("A$row:G$row")->getFont()->setBold(true);$sheet->getStyle("A$row:G$row")->getFill()->setFillType('solid')->getStartColor()->setARGB($depth<2?'FFD9EAF7':'FFEEF5FA');$row++;}$lastAccount=$account;}$amount=(float)($d['jumlah']??0);$total+=$amount;$desc=trim(($d['komponen']??$d['uraian']??'').(!empty($d['spesifikasi'])?' — Spesifikasi: '.$d['spesifikasi']:''));$sheet->fromArray(['',$desc,(float)($d['volume']??0),$d['sat_1']??'-',(float)($d['harga_satuan']??0),0,$amount],null,"A$row",true);$row++;}$sheet->fromArray(['JUMLAH ANGGARAN SUB KEGIATAN','','','','','',$total],null,"A$row",true);}
-            $header="A$head:$last".($change?$head+1:$head);$range="A$head:$last$row";$sheet->getStyle("A1:{$last}1")->getFont()->setBold(true)->setSize(14)->getColor()->setARGB('FFFFFFFF');$sheet->getStyle("A1:{$last}1")->getFill()->setFillType('solid')->getStartColor()->setARGB('FF174A68');$sheet->getStyle("A2:{$last}2")->getFont()->setBold(true);$sheet->getStyle($header)->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');$sheet->getStyle($header)->getFill()->setFillType('solid')->getStartColor()->setARGB('FF2185D0');$sheet->getStyle($range)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN)->getColor()->setARGB('FF708090');$sheet->getStyle("A1:$last$row")->getAlignment()->setVertical(Alignment::VERTICAL_TOP)->setWrapText(true);$sheet->getStyle("A$row:$last$row")->getFont()->setBold(true);$sheet->getStyle($change?"C".($head+2).":M$row":"C".($head+1).":G$row")->getNumberFormat()->setFormatCode('#,##0.00');$sheet->getStyle($change?"F".($head+2).":F$row":"F".($head+1).":F$row")->getNumberFormat()->setFormatCode('0%');$sheet->freezePane('A'.($head+($change?2:1)));foreach(range('A',$last)as$col)$sheet->getColumnDimension($col)->setWidth($col==='B'?44:(in_array($col,['A','M'],true)?19:14));PageSetupService::applyExcel($sheet,PageSetupService::current($this->user),$change?'L':'P');$sheet->getPageMargins()->setTop(.3)->setBottom(.3)->setLeft(.25)->setRight(.25);}
-        if(!$groups){$sheet=$book->createSheet();$sheet->setTitle('Kosong');$sheet->setCellValue('A1','Tidak ada data dalam lingkup pengguna.');}$book->setActiveSheetIndex(0);ExcelPresentationService::apply($book,$this->user);
-    $tmp=tempnam(sys_get_temp_dir(),'anggaran_').'.xlsx';(new Xlsx($book))->save($tmp);return $tmp;
+            if ($change) {
+                $sheet->mergeCells("A$head:A".($head+1))->mergeCells("B$head:B".($head+1))
+                    ->mergeCells("C$head:G$head")->mergeCells("H$head:L$head")->mergeCells("M$head:M".($head+1));
+                $sheet->fromArray(['KODE REKENING','URAIAN','SEBELUM PERUBAHAN','','','','','SESUDAH PERUBAHAN','','','','','BERTAMBAH/(BERKURANG)'], null, "A$head", true);
+                $sheet->fromArray(['','','KOEFISIEN/VOLUME','SATUAN','HARGA','PPN','JUMLAH','KOEFISIEN/VOLUME','SATUAN','HARGA','PPN','JUMLAH',''], null, 'A'.($head+1), true);
+            } else {
+                $sheet->fromArray(['KODE REKENING','URAIAN','KOEFISIEN/VOLUME','SATUAN','HARGA','PPN','JUMLAH'], null, "A$head", true);
+            }
+
+            $row = $head + ($change ? 2 : 1);
+            $printedAccounts = [];
+            $accountRows = [];
+            $children = [];
+            $rootRows = [];
+            foreach ($details as $detail) {
+                $account = (string)($detail['kd_akun'] ?? '');
+                foreach ($this->newAccountHierarchy($account, $printedAccounts) as $depth => $node) {
+                    $nodeCode = $node['kode'];
+                    $accountRows[$nodeCode] = $row;
+                    if ($depth === 0) {
+                        $rootRows[] = $row;
+                    } else {
+                        $parent = substr($nodeCode, 0, strrpos($nodeCode, '.'));
+                        $children[$accountRows[$parent]][] = $row;
+                    }
+                    $sheet->setCellValue("A$row", $nodeCode)->setCellValue("B$row", $node['uraian']);
+                    $sheet->mergeCells("B$row:F$row");
+                    if ($change) $sheet->mergeCells("H$row:K$row");
+                    $sheet->getStyle("A$row:$last$row")->getFont()->setBold(true);
+                    $sheet->getStyle("A$row:$last$row")->getFill()->setFillType('solid')
+                        ->getStartColor()->setARGB($depth < 2 ? 'FFD9EAF7' : 'FFEEF5FA');
+                    $row++;
+                }
+
+                $hierarchy = $detail['akun_hierarchy'];
+                $leaf = $hierarchy ? $hierarchy[array_key_last($hierarchy)]['kode'] : null;
+                if ($leaf === null) {
+                    $rootRows[] = $row;
+                } else {
+                    $children[$accountRows[$leaf]][] = $row;
+                }
+                $desc = trim(($detail['komponen'] ?? $detail['uraian'] ?? '').(!empty($detail['spesifikasi']) ? ' — Spesifikasi: '.$detail['spesifikasi'] : ''));
+                $unit = $detail['sat_1'] ?? '-';
+                $after = [(float)($detail['volume'] ?? 0), $unit, (float)($detail['harga_satuan'] ?? 0), 0, (float)($detail['jumlah'] ?? 0)];
+                $amounts = $change
+                    ? [(float)($detail['volume_awal'] ?? 0), $unit, (float)($detail['harga_satuan_awal'] ?? 0), 0, (float)($detail['jumlah_awal'] ?? 0), ...$after, "=L$row-G$row"]
+                    : $after;
+                $sheet->fromArray(['', $desc, ...$amounts], null, "A$row", true);
+                $row++;
+            }
+
+            $sheet->setCellValue("A$row", 'JUMLAH ANGGARAN SUB KEGIATAN');
+            $children[$row] = $rootRows;
+            foreach ($children as $subtotalRow => $directRows) {
+                $sheet->setCellValue("G$subtotalRow", $this->excelSumRows('G', $directRows));
+                if ($change) {
+                    $sheet->setCellValue("L$subtotalRow", $this->excelSumRows('L', $directRows));
+                    $sheet->setCellValue("M$subtotalRow", "=L$subtotalRow-G$subtotalRow");
+                }
+            }
+
+            $belanjaRow = $accountRows['5'] ?? $row;
+            $sheetReference = "'".str_replace("'", "''", $sheet->getTitle())."'!";
+            $recap->fromArray([$code, $group['nama_sub_kegiatan'] ?? '', "={$sheetReference}G$belanjaRow"], null, "A$recapRow", true);
+            if ($change) {
+                $recap->setCellValue("D$recapRow", "={$sheetReference}L$belanjaRow");
+                $recap->setCellValue("E$recapRow", "=D$recapRow-C$recapRow");
+            }
+            $recapRow++;
+
+            $header="A$head:$last".($change?$head+1:$head);$range="A$head:$last$row";$sheet->getStyle("A1:{$last}1")->getFont()->setBold(true)->setSize(14)->getColor()->setARGB('FFFFFFFF');$sheet->getStyle("A1:{$last}1")->getFill()->setFillType('solid')->getStartColor()->setARGB('FF174A68');$sheet->getStyle("A2:{$last}2")->getFont()->setBold(true);$sheet->getStyle($header)->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');$sheet->getStyle($header)->getFill()->setFillType('solid')->getStartColor()->setARGB('FF2185D0');$sheet->getStyle($range)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN)->getColor()->setARGB('FF708090');$sheet->getStyle("A1:$last$row")->getAlignment()->setVertical(Alignment::VERTICAL_TOP)->setWrapText(true);$sheet->getStyle("A$row:$last$row")->getFont()->setBold(true);$sheet->getStyle($change?"C".($head+2).":M$row":"C".($head+1).":G$row")->getNumberFormat()->setFormatCode('#,##0.00');$sheet->getStyle($change?"F".($head+2).":F$row":"F".($head+1).":F$row")->getNumberFormat()->setFormatCode('0%');$sheet->freezePane('A'.($head+($change?2:1)));foreach(range('A',$last)as$col)$sheet->getColumnDimension($col)->setWidth($col==='B'?44:(in_array($col,['A','M'],true)?19:14));PageSetupService::applyExcel($sheet,PageSetupService::current($this->user),$change?'L':'P');$sheet->getPageMargins()->setTop(.3)->setBottom(.3)->setLeft(.25)->setRight(.25);
+        }
+        if ($groups) {
+            $lastSub = $recapRow - 1;
+            $recap->setCellValue("B$recapRow", 'TOTAL SELURUH SUB KEGIATAN');
+            foreach (range('C', $recapLast) as $column) {
+                $recap->setCellValue("$column$recapRow", "=SUM({$column}4:$column$lastSub)");
+            }
+            $recap->getStyle("C4:$recapLast$recapRow")->getNumberFormat()->setFormatCode('#,##0.00');
+            $recap->getStyle("A$recapRow:$recapLast$recapRow")->getFont()->setBold(true);
+            $recap->freezePane('A4');
+        }
+
+        $book->setActiveSheetIndex(0);
+        ExcelPresentationService::apply($book, $this->user);
+        $file = tempnam(sys_get_temp_dir(), 'anggaran_');
+        (new Xlsx($book))->save($file);
+        return $file;
     }
     public function exportSamePriceExcel(string $logical):string
     {

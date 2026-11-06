@@ -58,6 +58,12 @@ class ResetTabelController extends Controller
   {
     $this->checkAuth();
 
+    $user = Auth::user();
+    if ($user['type_user'] === 'admin_wilayah') {
+      $this->view('reset_tabel/index', ['backupRegion' => (string)($user['kd_wilayah'] ?? '')], 'app');
+      return;
+    }
+
     $sql = "
             SELECT TABLE_NAME, TABLE_ROWS
             FROM INFORMATION_SCHEMA.TABLES
@@ -249,11 +255,10 @@ class ResetTabelController extends Controller
     // ======================================================
     $this->checkAuth();
 
-    // ======================================================
-    // HANYA SUPER ADMIN BOLEH BACKUP
-    // ======================================================
-    if (($_SESSION['user']['type_user'] ?? null) !== 'super_admin') {
-      exit;
+    $user = Auth::user();
+    if ($user['type_user'] === 'admin_wilayah') {
+      $this->downloadRegionalBackup((string)($user['kd_wilayah'] ?? ''));
+      return;
     }
 
     // ======================================================
@@ -324,6 +329,42 @@ class ResetTabelController extends Controller
     // ======================================================
     // AKHIR SCRIPT
     // ======================================================
+    exit;
+  }
+
+  private function downloadRegionalBackup(string $region): void
+  {
+    require_once __DIR__.'/../Services/RegionalSqlBackupService.php';
+    if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
+
+    $file = tmpfile();
+    if (!$file) {
+      http_response_code(500);
+      echo 'File sementara untuk backup tidak dapat dibuat.';
+      return;
+    }
+    try {
+      RegionalSqlBackupService::export($region, $file);
+      $size = ftell($file);
+      rewind($file);
+      $filename = 'backup_wilayah_'.$region.'_'.date('Ymd_His').'.sql';
+      // The front controller rewrites relative links in HTML responses.
+      if (ob_get_level() > 0) ob_end_clean();
+      header('Content-Type: application/sql');
+      header('Content-Disposition: attachment; filename="'.$filename.'"');
+      header('Cache-Control: private, no-store');
+      header('Content-Length: '.$size);
+      fpassthru($file);
+    } catch (InvalidArgumentException $error) {
+      http_response_code(403);
+      echo $error->getMessage();
+    } catch (Throwable $error) {
+      error_log('Backup SQL wilayah gagal: '.$error->getMessage());
+      http_response_code(500);
+      echo 'Backup SQL wilayah gagal dibuat.';
+    } finally {
+      fclose($file);
+    }
     exit;
   }
 
