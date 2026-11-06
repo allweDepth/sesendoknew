@@ -14,6 +14,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		const table = $("#anggaranDocument").data("table") || paths[path] || "rkpd";
 		super({ moduleName: "anggaran", menuItems: [], useMenu: false });
 		this.table = table;
+		this.canManagePriorities = document.getElementById("anggaranDocument")?.dataset.managePriorities === "1";
 		this.workspaceEnabled = ["renja","rka","dpa","renja_p","rka_p","dppa"].includes(table);
 		this.collapsedGroups = new Set();
 		this.next = { renja: "rka", rka: "dpa", dpa: "renja_p", renja_p: "rka_p", rka_p: "dppa" };
@@ -51,6 +52,9 @@ class AnggaranDocumentModule extends BaseCrudModule {
 			`<div class="ui container anggaran-hierarchy"><div class="anggaran-hero"><div><small>DOKUMEN PERENCANAAN & ANGGARAN</small><h2>${label} — ${isRkpd ? "Target dan Pagu Sub Kegiatan" : "Rincian Belanja Sub Kegiatan"}</h2><p>${isRkpd ? "RKPD merangkum prioritas, indikator, target, lokasi, kelompok sasaran, dan pagu usulan OPD. Rincian akun disusun pada Renja/RKA hingga DPA." : (canWrite ? "Daftar dimulai dari sub kegiatan. Buka menu pada baris untuk melihat dan mengubah rincian belanja." : "Mode baca regional. Pilih OPD pada bagian atas untuk meninjau dokumen.")}</p></div><div class="ui compact buttons">${canWrite ? `<button class="ui primary button" data-ui="open-form" data-action="add" data-tbl="${this.table}"><i class="plus icon"></i> Tambah Data</button>` : ""}${canAdvance && next ? `<button class="ui teal button" data-phase3-action="advance" data-from="${this.table}" data-to="${next}"><i class="arrow right icon"></i> Proses ${next.toUpperCase()}</button>` : ""}${canAdvance && change ? `<button class="ui orange button" data-phase3-action="advance" data-from="${this.table}" data-to="${change}"><i class="sync icon"></i> Perubahan</button>` : ""}${official ? `<button class="ui button" data-budget-action="recap-excel"><i class="file excel icon"></i> Rekap Excel</button><button class="ui button" data-budget-action="recap-pdf"><i class="file pdf icon"></i> Rekap PDF</button>` : `<button class="ui button" data-budget-action="excel"><i class="file excel icon"></i> Excel</button><button class="ui button" data-budget-action="pdf"><i class="file pdf icon"></i> PDF</button>`}</div></div>${official ? `<div class="ui tiny buttons budget-secondary-export"><button class="ui basic button" data-budget-action="excel"><i class="table icon"></i>${this.table === "rka" ? "RKA Lengkap (Excel)" : "Rincian per Sub Kegiatan (Excel)"}</button><button class="ui basic button" data-budget-action="pdf"><i class="file pdf outline icon"></i>Rincian per Sub Kegiatan (PDF)</button><button class="ui basic button" data-budget-action="tapd"><i class="users icon"></i>Tim Anggaran Daerah</button></div>` : ""}<div id="budgetSummary" class="ui four stackable statistics budget-summary"></div><div class="ui fluid icon input budget-search"><input placeholder="Cari kode atau nama sub kegiatan..."><i class="search icon"></i></div><div id="budgetGroupList"><div class="ui segment"><div class="ui active centered inline loader"></div></div></div></div><div class="ui modal" id="monthlyPlanModal"><i class="close icon"></i><div class="header">Rencana Penarikan Dana per Bulan</div><div class="content"><form class="ui form" id="monthlyPlanForm"><input type="hidden" name="id" required><div class="ui info message" id="monthlyPlanInfo"></div><div class="four fields monthly-fields"></div><div class="ui right labeled input"><input readonly id="monthlyPlanTotal"><div class="ui label">Total Rencana</div></div></form></div><div class="actions"><button class="ui deny button">Batal</button>${canWrite ? '<button class="ui primary button" id="saveMonthlyPlan">Simpan Rencana</button>' : ""}</div></div><div class="ui modal" id="tapdModal"><i class="close icon"></i><div class="header">Tim Anggaran Pemerintah Daerah yang Berlaku</div><div class="content"><div id="tapdActiveList" class="ui relaxed divided list"></div><div class="ui message">Penugasan dipilih otomatis berdasarkan tanggal cetak dan masa berlaku awal-akhir.</div></div></div><div class="ui small modal" id="tapdApprovalModal"><i class="close icon"></i><div class="header">Persetujuan TAPD per Sub Kegiatan</div><div class="content"><input type="hidden" id="approvalSubCode"><div class="ui info message" id="approvalFlowInfo"></div><div class="ui fluid vertical labeled icon buttons"><button class="ui green button" data-approval-scenario="KUNCI"><i class="lock icon"></i>Setujui dan kunci saja</button><button class="ui teal button" data-approval-scenario="KUNCI_SALIN"><i class="copy icon"></i>Setujui, kunci, dan salin/sinkronkan ke dokumen berikutnya</button><button class="ui orange button" data-approval-scenario="KUNCI_GANTI_TUJUAN"><i class="exchange icon"></i>Setujui, kunci, hapus isi lama tujuan, lalu salin ulang</button></div><div class="ui warning message"><b>Ganti tujuan</b> hanya dapat dilakukan bila sub kegiatan pada dokumen tujuan belum dikunci.</div></div><div class="actions"><button class="ui deny button">Batal</button></div></div>`,
 		);
 		if(official) $('.budget-secondary-export [data-budget-action="tapd"]').before('<button class="ui basic button" data-budget-action="same-price-excel"><i class="clone outline icon"></i>Rekap Harga Sama (Excel)</button>');
+		if (official && this.canManagePriorities) {
+			$(".budget-secondary-export").append('<button class="ui basic button" data-budget-action="priorities"><i class="list icon" aria-hidden="true"></i>Prioritas Nasional</button>');
+		}
 	}
 	isActive() {
 		return window.activeBudgetDocument === this && this.root?.isConnected && window.location.pathname === this.route;
@@ -158,11 +162,28 @@ class AnggaranDocumentModule extends BaseCrudModule {
 			if (!button) return;
 			switch (button.dataset.workspace) {
 				case "close": this.workspaceDialog.close(); break;
+				case "edit-sub": this.openWorkspace("edit-sub",this.workspaceDialog.querySelector("form").dataset.code); break;
 				case "add":
-					button.parentElement.querySelector("[data-indicator-rows]").insertAdjacentHTML("beforeend", this.indicatorRow({}, true));
-					button.parentElement.querySelector("[data-indicator-row]:last-child input")?.focus();
+					this.addIndicator(button.closest("[data-indicator-list]"),{});
 					break;
 				case "remove": button.closest("[data-indicator-row]").remove(); break;
+			}
+		});
+		this.workspaceDialog.addEventListener("change", (event) => {
+			const select = event.target;
+			if (select.matches("[data-renstra-picker]") && select.value) {
+				const list = select.closest("[data-indicator-list]");
+				const reference = JSON.parse(select.selectedOptions[0].dataset.reference);
+				const exists = Array.from(list.querySelectorAll('[data-field="renstra_id"]')).some(input => input.value === select.value);
+				if (!exists) this.addIndicator(list,reference);
+				select.value = "";
+			} else if (select.matches("[data-priority-picker]")) {
+				const row = JSON.parse(select.selectedOptions[0].dataset.priority || "{}");
+				const form = select.form;
+				form.elements.id.value = row.id || "";
+				form.elements.kode.value = row.kode || "";
+				form.elements.uraian.value = row.uraian || "";
+				form.elements.aktif.checked = row.aktif === undefined || Number(row.aktif) === 1;
 			}
 		});
 		this.workspaceDialog.querySelector("form").addEventListener("submit", (event) => {
@@ -260,7 +281,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 	}
 	openWorkspace(action, code) {
 		const dialog = this.workspaceDialog, form = dialog.querySelector("form");
-		const titles = {"view-sub":"Lihat Sub Kegiatan Belanja","edit-sub":"Ubah Sub Kegiatan Belanja",indicators:"Indikator Program & Kegiatan",packages:"Paket / Kelompok Belanja"};
+		const titles = {"view-sub":"Lihat Sub Kegiatan Belanja","edit-sub":"Ubah Sub Kegiatan Belanja",indicators:"Indikator Program & Kegiatan",packages:"Paket / Kelompok Belanja",priorities:"Kelola Prioritas Pembangunan Nasional"};
 		const body = dialog.querySelector(".budget-workspace-body");
 		form.dataset.mode = "";
 		form.dataset.code = code;
@@ -275,11 +296,18 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		const fail = (message) => { if (active()) body.innerHTML = `<div class="ui warning message">${this.escape(message || "Data tidak berhasil dimuat.")}</div>`; };
 		this.workspaceRead = window.Ajax.request({
 			method: "GET", silent: true,
-			url: action === "packages" ? `/anggaran/details?tbl=${this.table}&kd_sub_keg=${encodeURIComponent(code)}`
+			url: action === "priorities" ? "/anggaran/prioritas-nasional"
+				: action === "packages" ? `/anggaran/details?tbl=${this.table}&kd_sub_keg=${encodeURIComponent(code)}`
 				: `/anggaran/sub-kegiatan-metadata?tbl=${this.table}&kode=${encodeURIComponent(code)}`,
 			success: (response) => {
 				if (!active()) return;
 				if (!response?.success) return fail(response?.message);
+				if (action === "priorities") {
+					body.innerHTML = this.priorityFields(response.data,response.meta);
+					form.dataset.mode = "priorities";
+					form.querySelector("[type=submit]").hidden = false;
+					return;
+				}
 				if (action === "packages") {
 					const groups = new Map();
 					for (const item of response.data) {
@@ -296,24 +324,38 @@ class AnggaranDocumentModule extends BaseCrudModule {
 				const edit = indicators ? data.can_edit_indicators : action === "edit-sub" && data.can_edit_sub;
 				form.dataset.mode = edit ? (indicators ? "indicators" : "sub") : "";
 				form.querySelector("[type=submit]").hidden = !edit;
-				body.innerHTML = this.workspaceFields(data, indicators, edit);
+				const message = action !== "view-sub" && !edit ? `<div class="ui info message">${this.escape(data.edit_message)}</div>` : "";
+				const editButton = action === "view-sub" && data.can_edit_sub
+					? '<button type="button" class="ui small basic button" data-workspace="edit-sub"><i class="edit icon"></i>Ubah Sub Kegiatan</button>' : "";
+				body.innerHTML = message + this.workspaceFields(data, indicators, edit) + editButton;
 			},
 			error: (response) => fail(response?.message),
 		});
+	}
+	priorityFields(rows, context) {
+		const options = rows.map(row => `<option data-priority="${this.escape(JSON.stringify(row))}">${this.escape(row.kode)} — ${this.escape(row.uraian)}${Number(row.aktif) ? "" : " (Nonaktif)"}</option>`).join("");
+		return `<p>Wilayah <b>${this.escape(context.region)}</b> · Tahun <b>${this.escape(context.year)}</b>. Prioritas aktif tersedia untuk dipilih oleh OPD.</p>
+			<label class="field"><span>Entri referensi</span><select data-priority-picker><option>Tambah prioritas baru</option>${options}</select></label>
+			<input name="id" type="hidden">
+			<label class="field"><span>Kode</span><input name="kode" maxlength="30" required></label>
+			<label class="field"><span>Uraian</span><input name="uraian" maxlength="500" required></label>
+			<label><input name="aktif" type="checkbox" value="1" checked> Aktif</label>`;
 	}
 	workspaceFields(data, indicators, edit) {
 		const field = (label, name, value, type="text", editable=edit) =>
 			`<label class="field"><span>${label}</span><input type="${type}" name="${name}" value="${this.escape(value ?? "")}" ${editable ? "" : "readonly"} ${type==="number" ? 'min="0" step="0.01"' : ""}></label>`;
 		const display = (label, value) => `<div class="field"><label>${label}</label><div class="budget-workspace-value">${this.escape(value || "—")}</div></div>`;
-		const indicatorsList = (label, name, rows) => `<section class="ui segment" data-indicator-list="${name}"><h4>${label}</h4>
-			<div class="budget-indicator-columns"><b>Tolok ukur</b><b>Target</b><b>Satuan</b></div>
-			<div data-indicator-rows>${rows.map(row => this.indicatorRow(row,edit)).join("") || (edit ? "" : '<p>Belum ada indikator.</p>')}</div>
-			${edit ? '<button type="button" class="ui mini basic button" data-workspace="add">Tambah Indikator</button>' : ""}</section>`;
+		const indicatorsList = (label, name, rows, references=[]) => `<section class="ui segment" data-indicator-list="${name}"><h4>${label}</h4>
+			<div class="budget-indicator-columns"><b>Tolok ukur</b><b>${name === "indikator" ? "Target / Volume" : "Target"}</b><b>Satuan</b></div>
+			<div data-indicator-rows>${rows.map(row => this.indicatorRow(row,edit,name === "indikator")).join("") || (edit ? "" : '<p>Belum ada indikator.</p>')}</div>
+			${edit ? '<button type="button" class="ui mini basic button" data-workspace="add">Tambah Indikator</button>' : ""}
+			${edit && references.length ? `<label class="field" style="margin-top:.75rem"><span>Tambah dari Renstra OPD</span>
+				<select data-renstra-picker><option value="">Pilih indikator Renstra</option>${references.map(row => `<option value="${this.escape(row.renstra_id)}" data-reference="${this.escape(JSON.stringify(row))}">${this.escape(row.tolok_ukur)}</option>`).join("")}</select></label>` : ""}</section>`;
 		const base = display("SKPD / Sub Unit",data.organization) + display("Bidang Urusan",data.bidang) + display("Program",`${data.program_code} ${data.program_name}`);
-		if (indicators) return base + indicatorsList("Indikator Program (Outcome)","indikator_program",data.program.indikator)
+		if (indicators) return base + indicatorsList("Indikator Program (Outcome)","indikator_program",data.program.indikator,data.renstra.program)
 			+ display("Kegiatan",`${data.activity_code} ${data.activity_name}`)
 			+ field("Kelompok Sasaran Kegiatan","kelompok_sasaran",data.activity.kelompok_sasaran)
-			+ field("Prioritas Pembangunan Nasional","prioritas_nasional",data.activity.prioritas_nasional)
+			+ (edit ? this.priorityDropdown(data.activity,data.priorities) : display("Prioritas Pembangunan Nasional",data.activity.prioritas_nasional))
 			+ indicatorsList("Indikator Keluaran Kegiatan","keluaran",data.activity.keluaran)
 			+ indicatorsList("Indikator Hasil Kegiatan","hasil",data.activity.hasil);
 		const s = data.sub;
@@ -326,11 +368,29 @@ class AnggaranDocumentModule extends BaseCrudModule {
 			+ `<div class="two fields">${field("Mulai Pelaksanaan","mulai",s.mulai,"date")}${field("Akhir Pelaksanaan","selesai",s.selesai,"date")}</div>`
 			+ `<div class="two fields">${display("Anggaran Sub Kegiatan",this.money(data.budget))}${display("Total Rincian Belanja",this.money(data.detail_total))}</div>`
 			+ `<div class="two fields">${field("Prakiraan Anggaran N+1","anggaran_n1",s.anggaran_n1,"number")}${field("Prakiraan Anggaran N+2","anggaran_n2",s.anggaran_n2,"number")}</div>`
-			+ indicatorsList("Indikator Keluaran Sub Kegiatan","indikator",s.indikator);
+			+ indicatorsList("Indikator Keluaran Sub Kegiatan","indikator",s.indikator,data.renstra.sub);
 	}
-	indicatorRow(row, edit) {
+	priorityDropdown(activity, rows) {
+		const current = Number(activity.prioritas_nasional_id || 0);
+		const legacy = activity.prioritas_nasional && !rows.some(row => Number(row.id) === current);
+		return `<label class="field"><span>Prioritas Pembangunan Nasional</span><select name="prioritas_nasional_id">
+			<option value="">Pilih prioritas</option>
+			${legacy ? `<option value="legacy" selected>${this.escape(activity.prioritas_nasional)} (data lama)</option>` : ""}
+			${rows.map(row => `<option value="${this.escape(row.id)}" ${Number(row.id) === current ? "selected" : ""}>${this.escape(row.kode)} — ${this.escape(row.uraian)}${Number(row.aktif) ? "" : " (Nonaktif)"}</option>`).join("")}
+			</select>${rows.some(row => Number(row.aktif)) ? "" : '<small>Daftar aktif belum tersedia. Hubungi TAPD atau administrator wilayah.</small>'}</label>`;
+	}
+	addIndicator(list, row) {
+		const rows = list.querySelector("[data-indicator-rows]");
+		rows.insertAdjacentHTML("beforeend",this.indicatorRow(row,true,list.dataset.indicatorList === "indikator"));
+		rows.lastElementChild.querySelector(row.renstra_id ? '[data-field="target"]' : '[data-field="tolok_ukur"]').focus();
+	}
+	indicatorRow(row, edit, volume) {
 		return `<div class="budget-indicator-columns" data-indicator-row>
-			${[["tolok_ukur","Tolok ukur"],["target","Target"],["satuan","Satuan"]].map(([key,label])=>`<input type="text" data-field="${key}" aria-label="${label}" placeholder="${label}" value="${this.escape(row[key] ?? "")}" ${edit ? "" : "readonly"}>`).join("")}
+			${row.renstra_id ? `<input type="hidden" data-field="renstra_id" value="${this.escape(row.renstra_id)}">` : ""}
+			<div><input type="text" data-field="tolok_ukur" aria-label="Tolok ukur" placeholder="Tolok ukur" value="${this.escape(row.tolok_ukur ?? "")}" ${edit && !row.renstra_id ? "" : "readonly"}>
+			${row.renstra_id ? '<small class="ui mini teal basic label">Indikator Renstra</small>' : ""}</div>
+			<input type="text" data-field="target" aria-label="${volume ? "Target / Volume" : "Target"}" placeholder="Target" value="${this.escape(row.target ?? "")}" ${volume ? 'inputmode="decimal"' : ""} ${edit ? "" : "readonly"}>
+			<input type="text" data-field="satuan" aria-label="Satuan" placeholder="Satuan" value="${this.escape(row.satuan ?? "")}" ${edit && !row.renstra_id ? "" : "readonly"}>
 			${edit ? '<button type="button" class="ui mini basic icon button" data-workspace="remove" aria-label="Hapus indikator"><i class="trash icon"></i></button>' : ""}
 		</div>`;
 	}
@@ -352,8 +412,9 @@ class AnggaranDocumentModule extends BaseCrudModule {
 			if (response?.success) this.workspaceDialog.close();
 			else { error.textContent = response?.message || "Perubahan tidak berhasil disimpan."; error.hidden = false; }
 		};
-		window.Ajax.request({url:"/anggaran/sub-kegiatan-metadata",method:"POST",silent:true,
-			data:{tbl:this.table,kode:code,mode,payload:JSON.stringify(payload)},
+		const priority = mode === "priorities";
+		window.Ajax.request({url:priority ? "/anggaran/prioritas-nasional" : "/anggaran/sub-kegiatan-metadata",method:"POST",silent:true,
+			data:priority ? payload : {tbl:this.table,kode:code,mode,payload:JSON.stringify(payload)},
 			success:finish,error:finish,
 		});
 	}
@@ -408,7 +469,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 					a = b.data("budget-action");
 				const menu = e.currentTarget.closest(".budget-action-popover");
 				if (menu?.matches(":popover-open")) menu.hidePopover();
-				if (["view-sub","edit-sub","indicators","packages"].includes(a) && this.workspaceEnabled) {
+				if (["view-sub","edit-sub","indicators","packages","priorities"].includes(a) && this.workspaceEnabled) {
 					e.preventDefault();
 					this.openWorkspace(a,String(b.data("code")));
 				} else if (a === "sub-pdf") {

@@ -4,6 +4,7 @@ require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../Services/AnggaranCopyService.php';
 require_once __DIR__ . '/../Services/JsonResponse.php';
 require_once __DIR__ . '/../Services/AnggaranDocumentService.php';
+require_once __DIR__ . '/../Services/BudgetPriorityService.php';
 
 class AnggaranController extends Controller
 {
@@ -21,7 +22,10 @@ class AnggaranController extends Controller
     private function document(string $table, string $title): void
     {
         if (!Auth::check()) { header('Location: ' . app_url('/')); exit; }
-        $this->view('anggaran/document', ['table'=>$table, 'title'=>$title]);
+        $this->view('anggaran/document', [
+            'table'=>$table, 'title'=>$title,
+            'managePriorities'=>in_array(Auth::user()['type_user'] ?? '',BudgetPriorityService::MANAGERS,true),
+        ]);
     }
 
     public function advance(): void
@@ -42,6 +46,33 @@ class AnggaranController extends Controller
 
     public function groups(): void { $this->documentJson('groups'); }
     public function details(): void { $this->documentJson('details'); }
+    public function nationalPriorities(): void
+    {
+        header('Content-Type: application/json;charset=UTF-8');
+        if (!Auth::check()) { echo JsonResponse::error('Unauthorized',401); return; }
+        $method = $_SERVER['REQUEST_METHOD'];
+        if (!in_array($method,['GET','POST'],true)) { echo JsonResponse::error('Method tidak diizinkan',405); return; }
+        $user = Auth::user();
+        if (!in_array($user['type_user'] ?? '',BudgetPriorityService::MANAGERS,true)) {
+            echo JsonResponse::error('Referensi hanya dapat dikelola oleh TAPD atau administrator wilayah.',403);
+            return;
+        }
+        if ($user['type_user'] === 'super_admin') $user = Auth::scopedUser();
+        try {
+            $region = (string)($user['kd_wilayah'] ?? '');
+            $year = (int)($user['tahun'] ?? 0);
+            if (!$region || !$year) throw new InvalidArgumentException('Pilih wilayah dan tahun aktif.');
+            if ($method === 'POST') {
+                BudgetPriorityService::save($user,$_POST);
+                echo JsonResponse::success('Referensi prioritas nasional tersimpan.');
+                return;
+            }
+            echo JsonResponse::success('Daftar prioritas dimuat',['region'=>$region,'year'=>$year],BudgetPriorityService::rows($region,$year));
+        } catch (Throwable $error) {
+            echo JsonResponse::error($error->getMessage(),400);
+        }
+    }
+
     public function subActivityMetadata(): void
     {
         header('Content-Type: application/json;charset=UTF-8');

@@ -205459,6 +205459,39 @@ COMMIT;
 SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 
 --
+-- Table structure for table `prioritas_pembangunan_nasional_neo`
+--
+
+DROP TABLE IF EXISTS `prioritas_pembangunan_nasional_neo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `prioritas_pembangunan_nasional_neo` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `kd_wilayah` varchar(60) NOT NULL,
+  `tahun` year(4) NOT NULL,
+  `kode` varchar(30) NOT NULL,
+  `uraian` varchar(500) NOT NULL,
+  `aktif` tinyint(4) NOT NULL DEFAULT 1,
+  `username_update` varchar(100) NOT NULL,
+  `tgl_update` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_prioritas_nasional_scope` (`kd_wilayah`,`tahun`,`kode`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `prioritas_pembangunan_nasional_neo`
+--
+
+SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
+LOCK TABLES `prioritas_pembangunan_nasional_neo` WRITE;
+/*!40000 ALTER TABLE `prioritas_pembangunan_nasional_neo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `prioritas_pembangunan_nasional_neo` ENABLE KEYS */;
+UNLOCK TABLES;
+COMMIT;
+SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
+
+--
 -- Table structure for table `program_renstra_neo`
 --
 
@@ -244832,4 +244865,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-11-06 13:31:25
+-- Dump completed on 2026-11-06 13:55:37

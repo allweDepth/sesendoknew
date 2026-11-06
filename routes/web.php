@@ -319,5 +319,6 @@ return [
   '/anggaran/groups'       => ['AnggaranController', 'groups'],
   '/anggaran/details'      => ['AnggaranController', 'details'],
   '/anggaran/sub-kegiatan-metadata' => ['AnggaranController', 'subActivityMetadata'],
+  '/anggaran/prioritas-nasional' => ['AnggaranController', 'nationalPriorities'],
   '/anggaran/approval'     => ['AnggaranController', 'approval'],
 ];

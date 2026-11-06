@@ -15,7 +15,7 @@ final class RegionalSqlBackupService
         'laporan_neraca_saldo_neo', 'maps_layers', 'master_biaya', 'master_biaya_akun', 'organisasi_neo',
         'page_setup_opd_neo', 'pejabat_tahunan_neo', 'pengaturan_neo', 'pengukuran_kinerja_neo', 'peraturan_neo',
         'periode_rpjmd', 'perjanjian_kinerja_detail_neo', 'perjanjian_kinerja_neo', 'pimpinan_wilayah_neo',
-        'pohon_kinerja_neo', 'rab_paket_neo', 'realisasi_dokumen_neo', 'ref_jenis_naskah', 'ref_jenis_naskah_dinas',
+        'pohon_kinerja_neo', 'prioritas_pembangunan_nasional_neo', 'rab_paket_neo', 'realisasi_dokumen_neo', 'ref_jenis_naskah', 'ref_jenis_naskah_dinas',
         'ref_kelompok_naskah', 'ref_klasifikasi_keamanan', 'ref_template_naskah', 'register_naskah_dinas',
         'rekanan_neo', 'rekening_kegiatan', 'rekening_kegiatan_historis', 'rencana_realisasi_anggaran_neo',
         'rencana_rekening_anggaran_neo', 'renja_neo', 'renja_p_neo', 'renja_sub_kegiatan_kinerja_neo',
