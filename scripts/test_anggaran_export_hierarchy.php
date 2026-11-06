@@ -22,12 +22,22 @@ foreach(['renja','rka','dpa','renja_p','rka_p','dppa']as$logical){
     expectHierarchy($book->getSheetCount()===3,"$logical: both sub-activities and recap exported");
     $recap=$book->getSheet(0);
     expectHierarchy($recap->getTitle()==='Rekapitulasi',"$logical: recap is first");
-    $recapRow=4;
+    $recapRows=[];
+    $grandRow=$recap->getHighestDataRow();
+    $recapColumn=$change?'D':'C';
+    for($r=4;$r<$grandRow;$r++){
+        $code=(string)$recap->getCell("A$r")->getValue();
+        expectHierarchy(!isset($recapRows[$code]),"$logical: recap code appears once");
+        $recapRows[$code]=$r;
+    }
     $grandTotal=0;
     $sample=null;
+    $expectedRecap=[];
     foreach(array_slice($book->getAllSheets(),1)as$sheet){
         $afterColumn=$change?'L':'G';
-        $recapColumn=$change?'D':'C';
+        $code=$sheet->getTitle();
+        expectHierarchy(isset($recapRows[$code]),"$logical: sub-activity appears in recap");
+        $recapRow=$recapRows[$code];
         $totalRow=$sheet->getHighestDataRow();
         $belanjaRow=null;
         $details=$svc->details($logical,$sheet->getTitle());$expected=[];$printed=[];$detailRows=0;
@@ -57,10 +67,19 @@ foreach(['renja','rka','dpa','renja_p','rka_p','dppa']as$logical){
         $link=$recap->getCell($recapColumn.$recapRow);
         expectHierarchy($belanjaRow!==null&&$link->getValue()==="='".$sheet->getTitle()."'!".$afterColumn.$belanjaRow
             &&abs($link->getCalculatedValue()-$expectedTotal)<.01,"$logical: recap links directly to Belanja Daerah");
+        $parts=explode('.',$code);
+        foreach([1,2,3,5]as$length){
+            $parent=implode('.',array_slice($parts,0,$length));
+            expectHierarchy(isset($recapRows[$parent])&&$recapRows[$parent]<$recapRow,"$logical: recap contains parent $parent before $code");
+            $expectedRecap[$parent]=($expectedRecap[$parent]??0)+$expectedTotal;
+        }
         $grandTotal+=$expectedTotal;
-        $recapRow++;
     }
-    $grandCell=$recapColumn.$recapRow;
+    foreach($expectedRecap as $parent=>$total){
+        $subtotal=$recap->getCell($recapColumn.$recapRows[$parent]);
+        expectHierarchy($subtotal->isFormula()&&abs($subtotal->getCalculatedValue()-$total)<.01,"$logical: recap rolls up $parent");
+    }
+    $grandCell=$recapColumn.$grandRow;
     expectHierarchy($recap->getCell($grandCell)->isFormula()&&abs($recap->getCell($grandCell)->getCalculatedValue()-$grandTotal)<.01,"$logical: recap grand total");
     [$sampleSheet,$input,$sheetTotal,$recapSubtotal]=$sample;
     $previous=$sampleSheet->getCell($input)->getValue();

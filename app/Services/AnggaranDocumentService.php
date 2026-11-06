@@ -40,7 +40,7 @@ class AnggaranDocumentService
         $codes = array_keys($codes);
         $holders = implode(',', array_fill(0, count($codes), '?'));
         $reference = $this->db->query("SELECT kode,level,uraian FROM rekening_kegiatan
-            WHERE kode IN ($holders) AND level IN ('sub_kegiatan','bidang')", $codes)->fetchAll();
+            WHERE kode IN ($holders) AND level IN ('urusan','bidang','program','kegiatan','sub_kegiatan')", $codes)->fetchAll();
         $historical = $this->db->query("SELECT kode,level,uraian FROM rekening_kegiatan_historis
             WHERE tahun=? AND kd_wilayah=? AND kode IN ($holders)
             AND level IN ('sub_kegiatan','program','kegiatan')",
@@ -52,13 +52,13 @@ class AnggaranDocumentService
             $code = (string)$row['kd_sub_keg'];
             $row['nama_sub_kegiatan'] = $historyMap['sub_kegiatan'][$code]
                 ?? $currentMap['sub_kegiatan'][$code] ?? $row['nama_sub_kegiatan'];
-            $row['program'] = $row['kegiatan'] = $row['bidang'] = null;
+            $row['program'] = $row['kegiatan'] = $row['bidang'] = $row['urusan'] = null;
             $parts = explode('.', $code);
             array_pop($parts);
             while ($parts) {
                 $prefix = implode('.', $parts);
-                foreach (['program','kegiatan','bidang'] as $level) {
-                    $name = $level === 'bidang' ? ($currentMap[$level][$prefix] ?? null) : ($historyMap[$level][$prefix] ?? null);
+                foreach (['program','kegiatan','bidang','urusan'] as $level) {
+                    $name = $historyMap[$level][$prefix] ?? $currentMap[$level][$prefix] ?? null;
                     if ($row[$level] === null && $name !== null) $row[$level] = $prefix.' '.$name;
                 }
                 array_pop($parts);
@@ -318,12 +318,15 @@ class AnggaranDocumentService
         $recap->setTitle($groups ? 'Rekapitulasi' : 'Kosong');
         $recapLast = $change ? 'E' : 'C';
         $recapRow = 4;
+        $recapParents = [];
+        $recapChildren = [];
+        $recapLevels = [1 => 'urusan', 2 => 'bidang', 3 => 'program', 5 => 'kegiatan'];
         if ($groups) {
-            $recap->mergeCells("A1:{$recapLast}1")->setCellValue('A1', 'REKAPITULASI SUB KEGIATAN '.$this->documentLabel($logical));
+            $recap->mergeCells("A1:{$recapLast}1")->setCellValue('A1', 'REKAPITULASI BELANJA '.$this->documentLabel($logical));
             $recap->setCellValue('A2', 'Tahun Anggaran '.($this->user['tahun'] ?? ''));
             $recap->fromArray($change
-                ? ['KODE SUB KEGIATAN','URAIAN SUB KEGIATAN','JUMLAH SEBELUM','JUMLAH SESUDAH','BERTAMBAH/(BERKURANG)']
-                : ['KODE SUB KEGIATAN','URAIAN SUB KEGIATAN','JUMLAH'], null, 'A3', true);
+                ? ['KODE','URAIAN','JUMLAH SEBELUM','JUMLAH SESUDAH','BERTAMBAH/(BERKURANG)']
+                : ['KODE','URAIAN','JUMLAH'], null, 'A3', true);
         } else {
             $recap->setCellValue('A1', 'Tidak ada data dalam lingkup pengguna.');
         }
@@ -405,7 +408,29 @@ class AnggaranDocumentService
 
             $belanjaRow = $accountRows['5'] ?? $row;
             $sheetReference = "'".str_replace("'", "''", $sheet->getTitle())."'!";
+            $parentRow = 0;
+            $parts = explode('.', $code);
+            $depth = 0;
+            foreach ($recapLevels as $length => $level) {
+                if ($length >= count($parts)) break;
+                $prefix = implode('.', array_slice($parts, 0, $length));
+                if (!isset($recapParents[$prefix])) {
+                    $recapParents[$prefix] = $recapRow;
+                    $recapChildren[$parentRow][] = $recapRow;
+                    $label = preg_replace('/^(?:'.preg_quote($prefix, '/').'\s+(?:-\s*)?)+/u', '', $group[$level] ?? '');
+                    $recap->fromArray([$prefix, $label ?: ucfirst($level === 'bidang' ? 'bidang urusan' : $level)], null, "A$recapRow", true);
+                    $recap->getStyle("A$recapRow")->getAlignment()->setIndent($depth);
+                    $recap->getStyle("A$recapRow:$recapLast$recapRow")->getFont()->setBold(true);
+                    $recap->getStyle("A$recapRow:$recapLast$recapRow")->getFill()->setFillType('solid')
+                        ->getStartColor()->setARGB($depth < 2 ? 'FFD9EAF7' : 'FFEEF5FA');
+                    $recapRow++;
+                }
+                $parentRow = $recapParents[$prefix];
+                $depth++;
+            }
+            $recapChildren[$parentRow][] = $recapRow;
             $recap->fromArray([$code, $group['nama_sub_kegiatan'] ?? '', "={$sheetReference}G$belanjaRow"], null, "A$recapRow", true);
+            $recap->getStyle("A$recapRow")->getAlignment()->setIndent($depth);
             if ($change) {
                 $recap->setCellValue("D$recapRow", "={$sheetReference}L$belanjaRow");
                 $recap->setCellValue("E$recapRow", "=D$recapRow-C$recapRow");
@@ -415,10 +440,15 @@ class AnggaranDocumentService
             $header="A$head:$last".($change?$head+1:$head);$range="A$head:$last$row";$sheet->getStyle("A1:{$last}1")->getFont()->setBold(true)->setSize(14)->getColor()->setARGB('FFFFFFFF');$sheet->getStyle("A1:{$last}1")->getFill()->setFillType('solid')->getStartColor()->setARGB('FF174A68');$sheet->getStyle("A2:{$last}2")->getFont()->setBold(true);$sheet->getStyle($header)->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');$sheet->getStyle($header)->getFill()->setFillType('solid')->getStartColor()->setARGB('FF2185D0');$sheet->getStyle($range)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN)->getColor()->setARGB('FF708090');$sheet->getStyle("A1:$last$row")->getAlignment()->setVertical(Alignment::VERTICAL_TOP)->setWrapText(true);$sheet->getStyle("A$row:$last$row")->getFont()->setBold(true);$sheet->getStyle($change?"C".($head+2).":M$row":"C".($head+1).":G$row")->getNumberFormat()->setFormatCode('#,##0.00');$sheet->getStyle($change?"F".($head+2).":F$row":"F".($head+1).":F$row")->getNumberFormat()->setFormatCode('0%');$sheet->freezePane('A'.($head+($change?2:1)));foreach(range('A',$last)as$col)$sheet->getColumnDimension($col)->setWidth($col==='B'?44:(in_array($col,['A','M'],true)?19:14));PageSetupService::applyExcel($sheet,PageSetupService::current($this->user),$change?'L':'P');$sheet->getPageMargins()->setTop(.3)->setBottom(.3)->setLeft(.25)->setRight(.25);
         }
         if ($groups) {
-            $lastSub = $recapRow - 1;
-            $recap->setCellValue("B$recapRow", 'TOTAL SELURUH SUB KEGIATAN');
-            foreach (range('C', $recapLast) as $column) {
-                $recap->setCellValue("$column$recapRow", "=SUM({$column}4:$column$lastSub)");
+            $recap->setCellValue("B$recapRow", 'TOTAL BELANJA');
+            $recapChildren[$recapRow] = $recapChildren[0];
+            unset($recapChildren[0]);
+            foreach ($recapChildren as $subtotalRow => $directRows) {
+                $recap->setCellValue("C$subtotalRow", $this->excelSumRows('C', $directRows));
+                if ($change) {
+                    $recap->setCellValue("D$subtotalRow", $this->excelSumRows('D', $directRows));
+                    $recap->setCellValue("E$subtotalRow", "=D$subtotalRow-C$subtotalRow");
+                }
             }
             $recap->getStyle("C4:$recapLast$recapRow")->getNumberFormat()->setFormatCode('#,##0.00');
             $recap->getStyle("A$recapRow:$recapLast$recapRow")->getFont()->setBold(true);
@@ -427,6 +457,7 @@ class AnggaranDocumentService
 
         $book->setActiveSheetIndex(0);
         ExcelPresentationService::apply($book, $this->user);
+        if ($groups) $recap->getColumnDimension('A')->setWidth(34);
         $file = tempnam(sys_get_temp_dir(), 'anggaran_');
         (new Xlsx($book))->save($file);
         return $file;
