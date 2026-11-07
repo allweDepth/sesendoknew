@@ -134,6 +134,7 @@ class SpaRouter {
 	beginNavigation() {
 		this.navigation?.abort();
 		window.activeBudgetDocument?.request?.abort();
+		window.activeBudgetDocument?.closeWorkspace?.();
 		this.navigation = new AbortController();
 		return this.navigation;
 	}

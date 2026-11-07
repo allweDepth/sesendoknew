@@ -22,6 +22,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 	}
 	init() {
 		window.activeBudgetDocument?.request?.abort();
+		window.activeBudgetDocument?.closeWorkspace?.();
 		window.activeBudgetDocument = this;
 		this.state.setTable(this.table);
 		this.state.req = null;
@@ -155,25 +156,42 @@ class AnggaranDocumentModule extends BaseCrudModule {
 				<button class="ui button" data-budget-action="collapse-all">Sembunyikan Semua</button>
 			</div>`);
 		this.root.insertAdjacentHTML("beforeend", `
-			<dialog class="budget-workspace-dialog" aria-labelledby="budgetWorkspaceTitle">
-				<form class="ui form">
-					<header><h3 id="budgetWorkspaceTitle"></h3>
-					<button type="button" class="ui basic icon button" data-workspace="close" aria-label="Tutup"><i class="close icon"></i></button></header>
+			<form class="ui large modal form budget-workspace-dialog" role="dialog" aria-modal="true" aria-labelledby="budgetWorkspaceTitle">
+				<div class="header budget-workspace-header">
+					<span id="budgetWorkspaceTitle"></span>
+					<button type="button" class="ui basic icon button" data-workspace="close" aria-label="Tutup modal"><i class="close icon" aria-hidden="true"></i></button>
+				</div>
+				<div class="scrolling content">
 					<div class="budget-workspace-body"></div>
 					<div class="ui negative message" role="alert" hidden></div>
-					<footer><button type="button" class="ui basic button" data-workspace="close">Tutup</button>
+				</div>
+				<div class="actions">
+					<button type="button" class="ui basic button" data-workspace="close">Tutup</button>
 					<button type="button" class="ui primary button" data-workspace="edit-sub" hidden>Ubah Sub Kegiatan</button>
-					<button type="submit" class="ui primary button" hidden>Simpan</button></footer>
-				</form>
-			</dialog>`);
+					<button type="submit" class="ui primary button" hidden>Simpan</button>
+				</div>
+			</form>`);
 		this.workspaceDialog = this.root.querySelector(".budget-workspace-dialog");
-		this.workspaceDialog.addEventListener("close", () => { this.workspaceRead?.abort(); });
+		$(this.workspaceDialog).modal({
+			detachable: true,
+			autofocus: false,
+			observeChanges: true,
+			onHide: () => {
+				this.workspaceOpen = false;
+				this.workspaceRead?.abort();
+			},
+			onHidden: () => {
+				if (this.root.isConnected) return;
+				$(this.workspaceDialog).find(".ui.dropdown").dropdown("destroy");
+				$(this.workspaceDialog).modal("destroy").remove();
+			},
+		});
 		this.workspaceDialog.addEventListener("click", (event) => {
 			const button = event.target.closest("[data-workspace]");
 			if (!button) return;
 			switch (button.dataset.workspace) {
-				case "close": this.workspaceDialog.close(); break;
-				case "edit-sub": this.openWorkspace("edit-sub",this.workspaceDialog.querySelector("form").dataset.code); break;
+				case "close": this.closeWorkspace(); break;
+				case "edit-sub": this.openWorkspace("edit-sub",this.workspaceDialog.dataset.code); break;
 				case "add":
 					this.addIndicator(button.closest("[data-indicator-list]"),{});
 					break;
@@ -192,17 +210,18 @@ class AnggaranDocumentModule extends BaseCrudModule {
 				const reference = JSON.parse(select.selectedOptions[0].dataset.reference);
 				const exists = Array.from(list.querySelectorAll('[data-field="renstra_id"]')).some(input => input.value === select.value);
 				if (!exists) this.addIndicator(list,reference);
-				select.value = "";
+				$(select).parent(".ui.dropdown").dropdown("clear");
 			} else if (select.matches("[data-priority-picker]")) {
 				const row = JSON.parse(select.selectedOptions[0].dataset.priority || "{}");
 				const form = select.form;
 				form.elements.id.value = row.id || "";
 				form.elements.kode.value = row.kode || "";
 				form.elements.uraian.value = row.uraian || "";
-				form.elements.aktif.checked = row.aktif === undefined || Number(row.aktif) === 1;
+				$(form.elements.aktif).closest(".ui.checkbox")
+					.checkbox(row.aktif === undefined || Number(row.aktif) === 1 ? "set checked" : "set unchecked");
 			}
 		});
-		this.workspaceDialog.querySelector("form").addEventListener("submit", (event) => {
+		this.workspaceDialog.addEventListener("submit", (event) => {
 			event.preventDefault();
 			this.saveWorkspace(event.currentTarget);
 		});
@@ -311,7 +330,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		if (pager.innerHTML !== markup) pager.innerHTML = markup;
 	}
 	openWorkspace(action, code) {
-		const dialog = this.workspaceDialog, form = dialog.querySelector("form");
+		const dialog = this.workspaceDialog, form = dialog;
 		const titles = {"open-sub":"Sub Kegiatan Belanja","view-sub":"Lihat Sub Kegiatan Belanja","edit-sub":"Ubah Sub Kegiatan Belanja",indicators:"Indikator Program & Kegiatan",packages:"Paket / Kelompok Belanja",priorities:"Kelola Prioritas Pembangunan Nasional"};
 		const body = dialog.querySelector(".budget-workspace-body");
 		const editButton = form.querySelector('[data-workspace="edit-sub"]');
@@ -320,12 +339,16 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		form.dataset.code = code;
 		form.querySelector("[type=submit]").hidden = true;
 		form.querySelector("[role=alert]").hidden = true;
-		dialog.querySelector("h3").textContent = titles[action];
+		dialog.querySelector("#budgetWorkspaceTitle").textContent = titles[action];
+		$(body).find(".ui.dropdown").dropdown("destroy");
 		body.innerHTML = '<div class="ui active inline centered loader"></div>';
-		if (!dialog.open) dialog.showModal();
+		if (!this.workspaceOpen) {
+			this.workspaceOpen = true;
+			$(dialog).modal("show");
+		}
 		this.workspaceRead?.abort();
 		const version = this.workspaceVersion = (this.workspaceVersion || 0) + 1;
-		const active = () => this.isActive() && dialog.open && this.workspaceVersion === version;
+		const active = () => this.isActive() && this.workspaceOpen && this.workspaceVersion === version;
 		const fail = (message) => { if (active()) body.innerHTML = `<div class="ui warning message">${this.escape(message || "Data tidak berhasil dimuat.")}</div>`; };
 		this.workspaceRead = window.Ajax.request({
 			method: "GET", silent: true,
@@ -339,6 +362,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 					body.innerHTML = this.priorityFields(response.data,response.meta);
 					form.dataset.mode = "priorities";
 					form.querySelector("[type=submit]").hidden = false;
+					this.initWorkspaceControls();
 					return;
 				}
 				if (action === "packages") {
@@ -357,24 +381,43 @@ class AnggaranDocumentModule extends BaseCrudModule {
 				const edit = indicators ? data.can_edit_indicators : action !== "view-sub" && data.can_edit_sub;
 				form.dataset.mode = edit ? (indicators ? "indicators" : "sub") : "";
 				form.querySelector("[type=submit]").hidden = !edit;
-				if (!indicators) dialog.querySelector("h3").textContent = titles[edit ? "edit-sub" : "view-sub"];
+				if (!indicators) dialog.querySelector("#budgetWorkspaceTitle").textContent = titles[edit ? "edit-sub" : "view-sub"];
 				editButton.hidden = action !== "view-sub" || !data.can_edit_sub;
 				const canEdit = indicators ? data.can_edit_indicators : data.can_edit_sub;
 				const message = canEdit ? "" : `<div class="ui info message">${this.escape(data.edit_message)}</div>`;
 				body.innerHTML = message + this.workspaceFields(data, indicators, edit);
 				body.querySelectorAll("[data-indicator-list]").forEach(list => this.refreshIndicatorList(list));
+				this.initWorkspaceControls();
 			},
 			error: (response) => fail(response?.message),
 		});
 	}
+	closeWorkspace() {
+		if (!this.workspaceDialog || !this.workspaceOpen) return;
+		this.workspaceOpen = false;
+		this.workspaceRead?.abort();
+		$(this.workspaceDialog).modal("hide");
+	}
+	initWorkspaceControls() {
+		$(this.workspaceDialog).find("select.ui.dropdown").dropdown({
+			fullTextSearch: true,
+			direction: "auto",
+		});
+		$(this.workspaceDialog).find("select").each((index, select) => {
+			const label = select.closest(".field")?.querySelector("span")?.textContent;
+			if (label) $(select).parent(".ui.dropdown").attr("aria-label", label);
+		});
+		$(this.workspaceDialog).find(".ui.checkbox").checkbox();
+		$(this.workspaceDialog).modal("refresh");
+	}
 	priorityFields(rows, context) {
 		const options = rows.map(row => `<option data-priority="${this.escape(JSON.stringify(row))}">${this.escape(row.kode)} — ${this.escape(row.uraian)}${Number(row.aktif) ? "" : " (Nonaktif)"}</option>`).join("");
 		return `<p>Wilayah <b>${this.escape(context.region)}</b> · Tahun <b>${this.escape(context.year)}</b>. Prioritas aktif tersedia untuk dipilih oleh OPD.</p>
-			<label class="field"><span>Entri referensi</span><select data-priority-picker><option>Tambah prioritas baru</option>${options}</select></label>
+			<label class="field"><span>Entri referensi</span><select class="ui fluid search selection dropdown" data-priority-picker><option>Tambah prioritas baru</option>${options}</select></label>
 			<input name="id" type="hidden">
 			<label class="field"><span>Kode</span><input name="kode" maxlength="30" required></label>
 			<label class="field"><span>Uraian</span><input name="uraian" maxlength="500" required></label>
-			<label><input name="aktif" type="checkbox" value="1" checked> Aktif</label>`;
+			<div class="field"><div class="ui checkbox"><input name="aktif" type="checkbox" value="1" checked><label>Aktif</label></div></div>`;
 	}
 	workspaceFields(data, indicators, edit) {
 		const field = (label, name, value, type="text", editable=edit) =>
@@ -384,7 +427,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 			const selected = String(date || "").slice(5,7);
 			const labels = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 			if (!edit) return display(label,labels[Number(selected)-1]);
-			return `<label class="field"><span>${label}</span><select name="bulan_${name}"><option value="">Pilih bulan</option>
+			return `<label class="field"><span>${label}</span><select class="ui fluid search selection dropdown" name="bulan_${name}"><option value="">Pilih bulan</option>
 				${labels.map((text,index) => {
 					const value = String(index+1).padStart(2,"0");
 					return `<option value="${value}" ${value === selected ? "selected" : ""}>${text}</option>`;
@@ -395,7 +438,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 			<div data-indicator-rows>${rows.map(row => this.indicatorRow(row,edit,name === "indikator")).join("")}</div>
 			<p data-indicator-empty hidden>Belum ada indikator.</p>
 			${edit && references.length ? `<label class="field" style="margin-top:.75rem"><span>Tambah dari Renstra OPD</span>
-				<select data-renstra-picker><option value="">Pilih indikator Renstra</option>${references.map(row => `<option value="${this.escape(row.renstra_id)}" data-reference="${this.escape(JSON.stringify(row))}">${this.escape(row.tolok_ukur)}</option>`).join("")}</select></label>` : ""}
+				<select class="ui fluid search selection dropdown" data-renstra-picker><option value="">Pilih indikator Renstra</option>${references.map(row => `<option value="${this.escape(row.renstra_id)}" data-reference="${this.escape(JSON.stringify(row))}">${this.escape(row.tolok_ukur)}</option>`).join("")}</select></label>` : ""}
 			${edit ? '<button type="button" class="ui mini green basic button" data-workspace="add"><i class="plus icon" aria-hidden="true"></i>Tambah Indikator</button>' : ""}</section>`;
 		const base = display("SKPD / Sub Unit",data.organization) + display("Bidang Urusan",data.bidang) + display("Program",`${data.program_code} ${data.program_name}`);
 		if (indicators) return base + indicatorsList("Indikator Program (Outcome)","indikator_program",data.program.indikator,data.renstra.program)
@@ -419,7 +462,7 @@ class AnggaranDocumentModule extends BaseCrudModule {
 	priorityDropdown(activity, rows) {
 		const current = Number(activity.prioritas_nasional_id || 0);
 		const legacy = activity.prioritas_nasional && !rows.some(row => Number(row.id) === current);
-		return `<label class="field"><span>Prioritas Pembangunan Nasional</span><select name="prioritas_nasional_id">
+		return `<label class="field"><span>Prioritas Pembangunan Nasional</span><select class="ui fluid search selection dropdown" name="prioritas_nasional_id">
 			<option value="">Pilih prioritas</option>
 			${legacy ? `<option value="legacy" selected>${this.escape(activity.prioritas_nasional)} (data lama)</option>` : ""}
 			${rows.map(row => `<option value="${this.escape(row.id)}" ${Number(row.id) === current ? "selected" : ""}>${this.escape(row.kode)} — ${this.escape(row.uraian)}${Number(row.aktif) ? "" : " (Nonaktif)"}</option>`).join("")}
@@ -441,6 +484,15 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		for (const option of picker.options) option.disabled = selected.has(option.value);
 		picker.value = "";
 		picker.disabled = Array.from(picker.options).slice(1).every(option => option.disabled);
+		const dropdown = $(picker).parent(".ui.dropdown");
+		if (dropdown.length) {
+			dropdown.dropdown("clear");
+			dropdown.toggleClass("disabled", picker.disabled);
+			dropdown.find(".menu > .item").each((index, item) => {
+				$(item).toggleClass("disabled", selected.has(item.dataset.value));
+			});
+			dropdown.dropdown("refresh");
+		}
 	}
 	indicatorRow(row, edit, volume, pending=false) {
 		const protectedRow = row.renstra_id && !pending;
@@ -467,8 +519,8 @@ class AnggaranDocumentModule extends BaseCrudModule {
 		error.hidden = true;
 		const finish = (response) => {
 			submit.disabled = false;
-			if (!this.isActive() || !this.workspaceDialog.open || version !== this.workspaceVersion) return;
-			if (response?.success) this.workspaceDialog.close();
+			if (!this.isActive() || !this.workspaceOpen || version !== this.workspaceVersion) return;
+			if (response?.success) this.closeWorkspace();
 			else { error.textContent = response?.message || "Perubahan tidak berhasil disimpan."; error.hidden = false; }
 		};
 		const priority = mode === "priorities";
@@ -768,8 +820,11 @@ class AnggaranDocumentModule extends BaseCrudModule {
 	injectStyles() {
 		if (document.getElementById("budgetHierarchyStyle")) return;
 		$("head").append(
-			`<style id="budgetHierarchyStyle">.anggaran-hero{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#19324d,#346fa7);color:#fff;padding:22px;border-radius:14px;margin-bottom:15px}.anggaran-hero h2{margin:3px 0}.budget-summary{background:#fff;padding:14px;border-radius:10px;margin-bottom:14px!important;box-shadow:0 2px 12px rgba(34,36,38,.08)}.budget-summary .budget-money{font-size:1.45rem!important}.budget-search{margin-bottom:14px}.budget-tree-table .budget-level td{font-weight:700}.budget-tree-table .program td{background:#d8ecfb!important;color:#19324d}.budget-tree-table .kegiatan td{background:#eef7fc!important;padding-left:28px!important}.budget-tree-table .account td{background:#f7f7f7!important}.budget-tree-table a{cursor:pointer}.budget-tree-controls{margin:0 0 10px!important}.budget-level.urusan td,.budget-level.bidang td{background:#cbe3f7!important;color:#19324d}.budget-tree-table tr[hidden],.budget-workspace-dialog [hidden],.budget-empty-search[hidden]{display:none!important}.budget-workspace-dialog{width:min(900px,calc(100vw - 2rem));max-height:90vh;padding:0;border:0;border-radius:12px;color:#19324d;box-shadow:0 20px 70px #0005}.budget-workspace-dialog::backdrop{background:#14233888}.budget-workspace-dialog header,.budget-workspace-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.5rem;position:sticky;z-index:1;background:#fff}.budget-workspace-dialog header{top:0;border-bottom:1px solid #dce5ed}.budget-workspace-dialog footer{bottom:0;border-top:1px solid #dce5ed}.budget-workspace-dialog header h3{margin:0}.budget-workspace-body,.budget-workspace-dialog [role=alert]{padding:1rem 1.5rem}.budget-workspace-value{background:#f3f7fa;padding:.65em;border-radius:5px;white-space:pre-line}.budget-workspace-dialog .field span{display:block;font-weight:bold;margin-bottom:.3em}.budget-indicator-columns{display:grid;grid-template-columns:minmax(0,3fr) minmax(4em,1fr) minmax(4em,1fr) auto;gap:.5rem;align-items:start;margin:.45rem 0}.budget-indicator-columns input{min-width:0}.table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch}.budget-detail-table{min-width:1100px!important}[data-budget-action="monthly"]{display:none!important}@media(max-width:800px){.anggaran-hero{display:block}.anggaran-hero .buttons{margin-top:12px}.budget-summary .statistic{min-width:45%!important;margin-bottom:12px!important}}
-			.budget-workspace-dialog .ui.form input[readonly] { background: #f3f7fa; color: #53647b; }
+			`<style id="budgetHierarchyStyle">.anggaran-hero{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#19324d,#346fa7);color:#fff;padding:22px;border-radius:14px;margin-bottom:15px}.anggaran-hero h2{margin:3px 0}.budget-summary{background:#fff;padding:14px;border-radius:10px;margin-bottom:14px!important;box-shadow:0 2px 12px rgba(34,36,38,.08)}.budget-summary .budget-money{font-size:1.45rem!important}.budget-search{margin-bottom:14px}.budget-tree-table .budget-level td{font-weight:700}.budget-tree-table .program td{background:#d8ecfb!important;color:#19324d}.budget-tree-table .kegiatan td{background:#eef7fc!important;padding-left:28px!important}.budget-tree-table .account td{background:#f7f7f7!important}.budget-tree-table a{cursor:pointer}.budget-tree-controls{margin:0 0 10px!important}.budget-level.urusan td,.budget-level.bidang td{background:#cbe3f7!important;color:#19324d}.budget-tree-table tr[hidden],.budget-workspace-dialog [hidden],.budget-empty-search[hidden]{display:none!important}.budget-workspace-dialog .budget-workspace-value{background:var(--app-raised,#f3f7fa);color:inherit;padding:.65em;border-radius:.28571429rem;white-space:pre-line}.budget-workspace-dialog .field>span{display:block;font-weight:bold;margin-bottom:.3em}.budget-indicator-columns{display:grid;grid-template-columns:minmax(0,3fr) minmax(4em,1fr) minmax(4em,1fr) auto;gap:.5rem;align-items:start;margin:.45rem 0}.budget-indicator-columns input{min-width:0}.table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch}.budget-detail-table{min-width:1100px!important}[data-budget-action="monthly"]{display:none!important}@media(max-width:800px){.anggaran-hero{display:block}.anggaran-hero .buttons{margin-top:12px}.budget-summary .statistic{min-width:45%!important;margin-bottom:12px!important}}
+			.budget-workspace-dialog.ui.form input[readonly] { background: var(--app-raised,#f3f7fa); color: var(--app-muted,#53647b); }
+			.budget-workspace-dialog label.field { display: block; }
+			.budget-workspace-header { display: flex !important; align-items: center; justify-content: space-between; gap: 1rem; }
+			.budget-workspace-header > .button { flex-shrink: 0; margin: 0; }
 			.budget-workspace-dialog [data-indicator-list] h4 { display: flex; align-items: center; gap: .5rem; }
 			.budget-workspace-dialog [data-indicator-list] [data-workspace="add"] { margin-top: .5rem; }
 			.budget-workspace-dialog [data-indicator-row] .label { margin: .25rem 0 0; }
