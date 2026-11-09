@@ -1,0 +1,9 @@
+{
+  "updated_rows": {
+    "kontrak_neo": 4,
+    "dokumen_pengadaan_neo": 72
+  },
+  "other_lines_unchanged": true,
+  "sql_sha256": "2d86f6d78d2e2f8731d0b083b0f02b7effbe44116a7231b569cdd6a972208b0c",
+  "previous_backup": "/Users/alwi_mansyur/Documents/htdocs/sesendoknew/outputs/saluran-dates-20261109/sesendoknew_db-before-process.sql.gz"
+}
