@@ -6,14 +6,18 @@ if(!$c)throw new RuntimeException('A contract with an offer RAB is required');
 $u=['type_user'=>'admin_opd','username'=>'OFFER_PRINT_TEST','kd_wilayah'=>$c['kd_wilayah'],'kd_opd'=>$c['kd_opd'],'tahun'=>$c['tahun']];
 $oldSession=$_SESSION??[];$_SESSION['user']=$u;$s=new ContractOfferPrintService($u);$db->begin();
 try {
+    $s->save((int)$c['id'],['nomor_surat'=>'QA-SPSE','tanggal_surat'=>'2026-10-26','masa_berlaku'=>20,'penandatangan_nama'=>'QA PENERIMA KUASA','penandatangan_jabatan'=>'Penerima Kuasa','dasar_kuasa'=>'Surat Kuasa Nomor QA-04']);
     $s->save((int)$c['id'],['nomor_surat'=>'QA-SPSE','tanggal_surat'=>'2026-10-26','masa_berlaku'=>20]);
+    if($s->get((int)$c['id'])['penandatangan_nama']!=='QA PENERIMA KUASA')throw new RuntimeException('Saving existing settings erased the contract signer');
     ContractPrintSettingsService::save((int)$c['id'],['line_spacing'=>1.5],'QA');
     if($s->get((int)$c['id'])['nomor_surat']!=='QA-SPSE')throw new RuntimeException('Paragraph settings erased offer settings');
     foreach(['bundle','letter','rab'] as $kind)if(!str_starts_with($s->pdf((int)$c['id'],$kind),'%PDF-'))throw new RuntimeException('Invalid native PDF');
-    foreach([['tanggal_surat'=>'2026-02-30'],['masa_berlaku'=>0],['nomor_surat'=>'']] as $bad){
+    foreach([['tanggal_surat'=>'2026-02-30'],['masa_berlaku'=>0],['nomor_surat'=>''],['penandatangan_nama'=>str_repeat('A',151)],['penandatangan_jabatan'=>''],['penandatangan_nama'=>'']] as $bad){
         $failed=false;try{$s->save((int)$c['id'],array_replace(['nomor_surat'=>'QA','tanggal_surat'=>'2026-10-26','masa_berlaku'=>20],$bad));}catch(FieldValidationException $e){$failed=(bool)$e->errors;}
         if(!$failed)throw new RuntimeException('Invalid field accepted');
     }
+    $s->save((int)$c['id'],['nomor_surat'=>'QA-SPSE','tanggal_surat'=>'2026-10-26','masa_berlaku'=>20,'penandatangan_nama'=>'','penandatangan_jabatan'=>'','dasar_kuasa'=>'']);
+    if($s->get((int)$c['id'])['penandatangan_nama']!==''||!str_starts_with($s->pdf((int)$c['id'],'letter'),'%PDF-'))throw new RuntimeException('Clearing the override did not restore director printing');
     $_SESSION['user']=array_replace($u,['kd_opd'=>'UNRELATED']);$failed=false;
     try{(new ContractOfferPrintService($_SESSION['user']))->get((int)$c['id']);}catch(RuntimeException $e){$failed=true;}
     if(!$failed)throw new RuntimeException('Cross-OPD data exposed');

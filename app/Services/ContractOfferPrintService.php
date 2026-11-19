@@ -21,7 +21,7 @@ final class ContractOfferPrintService
     private function settings(int $id,array $c):array
     {
         $p=$this->raw($id)['offer_print']??[];$process=ProcurementProcessService::values($c);
-        return array_replace(['nomor_surat'=>'SPSE','tanggal_surat'=>($process['UPLOAD_PENAWARAN']['tanggal']??'')?:($c['tanggal_kontrak']??''),'masa_berlaku'=>20,'kop_aktif'=>false,'kop_path'=>'','kop_filename'=>''],is_array($p)?$p:[]);
+        return array_replace(['nomor_surat'=>'SPSE','tanggal_surat'=>($process['UPLOAD_PENAWARAN']['tanggal']??'')?:($c['tanggal_kontrak']??''),'masa_berlaku'=>20,'kop_aktif'=>false,'kop_path'=>'','kop_filename'=>'','penandatangan_nama'=>'','penandatangan_jabatan'=>'','dasar_kuasa'=>''],is_array($p)?$p:[]);
     }
     public function get(int $id):array{$d=$this->data($id);$p=$this->settings($id,$d['contract']);unset($p['kop_path']);return $p;}
     public function save(int $id,array $input,array $file=[]):array
@@ -31,6 +31,12 @@ final class ContractOfferPrintService
         if($number===''||mb_strlen($number)>255)throw new FieldValidationException('nomor_surat','Isi nomor surat penawaran, maksimal 255 karakter.');
         if(!preg_match('/^\d{4}-\d{2}-\d{2}$/D',$date)||!checkdate((int)substr($date,5,2),(int)substr($date,8,2),(int)substr($date,0,4)))throw new FieldValidationException('tanggal_surat','Tanggal surat penawaran tidak valid.');
         if($days===false||$days<1||$days>365)throw new FieldValidationException('masa_berlaku','Masa berlaku penawaran harus 1–365 hari.');
+        foreach(['penandatangan_nama'=>150,'penandatangan_jabatan'=>100,'dasar_kuasa'=>255] as $field=>$limit){
+            if(array_key_exists($field,$input))$p[$field]=trim((string)$input[$field]);
+            if(mb_strlen($p[$field])>$limit)throw new FieldValidationException($field,'Maksimal '.$limit.' karakter.');
+        }
+        if($p['penandatangan_nama']===''&&($p['penandatangan_jabatan']!==''||$p['dasar_kuasa']!==''))throw new FieldValidationException('penandatangan_nama','Isi nama penandatangan atau kosongkan seluruh data kuasa.');
+        if($p['penandatangan_nama']!==''&&$p['penandatangan_jabatan']==='')throw new FieldValidationException('penandatangan_jabatan','Isi jabatan penandatangan.');
         $p=array_replace($p,['nomor_surat'=>$number,'tanggal_surat'=>$date,'masa_berlaku'=>$days,'kop_aktif'=>!empty($input['kop_aktif'])]);$newFile=null;$oldPath=$p['kop_path'];
         if(($file['error']??UPLOAD_ERR_NO_FILE)!==UPLOAD_ERR_NO_FILE){
             if(($file['error']??-1)!==UPLOAD_ERR_OK)throw new FieldValidationException('kop_file','File kop gagal diunggah.');
@@ -54,6 +60,11 @@ final class ContractOfferPrintService
         if($total<=0)throw new RuntimeException('RAB penawaran belum terisi. Lengkapi RAB penawaran sebelum mencetak.');
         $vendor=$this->db->query('SELECT nama_perusahaan,direktur,jabatan FROM rekanan_neo WHERE id=? AND is_deleted=0',[(int)($c['rekanan_id']??0)])->fetch();if(!$vendor)throw new RuntimeException('Pilih perusahaan dan lengkapi identitas penyedia sebelum mencetak surat penawaran.');
         $p=$this->settings($id,$c);if(empty($p['tanggal_surat']))throw new RuntimeException('Lengkapi tanggal surat penawaran terlebih dahulu.');
+        if(trim((string)$p['penandatangan_nama'])!==''){
+            $vendor['direktur']=$p['penandatangan_nama'];
+            $vendor['jabatan']=$p['penandatangan_jabatan'];
+            $vendor['dasar_kuasa']=$p['dasar_kuasa'];
+        }
         $setup=array_merge(PageSetupService::current($this->user),ContractPrintSettingsService::get($id),$pageOverrides);$pdf=PageSetupService::createPdf($setup,$kind==='rab'?'L':'P');PageSetupService::applyPdf($pdf,$setup);ProcurementDocumentFormatService::typography($pdf,$setup);$pdf->SetCreator('seSendok');$pdf->SetTitle('Penawaran - '.$c['uraian_kontrak']);
         if($kind!=='rab'){$this->page($pdf,$setup,$p,'P');$this->letter($pdf,$c,$vendor,$p,$total);}
         if($kind!=='letter'){$this->page($pdf,$setup,$p,'L');$this->rab($pdf,$c,$vendor,$rows,$total);}
@@ -73,7 +84,9 @@ final class ContractOfferPrintService
         $process=ProcurementProcessService::values($c);$inv=$process['UNDANGAN_PL']??[];$reference=(!empty($inv['nomor'])&&!empty($inv['tanggal']))?'Sehubungan dengan Undangan Pengadaan Langsung Nomor '.$e($inv['nomor']).' tanggal '.$e($this->date($inv['tanggal'])).', dan setelah kami pelajari dengan saksama Dokumen Pengadaan, ':'Setelah kami pelajari dengan saksama Dokumen Pengadaan, ';
         $days=(int)($c['waktu_pelaksanaan']??0);if(!$days&&!empty($c['tanggal_mulai'])&&!empty($c['tanggal_selesai']))$days=(int)(new DateTimeImmutable($c['tanggal_mulai']))->diff(new DateTimeImmutable($c['tanggal_selesai']))->days+1;
         $texts=[$reference.'dengan ini kami mengajukan penawaran untuk pekerjaan '.$e($c['uraian_kontrak']).' sebesar Rp'.number_format($total,2,',','.').' ('.$e(ucwords($this->words((int)round($total)))).' Rupiah).','Penawaran ini sudah memperhatikan ketentuan dan persyaratan yang tercantum dalam Dokumen Pengadaan untuk melaksanakan pekerjaan tersebut di atas.','Kami akan melaksanakan pekerjaan tersebut dengan jangka waktu pelaksanaan pekerjaan selama '.$days.' ('.$e(ucwords($this->words($days))).') hari kalender.','Penawaran ini berlaku selama '.$p['masa_berlaku'].' ('.$e($this->words((int)$p['masa_berlaku'])).') hari kalender sejak tanggal surat penawaran ini.','Surat penawaran beserta lampirannya kami sampaikan sebanyak 1 (satu) rangkap dokumen asli.','Dengan disampaikannya surat penawaran ini, kami menyatakan sanggup dan akan tunduk pada semua ketentuan yang tercantum dalam Dokumen Pengadaan.'];foreach($texts as $text)$html.='<p align="justify" style="text-indent:10mm;">'.$text.'</p>';
-        $html.='<table cellpadding="2"><tr nobr="true"><td width="50%"></td><td width="50%" align="left"><b>'.$e($v['nama_perusahaan']).'</b><br><br><br><br><b><u>'.$e($v['direktur']).'</u></b><br>'.$e($v['jabatan']?:'Direktur').'</td></tr></table>';$pdf->writeHTML($html,true,false,true,false,'');
+        $html.='<table cellpadding="2"><tr nobr="true"><td width="50%"></td><td width="50%" align="left"><b>'.$e($v['nama_perusahaan']).'</b><br><br><br><br><b><u>'.$e($v['direktur']).'</u></b><br>'.$e($v['jabatan']?:'Direktur');
+        if(!empty($v['dasar_kuasa']))$html.='<br>'.$e($v['dasar_kuasa']);
+        $html.='</td></tr></table>';$pdf->writeHTML($html,true,false,true,false,'');
     }
     private function rab(TCPDF $pdf,array $c,array $v,array $rows,float $total):void
     {
