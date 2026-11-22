@@ -1,0 +1,10 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const context=vm.createContext({console,window:{},PermissionEngine:{allow:()=>true}});
+const source=fs.readFileSync('public/assets/js/config/ui-config.js','utf8');
+const start=source.indexOf('UIConfig.rekanan_akta =');const end=source.indexOf('UIConfig.sumber_dana',start);
+vm.runInContext('var UIConfig={};'+source.slice(start,end),context);
+vm.runInContext(fs.readFileSync('public/assets/js/engine/form-engine.js','utf8')+';var FieldEngine=FormEngine;',context);
+const idField=context.UIConfig.rekanan_akta.form.elements.find(e=>e.prop?.name==='rekanan_id');
+const html=context.FieldEngine.element({...idField,prop:{...idField.prop,value:496}});
+assert.equal(idField.tag,'hidden');assert.match(html,/type="hidden"/);assert.match(html,/name="rekanan_id"/);assert.match(html,/value="496"/);assert(!html.includes('<div'));assert(!html.includes('type="text"'));
+console.log('PASS: ID rekanan disimpan tersembunyi dan tidak membentuk kolom input Akta.');

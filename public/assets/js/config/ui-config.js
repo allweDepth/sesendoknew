@@ -860,11 +860,8 @@ UIConfig.rekanan_akta = {
 	form: {
 		elements: [
 			{
-				tag: "field",
-				prop: {
-					name: "rekanan_id",
-					atribut: 'type="hidden"',
-				},
+				tag: "hidden",
+				prop: { name: "rekanan_id" },
 			},
 
 			{

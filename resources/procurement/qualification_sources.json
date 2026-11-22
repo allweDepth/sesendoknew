@@ -1,0 +1,37 @@
+{
+  "reviewed_at": "2026-11-22",
+  "purpose": "Catatan pemeliharaan internal; tidak dicetak pada formulir penyedia.",
+  "sources": [
+    {
+      "title": "Peraturan LKPP Nomor 3 Tahun 2026",
+      "url": "https://jdih.lkpp.go.id/regulation/peraturan-lkpp/peraturan-lkpp-nomor-3-tahun-2026",
+      "sections": [
+        "Lampiran I dan II, 3.4 dan 5.3"
+      ],
+      "use": "Persyaratan kualifikasi dan pengadaan langsung; menggantikan acuan PerLKPP 12/2021 dan perubahannya."
+    },
+    {
+      "title": "Surat Edaran Kepala LKPP Nomor 3 Tahun 2026",
+      "url": "https://jdih.lkpp.go.id/regulation/surat-edaran-kepala-lkpp/surat-edaran-kepala-lkpp-nomor-3-tahun-2026",
+      "use": "Ketentuan transisi dan kesiapan fitur; cetakan bukan penetapan kelulusan."
+    },
+    {
+      "title": "Peraturan LKPP Nomor 2 Tahun 2026",
+      "url": "https://jdih.lkpp.go.id/regulation/peraturan-lkpp/peraturan-lkpp-nomor-2-tahun-2026",
+      "use": "Katalog elektronik."
+    },
+    {
+      "title": "Keputusan Kepala LKPP Nomor 93 Tahun 2025",
+      "url": "https://jdih.lkpp.go.id/regulation/keputusan-kepala-lkpp/keputusan-kepala-lkpp-nomor-93-tahun-2025",
+      "use": "Mini kompetisi mengikuti persyaratan paket yang diumumkan; tidak otomatis menerapkan seluruh persyaratan tender."
+    }
+  ],
+  "format_notes": [
+    "Susunan tabel mengadaptasi model dokumen pemilihan resmi; persyaratan substantif mengikuti ketentuan terbaru dan dokumen paket.",
+    "Bagian personel/peralatan hanya digunakan bila dipersyaratkan paket.",
+    "Konsultansi mini kompetisi mengikuti ketersediaan fitur dan dokumen kompetisi.",
+    "Data kosong harus dilengkapi berdasarkan bukti; tidak disimpulkan tidak berlaku.",
+    "Identitas, direktur, akta dan NPWP bersumber dari data induk rekanan.",
+    "Penandatangan cetakan dapat berbeda dari direktur dengan dasar kewenangan."
+  ]
+}

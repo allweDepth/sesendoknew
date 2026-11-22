@@ -398,6 +398,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 							data-action="akta">
 							<i class="file alternate outline icon"></i>
 						</button>
+                        <button type="button" class="ui red button" data-rekanan-kualifikasi="${Number(id)}" title="Isian Kualifikasi PDF / Excel" aria-label="Isian Kualifikasi PDF / Excel"><i class="file pdf outline icon"></i></button>
 					`;
 					break;
 				case "trx_naskah_dinas":

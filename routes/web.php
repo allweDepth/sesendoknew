@@ -118,6 +118,11 @@ return [
     | 📚 REFERENSI (Legacy Controller Mode)
     |--------------------------------------------------------------------------
     */
+  '/referensi/kualifikasi/data' => ['ReferensiController', 'qualificationData'],
+  '/referensi/kualifikasi/save' => ['ReferensiController', 'qualificationSave'],
+  '/referensi/kualifikasi/options' => ['ReferensiController', 'qualificationOptions'],
+  '/referensi/kualifikasi/excel' => ['ReferensiController', 'qualificationExcel'],
+  '/referensi/kualifikasi/pdf' => ['ReferensiController', 'qualificationPdf'],
   '/referensi'          => ['ReferensiController', 'index'],
   '/referensi/store'    => ['ReferensiController', 'store'],
   '/referensi/update'   => ['ReferensiController', 'update'],

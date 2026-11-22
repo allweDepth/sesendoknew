@@ -154,13 +154,26 @@ final class ProcurementFixedPdfService
             if($format==='clause-heading'){$pdf->Ln(1.5);$pdf->SetFont($this->font,'B',$this->baseSize);$pdf->MultiCell(0,5.2,$text,0,'L',false,1);continue;}
             $pdf->SetFont($this->font,'',$this->baseSize);
             if($format==='hanging-list'&&preg_match('/^(\([a-z0-9]+\)|\d+\.)\s+(.+)$/isu',$text,$m)){
-                $margin=$pdf->getMargins();$x=$margin['left'];$y=$pdf->GetY();$pdf->SetXY($x,$y);$pdf->Cell(8,5.0,$m[1],0,0,'R');$pdf->SetXY($x+10,$y);$pdf->MultiCell($pdf->getPageWidth()-$margin['right']-($x+10),5.0,rtrim($m[2])."\n",0,'J',false,1);continue;
+                $this->hangingParagraph($pdf,$m[1],$m[2]);continue;
             }
             if($format==='hanging-list'&&preg_match('/^((?:[a-z]\.|\d+\)|[ivx]+\.))\s+(.+)$/isu',$text,$m)){
-                $margin=$pdf->getMargins();$x=$margin['left'];$y=$pdf->GetY();$pdf->SetXY($x,$y);$pdf->Cell(8,5.0,$m[1],0,0,'R');$pdf->SetXY($x+10,$y);$pdf->MultiCell($pdf->getPageWidth()-$margin['right']-($x+10),5.0,rtrim($m[2])."\n",0,'J',false,1);continue;
+                $this->hangingParagraph($pdf,$m[1],$m[2]);continue;
             }
             $pdf->MultiCell(0,5.0,rtrim($text)."\n",0,'J',false,1,'','',true,0,false,true);$pdf->Ln(.8);
         }
+    }
+    private function hangingParagraph(TCPDF $pdf,string $prefix,string $text):void
+    {
+        $margin=$pdf->getMargins();$x=$margin['left'];
+        $width=$pdf->getPageWidth()-$margin['right']-($x+10);
+        $body=rtrim($text)."\n";
+        $height=max(5.0,$pdf->getStringHeight($width,$body));
+        $bottom=$pdf->getPageHeight()-$pdf->getBreakMargin();
+        $required=min($height,$bottom-$margin['top']);
+        // Move the label and its paragraph together before Cell can change pages.
+        if($pdf->GetY()+$required>$bottom)$pdf->AddPage($this->orientation);
+        $y=$pdf->GetY();$pdf->SetXY($x,$y);$pdf->Cell(8,5.0,$prefix,0,0,'R');
+        $pdf->SetXY($x+10,$y);$pdf->MultiCell($width,5.0,$body,0,'J',false,1);
     }
     private function footerPages(TCPDF $pdf,string $label):void
     {
@@ -240,7 +253,7 @@ final class ProcurementFixedPdfService
 
     private function sskk(array $d,array $c,array $setup):string
     {
-        $pdf=$this->pdf($setup,'P');$pdf->AddPage($this->orientation);$pdf->SetFont($this->font,'B',$this->baseSize+5);$pdf->MultiCell(0,8,'SYARAT-SYARAT KHUSUS KONTRAK',0,'C');$rows=$this->paragraphs($d,$c);if(empty($d['id']))$rows=ProcurementReferenceTermsService::rows('SSKK',$c);if(!$rows)$rows=ProcurementReferenceTermsService::rows('SSKK',$c);foreach($rows as &$row)$row['text']=$this->variables((string)($row['text']??''),$d,$c);unset($row);$html='<table cellpadding="3"><thead><tr style="font-weight:bold"><th width="13%">Pasal dalam SSUK</th><th width="22%">Ketentuan</th><th width="65%">Data</th></tr></thead><tbody>';foreach($rows as $row){$parts=array_map('trim',explode('|',(string)$row['text'],3));$html.='<tr><td width="13%"><b>'.nl2br($this->e($parts[0]??''),false).'</b></td><td width="22%"><b>'.nl2br($this->e($parts[1]??''),false).'</b></td><td width="65%">'.nl2br($this->e($parts[2]??$parts[0]??''),false).'</td></tr>';}$html.='</tbody></table>';$pdf->SetFont($this->font,'',max(6,$this->baseSize-0.5));$pdf->writeHTML($html,true,false,true,false,'');$this->footerPages($pdf,'syarat-syarat khusus kontrak');return$this->finish($pdf);
+        $pdf=$this->pdf($setup,'P');$pdf->AddPage($this->orientation);$pdf->SetFont($this->font,'B',$this->baseSize+5);$pdf->MultiCell(0,8,'SYARAT-SYARAT KHUSUS KONTRAK',0,'C');$rows=$this->paragraphs($d,$c);if(empty($d['id']))$rows=ProcurementReferenceTermsService::rows('SSKK',$c);if(!$rows)$rows=ProcurementReferenceTermsService::rows('SSKK',$c);$data=$d['data_isian']??[];if(is_string($data))$data=json_decode($data,true)?:[];$context=array_replace($c,array_intersect_key($data,array_flip(['masa_pemeliharaan','masa_pemeliharaan_bulan'])));$rows=ProcurementReferenceTermsService::fillSskkRows($rows,$context);foreach($rows as &$row)$row['text']=$this->variables((string)($row['text']??''),$d,$c);unset($row);$html='<table cellpadding="3"><thead><tr style="font-weight:bold"><th width="13%">Pasal dalam SSUK</th><th width="22%">Ketentuan</th><th width="65%">Data</th></tr></thead><tbody>';foreach($rows as $row){$parts=array_map('trim',explode('|',(string)$row['text'],3));$html.='<tr nobr="true"><td width="13%"><b>'.nl2br($this->e($parts[0]??''),false).'</b></td><td width="22%"><b>'.nl2br($this->e($parts[1]??''),false).'</b></td><td width="65%">'.nl2br($this->e($parts[2]??$parts[0]??''),false).'</td></tr>';}$html.='</tbody></table>';$pdf->SetFont($this->font,'',max(6,$this->baseSize-0.5));$pdf->writeHTML($html,true,false,true,false,'');$this->footerPages($pdf,'syarat-syarat khusus kontrak');return$this->finish($pdf);
     }
     private function ssuk(array $d,array $c,array $setup):string
     {

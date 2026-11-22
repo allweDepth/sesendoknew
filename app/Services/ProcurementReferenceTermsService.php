@@ -130,17 +130,20 @@ final class ProcurementReferenceTermsService
 
     private static function sskkRows(array $c): array
     {
-        $days = trim((string)($c['waktu_pelaksanaan'] ?? '')) ?: '200';
+        $days = trim((string)($c['waktu_pelaksanaan'] ?? '')) ?: 'sesuai SPMK';
         $ppk = trim((string)($c['nama_ppk_resmi'] ?? $c['nama_ppk'] ?? '')) ?: '{{nama_ppk}}';
+        $pptk = trim((string)($c['nama_pptk'] ?? '')) ?: 'Belum ditetapkan';
+        $pptkNip = trim((string)($c['nip_pptk'] ?? '')) ?: '-';
+        $maintenance = !empty($c['masa_pemeliharaan_bulan']) ? $c['masa_pemeliharaan_bulan'].' bulan' : (!empty($c['masa_pemeliharaan']) ? $c['masa_pemeliharaan'].' hari kalender' : 'sesuai ketentuan dokumen kontrak');
         $provider = trim((string)($c['direktur'] ?? $c['nama_penyedia_resmi'] ?? $c['nama_penyedia'] ?? '')) ?: '{{nama_penyedia}}';
         $providerAddress = trim((string)($c['alamat_penyedia'] ?? $c['alamat'] ?? '')) ?: '-';
         $opd = trim((string)($c['nama_opd'] ?? '')) ?: '{{nama_opd}}';
         $rows = [
             ['4.1 & 4.2','Korespondensi',"Alamat Para Pihak sebagai berikut:\n\nSatuan Kerja PPK : {$opd}\nNama : {$ppk}\nE-mail : ................................\n\nPenyedia : {{nama_penyedia}}\nNama : {$provider}\nAlamat : {$providerAddress}\nE-mail : ................................"],
-            ['4.2 & 5.1','Wakil Sah Para Pihak',"Wakil Sah Para Pihak sebagai berikut:\n\nUntuk PPK:\nNama : {$ppk}\nBerdasarkan Surat Keputusan pejabat yang berwenang tentang pengangkatan PPTK dan tim teknis pada {{nama_opd}}.\n\nUntuk Penyedia:\nNama : {$provider}"],
+            ['4.2 & 5.1','Wakil Sah Para Pihak',"Untuk PPK:\nNama PPK : {$ppk}\nPPTK : {$pptk}\nNIP PPTK : {$pptkNip}\nKewenangan PPTK sebagai wakil PPK mengikuti penetapan/pelimpahan tertulis yang berlaku.\n\nUntuk Penyedia:\nNama : {$provider}"],
             ['6.3.b & 6.3.c / 44.4 & 44.6','Pencairan Jaminan','Jaminan dicairkan dan disetorkan pada Kas Daerah Kabupaten/Kota sesuai satuan kerja Pengguna Jasa.'],
             ['27.1','Masa Pelaksanaan',"Masa Pelaksanaan selama {$days} hari kalender terhitung sejak Tanggal Mulai Kerja yang tercantum dalam SPMK."],
-            ['33.8','Masa Pemeliharaan','Masa Pemeliharaan berlaku selama 360 (tiga ratus enam puluh) hari kalender terhitung sejak Tanggal Penyerahan Pertama Pekerjaan (PHO).'],
+            ['33.8','Masa Pemeliharaan','Masa Pemeliharaan berlaku selama '.$maintenance.' terhitung sejak Tanggal Penyerahan Pertama Pekerjaan (PHO).'],
             ['33.19','Serah Terima Sebagian Pekerjaan (Bagian Kontrak)',"Dalam Kontrak ini diberlakukan serah terima pekerjaan sebagian atau secara parsial untuk bagian sebagai berikut:\n1. Bagian pekerjaan yang ditetapkan dalam dokumen kontrak;\n2. Bagian pekerjaan lain yang disetujui Pengguna Jasa."],
             ['33.22','Masa Pemeliharaan untuk Serah Terima Sebagian Pekerjaan (Bagian Kontrak)','Tidak ditentukan, kecuali dinyatakan lain dalam dokumen kontrak.'],
             ['35.1','Gambar As Built dan Pedoman Pengoperasian dan Perawatan/Pemeliharaan','Gambar “As built” dan/atau pedoman pengoperasian dan perawatan/pemeliharaan harus diserahkan paling lambat 3 (tiga) hari kalender setelah Tanggal Penyerahan Pertama Pekerjaan.'],
@@ -161,5 +164,14 @@ final class ProcurementReferenceTermsService
             ['Lainnya','Penyelesaian Perselisihan/Sengketa','Dalam hal musyawarah untuk mufakat tidak tercapai, para pihak sepakat menyelesaikan perselisihan/sengketa melalui Layanan Penyelesaian Sengketa yang diselenggarakan oleh LKPP.'],
         ];
         return array_map(static fn($r) => ['type'=>'paragraph','align'=>'left','style'=>[],'format'=>'sskk-row','text'=>implode(' | ', $r)], $rows);
+    }
+
+    /** Refresh contract identity fields while retaining the other edited clauses. */
+    public static function fillSskkRows(array $rows,array $contract):array
+    {
+        $automatic=['4.1 & 4.2','4.2 & 5.1','27.1','33.8'];$current=[];
+        foreach(self::sskkRows($contract) as $r){$key=trim(explode('|',$r['text'],2)[0]);if(in_array($key,$automatic,true))$current[$key]=$r;}
+        foreach($rows as &$r){$key=trim(explode('|',(string)($r['text']??''),2)[0]);if(isset($current[$key])){$r=$current[$key];unset($current[$key]);}}unset($r);
+        return array_merge($rows,array_values($current));
     }
 }
