@@ -3,6 +3,8 @@ require_once __DIR__.'/PageSetupService.php';
 require_once __DIR__.'/OfficialLetterheadPdfService.php';
 require_once __DIR__.'/ProcurementZipPdfService.php';
 require_once __DIR__.'/ProcurementReferenceTermsService.php';
+require_once __DIR__.'/ProcurementParagraphLayoutService.php';
+require_once __DIR__.'/ProcurementContractFormService.php';
 require_once __DIR__.'/ProcurementDocumentFormatService.php';
 require_once __DIR__.'/ProcurementContractTypeService.php';
 
@@ -44,8 +46,9 @@ final class ProcurementFixedPdfService
     }
     private function finish(TCPDF $pdf):string{return $this->sharedPdf?'':$pdf->Output('','S');}
 
-    public function cover(TCPDF $pdf,array $c,array $setup):void
+    public function cover(TCPDF $pdf,array $c,array $setup,?string $form=null):void
     {
+        $form=$form??ProcurementContractFormService::recommend($c);
         ProcurementDocumentFormatService::registerFonts($pdf);PageSetupService::applyPdf($pdf,$setup,[18,15,18,18]);$pdf->AddPage(PageSetupService::orientation($setup,'P'));
         $coverFont=$setup['font']??ProcurementDocumentFormatService::BODY_FONT;
         $m=$pdf->getMargins();$x=$m['left'];$y=$m['top'];$w=$pdf->getPageWidth()-$x-$m['right'];$bottom=$pdf->getPageHeight()-$m['bottom']-3;$h=$bottom-$y;$layoutScale=min(1.0,$h/270,$w/174);$fontScale=(float)($setup['font_size']??12)/12;
@@ -55,8 +58,8 @@ final class ProcurementFixedPdfService
         $pdf->startTransaction();OfficialLetterheadPdfService::draw($pdf,$letterheadUser);$headerBottom=$pdf->GetY()-4;$pdf->rollbackTransaction(true);
         $pdf->SetFillColor(183,211,159);$pdf->Rect($x,$y,$w,$headerBottom-$y,'F');
         $pdf->SetXY($x+4,$y+3);OfficialLetterheadPdfService::draw($pdf,$letterheadUser);$pdf->SetMargins($x,$m['top'],$m['right']);
-        $pdf->SetTextColor(0,0,0);$pdf->SetFont($coverFont,'B',23*$fontScale);$pdf->SetXY($x+3,$y+44*$layoutScale);$pdf->MultiCell($w-6,10,'SURAT PERINTAH KERJA (SPK)',0,'C');
-        $pdf->SetFont($coverFont,'B',11*$fontScale);$pdf->MultiCell($w-6,6,'SPK '.ProcurementContractTypeService::label($c),0,'C');
+        $pdf->SetTextColor(0,0,0);$pdf->SetFont($coverFont,'B',23*$fontScale);$pdf->SetXY($x+3,$y+44*$layoutScale);$pdf->MultiCell($w-6,10,ProcurementContractFormService::label($form),0,'C');
+        $pdf->SetFont($coverFont,'B',11*$fontScale);$pdf->MultiCell($w-6,6,'Kontrak '.ProcurementContractTypeService::label($c),0,'C');
         $kind=strtoupper(trim((string)($c['jenis_pengadaan']??'')));
         $packageLabel=match(true){
             strtoupper($c['cara_pengadaan']??'')==='SWAKELOLA'=>'Paket Swakelola',
@@ -91,7 +94,9 @@ final class ProcurementFixedPdfService
     {
         $contract['print_settings']=$contract['print_settings']??ContractPrintSettingsService::get((int)($contract['id']??0));
         $setup=array_merge($setup,$contract['print_settings']);
-        if(ProcurementDocumentFormatService::supports('SPK_KONSULTANSI_KONSTRUKSI',$contract))return $this->spk(['kode_dokumen'=>'SPK_KONSULTANSI_KONSTRUKSI','nomor_dokumen'=>$contract['nomor_kontrak'],'tanggal_dokumen'=>$contract['tanggal_kontrak']],$contract,ProcurementDocumentFormatService::setup($setup,$contract['print_settings']??[]));
+        $form=ProcurementContractFormService::recommend($contract);
+        if($form==='SURAT_PESANAN')return $this->render(['kode_dokumen'=>'SURAT_PESANAN','judul'=>'Surat Pesanan','nomor_dokumen'=>$contract['nomor_kontrak']??'','tanggal_dokumen'=>$contract['tanggal_kontrak']??''],$contract,$setup);
+        if($form==='SPK')return $this->spk(['kode_dokumen'=>'SPK_'.($contract['jenis_pengadaan']==='PEKERJAAN_KONSTRUKSI'?'KONSTRUKSI':$contract['jenis_pengadaan']),'nomor_dokumen'=>$contract['nomor_kontrak'],'tanggal_dokumen'=>$contract['tanggal_kontrak']],$contract,ProcurementDocumentFormatService::setup($setup,$contract['print_settings']??[]));
         return $this->contract(['kode_dokumen'=>'SURAT_PERJANJIAN','judul'=>'Surat Perjanjian','nomor_dokumen'=>$contract['nomor_kontrak']??'','tanggal_dokumen'=>$contract['tanggal_kontrak']??date('Y-m-d'),'sections'=>[],'attachments'=>[]],$contract,$setup);
     }
 
@@ -113,7 +118,7 @@ final class ProcurementFixedPdfService
     private function paragraphs(array $document,array $contract,bool $jsonOnly=false):array
     {
         $code=strtoupper((string)($document['kode_dokumen']??''));
-        if(empty($document['id'])&&in_array($code,['SURAT_PERJANJIAN','SSKK','SSUK'],true)){$reference=ProcurementReferenceTermsService::rows($code,$contract);foreach($reference as &$row)$row['text']=$this->variables((string)($row['text']??''),$document,$contract);unset($row);if($reference)return$reference;}$out=[];foreach($document['sections']??[] as $section){$raw=$section['isi']??$section['isi_template']??'';$decoded=is_string($raw)?json_decode($raw,true):$raw;if(is_array($decoded)){foreach($decoded as $row){if(is_string($row))$row=['text'=>$row];if(!is_array($row)||trim((string)($row['text']??''))==='')continue;$row['text']=$this->variables((string)$row['text'],$document,$contract);$out[]=$row;}continue;}if($jsonOnly)continue;$text=preg_replace('/\s+/u',' ',html_entity_decode(strip_tags(str_replace(['</p>','</li>','<br>','<br/>','<br />'],"\n",(string)$raw)),ENT_QUOTES|ENT_HTML5,'UTF-8'));foreach(preg_split('/\n+/',$text)?:[] as $line)if(trim($line)!=='')$out[]=['type'=>'paragraph','align'=>'justify','text'=>$this->variables(trim($line),$document,$contract)];}return$out;
+        if(empty($document['id'])&&in_array($code,['SURAT_PERJANJIAN','SSKK','SSUK'],true)){$reference=ProcurementReferenceTermsService::rows($code,$contract);foreach($reference as &$row)$row['text']=$this->variables((string)($row['text']??''),$document,$contract);unset($row);if($reference)return$reference;}$out=[];foreach($document['sections']??[] as $section){$raw=$section['isi']??$section['isi_template']??'';$decoded=is_string($raw)?json_decode($raw,true):$raw;if(is_array($decoded)){foreach($decoded as $row){if(is_string($row))$row=['text'=>$row];if(!is_array($row)||trim((string)($row['text']??''))==='')continue;$row['text']=$this->variables((string)$row['text'],$document,$contract);$out[]=$row;}continue;}if($jsonOnly)continue;$text=preg_replace('/[ \t]+/u',' ',html_entity_decode(strip_tags(str_replace(['</p>','</li>','<br>','<br/>','<br />'],"\n",(string)$raw)),ENT_QUOTES|ENT_HTML5,'UTF-8'));foreach(preg_split('/\n+/',$text)?:[] as $line)if(trim($line)!=='')$out[]=['type'=>'paragraph','align'=>'justify','text'=>$this->variables(trim($line),$document,$contract)];}return$out;
     }
     private function variables(string $text,array $d,array $c):string
     {
@@ -122,7 +127,7 @@ final class ProcurementFixedPdfService
     private function writeParagraphs(TCPDF $pdf,array $rows):void
     {
         $sequence=[];
-        foreach($rows as $row){
+        foreach(ProcurementParagraphLayoutService::normalize($rows) as $row){
             if(in_array($row['format']??'',['clause-heading','hanging-list','body'],true)){$this->writeTermsParagraphs($pdf,[$row]);continue;}
             $type=$row['type']??'paragraph';$style=is_array($row['style']??null)?$row['style']:[];
             $font=(in_array('bold',$style,true)?'B':'').(in_array('italic',$style,true)?'I':'').(in_array('underline',$style,true)?'U':'');
@@ -151,29 +156,35 @@ final class ProcurementFixedPdfService
         foreach($rows as $row){
             $text=trim((string)($row['text']??''));if($text==='')continue;
             $format=(string)($row['format']??'body');
-            if($format==='clause-heading'){$pdf->Ln(1.5);$pdf->SetFont($this->font,'B',$this->baseSize);$pdf->MultiCell(0,5.2,$text,0,'L',false,1);continue;}
+            if($format==='clause-heading'){
+                $needed=preg_match('/^Pasal\s+\d+/i',$text)?24:14;
+                if($pdf->GetY()+$needed>$pdf->getPageHeight()-$pdf->getBreakMargin())$pdf->AddPage($this->orientation);
+                $pdf->Ln(preg_match('/^Pasal\s+\d+/i',$text)?3:1);$pdf->SetFont($this->font,'B',$this->baseSize);
+                $align=['left'=>'L','center'=>'C','right'=>'R'][$row['align']??'left']??'L';
+                $pdf->MultiCell(0,5.2,$text,0,$align,false,1);continue;
+            }
             $pdf->SetFont($this->font,'',$this->baseSize);
-            if($format==='hanging-list'&&preg_match('/^(\([a-z0-9]+\)|\d+\.)\s+(.+)$/isu',$text,$m)){
+            if($format==='hanging-list'&&preg_match('/^(\([a-z0-9]+\)|\d+\.|[•●▪])\s+(.+)$/isu',$text,$m)){
                 $this->hangingParagraph($pdf,$m[1],$m[2]);continue;
             }
-            if($format==='hanging-list'&&preg_match('/^((?:[a-z]\.|\d+\)|[ivx]+\.))\s+(.+)$/isu',$text,$m)){
-                $this->hangingParagraph($pdf,$m[1],$m[2]);continue;
+            if($format==='hanging-list'&&preg_match('/^((?:[a-z][.)]|\d+\)|[ivx]+\.))\s+(.+)$/isu',$text,$m)){
+                $this->hangingParagraph($pdf,$m[1],$m[2],8);continue;
             }
             $pdf->MultiCell(0,5.0,rtrim($text)."\n",0,'J',false,1,'','',true,0,false,true);$pdf->Ln(.8);
         }
     }
-    private function hangingParagraph(TCPDF $pdf,string $prefix,string $text):void
+    private function hangingParagraph(TCPDF $pdf,string $prefix,string $text,float $indent=0):void
     {
-        $margin=$pdf->getMargins();$x=$margin['left'];
-        $width=$pdf->getPageWidth()-$margin['right']-($x+10);
+        $margin=$pdf->getMargins();$x=$margin['left']+$indent;
+        $width=$pdf->getPageWidth()-$margin['right']-($x+8);
         $body=rtrim($text)."\n";
         $height=max(5.0,$pdf->getStringHeight($width,$body));
         $bottom=$pdf->getPageHeight()-$pdf->getBreakMargin();
         $required=min($height,$bottom-$margin['top']);
         // Move the label and its paragraph together before Cell can change pages.
         if($pdf->GetY()+$required>$bottom)$pdf->AddPage($this->orientation);
-        $y=$pdf->GetY();$pdf->SetXY($x,$y);$pdf->Cell(8,5.0,$prefix,0,0,'R');
-        $pdf->SetXY($x+10,$y);$pdf->MultiCell($width,5.0,$body,0,'J',false,1);
+        $y=$pdf->GetY();$pdf->SetXY($x,$y);$pdf->Cell(6,5.0,$prefix,0,0,'L');
+        $pdf->SetXY($x+8,$y);$pdf->MultiCell($width,5.0,$body,0,'J',false,1);$pdf->SetX($margin['left']);$pdf->Ln(1.5);
     }
     private function footerPages(TCPDF $pdf,string $label):void
     {
@@ -182,6 +193,7 @@ final class ProcurementFixedPdfService
         $pdf->SetAutoPageBreak(false,0);
         for($page=1;$page<=$pages;$page++){
             $pdf->setPage($page);
+            $pdf->SetAutoPageBreak(false,0);
             $m=$pdf->getMargins();
             $usable=$pdf->getPageWidth()-$m['left']-$m['right'];
             $pdf->SetFont($this->font,'I',7);
@@ -195,7 +207,7 @@ final class ProcurementFixedPdfService
     private function spk(array $d,array $c,array $setup):string
     {
         $pdf=$this->pdf($setup,'P');
-        if($d['include_cover']??true)$this->cover($pdf,$c,$setup);
+        if($d['include_cover']??true)$this->cover($pdf,$c,$setup,'SPK');
         $pdf->AddPage(PageSetupService::orientation($setup,'P'));$first=$pdf->getPage();ProcurementDocumentFormatService::typography($pdf,$setup);
         $name=$this->e($this->user['nama_opd']??'-');
         $provider=$this->e($this->value($c,'nama_penyedia_resmi','nama_penyedia'));
@@ -241,14 +253,43 @@ final class ProcurementFixedPdfService
         if($n<12)return $a[$n];if($n<20)return $this->numberWords($n-10).' belas';if($n<100)return $this->numberWords(intdiv($n,10)).' puluh'.($n%10?' '.$this->numberWords($n%10):'');if($n<200)return 'seratus'.($n%100?' '.$this->numberWords($n%100):'');if($n<1000)return $this->numberWords(intdiv($n,100)).' ratus'.($n%100?' '.$this->numberWords($n%100):'');if($n<2000)return 'seribu'.($n%1000?' '.$this->numberWords($n%1000):'');foreach([1000000000=>'miliar',1000000=>'juta',1000=>'ribu'] as $unit=>$label)if($n>=$unit)return $this->numberWords(intdiv($n,$unit)).' '.$label.($n%$unit?' '.$this->numberWords($n%$unit):'');return '';
     }
 
+    private function contractIdentity(TCPDF $pdf,array $fields):void
+    {
+        $html='<table cellpadding="3">';
+        foreach($fields as $label=>$value)$html.='<tr nobr="true"><td width="8%"></td><td width="27%">'.$this->e($label).'</td><td width="3%">:</td><td width="62%">'.nl2br($this->e($value),false).'</td></tr>';
+        $pdf->writeHTML($html.'</table>',true,false,true,false,'');
+    }
     private function contract(array $d,array $c,array $setup):string
     {
-        $pdf=$this->pdf($setup,'P');$this->addOfficialPage($pdf);$pdf->SetFont($this->font,'B',$this->baseSize+3);$pdf->MultiCell(0,6,"SURAT PERJANJIAN\nKontrak ".ProcurementContractTypeService::label($c)."\n\nPaket ".$this->value($c,'jenis_pengadaan')."\n".strtoupper($this->value($c,'uraian_kontrak')),0,'C');$pdf->SetFont($this->font,'',$this->baseSize);$pdf->MultiCell(0,5,'Nomor : '.$this->value($d,'nomor_dokumen','nomor_kontrak'),0,'C');$pdf->Ln(4);
-        $intro='SURAT PERJANJIAN ini berikut semua lampirannya adalah kontrak yang selanjutnya disebut "Kontrak", dibuat dan ditandatangani di '.$this->value($this->user,'nama_wilayah').' pada tanggal '.$this->value($d,'tanggal_dokumen').', antara:';$this->writeJustified($pdf,$intro,5);$party='<table cellpadding="3"><tr><td width="8%"></td><td width="24%">Nama<br>NIP<br>Jabatan<br>Berkedudukan di</td><td width="4%">:<br>:<br>:<br>:</td><td width="64%">'.$this->e($this->value($c,'nama_ppk_resmi','nama_ppk')).'<br>'.$this->e($this->value($c,'nip_ppk_resmi','nip_ppk')).'<br>Pejabat Pembuat Komitmen<br>'.$this->e($this->user['alamat_opd']??'-').'</td></tr></table><p>yang bertindak untuk dan atas nama '.$this->e($this->user['nama_opd']??$this->user['nama_org']??'-').' selanjutnya disebut "Pengguna Jasa", dengan:</p><table cellpadding="3"><tr><td width="8%"></td><td width="24%">Nama<br>Jabatan<br>Berkedudukan di<br>NPWP</td><td width="4%">:<br>:<br>:<br>:</td><td width="64%">'.$this->e($this->value($c,'direktur')).'<br>Direktur<br>'.$this->e($this->value($c,'alamat_penyedia','alamat')).'<br>'.$this->e($this->value($c,'npwp')).'</td></tr></table><p>yang bertindak untuk dan atas nama '.$this->e($this->value($c,'nama_penyedia_resmi','nama_perusahaan','nama_penyedia')).' selanjutnya disebut "Penyedia".</p>';$pdf->writeHTML($party,true,false,true,false,'');
-        $defaults=[['type'=>'numbered','text'=>'Undang-Undang Nomor 2 Tahun 2017 tentang Jasa Konstruksi beserta perubahannya;'],['type'=>'numbered','text'=>'Kitab Undang-Undang Hukum Perdata, khususnya ketentuan mengenai perikatan;'],['type'=>'numbered','text'=>'Peraturan Presiden Nomor 16 Tahun 2018 beserta perubahannya tentang Pengadaan Barang/Jasa Pemerintah;'],['type'=>'paragraph','align'=>'center','style'=>['bold'],'text'=>'PARA PIHAK MENERANGKAN TERLEBIH DAHULU BAHWA:'],['type'=>'alpha','text'=>'telah dilakukan proses pemilihan Penyedia sesuai Dokumen Pemilihan;'],['type'=>'alpha','text'=>'Pengguna Jasa telah menunjuk Penyedia melalui SPPBJ untuk melaksanakan pekerjaan;'],['type'=>'alpha','text'=>'Penyedia memiliki keahlian, tenaga, dan sumber daya untuk menyelesaikan pekerjaan;'],['type'=>'paragraph','align'=>'center','style'=>['bold'],'text'=>'Pasal 1 - ISTILAH DAN UNGKAPAN'],['type'=>'paragraph','text'=>'Istilah dan ungkapan dalam Surat Perjanjian ini memiliki arti yang sama seperti dalam lampiran Kontrak.'],['type'=>'paragraph','align'=>'center','style'=>['bold'],'text'=>'Pasal 2 - RUANG LINGKUP PEKERJAAN'],['type'=>'paragraph','text'=>'Ruang lingkup pekerjaan adalah '.$this->value($c,'uraian_kontrak').'.'],['type'=>'paragraph','align'=>'center','style'=>['bold'],'text'=>'Pasal 3 - HARGA KONTRAK, SUMBER PEMBIAYAAN DAN PEMBAYARAN'],['type'=>'numbered','text'=>'Nilai Kontrak termasuk pajak adalah Rp'.$this->money($c['nilai_kontrak']??0).'.'],['type'=>'numbered','text'=>'Kontrak ini dibiayai dari '.$this->value($c,'sumber_dana').'.'],['type'=>'paragraph','align'=>'center','style'=>['bold'],'text'=>'Pasal 4 - DOKUMEN KONTRAK'],['type'=>'paragraph','text'=>'Surat Perjanjian, penawaran, daftar kuantitas dan harga, SSKK, SSUK, spesifikasi/KAK, gambar, jadwal, jaminan, berita acara, dan adendum merupakan satu kesatuan Kontrak.'],['type'=>'paragraph','align'=>'center','style'=>['bold'],'text'=>'Pasal 5 - MASA KONTRAK'],['type'=>'paragraph','text'=>'Masa pelaksanaan pekerjaan adalah '.$this->value($c,'waktu_pelaksanaan').' hari kalender sesuai SPMK.']];$rows=$this->paragraphs($d,$c);$this->writeParagraphs($pdf,$rows?:$defaults);$pdf->Ln(5);$pdf->writeHTML(ProcurementDocumentFormatService::signatureColumns([
-            ['heading'=>'Untuk dan atas nama Penyedia','name'=>$this->value($c,'direktur','nama_penyedia_resmi','nama_penyedia')],
-            ['heading'=>'Pejabat Pembuat Komitmen','name'=>$this->value($c,'nama_ppk_resmi','nama_ppk'),'details'=>'NIP. '.$this->e($this->value($c,'nip_ppk_resmi','nip_ppk'))]
-        ]),true,false,true,false,'');$this->footerPages($pdf,'surat perjanjian');return$this->finish($pdf);
+        $kind=strtoupper($c['jenis_pengadaan']??'');$construction=in_array($kind,['PEKERJAAN_KONSTRUKSI','KONSULTANSI_KONSTRUKSI'],true);
+        $label=['PEKERJAAN_KONSTRUKSI'=>'Pekerjaan Konstruksi','KONSULTANSI_KONSTRUKSI'=>'Pekerjaan Jasa Konsultansi Konstruksi','KONSULTANSI_NON_KONSTRUKSI'=>'Pengadaan Jasa Konsultansi','KONSULTANSI_NONKONSTRUKSI'=>'Pengadaan Jasa Konsultansi','BARANG'=>'Pengadaan Barang','JASA_LAINNYA'=>'Pengadaan Jasa Lainnya'][$kind]??'Pengadaan Jasa Konsultansi';
+        $role=$construction?'Pengguna Jasa':'Pejabat Penandatangan Kontrak';
+        $pdf=$this->pdf($setup,'P');if($d['include_cover']??true)$this->cover($pdf,$c,$setup,'SURAT_PERJANJIAN');$this->addOfficialPage($pdf);
+        $pdf->SetFont($this->font,'B',$this->baseSize+2);$pdf->MultiCell(0,6,"SURAT PERJANJIAN\nKontrak ".ProcurementContractTypeService::label($c),0,'C');$pdf->Ln(3);
+        $pdf->SetFont($this->font,'B',$this->baseSize);$pdf->MultiCell(0,5,'Paket '.$label,0,'C');$pdf->MultiCell(0,5,strtoupper($this->value($c,'uraian_kontrak')),0,'C');
+        $pdf->SetFont($this->font,'',$this->baseSize);$pdf->MultiCell(0,5,'Nomor : '.$this->value($d,'nomor_dokumen','nomor_kontrak'),0,'C');$pdf->Ln(4);
+        $place=trim((string)($c['tempat_ttd']??$this->user['nama_wilayah']??''));
+        if($place==='')$place=preg_replace('/^Pemerintah\s+(?:Kabupaten|Kota)\s+/iu','',trim((string)($this->user['nama_pemda']??'')));
+        if($place==='')$place='........................';
+        $date=$this->value($d,'tanggal_dokumen');$stamp=strtotime($date);$week=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+        $dateText=$stamp?'hari '.$week[(int)date('w',$stamp)].' tanggal '.$this->numberWords((int)date('j',$stamp)).' bulan '.explode(' ',$this->displayDate($date))[1].' tahun '.$this->numberWords((int)date('Y',$stamp)):'tanggal ........................';
+        $this->writeJustified($pdf,'SURAT PERJANJIAN ini berikut semua lampirannya adalah '.($construction?'Kontrak Kerja Konstruksi ':'Kontrak ').ProcurementContractTypeService::label($c).', yang selanjutnya disebut “Kontrak”, dibuat dan ditandatangani di '.$place.' pada '.$dateText.', antara:');
+        $this->contractIdentity($pdf,['Nama'=>$this->value($c,'nama_ppk_resmi','nama_ppk'),'NIP'=>$this->value($c,'nip_ppk_resmi','nip_ppk'),'Jabatan'=>'Pejabat Pembuat Komitmen','Berkedudukan di'=>$this->user['alamat_opd']??'-']);
+        $this->writeJustified($pdf,'yang bertindak untuk dan atas nama '.($this->user['nama_opd']??$this->user['nama_org']??'-').' selanjutnya disebut “'.$role.'”, dengan:');
+        $fields=['Nama'=>$this->value($c,'direktur'),'Jabatan'=>$this->value($c,'jabatan_pelaksana','jabatan'),'Berkedudukan di'=>$this->value($c,'alamat_penyedia','alamat')];
+        if($construction)$fields+=['Akta Notaris Nomor'=>$this->value($c,'no_akta_pendirian'),'Tanggal'=>$this->displayDate($c['tgl_akta_pendirian']??''),'Notaris'=>$this->value($c,'nama_notaris_pendirian')];
+        else $fields+=['Akta Pendirian Nomor'=>$this->value($c,'no_akta_pendirian'),'Tanggal'=>$this->displayDate($c['tgl_akta_pendirian']??'')];
+        $fields['NPWP']=$this->value($c,'npwp');
+        $this->contractIdentity($pdf,$fields);
+        $this->writeJustified($pdf,'yang bertindak untuk dan atas nama '.$this->value($c,'nama_penyedia_resmi','nama_perusahaan','nama_penyedia').' selanjutnya disebut “Penyedia”.');
+        $rows=$this->paragraphs($d,$c);
+        if(!$rows){$rows=ProcurementReferenceTermsService::rows('SURAT_PERJANJIAN',$c);foreach($rows as &$row)$row['text']=$this->variables($row['text'],$d,$c);unset($row);}
+        $this->writeParagraphs($pdf,$rows);$pdf->Ln(5);
+        $pdf->writeHTML(ProcurementDocumentFormatService::signatureColumns([
+            ['heading'=>'Untuk dan atas nama Penyedia','name'=>$this->value($c,'direktur','nama_penyedia_resmi','nama_penyedia'),'details'=>$this->e($this->value($c,'jabatan_pelaksana','jabatan'))],
+            ['heading'=>'Untuk dan atas nama '.$role,'name'=>$this->value($c,'nama_ppk_resmi','nama_ppk'),'details'=>'NIP. '.$this->e($this->value($c,'nip_ppk_resmi','nip_ppk'))]
+        ]),true,false,true,false,'');
+        $this->footerPages($pdf,'surat perjanjian');return$this->finish($pdf);
     }
 
     private function sskk(array $d,array $c,array $setup):string
@@ -257,10 +298,10 @@ final class ProcurementFixedPdfService
     }
     private function ssuk(array $d,array $c,array $setup):string
     {
-        $pdf=$this->pdf($setup,'P');$pdf->AddPage($this->orientation);$pdf->SetFont($this->font,'B',$this->baseSize+5);$pdf->MultiCell(0,7,"SYARAT UMUM\nSURAT PERINTAH KERJA (SPK)",0,'C');$rows=$this->paragraphs($d,$c);if(empty($d['id']))$rows=ProcurementReferenceTermsService::rows('SSUK',$c);if(!$rows)$rows=ProcurementReferenceTermsService::rows('SSUK',$c);$this->writeTermsParagraphs($pdf,$rows);$this->footerPages($pdf,'syarat umum spk');return$this->finish($pdf);
+        $pdf=$this->pdf($setup,'P');$pdf->AddPage($this->orientation);$pdf->SetFont($this->font,'B',$this->baseSize+5);$form=ProcurementContractFormService::recommend($c);$pdf->MultiCell(0,7,$form==='SPK'?"SYARAT UMUM\nSURAT PERINTAH KERJA (SPK)":'SYARAT-SYARAT UMUM KONTRAK',0,'C');$rows=$this->paragraphs($d,$c);if(empty($d['id']))$rows=ProcurementReferenceTermsService::rows('SSUK',$c);if(!$rows)$rows=ProcurementReferenceTermsService::rows('SSUK',$c);$this->writeTermsParagraphs($pdf,$rows);$this->footerPages($pdf,$form==='SPK'?'syarat umum spk':'syarat-syarat umum kontrak');return$this->finish($pdf);
     }
     private function officialLetter(array $d,array $c,array $setup):string
     {
-        $pdf=$this->pdf($setup,($d['orientasi']??'P'));$this->addOfficialPage($pdf);$title=strtoupper((string)($d['judul']??$d['nama_master']??'DOKUMEN PENGADAAN'));$pdf->SetFont($this->font,'B',$this->baseSize+4);$pdf->MultiCell(0,7,$title,0,'C');$pdf->SetFont($this->font,'',$this->baseSize);$pdf->MultiCell(0,5,'Nomor : '.($d['nomor_dokumen']??'-'),0,'C');$pdf->Ln(4);$info='<table cellpadding="3"><tr><td width="25%">Nama Paket</td><td width="3%">:</td><td width="72%">'.$this->e($this->value($c,'uraian_kontrak')).'</td></tr><tr><td>Nilai</td><td>:</td><td>Rp'.$this->money($c['nilai_kontrak']??0).'</td></tr><tr><td>Sumber Dana</td><td>:</td><td>'.$this->e($this->value($c,'sumber_dana')).'</td></tr><tr><td>Penyedia</td><td>:</td><td>'.$this->e($this->value($c,'nama_penyedia_resmi','nama_penyedia')).'</td></tr></table>';$pdf->writeHTML($info,true,false,true,false,'');$rows=$this->paragraphs($d,$c);if(!$rows)$rows=[['text'=>'Pada tanggal '.$this->value($d,'tanggal_dokumen').' telah disusun '.$title.' untuk paket tersebut di atas.'],['text'=>'Dokumen ini dibuat berdasarkan hasil pemeriksaan, klarifikasi, evaluasi, atau kesepakatan para pihak sesuai tahapan pengadaan yang berlaku.'],['text'=>'Demikian dokumen ini dibuat untuk dipergunakan sebagaimana mestinya.']];$this->writeParagraphs($pdf,$rows);$this->footerPages($pdf,$title);return$this->finish($pdf);
+        $pdf=$this->pdf($setup,($d['orientasi']??'P'));if(($d['kode_dokumen']??'')==='SURAT_PESANAN'&&($d['include_cover']??true))$this->cover($pdf,$c,$setup,'SURAT_PESANAN');$this->addOfficialPage($pdf);$title=strtoupper((string)($d['judul']??$d['nama_master']??'DOKUMEN PENGADAAN'));$pdf->SetFont($this->font,'B',$this->baseSize+4);$pdf->MultiCell(0,7,$title,0,'C');$pdf->SetFont($this->font,'',$this->baseSize);$pdf->MultiCell(0,5,'Nomor : '.($d['nomor_dokumen']??'-'),0,'C');$pdf->Ln(4);$info='<table cellpadding="3"><tr><td width="25%">Nama Paket</td><td width="3%">:</td><td width="72%">'.$this->e($this->value($c,'uraian_kontrak')).'</td></tr><tr><td>Nilai</td><td>:</td><td>Rp'.$this->money($c['nilai_kontrak']??0).'</td></tr><tr><td>Sumber Dana</td><td>:</td><td>'.$this->e($this->value($c,'sumber_dana')).'</td></tr><tr><td>Penyedia</td><td>:</td><td>'.$this->e($this->value($c,'nama_penyedia_resmi','nama_penyedia')).'</td></tr></table>';$pdf->writeHTML($info,true,false,true,false,'');$rows=$this->paragraphs($d,$c);if(!$rows)$rows=[['text'=>'Pada tanggal '.$this->value($d,'tanggal_dokumen').' telah disusun '.$title.' untuk paket tersebut di atas.'],['text'=>'Dokumen ini dibuat berdasarkan hasil pemeriksaan, klarifikasi, evaluasi, atau kesepakatan para pihak sesuai tahapan pengadaan yang berlaku.'],['text'=>'Demikian dokumen ini dibuat untuk dipergunakan sebagaimana mestinya.']];$this->writeParagraphs($pdf,$rows);$this->footerPages($pdf,$title);return$this->finish($pdf);
     }
 }

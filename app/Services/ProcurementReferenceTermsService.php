@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__.'/ProcurementContractTypeService.php';
+require_once __DIR__.'/ProcurementParagraphLayoutService.php';
 
 /**
  * Membaca naskah acuan syarat kontrak yang berasal dari berkas contoh pengguna.
@@ -12,7 +14,7 @@ final class ProcurementReferenceTermsService
     public static function rows(string $code, array $contract=[]): array
     {
         $code = strtoupper($code);
-        if ($code === 'SURAT_PERJANJIAN') return self::contractRows($contract);
+        if ($code === 'SURAT_PERJANJIAN') return ProcurementParagraphLayoutService::normalize(self::contractRows($contract));
         if ($code === 'SSKK') return self::sskkRows($contract);
         if ($code === 'SSUK') return self::ssukRows($contract);
         return [];
@@ -20,6 +22,9 @@ final class ProcurementReferenceTermsService
 
     private static function contractRows(array $c): array
     {
+        $kind=strtoupper((string)($c['jenis_pengadaan']??'PEKERJAAN_KONSTRUKSI'));
+        if(!in_array($kind,['PEKERJAAN_KONSTRUKSI','KONSULTANSI_KONSTRUKSI'],true))return self::lkppContractRows($c);
+        $consult=$kind==='KONSULTANSI_KONSTRUKSI';
         $package = trim((string)($c['uraian_kontrak'] ?? '')) ?: '{{nama_paket}}';
         $days = trim((string)($c['waktu_pelaksanaan'] ?? '')) ?: 'sesuai SSKK';
         $maintenance = trim((string)($c['masa_pemeliharaan'] ?? '')) ?: 'sesuai SSKK';
@@ -32,8 +37,7 @@ final class ProcurementReferenceTermsService
         $add('2. Kitab Undang-Undang Hukum Perdata (Buku III tentang perikatan);','hanging-list');
         $add('3. Peraturan Pemerintah Nomor 22 Tahun 2020 tentang Peraturan Pelaksanaan Undang-Undang Nomor 2 Tahun 2017 tentang Jasa Konstruksi beserta perubahannya;','hanging-list');
         $add('4. Peraturan Presiden Nomor 16 Tahun 2018 tentang Pengadaan Barang/Jasa Pemerintah beserta perubahannya;','hanging-list');
-        $add('5. Ketentuan pengadaan khusus daerah apabila berlaku; dan','hanging-list');
-        $add('6. Peraturan Menteri Pekerjaan Umum dan Perumahan Rakyat tentang Standar dan Pedoman Pengadaan Jasa Konstruksi melalui Penyedia.','hanging-list');
+        $add('5. Peraturan Menteri Pekerjaan Umum dan Perumahan Rakyat Nomor 14 Tahun 2020 tentang Standar dan Pedoman Pengadaan Jasa Konstruksi melalui Penyedia.','hanging-list');
         $add('PARA PIHAK MENERANGKAN TERLEBIH DAHULU BAHWA:','clause-heading','center',['bold']);
         $add('(a) telah dilakukan proses pemilihan Penyedia yang telah sesuai dengan Dokumen Pemilihan;','hanging-list');
         $add('(b) Pengguna Jasa telah menunjuk Penyedia menjadi pihak dalam Kontrak ini melalui Surat Penunjukan Penyedia Barang/Jasa (SPPBJ) untuk melaksanakan Pekerjaan Konstruksi '.$package.' sebagaimana diterangkan dalam Syarat-Syarat Umum Kontrak yang merupakan satu kesatuan dalam Kontrak ini, selanjutnya disebut “Pekerjaan Konstruksi”;','hanging-list');
@@ -50,15 +54,11 @@ final class ProcurementReferenceTermsService
         $add("Pasal 2\nRUANG LINGKUP PEKERJAAN",'clause-heading','center',['bold']);
         $add('Ruang lingkup utama pekerjaan terdiri atas:');
         $add('1. '.$package,'hanging-list');
-        $add('2. pekerjaan persiapan dan pekerjaan terkait sebagaimana Daftar Kuantitas dan Harga;','hanging-list');
-        $add('3. pekerjaan utama sesuai spesifikasi teknis dan gambar;','hanging-list');
-        $add('4. pekerjaan penunjang, keselamatan konstruksi, dan pengendalian mutu;','hanging-list');
-        $add('5. pengujian, dokumentasi, serta penyerahan hasil pekerjaan; dan','hanging-list');
-        $add('6. pekerjaan lain yang menjadi satu kesatuan sesuai dokumen Kontrak.','hanging-list');
         $add("Pasal 3\nHARGA KONTRAK, SUMBER PEMBIAYAAN DAN PEMBAYARAN",'clause-heading','center',['bold']);
         $add('(1) Nilai Kontrak termasuk Pajak Pertambahan Nilai (PPN) yang diperoleh berdasarkan total harga penawaran terkoreksi sebagaimana tercantum dalam Daftar Kuantitas dan Harga adalah sebesar Rp{{nilai_kontrak}}.','hanging-list');
         $add('(2) Kontrak ini dibiayai dari {{sumber_dana}}.','hanging-list');
-        $add('(3) Pembayaran untuk Kontrak ini dilakukan ke rekening Penyedia yang sah dan tercantum dalam data kontrak setelah dokumen tagihan dinyatakan lengkap.','hanging-list');
+        $bank=trim((string)($c['bank_rekening']??''))?:'........................';$account=trim((string)($c['no_rekening']??''))?:'........................';$holder=trim((string)($c['atas_nama_rekening']??''))?:'........................';
+        $add('(3) Pembayaran untuk Kontrak ini dilakukan ke Bank '.$bank.' rekening nomor '.$account.' atas nama '.$holder.'.','hanging-list');
         $add("Pasal 4\nDOKUMEN KONTRAK",'clause-heading','center',['bold']);
         $add('(1) Kelengkapan dokumen berikut merupakan satu kesatuan dan bagian yang tidak terpisahkan dari Kontrak ini: adendum Kontrak (apabila ada), Surat Perjanjian, Surat Penawaran, Daftar Kuantitas dan Harga, Syarat-Syarat Umum Kontrak, Syarat-Syarat Khusus Kontrak beserta lampirannya berupa lampiran daftar harga satuan timpang, subpenyedia, personel manajerial dan peralatan utama, Rencana Keselamatan Konstruksi, spesifikasi teknis, gambar, SPPBJ, jadwal pelaksanaan, jaminan, Berita Acara Rapat Persiapan Penandatanganan Kontrak, serta Berita Acara Rapat Persiapan Pelaksanaan Kontrak.','hanging-list');
         $add('(2) Jika terjadi pertentangan antarketentuan dokumen, yang berlaku adalah dokumen yang lebih tinggi menurut urutan hierarki berikut:','hanging-list');
@@ -68,7 +68,41 @@ final class ProcurementReferenceTermsService
         $add('(2) Masa Pelaksanaan ditentukan dalam Syarat-Syarat Khusus Kontrak, dihitung sejak Tanggal Mulai Kerja dalam SPMK sampai dengan Tanggal Penyerahan Pertama Pekerjaan selama '.$days.' hari kalender.','hanging-list');
         $add('(3) Masa Pemeliharaan ditentukan dalam Syarat-Syarat Khusus Kontrak, dihitung sejak Tanggal Penyerahan Pertama Pekerjaan sampai dengan Tanggal Penyerahan Akhir Pekerjaan selama '.$maintenance.' hari kalender.','hanging-list');
         $add('Dengan demikian, Pengguna Jasa dan Penyedia telah bersepakat untuk menandatangani Kontrak ini pada tanggal tersebut di atas dan melaksanakan Kontrak sesuai ketentuan peraturan perundang-undangan di Republik Indonesia. Kontrak dibuat dalam 2 (dua) rangkap, masing-masing dibubuhi meterai, mempunyai kekuatan hukum yang sama dan mengikat bagi para pihak; rangkap lain dapat diperbanyak sesuai kebutuhan tanpa dibubuhi meterai.');
+        if($consult){
+            foreach($rows as &$row){$row['text']=str_replace(['Pekerjaan Konstruksi','tenaga kerja konstruksi','Daftar Kuantitas dan Harga'],['Pekerjaan Jasa Konsultansi Konstruksi','personel','Daftar Keluaran dan Harga'],$row['text']);}unset($row);
+            $start=array_search("Pasal 4\nDOKUMEN KONTRAK",array_column($rows,'text'),true);
+            $end=array_search("Pasal 5\nMASA KONTRAK",array_column($rows,'text'),true);
+            $documents=['(1) Dokumen-dokumen berikut merupakan satu kesatuan dan bagian yang tidak terpisahkan dari Kontrak ini:','a. adendum Kontrak (apabila ada);','b. Surat Perjanjian;','c. Surat Penawaran;','d. Syarat-Syarat Khusus Kontrak berikut lampiran Daftar Personel, Daftar Subkontrak, dan Jadwal Penugasan Personel;','e. Syarat-Syarat Umum Kontrak;','f. Kerangka Acuan Kerja;','g. Daftar Keluaran dan Harga hasil negosiasi dan koreksi aritmatik;','h. Data Teknis selain KAK; dan','i. dokumen lainnya seperti SPPBJ, Jadwal Pelaksanaan Pekerjaan, Berita Acara Rapat Persiapan Penandatanganan Kontrak, dan Berita Acara Rapat Persiapan Pelaksanaan Kontrak.','(2) Dokumen Kontrak saling menjelaskan. Jika terjadi pertentangan, berlaku dokumen yang lebih tinggi berdasarkan urutan hierarki pada ayat (1) huruf a sampai dengan huruf g.'];
+            $parts=array_map(static fn($text)=>['type'=>'paragraph','align'=>'justify','format'=>'hanging-list','style'=>[],'text'=>$text],$documents);
+            array_splice($rows,$start+1,$end-$start-1,$parts);
+            foreach($rows as &$row){
+                if(str_starts_with($row['text'],'(1) Masa Kontrak'))$row['text']='(1) Masa Kontrak berlaku sejak tanggal penandatanganan sampai dengan selesainya pekerjaan dan terpenuhinya seluruh hak dan kewajiban para pihak.';
+                if(str_starts_with($row['text'],'(2) Masa Pelaksanaan'))$row['text']='(2) Masa Pelaksanaan Kontrak ditentukan dalam SSKK sejak Tanggal Mulai Kerja dalam SPMK sampai Tanggal Penyerahan Pekerjaan selama '.$days.' hari kalender.';
+            }unset($row);
+            $rows=array_values(array_filter($rows,static fn($row)=>!str_starts_with($row['text'],'(3) Masa Pemeliharaan')));
+        }
         return $rows;
+    }
+
+    private static function lkppContractRows(array $c):array
+    {
+        $consult=str_contains(strtoupper($c['jenis_pengadaan']??''),'KONSULTANSI');
+        $label=$consult?'Pengadaan Jasa Konsultansi':(($c['jenis_pengadaan']??'')==='JASA_LAINNYA'?'Pengadaan Jasa Lainnya':'Pengadaan Barang');
+        $package=$c['uraian_kontrak']??'{{nama_paket}}';$rows=[];
+        $add=static function($text,$format='body',$align='justify')use(&$rows){$rows[]=['type'=>'paragraph','format'=>$format,'align'=>$align,'style'=>$format==='clause-heading'?['bold']:[],'text'=>$text];};
+        $add('PARA PIHAK MENERANGKAN TERLEBIH DAHULU BAHWA:','clause-heading','center');
+        foreach(['(a) Telah diadakan proses pemilihan Penyedia sesuai Dokumen Pemilihan.','(b) Pejabat Penandatangan Kontrak telah menunjuk Penyedia melalui SPPBJ untuk melaksanakan '.$label.' '.$package.' sebagaimana diterangkan dalam Kontrak ini.','(c) Penyedia menyatakan memenuhi persyaratan kualifikasi, memiliki keahlian profesional, personel, dan sumber daya teknis, serta menyetujui pelaksanaan pekerjaan sesuai persyaratan dan ketentuan Kontrak.','(d) Para pihak memiliki kewenangan menandatangani Kontrak ini dan mengikat pihak yang diwakili.','(e) Para pihak mengakui bahwa sehubungan dengan penandatanganan Kontrak ini masing-masing pihak:','1) telah diberikan kesempatan untuk didampingi oleh advokat;','2) menandatangani Kontrak setelah meneliti secara patut;','3) telah membaca dan memahami seluruh ketentuan Kontrak; dan','4) mendapat kesempatan memeriksa dan mengonfirmasikan ketentuan Kontrak beserta fakta dan kondisi terkait.'] as $text)$add($text,'hanging-list');
+        $add('Maka oleh karena itu, Pejabat Penandatangan Kontrak dan Penyedia bersepakat dan menyetujui hal-hal sebagai berikut:');
+        $add("Pasal 1\nISTILAH DAN UNGKAPAN",'clause-heading','center');$add('Peristilahan dan ungkapan dalam Kontrak ini memiliki arti dan makna yang sama seperti yang tercantum dalam lampiran Kontrak ini.');
+        $add("Pasal 2\nRUANG LINGKUP PEKERJAAN",'clause-heading','center');$add('Ruang lingkup pekerjaan '.$label.' terdiri atas:');$add('1. '.$package.' sebagaimana spesifikasi teknis/KAK dan dokumen Kontrak.','hanging-list');
+        $add("Pasal 3\nJENIS DAN NILAI KONTRAK",'clause-heading','center');
+        $add('(1) Pekerjaan ini menggunakan jenis Kontrak '.ProcurementContractTypeService::label($c).'.','hanging-list');$add('(2) Nilai Kontrak termasuk Pajak Pertambahan Nilai (PPN) adalah sebesar Rp{{nilai_kontrak}}.','hanging-list');
+        $add("Pasal 4\nDOKUMEN KONTRAK",'clause-heading','center');$add('(1) Dokumen berikut merupakan kesatuan dan bagian yang tidak terpisahkan dari Kontrak ini:','hanging-list');
+        foreach(['a. adendum/perubahan Kontrak (apabila ada);','b. Kontrak;','c. Syarat-Syarat Khusus Kontrak;','d. Syarat-Syarat Umum Kontrak;','e. Dokumen Penawaran;','f. '.($consult?'Kerangka Acuan Kerja;':'spesifikasi teknis;'),'g. gambar-gambar (apabila ada);','h. '.($consult?'Rekapitulasi Penawaran Biaya/rincian harga penawaran (apabila ada); dan':'daftar kuantitas dan harga (apabila ada); dan'),'i. dokumen lainnya seperti jaminan-jaminan, SPPBJ, dan BAHP.'] as $text)$add($text,'hanging-list');
+        $add('(2) Dokumen Kontrak saling menjelaskan. Jika terdapat pertentangan, berlaku dokumen yang lebih tinggi berdasarkan urutan hierarki pada ayat (1).','hanging-list');
+        $add("Pasal 5\nHAK DAN KEWAJIBAN",'clause-heading','center');$add('Hak dan kewajiban timbal balik Pejabat Penandatangan Kontrak dan Penyedia dinyatakan dalam SSUK dan SSKK.');
+        $add("Pasal 6\nMASA BERLAKU KONTRAK",'clause-heading','center');$add('Masa berlaku Kontrak terhitung sejak tanggal penandatanganan sampai selesainya pekerjaan dan terpenuhinya seluruh hak dan kewajiban para pihak sebagaimana diatur dalam SSUK dan SSKK.');
+        $add('Dengan demikian, para pihak bersepakat menandatangani dan melaksanakan Kontrak sesuai peraturan perundang-undangan di Republik Indonesia. Kontrak dibuat dalam dua rangkap bermeterai, mempunyai kekuatan hukum yang sama dan mengikat bagi para pihak.');return $rows;
     }
 
     private static function ssukRows(array $contract): array

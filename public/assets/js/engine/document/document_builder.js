@@ -106,6 +106,9 @@ class DocumentBuilder {
 					row.attr("data-align", rowData.align);
 				}
 
+				if (Array.isArray(rowData.style)) row.attr("data-style", rowData.style.join(","));
+				if (rowData.format) row.attr("data-format", rowData.format);
+
 				// Editable text Tata Naskah selalu tampil plain di modal. Semua
 				// style/type/format hanya metadata ekspor PDF dan tidak boleh
 				// mengubah isi maupun tampilan editor.

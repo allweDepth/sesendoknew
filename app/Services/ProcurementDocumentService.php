@@ -93,15 +93,7 @@ final class ProcurementDocumentService
 
     public static function recommendForm(string $way,string $kind,string $method,float $value,?string $swakelolaType=null):string
     {
-        $way=strtoupper($way);$kind=strtoupper($kind);$method=strtolower(trim($method));
-        if($way==='SWAKELOLA')return'PERJANJIAN_SWAKELOLA';
-        if(str_contains($method,'e-purchasing')||str_contains($method,'e purchasing')||str_contains($method,'katalog'))return'SURAT_PESANAN';
-        if(in_array($kind,['KONSULTANSI','KONSULTANSI_KONSTRUKSI','KONSULTANSI_NON_KONSTRUKSI'],true))return$value<=100000000?'SPK':'SURAT_PERJANJIAN';
-        if($kind==='PEKERJAAN_KONSTRUKSI')return$value<=400000000?'SPK':'SURAT_PERJANJIAN';
-        if($value<=10000000)return'BUKTI_PEMBELIAN';
-        if($value<=50000000)return'KUITANSI';
-        if($value<=200000000)return'SPK';
-        return'SURAT_PERJANJIAN';
+        return ProcurementContractFormService::recommend(['cara_pengadaan'=>$way,'jenis_pengadaan'=>$kind,'metode_pemilihan'=>$method,'nilai_kontrak'=>$value]);
     }
 
     public function templates(int $contractId):array
@@ -135,7 +127,7 @@ final class ProcurementDocumentService
             if($id){$old=$this->detail($id);if((int)$old['master_id']!==$masterId)throw new RuntimeException('Master dokumen hasil tidak boleh diganti');if((int)$old['kontrak_id']!==$contractId)throw new RuntimeException('Kontrak dokumen tidak boleh dipindahkan');$values['tgl_update']=date('Y-m-d H:i:s');$values['username_update']=$this->user['username']??'system';$this->db->update('dokumen_pengadaan_neo',$values,'WHERE id=?',[$id]);}
             else{$values['username_insert']=$this->user['username']??'system';$id=(int)$this->db->insert('dokumen_pengadaan_neo',$values);}
             $masterSections=$this->db->query('SELECT * FROM master_dokumen_pengadaan_bagian_neo WHERE master_id=? AND is_deleted=0 ORDER BY urutan,id',[$masterId])->fetchAll();$given=[];foreach($sections as $s)if(!empty($s['kode_bagian']))$given[(string)$s['kode_bagian']]=$s;
-            foreach($masterSections as $s){$custom=$given[$s['kode_bagian']]??[];$body=trim((string)($custom['isi']??$s['isi_template']));if(SwakelolaDocumentService::supports($master['kode'])){$blocks=json_decode($body,true,512,JSON_THROW_ON_ERROR);if(!is_array($blocks))throw new InvalidArgumentException('Struktur dokumen tidak valid');SwakelolaDocumentService::validate($blocks);$body=json_encode(SwakelolaDocumentService::fill($blocks,SwakelolaDocumentService::identity($contract,$this->user)),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);}if(!empty($s['wajib'])&&$body==='')throw new InvalidArgumentException('Bagian '.$s['judul'].' wajib diisi');$this->db->query('INSERT INTO dokumen_pengadaan_bagian_neo(dokumen_id,master_bagian_id,kode_bagian,judul,urutan,isi,username_insert,is_deleted) VALUES(?,?,?,?,?,?,?,0) ON DUPLICATE KEY UPDATE judul=VALUES(judul),urutan=VALUES(urutan),isi=VALUES(isi),tgl_update=NOW(),username_update=VALUES(username_insert),is_deleted=0',[$id,$s['id'],$s['kode_bagian'],$custom['judul']??$s['judul'],$s['urutan'],$body,$this->user['username']??'system']);}
+            foreach($masterSections as $s){$custom=$given[$s['kode_bagian']]??[];$body=trim((string)($custom['isi']??$s['isi_template']));if(SwakelolaDocumentService::supports($master['kode'])){$blocks=json_decode($body,true,512,JSON_THROW_ON_ERROR);if(!is_array($blocks))throw new InvalidArgumentException('Struktur dokumen tidak valid');SwakelolaDocumentService::validate($blocks);$body=json_encode(SwakelolaDocumentService::fill($blocks,SwakelolaDocumentService::identity($contract,$this->user)),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);}if($master['kode']==='SURAT_PERJANJIAN'&&is_array($paragraphs=json_decode($body,true)))$body=json_encode(ProcurementParagraphLayoutService::normalize($paragraphs),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);if(!empty($s['wajib'])&&$body==='')throw new InvalidArgumentException('Bagian '.$s['judul'].' wajib diisi');$this->db->query('INSERT INTO dokumen_pengadaan_bagian_neo(dokumen_id,master_bagian_id,kode_bagian,judul,urutan,isi,username_insert,is_deleted) VALUES(?,?,?,?,?,?,?,0) ON DUPLICATE KEY UPDATE judul=VALUES(judul),urutan=VALUES(urutan),isi=VALUES(isi),tgl_update=NOW(),username_update=VALUES(username_insert),is_deleted=0',[$id,$s['id'],$s['kode_bagian'],$custom['judul']??$s['judul'],$s['urutan'],$body,$this->user['username']??'system']);}
             if(SwakelolaDocumentService::supports($master['kode'])){foreach($this->db->query('SELECT id,isi FROM dokumen_pengadaan_bagian_neo WHERE dokumen_id=? AND is_deleted=0',[$id])->fetchAll() as $part)SwakelolaDocumentService::storeBlocks($this->db,'dokumen_bagian_id',(int)$part['id'],json_decode($part['isi'],true,512,JSON_THROW_ON_ERROR));}
             $this->db->query('UPDATE dokumen_pengadaan_lampiran_neo SET is_deleted=1 WHERE dokumen_id=?',[$id]);
             foreach($attachments as $i=>$a){$attachmentTitle=trim((string)($a['judul']??''));$attachmentBody=trim((string)($a['isi']??''));if($attachmentTitle===''&&$attachmentBody==='')continue;$this->db->insert('dokumen_pengadaan_lampiran_neo',['dokumen_id'=>$id,'jenis_lampiran'=>trim((string)($a['jenis_lampiran']??'NARASI'))?:'NARASI','judul'=>$attachmentTitle?:('Lampiran '.($i+1)),'urutan'=>$i+1,'isi'=>$attachmentBody,'username_insert'=>$this->user['username']??'system','is_deleted'=>0]);}
@@ -252,6 +244,7 @@ final class ProcurementDocumentService
         if($flow==='LANGSUNG'){$sampleOrder=['UNDANGAN_PL','JADWAL_DOKUMEN','BA_SURVEY_HARGA','PAKTA_INTEGRITAS','BA_KLARIFIKASI_NEGOSIASI','LAMPIRAN_NEGOSIASI','DAFTAR_HADIR_KLARIFIKASI','PENETAPAN_PENYEDIA','PENGUMUMAN_PENYEDIA','BA_EVALUASI','BAHP','SPPBJ','SPMK','RAPAT_PRA_KONTRAK'];$order=array_merge([$main],array_reverse($sampleOrder));}
         $existing=[];foreach($this->list($contractId) as $d)if(!isset($existing[$d['kode_dokumen']]))$existing[$d['kode_dokumen']]=$d['id'];
         $masters=[];foreach($info['templates'] as $m)if($m['sesuai_nilai']&&(!$m['metode_pemilihan']||ProcurementProcessService::flow(['metode_pemilihan'=>$m['metode_pemilihan']])===$flow))$masters[$m['kode']]=$m;
+        if(!isset($existing[$main])&&!isset($masters[$main]))throw new RuntimeException('Master dokumen utama '.ProcurementContractFormService::label($form).' belum tersedia untuk paket ini.');
         $missing=[];foreach($order as $code)if(!isset($existing[$code])&&isset($masters[$code])&&empty(ProcurementProcessService::documentValue($c,$code)['tanggal']))$missing[]=$masters[$code]['nama'];
         if($missing)throw new InvalidArgumentException('Lengkapi tanggal proses di form kontrak: '.implode(', ',$missing));
         foreach($order as $code){
@@ -262,7 +255,7 @@ final class ProcurementDocumentService
         }
         $c=$this->contract($contractId);$setup=PageSetupService::current($this->user);if($reference)$setup=ProcurementDocumentFormatService::setup($setup,$c['print_settings']??[]);$setup=array_replace($setup,$pageOverrides);$pdf=PageSetupService::createPdf($setup,'P');$pdf->SetTitle('Dokumen Pengadaan - '.$c['uraian_kontrak']);
         $renderer=new ProcurementFixedPdfService($this->user);
-        if($form==='SPK'){$renderer->cover($pdf,$c,$setup);$pdf->Bookmark('Sampul SPK',0,0,$pdf->getPage());}
+        $renderer->cover($pdf,$c,$setup,$form);$pdf->Bookmark('Sampul '.ProcurementContractFormService::label($form),0,0,$pdf->getPage());
         foreach($order as $code){
             if(!isset($existing[$code]))continue;
             $d=$this->detail((int)$existing[$code]);$d['include_cover']=false;$start=$pdf->getNumPages()+1;

@@ -9,7 +9,7 @@ final class ProcurementProcessService
     {
         if(($c['cara_pengadaan']??'')==='SWAKELOLA')return 'SWAKELOLA';
         $method=mb_strtolower(trim($c['metode_pemilihan']??''));
-        if(preg_match('/katalog|e[ -]?purchas|e[ -]?catalog/u',$method))return 'KATALOG';
+        if(preg_match('/katalog|mini[ _-]?kompetisi|e[ _-]?purchas|e[ _-]?catalog/u',$method))return 'KATALOG';
         if(preg_match('/tender|lelang|seleksi/u',$method))return 'TENDER';
         if(str_contains($method,'pengadaan langsung'))return 'LANGSUNG';
         return 'LAINNYA';

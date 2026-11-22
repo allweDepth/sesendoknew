@@ -1,0 +1,54 @@
+{
+  "reviewed_at": "2026-11-22",
+  "purpose": "Catatan sumber internal untuk pemeliharaan template, tidak dicetak pada surat.",
+  "sources": [
+    {
+      "title": "Permen PUPR 14/2020, Lampiran III C: SDP PK Pasca Harga Terendah HS",
+      "url": "https://peraturan.bpk.go.id/Details/159651/permen-pupr-no-14-tahun-2020",
+      "pdf_pages": [
+        101,
+        102,
+        103
+      ],
+      "use": "Susunan surat perjanjian pekerjaan konstruksi: identitas, konsiderans, Pasal 1-5, tanda tangan."
+    },
+    {
+      "title": "Permen PUPR 14/2020, Lampiran II C: Seleksi BU Kualitas Biaya LS",
+      "url": "https://peraturan.bpk.go.id/Details/159651/permen-pupr-no-14-tahun-2020",
+      "pdf_pages": [
+        60,
+        61,
+        62
+      ],
+      "use": "Konsultansi konstruksi: KAK, daftar personel, daftar keluaran/harga, masa kontrak tanpa masa pemeliharaan fisik."
+    },
+    {
+      "title": "Model dokumen LKPP Lampiran IV PerLKPP 12/2021 (model historis)",
+      "url": "https://jdih.bpkp.go.id/dokumen/data_dokumen/Peraturan%20Lembaga%20Nomor%2012%20Tahun%202021-LAMPIRAN%20IV-366-1975%20%281%29.pdf",
+      "pdf_pages": [
+        97,
+        98,
+        99,
+        826
+      ],
+      "use": "Susunan enam pasal untuk barang/jasa lainnya/konsultansi nonkonstruksi; bukan acuan regulasi yang masih berlaku."
+    },
+    {
+      "title": "Peraturan LKPP 3/2026",
+      "url": "https://jdih.lkpp.go.id/regulation/peraturan-lkpp/peraturan-lkpp-nomor-3-tahun-2026",
+      "use": "Pedoman terkini; menggantikan PerLKPP 12/2021 dan perubahannya."
+    },
+    {
+      "title": "Perpres 46/2025",
+      "url": "https://jdih.lkpp.go.id/regulation/peraturan-presiden/peraturan-presiden-nomor-46-tahun-2025",
+      "use": "Bentuk kontrak dan batas nilai."
+    }
+  ],
+  "notes": [
+    "Normalisasi dokumen lama hanya memulihkan format; teks khusus pengguna dipertahankan.",
+    "Sampul dan rekomendasi menggunakan satu pemilih bentuk kontrak.",
+    "Konstruksi katalog di atas Rp400 juta menggunakan surat perjanjian; bukti pesanan katalog tetap dapat disertakan dalam bundel.",
+    "Barang/jasa lainnya dan konsultansi melalui katalog menggunakan surat pesanan.",
+    "Nomor pasal, judul pasal dan isi menjadi paragraf terpisah."
+  ]
+}
