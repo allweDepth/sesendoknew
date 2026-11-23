@@ -20,8 +20,8 @@ final class ProcurementProcessService
         $profiles=[
             'LANGSUNG'=>['label'=>'Pengadaan Langsung','steps'=>array_merge([
                 ['JADWAL_DOKUMEN','Jadwal dan Kelengkapan Dokumen'],['BA_SURVEY_HARGA','Survei Harga'],['PAKTA_INTEGRITAS','Pakta Integritas'],['UNDANGAN_PL','Undangan Pengadaan Langsung'],['UPLOAD_PENAWARAN','Pemasukan Dokumen Penawaran'],['PEMBUKAAN_PENAWARAN','Pembukaan Dokumen Penawaran'],['BA_EVALUASI','Evaluasi Penawaran'],['EVALUASI_KUALIFIKASI','Evaluasi Kualifikasi'],['BA_KLARIFIKASI_NEGOSIASI','Klarifikasi dan Negosiasi'],['DAFTAR_HADIR_KLARIFIKASI','Daftar Hadir Klarifikasi dan Negosiasi'],['PERNYATAAN_PENURUNAN','Pernyataan Kesanggupan Menurunkan Biaya'],['LAMPIRAN_NEGOSIASI','Lampiran Biaya Setelah Negosiasi'],['BAHP','Berita Acara Hasil Pengadaan'],['PENETAPAN_PENYEDIA','Penetapan Penyedia'],['PENGUMUMAN_PENYEDIA','Pengumuman Penyedia'],['SPPBJ','Surat Penunjukan Penyedia (SPPBJ)']],$common)],
-            'TENDER'=>['label'=>'Tender / Seleksi / Lelang','steps'=>array_merge([['PENGUMUMAN_TENDER','Pengumuman Tender / Seleksi'],['PAKTA_INTEGRITAS','Pakta Integritas'],['BA_AANWIJZING','Pemberian Penjelasan / Aanwijzing'],['UPLOAD_PENAWARAN','Pemasukan Dokumen Penawaran'],['PEMBUKAAN_PENAWARAN','Pembukaan Dokumen Penawaran'],['BA_EVALUASI','Evaluasi Penawaran'],['EVALUASI_KUALIFIKASI','Evaluasi Kualifikasi'],['BA_KLARIFIKASI_NEGOSIASI','Klarifikasi / Negosiasi (jika dilakukan)'],['BAHP','Berita Acara Hasil Pemilihan'],['PENETAPAN_PENYEDIA','Penetapan Pemenang'],['PENGUMUMAN_PENYEDIA','Pengumuman Pemenang'],['SANGGAH','Masa Sanggah'],['SPPBJ','Surat Penunjukan Penyedia (SPPBJ)']],$common)],
-            'KATALOG'=>['label'=>'E-purchasing / E-katalog','steps'=>array_merge([['PERSIAPAN_PESANAN','Persiapan / Mini Kompetisi'],['BA_KLARIFIKASI_NEGOSIASI','Klarifikasi dan Negosiasi E-purchasing'],['SURAT_PESANAN','Surat / Bukti Pesanan'],['SPPBJ','Surat Penunjukan Penyedia (SPPBJ)']],$common,[['PENGIRIMAN','Pengiriman / Pelaksanaan'],['BAST','Serah Terima']])],
+            'TENDER'=>['label'=>'Tender / Seleksi / Lelang','steps'=>array_merge([['PENGUMUMAN_TENDER','Pengumuman Tender / Seleksi'],['PAKTA_INTEGRITAS','Pakta Integritas'],['BA_AANWIJZING','Pemberian Penjelasan / Aanwijzing'],['UPLOAD_PENAWARAN','Pemasukan Dokumen Penawaran'],['PEMBUKAAN_PENAWARAN','Pembukaan Dokumen Penawaran'],['BA_EVALUASI','Evaluasi Penawaran'],['EVALUASI_KUALIFIKASI','Evaluasi Kualifikasi'],['BA_KLARIFIKASI_NEGOSIASI','Klarifikasi / Negosiasi (jika dilakukan)'],['LAMPIRAN_NEGOSIASI','Lampiran Rincian Penawaran Setelah Negosiasi'],['BAHP','Berita Acara Hasil Pemilihan'],['PENETAPAN_PENYEDIA','Penetapan Pemenang'],['PENGUMUMAN_PENYEDIA','Pengumuman Pemenang'],['SANGGAH','Masa Sanggah'],['SPPBJ','Surat Penunjukan Penyedia (SPPBJ)']],$common)],
+            'KATALOG'=>['label'=>'E-purchasing / E-katalog','steps'=>array_merge([['PERSIAPAN_PESANAN','Persiapan / Mini Kompetisi'],['BA_KLARIFIKASI_NEGOSIASI','Klarifikasi dan Negosiasi E-purchasing'],['LAMPIRAN_NEGOSIASI','Lampiran Rincian Penawaran Setelah Negosiasi'],['SURAT_PESANAN','Surat / Bukti Pesanan'],['SPPBJ','Surat Penunjukan Penyedia (SPPBJ)']],$common,[['PENGIRIMAN','Pengiriman / Pelaksanaan'],['BAST','Serah Terima']])],
             'LAINNYA'=>['label'=>'Pengadaan Melalui Penyedia','steps'=>$common],
             'SWAKELOLA'=>['label'=>'Swakelola','steps'=>[]],
         ];
@@ -71,6 +71,15 @@ final class ProcurementProcessService
         foreach($c['dokumen_referensi']??[] as $code=>$ref)$values[$code]=array_merge($values[$code]??[],['nomor'=>$ref['nomor_dokumen']??'','tanggal'=>$ref['tanggal_dokumen']??'']);
         $values['KONTRAK']=['nomor'=>$c['nomor_kontrak']??'','tanggal'=>$c['tanggal_kontrak']??'','waktu'=>''];
         $values['SPMK']=array_merge($values['SPMK']??[],['nomor'=>$c['nomor_spmk']??'','tanggal'=>$c['tanggal_spmk']??'']);
+        return self::withNegotiationAttachment($values);
+    }
+    /** The attachment belongs to the same negotiation event unless explicitly identified separately. */
+    private static function withNegotiationAttachment(array $values):array
+    {
+        if(!empty($values['BA_KLARIFIKASI_NEGOSIASI'])){
+            $own=array_filter($values['LAMPIRAN_NEGOSIASI']??[],static fn($v)=>$v!==''&&$v!==null);
+            $values['LAMPIRAN_NEGOSIASI']=array_replace($values['BA_KLARIFIKASI_NEGOSIASI'],$own);
+        }
         return $values;
     }
     public static function documentValue(array $c,string $code):array
@@ -83,6 +92,7 @@ final class ProcurementProcessService
         $values=self::decode($c['proses_pengadaan']??null);
         $values['SPMK']=['nomor'=>$c['nomor_spmk']??'','tanggal'=>$c['tanggal_spmk']??''];
         $values['KONTRAK']=['nomor'=>$c['nomor_kontrak']??'','tanggal'=>$c['tanggal_kontrak']??''];
+        $values=self::withNegotiationAttachment($values);
         $docs=$db->query('SELECT id,kode_dokumen,status,nomor_dokumen,tanggal_dokumen FROM dokumen_pengadaan_neo WHERE kontrak_id=? AND is_deleted=0',[$id])->fetchAll();
         foreach($docs as $doc){
                 $code=$doc['kode_dokumen'];if(str_starts_with($code,'SPK_')||$code==='SURAT_PERJANJIAN')$code='KONTRAK';

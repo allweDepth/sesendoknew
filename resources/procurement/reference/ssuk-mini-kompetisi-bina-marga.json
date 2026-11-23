@@ -1,0 +1,5252 @@
+[
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "A. KETENTUAN UMUM"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "1. Definisi"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Istilah-istilah yang digunakan dalam Syarat-Syarat Umum Kontrak selanjutnya disebut SSUK harus mempunyai arti atau tafsiran seperti yang dimaksudkan sebagai berikut."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.1 Aparat Pengawas Intern Pemerintah yang selanjutnya disingkat APIP adalah aparat yang melakukan pengawasan melalui audit, reviu, pemantauan, evaluasi, dan kegiatan pengawasan lain terhadap penyelenggaraan tugas dan fungsi Pemerintah."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.2 Bagian Pekerjaan yang disubkontrakkan adalah bagian pekerjaan utama atau bagian pekerjaan bukan utama yang ditetapkan sebagaimana tercantum dalam Dokumen Pemilihan yang pelaksanaanya diserahkan kepada Penyedia lain (subkontraktor) dan disetujui terlebih dahulu oleh Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.3 Daftar Kuantitas dan Harga adalah daftar kuantitas yang telah diisi harga satuan dan jumlah biaya keseluruhannya yang merupakan bagian dari penawaran."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.4 Direksi Lapangan adalah tenaga/tim pendukung yang dibentuk/ditetapkan oleh Pejabat Penandatangan Kontrak, terdiri dari 1 (satu) orang atau lebih, untuk mengelola administrasi Kontrak dan mengendalikan pelaksanaan pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.5 Harga Kontrak adalah total harga pelaksanaan pekerjaan yang tercantum dalam Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.6 Harga Satuan Pekerjaan yang selanjutnya disingkat HSP adalah harga satu jenis pekerjaan tertentu per satu satuan tertentu."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.7 Jadwal Pelaksanaan Pekerjaan adalah kerangka waktu yang sudah terinci berdasarkan Masa Pelaksanaan, setelah dilaksanakan pemeriksaan lapangan bersama dan disepakati dalam rapat persiapan pelaksanaan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.8 Katalog Elektronik adalah sistem informasi elektronik yang memuat daftar, merek, jenis, spesifikasi teknis, harga, dan jumlah ketersediaan Barang/Jasa tertentu dari berbagai Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.9 Keadaan Kahar adalah suatu keadaan yang terjadi di luar kehendak para pihak dalam Kontrak dan tidak dapat diperkirakan sebelumnya, sehingga kewajiban yang ditentukan dalam Kontrak menjadi tidak dapat dipenuhi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.10 Kegagalan Bangunan adalah suatu keadaan keruntuhan bangunan dan/atau tidak berfungsinya bangunan setelah penyerahan akhir hasil Jasa Konstruksi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.11 Kontrak Kerja Konstruksi selanjutnya disebut Kontrak adalah keseluruhan dokumen yang mengatur hubungan hukum antara Pejabat Penandatangan Kontrak dengan Penyedia dalam pelaksanaan jasa konsultansi konstruksi atau pekerjaan konstruksi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.12 Kontrak Harga Satuan adalah Kontrak dengan harga satuan yang tetap untuk setiap satuan atau unsur pekerjaan dengan spesifikasi teknis tertentu atas penyelesaian seluruh pekerjaan dalam batas waktu yang telah ditetapkan, volume atau kuantitas pekerjaannya masih bersifat perkiraan pada saat Kontrak ditandatangani, pembayaran berdasarkan hasil pengukuran bersama atas realisasi volume pekerjaan dan nilai akhir Kontrak ditetapkan setelah seluruh pekerjaan diselesaikan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.13 Kuasa Pengguna Anggaran pada pelaksanaan APBN yang selanjutnya disingkat KPA adalah pejabat yang memperoleh kuasa dari PA untuk melaksanakan sebagian kewenangan dan tanggung jawab Penggunaan Anggaran pada Kementerian Negara/Lembaga yang bersangkutan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.14 Masa Kontrak adalah jangka waktu berlakunya Kontrak ini terhitung sejak tanggal penandatanganan Kontrak sampai dengan Tanggal Penyerahan Akhir Pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.15 Masa Pelaksanaan adalah jangka waktu untuk melaksanakan seluruh pekerjaan terhitung sejak Tanggal Mulai Kerja sampai dengan Tanggal Penyerahan Pertama Pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.16 Masa Pemeliharaan adalah jangka waktu untuk melaksanakan kewajiban pemeliharaan oleh Penyedia, terhitung sejak Tanggal Penyerahan Pertama Pekerjaan sampai dengan Tanggal Penyerahan Akhir Pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.17 Mata Pembayaran Utama adalah mata pembayaran yang pokok dan penting yang nilai bobot kumulatifnya minimal 80% (delapan puluh persen) dari seluruh nilai pekerjaan, dihitung mulai dari mata pembayaran yang nilai bobotnya terbesar."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.18 Metode Pelaksanaan Pekerjaan adalah metode yang menggambarkan penguasaan penyelesaian pekerjaan yang sistematis dari awal sampai akhir meliputi tahapan/urutan pekerjaan utama dan uraian/cara kerja dari masing-masing jenis kegiatan pekerjaan utama yang dapat dipertanggung jawabkan secara teknis."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.19 Nilai Pagu Paket Pengadaan adalah nilai total dari Perkiraan Biaya."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.20 Pejabat Pembuat Komitmen yang selanjutnya disingkat PPK adalah pejabat yang diberi kewenangan oleh PA/KPA untuk mengambil keputusan dan/atau melakukan tindakan yang dapat mengakibatkan pengeluaran anggaran belanja negara."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.21 Pekerjaan Konstruksi adalah keseluruhan atau sebagian kegiatan yang meliputi pembangunan, pengoperasian, pemeliharaan, pembongkaran, dan pembangunan kembali suatu bangunan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.22 Pekerjaan Utama adalah rangkaian kegiatan dalam suatu penyelenggaraan pekerjaan konstruksi yang memiliki pengaruh terbesar dalam mengakibatkan terjadinya keterlambatan penyelesaian pekerjaan konstruksi dan secara langsung menunjang terwujudnya dan berfungsinya suatu konstruksi sesuai peruntukannya sebagaimana tercantum dalam rancangan kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.23 Pelaku Usaha adalah badan usaha atau perseorangan yang melakukan usaha dan/atau kegiatan pada bidang tertentu."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.24 Pengawas Pekerjaan adalah tim pendukung/badan usaha yang ditunjuk/ditetapkan oleh Pejabat Penandatangan Kontrak yang bertugas untuk mengawasi pelaksanaan pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.25 Pengguna Anggaran yang selanjutnya disingkat PA adalah pejabat pemegang kewenangan penggunaan anggaran Kementerian Negara/Lembaga/Perangkat Daerah."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.26 Pejabat yang berwenang untuk menandatangani Kontrak yang selanjutnya disebut Pejabat Penandatangan Kontrak adalah pemilik atau pemberi pekerjaan yang menggunakan layanan Jasa Konstruksi yang dapat berupa Pengguna Anggaran, Kuasa Pengguna Anggaran, atau Pejabat Pembuat Komitmen."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.27 Penyedia adalah Pelaku Usaha yang menyediakan barang/jasa berdasarkan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.28 Personel Manajerial adalah tenaga ahli atau tenaga teknis yang ditempatkan sesuai penugasan pada organisasi pelaksanaan pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.29 Perkiraan Biaya adalah perhitungan biaya komponen tenaga kerja, bahan, dan alat yang dibutuhkan serta telah ditambah Biaya Penerapan Sistem Manajemen Keselamatan Konstruksi dalam melaksanakan Pekerjaan Konstruksi. Perkiraan biaya telah memperhitungkan biaya tidak langsung, keuntungan dan Pajak Pertambahan Nilai."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.30 Sanksi Daftar Hitam adalah sanksi yang diberikan kepada Peserta pemilihan/Penyedia berupa larangan mengikuti Pengadaan Barang/Jasa di seluruh Kementerian/Lembaga dalam jangka waktu tertentu."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.31 Subkontraktor adalah Penyedia yang mengadakan perjanjian kerja tertulis dengan Penyedia penanggung jawab Kontrak, untuk melaksanakan sebagian pekerjaan (subkontrak)."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.32 Surat Jaminan yang selanjutnya disebut Jaminan adalah jaminan tertulis yang dikeluarkan oleh Bank Umum/Perusahaan Penjaminan/Perusahaan Asuransi/lembaga keuangan khusus yang menjalankan usaha di bidang pembiayaan, penjaminan, dan asuransi untuk mendorong ekspor Indonesia."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.33 Surat Perintah Mulai Kerja yang selanjutnya disingkat SPMK adalah surat yang diterbitkan oleh Pejabat Penandatangan Kontrak kepada Penyedia untuk memulai melaksanakan pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.34 Tanggal Mulai Kerja adalah tanggal yang dinyatakan pada SPMK yang diterbitkan oleh Pejabat Penandatangan Kontrak untuk memulai melaksanakan pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.35 Tanggal Penyerahan Pertama Pekerjaan adalah tanggal serah terima pertama pekerjaan selesai (Provisional Hand Over/PHO) dinyatakan dalam Berita Acara Serah Terima Pertama Pekerjaan yang diterbitkan oleh Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.36 Tanggal Penyerahan Akhir Pekerjaan adalah tanggal serah terima akhir pekerjaan selesai (Final Hand Over/FHO) dinyatakan dalam Berita Acara Serah Terima Akhir Pekerjaan yang diterbitkan oleh Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1.37 Tenaga Kerja Konstruksi adalah tenaga kerja yang bekerja di sektor konstruksi yang meliputi ahli, teknisi atau analis, dan operator."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "2. Penerapan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "SSUK diterapkan secara luas dalam pelaksanaan Pekerjaan Konstruksi ini tetapi tidak dapat bertentangan dengan ketentuan-ketentuan dalam Dokumen Kontrak lain yang lebih tinggi berdasarkan urutan hierarki dalam Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "3. Bahasa dan Hukum"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "3.1 Bahasa Kontrak harus dalam bahasa Indonesia."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "3.2 Dalam hal Kontrak dilakukan dengan pihak asing harus dibuat dalam bahasa Indonesia dan bahasa Inggris. Dalam hal terjadi perselisihan dengan pihak asing digunakan Kontrak dalam bahasa Indonesia."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "3.3 Hukum yang digunakan adalah hukum yang berlaku di Indonesia."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "4. Korespondensi"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "4.1 Semua korespondensi dapat berbentuk surat, e-mail dan/atau faksimili dengan alamat tujuan para pihak yang tercantum dalam SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "4.2 Semua pemberitahuan, permohonan, atau persetujuan berdasarkan Kontrak ini harus dibuat secara tertulis dalam Bahasa Indonesia, dan dianggap telah diberitahukan jika telah disampaikan secara langsung kepada Wakil Sah Para Pihak dalam SSKK, atau jika disampaikan melalui surat tercatat dan/atau faksimili ditujukan ke alamat yang tercantum dalam SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "5. Wakil Sah Para Pihak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "5.1 Setiap tindakan yang disyaratkan atau diperbolehkan untuk"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "dilakukan, dan setiap dokumen yang disyaratkan atau diperbolehkan untuk dibuat berdasarkan Kontrak ini oleh Pejabat Penandatangan Kontrak atau Penyedia hanya dapat dilakukan atau dibuat oleh Wakil Sah Para Pihak atau pejabat yang disebutkan dalam SSKK kecuali untuk melakukan perubahan kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "5.2 Kewenangan Wakil Sah Para Pihak diatur dalam Surat Keputusan dari Para Pihak dan harus disampaikan kepada masing-masing pihak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "5.3 Dalam hal Direksi Lapangan diangkat dan ditunjuk menjadi Wakil Sah Pejabat Penandatangan Kontrak, maka selain melaksanakan pengelolaan administrasi kontrak dan pengendalian pelaksanaan pekerjaan, Direksi Lapangan juga melaksanakan pendelegasian sesuai dengan pelimpahan dari Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "6. Lokasi Pelaksanaan Pekerjaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Penyedia melaksanakan pekerjaan pada lokasi sebagaimana yang tercantum pada SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "7. Larangan Korupsi, Kolusi dan/atau Nepotisme, Penyalahgunaan Wewenang serta Penipuan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "7.1 Berdasarkan etika pengadaan barang/jasa pemerintah, para pihak dilarang untuk :"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. menawarkan, menerima atau menjanjikan untuk memberi atau menerima hadiah atau imbalan berupa apa saja atau melakukan tindakan lainnya untuk mempengaruhi siapapun yang diketahui atau patut dapat diduga berkaitan dengan pengadaan ini;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. mendorong terjadinya persaingan tidak sehat; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. membuat dan/atau menyampaikan secara tidak benar dokumen dan/atau keterangan lain yang disyaratkan untuk penyusunan dan pelaksanaan Kontrak ini."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "7.2 Penyedia menjamin bahwa yang bersangkutan termasuk semua subkontraktornya (jika ada) tidak pernah dan tidak akan melakukan tindakan yang dilarang pada Pasal 7.1 di atas."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "7.3 Penyedia yang menurut penilaian Pejabat Penandatangan Kontrak terbukti melakukan larangan-larangan di atas dapat dikenakan sanksi-sanksi administratif oleh Pejabat Penandatangan Kontrak sebagai berikut:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. pemutusan Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Jaminan Pelaksanaan dicairkan dan disetorkan sebagaimana ditetapkan dalam SSKK;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. sisa uang muka harus dilunasi oleh Penyedia atau Jaminan Uang Muka dicairkan dan disetorkan sebagaimana ditetapkan dalam SSKK; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. pengenaan Sanksi Daftar Hitam."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "7.4 Pengenaan sanksi administratif di atas dilaporkan oleh Pejabat Penandatangan Kontrak kepada PA/KPA."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "7.5 Pejabat Penandatangan Kontrak yang terlibat dalam korupsi, kolusi, dan/atau nepotisme dan penipuan dikenakan sanksi berdasarkan ketentuan peraturan perundang-undangan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "8. Asal Material/Bahan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "8.1 Penyedia harus menyampaikan asal material/bahan yang terdiri"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "dari rincian komponen dalam negeri dan komponen impor selama pelaksanaan pekerjaan kepada Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "8.2 Asal material/bahan merupakan tempat material/bahan diperoleh, antara lain tempat material/bahan ditambang, tumbuh, atau diproduksi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "8.3 Kendaraan yang digunakan untuk pengiriman dan pengangkutan material/bahan mematuhi peraturan perundangan terkait beban dan dimensi kendaraan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "9. Pembukuan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Penyedia diharapkan untuk melakukan pencatatan keuangan yang akurat dan sistematis sehubungan dengan pelaksanaan pekerjaan ini berdasarkan standar akuntansi yang berlaku."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "10. Perpajakan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Penyedia, Subkontraktor (jika ada), dan Tenaga Kerja Konstruksi yang bersangkutan berkewajiban untuk membayar semua pajak, bea, retribusi, dan pungutan lain yang dibebankan oleh peraturan perpajakan atas pelaksanaan Kontrak ini. Semua pengeluaran perpajakan ini dianggap telah termasuk dalam Harga Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "11. Pengalihan Seluruh Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "11.1 Pengalihan seluruh Kontrak hanya diperbolehkan dalam hal pergantian nama Penyedia, baik sebagai akibat peleburan (merger) maupun akibat lainnya."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "11.2 Jika ketentuan di atas dilanggar maka Kontrak diputuskan sepihak oleh Pejabat Penandatangan Kontrak dan Penyedia dikenakan sanksi sebagaimana diatur dalam pasal 45.2."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "12. Pengabaian"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Jika terjadi pengabaian oleh satu pihak terhadap pelanggaran ketentuan tertentu Kontrak oleh pihak yang lain maka pengabaian tersebut tidak menjadi pengabaian yang terus-menerus selama Masa Kontrak atau seketika menjadi pengabaian terhadap pelanggaran ketentuan yang lain. Pengabaian hanya dapat mengikat jika dapat dibuktikan secara tertulis dan ditandatangani oleh Wakil Sah Pihak yang melakukan pengabaian."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "13. Penyedia Mandiri"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Penyedia berdasarkan Kontrak ini bertanggung jawab penuh terhadap Tenaga Kerja Konstruksi dan subkontraktornya (jika ada) serta pekerjaan yang dilakukan oleh mereka."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "14. Pengawasan Pelaksanaan Pekerjaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "14.1 Pejabat Penandatangan Kontrak menetapkan Pengawas Pekerjaan untuk melakukan pengawasan pelaksanaan pekerjaan sesuai Kontrak ini. Pengawas Pekerjaan dapat berasal dari"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "personel Pejabat Penandatangan Kontrak (Direksi Teknis) atau Penyedia Jasa Pengawasan (Konsultan Pengawas)."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "14.2 Dalam melaksanakan kewajibannya, Pengawas Pekerjaan bertindak profesional. Jika tercantum dalam SSKK, Pengawas Pekerjaan yang berasal dari Personel Pejabat Penandatangan Kontrak dapat bertindak sebagai Wakil Sah Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "15. Tugas dan Wewenang Pengawas Pekerjaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "15.1 Semua gambar dan rencana kerja yang digunakan dalam pelaksanaan pekerjaan sesuai Kontrak, untuk pekerjaan permanen maupun pekerjaan sementara mendapatkan persetujuan dari Pengawas Pekerjaan sesuai pelimpahan wewenang dari Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "15.2 Jika dalam pelaksanaan pekerjaan ini diperlukan terlebih dahulu ada pekerjaan sementara yang tidak tercantum dalam Daftar Kuantitas dan Harga di dalam Kontrak maka Penyedia berkewajiban untuk menyerahkan spesifikasi dan gambar usulan pekerjaan sementara tersebut untuk mendapatkan pernyataan tidak berkeberatan (no objection) untuk dilaksanakan dari Pengawas Pekerjaan. Pernyataan tidak berkeberatan atas rencana pekerjaan sementara ini tidak melepaskan Penyedia dari tanggung jawabnya sesuai Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "15.3 Pengawas Pekerjaan melaksanakan tugas dan wewenang paling sedikit meliputi:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. mengevaluasi dan menyetujui rencana mutu pekerjaan konstruksi Penyedia Jasa pelaksana konstruksi;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. memberikan izin dimulainya setiap tahapan pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. memeriksa dan menyetujui kemajuan pelaksanaan Pekerjaan Konstruksi sesuai dengan ketentuan dalam Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. memeriksa dan menilai mutu dan keselamatan konstruksi terhadap hasil akhir pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. menghentikan setiap pekerjaan yang tidak memenuhi persyaratan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. bertanggung jawab terhadap hasil pelaksanaan Pekerjaan Konstruksi sesuai tugas dan tanggungjawabnya;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "g. memberikan laporan secara periodik kepada Pejabat Penandatangan Kontrak sesuai dengan ketentuan dalam Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "15.4 Dalam hal Pengawas Pekerjaan melaksanakan tugas dan wewenang sebagaimana yang dimaksud pada pasal 15.3 yang akan mempengaruhi ketentuan atau persyaratan dalam kontrak maka Pengawas Pekerjaan terlebih dahulu mendapatkan persetujuan dari Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "15.5 Penyedia berkewajiban untuk melaksanakan perintah Pengawas Pekerjaan yang sesuai dengan kewenangan Pengawas Pekerjaan dalam Kontrak ini."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "16. Penemuan-penemuan Penyedia wajib memberitahukan kepada Pejabat Penandatangan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Kontrak dan kepada pihak yang berwenang semua penemuan benda/barang yang mempunyai nilai sejarah atau penemuan kekayaan di lokasi pekerjaan yang menurut peraturan perundang-undangan dikuasai oleh negara."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "17. Akses ke Lokasi Kerja"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "17.1 Penyedia berkewajiban untuk menjamin akses Pejabat"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Penandatangan Kontrak, Wakil Sah Pejabat Penandatangan Kontrak, Pengawas Pekerjaan dan/atau pihak yang mendapat izin dari Pejabat Penandatangan Kontrak ke lokasi kerja dan lokasi lainnya dimana pekerjaan ini sedang atau akan dilaksanakan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "17.2 Penyedia harus dianggap telah menerima kelayakan dan ketersediaan jalur akses menuju lapangan dan Penyedia harus berupaya menjaga setiap jalan atau jembatan dari kerusakan akibat penggunaan/lalu lintas Penyedia atau akibat personel Penyedia, maka:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Penyedia harus bertanggung jawab atas pemeliharaan yang mungkin diperlukan akibat penggunaan jalur akses;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Penyedia harus menyediakan rambu atau petunjuk sepanjang jalur akses, dan mendapatkan perizinan yang mungkin disyaratkan oleh otoritas terkait untuk penggunaan jalur, rambu, dan petunjuk;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. biaya karena ketidak layakan atau tidak tersedianya jalur akses untuk digunakan oleh Penyedia, harus ditanggung Penyedia; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. Pejabat Penandatangan Kontrak tidak bertanggung jawab atas klaim yang mungkin timbul akibat penggunaan jalur akses."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "17.3 Dalam hal untuk menjamin ketersediaan jalan akses tersebut membutuhkan biaya yang lebih besar dari biaya umum (overhead) dalam Penawaran Penyedia, maka Pejabat Penandatangan Kontrak dapat mengalokasikan biaya untuk penyediaan jalur akses tersebut di dalam Harga Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "17.4 Pejabat Penandatangan Kontrak tidak bertanggung jawab atas klaim yang mungkin timbul selain penggunaan jalur akses tersebut."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "B. PELAKSANAAN, PENYELESAIAN, ADENDUM DAN PEMUTUSAN KONTRAK"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "18. Masa Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Kontrak ini berlaku efektif sejak penandatanganan Surat Perjanjian oleh Para Pihak sampai dengan Tanggal Penyerahan Akhir Pekerjaan dan hak dan kewajiban Para Pihak yang terdapat dalam Kontrak sudah terpenuhi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "B.1 Pelaksanaan Pekerjaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "19. Penyerahan Lokasi Kerja dan Personel"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "19.1 Sebelum penyerahan lokasi kerja, dilakukan peninjauan lapangan bersama oleh para pihak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "19.2 Pejabat Penandatangan Kontrak berkewajiban untuk menyerahkan lokasi kerja sesuai dengan kebutuhan Penyedia yang tercantum dalam rencana penyerahan lokasi kerja yang telah disepakati oleh para pihak dalam Rapat Persiapan Penandatanganan Kontrak, untuk melaksanakan pekerjaan tanpa ada hambatan kepada Penyedia sebelum SPMK diterbitkan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "19.3 Hasil peninjauan dan penyerahan dituangkan dalam Berita Acara Penyerahan Lokasi Kerja."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "19.4 Jika dalam peninjauan lapangan bersama ditemukan hal-hal yang dapat mengakibatkan perubahan isi Kontrak maka perubahan tersebut harus dituangkan dalam Berita Acara Penyerahan Lokasi Kerja yang selanjutnya akan dituangkan dalam adendum kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "20. Surat Perintah Mulai Kerja (SPMK)"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "19.5 Jika Pejabat Penandatangan Kontrak tidak dapat menyerahkan lokasi kerja sesuai kebutuhan Penyedia yang untuk mulai bekerja pada Tanggal Mulai Kerja untuk melaksanakan pekerjaan dan terbukti merupakan suatu hambatan yang disebabkan oleh Pejabat Penandatangan Kontrak, maka kondisi ini ditetapkan sebagai Peristiwa Kompensasi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "19.6 Penyedia menyerahkan Personel dengan memenuhi ketentuan sebagai berikut:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. bukti sertifikat kompetensi personel manajerial pada Pekerjaan Konstruksi;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. perubahan jangka waktu pelaksanaan pekerjaan dikarenakan jadwal pelaksanaan pekerjaan yang ditetapkan sebelumnya akan melewati batas tahun anggaran;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. melakukan sertifikasi bagi operator, teknisi, atau analis yang belum bersertifikat pada saat pelaksanaan pekerjaan; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. pelaksanaan alih pengalaman/keahlian bidang konstruksi melalui sistem kerja praktik/magang, membahas paling sedikit terkait jumlah peserta, durasi pelaksanaan, dan jenis keahlian. Apabila Penyedia tidak dapat menunjukan bukti sertifikat maka Pejabat Penandatangan Kontrak meminta Penyedia untuk mengganti personel yang memenuhi persyaratan yang sudah ditentukan. Penggantian personel harus dilakukan dalam jangka waktu mobilisasi dan sesuai dengan kesepakatan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "20.1 Pejabat Penandatangan Kontrak menerbitkan SPMK paling lambat 14 (empat belas) hari kerja sejak tanggal penandatanganan Kontrak atau 14 (empat belas) hari kerja sejak penyerahan lokasi kerja pertama kali."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "20.2 Dalam SPMK dicantumkan seluruh lingkup pekerjaan dan Tanggal Mulai Kerja."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "21. Rencana Mutu Pekerjaan Konstruksi (RMPK)"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "21.1 Penyedia berkewajiban untuk mempresentasikan dan menyerahkan RMPK sebagai penjaminan dan pengendalian mutu pelaksanaan pekerjaan pada rapat persiapan pelaksanaan Kontrak, kemudian dibahas dan disetujui oleh Pejabat Penandatangan Kontrak ."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "21.2 RMPK disusun paling sedikit berisi:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Rencana Pelaksanaan Pekerjaan (Work Method Statement );"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Rencana Pemeriksaan dan Pengujian/Inspection and Test Plan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "(ITP);"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Pengendalian Subkontraktor (jika ada) dan Pemasok."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "21.3 Penyedia wajib menerapkan dan mengendalikan pelaksanaan RMPK secara konsisten untuk mencapai mutu yang dipersyaratkan pada pelaksanaan pekerjaan ini."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "21.4 RMPK dapat direvisi sesuai dengan kondisi pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "21.5 Penyedia berkewajiban untuk memutakhirkan RMPK jika terjadi Adendum Kontrak dan/atau Peristiwa Kompensasi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "21.6 Pemutakhiran RMPK harus menunjukan perkembangan kemajuan setiap pekerjaan dan dampaknya terhadap penjadwalan sisa pekerjaan, termasuk perubahan terhadap urutan pekerjaan. Pemutakhiran RMPK harus mendapatkan persetujuan Pejabat Penandatangan Kontrak ."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "22. Rencana Keselamatan Konstruksi (RKK)"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "21.7 Persetujuan Pejabat Penandatangan Kontrak terhadap RMPK tidak mengubah kewajiban kontraktual Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "22.1 Penyedia berkewajiban untuk mempresentasikan dan menyerahkan RKK pada saat rapat persiapan pelaksanaan Kontrak, kemudian pelaksanaan RKK dibahas dan disetujui oleh Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "22.2 Para Pihak wajib menerapkan dan mengendalikan pelaksanaan RKK secara konsisten."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "22.3 RKK menjadi bagian dari Dokumen Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "22.4 Penyedia berkewajiban untuk memutakhirkan RKK sesuai dengan kondisi pekerjaan, jika terjadi perubahan maka dituangkan dalam adendum Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "22.5 Pemutakhiran RKK harus mendapat persetujuan Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "22.6 Persetujuan Pejabat Penandatangan Kontrak terhadap pelaksanaan RKK tidak mengubah kewajiban kontraktual Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "23. Identifikasi Bahaya, Penilaian Risiko, Penentuan Pengendalian Risiko, dan Peluang (IBPRP)"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "23.1 IBPRP disusun oleh penanggung jawab Keselamatan Konstruksi bersama dengan tenaga ahli teknis (engineer) dan disetujui oleh pimpinan tertinggi pelaksana Pekerjaan Konstruksi di proyek memuat:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. deskripsi Risiko, meliputi uraian pekerjaan, identifikasi bahaya, dan risiko;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. perundangan atau persyaratan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. penilaian tingkat Risiko Keselamatan Konstruksi;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. pengendalian risiko awal yaitu upaya yang dilakukan untuk menghilangkan atau mengurangi risiko serta memperbesar peluang yang telah diidentifikasi dan dinilai berdasar hasil penilaian risiko keselamatan konstruksi;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. penilaian risiko sisa adalah penilaian terhadap risiko yang terjadi setelah memperhitungkan pengendalian yang sudah ditetapkan untuk mengurangi risiko keselamatan konstruksi; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. pengendalian risiko lanjutan yaitu upaya tambahan yang dilakukan untuk menghilangkan atau mengurangi risiko yang telah diidentifikasi serta memperbesar peluang dan dinilai berdasar hasil penilaian risiko sisa dan peluang."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "23.2 Uraian pekerjaan diintegrasikan dengan jadwal dan tahapan pekerjaan sebagaimana dalam dokumen RMPK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "23.3 Identifikasi bahaya disusun berdasarkan analisis multi-risiko (multi-risk analysis) yang terdiri atas keselamatan pekerja dan/atau properti/aset/material dan/atau keselamatan publik dan/atau keselamatan lingkungan pada tiap tahapan pekerjaan disesuaikan dengan metode pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "23.4 Pengendalian risiko dalam IBPRP harus menerapkan analisis pengendalian risiko terintegrasi atas hasil identifikasi bahaya yaitu dengan pengendalian berdasarkan:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. aspek keteknikan (engineering control);"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. aspek manajemen (administrative control);"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. aspek perilaku manusia; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. aspek perubahan dan dinamika pekerjaan konstruksi (menerapkan manajemen perubahan)."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "23.5 Pengendalian disusun dengan berdasarkan tingkatan pengendalian sebagai berikut:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. eliminasi;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. substitusi;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. rekayasa teknis;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. pengendalian administratif; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. penggunaan alat pelindung diri dan alat pelindung kerja."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "24. Rapat Persiapan Pelaksanaan Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "24.1 Paling lambat 7 (tujuh) hari kalender sejak diterbitkannya SPMK dan sebelum pelaksanaan pekerjaan, Pejabat Penandatangan Kontrak bersama dengan Penyedia, unsur perancangan, dan unsur pengawasan, harus sudah menyelenggarakan rapat persiapan pelaksanaan kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "24.2 Beberapa hal yang dibahas dan disepakati dalam rapat persiapan pelaksanaan kontrak meliputi:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Penerapan SMKK:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1) RKK;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "2) RMPK;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "3) Rencana Kerja Pengelolaan dan Pemantauan Lingkungan (RKPPL) (apabila ada); dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "4) Rencana Manajemen Lalu Lintas (RMLL) (apabila ada);"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Rencana Kerja;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. organisasi kerja;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. tata cara pengaturan pelaksanaan pekerjaan termasuk permohonan persetujuan memulai pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. jadwal pelaksanaan pekerjaan, yang diikuti uraian tentang metode kerja yang memperhatikan Keselamatan Konstruksi;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. jadwal pengadaan bahan/material, mobilisasi peralatan dan Tenaga Kerja Konstruksi;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "g. Penggunaan Sistem Informasi Kontrak dan Manajemen Pengendalian Pelaksanaan Kontrak (SIKOMPAK) dalam pelaksanaan dan pengendalian kontrak; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "h. hal-hal lain yang dianggap perlu."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "24.3 Hasil rapat persiapan pelaksanaan Kontrak dituangkan dalam Berita Acara Rapat Persiapan Pelaksanaan Kontrak. Apabila dalam rapat persiapan pelaksanaan kontrak mengakibatkan perubahan isi Kontrak, maka harus dituangkan dalam adendum Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "24.4 Pada tahapan rapat persiapan pelaksanaan Kontrak, PA/KPA dapat membentuk Pejabat/Panitia Peneliti Pelaksanaan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "25. Mobilisasi"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "25.1 Mobilisasi paling lambat harus sudah mulai dilaksanakan dalam waktu 30 (tiga puluh) hari kalender sejak diterbitkan SPMK, atau sesuai kebutuhan dan Rencana Kerja yang disepakati saat Rapat Persiapan Pelaksanaan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "25.2 Mobilisasi dilakukan sesuai dengan lingkup pekerjaan, yaitu :"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. mendatangkan peralatan-peralatan terkait yang diperlukan dalam pelaksanaan pekerjaan, termasuk instalasi alat;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. mempersiapkan fasilitas seperti kantor, rumah, gedung laboratorium, bengkel, gudang, dan sebagainya; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. mendatangkan Tenaga Kerja Konstruksi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "25.3 Mobilisasi peralatan dan kendaraan yang digunakan mematuhi peraturan perundangan terkait beban dan dimensi kendaraan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "25.4 Mobilisasi peralatan dan Tenaga Kerja Konstruksi dapat dilakukan secara bertahap sesuai dengan kebutuhan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "26. Pengukuran/ Pemeriksaan Bersama"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "B.2 Pengendalian Waktu"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "26.1 Pada tahap awal pelaksanaan Kontrak, Pejabat Penandatangan Kontrak dan Pengawas Pekerjaan bersama-sama dengan Penyedia melakukan pengukuran dan pemeriksaan detail terhadap kondisi lokasi pekerjaan untuk setiap rencana mata pembayaran, Tenaga Kerja Konstruksi, dan Peralatan Utama (Mutual Check 0%)."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "26.2 Hasil pemeriksaan bersama dituangkan dalam Berita Acara. Apabila dalam pengukuran/pemeriksaan bersama mengakibatkan perubahan isi Kontrak, maka harus dituangkan dalam adendum Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "26.3 Tenaga Kerja Konstruksi dan/atau Peralatan Utama yang sesuai dengan persyaratan Kontrak dapat segera dimobilisasi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "26.4 Tindak lanjut hasil pemeriksaan bersama Tenaga Kerja Konstruksi dan/atau Peralatan Utama mengikuti ketentuan pasal 70 dan 71."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "27. Penggunaan Produksi Dalam Negeri"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "27.1 Dalam pelaksanaan pekerjaan ini, Penyedia berkewajiban mengutamakan material/bahan produksi dalam negeri dan tenaga kerja Indonesia untuk pekerjaan yang dilaksanakan di Indonesia sesuai dengan yang disampaikan pada saat penawaran."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "27.2 Dalam pelaksanaan Pekerjaan Konstruksi, bahan baku, Tenaga Kerja Konstruksi, dan perangkat lunak yang digunakan mengacu kepada dokumen:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. formulir rekapitulasi perhitungan Tingkat Komponen Dalam Negeri (TKDN), untuk Penyedia yang mendapat preferensi harga; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. daftar barang yang diimpor, untuk barang yang diimpor."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "27.3 Apabila dalam pelaksanaan pekerjaan ditemukan ketidaksesuaian dengan dokumen pada pasal 27.2, maka akan dikenakan sanksi sesuai peraturan perundangan yang berlaku."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "28. Masa Pelaksanaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "28.1 Kecuali Kontrak diputuskan lebih awal, Penyedia berkewajiban untuk memulai pelaksanaan pekerjaan pada Tanggal Mulai Kerja, dan melaksanakan pekerjaan sesuai dengan RMPK, serta menyelesaikan pekerjaan paling lambat selama Masa Pelaksanaan yang dinyatakan dalam SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "28.2 Apabila Penyedia berpendapat tidak dapat menyelesaikan pekerjaan sesuai Masa Pelaksanaan karena di luar pengendaliannya yang dapat dibuktikan demikian, dan Penyedia telah melaporkan kejadian tersebut kepada Pejabat Penandatangan Kontrak, dengan disertai bukti-bukti yang dapat disetujui Pejabat Penandatangan Kontrak, maka Pejabat Penandatangan Kontrak dapat memberlakukan Peristiwa Kompensasi dan melakukan penjadwalan kembali pelaksanaan tugas Penyedia dengan membuat adendum Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "28.3 Jika pekerjaan tidak selesai sesuai Masa Pelaksanaan bukan akibat Keadaan Kahar atau Peristiwa Kompensasi atau karena kesalahan atau kelalaian Penyedia maka Penyedia dikenakan denda."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "29. Penundaan Oleh Pengawas Pekerjaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Pengawas Pekerjaan dapat memerintahkan secara tertulis Penyedia untuk menunda pelaksanaan pekerjaan. Setiap perintah penundaan ini harus mendapatkan persetujuan dari Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "30. Rapat Pemantauan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "30.1 Pengawas Pekerjaan atau Penyedia dapat menyelenggarakan rapat pemantauan, dan meminta satu sama lain untuk menghadiri rapat tersebut. Rapat pemantauan diselenggarakan untuk membahas perkembangan pekerjaan dan perencanaan atas sisa pekerjaan serta untuk menindaklanjuti peringatan dini."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "30.2 Hasil rapat pemantauan akan dituangkan oleh Pengawas Pekerjaan dalam berita acara rapat, dan rekamannya diserahkan kepada Pejabat Penandatangan Kontrak dan pihak-pihak yang menghadiri rapat."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "30.3 Mengenai hal-hal dalam rapat yang perlu diputuskan, Pengawas Pekerjaan dapat memutuskan baik dalam rapat atau setelah rapat melalui pernyataan tertulis kepada semua pihak yang menghadiri rapat."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "31. Peringatan Dini"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "31.1 Penyedia berkewajiban untuk memperingatkan sedini mungkin Pengawas Pekerjaan atas peristiwa atau kondisi tertentu yang dapat mempengaruhi mutu pekerjaan, menaikkan Harga Kontrak atau menunda penyelesaian pekerjaan. Pengawas Pekerjaan dapat memerintahkan Penyedia untuk menyampaikan secara tertulis perkiraan dampak peristiwa atau kondisi tersebut di atas terhadap Harga Kontrak dan Masa Pelaksanaan. Pernyataan perkiraan ini harus sesegera mungkin disampaikan oleh Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "31.2 Penyedia berkewajiban untuk bekerja sama dengan Pengawas Pekerjaan untuk mencegah atau mengurangi dampak peristiwa atau kondisi tersebut."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "32. Keterlambatan Pelaksanaan Pekerjaan dan Kontrak Kritis"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "32.1. Apabila Penyedia terlambat melaksanakan pekerjaan sesuai jadwal, maka Pejabat Penandatangan Kontrak harus memberikan peringatan secara tertulis atau memberlakukan ketentuan kontrak kritis."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "32.2. Kontrak dinyatakan kritis apabila:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Dalam periode I (rencana fisik pelaksanaan 0% - 70% dari Kontrak), selisih keterlambatan antara realisasi fisik pelaksanaan dengan rencana lebih besar 10%"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Dalam periode II (rencana fisik pelaksanaan 70% - 100% dari Kontrak), selisih keterlambatan antara realisasi fisik pelaksanaan dengan rencana lebih besar 5%;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Dalam periode II (rencana fisik pelaksanaan 70% - 100% dari Kontrak), selisih keterlambatan antara realisasi fisik pelaksanaan dengan rencana pelaksanaan kurang dari 5% dan akan melampaui tahun anggaran berjalan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "32.3. Penanganan kontrak kritis dilakukan dengan rapat pembuktian (show cause meeting/SCM)"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Pada saat Kontrak dinyatakan kritis, Pejabat Penandatangan Kontrak berdasarkan laporan dari Pengawas Pekerjaan memberikan peringatan secara tertulis kepada Penyedia dan selanjutnya Pejabat Penandatangan Kontrak menyelenggarakan Rapat Pembuktian (SCM) Tahap I."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Dalam SCM Tahap I, Pejabat Penandatangan Kontrak, Pengawas Pekerjaan dan Penyedia membahas dan menyepakati besaran kemajuan fisik yang harus dicapai oleh Penyedia dalam periode waktu tertentu (uji coba pertama) yang dituangkan dalam Berita Acara SCM Tahap I."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Apabila Penyedia gagal pada uji coba pertama, maka Pejabat Penandatangan Kontrak menerbitkan Surat Peringatan Kontrak Kritis I dan harus diselenggarakan SCM Tahap II yang membahas dan menyepakati besaran kemajuan fisik yang harus dicapai oleh Penyedia dalam waktu tertentu (uji coba kedua) yang dituangkan dalam Berita Acara SCM Tahap II."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. Apabila Penyedia gagal pada uji coba kedua, maka Pejabat Penandatangan Kontrak menerbitkan Surat Peringatan Kontrak Kritis II dan harus diselenggarakan SCM Tahap III yang membahas dan menyepakati besaran kemajuan fisik yang harus dicapai oleh Penyedia dalam waktu tertentu (uji coba ketiga) yang dituangkan dalam Berita Acara SCM Tahap III."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. Apabila Penyedia gagal pada uji coba ketiga, maka Pejabat Penandatangan Kontrak menerbitkan Surat Peringatan Kontrak Kritis III dan Pejabat Penandatangan Kontrak dapat melakukan pemutusan Kontrak secara sepihak dengan mengesampingkan Pasal 1266 dan 1267 Kitab Undang- Undang Hukum Perdata."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. Apabila uji coba berhasil, namun pada pelaksanaan pekerjaan selanjutnya Kontrak dinyatakan kritis lagi maka berlaku ketentuan SCM dari awal."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "33. Pemberian Kesempatan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "33.1. Dalam hal diperkirakan Penyedia gagal menyelesaikan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "pekerjaan sampai Masa Pelaksanaan berakhir, namun Pejabat Penandatangan Kontrak menilai bahwa Penyedia mampu menyelesaikan pekerjaan, Pejabat Penandatangan Kontrak dapat memberikan kesempatan kepada Penyedia untuk menyelesaikan pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "33.2. Hasil penilaian menjadi dasar bagi Pejabat Penandatangan Kontrak untuk:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Memberikan kesempatan kepada Penyedia untuk menyelesaikan pekerjaannya dengan ketentuan sebagai berikut:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1) Pemberian kesempatan kepada Penyedia menyelesaikan pekerjaan sampai dengan 50 (lima puluh) hari kalender."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "2) Dalam hal setelah diberikan kesempatan sebagaimana angka 1) diatas, Penyedia masih belum dapat menyelesaikan pekerjaan, Pejabat Penandatangan Kontrak dapat:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a) Memberikan kesempatan kedua untuk penyelesaian sisa pekerjaan dengan jangka waktu sesuai kebutuhan; atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b) Melakukan pemutusan Kontrak dalam hal Penyedia dinilai tidak akan sanggup menyelesaikan pekerjaannya."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "3) Pemberian kesempatan kepada Penyedia sebagaimana dimaksud pada angka 1) dan angka 2) huruf a), dituangkan dalam adendum kontrak yang didalamnya mengatur pengenaan sanksi denda keterlambatan kepada Penyedia dan perpanjangan masa berlaku Jaminan Pelaksanaan (apabila ada)."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "4) Pemberian kesempatan kepada Penyedia untuk menyelesaikan pekerjaan dapat melampaui tahun anggaran."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Tidak memberikan kesempatan kepada Penyedia dan dilanjutkan dengan pemutusan kontrak serta pengenaan sanksi administratif dalam hal antara lain:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1) Penyedia dinilai tidak dapat menyelesaikan pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "2) Pekerjaan yang harus segera dipenuhi dan tidak dapat ditunda; atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "3) Penyedia menyatakan tidak sanggup menyelesaikan pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "33.3. Pemberian kesempatan kepada Penyedia untuk menyelesaikan pekerjaan dimuat dalam adendum Kontrak yang didalamnya mengatur:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. waktu pemberian kesempatan penyelesaian pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. pengenaan sanksi denda keterlambatan kepada Penyedia;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. perpanjangan masa berlaku Jaminan Pelaksanaan; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. sumber dana untuk membiayai penyelesaian sisa pekerjaan yang akan dilanjutkan ke Tahun Anggaran berikutnya dari DIPA Tahun Anggaran berikutnya, apabila pemberian kesempatan melampaui Tahun Anggaran."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "B.3 Penyelesaian Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "34. Serah Terima Pekerjaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.1 Setelah pekerjaan dan/atau bagian pekerjaan selesai, sesuai"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "dengan ketentuan dalam Kontrak, Penyedia mengajukan permintaan secara tertulis kepada Pejabat Penandatangan Kontrak untuk serah terima pertama pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.2 Pejabat Penandatangan Kontrak memerintahkan Pengawas Pekerjaan untuk melakukan pemeriksaan dan/atau pengujian terhadap hasil pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.3 Pemeriksaan dan/atau pengujian dilakukan terhadap kesesuaian hasil pekerjaan terhadap kriteria/spesifikasi yang tercantum dalam Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.4 Hasil pemeriksaan dan/atau pengujian dari Pengawas Pekerjaan disampaikan kepada Pejabat Penandatangan Kontrak, apabila dalam pemeriksaan hasil pekerjaan tidak sesuai dengan ketentuan yang tercantum dalam Kontrak dan/atau cacat hasil pekerjaan, Pejabat Penandatangan Kontrak memerintahkan Penyedia untuk memperbaiki dan/atau melengkapi kekurangan pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.5 Apabila dalam pemeriksaan dan/atau pengujian hasil pekerjaan telah sesuai dengan ketentuan yang tercantum dalam Kontrak maka Pejabat Penandatangan Kontrak dan Penyedia menandatangani Berita Acara Serah Terima Pertama Pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.6 Pembayaran dilakukan sebesar 95% (sembilan puluh lima persen) dari Harga Kontrak, sedangkan yang 5% (lima persen) merupakan retensi selama masa pemeliharaan, atau pembayaran dilakukan sebesar 100% (seratus persen) dari Harga Kontrak dan Penyedia harus menyerahkan Jaminan Pemeliharaan sebesar 5% (lima persen) dari Harga Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.7 Penyedia wajib memelihara hasil pekerjaan selama Masa Pemeliharaan sehingga kondisi tetap seperti pada saat penyerahan pertama pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.8 Masa Pemeliharaan paling singkat untuk pekerjaan permanen selama 6 (enam) bulan, sedangkan untuk pekerjaan semi permanen selama 3 (tiga) bulan dan dapat melampaui Tahun Anggaran. Lamanya Masa Pemeliharaan ditetapkan dalam SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.9 Setelah Masa Pemeliharaan berakhir, Penyedia mengajukan permintaan secara tertulis kepada Pejabat Penandatangan Kontrak untuk penyerahan akhir pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.10 Pejabat Penandatangan Kontrak setelah menerima pengajuan sebagaimana pasal 34.9 memerintahkan Pengawas Pekerjaan untuk melakukan pemeriksaan (dan pengujian apabila diperlukan) terhadap hasil pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.11 Apabila dalam pemeriksaan hasil pekerjaan, Penyedia telah melaksanakan semua kewajibannya selama Masa Pemeliharaan dengan baik dan telah sesuai dengan ketentuan yang tercantum dalam Kontrak maka Pejabat Penandatangan Kontrak dan Penyedia menandatangani Berita Acara Serah Terima Akhir Pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.12 Pejabat Penandatangan Kontrak wajib melakukan pembayaran sisa Harga Kontrak yang belum dibayar atau mengembalikan Jaminan Pemeliharaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.13 Apabila Penyedia tidak melaksanakan kewajiban pemeliharaan sebagaimana mestinya, maka Kontrak dapat diputuskan sepihak oleh Pejabat Penandatangan Kontrak dan Penyedia dikenakan sanksi sebagaimana diatur dalam pasal 45.3."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "34.14 Setelah penandatanganan Berita Acara Serah Terima Akhir Pekerjaan, Pejabat Penandatangan Kontrak menyerahkan hasil pekerjaan kepada PA/KPA."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "35. Pengambilalihan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Pejabat Penandatangan Kontrak akan mengambil alih lokasi dan hasil pekerjaan dalam jangka waktu tertentu setelah dikeluarkan surat keterangan selesai/pengakhiran pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "36. Gambar As Built dan Pedoman Pengoperasian dan Perawatan/ Pemeliharaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "B.4 Adendum"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "36.1 Penyedia diwajibkan menyerahkan kepada Pejabat Penandatangan Kontrak Gambar As-built dan pedoman pengoperasian dan perawatan/pemeliharaan sesuai dengan SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "36.2 Apabila Penyedia tidak memberikan pedoman pengoperasian dan perawatan/pemeliharaan, Pejabat Penandatangan Kontrak berhak menahan uang retensi atau Jaminan Pemeliharaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "37. Perubahan Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "37.1 Kontrak hanya dapat diubah melalui adendum Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "37.2 Perubahan Kontrak dapat dilaksanakan apabila disetujui oleh para pihak, yang diakibatkan beberapa hal berikut meliputi:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. perubahan pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. perubahan Harga Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. perubahan jadwal pelaksanaan pekerjaan dan/atau Masa Pelaksanaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. perubahan personel manajerial dan/atau peralatan utama; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. perubahan Kontrak yang disebabkan masalah administrasi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "37.3 Untuk kepentingan perubahan Kontrak, Pejabat Penandatangan Kontrak dapat meminta pertimbangan dari Pengawas Pekerjaan dan Pejabat/Panitia Peneliti Pelaksanaan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "37.4 Pejabat/Panitia Peneliti Pelaksanaan Kontrak meneliti kelayakan perubahan kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "38. Perubahan Pekerjaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "38.1 Dalam hal terdapat perbedaan antara kondisi lapangan pada saat pelaksanaan dengan gambar dan/atau spesifikasi teknis yang ditentukan dalam dokumen Kontrak, Pejabat Penandatangan Kontrak bersama Penyedia dapat melakukan perubahan pekerjaan, yang meliputi:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. menambah atau mengurangi volume yang tercantum dalam Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. menambah dan/atau mengurangi jenis kegiatan/pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. mengubah spesifikasi teknis dan/atau gambar pekerjaan; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. mengubah jadwal pelaksanaan pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "38.2 Dalam hal tidak terjadi perubahan kondisi lapangan seperti yang dimaksud pada pasal 38.1 namun ada perintah perubahan dari Pejabat Penandatangan Kontrak, Pejabat Penandatangan Kontrak bersama Penyedia dapat menyepakati perubahan pekerjaan yang meliputi:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. menambah dan/atau mengurangi jenis kegiatan/pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. mengubah spesifikasi teknis dan/atau gambar pekerjaan; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. mengubah jadwal pelaksanaan pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "38.3 Perintah perubahan pekerjaan dibuat oleh Pejabat Penandatangan Kontrak secara tertulis kepada Penyedia kemudian dilanjutkan dengan negosiasi teknis dan harga dengan tetap mengacu pada ketentuan yang tercantum dalam Kontrak awal."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "38.4 Hasil negosiasi tersebut dituangkan dalam Berita Acara sebagai dasar penyusunan adendum Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "38.5 Dalam hal perubahan pekerjaan sebagaimana dimaksud pada pasal 38.1 dan 38.2 mengakibatkan penambahan Harga Kontrak, perubahan Kontrak dilaksanakan dengan ketentuan penambahan Harga Kontrak akhir tidak melebihi 10% (sepuluh persen) dari harga yang tercantum dalam Kontrak awal dan tersedianya anggaran."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "38.6 Dalam hal terdapat penambahan jenis kegiatan/pekerjaan sebagaimana dimaksud pada Pasal 38.1 dan 38.2, maka PPK melakukan proses pemesanan untuk jenis kegiatan/pekerjaan tambahan tersebut pada Katalog Elektronik dan dilengkapi dengan Surat Pesanannya."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "38.7 Jenis kegiatan/pekerjaan tambahan beserta Surat Pesanannya sebagaimana dimaksud pada Pasal 38.6 merupakan bagian tidak terpisahkan dari Dokumen Kontrak ini."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "39. Perubahan Harga"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "39.1 Perubahan Harga Kontrak dapat diakibatkan oleh:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. perubahan pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. penyesuaian harga; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Peristiwa Kompensasi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "39.2 Apabila kuantitas mata pembayaran utama yang akan dilaksanakan berubah akibat perubahan pekerjaan lebih dari 10% (sepuluh persen) dari kuantitas awal, maka pembayaran volume selanjutnya dengan menggunakan harga satuan yang disesuaikan dengan negosiasi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "39.3 Apabila dari hasil evaluasi penawaran terdapat harga satuan timpang, maka harga satuan timpang tersebut hanya berlaku untuk kuantitas pekerjaan yang tercantum dalam Dokumen"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Kompetisi. Untuk kuantitas pekerjaan tambahan digunakan harga satuan berdasarkan hasil negosiasi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "39.4 Apabila ada daftar mata pembayaran yang masuk kategori harga satuan timpang, maka dicantumkan dalam Lampiran A SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "39.5 Apabila diperlukan mata pembayaran baru, maka Penyedia jasa harus menyerahkan rincian harga satuannya kepada Pejabat Penandatangan Kontrak. Penentuan harga satuan mata pembayaran baru dilakukan dengan negosiasi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "39.6 Ketentuan penggunaan rumusan penyesuaian harga adalah sebagai berikut:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. harga yang tercantum dalam Kontrak dapat berubah akibat adanya penyesuaian harga sesuai dengan peraturan yang berlaku."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. penyesuaian harga diberlakukan pada Kontrak Tahun Jamak dengan yang masa pelaksanaannya lebih dari 18 (delapan belas) bulan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. penyesuaian harga satuan diberlakukan mulai bulan ke-13 (tiga belas) sejak pelaksanaan pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. penyesuaian harga satuan berlaku bagi seluruh kegiatan/mata pembayaran, kecuali komponen keuntungan, biaya umum (overhead cost) dan harga satuan timpang sebagaimana tercantum dalam penawaran;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. penyesuaian harga satuan diberlakukan sesuai dengan jadwal pelaksanaan yang tercantum dalam Kontrak awal/adendum Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. penyesuaian harga satuan bagi komponen pekerjaan yang berasal dari luar negeri, menggunakan indeks penyesuaian harga dari negara asal barang tersebut;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "g. jenis pekerjaan baru dengan harga satuan baru sebagai akibat adanya adendum Kontrak dapat diberikan penyesuaian harga mulai bulan ke-13 (tiga belas) sejak adendum Kontrak tersebut ditandatangani;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "h. indeks yang digunakan dalam pelaksanaan Kontrak terlambat disebabkan oleh kesalahan Penyedia adalah indeks terendah antara jadwal Kontrak dan realisasi pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "i. jenis pekerjaan yang lebih cepat pelaksanaannya diberlakukan penyesuaian harga berdasarkan indeks harga pada saat pelaksanaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "39.7 Ketentuan lebih lanjut terkait penyesuaian harga diatur dalam SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "39.8 Ketentuan ganti rugi akibat Peristiwa Kompensasi mengacu pada pasal Peristiwa Kompensasi."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "40. Perubahan Jadwal Pelaksanaan Pekerjaan dan/atau Masa Pelaksanaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "40.1 Perubahan jadwal pelaksanaan pekerjaan dapat diakibatkan oleh:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. perubahan pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. perpanjangan Masa Pelaksanaan; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Peristiwa Kompensasi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "40.2 Perpanjangan Masa Pelaksanaan dapat diberikan oleh Pejabat Penandatangan Kontrak atas pertimbangan yang layak dan wajar untuk hal-hal sebagai berikut:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. perubahan pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Peristiwa Kompensasi; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Keadaan Kahar."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "40.3 Masa Pelaksanaan dapat diperpanjang paling kurang sama dengan waktu terhentinya Kontrak akibat Keadaan Kahar atau waktu yang diperlukan untuk menyelesaikan pekerjaan akibat dari ketentuan pada pasal 40.2 huruf a atau b."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "40.4 Pejabat Penandatangan Kontrak dapat menyetujui perpanjangan Masa Pelaksanaan atas Kontrak setelah melakukan penelitian terhadap usulan tertulis yang diajukan oleh Penyedia dalam jangka waktu sesuai pertimbangan yang wajar setelah Penyedia meminta perpanjangan. Jika Penyedia lalai untuk memberikan peringatan dini atas keterlambatan atau tidak dapat bekerja sama untuk mencegah keterlambatan sesegera mungkin, maka keterlambatan seperti ini tidak dapat dijadikan alasan untuk memperpanjang Masa Pelaksanaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "40.5 Pejabat Penandatangan Kontrak berdasarkan pertimbangan Pengawas Pekerjaan dan Panitia Peneliti Pelaksanaan Kontrak harus telah menetapkan ada tidaknya perpanjangan dan untuk berapa lama."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "40.6 Persetujuan perubahan jadwal pelaksanaan dan/atau perpanjangan Masa Pelaksanaan dituangkan dalam Adendum Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "40.7 Jika terjadi Peristiwa Kompensasi sehingga penyelesaian pekerjaan akan melampaui Masa Pelaksanaan maka Penyedia berhak untuk meminta perpanjangan Masa Pelaksanaan berdasarkan data penunjang. Pejabat Penandatangan Kontrak berdasarkan pertimbangan Pengawas Pekerjaan memperpanjang Masa Pelaksanaan secara tertulis. Perpanjangan Masa Pelaksanaan harus dilakukan melalui adendum Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "41. Perubahan personel manajerial dan/atau peralatan utama"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "41.1. Jika Pejabat Penandatangan Kontrak menilai bahwa Personel Manajerial :"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. tidak mampu atau tidak dapat melakukan pekerjaan dengan baik;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. tidak menerapkan prosedur SMKK; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. mengabaikan pekerjaan yang menjadi tugasnya; maka Penyedia berkewajiban untuk menyediakan pengganti dan menjamin Personel Manajerial tersebut meninggalkan lokasi kerja dalam waktu 7 (tujuh) hari kalender sejak diminta oleh Pejabat Penandatangan Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "41.2. Jika Pejabat Penandatangan Kontrak menilai bahwa Peralatan Utama :"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. tidak dapat berfungsi sesuai dengan spesifikasi peralatan; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. tidak sesuai peraturan perundangan terkait beban dan dimensi kendaraan. maka Penyedia berkewajiban untuk menyediakan pengganti dan menjamin peralatan utama tersebut meninggalkan lokasi kerja dalam waktu 7 (tujuh) hari kalender sejak diminta oleh Pejabat Penandatangan Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "41.3. Dalam hal penggantian Personel Manajerial dan/atau Peralatan Utama perlu dilakukan, maka Penyedia berkewajiban untuk menyediakan pengganti dengan kualifikasi yang setara atau lebih baik dari tenaga kerja konstruksi dan/atau peralatan yang digantikan tanpa biaya tambahan apapun."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "41.4. Pejabat Penandatangan Kontrak dapat menyetujui penempatan/penggantian Personel Manajerial dan/atau Peralatan Utama menurut kualifikasi yang dibutuhkan setelah mendapat rekomendasi dari Pengawas Pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "41.5. Perubahan Personel Manajerial dan/atau Peralatan Utama harus mendapat persetujuan terlebih dahulu dari Pejabat Penandatangan Kontrak dan dituangkan dalam adendum kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "41.6. Biaya mobilisasi/demobilisasi yang timbul akibat perubahan Personel Manajerial dan/atau Peralatan Utama menjadi tanggung jawab Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "B.5 Keadaan Kahar"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "42. Keadaan Kahar"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "42.1 Contoh Keadaan Kahar tidak terbatas pada: bencana alam, bencana non alam, bencana sosial, pemogokan, kebakaran, kondisi cuaca ekstrim, dan gangguan industri lainnya."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "42.2 Tidak termasuk Keadaan Kahar adalah hal-hal merugikan yang disebabkan oleh perbuatan atau kelalaian para pihak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "42.3 Dalam hal terjadi keadaan kahar, Pejabat Penandatangan Kontrak atau Penyedia memberitahukan tentang terjadinya Keadaan Kahar kepada salah satu pihak secara tertulis dengan ketentuan :"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. dalam waktu paling lambat 14 (empat belas) hari kalender sejak menyadari atau seharusnya menyadari atas kejadian atau terjadinya Keadaan Kahar;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. menyertakan bukti keadaan kahar; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. menyerahkan hasil identifikasi kewajiban dan kinerja pelaksanaan yang terhambat dan/atau akan terhambat akibat Keadaan Kahar tersebut."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "42.4 Bukti Keadaan Kahar dapat berupa :"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. pernyataan yang diterbitkan oleh pihak/instansi yang berwenang sesuai ketentuan peraturan perundang- undangan; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. foto/video dokumentasi Keadaan Kahar yang telah diverifikasi kebenarannya."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "42.5 Hasil identifikasi kewajiban dan kinerja pelaksanaan dapat berupa:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Foto/video dokumentasi pekerjaan yang terdampak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Kurva S pekerjaan; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Dokumen pendukung lainnya (apabila ada)."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "42.6 Pejabat Penandatangan Kontrak meminta Pengawas Pekerjaan untuk melakukan penelitian terhadap penyampaian pemberitahuan Keadaan Kahar dan bukti serta hasil identifikasi sebagaimana dimaksud pada pasal 42.4 dan pasal 42.5"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "42.7 Dalam hal Keadaan Kahar terbukti, kegagalan salah satu Pihak untuk memenuhi kewajibannya yang ditentukan dalam Kontrak bukan merupakan cedera janji atau wanprestasi apabila telah dilakukan sesuai pada pasal 42.3. Kewajiban yang dimaksud adalah hanya kewajiban dan kinerja pelaksanaan terhadap pekerjaan/bagian pekerjaan yang terdampak dan/atau akan terdampak akibat dari Keadaan Kahar."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "42.8 Dalam hal terjadi Keadaan Kahar, Pelaksanaan pekerjaan dapat dihentikan. Penghentian Pekerjaan karena Keadaan Kahar dapat bersifat"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. sementara hingga Keadaan Kahar berakhir apabila akibat Keadaan Kahar masih memungkinkan dilanjutkan/diselesaikannya pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. permanen apabila akibat Keadaan Kahar tidak memungkinkan dilanjutkan/diselesaikannya pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. sebagian apabila Keadaan Kahar hanya berdampak pada bagian Pekerjaan; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. seluruhnya apabila Keadaan Kahar berdampak terhadap keseluruhan Pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "42.9 Penghentian Pekerjaan akibat keadaan kahar sesuai pasal 42.8 dilakukan secara tertulis oleh Pejabat Penandatangan Kontrak dengan disertai alasan penghentian pekerjaan dan dituangkan dalam perubahan Rencana Kerja Penyedia"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "42.10 Dalam hal penghentian pekerjaan mencakup seluruh pekerjaan (baik sementara ataupun permanen) karena Keadaan Kahar, maka:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Kontrak dihentikan sementara hingga keadaan kahar berakhir; atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Kontrak dihentikan permanen apabila akibat Keadaan Kahar tidak memungkinkan dilanjutkan/diselesaikannya pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "42.11 Penghentian kontrak sebagaimana pasal 42.10 dilakukan melalui perintah tertulis oleh Pejabat Penandatangan Kontrak dengan disertai alasan penghentian kontrak dan dituangkan dalam adendum kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "42.12 Dalam hal pelaksanaan Kontrak dilanjutkan, para pihak dapat melakukan perubahan Kontrak. Masa Pelaksanaan dapat diperpanjang sekurang-kurangnya sama dengan jangka waktu terhentinya Kontrak akibat Keadaan Kahar. Perpanjangan Masa Pelaksanaan dapat melewati Tahun Anggaran."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "42.13 Selama masa Keadaan Kahar, jika Pejabat Penandatangan Kontrak memerintahkan secara tertulis kepada Penyedia untuk sedapat mungkin meneruskan pekerjaan, maka Penyedia berhak untuk menerima pembayaran sebagaimana ditentukan dalam Kontrak dan mendapat penggantian biaya yang wajar sesuai dengan kondisi yang telah dikeluarkan untuk bekerja dalam Keadaan Kahar. Penggantian biaya ini harus diatur dalam suatu adendum Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "42.14 Dalam hal pelaksanaan Kontrak dihentikan permanen, para pihak melakukan pengakhiran kontrak dan menyelesaikan hak dan kewajiban sesuai Kontrak. Penyedia berhak untuk menerima pembayaran sesuai dengan prestasi atau kemajuan hasil pekerjaan yang telah dicapai setelah dilakukan pengukuran/pemeriksaan bersama atau berdasarkan hasil audit."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "B.6 Penghentian, Pemutusan, dan Berakhirnya Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "43. Penghentian Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Penghentian Kontrak dapat dilakukan karena terjadi Keadaan Kahar sebagaimana dimaksud pada pasal 42."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "44. Pemutusan Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "44.1 Pemutusan Kontrak dapat dilakukan oleh Pejabat Penandatangan Kontrak atau Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "44.2 Pemutusan kontrak dilakukan dengan terlebih dahulu memberikan surat peringatan dari salah satu pihak ke pihak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "yang lain yang melakukan tindakan wanprestasi kecuali telah ada putusan pidana."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "44.3 Surat peringatan diberikan 3 (tiga) kali kecuali pelanggaran tersebut berdampak terhadap kerugian atas konstruksi, jiwa manusia, keselamatan publik, dan lingkungan dan ditindaklanjuti dengan surat pernyataan wanprestasi dari pihak yang dirugikan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "44.4 Pemutusan kontrak dilakukan sekurang-kurangnya 14 (empat belas) hari kalender setelah Pejabat Penandatangan Kontrak/Penyedia menyampaikan pemberitahuan rencana Pemutusan Kontrak secara tertulis kepada Penyedia/Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "44.5 Dalam hal dilakukan pemutusan Kontrak oleh salah satu pihak maka Pejabat Penandatangan Kontrak membayar kepada Penyedia sesuai dengan pencapaian prestasi pekerjaan yang telah diterima oleh Pejabat Penandatangan Kontrak dikurangi denda yang harus dibayar Penyedia (apabila ada), serta Penyedia menyerahkan semua hasil pelaksanaan kepada Pejabat Penandatangan Kontrak dan selanjutnya menjadi hak milik Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "45. Pemutusan Kontrak oleh Pejabat Penandatangan Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "45.1 Mengesampingkan Pasal 1266 dan 1267 Kitab Undang-Undang Hukum Perdata, Pejabat Penandatangan Kontrak dapat melakukan pemutusan Kontrak apabila:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Penyedia terbukti melakukan KKN, kecurangan dan/atau pemalsuan dalam proses pengadaan yang diputuskan oleh Instansi yang berwenang;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. pengaduan tentang penyimpangan prosedur, dugaan KKN dan/atau pelanggaran persaingan sehat dalam pelaksanaan Pengadaan Barang/Jasa dinyatakan benar oleh Instansi yang berwenang;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Penyedia berada dalam keadaan pailit yang diputuskan oleh pengadilan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. Penyedia terbukti dikenakan Sanksi Daftar Hitam sebelum penandatanganan Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. Penyedia gagal memperbaiki kinerja;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. Penyedia tidak mempertahankan berlakunya Jaminan Pelaksanaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "g. Penyedia lalai/cedera janji dalam melaksanakan kewajibannya dan tidak memperbaiki kelalaiannya dalam jangka waktu yang telah ditetapkan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "h. berdasarkan penelitian Pejabat Penandatangan Kontrak, Penyedia tidak akan mampu menyelesaikan keseluruhan pekerjaan walaupun diberikan kesempatan sampai dengan 50 (lima puluh) hari kalender sejak masa berakhirnya pelaksanaan pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "i. setelah diberikan kesempatan menyelesaikan pekerjaan sampai dengan 50 (lima puluh) hari kalender sejak masa berakhirnya pelaksanaan pekerjaan, Penyedia tidak dapat menyelesaikan pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "j. Penyedia menghentikan pekerjaan selama 28 (dua puluh delapan) hari kalender dan penghentian ini tidak tercantum dalam jadwal pelaksanaan pekerjaan serta tanpa persetujuan pengawas pekerjaan; atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "k. Penyedia mengalihkan seluruh Kontrak bukan dikarenakan pergantian nama Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "46. Pemutusan Kontrak oleh Penyedia"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "45.2 Dalam hal pemutusan Kontrak dilakukan pada Masa Pelaksanaan karena kesalahan Penyedia, maka:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Jaminan Pelaksanaan terlebih dahulu dicairkan sebelum pemutusan kontrak dan disetorkan sesuai ketentuan dalam SSKK;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. sisa uang muka harus dilunasi oleh Penyedia atau Jaminan Uang Muka terlebih dahulu dicairkan (apabila diberikan);"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Penyedia membayar denda (apabila ada); dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. Penyedia dikenakan Sanksi Daftar Hitam."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "45.3 Dalam hal pemutusan Kontrak dilakukan pada Masa Pemeliharaan karena kesalahan Penyedia, maka:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Pejabat Penandatangan Kontrak berhak untuk tidak membayar retensi atau terlebih dahulu mencairkan Jaminan Pemeliharaan sebelum pemutusan Kontrak untuk membiayai perbaikan/pemeliharaan; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Penyedia dikenakan sanksi Daftar Hitam."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "45.4 Dalam hal terdapat nilai sisa penggunaan uang retensi atau uang pencairan Jaminan Pemeliharaan untuk membiayai pembiayaan/pemeliharaan maka Pejabat Penandatangan Kontrak wajib menyetorkan sebagaimana ditetapkan dalam SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "45.5 Pencairan Jaminan sebagaimana dimaksud pasal 45.2 dan pasal 45.4 disertai dengan:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. bukti kesalahan penyedia sesuai dengan ketentuan Kontrak; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. dokumen pendukung."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "45.6 Pencairan jaminan sebagaimana dimaksud pada Pasal 45.2 di atas, dicairkan dan disetorkan sesuai ketentuan dalam SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "45.7 Dalam hal dilakukan pemutusan Kontrak secara sepihak oleh Pejabat Penandatangan Kontrak karena kesalahan Penyedia, maka Pejabat Penandatangan Kontrak dapat menunjuk pemenang cadangan berikutnya pada paket pekerjaan yang sama yang mampu dan memenuhi syarat. Mengesampingkan Pasal 1266 dan 1267 Kitab Undang-Undang Hukum Perdata, Penyedia dapat melakukan pemutusan Kontrak apabila:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Pejabat Penandatangan Kontrak menyetujui Pengawas Pekerjaan untuk memerintahkan Penyedia menunda pelaksanaan pekerjaan yang bukan disebabkan oleh kesalahan Penyedia, dan perintah penundaan tersebut tidak ditarik selama 28 (dua puluh delapan) hari kalender;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Pejabat Penandatangan Kontrak tidak menerbitkan Surat Permintaan Pembayaran (SPP) untuk pembayaran tagihan angsuran sesuai dengan yang disepakati sebagaimana tercantum dalam SSKK;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Pejabat Penandatangan Kontrak tidak memenuhi kewajiban sebagaimana dimaksud dalam Kontrak atau Adendum Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "47. Pengakhiran Pekerjaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "47.1 Para Pihak dapat menyepakati pengakhiran pekerjaan dalam hal terjadi:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. penyimpangan prosedur yang diakibatkan bukan oleh kesalahan para pihak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. pelaksanaan kontrak tidak dapat dilanjutkan akibat keadaan kahar; atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. ruang lingkup kontrak sudah terwujud. 47.2 Pengakhiran pekerjaan sesuai pasal 47.1 dituangkan dalam adendum final yang berisi perubahan akhir dari Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "48. Berakhirnya Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "48.1 Pengakhiran pelaksanaan Kontrak dilakukan berdasarkan kesepakatan para pihak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "48.2 Kontrak berakhir apabila telah dilakukan pengakhiran pekerjaan dan hak dan kewajiban para pihak yang terdapat dalam Kontrak sudah terpenuhi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "48.3 Terpenuhinya hak dan kewajiban para pihak sebagaimana dimaksud pada pasal 48.2 adalah terkait dengan pembayaran yang seharusnya dilakukan akibat dari pelaksanaan kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "49. Keterlambatan Pelaksanaan Pekerjaan dan Kontrak Kritis"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "49.1 Apabila Penyedia terlambat melaksanakan pekerjaan sesuai jadwal, maka Pejabat Penandatangan Kontrak harus memberikan peringatan secara tertulis atau memberlakukan ketentuan kontrak kritis."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "49.2 Kontrak dinyatakan kritis apabila:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Dalam periode I (rencana fisik pelaksanaan 0% - 70% dari Kontrak), selisih keterlambatan antara realisasi fisik pelaksanaan dengan rencana lebih besar 10%;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Dalam periode II (rencana fisik pelaksanaan 70% - 100% dari Kontrak), selisih keterlambatan antara realisasi fisik pelaksanaan dengan rencana lebih besar 5%;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Dalam periode II (rencana fisik pelaksanaan 70% - 100% dari Kontrak), selisih keterlambatan antara realisasi fisik pelaksanaan dengan rencana pelaksanaan kurang dari 5% dan akan melampaui tahun anggaran berjalan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "49.3 Penanganan kontrak kritis dilakukan dengan rapat pembuktian (show cause meeting/SCM)"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Pada saat Kontrak dinyatakan kritis, Pengawas Pekerjaan memberikan peringatan secara tertulis kepada Penyedia dan selanjutnya menyelenggarakan Rapat Pembuktian (SCM) Tahap I."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Dalam SCM Tahap I, Pejabat Penandatangan Kontrak, Pengawas Pekerjaan dan Penyedia membahas dan menyepakati besaran kemajuan fisik yang harus dicapai oleh Penyedia dalam periode waktu tertentu (uji coba pertama) yang dituangkan dalam Berita Acara SCM Tahap I."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Apabila Penyedia gagal pada uji coba pertama, maka Pejabat Penandatangan Kontrak menerbitkan Surat Peringatan Kontrak Kritis I dan harus diselenggarakan SCM Tahap II yang membahas dan menyepakati besaran kemajuan fisik yang harus dicapai oleh Penyedia dalam waktu tertentu (uji coba kedua) yang dituangkan dalam Berita Acara SCM Tahap II."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. Apabila Penyedia gagal pada uji coba kedua, maka Pejabat Penandatangan Kontrak menerbitkan Surat Peringatan Kontrak Kritis II dan harus diselenggarakan SCM Tahap III yang membahas dan menyepakati besaran kemajuan fisik yang harus dicapai oleh Penyedia dalam waktu tertentu (uji coba ketiga) yang dituangkan dalam Berita Acara SCM Tahap III."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. Apabila Penyedia gagal pada uji coba ketiga, maka Pejabat Penandatangan Kontrak menerbitkan Surat Peringatan Kontrak Kritis III dan Pejabat Penandatangan Kontrak dapat melakukan pemutusan Kontrak secara sepihak dengan mengesampingkan Pasal 1266 dan 1267 Kitab Undang- Undang Hukum Perdata."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. Apabila uji coba berhasil, namun pada pelaksanaan pekerjaan selanjutnya Kontrak dinyatakan kritis lagi maka berlaku ketentuan SCM dari awal."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "50. Pemberian Kesempatan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "50.1 Dalam hal diperkirakan Penyedia gagal menyelesaikan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "pekerjaan sampai Masa Pelaksanaan berakhir, namun Pejabat Penandatangan Kontrak menilai bahwa Penyedia mampu menyelesaikan pekerjaan, Pejabat Penandatangan Kontrak dapat memberikan kesempatan kepada Penyedia untuk menyelesaikan pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "50.2 Pemberian kesempatan kepada Penyedia untuk menyelesaikan pekerjaan dimuat dalam adendum Kontrak yang didalamnya mengatur:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. waktu pemberian kesempatan penyelesaian pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. pengenaan sanksi denda keterlambatan kepada Penyedia;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. perpanjangan masa berlaku Jaminan Pelaksanaan; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. sumber dana untuk membiayai penyelesaian sisa pekerjaan yang akan dilanjutkan ke Tahun Anggaran berikutnya dari DIPA/DPA Tahun Anggaran berikutnya, apabila pemberian kesempatan melampaui Tahun Anggaran."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "50.3 Pemberian kesempatan kepada Penyedia menyelesaikan pekerjaan sampai dengan 50 (lima puluh) hari kalender, sejak Masa Pelaksanaan berakhir."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "50.4 Pemberian kesempatan kepada Penyedia untuk menyelesaikan pekerjaan dapat melampaui Tahun Anggaran."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "51. Peninggalan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Semua bahan, perlengkapan, peralatan, hasil pekerjaan sementara yang masih berada di lokasi kerja setelah pemutusan Kontrak akibat kelalaian atau kesalahan Penyedia, dapat dimanfaatkan sepenuhnya oleh Pejabat Penandatangan Kontrak tanpa kewajiban perawatan/pemeliharaan. Pengambilan kembali semua peninggalan tersebut oleh Penyedia hanya dapat dilakukan setelah mempertimbangkan kepentingan Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "C. HAK DAN KEWAJIBAN PENYEDIA"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "52. Hak dan Kewajiban Penyedia"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Hak-hak yang dimiliki serta kewajiban-kewajiban yang harus dilaksanakan oleh Penyedia dalam melaksanakan Kontrak, meliputi :"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. menerima pembayaran untuk pelaksanaan pekerjaan sesuai dengan harga dan ketentuan yang telah ditetapkan dalam Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. meminta fasilitas-fasilitas dalam bentuk sarana dan prasarana dari Pejabat Penandatangan Kontrak untuk kelancaran pelaksanaan pekerjaan sesuai ketentuan Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. melaporkan pelaksanaan pekerjaan secara periodik kepada Pejabat Penandatangan Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. melaksanakan, menyelesaikan dan menyerahkan pekerjaan sesuai dengan jadwal pelaksanaan pekerjaan dan ketentuan yang telah ditetapkan dalam Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. melaksanakan dan menyelesaikan pekerjaan secara cermat, akurat dan penuh tanggung jawab dengan menyediakan tenaga kerja, bahan-bahan, peralatan, angkutan ke atau dari lapangan, dan segala pekerjaan permanen maupun sementara yang diperlukan untuk"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "53. Penggunaan Dokumen- Dokumen Kontrak dan Informasi"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "pelaksanaan, penyelesaian dan perbaikan pekerjaan yang dirinci dalam Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. memberikan keterangan-keterangan yang diperlukan untuk pemeriksaan pelaksanaan yang dilakukan Pejabat Penandatangan Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "g. mengambil langkah-langkah yang memadai dalam rangka memberi perlindungan kepada setiap orang yang berada di tempat kerja maupun masyarakat dan lingkungan sekitar yang berhubungan dengan pemindahan bahan baku, penggunaan peralatan kerja konstruksi dan proses produksi;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "h. melaksanakan semua perintah Pengawas Pekerjaan yang sesuai dengan kewenangan Pengawas Pekerjaan dalam Kontrak ini;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "i. Menggunakan Sistem Informasi Kontrak dan Manajemen Pengendalian Pelaksanaan Kontrak (SIKOMPAK) dalam pelaksanaan dan pengendalian kontrak; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "j. hak dan kewajiban lain yang timbul akibat lingkup pekerjaan ditentukan di SSKK. Penyedia tidak diperkenankan menggunakan dan menginformasikan dokumen Kontrak atau dokumen lainnya yang berhubungan dengan Kontrak untuk kepentingan pihak lain, misalnya spesifikasi teknis dan/atau gambar-gambar, serta informasi lain yang berkaitan dengan Kontrak, kecuali dengan izin tertulis dari Pejabat Penandatangan Kontrak sesuai ketentuan peraturan perundang-undangan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "54. Hak Kekayaan Intelektual"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Penyedia wajib melindungi Pejabat Penandatangan Kontrak dari segala tuntutan atau klaim dari pihak ketiga yang disebabkan penggunaan atau atas pelanggaran Hak Kekayaan Intelektual oleh Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "55. Penanggungan Risiko"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "55.1 Penyedia berkewajiban untuk melindungi, membebaskan, dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "menanggung tanpa batas Pejabat Penandatangan Kontrak beserta instansinya terhadap semua bentuk tuntutan, tanggung jawab, kewajiban, kehilangan, kerugian, denda, gugatan atau tuntutan hukum, proses pemeriksaan hukum, dan biaya yang dikenakan terhadap Pejabat Penandatangan Kontrak beserta instansinya (kecuali kerugian yang mendasari tuntutan tersebut disebabkan kesalahan atau kelalaian berat Pejabat Penandatangan Kontrak) sehubungan dengan klaim yang timbul dari hal-hal berikut terhitung sejak Tanggal Mulai Kerja sampai dengan Tanggal Penyerahan Akhir Pekerjaan :"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. kehilangan atau kerusakan peralatan dan harta benda Penyedia dan tenaga kerja konstruksi;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. cedera tubuh, sakit atau kematian tenaga kerja konstruksi;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. kehilangan atau kerusakan harta benda, dan cedera tubuh, sakit atau kematian pihak ketiga."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "55.2 Terhitung sejak Tanggal Mulai Kerja sampai dengan Tanggal Penyerahan Akhir Pekerjaan, semua risiko kehilangan atau kerusakan hasil pekerjaan ini, bahan dan perlengkapan merupakan risiko Penyedia, kecuali kerugian atau kerusakan tersebut diakibatkan oleh kesalahan atau kelalaian Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "55.3 Pertanggungan asuransi yang dimiliki oleh Penyedia tidak membatasi kewajiban penanggungan dalam pasal ini. Dalam hal pertanggungan asuransi tidak mencukupi maka biaya yang timbul dan/atau selisih biaya tetap ditanggung oleh Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "56. Perlindungan Tenaga Kerja"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "57. Pemeliharaan Lingkungan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "55.4 Kehilangan atau kerusakan terhadap hasil pekerjaan atau bahan yang menyatu dengan hasil pekerjaan sejak Tanggal Mulai Kerja sampai dengan Tanggal Penyerahan Akhir Pekerjaan harus diganti atau diperbaiki oleh Penyedia atas tanggungannya sendiri jika kehilangan atau kerusakan tersebut terjadi akibat tindakan atau kelalaian Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "56.1 Penyedia berkewajiban atas biaya sendiri untuk mengikutsertakan Tenaga Kerja Konstruksinya pada program Badan Penyelenggara Jaminan Sosial (BPJS) Ketenagakerjaan serta melunasi kewajiban pembayaran BPJS tersebut sebagaimana diatur dalam peraturan perundang-undangan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "56.2 Penyedia berkewajiban untuk mematuhi dan memerintahkan Tenaga Kerja Konstruksinya untuk mematuhi peraturan keselamatan konstruksi kerja. Pada waktu pelaksanaan pekerjaan, Penyedia beserta Tenaga Kerja Konstruksinya dianggap telah membaca dan memahami peraturan keselamatan konstruksi kerja tersebut."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "56.3 Penyedia berkewajiban untuk menyediakan kepada setiap Tenaga Kerja Konstruksinya (termasuk Tenaga Kerja Konstruksi Subkontraktor, jika ada) perlengkapan keselamatan kerja yang sesuai dan memadai."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "56.4 Tanpa mengurangi kewajiban Penyedia untuk melaporkan kecelakaan berdasarkan hukum yang berlaku, Penyedia wajib melaporkan kepada Pejabat Penandatangan Kontrak mengenai setiap kecelakaan yang timbul sehubungan dengan pelaksanaan Kontrak ini dalam waktu 24 (dua puluh empat) jam setelah kejadian. Penyedia berkewajiban untuk mengambil langkah-langkah yang memadai untuk melindungi lingkungan baik di dalam maupun di luar tempat kerja dan membatasi gangguan lingkungan terhadap pihak ketiga dan harta bendanya sehubungan dengan pelaksanaan Kontrak ini, sesuai dengan ketentuan peraturan perundang-undangan yang mengatur mengenai pengelolaan lingkungan hidup."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "58. Asuransi"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "58.1 Apabila disyaratkan, Penyedia wajib menyediakan asuransi sejak SPMK sampai dengan Tanggal Penyerahan Akhir Pekerjaan untuk pekerjaan/barang/peralatan yang mempunyai risiko tinggi terhadap:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. terjadinya kecelakaan dalam pelaksanaan pekerjaan atas:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1) segala risiko terhadap kecelakaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "2) kerusakan akibat kecelakaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. kehilangan; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. serta risiko lain yang tidak dapat diduga."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "58.2 Penyedia wajib menyediakan asuransi bagi pihak ketiga sebagai akibat kecelakaan di lokasi kerja."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "58.3 Besarnya asuransi sudah diperhitungkan dalam penawaran dan termasuk dalam Harga Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "59. Tindakan Penyedia yang Mensyaratkan Persetujuan Pejabat Penandatangan Kontrak atau Pengawas Pekerjaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "59.1 Penyedia berkewajiban untuk mendapatkan lebih dahulu persetujuan tertulis Pejabat Penandatangan Kontrak sebelum melakukan tindakan-tindakan berikut:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. mensubkontrakkan sebagian pekerjaan yang belum tercantum dalam Lampiran A SSKK;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. menunjuk Personel Manajerial yang namanya tidak tercantum dalam Lampiran A SSKK;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. mengubah atau memutakhirkan dokumen penerapan SMKK;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. tindakan lain selain yang diatur dalam SSUK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "59.2 Penyedia berkewajiban untuk mendapatkan lebih dahulu persetujuan tertulis Pengawas Pekerjaan sebelum melakukan tindakan-tindakan berikut:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. melaksanakan setiap tahapan pekerjaan berdasarkan rencana kerja dan metode kerja;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. mengubah syarat dan ketentuan polis asuransi;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. mengubah Personel Manajerial dan/atau Peralatan Utama;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. tindakan lain selain yang diatur dalam SSUK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "59.3 Tindakan lain dalam pasal 59.1 huruf d dan 59.2 huruf d dituangkan dalam SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "60. Laporan Hasil Pekerjaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "60.1 Pemeriksaan pekerjaan dilakukan selama pelaksanaan Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "untuk menetapkan volume pekerjaan atau kegiatan yang telah dilaksanakan guna pembayaran hasil pekerjaan. Hasil pemeriksaan pekerjaan dituangkan dalam laporan kemajuan hasil pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "60.2 Untuk kepentingan pengendalian dan pengawasan pelaksanaan pekerjaan, seluruh aktivitas kegiatan pekerjaan di lokasi pekerjaan dicatat sebagai bahan laporan harian pekerjaan yang berisi rencana dan realisasi pekerjaan harian."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "60.3 Laporan harian berisi:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. jenis dan kuantitas bahan yang berada di lokasi pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. penempatan tenaga kerja konstruksi untuk tiap macam tugasnya;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. jenis, jumlah dan kondisi peralatan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. jenis dan kuantitas pekerjaan yang dilaksanakan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. keadaan cuaca termasuk hujan, banjir dan peristiwa alam lainnya yang berpengaruh terhadap kelancaran pekerjaan; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. catatan-catatan lain yang berkenaan dengan pelaksanaan pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "60.4 Laporan mingguan terdiri dari rangkuman laporan harian dan berisi hasil kemajuan fisik pekerjaan dalam periode satu minggu, serta hal-hal penting yang perlu ditonjolkan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "60.5 Laporan bulanan terdiri dari rangkuman laporan mingguan dan berisi hasil kemajuan fisik pekerjaan dalam periode satu bulan, serta hal-hal penting yang perlu ditonjolkan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "60.6 Untuk merekam kegiatan pelaksanaan pekerjaan konstruksi, Pejabat Penandatangan Kontrak dan Penyedia membuat foto-foto dokumentasi dan video pelaksanaan pekerjaan di lokasi pekerjaan sesuai kebutuhan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "60.7 Laporan hasil pekerjaan dibuat oleh Penyedia, diperiksa oleh Pengawas Pekerjaan, dan disetujui oleh Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "61. Kepemilikan Dokumen Semua rancangan, gambar, spesifikasi, desain, laporan, dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "dokumen-dokumen lain serta piranti lunak yang dipersiapkan oleh Penyedia berdasarkan Kontrak ini sepenuhnya merupakan hak milik Pejabat Penandatangan Kontrak. Penyedia paling lambat pada waktu pemutusan atau penghentian atau akhir Masa Kontrak berkewajiban"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "62. Kerjasama Antara Penyedia dan Subkontraktor"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "untuk menyerahkan semua dokumen dan piranti lunak tersebut beserta daftar rinciannya kepada Pejabat Penandatangan Kontrak. Penyedia dapat menyimpan 1 (satu) buah salinan tiap dokumen dan piranti lunak tersebut. Pembatasan (jika ada) mengenai penggunaan dokumen dan piranti lunak tersebut di atas di kemudian hari diatur dalam SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "62.1 Persyaratan pekerjaan yang disubkontrakkan harus memperhatikan:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Dalam hal nilai pagu anggaran di atas Rp25.000.000.000,00 (dua puluh lima miliar rupiah), jenis pekerjaan yang wajib disubkontrakkan dicantumkan dalam dokumen kompetisi; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Bagian pekerjaan yang wajib disubkontrakkan yaitu:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1) Sebagian pekerjaan utama yang disubkontrakkan kepada penyedia jasa spesialis, dengan ketentuan:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a) Paling banyak 2 (dua) pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b) Pekerjaan sebagaimana dimaksud pada huruf a) sesuai dengan subklasifikasi SBU;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "2) Sebagian pekerjaan yang bukan pekerjaan utama kepada sub penyedia jasa usaha kualifikasi kecil dengan ketentuan:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a) Paling banyak 2 (dua) pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b) Pekerjaan sebagaimana dimaksud pada huruf a) tidak mensyaratkan subklasifikasi SBU."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "62.2 Penyedia tetap bertanggung jawab atas bagian pekerjaan yang disubkontrakkan tersebut."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "62.3 Subkontraktor dilarang mengalihkan atau mensubkontrakkan pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "62.4 Penyedia Usaha Kecil tidak boleh mensubkontrakkan pekerjaan kepada pihak lain."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "62.5 Penyedia Usaha Non Kecil yang melakukan kerjasama dengan Subkontraktor hanya boleh melaksanakan sesuai dengan daftar bagian pekerjaan yang disubkontrakkan (apabila ada) yang dituangkan dalam Lampiran A SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "62.6 Lampiran A SSKK (Daftar Pekerjaan yang Disubkontrakkan dan Subkontraktor) tidak boleh diubah kecuali atas persetujuan tertulis dari Pejabat Penandatangan Kontrak dan dituangkan dalam adendum Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "62.7 Pelaksanaan Kerjasama Antara Penyedia dan Subkontraktor diawasi oleh Pengawas Pekerjaan dan Penyedia melaporkan secara periodik kepada Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "62.8 Apabila Penyedia melanggar ketentuan sebagaimana diatur pada pasal 62.4 atau 62.5 maka akan dikenakan denda senilai pekerjaan yang disubkontrakkan tersebut."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "63. Penyedia Lain"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Penyedia berkewajiban untuk bekerjasama dan menggunakan lokasi kerja termasuk jalan akses bersama-sama dengan Penyedia Lain (jika ada) dan pihak-pihak lainnya yang berkepentingan atas lokasi kerja. Jika dipandang perlu, Pejabat Penandatangan Kontrak dapat memberikan jadwal kerja Penyedia Lain di lokasi kerja."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "64. Alih"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Pengalaman/Keahlian Dalam hal pelaksanaan paket pekerjaan konstruksi dengan nilai pagu anggaran di atas Rp50.000.000.000,00 (lima puluh miliar rupiah), Penyedia memenuhi ketentuan alih pengalaman/keahlian bidang konstruksi melalui sistem kerja praktek/magang sesuai dengan jumlah peserta, durasi pelaksanaan, dan jenis keahlian yang disepakati pada saat Rapat Persiapan Penandatanganan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "65. Pembayaran Denda"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Penyedia berkewajiban untuk membayar sanksi finansial berupa denda sebagai akibat wanprestasi atau cedera janji terhadap kewajiban- kewajiban Penyedia dalam Kontrak ini. Pejabat Penandatangan Kontrak mengenakan denda dengan memotong angsuran pembayaran prestasi pekerjaan Penyedia. Pembayaran denda tidak mengurangi tanggung jawab kontraktual Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "66. Jaminan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "66.1 Jaminan yang digunakan dalam pelaksanaan Kontrak ini dapat berupa bank garansi atau surety bond. Jaminan bersifat tidak bersyarat, mudah dicairkan, dan harus dicairkan oleh penerbit jaminan paling lambat 14 (empat belas) hari kerja setelah surat perintah pencairan dari Pejabat Penandatangan Kontrak atau pihak yang diberi kuasa oleh Pejabat Penandatangan Kontrak diterima."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "66.2 Penerbit Jaminan selain Bank Umum harus telah ditetapkan/mendapat rekomendasi dari Otoritas Jasa Keuangan (OJK)"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "66.3 Penggunaan Jaminan Pelaksanaan, Jaminan Uang Muka dan Jaminan Pemeliharaan sebagai berikut:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Bank Umum;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Perusahaan Asuransi;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Perusahaan Penjaminan; atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. lembaga keuangan khusus yang menjalankan usaha di bidang pembiayaan, penjaminan, dan asuransi untuk mendorong ekspor Indonesia sesuai dengan ketentuan peraturan perundang-undangan di bidang lembaga pembiayaan ekspor Indonesia."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "66.4 Jaminan Pelaksanaan diberikan kepada Pejabat Penandatangan Kontrak setelah diterbitkannya Surat Penunjukan Penyedia Barang/Jasa (SPPBJ) sebelum dilakukan Penandatanganan Kontrak dengan besar:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. 5% (lima persen) dari Harga Kontrak; atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. 5% (lima persen) dari nilai Pagu Paket Pengadaan untuk harga penawaran atau penawaran terkoreksi di bawah 80% (delapan puluh persen) nilai Pagu Paket Pengadaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "66.5 Masa berlakunya Jaminan Pelaksanaan paling kurang sejak tanggal penandatanganan Kontrak sampai dengan Tanggal Penyerahan Pertama Pekerjaan (Provisional Hand Over/PHO)."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "66.6 Jaminan Pelaksanaan dikembalikan setelah pekerjaan dinyatakan selesai 100% (seratus persen) dan diganti dengan Jaminan Pemeliharaan atau menahan uang retensi sebesar 5% (lima persen) dari Harga Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "66.7 Jaminan Uang Muka diberikan kepada Pejabat Penandatangan Kontrak dalam rangka pengambilan uang muka yang besarannya paling kurang sama dengan besarnya uang muka yang diterima Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "66.8 Nilai Jaminan Uang Muka dapat dikurangi secara proporsional sesuai dengan sisa uang muka yang diterima."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "66.9 Masa berlakunya Jaminan Uang Muka paling kurang sejak tanggal persetujuan pemberian uang muka sampai dengan Tanggal Penyerahan Pertama Pekerjaan (PHO)."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "66.10 Jaminan Pemeliharaan diberikan kepada Pejabat Penandatangan Kontrak setelah pekerjaan dinyatakan selesai 100% (seratus persen)."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "66.11 Pengembalian Jaminan Pemeliharan dilakukan paling lambat 14 (empat belas) hari kerja setelah Masa Pemeliharaan selesai dan pekerjaan diterima dengan baik sesuai dengan ketentuan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "66.12 Masa berlaku Jaminan Pemeliharaan paling kurang sejak Tanggal Penyerahan Pertama Pekerjaan sampai dengan Tanggal Penyerahan Akhir Pekerjaan (Final Hand Over/FHO)."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "D. HAK DAN KEWAJIBAN PEJABAT PENANDATANGAN KONTRAK"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "67. Hak dan Kewajiban Pejabat Penandatangan Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Hak-hak yang dimiliki serta kewajiban-kewajiban yang harus dilaksanakan oleh Pejabat Penandatangan Kontrak dalam melaksanakan Kontrak, meliputi :"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. mengawasi dan memeriksa pekerjaan yang dilaksanakan oleh Penyedia;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. mendapat jaminan pekerjaan dilaksanakan dan diselesaikan secara cermat, akurat dan penuh tanggung jawab dengan menyediakan tenaga kerja, bahan-bahan, peralatan, angkutan ke atau dari lapangan, dan segala pekerjaan permanen maupun sementara yang diperlukan untuk pelaksanaan, penyelesaian dan perbaikan pekerjaan yang dirinci dalam Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. menerima laporan-laporan secara periodik mengenai pelaksanaan pekerjaan yang dilaksanakan oleh Penyedia;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. menerima hasil pekerjaan sesuai dengan jadwal penyerahan pekerjaan dan ketentuan yang telah ditetapkan dalam Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. membayar pekerjaan sesuai dengan harga yang tercantum dalam Kontrak yang telah ditetapkan kepada Penyedia;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. memberikan fasilitas berupa sarana dan prasarana yang dibutuhkan oleh Penyedia untuk kelancaran pelaksanaan pekerjaan sesuai ketentuan Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "g. menilai kinerja Penyedia; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "h. Menggunakan Sistem Informasi Kontrak dan Manajemen Pengendalian Pelaksanaan Kontrak (SIKOMPAK) dalam pelaksanaan dan pengendalian kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "68. Fasilitas"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Pejabat Penandatangan Kontrak dapat memberikan fasilitas berupa sarana dan prasarana atau kemudahan lainnya (jika ada) yang tercantum dalam SSKK untuk kelancaran pelaksanan pekerjaan ini."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "69. Peristiwa Kompensasi"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "69.1 Peristiwa Kompensasi dapat diberikan kepada Penyedia yaitu:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Pejabat Penandatangan Kontrak mengubah jadwal pekerjaan yang dapat mempengaruhi pelaksanaan pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. keterlambatan pembayaran kepada Penyedia;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Pejabat Penandatangan Kontrak tidak memberikan gambar- gambar, spesifikasi dan/atau instruksi sesuai jadwal yang dibutuhkan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. Penyedia belum bisa masuk ke lokasi sesuai jadwal dalam kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. Pejabat Penandatangan Kontrak menginstruksikan kepada pihak Penyedia untuk melakukan pengujian tambahan yang setelah dilaksanakan pengujian ternyata tidak ditemukan kerusakan/kegagalan/ penyimpangan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. Pejabat Penandatangan Kontrak memerintahkan penundaan pelaksanaan pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "g. Pejabat Penandatangan Kontrak memerintahkan untuk mengatasi kondisi tertentu yang tidak dapat diduga sebelumnya yang disebabkan/tidak disebabkan oleh Pejabat Penandatangan Kontrak; atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "h. ketentuan lain dalam SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "69.2 Jika Peristiwa Kompensasi mengakibatkan pengeluaran tambahan dan/atau keterlambatan penyelesaian pekerjaan maka Pejabat Penandatangan Kontrak berkewajiban untuk membayar ganti rugi dan/atau memberikan perpanjangan Masa Pelaksanaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "69.3 Ganti rugi akibat Peristiwa Kompensasi hanya dapat dibayarkan jika berdasarkan data penunjang dan perhitungan kompensasi yang diajukan oleh Penyedia kepada Pejabat Penandatangan Kontrak, dapat dibuktikan kerugian nyata."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "69.4 Perpanjangan Masa Pelaksanaan hanya dapat diberikan jika berdasarkan data penunjang dan perhitungan kompensasi yang diajukan oleh Penyedia kepada Pejabat Penandatangan Kontrak, dapat dibuktikan perlunya tambahan waktu akibat Peristiwa Kompensasi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "69.5 Penyedia tidak berhak atas ganti rugi dan/atau perpanjangan Masa Pelaksanaan jika Penyedia gagal atau lalai untuk memberikan peringatan dini dalam mengantisipasi atau mengatasi dampak Peristiwa Kompensasi."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "E. TENAGA KERJA KONSTRUKSI DAN/ATAU PERALATAN PENYEDIA"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "70. Tenaga Kerja Konstruksi"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "70.1 Setiap Tenaga Kerja Konstruksi yang bekerja pada pekerjaan ini"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "wajib memiliki sertifikat kompetensi kerja."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "70.2 Tenaga Kerja Konstruksi selain Personel Manajerial yang bekerja/akan bekerja pada pekerjaan ini dan belum memiliki sertifikat kompetensi kerja, maka Penyedia wajib memastikan dipenuhinya persyaratan sertifikat kompetensi kerja sepanjang Masa Pelaksanaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "71. Personel Manajerial dan/atau Peralatan Utama"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "71.1 Personel Manajerial yang ditempatkan dan dipekerjakan harus sesuai dengan yang tercantum dalam Lampiran A SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "71.2 Peralatan Utama yang ditempatkan dan digunakan untuk pelaksanaan pekerjaan adalah peralatan yang laik dan harus sesuai dengan yang tercantum dalam Lampiran A SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "71.3 Jika PPK menilai bahwa Personel Manajerial :"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. tidak mampu atau tidak dapat melakukan pekerjaan dengan baik;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. berkelakuan tidak baik; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. mengabaikan pekerjaan yang menjadi tugasnya; maka Penyedia berkewajiban untuk menyediakan pengganti dan menjamin Personel Manajerial tersebut meninggalkan lokasi kerja dalam waktu 7 (tujuh) hari kalender sejak diminta oleh Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "71.4 Jika penggantian Personel Manajerial dan/atau Peralatan Utama perlu dilakukan, maka Penyedia berkewajiban untuk menyediakan pengganti dengan kualifikasi yang setara atau lebih baik dari tenaga kerja konstruksi dan/atau peralatan yang digantikan tanpa biaya tambahan apapun."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "71.5 Penggantian Personel Manajerial dan/atau Peralatan Utama tidak boleh dilakukan kecuali atas persetujuan tertulis dari Pejabat Penandatangan Kontrak dan dituangkan dalam adendum Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "71.6 Personel Manajerial berkewajiban untuk menjaga kerahasiaan pekerjaannya. Jika diperlukan oleh Pejabat Penandatangan Kontrak, Personel Manajerial dapat sewaktu-waktu disyaratkan untuk menjaga kerahasiaan pekerjaan di bawah sumpah."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "F. PEMBAYARAN KEPADA PENYEDIA"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "72. Harga Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "72.1 Pejabat Penandatangan Kontrak membayar kepada Penyedia atas pelaksanaan pekerjaan dalam Kontrak sebesar Harga Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "72.2 Harga Kontrak telah memperhitungkan meliputi :"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. beban pajak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. biaya umum (overhead) dan keuntungan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. biaya pelaksanaan pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. biaya mobilisasi; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. biaya penerapan SMKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "72.3 Rincian Harga Kontrak sesuai dengan rincian yang tercantum dalam Daftar Kuantitas dan Harga."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "72.4 Besaran Harga Kontrak sesuai dengan penawaran yang sebagaimana yang telah diubah terakhir kali sesuai dengan ketentuan dalam Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "73. Pembayaran"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "73.1 Uang Muka"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Uang muka dibayar untuk membiayai mobilisasi peralatan/tenaga kerja konstruksi, pembayaran uang tanda jadi kepada pemasok bahan/material dan/atau untuk persiapan teknis lain."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Untuk usaha kecil, uang muka dapat diberikan paling tinggi 30% (tiga puluh perseratus) dari Harga Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Untuk usaha non kecil, uang muka dapat diberikan paling tinggi 20% (dua puluh persen) dari Harga Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. Untuk Kontrak Tahun Jamak, uang muka dapat diberikan paling tinggi 15% (lima belas persen) dari Harga Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. Besaran uang muka ditentukan dalam SSKK dan dibayar setelah Penyedia menyerahkan Jaminan Uang Muka paling sedikit sebesar uang muka yang diterima."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. Dalam hal diberikan uang muka, maka Penyedia harus mengajukan permohonan pengambilan uang muka secara tertulis kepada Pejabat Penandatangan Kontrak disertai dengan rencana penggunaan uang muka untuk melaksanakan pekerjaan sesuai Kontrak dan rencana pengembaliannya."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "g. Pejabat Penandatangan Kontrak harus mengajukan Surat Permintaan Pembayaran (SPP) kepada Pejabat Penandatanganan Surat Perintah Membayar (PPSPM) untuk permohonan tersebut pada huruf f, paling lambat 7 (tujuh) hari kerja setelah Jaminan Uang Muka diterima."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "h. Pengembalian uang muka harus diperhitungkan berangsur-angsur secara proporsional pada setiap pembayaran prestasi pekerjaan dan paling lambat harus lunas pada saat pekerjaan mencapai prestasi 100% (seratus persen)."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "73.2 Prestasi pekerjaan Pembayaran prestasi hasil pekerjaan yang disepakati dilakukan oleh Pejabat Penandatangan Kontrak, dengan ketentuan:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Penyedia telah mengajukan tagihan disertai laporan kemajuan hasil pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. pembayaran dilakukan tidak boleh melebihi kemajuan hasil pekerjaan yang telah dicapai dan diterima oleh Pejabat Penandatangan Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. pembayaran dilakukan terhadap pekerjaan yang sudah terpasang;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. pembayaran dilakukan dengan sistem bulanan atau sistem termin sesuai ketentuan dalam SSKK;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. pembayaran harus memperhitungkan:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1) angsuran uang muka;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "2) peralatan dan/atau bahan yang menjadi bagian permanen dari hasil pekerjaan yang akan diserahterimakan (material on site) yang sudah dibayar sebelumnya;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "3) denda (apabila ada);"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "4) pajak; dan/atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "5) uang retensi."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. untuk Kontrak yang mempunyai subkontrak, permintaan pembayaran harus dilengkapi bukti pembayaran kepada seluruh Subkontraktor sesuai dengan prestasi pekerjaan. Pembayaran kepada Subkontraktor dilakukan sesuai prestasi pekerjaan yang selesai dilaksanakan oleh Subkontraktor tanpa harus menunggu pembayaran terlebih dahulu dari Pejabat Penandatangan Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "g. pembayaran terakhir hanya dilakukan setelah pekerjaan selesai 100% (seratus persen) dan Berita Acara Serah Terima Pertama Pekerjaan ditandatangani oleh Pejabat Penandatangan Kontrak dan Penyedia;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "h. Pejabat Penandatangan Kontrak dalam kurun waktu 7 (tujuh) hari kerja setelah pengajuan permintaan pembayaran dari Penyedia diterima harus sudah mengajukan Surat Permintaan Pembayaran kepada Pejabat Penandatanganan Surat Perintah Membayar (PPSPM);"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "i. apabila terdapat ketidaksesuaian dalam perhitungan angsuran, tidak akan menjadi alasan untuk menunda pembayaran. Pejabat Penandatangan Kontrak dapat meminta Penyedia untuk menyampaikan perhitungan prestasi sementara dengan mengesampingkan hal-hal yang sedang menjadi perselisihan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "73.3 Material on Site Bahan dan/atau peralatan yang menjadi bagian dari hasil pekerjaan memenuhi ketentuan:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. bahan dan/atau peralatan yang menjadi bagian permanen dari hasil pekerjaan;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. bahan dan/atau peralatan yang belum dilakukan uji fungsi (commisioning), serta merupakan bagian dari pekerjaan utama harus memenuhi ketentuan sebagai berikut:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1) berada di lokasi pekerjaan sebagaimana tercantum dalam Kontrak dan perubahannya;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "2) memiliki sertifikat uji mutu dari pabrikan/produsen;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "3) bersertifikat garansi dari produsen/agen resmi yang ditunjuk oleh produsen;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "4) disetujui oleh Pejabat Penandatangan Kontrak sesuai dengan capaian fisik yang diterima;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "5) dilarang dipindahkan dari area lokasi pekerjaan dan/atau dipindahtangankan oleh pihak manapun; dan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "6) keamanan penyimpanan dan risiko kerusakan sebelum diserahterimakan secara satu kesatuan fungsi merupakan tanggung jawab Penyedia;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. sertifikat uji mutu dan sertifikat garansi tidak diperlukan dalam hal peralatan dan/atau bahan dibuat/dirakit oleh Penyedia;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. besaran yang akan dibayarkan dari material on site (maksimal sampai dengan 70%) dari Harga Satuan Pekerjaan (HSP);"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. besaran nilai pembayaran dan jenis material on site dicantumkan di dalam SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "73.4 Denda dan Ganti Rugi"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. Denda merupakan sanksi finansial yang dikenakan kepada Penyedia, antara lain: denda keterlambatan dalam penyelesaian pelaksanaan pekerjaan, denda keterlambatan dalam perbaikan Cacat Mutu."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Ganti rugi merupakan sanksi finansial yang dikenakan kepada Pejabat Penandatangan Kontrak maupun Penyedia karena terjadinya cedera janji/wanprestasi. Besarnya sanksi ganti rugi adalah sebesar nilai kerugian yang ditimbulkan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Besarnya denda keterlambatan yang dikenakan kepada Penyedia atas keterlambatan penyelesaian pekerjaan adalah:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "1) 1‰ (satu perseribu) dari harga bagian Kontrak yang tercantum dalam Kontrak (sebelum PPN); atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "2) 1‰ (satu perseribu) dari Harga Kontrak (sebelum PPN); sesuai yang ditetapkan dalam SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "d. Besaran denda cacat mutu sebesar 1‰ (satu perseribu) per hari keterlambatan perbaikan dari nilai biaya perbaikan pekerjaan yang ditemukan cacat mutu."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "e. Besarnya ganti rugi sebagai akibat Peristiwa Kompensasi yang dibayar oleh Pejabat Penandatangan Kontrak atas keterlambatan pembayaran adalah sebesar bunga dari nilai tagihan yang terlambat dibayar, berdasarkan tingkat suku bunga yang berlaku pada saat itu menurut ketetapan Bank Indonesia, sepanjang telah diputuskan oleh lembaga yang berwenang;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "f. Pembayaran denda dan/atau ganti rugi diperhitungkan dalam pembayaran prestasi pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "g. Ganti rugi kepada Penyedia dapat mengubah Harga Kontrak setelah dituangkan dalam adendum kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "h. Pembayaran ganti rugi dilakukan oleh Pejabat Penandatangan Kontrak, apabila Penyedia telah mengajukan tagihan disertai perhitungan dan data-data."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "74. Hari Kerja"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "74.1 Orang hari standar atau satu hari orang bekerja adalah 8 (delapan) jam, terdiri atas 7 (tujuh) jam kerja (efektif) dan 1 (satu) jam istirahat."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "74.2 Penyedia tidak diperkenankan melakukan pekerjaan apapun di lokasi kerja pada waktu yang secara ketentuan peraturan perundang-undangan dinyatakan sebagai hari libur atau di luar jam kerja normal, kecuali:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. dinyatakan lain di dalam Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. Pejabat Penandatangan Kontrak memberikan izin; atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. pekerjaan tidak dapat ditunda, atau untuk keselamatan/perlindungan masyarakat, dimana Penyedia harus segera memberitahukan urgensi pekerjaan tersebut kepada Pengawas Pekerjaan dan Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "74.3 Semua pekerja dibayar selama hari kerja dan datanya disimpan oleh Penyedia. Daftar pembayaran masing-masing pekerja dapat diperiksa oleh Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "74.4 Untuk pekerjaan yang dilakukan di luar hari kerja efektif dan jam kerja normal harus mengikuti ketentuan Menteri yang membidangi ketenagakerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "74.5 Pelaksanaan pekerjaan di luar hari kerja efektif dan/atau jam kerja normal harus diawasi oleh Pengawas Pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "75. Perhitungan Akhir"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "75.1 Pembayaran angsuran prestasi pekerjaan terakhir dilakukan setelah pekerjaan selesai 100% (seratus persen) dan berita acara serah terima pertama pekerjaan telah ditandatangani oleh kedua pihak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "75.2 Sebelum pembayaran terakhir dilakukan, Penyedia berkewajiban untuk menyerahkan kepada Pengawas Pekerjaan rincian perhitungan nilai tagihan terakhir yang jatuh tempo. Pejabat Penandatangan Kontrak berdasarkan hasil penelitian tagihan oleh Pengawas Pekerjaan berkewajiban untuk menerbitkan SPP untuk pembayaran tagihan angsuran terakhir paling lambat 7 (tujuh) hari kerja terhitung sejak tagihan dan dokumen penunjang dinyatakan lengkap dan diterima oleh Pengawas Pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "76. Penangguhan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "76.1 Pejabat Penandatangan Kontrak dapat menangguhkan pembayaran setiap angsuran prestasi pekerjaan Penyedia jika Penyedia gagal atau lalai memenuhi kewajiban kontraktualnya, termasuk penyerahan setiap Hasil Pekerjaan sesuai dengan waktu yang telah ditetapkan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "76.2 Pejabat Penandatangan Kontrak secara tertulis memberitahukan kepada Penyedia tentang penangguhan hak pembayaran, disertai alasan-alasan yang jelas mengenai penangguhan tersebut. Penyedia diberi kesempatan untuk memperbaiki dalam jangka waktu tertentu."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "76.3 Pembayaran yang ditangguhkan harus disesuaikan dengan proporsi kegagalan atau kelalaian Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "76.4 Jika dipandang perlu oleh Pejabat Penandatangan Kontrak, penangguhan pembayaran akibat keterlambatan penyerahan pekerjaan dapat dilakukan bersamaan dengan pengenaan denda kepada Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "G. PENGAWASAN MUTU"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "77. Pengawasan dan Pemeriksaan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "Pejabat Penandatangan Kontrak berwenang melakukan pengawasan dan pemeriksaan terhadap pelaksanaan pekerjaan yang dilaksanakan oleh Penyedia. Pejabat Penandatangan Kontrak dapat memerintahkan kepada pihak ketiga untuk melakukan pengawasan dan pemeriksaan atas semua pelaksanaan pekerjaan yang dilaksanakan oleh Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "78. Penilaian Pekerjaan Sementara oleh Pejabat Penandatangan Kontrak"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "78.1 Pejabat Penandatangan Kontrak dalam Masa Pelaksanaan pekerjaan dapat melakukan penilaian sementara atas hasil pekerjaan yang dilakukan oleh Penyedia."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "78.2 Penilaian atas hasil pekerjaan dilakukan terhadap mutu dan kemajuan fisik pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "79. Pemeriksaan dan Pengujian Cacat Mutu"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "79.1 Pejabat Penandatangan Kontrak atau Pengawas Pekerjaan akan memeriksa setiap hasil pekerjaan dan memberitahukan Penyedia secara tertulis atas setiap Cacat Mutu yang ditemukan. Pejabat Penandatangan Kontrak atau Pengawas Pekerjaan dapat memerintahkan Penyedia untuk menemukan dan mengungkapkan Cacat Mutu, serta menguji hasil pekerjaan yang dianggap oleh Pejabat Penandatangan Kontrak atau Pengawas Pekerjaan mengandung Cacat Mutu. Penyedia bertanggung jawab atas perbaikan Cacat Mutu selama Masa Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "79.2 Jika Pejabat Penandatangan Kontrak atau Pengawas Pekerjaan memerintahkan Penyedia untuk melakukan pengujian Cacat Mutu yang tidak tercantum dalam Spesifikasi Teknis dan Gambar, dan hasil uji coba menunjukkan adanya cacat mutu maka Penyedia berkewajiban untuk menanggung biaya pengujian tersebut. Jika tidak ditemukan adanya Cacat Mutu maka uji coba tersebut dianggap sebagai Peristiwa Kompensasi."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "80. Perbaikan Cacat Mutu"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "80.1 Pejabat Penandatangan Kontrak atau Pengawas Pekerjaan akan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "menyampaikan pemberitahuan Cacat Mutu kepada Penyedia segera setelah ditemukan Cacat Mutu tersebut. Penyedia bertanggung jawab atas Cacat Mutu selama Masa Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "80.2 Terhadap pemberitahuan Cacat Mutu tersebut, Penyedia berkewajiban untuk memperbaiki Cacat Mutu dalam jangka waktu yang ditetapkan dalam pemberitahuan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "80.3 Jika Penyedia tidak memperbaiki Cacat Mutu dalam jangka waktu yang ditentukan maka Pejabat Penandatangan Kontrak, berdasarkan pertimbangan Pengawas Pekerjaan, berhak untuk secara langsung atau melalui pihak ketiga yang ditunjuk oleh Pejabat Penandatangan Kontrak melakukan perbaikan tersebut. Penyedia segera setelah menerima klaim Pejabat Penandatangan Kontrak secara tertulis berkewajiban untuk mengganti biaya perbaikan tersebut. Pejabat Penandatangan Kontrak dapat memperoleh penggantian biaya dengan memotong pembayaran atas tagihan Penyedia yang jatuh tempo (jika ada) atau uang retensi atau pencairan Jaminan Pemeliharaan atau jika tidak ada maka biaya penggantian akan diperhitungkan sebagai utang Penyedia kepada Pejabat Penandatangan Kontrak yang telah jatuh tempo."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "80.4 Dalam hal cacat mutu ditemukan oleh Pejabat Penandatangan Kontrak selama masa pelaksanaan maka penyedia wajib memperbaiki cacat mutu tersebut dan Pejabat Penandatangan Kontrak tidak melakukan pembayaran pekerjaan sebelum cacat mutu tersebut selesai diperbaiki."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "80.5 Dalam hal cacat mutu ditemukan oleh Pejabat Penandatangan Kontrak selama masa pemeliharaan maka penyedia wajib memperbaiki cacat mutu tersebut dalam jangka waktu yang ditentukan dan mengenakan denda keterlambatan untuk setiap keterlambatan perbaikan Cacat Mutu."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "80.6 Penyedia yang tidak melaksanakan perbaikan cacat mutu sewaktu masa pemeliharaan dapat diputus kontrak dan dikenakan sanksi daftar hitam."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "80.7 Jangka waktu perbaikan cacat mutu sesuai dengan perkiraan waktu yang diperlukan untuk perbaikan dan ditetapkan oleh Pejabat Penandatangan Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "80.8 Pejabat Penandatangan Kontrak dapat memperpanjang Masa Pemeliharaan dalam hal jangka waktu perbaikan cacat mutu akan melampaui Masa Pemeliharaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "81. Kegagalan Bangunan"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "81.1 Kegagalan Bangunan terhitung sejak Tanggal Penyerahan Akhir Pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "81.2 Penyedia bertanggung jawab atas Kegagalan Bangunan selama Umur Konstruksi yang tercantum dalam SSKK tetapi tidak lebih dari 10 (sepuluh) tahun, dan dalam SSKK agar dicantumkan lama pertanggungan terhadap Kegagalan Bangunan yang ditetapkan apabila rencana Umur Konstruksi kurang dari 10 (sepuluh) tahun."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "81.3 Pejabat Penandatangan Kontrak bertanggung jawab atas Kegagalan Bangunan yang terjadi setelah jangka waktu yang ditetapkan dalam SSKK."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "81.4 Penyedia berkewajiban untuk melindungi, membebaskan, dan menanggung tanpa batas Pejabat Penandatangan Kontrak beserta instansinya terhadap semua bentuk tuntutan, tanggung jawab, kewajiban, kehilangan, kerugian, denda, gugatan atau tuntutan hukum, proses pemeriksaan hukum, dan biaya yang dikenakan terhadap Pejabat Penandatangan Kontrak beserta instansinya (kecuali kerugian yang mendasari tuntutan tersebut disebabkan kesalahan atau kelalaian Pejabat Penandatangan Kontrak) sehubungan dengan klaim kehilangan atau kerusakan harta benda, dan cedera tubuh, sakit atau kematian pihak ketiga yang timbul dari Kegagalan Bangunan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "81.5 Pejabat Penandatangan Kontrak maupun Penyedia berkewajiban untuk menyimpan dan memelihara semua dokumen yang digunakan dan terkait dengan pelaksanaan ini selama Umur Konstruksi yang tercantum dalam SSKK tetapi tidak lebih dari 10 (sepuluh) tahun."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "H. PENYELESAIAN PERSELISIHAN"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "82. Penyelesaian Perselisihan/Sengketa"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "82.1 Para Pihak berkewajiban untuk berupaya sungguh-sungguh menyelesaikan secara damai semua perselisihan yang timbul dari atau berhubungan dengan Kontrak ini atau interpretasinya selama atau setelah pelaksanaan pekerjaan ini dengan prinsip dasar musyawarah untuk mencapai kemufakatan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "82.2 Dalam hal musyawarah para pihak sebagaimana dimaksud pada pasal 82.1 tidak dapat mencapai suatu kemufakatan, maka penyelesaian perselisihan atau sengketa antara para pihak ditempuh melalui tahapan mediasi, konsiliasi, dan arbitrase."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "82.3 Selain ketentuan pada pasal 82.2 penyelesaian perselisihan/sengketa para pihak dapat dilakukan melalui:"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "a. layanan penyelesaian sengketa Kontrak;"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "b. dewan sengketa konstruksi; atau"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "c. Pengadilan."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "82.4 Dalam hal pilihan yang digunakan dewan sengketa untuk menggantikan mediasi dan konsiliasi maka nama anggota dewan sengketa yang dipilih dan ditetapkan oleh para pihak sebelum penandatanganan kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "clause-heading",
+    "style": [
+      "bold"
+    ],
+    "text": "83. Itikad Baik"
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "body",
+    "style": [],
+    "text": "83.1 Para pihak bertindak berdasarkan asas saling percaya yang disesuaikan dengan hak-hak yang terdapat dalam Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "justify",
+    "format": "hanging-list",
+    "style": [],
+    "text": "83.2 Para pihak setuju untuk melaksanakan perjanjian dengan jujur tanpa menonjolkan kepentingan masing-masing pihak. Apabila selama Kontrak, salah satu pihak merasa dirugikan, maka diupayakan tindakan yang terbaik untuk mengatasi keadaan tersebut."
+  }
+]

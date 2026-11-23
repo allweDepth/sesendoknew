@@ -2380,6 +2380,7 @@ $profiles['kontrak'] = [
   'req_filters' => ['kontrak_dpa' => ['where' => ['tahap' => 'dpa']], 'kontrak_dppa' => ['where' => ['tahap' => 'dppa']]],
   'dropdown' => ['value' => 'id', 'label' => 'nomor_kontrak'],
   'modes' => [
+    'export' => ['select' => ['kontrak_neo.*', 'COALESCE(rekanan_neo.nama_perusahaan,kontrak_neo.nama_penyedia) AS penyedia']],
     'default' => [
       'select' => ['kontrak_neo.id', 'kontrak_neo.tahap', 'kontrak_neo.cara_pengadaan', 'kontrak_neo.jenis_pengadaan', 'kontrak_neo.tipe_swakelola', 'kontrak_neo.bentuk_kontrak', 'kontrak_neo.kd_sub_keg', 'kontrak_neo.tanggal_kontrak', 'kontrak_neo.waktu_pelaksanaan', 'kontrak_neo.nomor_kontrak', 'kontrak_neo.uraian_kontrak', 'rekanan_neo.nama_perusahaan AS penyedia', 'kontrak_neo.total_anggaran', 'kontrak_neo.nilai_hps', 'kontrak_neo.nilai_kontrak', 'kontrak_neo.tanggal_mulai', 'kontrak_neo.tanggal_selesai', 'kontrak_neo.status_kontrak'],
       'searchable' => ['kontrak_neo.nomor_spmk', 'kontrak_neo.nomor_kontrak', 'kontrak_neo.uraian_kontrak', 'rekanan_neo.nama_perusahaan'],

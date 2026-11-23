@@ -2379,7 +2379,7 @@ EXPORT ENGINE
 
     $this->authorize('view', $table);
 
-    $rows = $this->getAllRaw($table, $profile, $request, $mode);
+    $rows = $this->getAllRaw($table, $profile, $request, $table==='kontrak_neo'?'export':$mode);
 
     // 🔥 Jika kosong tetap success tapi beri pesan
     if (empty($rows)) {

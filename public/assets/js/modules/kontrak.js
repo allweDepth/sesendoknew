@@ -93,7 +93,7 @@ class KontrakModule extends BaseCrudModule {
 		if (tbl === "realisasi") {
 			return `<div class="ui right floated basic buttons" style="margin-top:10px"><button class="ui teal button" data-realization-add><i class="plus icon"></i>Input Realisasi</button><button class="ui icon button" data-action="export" data-tbl="${tbl}" title="Export"><i class="alternate download icon"></i></button></div>`;
 		}
-		return `${super.buildActionButtons(tbl)}<div class="ui right floated basic icon buttons" style="margin-top:10px;margin-right:8px"><button class="ui button" data-p4="report-excel" title="Laporan Excel"><i class="file excel icon"></i></button><button class="ui button" data-p4="report-pdf" title="Laporan PDF"><i class="chart bar icon"></i></button></div>`;
+		return `${super.buildActionButtons(tbl)}<div class="ui right floated basic icon buttons" style="margin-top:10px;margin-right:8px"><button class="ui button" data-p4="report-excel" title="Unduh Excel Daftar Kontrak Lengkap"><i class="file excel icon"></i></button><button class="ui button" data-p4="report-pdf" title="Unduh PDF Daftar Kontrak dan Jadwal"><i class="file pdf icon"></i></button></div>`;
 	}
 
 	rowAction() {
@@ -872,7 +872,8 @@ class KontrakModule extends BaseCrudModule {
 		}});
 	}
 
-	async generateProcurementBundle() {
+	async generateProcurementBundle(formatChosen=false) {
+        if(!formatChosen){this.chooseContractTerms(()=>this.generateProcurementBundle(true));return;}
 		const button=$("#generateProcurementBundle");if(button.hasClass("loading"))return;button.addClass("loading disabled");
 		try {
 			const response=await fetch(window.appUrl("/kontrak/procurement/bundle-pdf"),{method:"POST",credentials:"same-origin",headers:{"X-CSRF-TOKEN":window.CSRF_TOKEN||"","X-Requested-With":"XMLHttpRequest"},body:new URLSearchParams({contract_id:String(this.contractId),_csrf:window.CSRF_TOKEN||""})});
@@ -881,14 +882,37 @@ class KontrakModule extends BaseCrudModule {
 		}catch(error){Toast.show({success:false,message:error.message||"Dokumen belum dapat digabung"});}
 		finally{button.removeClass("loading disabled");}
 	}
-	openProcurementEditor(masterId) {window.Ajax.request({url:`/kontrak/procurement/draft?contract_id=${this.contractId}&master_id=${masterId}`,method:"GET",success:r=>this.showProcurementEditor(r.data||{})});}
+	openProcurementEditor(masterId,formatChosen=false) {
+        window.Ajax.request({url:`/kontrak/procurement/draft?contract_id=${this.contractId}&master_id=${masterId}`,method:"GET",success:r=>{
+            const data=r.data||{},code=String(data.master?.kode||"");
+            if(!formatChosen&&["SSUK","SSKK","SURAT_PERJANJIAN","SURAT_PESANAN"].includes(code)){
+                this.chooseContractTerms(()=>this.openProcurementEditor(masterId,true));return;
+            }
+            this.showProcurementEditor(data);
+        }});
+    }
+    chooseContractTerms(next) {
+        window.Ajax.request({url:`/kontrak/print-settings?contract_id=${this.contractId}`,method:"GET",success:r=>{
+            const settings=r.data||{};
+            if(!settings.terms_eligible||settings.can_edit===false){next();return;}
+            $("#contractTermsModal").remove();
+            $("body").append(`<div class="ui small modal" id="contractTermsModal"><i class="close icon"></i><div class="header">Pilih Format Syarat Kontrak</div><div class="content"><form class="ui form"><div class="grouped fields"><div class="field"><div class="ui radio checkbox"><input type="radio" name="terms_variant" value="STANDARD" ${settings.terms_variant!=="MINI_KOMPETISI"?"checked":""}><label>Standar saat ini</label></div></div><div class="field"><div class="ui radio checkbox"><input type="radio" name="terms_variant" value="MINI_KOMPETISI" ${settings.terms_variant==="MINI_KOMPETISI"?"checked":""}><label>Mini Kompetisi — Konstruksi e-Katalog<br><small>SE Dirjen Bina Marga Nomor 03/SE/Db/2025</small></label></div></div></div></form></div><div class="actions"><button class="ui cancel button">Batal</button><button class="ui primary button" id="applyContractTerms">Gunakan Format</button></div></div>`);
+            const modal=$("#contractTermsModal");modal.find('.ui.checkbox').checkbox();
+            modal.find('#applyContractTerms').on('click',()=>{
+                const variant=modal.find('input[name=terms_variant]:checked').val();
+                const button=modal.find('#applyContractTerms').addClass('loading disabled');
+                window.Ajax.request({url:'/kontrak/print-settings/save',method:'POST',data:{contract_id:this.contractId,terms_variant:variant},success:res=>{if(res.success){modal.modal('hide');next();}},complete:()=>button.removeClass('loading disabled')});
+            });
+            modal.modal({closable:false}).modal('show');
+        }});
+    }
 	openProcurementResult(id) {window.Ajax.request({url:`/kontrak/procurement/documents?id=${id}`,method:"GET",success:r=>this.showProcurementEditor(r.data||{})});}
 	showProcurementEditor(data) {
 		const master=data.master||{},contract=data.contract||this.deliveryData?.contract||{},sections=data.sections||[],code=String(data.kode_dokumen||master.kode||"").toUpperCase(),swakelolaMode=code.startsWith("SW_"),paragraphMode=["SURAT_PERJANJIAN","SSKK","SSUK"].includes(code);
 		if(paragraphMode&&typeof DocumentBuilder!=="function"){
 			if(this.procurementBuilderLoading)return;this.procurementBuilderLoading=true;const script=document.createElement("script");script.src=window.appUrl("/assets/js/engine/document/document_builder.js?v=20260913.59");script.onload=()=>{this.procurementBuilderLoading=false;this.showProcurementEditor(data);};script.onerror=()=>{this.procurementBuilderLoading=false;alert("Editor paragraf gagal dimuat. Silakan muat ulang halaman.");};document.body.appendChild(script);return;
 		}
-		$("#procurementEditorModal").remove();this.procurementSectionMap=[];this.procurementBuilder=null;this.swakelolaEditors=[];this.swakelolaSections=null;this.swakelolaData=null;
+		$("#procurementEditorModal").remove();this.procurementSectionMap=[];this.procurementBuilder=null;this.swakelolaEditors=[];this.swakelolaSections=null;this.swakelolaData=typeof data.data_isian==="string"?JSON.parse(data.data_isian||"{}"):data.data_isian||{};
 		$("body").append(`<div class="ui large modal" id="procurementEditorModal"><i class="close icon"></i><div class="header">${paragraphMode||swakelolaMode?'Editor Paragraf Dokumen':'Data Dokumen Fixed'}</div><div class="scrolling content"><form class="ui form" id="procurementDocumentForm"><input type="hidden" name="id" value="${data.id||''}"><input type="hidden" name="contract_id" value="${this.contractId}"><input type="hidden" name="master_id" value="${data.master_id||master.id||''}"><input type="hidden" name="document_code" value="${this.esc(code)}"><div class="three fields"><div class="required field"><label>Judul</label><input name="judul" value="${this.esc(data.judul||master.nama||'')}"></div><div class="field"><label>Nomor</label><input name="nomor_dokumen" value="${this.esc(data.nomor_dokumen||contract.nomor_kontrak||'')}"></div><div class="required field"><label>Tanggal</label><div class="ui calendar contract-calendar"><div class="ui input left icon"><i class="calendar icon"></i><input type="text" name="tanggal_dokumen" value="${this.esc(data.tanggal_dokumen||contract.tanggal_kontrak||'')}" autocomplete="off"></div></div></div></div><div class="field"><label>Status</label><select class="ui dropdown" name="status">${['DRAFT','DIAJUKAN','DISETUJUI','DITANDATANGANI'].map(s=>`<option ${s===(data.status||'DRAFT')?'selected':''}>${s}</option>`).join('')}</select></div>${swakelolaMode?'<div id="procurementParagraphEditor"></div>':paragraphMode?'<div class="ui visible info message"><i class="paragraph icon"></i>Isi diedit per paragraf. Gunakan toolbar pada setiap baris untuk jenis paragraf, penomoran, perataan, tebal, miring, dan garis bawah. Tidak ada kode HTML yang perlu diisi.</div><div id="procurementParagraphEditor"></div>':'<div class="ui positive icon message"><i class="lock icon"></i><div class="content"><div class="header">Format dokumen dikunci sesuai contoh resmi</div><p>Garis, susunan kolom, judul, kop, dan halaman dibentuk otomatis. Pengguna cukup mengisi judul, nomor, tanggal, dan data kontrak.</p></div></div>'}</form></div><div class="actions"><button type="button" class="ui deny button">Batal</button><button class="ui primary button" id="saveProcurementDocument"><i class="save icon"></i>Simpan Dokumen</button></div></div>`);
 		if(swakelolaMode){this.swakelolaData=typeof data.data_isian==="string"?JSON.parse(data.data_isian||"{}"):data.data_isian||{};this.renderSwakelolaEditor(sections,data.kop_surat||{});}
 		if(paragraphMode){const schema={sections:[]},values={};sections.forEach((section,index)=>{const key=`procurement_section_${index}`;this.procurementSectionMap.push({key,code:section.kode_bagian,title:section.judul});schema.sections.push({type:"editable_table",name:key,label:`${index+1}. ${section.judul}`,columns:["URAIAN"]});values[key]=this.procurementParagraphs(section.isi||section.isi_template||"",contract,data);});this.procurementBuilder=new DocumentBuilder($("#procurementParagraphEditor"));this.procurementBuilder.schema=schema;this.procurementBuilder.data=values;this.procurementBuilder.render();}
@@ -1119,7 +1143,7 @@ class KontrakModule extends BaseCrudModule {
 
 	deliveryAction(a, button) {
 		if (a === "sskk" || a === "ssuk") {
-			this.download(`/kontrak/terms_pdf?contract_id=${this.contractId}&type=${a.toUpperCase()}`);
+			this.chooseContractTerms(()=>this.download(`/kontrak/terms_pdf?contract_id=${this.contractId}&type=${a.toUpperCase()}`));
 			return;
 		}
 		if (a === "excel") {

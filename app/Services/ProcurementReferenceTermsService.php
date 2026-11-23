@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__.'/ProcurementContractTypeService.php';
 require_once __DIR__.'/ProcurementParagraphLayoutService.php';
+require_once __DIR__.'/ProcurementMiniCompetitionTermsService.php';
 
 /**
  * Membaca naskah acuan syarat kontrak yang berasal dari berkas contoh pengguna.
@@ -14,6 +15,7 @@ final class ProcurementReferenceTermsService
     public static function rows(string $code, array $contract=[]): array
     {
         $code = strtoupper($code);
+        if(in_array($code,['SSUK','SSKK'],true)&&ProcurementMiniCompetitionTermsService::variant($contract)==='MINI_KOMPETISI')return ProcurementMiniCompetitionTermsService::rows($code,$contract);
         if ($code === 'SURAT_PERJANJIAN') return ProcurementParagraphLayoutService::normalize(self::contractRows($contract));
         if ($code === 'SSKK') return self::sskkRows($contract);
         if ($code === 'SSUK') return self::ssukRows($contract);
@@ -203,6 +205,7 @@ final class ProcurementReferenceTermsService
     /** Refresh contract identity fields while retaining the other edited clauses. */
     public static function fillSskkRows(array $rows,array $contract):array
     {
+        if(ProcurementMiniCompetitionTermsService::variant($contract)==='MINI_KOMPETISI')return ProcurementMiniCompetitionTermsService::fill($rows,$contract);
         $automatic=['4.1 & 4.2','4.2 & 5.1','27.1','33.8'];$current=[];
         foreach(self::sskkRows($contract) as $r){$key=trim(explode('|',$r['text'],2)[0]);if(in_array($key,$automatic,true))$current[$key]=$r;}
         foreach($rows as &$r){$key=trim(explode('|',(string)($r['text']??''),2)[0]);if(isset($current[$key])){$r=$current[$key];unset($current[$key]);}}unset($r);

@@ -1,0 +1,25 @@
+{
+  "source": "Surat-Edaran-Direktur-Jenderal-Bina-Marga-Nomor-03SEDb2025-tentang-Pengadaan-Pekerjaan-Konstruksi-Jalan-dan-Jembatan-pada-Katalog-Elektronik-Sektoral-Konstruksi-Bidang-Pekerjaan-Umum.docx",
+  "sha256": "83db105e813f33c46a8580e7168ed5dc1eece99827c87c6de2c81700bffa7eff",
+  "reference": "SE Dirjen Bina Marga Nomor 03/SE/Db/2025",
+  "ssuk_paragraph_range": [
+    2385,
+    3585
+  ],
+  "sskk_tables": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "notes": [
+    "Penomoran Word diubah menjadi teks agar tetap tersedia pada editor dan PDF.",
+    "Isian yang belum ditetapkan pada contoh SSKK dipertahankan untuk disunting sesuai dokumen paket.",
+    "Pasal 3 dan 4 dipulihkan dari tabel dalam SSUK; kalimat lokasi ditempatkan di bawah Pasal 6.",
+    "Judul pasal dipisahkan dari kalimat ayat pertama; judul yang menyela lanjutan pasal sebelumnya dipindahkan sebelum ayatnya sendiri."
+  ],
+  "ssuk_tables": [
+    41
+  ]
+}

@@ -4,6 +4,8 @@ require_once __DIR__.'/PageSetupService.php';
 require_once __DIR__.'/OfficialLetterheadPdfService.php';
 require_once __DIR__.'/ProcurementDocumentFormatService.php';
 require_once __DIR__.'/ProcurementProcessService.php';
+require_once __DIR__.'/ProcurementContractFormService.php';
+require_once __DIR__.'/ProcurementPerformanceSecurityService.php';
 
 /** Layout khusus untuk setiap dokumen pada ZIP contoh pengguna. */
 final class ProcurementZipPdfService
@@ -47,6 +49,12 @@ final class ProcurementZipPdfService
         $pdf->SetFont($this->font,'',$this->size);
         $pdf->Ln($this->printSettings['paragraph_before']*25.4/72);
         $pdf->MultiCell(0,0,rtrim($text)."\n",0,'J',false,1,'','',true,0,false,true);
+        $pdf->Ln($this->printSettings['paragraph_after']*25.4/72);
+    }
+    private function letterParagraph(TCPDF $pdf,string $text):void
+    {
+        $pdf->Ln($this->printSettings['paragraph_before']*25.4/72);
+        $pdf->writeHTML('<p align="justify" style="text-indent:10mm;">'.$this->e($text).'</p>',true,false,true,false,'');
         $pdf->Ln($this->printSettings['paragraph_after']*25.4/72);
     }
     private function fields(array $rows,array $widths=[30,4,66]):string{$html='<br><table width="100%" cellpadding="3">';foreach($rows as [$label,$value])$html.='<tr nobr="true"><td width="'.$widths[0].'%">'.$this->e($label).'</td><td width="'.$widths[1].'%">:</td><td width="'.$widths[2].'%">'.$this->e($value).'</td></tr>';$html.='</table>';return$html;}
@@ -190,7 +198,7 @@ final class ProcurementZipPdfService
         $summary.='</table><p><b>Terbilang ## '.(isset($nego)?$this->e(ucwords($this->words((int)round($nego)))).' Rupiah':'Belum ditetapkan').' ##</b></p><p>Keterangan:<br>Harga sudah memperhitungkan pajak yang berlaku</p>';
         // Continue in the available space; only individual rows and signatures stay intact.
         $pdf->writeHTML($summary,true,false,true,false,'');
-        $this->signatureBlock($pdf,$this->pairedSignatures($c));
+        $this->signatureBlock($pdf,$this->pairedSignatures($c,ProcurementProcessService::flow($c)==='KATALOG'));
         return $this->finish($pdf);
     }
     private function attendance(array $d,array $c,array $setup):string
@@ -226,10 +234,18 @@ final class ProcurementZipPdfService
     private function sppbj(array $d,array $c,array $setup):string
     {
         $pdf=$this->page($setup);$date=$this->date($d,$c);$amount=$c['nilai_kontrak']??null;
-        $pdf->writeHTML('<table><tr><td width="60%">Nomor: '.$this->e($d['nomor_dokumen']??'-').'<br>Lampiran: -</td><td width="40%">Pasangkayu, '.$this->e($date).'</td></tr></table><p>Kepada Yth.<br>Direktur '.$this->e($this->v($c,'nama_penyedia_resmi','nama_penyedia')).'<br>di-<br>'.$this->e($this->v($c,'alamat_penyedia','alamat')).'</p><p>Perihal: Penunjukan Penyedia untuk Pelaksanaan Paket Pekerjaan: '.$this->e($c['uraian_kontrak']).' - pada Kegiatan '.$this->e($this->v($c,'nama_sub_keg')).'</p>',true,false,true,false,'');
-        $this->para($pdf,'Dengan ini kami beritahukan bahwa penawaran Saudara nomor: SPSE Tanggal '.$date.' perihal Penawaran Pekerjaan '.$c['uraian_kontrak'].'. dengan nilai Negoisasi Harga sebesar '.(isset($amount)?$this->money($amount).' ('.ucwords($this->words((int)round($amount))).' Rupiah)':'Belum ditetapkan').'. kami nyatakan diterima/disetujui.');
-        $this->para($pdf,'Sebagai tindak lanjut dari Surat Penunjukan Penyedia Barang/Jasa (SPPBJ) ini Saudara diharuskan untuk menandatangani Surat Perjanjian paling lambat 14 (empat belas) hari kerja setelah diterbitkannya SPPBJ.');
-        $this->para($pdf,'Penunjukan ini diberikan berdasarkan hasil evaluasi terhadap penawaran Saudara tersebut diatas, apabila Saudara tidak bersedia menerima penunjukan ini akan dikenakan sanksi sesuai ketentuan dalam Peraturan Presiden No. 16 Tahun 2018 tentang Pengadaan Barang/Jasa beserta petunjuk teknisnya.');
+        $pdf->writeHTML('<table><tr><td width="60%">Nomor: '.$this->e($d['nomor_dokumen']??'-').'<br>Lampiran: -</td><td width="40%">Pasangkayu, '.$this->e($date).'</td></tr></table><p>Kepada Yth.<br>Direktur '.$this->e($this->v($c,'nama_penyedia_resmi','nama_penyedia')).'<br>di-<br>'.$this->e($this->v($c,'alamat_penyedia','alamat')).'</p><table width="100%" cellpadding="0" cellspacing="0"><tr><td width="10%" align="left">Perihal:</td><td width="90%" align="left">Penunjukan Penyedia untuk Pelaksanaan Paket Pekerjaan: '.$this->e($c['uraian_kontrak']).' - pada Kegiatan '.$this->e($this->v($c,'nama_sub_keg')).'</td></tr></table>',true,false,true,false,'');
+        $pdf->Ln(6);
+        $this->letterParagraph($pdf,'Dengan ini kami beritahukan bahwa penawaran Saudara nomor: SPSE Tanggal '.$date.' perihal Penawaran Pekerjaan '.$c['uraian_kontrak'].'. dengan nilai Negoisasi Harga sebesar '.(isset($amount)?$this->money($amount).' ('.ucwords($this->words((int)round($amount))).' Rupiah)':'Belum ditetapkan').'. kami nyatakan diterima/disetujui.');
+        $security=ProcurementPerformanceSecurityService::construction($c);
+        $followUp='Sebagai tindak lanjut dari Surat Penunjukan Penyedia Barang/Jasa (SPPBJ) ini Saudara diharuskan untuk ';
+        if($security){
+            $followUp.='menyerahkan Jaminan Pelaksanaan sebesar '.$this->money($security['amount']).' ('.ucwords($this->words((int)round($security['amount']))).' Rupiah), yaitu 5% (lima persen) dari '.$security['basis'].', dengan masa berlaku sekurang-kurangnya '.$security['days'].' ('.$this->words($security['days']).') hari kalender dan berlaku sampai dengan serah terima pertama pekerjaan (PHO), sebelum penandatanganan kontrak, serta ';
+        }
+        $form=ProcurementContractFormService::recommend($c);
+        $document=$form==='SPK'?'Surat Perintah Kerja (SPK)':($form==='SURAT_PESANAN'?'Surat Pesanan':'Surat Perjanjian');
+        $this->letterParagraph($pdf,$followUp.'menandatangani '.$document.' paling lambat 14 (empat belas) hari kerja setelah diterbitkannya SPPBJ.');
+        $this->letterParagraph($pdf,'Penunjukan ini diberikan berdasarkan hasil evaluasi terhadap penawaran Saudara tersebut diatas, apabila Saudara tidak bersedia menerima penunjukan ini akan dikenakan sanksi sesuai ketentuan dalam Peraturan Presiden No. 16 Tahun 2018 tentang Pengadaan Barang/Jasa beserta petunjuk teknisnya.');
         $this->signature($pdf,'Pejabat Pembuat Komitmen',$this->v($c,'nama_ppk_resmi','nama_ppk'),$this->v($c,'nip_ppk_resmi','nip_ppk'),$c['pangkat_ppk']??'');
         $pdf->writeHTML('<p>Tembusan Yth.:<br>1. Bupati Pasangkayu di Pasangkayu (sebagai laporan);<br>2. LPSE Pasangkayu di Pasangkayu<br>3. Pejabat Pengadaan<br>4. Pertinggal</p>',true,false,true,false,'');return $this->finish($pdf);
     }
@@ -252,7 +268,7 @@ final class ProcurementZipPdfService
             ['heading'=>'Untuk dan atas nama<br>'.$this->e($this->v($this->user,'nama_opd')).'<br>Pejabat Pembuat Komitmen','name'=>$this->v($c,'nama_ppk_resmi','nama_ppk'),'details'=>'NIP. '.$this->e($this->v($c,'nip_ppk_resmi','nip_ppk'))]
         ]));
         $pdf->AddPage($this->orientation);$pdf->SetFont($this->font,'',$this->size);$pdf->writeHTML($this->fields([['Lampiran','Berita Acara Rapat Persiapan Penandatanganan Kontrak dan Persiapan Pelaksanaan Pekerjaan'],['Nomor',$d['nomor_dokumen']??'-'],['Tanggal',$this->date($d,$c)],['Pekerjaan',$this->v($c,'uraian_kontrak')]]),true,false,true,false,'');
-        $agreements=['Nilai Kontrak termasuk Pajak Pertambahan Nilai (PPN) yang diperoleh berdasarkan total harga penawaran terkoreksi sebagaimana tercantum dalam Daftar Kuantitas dan Harga adalah sebesar '.$this->money($c['nilai_kontrak']??0).'.','Harga Satuan pekerjaan adalah sesuai hasil koreksi Aritmatik atau hasil Negosiasi Rekanan Penyedia Jasa pengadaan adalah tetap','Syarat-syarat umum Kontrak adalah tetap.','kerangka acuan kerja adalah tetap;','Berita Acara Rapat Persiapan ini merupakan bagian dari Dokumen Kontrak.'];$html='<table border="1" cellpadding="5"><tr style="font-weight:bold"><th width="8%">No.</th><th width="72%">KESEPAKATAN</th><th width="20%">PERNYATAAN PENYEDIA JASA</th></tr>';foreach($agreements as $i=>$agreement)$html.='<tr><td>'.($i+1).'</td><td>'.$this->e($agreement).'</td><td align="center">Setuju</td></tr>';$html.='</table><br><table border="1" cellpadding="6"><tr style="font-weight:bold"><th width="8%">No.</th><th width="42%">NAMA</th><th width="28%">JABATAN</th><th width="22%">TANDA TANGAN</th></tr><tr><td>1</td><td>'.$this->e($this->v($c,'nama_ppk_resmi','nama_ppk')).'<br>NIP. '.$this->e($this->v($c,'nip_ppk_resmi','nip_ppk')).'</td><td>Pengguna Jasa/Pejabat Pembuat Komitmen</td><td></td></tr><tr><td>2</td><td>'.$this->e($this->v($c,'direktur')).'</td><td>Direktur '.$this->e($this->v($c,'nama_penyedia_resmi','nama_penyedia')).'</td><td></td></tr><tr><td>3</td><td>'.$this->e($this->v($c,'nama_pptk')).'</td><td>PPTK/Tim Teknis</td><td></td></tr></table>';$pdf->writeHTML($html,true,false,true,false,'');return$this->finish($pdf);
+        $agreements=['Nilai Kontrak termasuk Pajak Pertambahan Nilai (PPN) yang diperoleh berdasarkan total harga penawaran terkoreksi sebagaimana tercantum dalam Daftar Kuantitas dan Harga adalah sebesar '.$this->money($c['nilai_kontrak']??0).'.','Harga Satuan pekerjaan adalah sesuai hasil koreksi Aritmatik atau hasil Negosiasi Rekanan Penyedia Jasa pengadaan adalah tetap','Syarat-syarat umum Kontrak adalah tetap.','kerangka acuan kerja adalah tetap;','Berita Acara Rapat Persiapan ini merupakan bagian dari Dokumen Kontrak.'];$html='<table border="1" cellpadding="5"><tr style="font-weight:bold"><th width="8%">No.</th><th width="72%">KESEPAKATAN</th><th width="20%">PERNYATAAN PENYEDIA JASA</th></tr>';foreach($agreements as $i=>$agreement)$html.='<tr><td>'.($i+1).'</td><td>'.$this->e($agreement).'</td><td align="center">Setuju</td></tr>';$html.='</table>';$pdf->writeHTML($html,true,false,true,false,'');$pdf->Ln(8);$html='<table border="1" cellpadding="6"><tr style="font-weight:bold"><th width="8%">No.</th><th width="42%">NAMA</th><th width="28%">JABATAN</th><th width="22%">TANDA TANGAN</th></tr><tr><td>1</td><td>'.$this->e($this->v($c,'nama_ppk_resmi','nama_ppk')).'<br>NIP. '.$this->e($this->v($c,'nip_ppk_resmi','nip_ppk')).'</td><td>Pengguna Jasa/Pejabat Pembuat Komitmen</td><td></td></tr><tr><td>2</td><td>'.$this->e($this->v($c,'direktur')).'</td><td>Direktur '.$this->e($this->v($c,'nama_penyedia_resmi','nama_penyedia')).'</td><td></td></tr><tr><td>3</td><td>'.$this->e($this->v($c,'nama_pptk')).'</td><td>PPTK/Tim Teknis</td><td></td></tr></table>';$pdf->writeHTML($html,true,false,true,false,'');return$this->finish($pdf);
     }
     private function dayWords(array $d,array $c):string
     {

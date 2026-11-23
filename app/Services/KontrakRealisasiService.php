@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__.'/BudgetApprovalService.php';
+require_once __DIR__.'/ContractListReportService.php';
 require_once __DIR__.'/RabTotalService.php';
 require_once __DIR__.'/RabImportService.php';
 require_once __DIR__ . '/ExcelPresentationService.php';
@@ -585,6 +586,8 @@ class KontrakRealisasiService
     if (!in_array($type, ['SSKK', 'SSUK'], true)) throw new InvalidArgumentException('Jenis syarat kontrak tidak valid');
     $data = $this->delivery($contractId);
     $d = $data['contract'];
+    $d['print_settings']=ContractPrintSettingsService::get($contractId);
+    ProcurementMiniCompetitionTermsService::variant($d);
     $master = $this->db->query('SELECT id,kode,nama,orientasi FROM master_dokumen_pengadaan_neo WHERE kode=? AND aktif=1 AND is_deleted=0 ORDER BY id DESC LIMIT 1', [$type])->fetch() ?: [];
     $sections = $master ? $this->db->query('SELECT kode_bagian,judul,urutan,isi_template isi FROM master_dokumen_pengadaan_bagian_neo WHERE master_id=? AND is_deleted=0 ORDER BY urutan,id', [(int)$master['id']])->fetchAll() : [];
     $document = [
@@ -794,14 +797,14 @@ class KontrakRealisasiService
   public function reportRows(): array
   {
     [$w, $o, $y] = $this->scope();
-    $sql = "SELECT k.id,k.tahap,k.kd_sub_keg,k.nomor_kontrak,k.uraian_kontrak,COALESCE(r.nama_perusahaan,k.nama_penyedia) penyedia,k.total_anggaran,k.nilai_kontrak,COALESCE(SUM(dr.jumlah),0) realisasi,COALESCE(MAX(dr.progress_fisik),0) progress_fisik,k.status_kontrak FROM kontrak_neo k LEFT JOIN rekanan_neo r ON r.id=k.rekanan_id LEFT JOIN daftar_realisasi_neo dr ON dr.kontrak_id=k.id AND dr.is_deleted=0 WHERE k.kd_wilayah=? AND k.tahun=? AND k.is_deleted=0";
+    $sql = "SELECT k.*,COALESCE(r.nama_perusahaan,k.nama_penyedia) penyedia,COALESCE(SUM(dr.jumlah),0) realisasi,COALESCE(MAX(dr.progress_fisik),0) progress_fisik FROM kontrak_neo k LEFT JOIN rekanan_neo r ON r.id=k.rekanan_id LEFT JOIN daftar_realisasi_neo dr ON dr.kontrak_id=k.id AND dr.is_deleted=0 WHERE k.kd_wilayah=? AND k.tahun=? AND k.is_deleted=0";
     $params = [$w, $y];
     if ($o && $o !== '0') {
       $sql .= ' AND k.kd_opd=?';
       $params[] = $o;
     }
     [$accessSql,$accessParams]=ContractAccessService::condition($this->user);$sql.=$accessSql;array_push($params,...$accessParams);
-    return $this->db->query($sql . ' GROUP BY k.id ORDER BY k.nomor_kontrak', $params)->fetchAll();
+    return ContractListReportService::enrich($this->db->query($sql . ' GROUP BY k.id ORDER BY k.nomor_kontrak', $params)->fetchAll(),$this->db);
   }
 
   public function reportPdf(): string
@@ -840,6 +843,7 @@ class KontrakRealisasiService
     }
     if (!$rows) $html .= '<tr><td colspan="9" align="center">Tidak ada data</td></tr>';
     $pdf->writeHTML($html . '</table>', true, false, true, false, '');
+    ContractListReportService::appendPdf($pdf,$rows);
     return $pdf->Output('', 'S');
   }
 
@@ -869,6 +873,7 @@ class KontrakRealisasiService
       $sheet->addChart($chart);
     }
     PageSetupService::applyExcel($sheet,PageSetupService::current($this->user),'L');
+    ContractListReportService::addSheet($book,$rows,$this->user);
     ExcelPresentationService::apply($book,$this->user);
     $tmp = tempnam(sys_get_temp_dir(), 'phase4_') . '.xlsx';
     (new Xlsx($book))->setIncludeCharts(true)->save($tmp);

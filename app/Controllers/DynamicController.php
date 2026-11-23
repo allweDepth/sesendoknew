@@ -6,6 +6,7 @@ require_once __DIR__ . '/../Core/DB.php';
 require_once __DIR__ . '/../Services/JsonResponse.php';
 require_once __DIR__ . '/../Services/PageSetupService.php';
 require_once __DIR__ . '/../Services/ExcelPresentationService.php';
+require_once __DIR__.'/../Services/ContractListReportService.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -114,6 +115,7 @@ class DynamicController
     }
 
     $data = $decoded['data'] ?? [];
+    if($tableKey==='kontrak')$data=ContractListReportService::exportRows(ContractListReportService::enrich($data,DB::getInstance()));
 
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
@@ -122,7 +124,7 @@ class DynamicController
     if (!empty($data)) {
       $headers = array_keys($data[0]);
     } else {
-      $headers = ['Keterangan'];
+      $headers = $tableKey==='kontrak'?array_keys(ContractListReportService::COLUMNS):['Keterangan'];
     }
 
     $totalColumns = count($headers);
@@ -131,7 +133,7 @@ class DynamicController
     // HEADER
     foreach ($headers as $i => $header) {
       $col = Coordinate::stringFromColumnIndex($i + 1);
-      $sheet->setCellValue($col . '1', strtoupper($header));
+      $sheet->setCellValue($col . '1', $tableKey==='kontrak'?(ContractListReportService::COLUMNS[$header]??strtoupper($header)):strtoupper($header));
     }
 
     // DATA

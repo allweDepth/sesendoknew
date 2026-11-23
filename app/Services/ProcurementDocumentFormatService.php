@@ -73,12 +73,12 @@ final class ProcurementDocumentFormatService
     public static function signatureColumns(array $columns):string
     {
         $width=100/count($columns);
-        $html='<table nobr="true" width="100%" cellpadding="4"><tr>';
+        $html='<table nobr="true" width="100%" cellpadding="0" cellspacing="0"><tr>';
         foreach($columns as $column)$html.='<td width="'.$width.'%" align="center" valign="top">'.$column['heading'].'</td>';
-        $html.='</tr><tr><td colspan="'.count($columns).'"><br><br></td></tr><tr>';
-        foreach($columns as $column)$html.='<td width="'.$width.'%" align="center" valign="top"><b><u>'.htmlspecialchars($column['name'],ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8').'</u></b></td>';
-        $html.='</tr><tr>';
-        foreach($columns as $column)$html.='<td width="'.$width.'%" align="center" valign="top">'.($column['details']??'').'</td>';
+        $html.='</tr><tr><td colspan="'.count($columns).'" height="18mm"></td></tr><tr>';
+        // Keep the name, NIP and position in one compact cell; table padding
+        // must not add another blank line between the name and its details.
+        foreach($columns as $column)$html.='<td width="'.$width.'%" align="center" valign="top" style="line-height:120%;"><b><u>'.htmlspecialchars($column['name'],ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8').'</u></b>'.(!empty($column['details'])?'<br>'.$column['details']:'').'</td>';
         return $html.'</tr></table>';
     }
     public static function supports(string $code,array $c):bool

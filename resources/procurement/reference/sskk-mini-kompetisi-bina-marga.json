@@ -1,0 +1,156 @@
+[
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "4.1 & 4.2 | Korespondensi | Alamat Para Pihak sebagai berikut:\nSatuan Kerja Pejabat Penandatangan Kontrak :\t[diisi nama satuan\nkerja Pejabat Penandatangan Kontrak]\nNama\t:\t[diisi nama Pejabat Penandatangan Kontrak]\nAlamat\t:\t[diisi alamat Pejabat Penandatangan Kontrak]\nWebsite\t:\t[diisi website Pejabat Penandatangan Kontrak]\nE-mail\t:\t[diisi email Pejabat Penandatangan Kontrak]\nFaksimili\t:\t.......... [diisi nomor faksimili Pejabat Penandatangan Kontrak]\nPenyedia\t[diisi nama badan usaha]\nNama\t:\t[diisi nama yang ttd surat perjanjian]\nAlamat\t:\t[diisi alamat Penyedia]\nE-mail\t:\t[diisi email Penyedia]\nFaksimili\t:\t[diisi nomor faksimili Penyedia]"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "4.2 & 5.1 | Wakil Sah Para Pihak | Wakil Sah Para Pihak sebagai berikut:\nUntuk Pejabat Penandatangan Kontrak:\nNama\t: .......... [diisi nama yang ditunjuk menjadi Wakil Sah Pejabat Penandatangan Kontrak]\nBerdasarkan Surat Keputusan Pejabat Penandatangan Kontrak …… nomor .…. tanggal ……. [diisi nomor dan tanggal SK pengangkatan Wakil Sah Pejabat Penandatangan Kontrak]\nUntuk Penyedia:\nNama\t: .......... [diisi nama yang ditunjuk menjadi Wakil Sah Penyedia]\nBerdasarkan Surat Keputusan …… nomor .…. tanggal ……. [diisi nomor dan tanggal SK pengangkatan Wakil Sah Penyedia]"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "6 | Lokasi\nPelaksanaan Pekerjaan | Lokasi Pekerjaan: ........ [diisi alamat, kabupaten/kota, serta provinsi pekerjaan/kegiatan yang dilaksanakan]"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "7.3.b &\n7.3.c\n45.4 &\n45.6 | Pencairan Jaminan | Jaminan dicairkan dan disetorkan pada\t[diisi nama kantor Kas\nNegara]"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "28.1 | Masa Pelaksanaan | Masa Pelaksanaan selama\t[diisi jumlah hari kalender dalam angka\ndan huruf] hari kalender terhitung sejak Tanggal Mulai Kerja yang tercantum dalam SPMK."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "25 | Periode Mobilisasi | Periode mobilisasi harus diselesaikan dalam jangka waktu …. hari kalender terhitung Tanggal Mulai Kerja, termasuk penyediaan  Fasilitas dan Pelayanan Pengendalian Mutu yang terdiri dari tenaga ahli, tenaga terampil, dan sumber daya uji mutu lainnya. [ditentukan oleh PPK]"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "34.8 | Masa Pemeliharaan | Masa Pemeliharaan berlaku selama\t[diisi jumlah hari kalender dalam\nangka dan huruf]\thari kalender terhitung sejak Tanggal Penyerahan Pertama Pekerjaan (PHO)."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "36.1 | Gambar As Built dan Pedoman Pengoperasian dan Perawatan/\nPemeliharaan | Gambar ”As built” diserahkan paling lambat ..... (...... dalam huruf\t)\ndan/atau pedoman pengoperasian dan perawatan/pemeliharaan harus diserahkan paling lambat ..... (...... dalam huruf\t) hari kalender setelah\nTanggal Penyerahan Pertama Pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "39.7 | Penyesuaian Harga | Penyesuaian  harga  ……………..  [dipilih:  diberikan/tidak  diberikan]\ndalam hal diberikan maka rumusannya sebagai berikut:\n\nRumusan tersebut diatas memperhatikan hal-hal sebagai berikut:\nPenetapan koefisien bahan, tenaga kerja, alat kerja, bahan bakar, dan sebagainya ditetapkan seperti contoh sebagai berikut:\n\nKoefisien komponen kontrak ditetapkan oleh Pejabat Penandatangan Kontrak dari perbandingan antara harga bahan, tenaga kerja, alat kerja, dan sebagainya (apabila ada) terhadap Harga Satuan dari pembobotan Pagu Paket Pengadaan dan dicantumkan dalam Dokumen Kompetisi (Rancangan Kontrak).\nIndeks harga yang digunakan bersumber dari penerbitan BPS.\nDalam hal indeks harga tidak dimuat dalam penerbitan BPS, digunakan indeks harga yang dikeluarkan oleh instansi teknis.\nRumusan penyesuaian Harga Kontrak ditetapkan sebagai berikut:\nPn  -  (Hn1xV1)+(Hn2xV2)+(Hn3xV3)+  dst\nPn - Harga Kontrak setelah dilakukan penyesuaian Harga Satuan;\nHn - Harga Satuan baru setiap jenis komponen pekerjaan setelah dilakukan penyesuaian harga menggunakan rumusan penyesuaian Harga Satuan;\nV - Volume setiap jenis komponen pekerjaan yang dilaksanakan.\nPenyedia dapat mengajukan tagihan secara berkala paling cepat 6 (enam) bulan setelah pekerjaan yang diberikan penyesuaian harga tersebut dilaksanakan.\nPembayaran penyesuaian harga dilakukan oleh Pejabat Penandatangan Kontrak, apabila Penyedia telah mengajukan tagihan disertai perhitungan beserta data-data dan telah dilakukan audit sesuai dengan ketentuan peraturan perundang-undangan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "46.b | Pembayaran Tagihan | Batas akhir waktu yang disepakati untuk penerbitan SPP oleh Pejabat Penandatangan Kontrak  untuk pembayaran tagihan angsuran adalah\n........... (...... dalam huruf .........) hari kerja terhitung sejak tagihan dan kelengkapan dokumen penunjang yang tidak diperselisihkan diterima oleh Pejabat Penandatangan Kontrak ."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "52.(j) | Hak dan Kewajiban Penyedia | Hak dan kewajiban Penyedia :\n……….\n……….\nDst\n[diisi hak dan kewajiban Penyedia yang timbul akibat lingkup pekerjaan selain yang sudah tercantum dalam SSUK]"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "59.3 | Tindakan Penyedia yang Mensyaratkan Persetujuan Pejabat Penandatangan Kontrak | Tindakan lain oleh Penyedia yang memerlukan persetujuan Pejabat Penandatangan Kontrak adalah:\nMenambah\tdan/atau\tmengurangi\tvolume\tpekerjaan\tyang menimbulkan perubahan harga kontrak;\nMenambah jenis item pekerjaan baru;\nMenambah dan/atau mengurangi harga kontrak;\nMengubah jadwal pelaksanaan pekerjaan;\nPersetujuan pembayaran prestasi pekerjaan."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "59.3 | Tindakan Penyedia yang Mensyaratkan Persetujuan Pengawas Pekerjaan | Tindakan lain oleh Penyedia yang memerlukan persetujuan Pengawas Pekerjaan adalah:\nMetode dan izin pelaksanaan pekerjaan;\nRencana Mutu Pekerjaan Konstruksi (RMPK);\nPengujian mutu bahan dan hasil pekerjaan yang termasuk titik tunggu setiap tahapan pekerjaan (holding points);\nPerbaikan cacat mutu pekerjaan;\nHasil prestasi pekerjaan di lapangan yang memenuhi mutu sesuai persyaratan kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "61 | Kepemilikan Dokumen | Penyedia diperbolehkan menggunakan salinan dokumen dan piranti lunak yang dihasilkan dari Pekerjaan Konstruksi ini dengan pembatasan sebagai berikut: .................... [diisi batasan/ketentuan yang dibolehkan dalam penggunaannya, misalnya: untuk penelitian/riset setelah mendapat persetujuan tertulis dari Pejabat Penandatangan Kontrak]"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "68 | Fasilitas | Pejabat Penandatangan Kontrak akan memberikan fasilitas berupa :\n.\t[diisi fasilitas milik Pejabat Penandatangan Kontrak yang akan\ndiberikan kepada Penyedia untuk kelancaran pelaksanan pekerjaan ini (apabila ada)]"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "69.1.(h) | Peristiwa Kompensasi | Termasuk Peristiwa Kompensasi yang dapat diberikan kepada Penyedia adalah ..................... [diisi apabila ada Peristiwa Kompensasi lain, selain yang telah tertuang dalam SSUK]"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": " | Sumber Pembiayaan | Kontrak Pengadaan Pekerjaan Konstruksi ini dibiayai dari\n\tTahun Anggaran"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "73.1.(e) | Besaran Uang Muka | Uang muka diberikan paling tinggi sebesar .....% (.....dalam huruf\t) dari\nHarga Kontrak."
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "73.2.(d) | Pembayaran Prestasi Pekerjaan | Pembayaran prestasi pekerjaan dilakukan dengan cara: ….. [diisi dengan memilih Termin/Bulanan]\nDokumen penunjang yang disyaratkan untuk mengajukan tagihan pembayaran prestasi pekerjaan :\n……….\n……….\nDst\n[diisi dokumen yang disyaratkan]"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "73.3.(e) | Pembayaran Bahan dan/atau Peralatan | Penentuan dan besaran pembayaran untuk bahan dan/atau peralatan yang menjadi bagian permanen dari pekerjaan utama (material on site), ditetapkan sebagai berikut:\n....[diisi bahan/peralatan].... dibayar\t% dari harga satuan pekerjaan;\n....[diisi bahan/peralatan].... dibayar\t% dari harga satuan pekerjaan;\n3\tdst.\n\n[contoh yang termasuk material on site peralatan: eskalator, lift, pompa air stasioner, turbin, peralatan elektromekanik; bahan fabrikasi: sheet pile, geosintetik, konduktor, tower, insulator,wiremesh pabrikasi\nbahan jadi: beton pracetak]\n[contoh yang tidak termasuk material on site: pasir, batu, semen, aspal, besi tulangan]"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "73.4.(c) | Denda akibat Keterlambatan | Untuk pekerjaan ini besar denda keterlambatan untuk setiap hari keterlambatan adalah 1/1000 (satu perseribu) dari\t(sebelum\nPPN) [diisi dengan memilih salah satu dari Harga Kontrak atau harga Bagian Kontrak yang tercantum dalam Kontrak dan belum diserahterimakan apabila ditetapkan serah terima pekerjaan secara parsial]"
+  },
+  {
+    "type": "paragraph",
+    "align": "left",
+    "format": "sskk-row",
+    "style": [],
+    "text": "81.2 | Umur Konstruksi dan Pertanggungan terhadap Kegagalan Bangunan | Bangunan Hasil Pekerjaan memiliki Umur Konstruksi selama ........ (.........dalam huruf...........) tahun sejak Tanggal Penyerahan Akhir Pekerjaan.\n[diisi sesuai dengan yang tertuang dalam dokumen perancangan]\nPertanggungan terhadap Kegagalan Bangunan ditetapkan selama ........ (.........dalam huruf...........) tahun sejak Tanggal Penyerahan Akhir Pekerjaan.\n[diisi sesuai dengan umur rencana pada huruf a apabila umur konstruksinya tidak lebih dari 10 (sepuluh) tahun]"
+  }
+]
