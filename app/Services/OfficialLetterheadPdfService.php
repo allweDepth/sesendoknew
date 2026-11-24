@@ -1,13 +1,29 @@
 <?php
 require_once __DIR__.'/../Core/DB.php';
+require_once __DIR__.'/ProcurementDocumentFormatService.php';
 
 final class OfficialLetterheadPdfService
 {
+    public static function forContract(array $user,array $contract):array
+    {
+        foreach(['kd_wilayah','kd_opd','tahun'] as $key)if(isset($contract[$key]))$user[$key]=$contract[$key];
+        $org=DB::getInstance()->query('SELECT uraian,alamat FROM organisasi_neo WHERE kd_wilayah=? AND kode=? AND is_deleted=0 ORDER BY id DESC LIMIT 1',[$user['kd_wilayah']??'', $user['kd_opd']??''])->fetch();
+        if($org){$user['nama_opd']=$user['nama_org']=$org['uraian'];$user['alamat_opd']=$org['alamat']??'';}
+        $kop=self::settings($user);
+        foreach(['nama_opd'=>'nama_opd','nama_pemerintah'=>'nama_pemda','alamat'=>'alamat_opd'] as $from=>$to)if(isset($kop[$from]))$user[$to]=$kop[$from];
+        // Letterhead capitalization is separate from names in the document body.
+        foreach(['nama_opd','nama_org'] as $key)if(!empty($user[$key]))$user[$key]=ProcurementDocumentFormatService::bodyOpdName($user[$key]);
+        return $user;
+    }
     public static function settings(array $user):array
     {
         $db=DB::getInstance();
         $kop=$db->query('SELECT * FROM kop_surat_neo WHERE kd_wilayah=? AND kd_opd=? AND tahun=? AND aktif=1 AND is_deleted=0 ORDER BY id DESC LIMIT 1',[$user['kd_wilayah']??'', $user['kd_opd']??'', $user['tahun']??date('Y')])->fetch()?:[];
-        if(!self::imagePath($kop['logo_kiri']??'')){
+        if(!$kop){
+            $org=$db->query('SELECT uraian,alamat FROM organisasi_neo WHERE kd_wilayah=? AND kode=? AND is_deleted=0 ORDER BY id DESC LIMIT 1',[$user['kd_wilayah']??'', $user['kd_opd']??''])->fetch();
+            if($org)$kop=['nama_opd'=>$org['uraian'],'alamat'=>$org['alamat']??''];
+        }
+        if(!self::imagePath($kop['logo_kiri']??'')&&empty($kop['gunakan_gambar_kop'])){
             $region=$db->query('SELECT logo FROM wilayah_neo WHERE kode=? AND is_deleted=0 LIMIT 1',[$user['kd_wilayah']??''])->fetch();
             if(self::imagePath($region['logo']??''))$kop['logo_kiri']=$region['logo'];
             elseif(($user['kd_wilayah']??'')==='76.01')$kop['logo_kiri']='public/assets/img/umum/logo.png';
@@ -36,7 +52,7 @@ final class OfficialLetterheadPdfService
         try{$kop=self::settings($user);}catch(Throwable $e){$kop=[];}
         $left=(float)$pdf->getMargins()['left'];$right=(float)$pdf->getMargins()['right'];$width=$pdf->getPageWidth()-$left-$right;$y=max((float)$pdf->GetY(),10.0);
         $full=self::imagePath($kop['gambar_kop']??'');
-        if(!empty($kop['gunakan_gambar_kop'])&&$full){self::image($pdf,$full,$left,$y,$width);$pdf->SetXY($left,$y+30);return;}
+        if(!empty($kop['gunakan_gambar_kop'])&&$full){$size=getimagesize($full);$height=$size&&$size[0]>0?$width*$size[1]/$size[0]:30;self::image($pdf,$full,$left,$y,$width);$pdf->SetXY($left,$y+$height+4);return;}
         $logoWidth=20.0;
         $leftLogo=self::imagePath($kop['logo_kiri']??'');$rightLogo=self::imagePath($kop['logo_kanan']??'');
         foreach([[$leftLogo,$left],[$rightLogo,$left+$width-$logoWidth]] as [$path,$x])if($path)self::image($pdf,$path,$x,$y,$logoWidth,$logoWidth);

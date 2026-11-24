@@ -18,3 +18,24 @@ foreach([array_replace($c,['jenis_pengadaan'=>'BARANG']),array_replace($c,['meto
 miniCheck(ProcurementMiniCompetitionTermsService::eligible(array_replace($c,['nilai_kontrak'=>35000000])),'Surat pesanan konstruksi tidak tersedia');
 miniCheck(ContractPrintSettingsService::validate([])['terms_variant']==='STANDARD','Dokumen lama bukan standar');
 echo "PASS: SSUK lengkap, nomor pasal SSKK berpasangan, pengisian identitas, standar lama, batas jenis kontrak dan validasi pilihan.\n";
+
+// Printed PDF labels are authoritative; a heading must never interrupt another clause.
+$current=0;$subclauses=[];
+foreach($ssuk as$row){
+ if($row['format']==='clause-heading'&&preg_match('/^(\d+)\./',$row['text'],$m))$current=(int)$m[1];
+ elseif($row['format']!=='clause-heading'&&preg_match('/^(\d+)\.(\d+)\.?\s/',$row['text'],$m)){
+  miniCheck((int)$m[1]===$current,'Ayat berada di bawah judul pasal yang salah: '.$row['text']);$subclauses[]=$m[1].'.'.$m[2];
+ }
+}
+foreach(['32.1','33.1','41.1','45.7','47.2','55.4','56.1','73.4','83.2']as$n)miniCheck(in_array($n,$subclauses,true),'Ayat cetak hilang: '.$n);
+foreach(['16. Penemuan-penemuan','61. Kepemilikan Dokumen','64. Alih Pengalaman/Keahlian']as$heading)miniCheck(in_array($heading,array_column($ssuk,'text'),true),'Judul menyatu dengan isi: '.$heading);
+$source=ProcurementMiniCompetitionTermsService::ssukSource();
+miniCheck(hash_file('sha256',__DIR__.'/../resources/procurement/reference/ssuk-mini-kompetisi-bina-marga.json')===$source['content_sha256'],'Naskah berbeda dari hasil verifikasi PDF');
+$old=['kode_dokumen'=>'SSUK','status'=>'DRAFT','data_isian'=>json_encode(['terms_variant'=>'MINI_KOMPETISI']),'sections'=>[['kode_bagian'=>'ISI','isi'=>json_encode([['text'=>'1. LINGKUP PEKERJAAN']])]]];
+$fixed=ProcurementMiniCompetitionTermsService::ssukDocument($old,$c);
+miniCheck(json_decode($fixed['sections'][0]['isi'],true)===$ssuk,'Draft berlabel mini masih memuat naskah SPK');
+miniCheck(ProcurementMiniCompetitionTermsService::ssukDocument($fixed,$c)===$fixed,'Normalisasi SSUK tidak idempoten');
+foreach(['DIAJUKAN','DISETUJUI','DITANDATANGANI']as$status){$frozen=array_replace($old,['status'=>$status]);miniCheck(ProcurementMiniCompetitionTermsService::ssukDocument($frozen,$c)===$frozen,'Snapshot non-draft berubah');}
+$standard=array_replace($old,['data_isian'=>'{"terms_variant":"STANDARD"}']);
+miniCheck(ProcurementMiniCompetitionTermsService::ssukDocument($standard,$c)===$standard,'SSUK standar ikut diganti');
+echo "PASS: ayat dan judul sesuai PDF, draft SPK lama dipulihkan, snapshot non-draft dan standar dipertahankan.\n";

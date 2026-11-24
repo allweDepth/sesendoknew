@@ -21,7 +21,11 @@ try:
                 assert border_bottom - max(w['bottom'] for w in words) < 16, (variant, number, 'stretched empty cell')
                 assert 'Pasal' in page.extract_text() and 'Ketentuan' in page.extract_text(), (variant, number, 'missing repeated header')
                 content.append(page.extract_text())
-            assert 'Umur Konstruksi' in ' '.join(content)
+            # PDF extraction interleaves wrapped title and data columns; verify
+            # the final clause identifier rather than a phrase crossing lines.
+            combined = ' '.join(content)
+            assert ('81.2' if variant == 'MINI_KOMPETISI' else '78.2') in combined
+            assert 'Umur' in combined and 'Kegagalan' in combined
             print(f'PASS: {variant}: {len(pdf.pages)} pages, closed rows, no empty cell tails, repeated headers.')
 finally:
     for path in files.values():

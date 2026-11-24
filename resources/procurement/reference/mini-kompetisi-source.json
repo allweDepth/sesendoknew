@@ -14,12 +14,27 @@
     46
   ],
   "notes": [
-    "Penomoran Word diubah menjadi teks agar tetap tersedia pada editor dan PDF.",
     "Isian yang belum ditetapkan pada contoh SSKK dipertahankan untuk disunting sesuai dokumen paket.",
-    "Pasal 3 dan 4 dipulihkan dari tabel dalam SSUK; kalimat lokasi ditempatkan di bawah Pasal 6.",
-    "Judul pasal dipisahkan dari kalimat ayat pertama; judul yang menyela lanjutan pasal sebelumnya dipindahkan sebelum ayatnya sendiri."
+    "SSUK dibangun ulang dari nomor dan urutan cetak PDF halaman 97–134; judul kolom kiri dipisahkan dari isi kolom kanan. Ayat lanjutan lintas halaman disatukan, daftar dan ayat tersendiri dipertahankan."
   ],
   "ssuk_tables": [
     41
-  ]
+  ],
+  "ssuk_verified_pdf": {
+    "reference": "SE Dirjen Bina Marga Nomor 03/SE/Db/2025",
+    "file_name": "Surat-Edaran-Direktur-Jenderal-Bina-Marga-Nomor-03SEDb2025-tentang-Pengadaan-Pekerjaan-Konstruksi-Jalan-dan-Jembatan-pada-Katalog-Elektronik-Sektoral-Konstruksi-Bidang-Pekerjaan-Umum.pdf",
+    "sha256": "9fd679045f2e71a2a06e3680acf59222e9437d57c20c390ae206c6386d99aa41",
+    "pdf_pages": [
+      97,
+      134
+    ],
+    "printed_pages": [
+      48,
+      85
+    ],
+    "main_clauses": 83,
+    "paragraphs": 707,
+    "content_sha256": "3c5357a1acd466f6011470e2c777d7a01bd595545da5c78e264fe9d6334c4b88",
+    "version": "2026-11-24-pdf-verified"
+  }
 }

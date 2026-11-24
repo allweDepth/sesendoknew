@@ -23,6 +23,8 @@ final class ProcurementFixedPdfService
 
     public function render(array $document,array $contract,array $setup):string
     {
+        $this->user=OfficialLetterheadPdfService::forContract($this->user,$contract);
+        foreach(['nama_opd','alamat_opd'] as $field)if(empty($contract[$field]))$contract[$field]=$this->user[$field]??'';
         $this->user=array_merge($this->user,array_intersect_key($contract,array_flip(['nama_pejabat_pengadaan','nip_pejabat_pengadaan','pangkat_pejabat_pengadaan'])));
         $code=strtoupper((string)($document['kode_dokumen']??''));
         $contract['print_settings']=ContractPrintSettingsService::validate($contract['print_settings']??ContractPrintSettingsService::get((int)($contract['id']??0)));
@@ -51,6 +53,7 @@ final class ProcurementFixedPdfService
 
     public function cover(TCPDF $pdf,array $c,array $setup,?string $form=null):void
     {
+        $this->user=OfficialLetterheadPdfService::forContract($this->user,$c);
         $form=$form??ProcurementContractFormService::recommend($c);
         ProcurementDocumentFormatService::registerFonts($pdf);PageSetupService::applyPdf($pdf,$setup,[18,15,18,18]);$pdf->AddPage(PageSetupService::orientation($setup,'P'));
         $coverFont=$setup['font']??ProcurementDocumentFormatService::BODY_FONT;
@@ -445,6 +448,7 @@ final class ProcurementFixedPdfService
 
     private function ssuk(array $d,array $c,array $setup):string
     {
+        $d=ProcurementMiniCompetitionTermsService::ssukDocument($d,$c);
         $form=ProcurementContractFormService::recommend($c);
         $pdf=$this->termsPage($setup,$c,$form==='SPK'?"SYARAT UMUM\nSURAT PERINTAH KERJA (SPK)":'SYARAT-SYARAT UMUM KONTRAK');
         $rows=$this->paragraphs($d,$c);

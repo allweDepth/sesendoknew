@@ -25,6 +25,7 @@ final class ProcurementZipPdfService
     private function finish(TCPDF $pdf):string{return $this->sharedPdf?'':$pdf->Output('','S');}
     public function render(string $code,array $d,array $c,array $setup):string
     {
+        $this->user=OfficialLetterheadPdfService::forContract($this->user,$c);
         $this->printSettings=ContractPrintSettingsService::validate($setup);
         $this->font=(string)($setup['font']??'helvetica');$this->size=(float)($setup['font_size']??10);
         return match(strtoupper($code)){

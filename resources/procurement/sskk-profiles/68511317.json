@@ -1,0 +1,221 @@
+{
+  "rup": "68511317",
+  "year": 2026,
+  "region": "76.01",
+  "source": {
+    "title": "DOKUMEN PENGADAAN MINI KOMPETISI JALAN RIGID SARASA",
+    "file_name": "DOKUMEN PENGADAAN MINI KOMPETISI JALAN RIGID SARASA.docx",
+    "section": "III. Syarat-Syarat Khusus Kontrak dan ketentuan tambahan paket",
+    "sha256": "d86e46442fd3986afc51a2ab255173a83bf8003ab4ccbf464a315162a1a7c140",
+    "path": "/Users/nabiila_inayah/Library/Mobile Documents/com~apple~CloudDocs/2026/Pengadaan 2026/Binamarga/Perubahan/Dokumen e katalog OK/DOKUMEN PENGADAAN MINI KOMPETISI JALAN RIGID SARASA.docx"
+  },
+  "maintenance_months": 6,
+  "advance_percent": 30,
+  "payment_method": "TERMIN",
+  "progress_percent": [
+    30,
+    60,
+    100
+  ],
+  "advance_recovery_percent": [
+    9,
+    9,
+    12
+  ],
+  "net_payment_percent": [
+    21,
+    21,
+    28
+  ],
+  "rows": [
+    {
+      "clause": "4.1 & 4.2",
+      "title": "Korespondensi",
+      "value": "Alamat Para Pihak sebagai berikut:\nSatuan Kerja Pejabat Penandatangan Kontrak: Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu\nNama\t: SYAMSUNAR, SP, MM\nAlamat\t: Jalan Pangeran Antasari No 1 Pasangkayu Kode Pos 91571\nWebsite: https://katalog.inaproc.id/\t\nE-mail\t: [diisi alamat e-mail resmi Pejabat Penandatangan Kontrak]\nFaksimili\t: [diisi nomor faksimili resmi apabila tersedia]\nTelepon\t: [diisi nomor telepon resmi]\nPenyedia\t: [diisi nama badan usaha penyedia yang ditetapkan]\nNama\t: [diisi nama penandatangan Surat Perjanjian/Surat Pesanan]\nAlamat\t: [diisi alamat Penyedia]\nE-mail\t: [diisi alamat e-mail Penyedia]\nFaksimili\t: [diisi nomor faksimili Penyedia apabila tersedia]\nTelepon\t: [diisi nomor telepon Penyedia]\nKetentuan paket:\nKorespondensi pelaksanaan kontrak dilakukan melalui alamat Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Pasangkayu, Jalan Pangeran Antasari No 1 Pasangkayu Kode Pos 91571, dan sarana komunikasi resmi paket pada aplikasi Katalog Elektronik. Data korespondensi Penyedia mengikuti Surat Pesanan.",
+      "source_table": 130,
+      "source_row": 2
+    },
+    {
+      "clause": "4.2 & 5.1",
+      "title": "Wakil Sah Para Pihak",
+      "value": "Wakil Sah Para Pihak sebagai berikut:\nUntuk Pejabat Penandatangan Kontrak:\nNama\t: [diisi nama Wakil Sah Pejabat Penandatangan Kontrak yang ditunjuk]\nDasar SK\t: [diisi pejabat penerbit Surat Keputusan]\nNomor SK\t: [diisi nomor Surat Keputusan pengangkatan Wakil Sah]\nTanggal SK\t: [diisi tanggal Surat Keputusan pengangkatan Wakil Sah]\nUntuk Penyedia:\nNama\t: [diisi nama Wakil Sah Penyedia yang ditunjuk]\nDasar SK\t: [diisi penerbit Surat Keputusan]\nNomor SK\t: [diisi nomor Surat Keputusan pengangkatan Wakil Sah Penyedia]\nTanggal SK\t: [diisi tanggal Surat Keputusan pengangkatan Wakil Sah Penyedia]\nRuang kewenangan masing-masing wakil ditetapkan secara tertulis. Wakil tidak dapat mengubah kontrak tanpa kewenangan yang sah.",
+      "source_table": 130,
+      "source_row": 3
+    },
+    {
+      "clause": "6",
+      "title": "Lokasi Pelaksanaan Pekerjaan",
+      "value": "Lokasi Pekerjaan: Desa Sarasa, Kecamatan Dapurang, Kabupaten Pasangkayu, Provinsi Sulawesi Barat\nKetentuan paket:\nLokasi pekerjaan: Desa Sarasa, Kecamatan Dapurang, Kabupaten Pasangkayu, Provinsi Sulawesi Barat. Penyerahan lokasi dilakukan melalui pemeriksaan bersama dan berita acara. Penyedia menjaga akses pengguna jalan, warga, pengawas dan pihak berwenang serta melindungi utilitas. Rujukan SSUK 6, 17 dan 19.",
+      "source_table": 130,
+      "source_row": 4
+    },
+    {
+      "clause": "7.3.b & 7.3.c 45.4 & 45.6",
+      "title": "Pencairan Jaminan",
+      "value": "Jaminan dicairkan dan hasil pencairannya disetorkan ke Kas Daerah sesuai ketentuan kontrak.\nKantor tujuan: Pemerintah Kabupaten Pasangkayu; hasil pencairan disetorkan ke Rekening Kas Umum Daerah Kabupaten Pasangkayu.",
+      "source_table": 130,
+      "source_row": 5
+    },
+    {
+      "clause": "28.1",
+      "title": "Masa Pelaksanaan",
+      "value": "Masa Pelaksanaan selama 40 (empat puluh) hari kalender terhitung sejak Tanggal Mulai Kerja yang tercantum dalam SPMK.\nKetentuan paket:\nMasa pelaksanaan 40 hari kalender sejak tanggal mulai kerja dalam SPMK. Masa pemeliharaan 6 bulan sejak PHO. Rincian tanggal dituangkan dalam SPMK dan berita acara serah terima; enam bulan tidak diganti secara otomatis menjadi 180 hari. Rujukan SSUK 20, 28 dan 34.",
+      "source_table": 130,
+      "source_row": 6
+    },
+    {
+      "clause": "25",
+      "title": "Periode Mobilisasi",
+      "value": "Mobilisasi dilaksanakan sejak Tanggal Mulai Kerja dan diselesaikan sebelum pekerjaan yang membutuhkan sumber daya tersebut dimulai, mengikuti jadwal pelaksanaan yang disetujui. Mobilisasi mencakup peralatan, tenaga kerja, serta fasilitas dan pelayanan pengendalian mutu dan merupakan bagian dari masa pelaksanaan 40 (empat puluh) hari kalender.\nPeriode tersebut ditetapkan dalam jadwal yang disetujui agar memenuhi masa pelaksanaan 40 (empat puluh) hari kalender.\nKetentuan paket:\nMobilisasi mengikuti jadwal yang disetujui dan harus cukup dini untuk memenuhi 40 hari pelaksanaan. Rapat persiapan, RMPK, RKK, pengukuran bersama dan persetujuan sumber material diselesaikan sebelum pekerjaan terkait dimulai. Rujukan SSUK 21 sampai 26.",
+      "source_table": 130,
+      "source_row": 7
+    },
+    {
+      "clause": "34.8",
+      "title": "Masa Pemeliharaan",
+      "value": "Masa Pemeliharaan berlaku selama 6 (enam) bulan terhitung sejak Tanggal Penyerahan Pertama Pekerjaan (PHO).\nTanggal akhir masa pemeliharaan dihitung menurut tanggal PHO dan dituangkan dalam dokumen serah terima. Enam bulan tidak dikonversi otomatis menjadi 180 hari kalender. Masa pemeliharaan berbeda dari umur rencana konstruksi dan pertanggungan kegagalan bangunan.",
+      "source_table": 130,
+      "source_row": 8
+    },
+    {
+      "clause": "36.1",
+      "title": "Gambar As Built dan Pedoman Pengoperasian dan Perawatan/ Pemeliharaan",
+      "value": "Gambar As Built diserahkan sebagai kelengkapan permohonan dan pemeriksaan Serah Terima Pertama Pekerjaan (PHO).\nPedoman pengoperasian dan perawatan/pemeliharaan diserahkan sebagai kelengkapan pemeriksaan Serah Terima Pertama Pekerjaan (PHO).\nDokumen hasil pekerjaan diserahkan lengkap kepada PPK untuk pemeriksaan serah terima.\nKetentuan paket:\nPenyedia menyerahkan gambar pelaksanaan akhir, hasil pengukuran, hasil pengujian mutu, dokumentasi, laporan keselamatan, dan pedoman pengoperasian atau pemeliharaan sebagai kelengkapan pemeriksaan PHO.",
+      "source_table": 130,
+      "source_row": 9
+    },
+    {
+      "clause": "39.7",
+      "title": "Penyesuaian Harga",
+      "value": "Penyesuaian harga: TIDAK DIBERIKAN untuk paket ini.\nKetentuan paket:\nPenyesuaian harga tidak diterapkan pada kontrak tahun tunggal dengan masa pelaksanaan 40 hari ini. Perubahan volume atau pekerjaan yang disetujui ditangani melalui prosedur adendum dan tidak disamakan dengan eskalasi harga. Rujukan SSUK 37 sampai 40.",
+      "source_table": 130,
+      "source_row": 10
+    },
+    {
+      "clause": "46.b",
+      "title": "Pembayaran Tagihan",
+      "value": "Batas akhir waktu untuk penerbitan SPP oleh Pejabat Penandatangan Kontrak adalah 7 (tujuh) hari kerja sejak tagihan dan dokumen penunjang yang lengkap serta tidak diperselisihkan diterima.\nPemrosesan dokumen tagihan oleh PPK paling lambat 7 (tujuh) hari kerja. Pencairan pembayaran mengikuti mekanisme pengelolaan keuangan daerah.",
+      "source_table": 130,
+      "source_row": 11
+    },
+    {
+      "clause": "52.(j)",
+      "title": "Hak dan Kewajiban Penyedia",
+      "value": "Hak dan kewajiban Penyedia sesuai lingkup paket:\n1.\tMenyediakan seluruh sumber daya pekerjaan.\n2.\tMenjaga keselamatan publik serta melaksanakan perlindungan lingkungan dan lalu lintas.\n3.\tMemastikan kontinuitas bahan yang sah.\n4.\tMemperbaiki cacat dan menyerahkan hasil yang memenuhi mutu.\n5.\tMemperoleh pembayaran atas prestasi yang diterima dan hak lain menurut kontrak.\nKetentuan paket:\nPenyedia menyediakan seluruh sumber daya, menjaga keselamatan publik, melaksanakan perlindungan lingkungan dan lalu lintas, memastikan kontinuitas bahan yang sah, memperbaiki cacat, serta menyerahkan hasil yang memenuhi mutu. Penyedia berhak memperoleh pembayaran atas prestasi yang diterima dan hak lain menurut kontrak. Rujukan SSUK 52.",
+      "source_table": 130,
+      "source_row": 12
+    },
+    {
+      "clause": "59.3",
+      "title": "Tindakan Penyedia yang Mensyaratkan Persetujuan Pejabat Penandatangan Kontrak",
+      "value": "Tindakan lain oleh Penyedia yang memerlukan persetujuan Pejabat Penandatangan Kontrak adalah:\na)\tMenambah dan/atau mengurangi volume pekerjaan yang menimbulkan perubahan harga kontrak;\nb)\tMenambah jenis item pekerjaan baru;\nc)\tMenambah dan/atau mengurangi harga kontrak;\nd)\tMengubah jadwal pelaksanaan pekerjaan;\ne)\tPersetujuan pembayaran prestasi pekerjaan.\nKetentuan paket:\nPersetujuan tertulis PPK diperlukan untuk perubahan jenis, volume, nilai dan waktu yang memengaruhi kontrak serta perubahan personel atau peralatan utama. Pengawas menyetujui metode kerja, titik pemeriksaan mutu, izin pekerjaan, perbaikan cacat serta verifikasi prestasi sesuai kewenangan; persetujuannya tidak mengubah harga atau masa kontrak. Rujukan SSUK 41 dan 59.",
+      "source_table": 130,
+      "source_row": 13
+    },
+    {
+      "clause": "59.3",
+      "title": "Tindakan Penyedia yang Mensyaratkan Persetujuan Pengawas Pekerjaan",
+      "value": "Tindakan lain oleh Penyedia yang memerlukan persetujuan Pengawas Pekerjaan adalah:\na)\tMetode dan izin pelaksanaan pekerjaan;\nb)\tRencana Mutu Pekerjaan Konstruksi (RMPK);\nc)\tPengujian mutu bahan dan hasil pekerjaan yang termasuk titik tunggu setiap tahapan pekerjaan (holding points);\nd)\tPerbaikan cacat mutu pekerjaan;\ne)\tHasil prestasi pekerjaan di lapangan yang memenuhi mutu sesuai persyaratan kontrak.",
+      "source_table": 130,
+      "source_row": 14
+    },
+    {
+      "clause": "61",
+      "title": "Kepemilikan Dokumen",
+      "value": "Penyedia diperbolehkan menggunakan salinan dokumen dan piranti lunak yang dihasilkan dari pekerjaan ini dengan pembatasan penggunaan sesuai ketentuan paket berikut.\nKetentuan paket:\nDokumen hasil pekerjaan menjadi milik pengguna jasa sesuai kontrak. Penyedia menyimpan salinan untuk kewajiban pelaksanaan, pembuktian dan administrasi yang sah; penggunaan untuk kepentingan lain memerlukan persetujuan tertulis PPK. Rujukan SSUK 53 dan 61.",
+      "source_table": 130,
+      "source_row": 15
+    },
+    {
+      "clause": "68",
+      "title": "Fasilitas",
+      "value": "Fasilitas dari Pejabat Penandatangan Kontrak: tidak ada fasilitas khusus. Penyedia menyediakan seluruh peralatan, bahan, tenaga kerja dan fasilitas kerja untuk pelaksanaan paket.\nKetentuan paket:\nPenyedia bertanggung jawab menyediakan sumber daya dan fasilitas kerja yang diperlukan untuk menyelesaikan seluruh lingkup pekerjaan.",
+      "source_table": 130,
+      "source_row": 16
+    },
+    {
+      "clause": "69.1.(h)",
+      "title": "Peristiwa Kompensasi",
+      "value": "Peristiwa kompensasi tambahan: tidak ada. Peristiwa kompensasi mengikuti SSUK.\nPeristiwa kompensasi tambahan hanya berlaku apabila ditetapkan secara jelas dalam kontrak.",
+      "source_table": 130,
+      "source_row": 17
+    },
+    {
+      "clause": "",
+      "title": "Sumber Pembiayaan",
+      "value": "Sumber pembiayaan: APBD Perubahan Kabupaten Pasangkayu\nTahun Anggaran\t: 2026\nPagu anggaran\t: Rp1.480.000.000,00\nKetentuan paket:\nAPBD Perubahan Kabupaten Pasangkayu Tahun Anggaran 2026, pagu Rp1.480.000.000,00, sesuai DPA/DPPA yang sah. PPK memastikan jadwal pelaksanaan dan pembayaran sesuai ketentuan keuangan daerah serta batas tahun anggaran; pembiayaan tahun berikutnya tidak dianggap tersedia tanpa dasar yang sah.",
+      "source_table": 130,
+      "source_row": 18
+    },
+    {
+      "clause": "73.1.(e)",
+      "title": "Besaran Uang Muka",
+      "value": "Uang muka diberikan sebesar 30% (tiga puluh persen) dari nilai kontrak setelah Jaminan Uang Muka dan rencana penggunaannya disetujui.\nBesaran uang muka: 30% (tiga puluh persen) dari Harga Kontrak.\nKetentuan paket:\nUang muka 30% nilai kontrak dibayarkan setelah penyerahan Jaminan Uang Muka senilai uang muka serta persetujuan rencana penggunaan dan pengembalian. Pengembalian dipotong pada Termin I sebesar 9%, Termin II sebesar 9%, dan Termin III sebesar 12% dari nilai kontrak sehingga lunas pada PHO.",
+      "source_table": 130,
+      "source_row": 19
+    },
+    {
+      "clause": "73.2.(d)",
+      "title": "Pembayaran Prestasi Pekerjaan",
+      "value": "Pembayaran dilaksanakan dalam 4 tahap: uang muka 30% dan 3 termin prestasi. Termin I pada kemajuan fisik kumulatif 30%: prestasi bruto 30%, pengembalian uang muka 9%, pembayaran bersih 21%. Termin II pada kemajuan fisik kumulatif 60%: tambahan prestasi bruto 30%, pengembalian uang muka 9%, pembayaran bersih 21%. Termin III pada kemajuan fisik kumulatif 100% dan PHO: tambahan prestasi bruto 40%, pengembalian sisa uang muka 12%, pembayaran bersih 28%. Persentase dihitung terhadap nilai kontrak; pembayaran bersih tersebut sebelum potongan pajak, denda atau potongan sah lainnya. Pada PHO, Penyedia menyerahkan Jaminan Pemeliharaan 5% nilai kontrak untuk masa pemeliharaan 6 bulan. Total uang muka dan pembayaran bersih prestasi adalah 100% nilai kontrak.\nDokumen penunjang yang disyaratkan untuk mengajukan tagihan pembayaran prestasi pekerjaan:\n1.\tSurat permohonan pembayaran.\n2.\tKuitansi atau dokumen tagihan yang sah.\n3.\tBerita acara pemeriksaan dan pengukuran.\n4.\tRekapitulasi prestasi pekerjaan.\n5.\tLaporan kemajuan.\n6.\tBukti pengujian.\n7.\tDokumentasi pekerjaan.\n8.\tDokumen pajak.\n9.\tPerhitungan pengembalian uang muka dan retensi.\n10.\tDokumen lain yang diwajibkan dalam pengelolaan keuangan daerah.\n11.\tUntuk tagihan akhir: dokumen PHO dan kelengkapan hasil pekerjaan.\nKetentuan paket:\nPembayaran menggunakan termin berdasarkan kuantitas hasil pengukuran bersama yang memenuhi mutu, dikalikan harga satuan kontrak. Pengembalian uang muka dan pembayaran bersih mengikuti skema 30%-21%-21%-28% pada SSKK. Pajak, denda, dan potongan sah lainnya diperhitungkan dalam tagihan. Pemrosesan tagihan lengkap oleh PPK paling lambat 7 (tujuh) hari kerja; pencairan mengikuti mekanisme keuangan daerah.\nTagihan memuat surat permohonan, kuitansi atau dokumen tagihan yang sah, berita acara pemeriksaan dan pengukuran, rekap prestasi, laporan kemajuan, bukti pengujian, dokumentasi, dokumen pajak, perhitungan pengembalian uang muka dan retensi, serta dokumen lain yang diwajibkan pengelolaan keuangan daerah. Tagihan akhir dilengkapi dokumen PHO dan kelengkapan hasil pekerjaan.",
+      "source_table": 130,
+      "source_row": 20
+    },
+    {
+      "clause": "73.3.(e)",
+      "title": "Pembayaran Bahan dan/atau Peralatan",
+      "value": "Pembayaran material on site secara terpisah tidak diterapkan. Pembayaran bahan dan peralatan diperhitungkan melalui prestasi pekerjaan yang diterima menurut skema pembayaran pada SSKK.",
+      "source_table": 130,
+      "source_row": 21
+    },
+    {
+      "clause": "73.4.(c)",
+      "title": "Denda akibat Keterlambatan",
+      "value": "Denda keterlambatan untuk setiap hari keterlambatan adalah 1/1000 (satu perseribu) dari nilai kontrak sebelum PPN apabila seluruh hasil pekerjaan belum dapat diserahterimakan.\nKetentuan paket:\nDenda keterlambatan setiap hari sebesar 1/1000 dari nilai kontrak sebelum PPN apabila seluruh hasil pekerjaan belum dapat diserahterimakan. Apabila kontrak secara sah menetapkan serah terima bagian yang dapat berfungsi sendiri, dasar denda terhadap bagian yang belum diserahkan harus ditegaskan terlebih dahulu dalam kontrak. Rujukan SSUK 65 dan 73.4.",
+      "source_table": 130,
+      "source_row": 22
+    },
+    {
+      "clause": "81.2",
+      "title": "Umur Konstruksi dan Pertanggungan terhadap Kegagalan Bangunan",
+      "value": "a.Bangunan Hasil Pekerjaan memiliki Umur Konstruksi selama ____________________ tahun sejak Tanggal Penyerahan Akhir Pekerjaan.\t\nDokumen desain/elemen konstruksi yang menjadi dasar: ____________________.\nb.Pertanggungan terhadap Kegagalan Bangunan ditetapkan selama ____________________ tahun sejak Tanggal Penyerahan Akhir Pekerjaan/FHO.\t\nApabila umur konstruksi tidak lebih dari 10 (sepuluh) tahun, isian pertanggungan mengikuti umur rencana pada huruf a. Untuk umur rencana lebih dari 10 tahun dan penentuan tanggung jawab, berlaku penegasan serta dasar hukum paket di bawah.\nKetentuan paket:\nUmur rencana konstruksi: ____________________ tahun. Dasar dokumen desain: ____________________. Jangka tanggung jawab Penyedia atas kegagalan bangunan: ____________________ tahun sejak penyerahan akhir hasil pekerjaan/FHO, mengikuti umur rencana dan batas tanggung jawab menurut peraturan jasa konstruksi. Masa pemeliharaan 6 bulan sejak PHO sampai FHO.",
+      "source_table": 130,
+      "source_row": 23
+    },
+    {
+      "clause": "66",
+      "title": "Jaminan Pelaksanaan",
+      "value": "Jaminan diserahkan sebelum penandatanganan. Untuk penawaran 80 sampai 100 persen HPS, nilai jaminan 5 persen nilai kontrak; untuk penawaran di bawah 80 persen HPS, nilai jaminan 5 persen HPS. Masa berlakunya sejak penandatanganan sampai PHO. Jaminan dikonfirmasi ke penerbit dan diperpanjang bila diperlukan. Rujukan SSUK 66.",
+      "source_table": 131,
+      "source_row": 2
+    },
+    {
+      "clause": "66 dan 73",
+      "title": "Retensi dan Jaminan Pemeliharaan",
+      "value": "Penyedia menyerahkan Jaminan Pemeliharaan sebesar 5% (lima persen) nilai kontrak pada PHO. Jaminan berlaku selama masa pemeliharaan 6 (enam) bulan sampai FHO. Pembayaran Termin III mengikuti skema pembayaran tanpa pemotongan retensi apabila Jaminan Pemeliharaan telah diterima dan memenuhi syarat.",
+      "source_table": 131,
+      "source_row": 3
+    },
+    {
+      "clause": "22, 23, 55, 56 dan 58",
+      "title": "Keselamatan dan Asuransi",
+      "value": "Penyedia menerapkan RKK, menyediakan personel dan perlengkapan keselamatan, mengikutsertakan tenaga kerja pada perlindungan yang diwajibkan, serta memenuhi asuransi pekerjaan Construction All Risk yang tercantum pada daftar kuantitas dan harga paket. Perlindungan asuransi mencakup lingkup dan masa pelaksanaan pekerjaan sesuai kontrak.",
+      "source_table": 131,
+      "source_row": 4
+    },
+    {
+      "clause": "82 dan 83",
+      "title": "Penyelesaian Perselisihan",
+      "value": "Para pihak terlebih dahulu mengupayakan penyelesaian melalui musyawarah. Pilihan forum lanjutan dan alamat domisili hukum ____________________ sesuai peraturan jasa konstruksi dan pengadaan. Rujukan SSUK 82 dan 83.",
+      "source_table": 131,
+      "source_row": 5
+    },
+    {
+      "clause": "62.4",
+      "title": "Lampiran Sumber Daya dan Harga Timpang",
+      "value": "Daftar personel, peralatan utama dan harga satuan timpang diisi berdasarkan hasil evaluasi serta klarifikasi yang sah. Subkontrak tidak dipersyaratkan pada paket ini. Penyedia usaha kecil tidak diperkenankan mensubkontrakkan pekerjaan sebagaimana SSUK 62.4.",
+      "source_table": 131,
+      "source_row": 6
+    }
+  ]
+}
