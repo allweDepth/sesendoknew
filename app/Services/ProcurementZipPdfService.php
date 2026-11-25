@@ -48,18 +48,18 @@ final class ProcurementZipPdfService
     private function para(TCPDF $pdf,string $text,float $height=0):void
     {
         $pdf->SetFont($this->font,'',$this->size);
-        $pdf->Ln($this->printSettings['paragraph_before']*25.4/72);
-        $pdf->MultiCell(0,0,rtrim($text)."\n",0,'J',false,1,'','',true,0,false,true);
-        $pdf->Ln($this->printSettings['paragraph_after']*25.4/72);
+        // Let the HTML paragraph close the final line normally. MultiCell with
+        // J alignment stretches an unterminated final line; adding a newline
+        // instead creates an unwanted empty line after every paragraph.
+        $pdf->writeHTML('<p align="justify">'.$this->e(rtrim($text)).'</p>',true,false,true,false,'');
     }
     private function letterParagraph(TCPDF $pdf,string $text):void
     {
-        $pdf->Ln($this->printSettings['paragraph_before']*25.4/72);
+        // HTML paragraph spacing is already applied by typography().
         $pdf->writeHTML('<p align="justify" style="text-indent:10mm;">'.$this->e($text).'</p>',true,false,true,false,'');
-        $pdf->Ln($this->printSettings['paragraph_after']*25.4/72);
     }
-    private function fields(array $rows,array $widths=[30,4,66]):string{$html='<br><table width="100%" cellpadding="3">';foreach($rows as [$label,$value])$html.='<tr nobr="true"><td width="'.$widths[0].'%">'.$this->e($label).'</td><td width="'.$widths[1].'%">:</td><td width="'.$widths[2].'%">'.$this->e($value).'</td></tr>';$html.='</table>';return$html;}
-    private function signature(TCPDF $pdf,string $role,string $name,string $nip,string $rank):void{$pdf->Ln(6);$html='<table nobr="true"><tr><td width="55%"></td><td width="45%" align="center">'.nl2br($this->e($role)).'<br><br><br><br><b><u>'.$this->e($name).'</u></b>'.($nip!==''?'<br>NIP. '.$this->e($nip).'<br>'.$this->e($rank):'').'</td></tr></table>';$this->signatureBlock($pdf,$html);}
+    private function fields(array $rows,array $widths=[30,4,66]):string{$html='<table width="100%" cellpadding="2" cellspacing="0">';foreach($rows as [$label,$value])$html.='<tr nobr="true"><td width="'.$widths[0].'%">'.$this->e($label).'</td><td width="'.$widths[1].'%">:</td><td width="'.$widths[2].'%">'.$this->e($value).'</td></tr>';$html.='</table>';return$html;}
+    private function signature(TCPDF $pdf,string $role,string $name,string $nip,string $rank):void{$pdf->Ln(3);$html='<table nobr="true"><tr><td width="55%"></td><td width="45%" align="center">'.nl2br($this->e($role)).'<br><br><br><br><b><u>'.$this->e($name).'</u></b>'.($nip!==''?'<br>NIP. '.$this->e($nip).'<br>'.$this->e($rank):'').'</td></tr></table>';$this->signatureBlock($pdf,$html);}
     private function signatureBlock(TCPDF $pdf,string $html):void
     {
         // The signature block already owns the TCPDF transaction.
@@ -74,13 +74,19 @@ final class ProcurementZipPdfService
         $offer=RabTotalService::totals((int)$c['id'])['stages']['penawaran']['total'];$nego=($c['rab_totals']['stages']['negoisasi']['manual']??false)?$c['rab_totals']['stages']['negoisasi']['total']:($c['nilai_kontrak']??null);
         return [['Nama Penyedia Barang/Jasa',$this->v($c,'nama_penyedia_resmi','nama_perusahaan','nama_penyedia')],['Nama Direktur Utama',$this->v($c,'direktur')],['Alamat',$this->v($c,'alamat_penyedia','alamat')],['NPWP',$this->v($c,'npwp')],['Harga Penawaran',$this->money($offer).' ('.ucwords($this->words((int)round($offer))).' Rupiah)'],['Harga Klarifikasi dan Negosiasi',isset($nego)?$this->money($nego).' ('.ucwords($this->words((int)round($nego))).' Rupiah)':'Belum ditetapkan'],['Jangka waktu pelaksanaan',$this->v($c,'waktu_pelaksanaan').' ('.ucwords($this->words((int)($c['waktu_pelaksanaan']??0))).') Hari Kalender']];
     }
+    private function procurementLabel(array $c):string
+    {
+        $kind=strtoupper((string)($c['jenis_pengadaan']??''));
+        if(str_starts_with($kind,'KONSULTANSI'))return 'Jasa Konsultansi';
+        return match($kind){'PEKERJAAN_KONSTRUKSI'=>'Pekerjaan Konstruksi','BARANG'=>'Barang','JASA_LAINNYA'=>'Jasa Lainnya',default=>'Barang/Jasa'};
+    }
     private function invitation(array $d,array $c,array $setup):string
     {
         $pdf=$this->page($setup);$date=$this->date($d,$c);$provider=$this->v($c,'nama_penyedia_resmi','nama_penyedia');
         $pdf->writeHTML('<table width="100%" cellpadding="2"><tr><td width="62%">Nomor: '.$this->e($d['nomor_dokumen']??'-').'<br>Lampiran: 1 (satu) berkas</td><td width="38%">Pasangkayu, '.$this->e($date).'</td></tr></table><p align="left">Kepada Yth.<br>Direktur '.$this->e($provider).'<br>di-<br>'.$this->e($this->v($c,'alamat_penyedia','alamat')).'</p><p>Perihal: Undangan pengadaan Langsung '.$this->e($c['uraian_kontrak']).' - pada Kegiatan '.$this->e($this->v($c,'nama_sub_keg')).'</p>',true,false,true,false,'');
-        $this->para($pdf,'Dengan ini, perusahaan Saudara kami undang untuk mengikuti proses Pengadaan Langsung Jasa Konsultansi paket Pekerjaan sebagai berikut:');
+        $this->para($pdf,'Dengan ini, perusahaan Saudara kami undang untuk mengikuti proses Pengadaan Langsung '.$this->procurementLabel($c).' untuk paket sebagai berikut:');
         $this->sectionHeading($pdf,'1.','Paket Pekerjaan');
-        $pdf->writeHTML($this->fields([['Sub Kegiatan',$this->v($c,'nama_sub_keg')],['Nama Paket Pekerjaan',$c['uraian_kontrak']],['Detail Pekerjaan','']]),true,false,true,false,'');
+        $pdf->writeHTML($this->fields([['Sub Kegiatan',$this->v($c,'nama_sub_keg')],['Nama Paket Pekerjaan',$c['uraian_kontrak']]]),true,false,true,false,'');
         $pdf->writeHTML('<table width="100%" border="1" cellpadding="4"><thead><tr><td width="72%">Pekerjaan</td><td width="28%">Pagu Anggaran</td></tr></thead><tr nobr="true"><td width="72%">'.$this->e($c['uraian_kontrak']).'</td><td width="28%" align="right">'.$this->money($c['total_anggaran']).'</td></tr></table>',true,false,true,false,'');
         $pdf->writeHTML($this->fields([['Nilai HPS/OE',$this->money($c['nilai_hps']??0)]]),true,false,true,false,'');
         $this->sectionHeading($pdf,'2.','Pelaksanaan Pengadaan');
@@ -208,16 +214,16 @@ final class ProcurementZipPdfService
     }
     private function providerDecision(array $d,array $c,array $setup):string
     {
-        $pdf=$this->page($setup);$this->title($pdf,'PENETAPAN PENYEDIA JASA KONSULTANSI',$d['nomor_dokumen']??'');
-        $this->para($pdf,'Berdasarkan Berita Acara Hasil Pengadaan Langsung (BAHPL) '.$this->dayWords($d,$c).' dengan ini Pejabat Pengadaan Barang/Jasa Bidang Kepala Dinas Selaku Pengguna Anggaran '.$this->v($this->user,'nama_opd').' yang ditetapkan berdasarkan keputusan Kepala '.$this->v($this->user,'nama_opd').' Nomor: '.$this->v($c,'nomor_sk_pejabat_pengadaan').' tanggal '.$this->date(['tanggal_dokumen'=>$c['tanggal_sk_pejabat_pengadaan']??''],$c).' menetapkan Penyedia Barang/Jasa Pengadaan Langsung Pekerjaan Konstruksi:');
+        $pdf=$this->page($setup);$this->title($pdf,'PENETAPAN PENYEDIA '.mb_strtoupper($this->procurementLabel($c)),$d['nomor_dokumen']??'');
+        $this->para($pdf,'Berdasarkan Berita Acara Hasil Pengadaan Langsung (BAHPL) '.$this->dayWords($d,$c).' dengan ini Pejabat Pengadaan Barang/Jasa Bidang Kepala Dinas Selaku Pengguna Anggaran '.$this->v($this->user,'nama_opd').' yang ditetapkan berdasarkan keputusan Kepala '.$this->v($this->user,'nama_opd').' Nomor: '.$this->v($c,'nomor_sk_pejabat_pengadaan').' tanggal '.$this->date(['tanggal_dokumen'=>$c['tanggal_sk_pejabat_pengadaan']??''],$c).' menetapkan Penyedia Barang/Jasa Pengadaan Langsung '.$this->procurementLabel($c).':');
         $pdf->writeHTML($this->fields($this->package($c)).'<p>Adalah sebagai berikut:</p>'.$this->fields($this->provider($c)).'<p>Demikian Penetapan Penyedia Barang/Jasa Pengadaan Langsung ini dibuat untuk dipergunakan sebagaimana mestinya.</p>',true,false,true,false,'');
         $this->signature($pdf,"Ditetapkan di Pasangkayu\nPada Tanggal: ".$this->date($d,$c)."\nPejabat Pengadaan Barang/Jasa",$this->v($c,'nama_pejabat_pengadaan'),$this->v($c,'nip_pejabat_pengadaan'),$c['pangkat_pejabat_pengadaan']??'');return $this->finish($pdf);
     }
     private function announcement(array $d,array $c,array $setup):string
     {
-        $pdf=$this->page($setup);$this->title($pdf,'PENGUMUMAN PENYEDIA JASA KONSULTANSI',$d['nomor_dokumen']??'');
+        $pdf=$this->page($setup);$this->title($pdf,'PENGUMUMAN PENYEDIA '.mb_strtoupper($this->procurementLabel($c)),$d['nomor_dokumen']??'');
         $ref=$c['dokumen_referensi']['BAHP']['nomor_dokumen']??'-';
-        $this->para($pdf,'Berdasarkan Surat Penetapan dari Pejabat Pengadaan Barang Jasa Nomor: '.$ref.' tanggal '.$this->date($d,$c).' tentang Pelaksana Pengadaan Langsung, dengan ini diberitahukan bahwa pelaksana Pengadaan Langsung Jasa Konsultansi:');
+        $this->para($pdf,'Berdasarkan Surat Penetapan dari Pejabat Pengadaan Barang Jasa Nomor: '.$ref.' tanggal '.$this->date($d,$c).' tentang Pelaksana Pengadaan Langsung, dengan ini diberitahukan bahwa pelaksana Pengadaan Langsung '.$this->procurementLabel($c).':');
         $pdf->writeHTML($this->fields(array_slice($this->package($c),0,2)).'<p>Adalah sebagai berikut:</p>'.$this->fields($this->provider($c)).'<p>Demikian Pengumuman Penyedia Barang/Jasa Pengadaan Langsung ini dibuat untuk dipergunakan sebagaimana mestinya.</p>',true,false,true,false,'');
         $this->signature($pdf,"Diumumkan di Pasangkayu\nPada Tanggal: ".$this->date($d,$c)."\nPejabat Pengadaan Barang/Jasa",$this->v($c,'nama_pejabat_pengadaan'),$this->v($c,'nip_pejabat_pengadaan'),$c['pangkat_pejabat_pengadaan']??'');return $this->finish($pdf);
     }
@@ -255,10 +261,10 @@ final class ProcurementZipPdfService
         $contractLabel=($c['bentuk_kontrak']??'')==='SURAT_PERJANJIAN'?'Surat Perjanjian/Kontrak':'Surat Perintah Kerja (SPK)';
         $pdf=$this->page($setup);$this->title($pdf,'Surat Perintah Mulai Kerja (SPMK)',$d['nomor_dokumen']??'');$pdf->SetFont($this->font,'',$this->size);$pdf->MultiCell(0,5,'Tanggal : '.$this->date($d,$c),0,'C');$pdf->SetFont($this->font,'B',$this->size+1);$pdf->MultiCell(0,6,"PAKET PEKERJAAN:\n".$this->v($c,'uraian_kontrak'),0,'C');$pdf->SetFont($this->font,'',$this->size);
         $pdf->writeHTML('<p>Yang bertanda tangan di bawah ini:</p>'.$this->fields([['Nama',$this->v($c,'nama_ppk_resmi','nama_ppk')],['Jabatan','PPK '.$this->v($this->user,'nama_opd')],['Alamat',$this->v($this->user,'alamat_opd')]]).'<p>Selanjutnya disebut Pejabat Pembuat Komitmen;</p><p>berdasarkan '.$this->e($contractLabel).'</p>'.$this->fields([['Nomor',$c['nomor_kontrak']??'-'],['Tanggal',$this->date($d,$c)]]).'<p>Bersama ini memerintahkan:</p>'.$this->fields([['Nama Penyedia',$this->v($c,'nama_penyedia_resmi','nama_penyedia')],['Alamat',$this->v($c,'alamat_penyedia','alamat')],['yang dalam hal ini diwakili oleh',$this->v($c,'direktur')]]).'<p>Selanjutnya disebut sebagai Penyedia;</p><p>untuk segera memulai pelaksanaan pekerjaan dengan memperhatikan ketentuan-ketentuan sebagai berikut:</p>'.$this->fields([['1. Macam Pekerjaan',$this->v($c,'jenis_pengadaan').' '.$this->v($c,'nama_sub_kegiatan','nama_sub_keg','kd_sub_keg')],['2. Tanggal Mulai Kerja',$this->date($d,$c)],['3. Syarat-Syarat Pekerjaan','sesuai dengan persyaratan dan ketentuan Kontrak'],['4. Waktu Penyelesaian',$this->v($c,'waktu_pelaksanaan').' ('.ucwords($this->words((int)($c['waktu_pelaksanaan']??0))).') Hari Kalender dan Pekerjaan sudah harus selesai pada tanggal '.$this->date(['tanggal_dokumen'=>$c['tanggal_selesai']??''],$c)],['5. Hasil Pekerjaan','1 (satu) paket '.$this->v($c,'uraian_kontrak').' sesuai Kerangka Acuan Kerja/Spesifikasi Teknis']]),true,false,true,false,'');
-        $pdf->AddPage($this->orientation);$pdf->writeHTML($this->fields([['6. Denda','Terhadap keterlambatan penyerahan hasil kerja dan laporan akhir, pembayaran kepada Penyedia dapat dikenakan denda atau dihentikan sesuai ketentuan dalam Kontrak.']]),true,false,true,false,'');$pdf->writeHTML(ProcurementDocumentFormatService::signatureColumns([
+        $pdf->writeHTML($this->fields([['6. Denda','Terhadap keterlambatan penyerahan hasil kerja dan laporan akhir, pembayaran kepada Penyedia dapat dikenakan denda atau dihentikan sesuai ketentuan dalam Kontrak.']]),true,false,true,false,'');$this->signatureBlock($pdf,ProcurementDocumentFormatService::signatureColumns([
             ['heading'=>'Untuk dan atas nama<br>'.$this->e($this->v($this->user,'nama_opd')).'<br>Pejabat Pembuat Komitmen','name'=>$this->v($c,'nama_ppk_resmi','nama_ppk'),'details'=>'NIP. '.$this->e($this->v($c,'nip_ppk_resmi','nip_ppk'))],
             ['heading'=>'Menerima dan Menyetujui<br>Untuk dan atas nama<br>'.$this->e($this->v($c,'nama_penyedia_resmi','nama_penyedia')),'name'=>$this->v($c,'direktur'),'details'=>$this->e($this->v($c,'jabatan_pelaksana'))]
-        ]),true,false,true,false,'');return$this->finish($pdf);
+        ]));return$this->finish($pdf);
     }
     private function preContract(array $d,array $c,array $setup):string
     {

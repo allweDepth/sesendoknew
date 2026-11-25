@@ -13,7 +13,7 @@ final class ContractOfficialService
     }
     public static function resolve(array $contract):array
     {
-        if(($contract['status_kontrak']??'')==='draft'&&($contract['username_insert']??'')==='IMPORT_PERUBAHAN_PUPR_2026'){
+        if(($contract['status_kontrak']??'')==='draft'&&($contract['username_insert']??'')==='IMPORT_PERUBAHAN_PUPR_2026'&&(empty($contract['waktu_pelaksanaan'])||empty($contract['tanggal_selesai']))){
             $name=mb_strtolower($contract['uraian_kontrak']??'');$start=$contract['tanggal_mulai']??$contract['tanggal_kontrak']??null;
             if($start&&preg_match('/stock|stok|perencanaan|penyusunan dokumen perencanaan|^sid /u',$name)){$contract['waktu_pelaksanaan']=30;$contract['tanggal_selesai']=date('Y-m-d',strtotime($start.' +29 days'));}
             elseif($start&&($contract['jenis_pengadaan']??'')==='PEKERJAAN_KONSTRUKSI'){$contract['tanggal_selesai']=$contract['tahun'].'-12-31';$contract['waktu_pelaksanaan']=(int)(new DateTimeImmutable($start))->diff(new DateTimeImmutable($contract['tanggal_selesai']))->days+1;}
