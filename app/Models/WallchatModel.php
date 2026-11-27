@@ -63,10 +63,21 @@ class WallchatModel
                 $feed['content'] ?? ''
             );
             $feed['comments'] = $commentsByPost[(int)$feed['id']] ?? [];
+            $feed['attachment_available'] = self::attachmentFile($feed['attachment_path'] ?? null) !== null;
         }
         unset($feed);
 
         return $feeds;
+    }
+
+    public static function attachmentFile(?string $relative): ?string
+    {
+        if (!$relative) return null;
+        $root = dirname(__DIR__, 2);
+        $allowed = realpath($root . '/storage/uploads/messages');
+        $file = realpath($root . '/' . $relative);
+        if (!$allowed || !$file || !str_starts_with($file, $allowed . DIRECTORY_SEPARATOR)) return null;
+        return is_file($file) && is_readable($file) ? $file : null;
     }
 
     /* ==========================================

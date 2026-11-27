@@ -237,6 +237,20 @@ body.dark-mode .ui.info.message { background:#1c3c54 !important; border-color:#7
 body.dark-mode .doc-toolbar { background:#29384d !important; }
 body.dark-mode .ui.toast { background:#29384d; color:#f1f5f9; }
 body.dark-mode .p4-status { border-color:var(--app-border); }
+body.dark-mode .p4-trend-card {
+    background: var(--workspace-bg, var(--app-surface));
+    color: var(--workspace-text, var(--app-text));
+    border-color: var(--workspace-line, var(--app-border));
+}
+body.dark-mode .p4-trend-chart { border-color: var(--app-border); }
+body.dark-mode .p4-trend-month small { color: var(--workspace-muted, var(--app-muted)); }
+body.dark-mode .p4-trend-card .p4-target { background: #6db8f1; }
+body.dark-mode .p4-trend-card .p4-actual { background: #ff9b55; }
+body.dark-mode .ui.table tr.p4-report-total > th {
+    background: #234339 !important;
+    color: #e4fff0 !important;
+    border-color: #3e6454;
+}
 #mapsCoordinateError[hidden] { display:none !important; }
 .maps-full-toolbar { flex-wrap:wrap; }
 #toastContainer .app-toast { width:100%; }

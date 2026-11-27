@@ -321,9 +321,9 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 		if (value == null) return "";
 
 		if (format === "excerpt") {
-			const parser = document.createElement("div");
+			const parser = document.createElement("template");
 			parser.innerHTML = String(value);
-			const plainText = (parser.textContent || "").replace(/\s+/g, " ").trim();
+			const plainText = (parser.content.textContent || "").replace(/\s+/g, " ").trim();
 			const limit = 90;
 			const excerpt = plainText.length > limit
 				? `${plainText.slice(0, limit).trimEnd()}\u2026`

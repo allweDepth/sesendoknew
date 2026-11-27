@@ -9,6 +9,7 @@ body {
     --workspace-text: #163027;
     --workspace-muted: #527063;
     --workspace-width: 252px;
+    --workspace-section-gap: clamp(16px, 2vw, 22px);
     --main-sidebar-width: var(--workspace-width);
 }
 body[data-workspace-style="pesisir"] {
@@ -337,6 +338,8 @@ body:not([data-workspace-style="classic"]) .module-dashboard .dash-link { color:
 .module-dashboard .metric-grid.ui.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 155px), 1fr)); gap: .8rem; margin: 0 0 1.25rem; }
 .module-dashboard .metric-grid.ui.cards::before,
 .module-dashboard .metric-grid.ui.cards::after { display: none; }
+.module-dashboard .dashboard-messenger-notice { margin: 0 0 var(--workspace-section-gap); }
+.module-dashboard .dashboard-messenger-notice > .ui.message { margin: 0; }
 .module-dashboard .metric-grid.ui.cards > .card { width: 100%; margin: 0; }
 body:not([data-workspace-style="classic"]) .module-dashboard .metric-grid.ui.cards > .card { box-shadow: none !important; border: 1px solid var(--workspace-line) !important; border-top: 3px solid var(--workspace-accent) !important; background: var(--workspace-surface) !important; }
 body:not([data-workspace-style="classic"]) .module-dashboard .metric-card .metric-value { color: var(--workspace-text); }
@@ -345,6 +348,11 @@ body:not([data-workspace-style="classic"]) .module-dashboard .metric-card .metri
 body:not([data-workspace-style="classic"]) .module-dashboard .dash-panel.ui.segment { background: var(--workspace-surface) !important; color: var(--workspace-text) !important; border-color: var(--workspace-line) !important; box-shadow: none !important; }
 .module-dashboard .chart-row { grid-template-columns: minmax(95px, 1.2fr) minmax(45px, 2fr) auto; }
 .module-dashboard .chart-row > b { display: block; overflow-wrap: anywhere; }
+.realization-report { display: grid; gap: var(--workspace-section-gap); min-width: 0; }
+.realization-report > .ui.segment, .realization-report > .p4-cards { margin: 0; }
+.realization-report > .table-wrapper { min-width: 0; overflow-x: auto; }
+.realization-report > .table-wrapper > .ui.table { display: table; width: 100%; min-width: 51rem; }
+.realization-report td:is(:nth-child(2), :nth-child(6), .right.aligned) { white-space: nowrap; overflow-wrap: normal; }
 body:not([data-workspace-style="classic"]) .module-dashboard .chart-row > div { background: var(--workspace-bg); }
 body:not([data-workspace-style="classic"]) .module-dashboard .chart-row i { background: var(--workspace-accent); }
 .module-dashboard .dashboard-schedule-filters { display: flex; flex-wrap: wrap; gap: .35rem; }

@@ -10,7 +10,7 @@
 </section>
 <?php if($compactMessenger): ?>
 <div class="ui sticky dashboard-messenger-notice">
-  <div class="ui small icon info message" style="margin:0 0 12px">
+  <div class="ui small icon info message">
     <i class="bell outline icon"></i>
     <div class="content"><span data-messenger-notification><?= !empty($dashboardStatus['unread']) ? (int)$dashboardStatus['unread'].' pesan belum dibaca.' : 'Belum ada pesan baru.' ?></span> <a href="<?= app_url('/wallchat') ?>" data-spa="server">Buka Messenger</a></div>
   </div>

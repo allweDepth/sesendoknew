@@ -26,6 +26,7 @@ $(function () {
         onVisible() {
             syncNavigation();
             if (mobile.matches) close.focus({ preventScroll: true });
+            revealActiveLink();
         },
         onHide() {
             if (navigation.contains(document.activeElement)) toggle.focus();
@@ -49,14 +50,32 @@ $(function () {
             });
             setExpanded(this, true);
         },
-        onClosing() { setExpanded(this, false); }
+        onClosing() { setExpanded(this, false); },
+        onOpen() {
+            if (this.querySelector('[aria-current="page"]')) revealActiveLink();
+        }
     });
     titles.forEach(title => setExpanded(title.nextElementSibling, false));
+
+    function revealActiveLink() {
+        const current = navigation.querySelector('a[aria-current="page"]');
+        if (!current || navigation.inert || !current.getClientRects().length) return;
+        const bounds = navigation.getBoundingClientRect();
+        const top = navigation.querySelector('.workspace-identity').getBoundingClientRect().bottom;
+        const link = current.getBoundingClientRect();
+        if (link.top < top) navigation.scrollTop += link.top - top - 6;
+        else if (link.bottom > bounds.bottom) navigation.scrollTop += link.bottom - bounds.bottom + 6;
+    }
 
     function openActiveGroup() {
         const current = navigation.querySelector('a[aria-current="page"]');
         const title = current?.closest('.workspace-group')?.querySelector('.title');
-        if (title && !title.classList.contains('active')) drawer.accordion('open', titles.indexOf(title));
+        if (title && !title.classList.contains('active')) {
+            $(title.nextElementSibling).stop(true, true);
+            drawer.accordion('open', titles.indexOf(title));
+        } else {
+            revealActiveLink();
+        }
     }
 
     document.addEventListener('workspace:navigation', openActiveGroup);

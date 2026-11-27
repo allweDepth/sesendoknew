@@ -516,7 +516,7 @@
   <script src="/assets/js/core/permission-engine.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/core/permission-engine.js') ?>"></script>
   <!-- UI REGISTRY -->
   <script src="/assets/js/ui/ui-registry.js"></script>
-  <script src="/assets/js/ui/rich-document-editor.js?v=20260905.6"></script>
+  <script src="<?= asset_url('/assets/js/ui/rich-document-editor.js') ?>"></script>
   <script src="/assets/js/ui/modern-table-resizer.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/ui/modern-table-resizer.js') ?>"></script>
   <!-- ================= ENGINE ================= -->
 

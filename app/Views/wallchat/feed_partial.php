@@ -2,7 +2,22 @@
 <article class="social-post theme-<?= $theme ?>" data-id="<?= (int)$feed['id'] ?>">
  <header><div class="social-avatar"><?= htmlspecialchars(strtoupper(substr($feed['nama']??'U',0,1)), ENT_QUOTES, 'UTF-8') ?></div><div><b><?= htmlspecialchars($feed['nama']??'User') ?></b><small><?= date('d M Y · H:i',strtotime($feed['created_at'])) ?><?= !empty($feed['updated_at'])?' · diedit':'' ?></small></div><?php if((int)$feed['user_id']===(int)($_SESSION['user']['id']??0)):?><div class="post-actions"><button class="ui mini circular icon button btnEditFeed" data-id="<?= (int)$feed['id'] ?>" data-content="<?= htmlspecialchars($feed['content'],ENT_QUOTES) ?>" data-theme="<?= $theme ?>"><i class="edit icon"></i></button><button class="ui mini circular red icon button btnDeleteFeed" data-id="<?= (int)$feed['id'] ?>"><i class="trash icon"></i></button></div><?php endif;?></header>
  <div class="post-copy"><?= nl2br(htmlspecialchars($feed['content'])) ?></div>
- <?php if(!empty($feed['attachment_path'])):$media=app_url('/wallchat/media?id='.(int)$feed['id'].'&v='.rawurlencode((string)($feed['attachment_size']??0).'-'.(string)($feed['created_at']??'')));?><div class="post-media"><?php if(str_starts_with($feed['attachment_mime']??'','image/')):?><img src="<?= $media ?>" loading="lazy" alt="Media posting"><?php elseif(str_starts_with($feed['attachment_mime']??'','video/')):?><video src="<?= $media ?>" controls preload="metadata"></video><?php else:?><a class="ui basic button" href="<?= $media ?>"><i class="paperclip icon"></i><?= htmlspecialchars($feed['attachment_name']) ?></a><?php endif;?></div><?php endif;?>
+ <?php if (!empty($feed['attachment_available'])):
+   $media = htmlspecialchars(app_url('/wallchat/media?id=' . (int)$feed['id'] . '&v=' . rawurlencode(($feed['attachment_size'] ?? 0) . '-' . ($feed['created_at'] ?? ''))), ENT_QUOTES, 'UTF-8');
+   $mime = $feed['attachment_mime'] ?? '';
+ ?>
+   <div class="post-media">
+     <?php if (str_starts_with($mime, 'image/')): ?>
+       <img src="<?= $media ?>" loading="lazy" alt="Media posting">
+     <?php elseif (str_starts_with($mime, 'video/')): ?>
+       <video src="<?= $media ?>" controls preload="metadata"></video>
+     <?php else: ?>
+       <a class="ui basic button" href="<?= $media ?>"><i class="paperclip icon"></i><?= htmlspecialchars($feed['attachment_name'] ?? 'Lampiran') ?></a>
+     <?php endif; ?>
+   </div>
+ <?php elseif (!empty($feed['attachment_path'])): ?>
+   <p class="ui small message"><i class="paperclip icon" aria-hidden="true"></i>Lampiran tidak tersedia.</p>
+ <?php endif; ?>
  <div class="post-meta"><span><i class="comment outline icon"></i><?= count($feed['comments']??[]) ?> komentar</span></div><div class="social-comments"><?php foreach(($feed['comments']??[]) as $comment):?><div class="social-comment"><div class="mini-avatar"><?= htmlspecialchars(strtoupper(substr($comment['nama']??'U',0,1)), ENT_QUOTES, 'UTF-8') ?></div><div><b><?= htmlspecialchars($comment['nama']) ?></b><p><?= nl2br(htmlspecialchars($comment['content'])) ?></p></div></div><?php endforeach;?></div>
  <form class="ui form formComment" data-id="<?= (int)$feed['id'] ?>"><div class="ui fluid icon input"><input name="content" maxlength="1000" placeholder="Tulis komentar…"><i class="paper plane link icon"></i></div></form>
 </article>
