@@ -114,33 +114,6 @@ $(document).ready(function () {
 	const $context = $("#mainContext");
 
 	// ===============================
-	// SIDEBAR KIRI (STABIL)
-	// ===============================
-	const $sidebarUtama = $(".sidebarutama");
-	if($sidebarUtama.length) document.documentElement.style.setProperty("--main-sidebar-width", $sidebarUtama.outerWidth()+"px");
-
-	$sidebarUtama.sidebar({
-		context: $context,
-		transition: "push",
-		dimPage: false,
-	});
-
-	$("#toggleSidebar").on("click", function () {
-		// =====================================
-		// FIX 1: tutup sidebar kanan jika terbuka
-		// =====================================
-		if ($sidebarKanan.hasClass("visible")) {
-			// cek state fomantic
-			$sidebarKanan.sidebar("hide"); // tutup flyout kanan
-		}
-
-		// =====================================
-		// FIX 2: toggle sidebar kiri
-		// =====================================
-		$sidebarUtama.sidebar("toggle");
-	});
-
-	// ===============================
 	// 🔥 SIDEBAR KANAN (INIT SEKALI SAJA)
 	// ===============================
 	const $sidebarKanan = $(".sidebarkanan");
@@ -297,20 +270,18 @@ $(document).ready(function () {
 	const applyTheme = (dark) => {
 		$("body").toggleClass("dark-mode", dark);
 		const toggle = $("#darkToggle");
-		toggle.find("span").text(dark ? "Mode Terang" : "Mode Gelap");
-		toggle.find("i").toggleClass("moon", !dark).toggleClass("sun", dark);
 		toggle.attr("aria-pressed", dark ? "true" : "false");
 	};
 	let savedDark = false;
 	try { savedDark = localStorage.getItem("sesendok-theme") === "dark"; } catch (_) {}
 	applyTheme(savedDark);
-	$(document).off("click.userTheme keydown.userTheme", "#darkToggle")
-		.on("click.userTheme keydown.userTheme", "#darkToggle", function (e) {
+	$("#darkToggle").off("click.userTheme keydown.userTheme")
+		.on("click.userTheme keydown.userTheme", function (e) {
 			if (e.type === "keydown" && !["Enter", " "].includes(e.key)) return;
 			e.preventDefault();
+			e.stopPropagation();
 			const dark = !$("body").hasClass("dark-mode");applyTheme(dark);
 			try { localStorage.setItem("sesendok-theme", dark ? "dark" : "light"); } catch (_) {}
-			$("#userMenu").dropdown("hide");
 		});
 	// The page header is already outside content-scroll; do not let the sticky
 	// plugin insert sizing/positioning into the flex viewport shell.
@@ -346,27 +317,4 @@ $(document).ready(function () {
 	// FLYOUT CONTROLLER
 	// ===============================
 	window.Flyout = new FlyoutController();
-	// =====================================
-	// SIMPLE ACCORDION TANPA FOMANTIC
-	// =====================================
-	// =====================================
-	// SIMPLE ACCORDION (FIX FINAL STABIL)
-	// =====================================
-	$(".sidebarutama > .item > .title")
-		.off("click")
-		.on("click", function () {
-			const $title = $(this);
-			const $item = $title.parent(); // item induk
-			const $content = $item.children(".content");
-
-			const $allItem = $(".sidebarutama > .item");
-
-			// tutup semua selain ini
-			$allItem.not($item).children(".content").slideUp(150);
-			$allItem.not($item).children(".title").removeClass("active");
-
-			// toggle current
-			$content.stop(true, true).slideToggle(150);
-			$title.toggleClass("active");
-		});
 });

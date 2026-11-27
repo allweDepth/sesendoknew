@@ -57,19 +57,29 @@ class SpaRouter {
 				bestMatch = { link, params: target.searchParams.size };
 		});
 		if (bestMatch) this.updateHeader(bestMatch.link);
+		else this.setActiveNavigation(null);
 	}
 
 	updateHeader(link) {
 		const $link = $(link),
 			title = $link.data("title") || "Dashboard";
-		const icon = $link.find("i.icon").last().attr("class") || "home icon";
+		const sidebarLink = [...document.querySelectorAll(".sidebarutama a[data-spa]")]
+			.find(candidate => candidate.href === link.href);
+		const icon = $link.find("i.icon").last().attr("class")
+			|| $(sidebarLink).closest(".workspace-group").find(".workspace-nav-icon > i").attr("class")
+			|| "home icon";
 		const description =
 			$link.data("description") || `Kelola ${String(title).replaceAll("/", " — ")} pada tahun anggaran aktif.`;
 		$("#dynamicHeaderTitle").text(title);
 		$("#dynamicHeaderIcon").attr("class", icon).addClass("circular blue");
 		$("#dynamicHeader .pDashboard").text(description);
-		$(".sidebarutama a.item").removeClass("active");
-		$link.addClass("active").parents(".content").show().siblings(".title").addClass("active");
+		this.setActiveNavigation(sidebarLink);
+	}
+
+	setActiveNavigation(link) {
+		$(".sidebarutama a.item.active").removeClass("active").removeAttr("aria-current");
+		if (link) $(link).addClass("active").attr("aria-current", "page");
+		document.dispatchEvent(new Event("workspace:navigation"));
 	}
 
 	async ensureSession() {
@@ -96,8 +106,10 @@ class SpaRouter {
 	// ================================
 	bindLinks() {
 		$(document).on("click", "[data-spa]", async (e) => {
+			if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button > 0) return;
 			e.preventDefault();
-			if (!(await this.ensureSession())) return;
+			const intent = this.intent = Symbol();
+			if (!(await this.ensureSession()) || intent !== this.intent) return;
 
 			const $link = $(e.currentTarget);
 
@@ -136,7 +148,12 @@ class SpaRouter {
 		window.activeBudgetDocument?.request?.abort();
 		window.activeBudgetDocument?.closeWorkspace?.();
 		this.navigation = new AbortController();
+		document.querySelector("#main-content")?.setAttribute("aria-busy", "true");
 		return this.navigation;
+	}
+
+	finishNavigation(navigation) {
+		if (navigation === this.navigation) document.querySelector("#main-content")?.removeAttribute("aria-busy");
 	}
 
 	loadClientModule(url) {
@@ -170,7 +187,8 @@ class SpaRouter {
 				if (typeof initFomantic === "function") {
 					initFomantic();
 				}
-			}).catch(error => { if (error.name !== "AbortError") console.error("Gagal memuat halaman", error); });
+			}).catch(error => { if (error.name !== "AbortError") console.error("Gagal memuat halaman", error); })
+			.finally(() => this.finishNavigation(navigation));
 	}
 
 	// ================================
@@ -178,7 +196,7 @@ class SpaRouter {
 	// ================================
 	loadServerPartial(url) {
 		const navigation = this.beginNavigation();
-		fetch(url, {
+		return fetch(url, {
 			signal: navigation.signal,
 			headers: { "X-Requested-With": "XMLHttpRequest" },
 		})
@@ -207,7 +225,8 @@ class SpaRouter {
 				if (typeof initFomantic === "function") {
 					initFomantic();
 				}
-			}).catch(error => { if (error.name !== "AbortError") console.error("Gagal memuat halaman", error); });
+			}).catch(error => { if (error.name !== "AbortError") console.error("Gagal memuat halaman", error); })
+			.finally(() => this.finishNavigation(navigation));
 	}
 
 	// ================================
@@ -215,6 +234,8 @@ class SpaRouter {
 	// ================================
 	bindPopState() {
 		window.addEventListener("popstate", (event) => {
+			this.intent = null;
+			this.updateHeaderFromCurrentUrl();
 			const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
 			const url = window.appRoutePath ? window.appRoutePath(currentUrl) : currentUrl;
 			const mode = event.state?.mode || this.resolveMode(url);

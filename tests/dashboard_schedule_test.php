@@ -8,7 +8,8 @@ $year=2026;$title='Perencanaan';$max=1;$cards=[['tone'=>'blue','icon'=>'tasks','
 foreach(['perencanaan','penganggaran'] as $module){
     $dashboardStatus=['unread'=>2,'schedules'=>['rka'=>['enabled'=>false,'label'=>'RKA','status'=>'Di luar jadwal']]];
     ob_start();require __DIR__.'/../app/Views/dashboard/index.php';$html=ob_get_clean();
-    checkDashboard(str_contains($html,'Disabled')&&str_contains($html,'Status Input OPD'),"$module menampilkan status input");
+    checkDashboard(str_contains($html,'data-schedule-state="closed"')&&str_contains($html,'Status Input OPD'),"$module menampilkan status input");
+    checkDashboard(str_contains($html,'data-schedule-filter="open"')&&str_contains($html,'data-schedule-result'),"$module menyediakan filter dan hasil jadwal");
     checkDashboard(str_contains($html,'ui sticky dashboard-messenger-notice')&&!str_contains($html,'messenger-card"><'),"$module memakai pemberitahuan sticky tanpa panel Messenger besar");
     checkDashboard(str_contains($html,'2 pesan belum dibaca.'),"$module menampilkan jumlah pesan belum dibaca");
 }

@@ -1,9 +1,10 @@
 <?php require_once __DIR__.'/../../Core/Auth.php'; ?>
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>seSendok</title>
 
   <link rel="stylesheet" href="<?= asset_url('/assets/vendor/fomantic-ui/semantic.min.css') ?>">
@@ -70,34 +71,6 @@
       min-width: 0;
       overflow-y: auto;
       padding: 20px;
-    }
-
-    /* Sidebar kiri tetap dapat digulir, tetapi identitas aplikasi/tahun tidak ikut hilang. */
-    #mainContext .sidebarutama {
-      overflow-y: auto !important;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(84, 200, 255, .65) transparent;
-      background: linear-gradient(180deg, #14283b 0%, #0c1722 100%) !important;
-    }
-
-    #mainContext .sidebarutama>.item:first-child {
-      position: sticky;
-      top: 0;
-      z-index: 12;
-      background: linear-gradient(135deg, #173a58, #10283c) !important;
-      box-shadow: 0 8px 22px rgba(0, 0, 0, .28);
-    }
-
-    #mainContext .sidebarutama .content .item {
-      margin: 3px 8px !important;
-      border-radius: 8px !important;
-      transition: background .18s ease, transform .18s ease;
-    }
-
-    #mainContext .sidebarutama .content .item:hover,
-    #mainContext .sidebarutama .content .item.active {
-      background: rgba(84, 200, 255, .16) !important;
-      transform: translateX(3px);
     }
 
     #crudMenu.ui.pointing.menu {
@@ -403,9 +376,18 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="<?= asset_url('/assets/css/workspace.css') ?>">
 </head>
 
 <body>
+  <script>
+    try {
+      document.body.classList.toggle('dark-mode', localStorage.getItem('sesendok-theme') === 'dark');
+      document.body.classList.toggle('workspace-nav-collapsed', localStorage.getItem('sesendok-navigation') === 'collapsed');
+      const style = localStorage.getItem('sesendok-workspace-style');
+      document.body.dataset.workspaceStyle = ['pasangkayu', 'pesisir', 'classic'].includes(style) ? style : 'pasangkayu';
+    } catch (_) {}
+  </script>
 
   <?php if (!isset($_SESSION['user'])) {
     header('Location: ' . app_url('/'));
@@ -414,6 +396,27 @@
   <!-- NAVBAR (DI LUAR PUSHABLE) @note navbar -->
   <!-- NAVBAR (DI LUAR PUSHABLE) -->
   <?php require __DIR__ . '/../partials/auth_navbar.php'; ?>
+  <div class="ui small modal workspace-menu-dialog" id="workspaceMenuSearch" role="dialog" aria-modal="true" aria-labelledby="workspaceMenuHeading">
+    <div class="header" id="workspaceMenuHeading">Cari menu</div>
+    <div class="content">
+      <div class="ui fluid left icon input"><i class="search icon" aria-hidden="true"></i><input type="search" id="workspaceMenuQuery" placeholder="Misalnya RKA atau Data ASN" aria-label="Cari berdasarkan nama menu" autocomplete="off"></div>
+      <p class="workspace-search-status" role="status"></p>
+      <div class="ui list workspace-search-results" aria-label="Hasil pencarian menu"></div>
+    </div>
+    <div class="actions"><button type="button" class="ui basic cancel button">Tutup</button></div>
+  </div>
+  <div class="ui small modal workspace-menu-dialog" id="workspaceTheme" role="dialog" aria-modal="true" aria-labelledby="workspaceThemeHeading">
+    <div class="header" id="workspaceThemeHeading">Tema seSendok</div>
+    <div class="content">
+      <div class="workspace-theme-options" role="group" aria-label="Pilihan tema">
+        <button type="button" class="ui button workspace-theme-option" data-style="pasangkayu" aria-pressed="true"><span class="theme-swatch" aria-hidden="true"></span>Hijau Pasangkayu</button>
+        <button type="button" class="ui button workspace-theme-option" data-style="pesisir" aria-pressed="false"><span class="theme-swatch" aria-hidden="true"></span>Biru Pesisir</button>
+        <button type="button" class="ui button workspace-theme-option" data-style="classic" aria-pressed="false"><span class="theme-swatch" aria-hidden="true"></span>Klasik</button>
+      </div>
+      <p class="workspace-search-status" data-theme-status role="status"></p>
+    </div>
+    <div class="actions"><button type="button" class="ui basic cancel button">Tutup</button></div>
+  </div>
 
   <!-- Toast global harus berada di luar pushable/dimmer agar tetap terlihat saat sidebar kanan aktif. -->
   <div id="toastContainer"></div>
@@ -546,6 +549,7 @@
 
   <!-- ================= ENTRY POINT ================= -->
   <script src="/assets/js/app-init.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/app-init.js') ?>"></script>
+  <script src="<?= asset_url('/assets/js/ui/workspace.js') ?>"></script>
   <script src="/assets/js/ui/dashboard-status.js?v=<?= (int)@filemtime(__DIR__ . '/../../../public/assets/js/ui/dashboard-status.js') ?>"></script>
 
   <script>
