@@ -248,6 +248,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 				key: item.prop.name,
 				label: item.prop.tableLabel || item.prop.label || item.prop.name,
 				labelLines: item.prop.tableLabelLines,
+				options: item.prop.options,
 				format: item.prop.format || (/(nilai|jumlah|total|pagu|harga|anggaran)/i.test(item.prop.name) ? "currency" : null),
 				priority: Number(item.prop.tablePriority || 0),
 				width: item.prop.tableWidth || this.inferColumnWidth(item.prop.name),
@@ -316,7 +317,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			- currency
 			- status badge
 		===================================================== */
-	formatValue(value, format) {
+	formatValue(value, format, options) {
 		if (value == null) return "";
 
 		if (format === "excerpt") {
@@ -338,6 +339,11 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 				minimumFractionDigits: 0,
 				maximumFractionDigits: 2,
 			}).format(value);
+		}
+
+		if (format === "optionLabel" && Array.isArray(options)) {
+			const option = options.find((item) => String(item.value) === String(value));
+			if (option) return `<span class="ui teal basic label">${this.escapeHtml(option.text)}</span>`;
 		}
 
 		if (format === "status") {
@@ -432,7 +438,7 @@ AMBIL LIMIT TERBARU DARI NAVBAR
 			}
 			columns.forEach((col) => {
 				let value = row[col.key] ?? "";
-				value = this.formatValue(value, col.format);
+				value = this.formatValue(value, col.format, col.options);
 				if (["riwayat_jabatan","riwayat_pangkat"].includes(this.state.tbl)) {
 					if (col.key === "pegawai_id") value = this.escapeHtml(row.nama_pegawai || row.pegawai_id) + `<div class="ui small grey text">${this.escapeHtml(row.nip_pegawai || "")}</div>`;
 					if (col.key === "golongan") value = ["", "I", "II", "III", "IV"][Number(row.golongan)] || this.escapeHtml(row.golongan);

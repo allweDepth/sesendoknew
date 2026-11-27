@@ -1665,8 +1665,8 @@ UIConfig.halaman_berita = {
 					name: "slug",
 				},
 			},
-			{tag:"fieldDropdown",prop:{label:"Tampil pada halaman",name:"jenis_halaman",options:[{value:"berita",text:"Berita"},{value:"data_teknis",text:"Data Teknis"},{value:"organisasi",text:"Organisasi"},{value:"pelayanan",text:"Pelayanan"}]}},
-			{tag:"fieldDropdown",prop:{label:"Status Publikasi",name:"aktif",options:[{value:1,text:"Aktif - tampil ke publik"},{value:0,text:"Nonaktif - disembunyikan"}]}},
+			{tag:"fieldDropdown",prop:{label:"Tag halaman publik",name:"jenis_halaman",format:"optionLabel",options:[{value:"berita",text:"Berita"},{value:"data_teknis",text:"Data Teknis"},{value:"organisasi",text:"Struktur Organisasi"},{value:"pelayanan",text:"Pelayanan"},{value:"home",text:"Beranda"}]}},
+			{tag:"fieldDropdown",prop:{label:"Status Publikasi",name:"aktif",format:"status",options:[{value:1,text:"Aktif - tampil ke publik"},{value:0,text:"Nonaktif - disembunyikan"}]}},
 
 			{
 				tag: "fieldTextarea",
@@ -1689,7 +1689,7 @@ UIConfig.halaman_berita = {
 			{
 				tag: "fieldTextarea",
 				prop: {
-					label: "Keterangan",
+					label: "Tag topik",
 					name: "keterangan",
 					atribut: `rows="3"`,
 				},

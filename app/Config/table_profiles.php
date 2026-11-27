@@ -2213,6 +2213,7 @@ $profiles = [
           'slug',
           'jenis_halaman',
           'aktif',
+          'html_aktif',
           'konten',
           'gambar',
           'keterangan',

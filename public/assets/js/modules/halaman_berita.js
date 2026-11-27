@@ -13,7 +13,7 @@ class HalamanBeritaModule extends BaseCrudModule {
 		const show=data=>{
 			$("#halamanBeritaEditor").remove();
 			$("#crud-table-container").hide().after('<div id="halamanBeritaEditor" class="news-editor-workspace"></div>');
-			this.editor=new RichDocumentEditor({container:"#halamanBeritaEditor",onBack:()=>this.closeEditor(),onSave:(html,meta)=>this.saveEditor(action,id,html,meta)}).mount(data.konten||"");
+			this.editor=new RichDocumentEditor({container:"#halamanBeritaEditor",publicPortal:true,onBack:()=>this.closeEditor(),onSave:(html,meta)=>this.saveEditor(action,id,html,meta)}).mount(data.konten||"");
 			this.editor.setMeta(data);
 		};
 		if(action==="edit"&&id)this.ajax.request({data:{action:"edit",tbl:"halaman_berita",id_row:id},success:res=>res?.data?show(res.data):Toast.show({success:false,message:"Data berita tidak ditemukan"})});

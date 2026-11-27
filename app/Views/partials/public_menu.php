@@ -1,20 +1,26 @@
-<nav class="ui container public-nav"><a href="<?= app_url('/') ?>" class="brand"><img src="<?= app_url('/assets/img/umum/logo.png') ?>" alt="Logo"><span><b>seSendok</b><small>Pasangkayu</small></span></a><div class="public-links">
-    <a href="<?= app_url('/') ?>" class="item <?= ($active ?? '') == 'home' ? 'active' : '' ?>">Home</a>
-
-    <a href="<?= app_url('/berita') ?>" class="item <?= ($active ?? '') == 'berita' ? 'active' : '' ?>">
-      Berita
+<header class="portal-header">
+  <nav class="ui container public-nav" aria-label="Navigasi utama">
+    <a href="<?= $escape($pageUrl('home')) ?>" class="brand">
+      <img src="<?= app_url('/assets/img/umum/logo.png') ?>" alt="" width="40" height="43">
+      <span><b>seSendok</b><small>Kabupaten Pasangkayu</small></span>
     </a>
-
-    <a href="<?= app_url('/datateknis') ?>" class="item <?= ($active ?? '') == 'datateknis' ? 'active' : '' ?>">
-      Data
-    </a>
-
-    <a href="<?= app_url('/organisasi') ?>" class="item <?= ($active ?? '') == 'organisasi' ? 'active' : '' ?>">
-      Struktur Organisasi
-    </a>
-
-    <a href="<?= app_url('/pelayanan') ?>" class="item <?= ($active ?? '') == 'pelayanan' ? 'active' : '' ?>">
-      Pelayanan
-    </a>
-
-    </div><div class="public-account"><?php if(!empty($_SESSION['user'])):?><a class="ui primary button" href="<?= app_url('/dashboard') ?>">Dashboard</a><form method="POST" action="<?= app_url('/logout') ?>" style="display:inline"><input type="hidden" name="_csrf" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>"><button class="ui basic button" type="submit">Logout</button></form><?php else:?><button class="ui basic button" id="btnLogin"><i class="sign in icon"></i>Login</button><button class="ui primary button" id="btnRegister">Daftar</button><?php endif;?></div><button class="nav-toggle" aria-label="Buka menu"><i class="bars icon"></i></button></nav>
+    <div class="public-links" id="public-navigation">
+      <?php foreach ($pages as $type => [, $name]): ?>
+        <a href="<?= $escape($pageUrl($type)) ?>" class="item<?= $active === $type ? ' active' : '' ?>" <?= $active === $type ? 'aria-current="page"' : '' ?>><?= $escape($name) ?></a>
+      <?php endforeach; ?>
+    </div>
+    <div class="public-account">
+      <?php if (!empty($_SESSION['user'])): ?>
+        <a class="ui button portal-primary" href="<?= app_url('/dashboard') ?>">Dashboard</a>
+        <form method="POST" action="<?= app_url('/logout') ?>">
+          <input type="hidden" name="_csrf" value="<?= $escape($_SESSION['csrf_token'] ?? '') ?>">
+          <button class="ui basic button" type="submit">Logout</button>
+        </form>
+      <?php else: ?>
+        <button type="button" class="ui basic button" id="btnLogin">Masuk</button>
+        <button type="button" class="ui button portal-primary" id="btnRegister">Daftar</button>
+      <?php endif; ?>
+    </div>
+    <button type="button" class="ui icon basic button nav-toggle" aria-label="Menu navigasi" aria-controls="public-navigation" aria-expanded="false"><i class="bars icon" aria-hidden="true"></i></button>
+  </nav>
+</header>

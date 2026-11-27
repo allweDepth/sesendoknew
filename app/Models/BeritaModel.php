@@ -14,10 +14,10 @@ class BeritaModel
     /**
      * Ambil semua berita aktif
      */
-    public function getAll($kdWilayah = null, string $type='berita')
+    public function getAll($kdWilayah = null, ?string $type = 'berita')
     {
         $sql = "
-            SELECT id,kd_wilayah,judul,slug AS id_pengenal,
+            SELECT id,kd_wilayah,judul,slug AS id_pengenal,jenis_halaman,
                    COALESCE(NULLIF(keterangan,''),'Informasi') AS kelompok,
                    konten AS uraian_html,
                    html_aktif,
@@ -25,10 +25,14 @@ class BeritaModel
                    COALESCE(tgl_update,tgl_insert) AS tanggal,
                    gambar,tgl_insert,tgl_update,username_insert,username_update,keterangan,0 AS urutan
             FROM halaman_berita
-            WHERE is_deleted = 0 AND aktif=1 AND jenis_halaman=?
+            WHERE is_deleted = 0 AND aktif = 1
         ";
 
-        $params = [$type];
+        $params = [];
+        if ($type !== null) {
+            $sql .= " AND jenis_halaman = ?";
+            $params[] = $type;
+        }
 
         // Optional filter wilayah
         if ($kdWilayah) {
@@ -36,7 +40,9 @@ class BeritaModel
             $params[] = $kdWilayah;
         }
 
-        $sql .= " ORDER BY urutan ASC, tanggal DESC";
+        $sql .= $type === null
+            ? " ORDER BY (jenis_halaman = 'berita') DESC, tanggal DESC, id DESC"
+            : " ORDER BY tanggal DESC, id DESC";
 
         return $this->db->query($sql, $params)
                         ->fetchAll(PDO::FETCH_ASSOC);
