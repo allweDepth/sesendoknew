@@ -115,6 +115,11 @@ final class ProcurementFixedPdfService
     private function addOfficialPage(TCPDF $pdf):void{$pdf->AddPage($this->orientation);OfficialLetterheadPdfService::draw($pdf,array_merge($this->user,['_letterhead_font'=>$this->font]));}
     private function e($v):string{return htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');}
     private function value(array $c,string ...$keys):string{foreach($keys as $key)if(trim((string)($c[$key]??''))!=='')return(string)$c[$key];return'-';}
+    private function vendorDeed(array $c):array
+    {
+        $kind=!empty($c['no_akta_perubahan'])?'perubahan':'pendirian';
+        return ['number'=>$this->value($c,'no_akta_'.$kind),'date'=>$this->displayDate($c['tgl_akta_'.$kind]??''),'notary'=>$this->value($c,'nama_notaris_'.$kind)];
+    }
     private function money($value):string{return number_format((float)$value,2,',','.');}
     private function coverAmount($value):string
     {
@@ -232,9 +237,10 @@ final class ProcurementFixedPdfService
             ['Nama',$this->e($this->value($c,'nama_ppk_resmi','nama_ppk'))],['Nip.',$this->e($this->value($c,'nip_ppk_resmi','nip_ppk'))],
             ['Jabatan','Pejabat Pembuat Komitmen'],['Berkedudukan di','Pasangkayu']
         ]).'<br>yang bertindak untuk dan atas nama '.$name.' berdasarkan Surat Keputusan Nomor '.$this->e($this->value($c,'nomor_sk_ppk')).' tanggal '.$this->e($this->displayDate($c['tanggal_sk_ppk']??'')).' tentang Pengangkatan Pejabat pembuat komitmen (PPK) '.$name.' tahun '.$c['tahun'].' selanjutnya disebut &quot;Pengguna Jasa&quot;, dengan:');
+        $deed=$this->vendorDeed($c);
         $html.=$row('NAMA PENYEDIA',$fields([
             ['Nama',$this->e($this->value($c,'direktur'))],['Jabatan',$this->e($this->value($c,'jabatan_pelaksana'))],['Berkedudukan di',$this->e($this->value($c,'alamat_penyedia','alamat'))]
-        ]).'<br><u>Akta Notaris</u>'.$fields([['Nomor',$this->e($this->value($c,'no_akta_pendirian'))],['Tanggal',$this->e($this->displayDate($c['tgl_akta_pendirian']??''))],['Notaris',$this->e($this->value($c,'nama_notaris_pendirian'))]]).'<br>yang bertindak untuk '.$provider.' selanjutnya disebut &quot;Penyedia&quot;.');
+        ]).'<br><u>Akta Notaris</u>'.$fields([['Nomor',$this->e($deed['number'])],['Tanggal',$this->e($deed['date'])],['Notaris',$this->e($deed['notary'])]]).'<br>yang bertindak untuk '.$provider.' selanjutnya disebut &quot;Penyedia&quot;.');
         $inv=$c['dokumen_referensi']['UNDANGAN_PL']??[];$result=$c['dokumen_referensi']['BAHP']??[];
         $html.=$row('PAKET PENGADAAN<br><br><div align="center"><u>'.$this->e($c['uraian_kontrak']).'</u></div>',
             'NOMOR DAN TANGGAL SURAT UNDANGAN PENGADAAN LANGSUNG:'.$fields([['Nomor',$this->e($inv['nomor_dokumen']??'-')],['Tanggal',$this->e($this->displayDate($inv['tanggal_dokumen']??''))]]).'<br>NOMOR DAN TANGGAL BERITA ACARA HASIL PENGADAAN LANGSUNG:'.$fields([['Nomor',$this->e($result['nomor_dokumen']??'-')],['Tanggal',$this->e($this->displayDate($result['tanggal_dokumen']??''))]]));
@@ -285,8 +291,9 @@ final class ProcurementFixedPdfService
         $this->contractIdentity($pdf,['Nama'=>$this->value($c,'nama_ppk_resmi','nama_ppk'),'NIP'=>$this->value($c,'nip_ppk_resmi','nip_ppk'),'Jabatan'=>'Pejabat Pembuat Komitmen','Berkedudukan di'=>$this->user['alamat_opd']??'-']);
         $this->writeJustified($pdf,'yang bertindak untuk dan atas nama '.($this->user['nama_opd']??$this->user['nama_org']??'-').' selanjutnya disebut “'.$role.'”, dengan:');
         $fields=['Nama'=>$this->value($c,'direktur'),'Jabatan'=>$this->value($c,'jabatan_pelaksana','jabatan'),'Berkedudukan di'=>$this->value($c,'alamat_penyedia','alamat')];
-        if($construction)$fields+=['Akta Notaris Nomor'=>$this->value($c,'no_akta_pendirian'),'Tanggal'=>$this->displayDate($c['tgl_akta_pendirian']??''),'Notaris'=>$this->value($c,'nama_notaris_pendirian')];
-        else $fields+=['Akta Pendirian Nomor'=>$this->value($c,'no_akta_pendirian'),'Tanggal'=>$this->displayDate($c['tgl_akta_pendirian']??'')];
+        $deed=$this->vendorDeed($c);
+        $fields+=['Akta Notaris Nomor'=>$deed['number'],'Tanggal'=>$deed['date']];
+        if($construction)$fields+=['Notaris'=>$deed['notary']];
         $fields['NPWP']=$this->value($c,'npwp');
         $this->contractIdentity($pdf,$fields);
         $this->writeJustified($pdf,'yang bertindak untuk dan atas nama '.$this->value($c,'nama_penyedia_resmi','nama_perusahaan','nama_penyedia').' selanjutnya disebut “Penyedia”.');

@@ -45,7 +45,7 @@ final class ProcurementDocumentService
         $row['rab']=$this->db->query('SELECT * FROM rab_paket_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY COALESCE(NULLIF(urutan,0),id),id',[$id])->fetchAll();
         $row['rab_totals']=RabTotalService::totals($id);if($row['rab_totals']['stages']['hps']['manual'])$row['nilai_hps']=$row['rab_totals']['stages']['hps']['total'];
         $row['dokumen_referensi']=[];foreach($this->db->query('SELECT kode_dokumen,nomor_dokumen,tanggal_dokumen FROM dokumen_pengadaan_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY id',[$id])->fetchAll() as $ref)$row['dokumen_referensi'][$ref['kode_dokumen']]=$ref;
-        $vendor=$row['rekanan_id']?$this->db->query('SELECT no_rekening,bank_rekening,atas_nama_rekening,nama_notaris_pendirian FROM rekanan_neo WHERE id=? AND is_deleted=0',[$row['rekanan_id']])->fetch():[];
+        $vendor=$row['rekanan_id']?$this->db->query('SELECT no_rekening,bank_rekening,atas_nama_rekening,nama_notaris_pendirian,no_akta_perubahan,tgl_akta_perubahan,nama_notaris_perubahan FROM rekanan_neo WHERE id=? AND is_deleted=0',[$row['rekanan_id']])->fetch():[];
         return $row+($vendor?:[]);
     }
 

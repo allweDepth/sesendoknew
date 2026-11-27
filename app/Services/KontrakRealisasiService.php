@@ -767,6 +767,12 @@ class KontrakRealisasiService
     $d = $this->db->query($sql, $params)->fetch();
     if (!$d) throw new RuntimeException('Kontrak tidak ditemukan');
     $d=ContractOfficialService::resolve($d);
+    if(ProcurementContractFormService::recommend($d)==='SURAT_PERJANJIAN'){
+      $documents=new ProcurementDocumentService($this->user);
+      $saved=$this->db->query("SELECT id FROM dokumen_pengadaan_neo WHERE kontrak_id=? AND kode_dokumen='SURAT_PERJANJIAN' AND is_deleted=0 ORDER BY id DESC LIMIT 1",[$id])->fetch();
+      if($saved)return $documents->pdf((int)$saved['id']);
+      $d=$documents->templates($id)['contract'];
+    }
     if(ProcurementDocumentFormatService::supports('SPK_KONSULTANSI_KONSTRUKSI',$d))$d=(new ProcurementDocumentService($this->user))->templates($id)['contract'];
     if(($d['cara_pengadaan']??'')==='SWAKELOLA')return (new ProcurementDocumentService($this->user))->swakelolaContractPdf($id);
     return (new ProcurementFixedPdfService($this->user))->directContract($d,PageSetupService::current($this->user));
