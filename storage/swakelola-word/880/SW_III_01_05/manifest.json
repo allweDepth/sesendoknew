@@ -1,0 +1,19 @@
+{
+    "docx_sha256": "db475a95b3603b34c1b314f6c80793273b2e3bcda44f8aaa71b826fee7accb7d",
+    "pdf_sha256": "80a55988f57372f18f310fb979b1964f9e565af3564eedd33ec697e9f39eb506",
+    "paragraph_paths": [
+        "0.0",
+        "0.1",
+        "0.2",
+        "0.3",
+        "0.4",
+        "0.5",
+        "0.6",
+        "0.7",
+        "0.8",
+        "0.9",
+        "0.10",
+        "0.11"
+    ],
+    "blocks_sha256": "9c72d5a96d1087b18394b361bba1ea740c3887f4b6e5c864edd768dacdb4bda3"
+}

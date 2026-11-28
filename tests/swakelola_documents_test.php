@@ -4,6 +4,7 @@ require_once __DIR__.'/../app/Services/DynamicTableService.php';
 require_once __DIR__.'/../app/Services/KontrakRealisasiService.php';
 $db=DB::getInstance();
 $ok=function(bool $v,string $m){if(!$v)throw new RuntimeException($m);echo "PASS: $m\n";};
+$visible=function(array $blocks)use(&$visible):string{$parts=[];foreach($blocks as$b){if($b['type']==='paragraph')$parts[]=$b['text'];else foreach($b['rows']as$r)foreach($r as$c)$parts[]=$visible($c['blocks']);}return implode("\n",$parts);};
 $catalog=SwakelolaDocumentService::catalog();
 $ok(count($catalog['sources'])===16 && count($catalog['templates'])===163,'16 sumber dan 163 master lengkap');
 foreach($catalog['templates'] as $t){
@@ -34,7 +35,8 @@ try {
         $expected=count(array_filter($catalog['templates'],fn($t)=>$t['type']===$type));
         $sw=array_filter($templates,fn($t)=>SwakelolaDocumentService::supports($t['kode']));
         $ok(count($sw)===$expected && count(array_filter($sw,fn($t)=>$t['tipe_swakelola']!==$type))===0,"daftar master Tipe $type sesuai ($expected)");
-        foreach($sw as $t){$autoDraft=$service->draft($contract,(int)$t['id']);foreach($autoDraft['sections'] as $part){if(preg_match('/[<(](?:diisi|isi|ditulis)\b/iu',$part['isi'])){preg_match('/.{0,100}[<(](?:diisi|isi|ditulis).{0,150}/iu',$part['isi'],$left);throw new RuntimeException('Petunjuk isian tersisa: '.$t['kode'].' '.($left[0]??''));}}}
+        $qaProcess=[];foreach($sw as$t)$qaProcess[$t['kode']]=['tanggal'=>'2026-10-23','nomor'=>'QA/'.$t['kode']];$db->update('kontrak_neo',['proses_pengadaan'=>json_encode($qaProcess)],'WHERE id=?',[$contract]);
+        foreach($sw as $t){$autoDraft=$service->draft($contract,(int)$t['id']);foreach($autoDraft['sections'] as $part){if(preg_match('/[<(](?:diisi|isi|ditulis)\b/iu',$visible(json_decode($part['isi'],true)))){preg_match('/.{0,100}[<(](?:diisi|isi|ditulis).{0,150}/iu',$visible(json_decode($part['isi'],true)),$left);throw new RuntimeException('Petunjuk isian tersisa: '.$t['kode'].' '.($left[0]??''));}}}
         $ok(true,"seluruh master Tipe $type terisi otomatis tanpa petunjuk (isi...)");
         if($type==='II'){$rabMaster=$db->query("SELECT id FROM master_dokumen_pengadaan_neo WHERE kode='SW_II_02_08' AND aktif=1")->fetch();$rabDraft=$service->draft($contract,(int)$rabMaster['id']);file_put_contents(sys_get_temp_dir().'/swakelola-draft-qa.json',json_encode($rabDraft,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES));$ok(str_contains($rabDraft['sections'][0]['isi'],'Pekerjaan nyata dari RAB paket'),'tabel RAB terisi uraian paket secara otomatis');}
         $master=$db->query("SELECT id FROM master_dokumen_pengadaan_neo WHERE kode=? AND aktif=1",['SW_'.$type.'_02_01'])->fetch();
@@ -46,6 +48,7 @@ try {
         $draft['sections'][0]['isi']=json_encode($blocks);
         $payload=['contract_id'=>$contract,'master_id'=>$master['id'],'judul'=>'KAK Swakelola Tipe '.$type,'nomor_dokumen'=>'QA/KAK/'.$type,'tanggal_dokumen'=>'2026-10-23','sections'=>$draft['sections']];
         $saved=$service->save($payload);$documents[]=(int)$saved['id'];
+        if(json_decode($saved['sections'][0]['isi'],true)!=$blocks)file_put_contents(__DIR__.'/../outputs/swakelola-tcpdf-20261128/roundtrip-diff.json',json_encode(['expected'=>$blocks,'actual'=>json_decode($saved['sections'][0]['isi'],true)]));
         $ok(json_decode($saved['sections'][0]['isi'],true)==$blocks,"sunting paragraf dan sel tersimpan Tipe $type");
         $payload['id']=$saved['id'];$payload['sections'][0]['isi']=json_encode(array_merge($blocks,[['type'=>'paragraph','text'=>'Perubahan kedua']]));
         $updated=$service->save($payload);

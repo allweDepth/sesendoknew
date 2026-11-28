@@ -8,3 +8,6 @@
 # Verified download caches, tools and recoverable copies of obsolete assets
 /storage/dependencies/
 /storage/backups/
+
+# Full local SQL remains available; commit its compressed backup instead.
+/config/sesendoknew_db.sql

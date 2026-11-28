@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/SwakelolaDefaultService.php';
 require_once __DIR__.'/RabTotalService.php';
 require_once __DIR__.'/ContractAccessService.php';
 require_once __DIR__.'/../Core/DB.php';
@@ -109,12 +110,15 @@ final class ProcurementDocumentService
 
     public function list(int $contractId):array
     {
-        $this->contract($contractId);return$this->db->query('SELECT id,master_id,kode_dokumen,nomor_dokumen,tanggal_dokumen,judul,status,versi_master,pembuat_role,tgl_update,tgl_insert FROM dokumen_pengadaan_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY tanggal_dokumen DESC,id DESC',[$contractId])->fetchAll();
+        $this->contract($contractId);
+        $rows=$this->db->query('SELECT id,master_id,kode_dokumen,nomor_dokumen,tanggal_dokumen,judul,status,versi_master,pembuat_role,tgl_update,tgl_insert,data_isian FROM dokumen_pengadaan_neo WHERE kontrak_id=? AND is_deleted=0 ORDER BY tanggal_dokumen DESC,id DESC',[$contractId])->fetchAll();
+        foreach($rows as &$row){$data=json_decode($row['data_isian']??'{}',true)?:[];$row['has_word_pdf']=str_starts_with($row['kode_dokumen'],'SW_');unset($row['data_isian']);}unset($row);
+        return $rows;
     }
 
     public function detail(int $id):array
     {
-        [$w,$o,$y]=$this->scope();$sql='SELECT d.*,m.nama nama_master,m.sumber_format,m.orientasi FROM dokumen_pengadaan_neo d JOIN master_dokumen_pengadaan_neo m ON m.id=d.master_id JOIN kontrak_neo k ON k.id=d.kontrak_id WHERE d.id=? AND d.kd_wilayah=? AND d.tahun=? AND d.is_deleted=0 AND k.is_deleted=0';$p=[$id,$w,$y];if($o!==''&&$o!=='0'){$sql.=' AND d.kd_opd=?';$p[]=$o;}$doc=$this->db->query($sql.' LIMIT 1',$p)->fetch();if(!$doc)throw new RuntimeException('Dokumen pengadaan tidak ditemukan');$contract=$this->contract((int)$doc['kontrak_id']);$doc['sections']=$this->db->query('SELECT id,kode_bagian,judul,urutan,isi FROM dokumen_pengadaan_bagian_neo WHERE dokumen_id=? AND is_deleted=0 ORDER BY urutan,id',[$id])->fetchAll();$doc['attachments']=$this->db->query('SELECT id,jenis_lampiran,judul,urutan,isi,nama_file,mime_type,ukuran FROM dokumen_pengadaan_lampiran_neo WHERE dokumen_id=? AND is_deleted=0 ORDER BY urutan,id',[$id])->fetchAll();if(SwakelolaDocumentService::supports($doc['kode_dokumen'])){$doc['kop_surat']=$this->letterhead();foreach($doc['sections'] as &$section){$blocks=SwakelolaDocumentService::loadBlocks($this->db,'dokumen_bagian_id',(int)$section['id']);if($blocks!==null)$section['isi']=json_encode($blocks,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);}unset($section);}if($doc['kode_dokumen']==='SSKK'){$data=json_decode($doc['data_isian']??'{}',true)?:[];$context=array_replace($contract,array_intersect_key($data,array_flip(['masa_pemeliharaan','masa_pemeliharaan_bulan'])));$context['terms_variant']=$data['terms_variant']??'STANDARD';foreach($doc['sections'] as &$section){$rows=json_decode($section['isi'],true);if(is_array($rows))$section['isi']=json_encode(ProcurementReferenceTermsService::fillSskkRows($rows,$context),JSON_UNESCAPED_UNICODE);}unset($section);}return ProcurementMiniCompetitionTermsService::ssukDocument($doc,$contract);
+        [$w,$o,$y]=$this->scope();$sql='SELECT d.*,m.nama nama_master,m.sumber_format,m.orientasi FROM dokumen_pengadaan_neo d JOIN master_dokumen_pengadaan_neo m ON m.id=d.master_id JOIN kontrak_neo k ON k.id=d.kontrak_id WHERE d.id=? AND d.kd_wilayah=? AND d.tahun=? AND d.is_deleted=0 AND k.is_deleted=0';$p=[$id,$w,$y];if($o!==''&&$o!=='0'){$sql.=' AND d.kd_opd=?';$p[]=$o;}$doc=$this->db->query($sql.' LIMIT 1',$p)->fetch();if(!$doc)throw new RuntimeException('Dokumen pengadaan tidak ditemukan');$contract=$this->contract((int)$doc['kontrak_id']);$doc['sections']=$this->db->query('SELECT id,kode_bagian,judul,urutan,isi FROM dokumen_pengadaan_bagian_neo WHERE dokumen_id=? AND is_deleted=0 ORDER BY urutan,id',[$id])->fetchAll();$doc['attachments']=$this->db->query('SELECT id,jenis_lampiran,judul,urutan,isi,nama_file,mime_type,ukuran FROM dokumen_pengadaan_lampiran_neo WHERE dokumen_id=? AND is_deleted=0 ORDER BY urutan,id',[$id])->fetchAll();if(SwakelolaDocumentService::supports($doc['kode_dokumen'])){$doc['kop_surat']=$this->letterhead();foreach($doc['sections'] as &$section){$blocks=SwakelolaDocumentService::loadBlocks($this->db,'dokumen_bagian_id',(int)$section['id']);if($blocks!==null){$blocks=SwakelolaTcpdfLayoutService::decorate($doc['kode_dokumen'],$blocks,SwakelolaTcpdfLayoutService::reference($doc));$section['isi']=json_encode($blocks,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);}}unset($section);}if($doc['kode_dokumen']==='SSKK'){$data=json_decode($doc['data_isian']??'{}',true)?:[];$context=array_replace($contract,array_intersect_key($data,array_flip(['masa_pemeliharaan','masa_pemeliharaan_bulan'])));$context['terms_variant']=$data['terms_variant']??'STANDARD';foreach($doc['sections'] as &$section){$rows=json_decode($section['isi'],true);if(is_array($rows))$section['isi']=json_encode(ProcurementReferenceTermsService::fillSskkRows($rows,$context),JSON_UNESCAPED_UNICODE);}unset($section);}return ProcurementMiniCompetitionTermsService::ssukDocument($doc,$contract);
     }
 
     public function save(array $payload):array
@@ -123,7 +127,7 @@ final class ProcurementDocumentService
         if(!$contractId||!$masterId||$date===''||$title==='')throw new InvalidArgumentException('Kontrak, master, tanggal, dan judul dokumen wajib diisi');$contract=$this->contract($contractId);ContractAccessService::assert($this->user,$contract,'dapat_input');
         $master=$this->db->query('SELECT * FROM master_dokumen_pengadaan_neo WHERE id=? AND aktif=1 AND is_deleted=0 LIMIT 1',[$masterId])->fetch();if(!$master)throw new RuntimeException('Master dokumen tidak aktif');$this->assertApplicable($master,$contract);
         $sections=$payload['sections']??[];if(is_string($sections))$sections=json_decode($sections,true)?:[];$attachments=$payload['attachments']??[];if(is_string($attachments))$attachments=json_decode($attachments,true)?:[];$data=$payload['data_isian']??[];if(is_string($data))$data=json_decode($data,true)?:[];
-        if(SwakelolaDocumentService::supports($master['kode'])){$draft=$this->draft($contractId,$masterId);if(!$sections)$sections=$draft['sections'];if(!$data)$data=$draft['data_isian'];}
+        if(SwakelolaDocumentService::supports($master['kode'])){$draft=$this->draft($contractId,$masterId);$draftSections=array_column($draft['sections'],null,'kode_bagian');if(!$sections)$sections=$draft['sections'];if(!$data)$data=$draft['data_isian'];$data['swakelola_layout']=array_replace($data['swakelola_layout']??[],['engine'=>'TCPDF','page_mode'=>'OPD','version'=>'2026-11-28']);}
         if(in_array($master['kode'],['SSUK','SSKK','SURAT_PERJANJIAN','SURAT_PESANAN'],true)){$previous=$id?(json_decode($this->detail($id)['data_isian']??'{}',true)?:[]):[];$data['terms_variant']=$data['terms_variant']??($id?($previous['terms_variant']??'STANDARD'):ProcurementMiniCompetitionTermsService::variant($contract));ProcurementMiniCompetitionTermsService::variant(array_replace($contract,['terms_variant'=>$data['terms_variant']]));}
         if($master['kode']==='SSUK'){$normalized=ProcurementMiniCompetitionTermsService::ssukDocument(['kode_dokumen'=>'SSUK','status'=>'DRAFT','data_isian'=>$data,'sections'=>$sections],$contract);$sections=$normalized['sections'];$data=is_string($normalized['data_isian'])?json_decode($normalized['data_isian'],true):$normalized['data_isian'];}
         [$w,$o,$y]=$this->scope();$values=['kontrak_id'=>$contractId,'master_id'=>$masterId,'kode_dokumen'=>$master['kode'],'nomor_dokumen'=>trim((string)($payload['nomor_dokumen']??''))?:null,'tanggal_dokumen'=>$date,'judul'=>$title,'status'=>in_array($payload['status']??'', ['DRAFT','DIAJUKAN','DISETUJUI','DITANDATANGANI'],true)?$payload['status']:'DRAFT','data_isian'=>json_encode($data,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES),'dasar_hukum_snapshot'=>$master['dasar_hukum'],'versi_master'=>$master['versi'],'pembuat_pegawai_id'=>$this->user['pegawai_id']??null,'pembuat_role'=>$this->user['type_user']??'','kd_wilayah'=>$w,'kd_opd'=>$contract['kd_opd'],'tahun'=>$y];
@@ -131,7 +135,7 @@ final class ProcurementDocumentService
             if($id){$old=$this->detail($id);if((int)$old['master_id']!==$masterId)throw new RuntimeException('Master dokumen hasil tidak boleh diganti');if((int)$old['kontrak_id']!==$contractId)throw new RuntimeException('Kontrak dokumen tidak boleh dipindahkan');$values['tgl_update']=date('Y-m-d H:i:s');$values['username_update']=$this->user['username']??'system';$this->db->update('dokumen_pengadaan_neo',$values,'WHERE id=?',[$id]);}
             else{$values['username_insert']=$this->user['username']??'system';$id=(int)$this->db->insert('dokumen_pengadaan_neo',$values);}
             $masterSections=$this->db->query('SELECT * FROM master_dokumen_pengadaan_bagian_neo WHERE master_id=? AND is_deleted=0 ORDER BY urutan,id',[$masterId])->fetchAll();$given=[];foreach($sections as $s)if(!empty($s['kode_bagian']))$given[(string)$s['kode_bagian']]=$s;
-            foreach($masterSections as $s){$custom=$given[$s['kode_bagian']]??[];$body=trim((string)($custom['isi']??$s['isi_template']));if(SwakelolaDocumentService::supports($master['kode'])){$blocks=json_decode($body,true,512,JSON_THROW_ON_ERROR);if(!is_array($blocks))throw new InvalidArgumentException('Struktur dokumen tidak valid');SwakelolaDocumentService::validate($blocks);$body=json_encode(SwakelolaDocumentService::fill($blocks,SwakelolaDocumentService::identity($contract,$this->user)),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);}if($master['kode']==='SURAT_PERJANJIAN'&&is_array($paragraphs=json_decode($body,true)))$body=json_encode(ProcurementParagraphLayoutService::normalize($paragraphs),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);if(!empty($s['wajib'])&&$body==='')throw new InvalidArgumentException('Bagian '.$s['judul'].' wajib diisi');$this->db->query('INSERT INTO dokumen_pengadaan_bagian_neo(dokumen_id,master_bagian_id,kode_bagian,judul,urutan,isi,username_insert,is_deleted) VALUES(?,?,?,?,?,?,?,0) ON DUPLICATE KEY UPDATE judul=VALUES(judul),urutan=VALUES(urutan),isi=VALUES(isi),tgl_update=NOW(),username_update=VALUES(username_insert),is_deleted=0',[$id,$s['id'],$s['kode_bagian'],$custom['judul']??$s['judul'],$s['urutan'],$body,$this->user['username']??'system']);}
+            foreach($masterSections as $s){$custom=$given[$s['kode_bagian']]??($draftSections[$s['kode_bagian']]??[]);$body=trim((string)($custom['isi']??$s['isi_template']));if(SwakelolaDocumentService::supports($master['kode'])){$blocks=json_decode($body,true,512,JSON_THROW_ON_ERROR);if(!is_array($blocks))throw new InvalidArgumentException('Struktur dokumen tidak valid');SwakelolaDocumentService::validate($blocks);$body=json_encode(SwakelolaDocumentService::fill($blocks,SwakelolaDocumentService::identity($contract,$this->user)),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);}if($master['kode']==='SURAT_PERJANJIAN'&&is_array($paragraphs=json_decode($body,true)))$body=json_encode(ProcurementParagraphLayoutService::normalize($paragraphs),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);if(!empty($s['wajib'])&&$body==='')throw new InvalidArgumentException('Bagian '.$s['judul'].' wajib diisi');$this->db->query('INSERT INTO dokumen_pengadaan_bagian_neo(dokumen_id,master_bagian_id,kode_bagian,judul,urutan,isi,username_insert,is_deleted) VALUES(?,?,?,?,?,?,?,0) ON DUPLICATE KEY UPDATE judul=VALUES(judul),urutan=VALUES(urutan),isi=VALUES(isi),tgl_update=NOW(),username_update=VALUES(username_insert),is_deleted=0',[$id,$s['id'],$s['kode_bagian'],$custom['judul']??$s['judul'],$s['urutan'],$body,$this->user['username']??'system']);}
             if(SwakelolaDocumentService::supports($master['kode'])){foreach($this->db->query('SELECT id,isi FROM dokumen_pengadaan_bagian_neo WHERE dokumen_id=? AND is_deleted=0',[$id])->fetchAll() as $part)SwakelolaDocumentService::storeBlocks($this->db,'dokumen_bagian_id',(int)$part['id'],json_decode($part['isi'],true,512,JSON_THROW_ON_ERROR));}
             $this->db->query('UPDATE dokumen_pengadaan_lampiran_neo SET is_deleted=1 WHERE dokumen_id=?',[$id]);
             foreach($attachments as $i=>$a){$attachmentTitle=trim((string)($a['judul']??''));$attachmentBody=trim((string)($a['isi']??''));if($attachmentTitle===''&&$attachmentBody==='')continue;$this->db->insert('dokumen_pengadaan_lampiran_neo',['dokumen_id'=>$id,'jenis_lampiran'=>trim((string)($a['jenis_lampiran']??'NARASI'))?:'NARASI','judul'=>$attachmentTitle?:('Lampiran '.($i+1)),'urutan'=>$i+1,'isi'=>$attachmentBody,'username_insert'=>$this->user['username']??'system','is_deleted'=>0]);}
@@ -151,7 +155,10 @@ final class ProcurementDocumentService
         if(SwakelolaDocumentService::supports($code)){
             $auto=new SwakelolaAutoFillService($this->db,$c,$this->user,['nomor_dokumen'=>$process['nomor']??'','tanggal_dokumen'=>$process['tanggal']??'']);
             foreach($sections as &$section){
-                $blocks=SwakelolaDocumentService::loadBlocks($this->db,'master_bagian_id',(int)$section['id'])??json_decode($section['isi'],true,512,JSON_THROW_ON_ERROR);
+                $defaults=SwakelolaDefaultService::blocks($this->db,$code,$section['kode_bagian']);
+                $blocks=$defaults??SwakelolaDocumentService::loadBlocks($this->db,'master_bagian_id',(int)$section['id'])??json_decode($section['isi'],true,512,JSON_THROW_ON_ERROR);
+                if($defaults===null)$blocks=SwakelolaTcpdfLayoutService::decorate($code,$blocks);
+                $blocks=SwakelolaDefaultService::apply($blocks,SwakelolaDefaultService::settings($this->db,$code));
                 $blocks=SwakelolaDocumentService::fill($blocks,SwakelolaDocumentService::identity($c,$this->user));
                 $section['isi']=json_encode($auto->blocks($blocks),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
             }unset($section);
@@ -213,9 +220,15 @@ final class ProcurementDocumentService
         $master=$this->db->query('SELECT id FROM master_dokumen_pengadaan_neo WHERE kode=? AND aktif=1 AND is_deleted=0 ORDER BY id DESC LIMIT 1',[$code])->fetch();
         if(!$master)throw new RuntimeException('Master pokok perjanjian swakelola belum terpasang');
         $saved=$this->db->query('SELECT id FROM dokumen_pengadaan_neo WHERE kontrak_id=? AND master_id=? AND is_deleted=0 ORDER BY tanggal_dokumen DESC,id DESC LIMIT 1',[$contractId,$master['id']])->fetch();
-        if($saved)return $this->pdf((int)$saved['id']);
-        $draft=$this->draft($contractId,(int)$master['id']);
-        return SwakelolaDocumentService::render($draft,$draft['contract'],$this->user,PageSetupService::current($this->user));
+        $documents=[];
+        foreach([(int)$chapter,(int)$chapter+1,(int)$chapter+2]as$part){
+            $partCode='SW_'.$type.'_'.$source.'_'.str_pad((string)$part,2,'0',STR_PAD_LEFT);
+            $m=$this->db->query('SELECT id FROM master_dokumen_pengadaan_neo WHERE kode=? AND aktif=1 AND is_deleted=0 ORDER BY id DESC LIMIT 1',[$partCode])->fetch();
+            if(!$m)throw new RuntimeException('Master kontrak Swakelola belum lengkap: '.$partCode);
+            $row=$this->db->query('SELECT id FROM dokumen_pengadaan_neo WHERE kontrak_id=? AND master_id=? AND is_deleted=0 ORDER BY tanggal_dokumen DESC,id DESC LIMIT 1',[$contractId,$m['id']])->fetch();
+            $documents[]=$row?$this->detail((int)$row['id']):$this->draft($contractId,(int)$m['id']);
+        }
+        return SwakelolaTcpdfLayoutService::renderBundle($documents,$c,$this->user,PageSetupService::current($this->user));
     }
 
     public function delete(int $id):array
@@ -245,7 +258,14 @@ final class ProcurementDocumentService
     public function bundlePdf(int $contractId,array $pageOverrides=[]):string
     {
         $this->canEdit();$info=$this->templates($contractId);$c=$info['contract'];
-        if(($c['cara_pengadaan']??'')!=='PENYEDIA')throw new InvalidArgumentException('Gunakan penyusunan dokumen swakelola untuk paket ini');
+        if(($c['cara_pengadaan']??'')==='SWAKELOLA'){
+            $documents=[];
+            foreach($this->list($contractId)as$item){$d=$this->detail((int)$item['id']);$data=json_decode($d['data_isian']??'{}',true)?:[];if(SwakelolaDocumentService::supports($d['kode_dokumen']))$documents[]=['id'=>(int)$d['id'],'order'=>(int)($data['word_bundle_order']??1000)];}
+            if(!$documents)throw new InvalidArgumentException('Belum ada dokumen Swakelola yang disimpan untuk paket ini.');
+            usort($documents,fn($a,$b)=>[$a['order'],$a['id']]<=>[$b['order'],$b['id']]);
+            return SwakelolaTcpdfLayoutService::renderBundle(array_map(fn($d)=>$this->detail($d['id']),$documents),$c,$this->user,PageSetupService::current($this->user));
+        }
+        if(($c['cara_pengadaan']??'')!=='PENYEDIA')throw new InvalidArgumentException('Cara pengadaan tidak mendukung bundel ini');
         $flow=ProcurementProcessService::flow($c);
         $order=array_column(ProcurementProcessService::steps($c),0);
         $form=$info['recommended_form'];$kind=$c['jenis_pengadaan'];$main=$form==='SPK'?($kind==='PEKERJAAN_KONSTRUKSI'?'SPK_KONSTRUKSI':'SPK_'.$kind):($form==='SURAT_PERJANJIAN'?'SURAT_PERJANJIAN':$form);

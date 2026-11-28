@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__.'/PageSetupService.php';
 require_once __DIR__.'/OfficialLetterheadPdfService.php';
+require_once __DIR__.'/SwakelolaTcpdfLayoutService.php';
 
 /** Structured MDS blocks: original tables stay tables in the editor and PDF. */
 final class SwakelolaDocumentService
@@ -29,7 +30,8 @@ final class SwakelolaDocumentService
                 foreach ($block['rows'] as $r=>$cells) {
                     $row=(int)$db->insert('dokumen_pengadaan_paragraf_neo',[$owner=>$id,'parent_id'=>$node,'jenis_blok'=>'row','urutan'=>$r]);
                     foreach ($cells as $c=>$cell) {
-                        $cellId=(int)$db->insert('dokumen_pengadaan_paragraf_neo',[$owner=>$id,'parent_id'=>$row,'jenis_blok'=>'cell','urutan'=>$c,'format_data'=>json_encode(['colspan'=>$cell['colspan']??1])]);
+                        $cellMeta=$cell;unset($cellMeta['blocks']);$cellMeta['colspan']=$cell['colspan']??1;
+                        $cellId=(int)$db->insert('dokumen_pengadaan_paragraf_neo',[$owner=>$id,'parent_id'=>$row,'jenis_blok'=>'cell','urutan'=>$c,'format_data'=>json_encode($cellMeta)]);
                         self::storeBlocks($db,$owner,$id,$cell['blocks'],$cellId);
                     }
                 }
@@ -54,7 +56,7 @@ final class SwakelolaDocumentService
                         $cells=[];
                         foreach($children[(int)$row['id']]??[] as $cell){
                             $meta=json_decode($cell['format_data']??'{}',true)?:[];
-                            $cells[]=['colspan'=>(int)($meta['colspan']??1),'blocks'=>$build((int)$cell['id'])];
+                            $cells[]=array_replace($meta,['colspan'=>(int)($meta['colspan']??1),'blocks'=>$build((int)$cell['id'])]);
                         }
                         $block['rows'][]=$cells;
                     }
@@ -76,6 +78,7 @@ final class SwakelolaDocumentService
             'npwp'=>$c['npwp']??'', 'pimpinan_pelaksana'=>$c['direktur']??'',
             'nama_ppk'=>$c['nama_ppk_resmi']??$c['nama_ppk']??'',
             'nip_ppk'=>$c['nip_ppk_resmi']??$c['nip_ppk']??'',
+            'nama_pptk'=>$c['nama_pptk']??'', 'nip_pptk'=>$c['nip_pptk']??'',
             'nilai_kontrak'=>number_format((float)($c['nilai_kontrak']??0),2,',','.'),
             'sumber_dana'=>$c['sumber_dana']??'APBD',
         ];
@@ -212,15 +215,6 @@ final class SwakelolaDocumentService
 
     public static function render(array $d, array $c, array $user, array $setup): string
     {
-        $pdf=PageSetupService::createPdf($setup,$d['orientasi']??'P');
-        PageSetupService::applyPdf($pdf,$setup,[18,15,18,18]);
-        $pdf->SetTitle($d['judul']);$pdf->AddPage();
-        OfficialLetterheadPdfService::draw($pdf,$user);
-        $pdf->SetFont($setup['font']??'helvetica','',9);
-        foreach ($d['sections'] as $section) {
-            $blocks=json_decode($section['isi'],true,512,JSON_THROW_ON_ERROR);
-            $pdf->writeHTML(self::html($blocks),true,false,true,false,'');
-        }
-        return $pdf->Output('','S');
+        return SwakelolaTcpdfLayoutService::render($d,$c,$user,$setup);
     }
 }

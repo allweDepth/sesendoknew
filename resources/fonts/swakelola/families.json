@@ -1,0 +1,14 @@
+{
+    "Book Antiqua": {
+        "": "bookantiqua",
+        "B": "bookantiquab",
+        "I": "bookantiquai",
+        "BI": "bookantiquabi"
+    },
+    "Times New Roman": {
+        "": "timesnewroman",
+        "B": "timesnewromanb",
+        "I": "timesnewromani",
+        "BI": "timesnewromanbi"
+    }
+}

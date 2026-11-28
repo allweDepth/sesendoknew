@@ -57,3 +57,42 @@ memiliki lingkup sendiri dan dibersihkan pada akhir pengujian.
 Pemeriksaan lama Phase 56 lulus pada bagian master dan aturan kontrak, lalu
 berhenti pada pemeriksaan input tanggal native di kode yang sudah ada; perubahan
 ini tidak menambahkan input tanggal native.
+
+## Tata letak Word, keluaran tetap TCPDF
+
+Seluruh cetak Swakelola menggunakan `SwakelolaTcpdfLayoutService`, termasuk
+kontrak utama dan bundel. Tidak menyajikan PDF Word statis atau menjalankan
+LibreOffice ketika pengguna mencetak. Kontrak utama memuat Pokok Perjanjian,
+SSUK dan SSKK, memakai snapshot tersimpan jika ada, atau draf tanpa mengubah DB.
+
+Font, ukuran, spasi, indentasi dan penomoran sumber diimpor sebagai metadata
+inert dengan `scripts/import_swakelola_layout.py`. Model disimpan per kode pada
+`resources/procurement/swakelola/layout/*.json.gz`. Untuk dokumen Word yang
+sebelumnya sudah disimpan, `layout.json` privat mempertahankan format spesifik
+paket. PDF cache Word dan pemeriksaan pemetaan Word tidak digunakan oleh jalur
+cetak TCPDF. Ukuran kertas, margin, header dan footer mengikuti Page Setup OPD.
+Jumlah halaman mengalir sesuai isi, tanpa target jumlah halaman Word.
+
+Setiap paragraf tetap blok mandiri; label nomor/bullet terpisah dari teks dan
+baris lanjutannya menggunakan hanging indent. Metadata run mempertahankan
+penekanan kata, sedangkan perubahan format pengguna mengatasi default sumber.
+Spasi kosong berlebih dan tinggi baris contoh tidak memaksa tanda tangan ke
+halaman berikutnya. Baris tanda tangan dikelompokkan, sementara tabel yang
+lebih tinggi daripada halaman tetap dapat berlanjut.
+
+Editor tetap mendukung geser batas kolom, tambah/hapus paragraf, baris, kolom
+serta sel. Lebar `column_widths` yang disimpan pengguna selalu didahulukan;
+penarikan lebar juga tersedia pada RAB dengan isi terikat data. Font, ukuran,
+spasi, jarak akhir, bullet/penomoran dan perataan dapat dikustom per paragraf.
+Tidak ada batasan pemetaan Word yang menghalangi penambahan/penghapusan teks.
+
+Pengujian: `tests/swakelola_tcpdf_layout_test.php` dan pasangan Python memeriksa
+koordinat PDF hasil cetak, perubahan lebar manual, F4/A5, nomor, bullet, paragraf
+baru dan penempatan tanda tangan. `tests/swakelola_native_editor_test.cjs` serta
+`tests/swakelola_table_editor_test.cjs` memeriksa editor pada Chrome terisolasi,
+termasuk drag, serialisasi dan buka ulang. Pengujian geometri memakai Python
+untuk membaca hasil PDF, bukan untuk menghasilkan PDF aplikasi.
+
+## Default dari database
+
+Draf `SW_` kini membaca `swakelola_teks_default_neo` dan `swakelola_pengaturan_default_neo` terlebih dahulu. SQL, penanda lokasi, contoh UPDATE, serta petunjuk kode ada di [database/swakelola/README.md](../database/swakelola/README.md). Default tidak menimpa snapshot dokumen tersimpan.

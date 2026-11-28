@@ -6,12 +6,14 @@ SESENDOK_DB_USER="${SESENDOK_DB_USER:-root}"
 SESENDOK_DB_SOCKET="${SESENDOK_DB_SOCKET:-/tmp/mysql.sock}"
 SESENDOK_PROJECT_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 SESENDOK_DUMP_FILE="$SESENDOK_PROJECT_ROOT/config/sesendoknew_db.sql"
+SESENDOK_GZIP_FILE="$SESENDOK_DUMP_FILE.gz"
 if (( $# > 0 )); then
-  echo "Gunakan tanpa argumen; SQL utama disimpan hanya di config/sesendoknew_db.sql." >&2
+  echo "Gunakan tanpa argumen; backup Git disimpan di config/sesendoknew_db.sql.gz dan SQL lokal di config/sesendoknew_db.sql." >&2
   exit 2
 fi
 SESENDOK_DUMP_TEMP="$(mktemp "$SESENDOK_PROJECT_ROOT/config/.sesendoknew-export.XXXXXX")"
-trap 'rm -f -- "$SESENDOK_DUMP_TEMP"' EXIT
+SESENDOK_GZIP_TEMP="$(mktemp "$SESENDOK_PROJECT_ROOT/config/.sesendoknew-gzip.XXXXXX")"
+trap 'rm -f -- "$SESENDOK_DUMP_TEMP" "$SESENDOK_GZIP_TEMP"' EXIT
 
 
 mariadb-dump --socket="$SESENDOK_DB_SOCKET" -u"$SESENDOK_DB_USER" \
@@ -26,5 +28,10 @@ perl -0pi -e 's{(^DELIMITER ;;\r?\n)/\*!50003 CREATE\*/[ \t]+/\*!50003 (TRIGGER\
 perl -pi -e 's/[ \t]+$//' "$SESENDOK_DUMP_TEMP"
 
 chmod 600 "$SESENDOK_DUMP_TEMP"
+gzip -n -c "$SESENDOK_DUMP_TEMP" > "$SESENDOK_GZIP_TEMP"
+gzip -t "$SESENDOK_GZIP_TEMP"
+chmod 600 "$SESENDOK_GZIP_TEMP"
 mv -f -- "$SESENDOK_DUMP_TEMP" "$SESENDOK_DUMP_FILE"
-echo "Dump portabel dibuat: $SESENDOK_DUMP_FILE"
+mv -f -- "$SESENDOK_GZIP_TEMP" "$SESENDOK_GZIP_FILE"
+echo "Backup portabel untuk Git dibuat: $SESENDOK_GZIP_FILE"
+echo "SQL lengkap lokal: $SESENDOK_DUMP_FILE"
